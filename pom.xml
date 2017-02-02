@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>software.amazon.awssdk</groupId>
   <artifactId>aws-java-sdk-pom</artifactId>
-  <version>@AWS_JAVA_SDK_VERSION@</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>AWS SDK for Java</name>
   <description>The Amazon Web Services SDK for Java provides Java APIs

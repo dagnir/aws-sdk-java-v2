@@ -43,8 +43,8 @@ dependencies.
   <dependencies>
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
-      <artifactId>aws-java-sdk-bom</artifactId>
-      <version>@AWS_JAVA_SDK_VERSION@</version>
+      <artifactId>sdk-bom</artifactId>
+      <version>0.1-SNAPSHOT</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -58,15 +58,15 @@ dependencies.
 <dependencies>
   <dependency>
     <groupId>software.amazon.awssdk</groupId>
-    <artifactId>aws-java-sdk-ec2</artifactId>
+    <artifactId>ec2</artifactId>
   </dependency>
   <dependency>
     <groupId>software.amazon.awssdk</groupId>
-    <artifactId>aws-java-sdk-s3</artifactId>
+    <artifactId>s3</artifactId>
   </dependency>
   <dependency>
     <groupId>software.amazon.awssdk</groupId>
-    <artifactId>aws-java-sdk-dynamodb</artifactId>
+    <artifactId>dynamodb</artifactId>
   </dependency>
 </dependencies>
 ```

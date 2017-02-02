@@ -5,7 +5,7 @@
     <parent>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>aws-java-sdk-pom</artifactId>
-        <version>@AWS_JAVA_SDK_VERSION@</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>bundle</artifactId>
@@ -24,7 +24,7 @@
         <artifactId>aws-java-sdk</artifactId>
         <groupId>software.amazon.awssdk</groupId>
         <optional>false</optional>
-        <version>@AWS_JAVA_SDK_VERSION@</version>
+        <version>0.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
 
