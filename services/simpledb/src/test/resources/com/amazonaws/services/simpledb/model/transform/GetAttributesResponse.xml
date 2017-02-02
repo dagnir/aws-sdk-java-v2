@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GetAttributesResponse xmlns="http://sdb.amazonaws.com/doc/2009-04-15/">
+    <GetAttributesResult>
+        <Attribute>
+            <Name>Color</Name>
+            <Value>Blue</Value>
+        </Attribute>
+        <Attribute>
+            <Name>Price</Name>
+            <Value>$2.50</Value>
+        </Attribute>
+    </GetAttributesResult>
+    <ResponseMetadata>
+        <RequestId>12345</RequestId>
+        <BoxUsage>1.0</BoxUsage>
+    </ResponseMetadata>
+</GetAttributesResponse>

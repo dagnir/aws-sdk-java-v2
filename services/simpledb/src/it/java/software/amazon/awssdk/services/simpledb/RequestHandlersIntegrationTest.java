@@ -1,0 +1,85 @@
+package software.amazon.awssdk.services.simpledb;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
+import software.amazon.awssdk.util.TimingInfo;
+
+/**
+ * Tests that new request handlers can be registered for a client, and that they're correctly run
+ * during a request's lifecyle.
+ */
+public class RequestHandlersIntegrationTest extends IntegrationTestBase {
+
+    @Test
+    public void testRequestHandlers() throws Exception {
+        TestRequestHandler requestHandler = new TestRequestHandler();
+        sdb.addRequestHandler(requestHandler);
+
+        try {
+            sdb.createDomain(new CreateDomainRequest());
+            fail("Expected exception not thrown");
+        } catch (AmazonServiceException ase) {
+            requestHandler.assertCallCounts(1, 0, 1);
+        }
+
+        requestHandler.resetCallCounts();
+        sdb.listDomains();
+        requestHandler.assertCallCounts(1, 1, 0);
+    }
+
+    /*
+     * TODO: Duplicated in the S3 RequestHandler test. It'd be nice to have a shared package that
+     * all SDK clients could declare a test-dependency on to share utilities like this.
+     */
+    private final class TestRequestHandler implements RequestHandler {
+        public int beforeRequestCallCount = 0;
+        public int afterResponseCallCount = 0;
+        public int afterErrorCallCount = 0;
+
+        @Override
+        public void beforeRequest(Request<?> request) {
+            assertNotNull(request);
+            beforeRequestCallCount++;
+        }
+
+        @Override
+        public void afterResponse(Request<?> request, Object response, TimingInfo timingInfo) {
+            assertNotNull(request);
+            assertNotNull(response);
+            assertNotNull(timingInfo);
+            assertTrue(timingInfo.getStartTime() > 0);
+            assertTrue(timingInfo.getEndTime() > timingInfo.getStartTime());
+            afterResponseCallCount++;
+        }
+
+        @Override
+        public void afterError(Request<?> request, Exception ace) {
+            assertNotNull(request);
+            assertNotNull(ace);
+            afterErrorCallCount++;
+        }
+
+        public void resetCallCounts() {
+            beforeRequestCallCount = 0;
+            afterResponseCallCount = 0;
+            afterErrorCallCount = 0;
+        }
+
+        public void assertCallCounts(int expectedBeforeRequestCount,
+                                     int expectedAfterResponseCount,
+                                     int expectedAfterErrorCount) {
+            assertEquals(expectedBeforeRequestCount, beforeRequestCallCount);
+            assertEquals(expectedAfterResponseCount, afterResponseCallCount);
+            assertEquals(expectedAfterErrorCount, afterErrorCallCount);
+        }
+    }
+}

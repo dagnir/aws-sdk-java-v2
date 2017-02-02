@@ -1,0 +1,184 @@
+package software.amazon.awssdk.services.sqs;
+
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isIn;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import software.amazon.awssdk.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+
+/**
+ * Tests async send/receive/delete operation on the Buffered client. Creates a bunch of messages on
+ * a queue, receives and deletes those messages one by one and finally makes sure all sent messages
+ * were received.
+ */
+public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
+
+    private static final int MESSAGE_ATTRIBUTES_PER_MESSAGE = 10;
+    private static final Map<String, MessageAttributeValue> ATTRIBUTES = createRandomAttributeValues(MESSAGE_ATTRIBUTES_PER_MESSAGE);
+    private static final int NUM_MESSAGES = 50;
+    private static final int NUM_OF_CONSUMERS = 5;
+
+    private AmazonSQSBufferedAsyncClient buffSqs;
+    private String queueUrl;
+
+    @Before
+    public void setup() {
+        buffSqs = new AmazonSQSBufferedAsyncClient(createSqsAyncClient(),
+                new QueueBufferConfig().withLongPollWaitTimeoutSeconds(60));
+        queueUrl = createQueue(buffSqs);
+    }
+
+    @After
+    public void tearDown() {
+        buffSqs.deleteQueue(queueUrl);
+        buffSqs.shutdown();
+    }
+
+    @Test
+    public void testAsyncOperations() throws Exception {
+        List<Future<SendMessageResult>> sendResults = new LinkedList<Future<SendMessageResult>>();
+        Set<String> messages = generateTestMessages(sendResults);
+
+        waitForFutures(sendResults);
+        System.out.println("All sending futures returned....");
+
+        // Now start receiving messages and removing them from resultSet
+        ExecutorService executor = Executors.newCachedThreadPool();
+        waitForFutures(submitMessageConsumerTasks(messages, executor));
+
+        // If we have successfully received all messsages resultSet should be empty
+        assertThat(messages, empty());
+        System.out.println("All receive threads exited....");
+        executor.shutdown();
+    }
+
+    private List<Future<Void>> submitMessageConsumerTasks(Set<String> messages, ExecutorService executor) {
+        List<Future<Void>> futures = new ArrayList<Future<Void>>(NUM_OF_CONSUMERS);
+        for (int i = 0; i < NUM_OF_CONSUMERS; i++) {
+            MessageConsumer consumer = new MessageConsumer(buffSqs, messages, queueUrl, ATTRIBUTES);
+            futures.add(executor.submit(consumer));
+        }
+        return futures;
+    }
+
+    private <T> void waitForFutures(List<Future<T>> futures) throws InterruptedException, ExecutionException {
+        for (Future<?> future : futures) {
+            future.get();
+        }
+    }
+
+    /**
+     * Sends several test messages to SQS and returns a set of all message bodies sent
+     */
+    private Set<String> generateTestMessages(List<Future<SendMessageResult>> sendResults) {
+        Set<String> messages = Collections.synchronizedSet(new HashSet<String>());
+        for (int i = 0; i < NUM_MESSAGES; i++) {
+            String body = "test message " + i + "_" + System.currentTimeMillis();
+            SendMessageRequest request = new SendMessageRequest().withMessageBody(body).withQueueUrl(queueUrl)
+                    .withMessageAttributes(ATTRIBUTES);
+
+            sendResults.add(buffSqs.sendMessageAsync(request));
+            messages.add(body);
+        }
+        return messages;
+    }
+
+    private class MessageConsumer implements Callable<Void> {
+
+        private static final int TIMEOUT_IN_SECONDS = 3 * 60;
+        private AmazonSQSAsync buffSqs;
+        private Set<String> resultSet;
+        private String url;
+        private Map<String, MessageAttributeValue> expectedAttributes;
+
+        public MessageConsumer(AmazonSQSAsync paramSQS, Set<String> set, String paramUrl,
+                Map<String, MessageAttributeValue> expectedAttributes) {
+            this.buffSqs = paramSQS;
+            this.resultSet = set;
+            this.url = paramUrl;
+            this.expectedAttributes = expectedAttributes;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            long operationStart = System.nanoTime();
+
+            while (true) {
+                List<Message> messages = recieveMessage();
+                // It's possible for messages to be empty but resultSet to still have items. This
+                // can happen if other messages have been received but not yet removed in resultSet.
+                // This is okay because we assert that resultSet is empty when all consumers are
+                // done
+                if (resultSet.isEmpty() || messages.isEmpty()) {
+                    return null;
+                }
+                assertThat(messages, hasSize(1));
+
+                Message theMessage = messages.get(0);
+                assertMessageIsValid(theMessage);
+
+                resultSet.remove(theMessage.getBody());
+                deleteMessage(messages.get(0));
+
+                long totalRunningTime = System.nanoTime() - operationStart;
+
+                if (TimeUnit.SECONDS.convert(totalRunningTime, TimeUnit.NANOSECONDS) > TIMEOUT_IN_SECONDS) {
+                    throw new RuntimeException("Timed out waiting for the desired message to arrive");
+                }
+
+            }
+        }
+
+        private List<Message> recieveMessage() throws InterruptedException, ExecutionException {
+            ReceiveMessageRequest recRequest = new ReceiveMessageRequest().withMaxNumberOfMessages(1).withQueueUrl(url)
+                    .withMessageAttributeNames("All");
+            Future<ReceiveMessageResult> future = buffSqs.receiveMessageAsync(recRequest);
+            List<Message> messages = future.get().getMessages();
+            return messages;
+        }
+
+        private void assertMessageIsValid(Message theMessage) {
+            assertNotNull(theMessage);
+            assertNotNull(theMessage.getMD5OfMessageAttributes());
+            assertNotNull(theMessage.getMessageAttributes());
+            assertThat(theMessage.getMessageAttributes().entrySet(), everyItem(isIn(expectedAttributes.entrySet())));
+            assertThat(theMessage.getMessageAttributes().entrySet(), hasSize(expectedAttributes.size()));
+        }
+
+        private void deleteMessage(Message theMessage) throws InterruptedException, ExecutionException {
+            DeleteMessageRequest deleteRequest = new DeleteMessageRequest().withQueueUrl(url).withReceiptHandle(
+                    theMessage.getReceiptHandle());
+            buffSqs.deleteMessageAsync(deleteRequest).get();
+        }
+
+    }
+}

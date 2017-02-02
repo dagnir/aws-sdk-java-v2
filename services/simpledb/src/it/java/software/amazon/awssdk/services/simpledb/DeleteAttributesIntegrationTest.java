@@ -1,0 +1,59 @@
+package software.amazon.awssdk.services.simpledb;
+
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+import software.amazon.awssdk.services.simpledb.model.DeleteAttributesRequest;
+import software.amazon.awssdk.services.simpledb.model.MissingParameterException;
+import software.amazon.awssdk.services.simpledb.model.NoSuchDomainException;
+
+/**
+ * Integration tests for the exceptional cases of the SimpleDB DeleteAttributes operation.
+ * 
+ * @author fulghum@amazon.com
+ */
+public class DeleteAttributesIntegrationTest extends IntegrationTestBase {
+
+    /**
+     * Tests that calling the DeleteAttribute operation without a domain name, or item name
+     * specified throws a MissingParameterException.
+     */
+    @Test
+    public void testDeleteAttributesMissingParameterException() {
+        DeleteAttributesRequest request = new DeleteAttributesRequest();
+        request.setItemName("foo");
+        try {
+            sdb.deleteAttributes(request);
+            fail("Expected MissingParameterException, but wasn't thrown");
+        } catch (MissingParameterException e) {
+            assertValidException(e);
+        }
+
+        request = new DeleteAttributesRequest();
+        request.setDomainName("foo");
+        try {
+            sdb.deleteAttributes(request);
+            fail("Expected MissingParameterException, but wasn't thrown");
+        } catch (MissingParameterException e) {
+            assertValidException(e);
+        }
+    }
+
+    /**
+     * Tests that calling the DeleteAttributes operation with a non-existent domain name throws a
+     * NoSuchDomainException.
+     */
+    @Test
+    public void testDeleteAttributesNoSuchDomainException() {
+        DeleteAttributesRequest request = new DeleteAttributesRequest();
+        request.setDomainName("foobarbazbarbashbarbazfoo");
+        request.setItemName("foobarbazbarbashbarbazfoo");
+        try {
+            sdb.deleteAttributes(request);
+            fail("Expected NoSuchDomainException, but wasn't thrown");
+        } catch (NoSuchDomainException e) {
+            assertValidException(e);
+        }
+    }
+}
