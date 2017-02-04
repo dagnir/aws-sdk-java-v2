@@ -20,13 +20,13 @@
     </properties>
 
     <dependencies>
-    <dependency>
-        <artifactId>aws-java-sdk</artifactId>
-        <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
-        <version>0.1-SNAPSHOT</version>
-    </dependency>
-</dependencies>
+        <dependency>
+            <artifactId>aws-java-sdk</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <optional>false</optional>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
