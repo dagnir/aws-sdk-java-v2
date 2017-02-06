@@ -15,22 +15,21 @@
  */
 package software.amazon.awssdk.codegen.maven.plugin;
 
-import software.amazon.awssdk.codegen.C2jModels;
-import software.amazon.awssdk.codegen.CodeGenerator;
-import software.amazon.awssdk.codegen.internal.Utils;
-import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
-import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
-import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
-import software.amazon.awssdk.codegen.model.intermediate.ServiceExamples;
-import software.amazon.awssdk.codegen.model.service.ServiceModel;
-import software.amazon.awssdk.codegen.model.service.Waiters;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import software.amazon.awssdk.codegen.C2jModels;
+import software.amazon.awssdk.codegen.CodeGenerator;
+import software.amazon.awssdk.codegen.internal.Utils;
+import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
+import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
+import software.amazon.awssdk.codegen.model.intermediate.ServiceExamples;
+import software.amazon.awssdk.codegen.model.service.ServiceModel;
+import software.amazon.awssdk.codegen.model.service.Waiters;
+import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
 
 import java.io.File;
 import java.util.Optional;
@@ -53,11 +52,17 @@ public class GenerationMojo extends AbstractMojo {
     @Parameter(property = "examplesFile", defaultValue = "codegen-resources/examples-1.json")
     private String serviceExamplesLocation;
 
+    @Parameter(property = "waitersFile", defaultValue = "codegen-resources/waiters-2.json")
+    private String waitersLocation;
+
     @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-src")
     private String outputDirectory;
 
     @Parameter(property = "resourcesDirectory", defaultValue = "${basedir}/src/main/resources")
     private String resourcesDirectory;
+
+    @Parameter(property = "codeGenDirectory", defaultValue = "${session.executionRootDirectory}/codegen/src/main/resources/")
+    private String codeGenDirectory;
 
     @Component
     private MavenProject project;
@@ -68,14 +73,14 @@ public class GenerationMojo extends AbstractMojo {
                              .customizationConfig(loadCustomizationConfig())
                              .serviceModel(loadServiceModel())
                              // Maven plugin doesn't support Waiters
-                             .waitersModel(Waiters.NONE)
+                             .waitersModel(loadWaiterModel())
                              .examplesModel(loadExamplesModel())
                              .build());
         project.addCompileSourceRoot(outputDirectory);
     }
 
     private void generateCode(C2jModels models) {
-        new CodeGenerator(models, outputDirectory, resourcesDirectory, Utils.getFileNamePrefix(models.serviceModel())).execute();
+        new CodeGenerator(models, outputDirectory, codeGenDirectory, Utils.getFileNamePrefix(models.serviceModel())).execute();
     }
 
     private BasicCodeGenConfig loadCodeGenConfig() throws MojoExecutionException {
@@ -92,6 +97,10 @@ public class GenerationMojo extends AbstractMojo {
 
     private ServiceExamples loadExamplesModel() {
         return loadOptionalModel(ServiceExamples.class, serviceExamplesLocation).orElse(ServiceExamples.NONE);
+    }
+
+    private Waiters loadWaiterModel() {
+        return loadOptionalModel(Waiters.class, waitersLocation).orElse(Waiters.NONE);
     }
 
     /**
