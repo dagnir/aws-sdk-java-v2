@@ -118,7 +118,7 @@
     <module>services/shield</module>
     <module>services/batch</module>
     <module>aws-java-sdk</module>
-    <module>core/runtime</module>
+    <module>runtime</module>
     <module>services/opensdk</module>
     <module>bom</module>
     <module>codegen</module>
