@@ -20,9 +20,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import software.amazon.awssdk.services.dynamodbv2.document.PrimaryKey;
-import software.amazon.awssdk.services.dynamodbv2.document.TableKeysAndAttributes;
-
 public class TableKeysAndAttributesTest {
 
     @Test

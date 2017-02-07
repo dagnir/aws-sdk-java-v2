@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.io.IOUtils;
+import software.amazon.awssdk.util.IOUtils;
 import org.junit.Test;
 
 import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;

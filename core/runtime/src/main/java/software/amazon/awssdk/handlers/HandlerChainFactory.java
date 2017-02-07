@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class HandlerChainFactory {
 
-    private static final String GLOBAL_HANDLER_PATH = "com/amazonaws/global/handlers/request.handler2s";
+    private static final String GLOBAL_HANDLER_PATH = "software/amazon/awssdk/global/handlers/request.handler2s";
 
     /**
      * For backward compatibility, constructs a new request handler chain adapted to {@link RequestHandler2} by analyzing the

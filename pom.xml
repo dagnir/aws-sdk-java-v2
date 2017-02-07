@@ -50,6 +50,7 @@
     <module>services/rds</module>
     <module>services/redshift</module>
     <module>services/elasticbeanstalk</module>
+    <module>services/glacier</module>
     <module>services/iam</module>
     <module>services/datapipeline</module>
     <module>services/elasticloadbalancing</module>
@@ -57,6 +58,8 @@
     <module>services/emr</module>
     <module>services/elasticache</module>
     <module>services/elastictranscoder</module>
+    <module>services/ec2</module>
+    <module>services/dynamodb</module>
     <module>services/sns</module>
     <module>services/budgets</module>
     <module>services/cloudtrail</module>
@@ -74,6 +77,7 @@
     <module>services/ses</module>
     <module>services/autoscaling</module>
     <module>services/cloudsearch</module>
+    <module>services/cloudwatchmetrics</module>
     <module>services/codedeploy</module>
     <module>services/codepipeline</module>
     <module>services/kms</module>
@@ -90,6 +94,7 @@
     <module>services/codecommit</module>
     <module>services/devicefarm</module>
     <module>services/elasticsearch</module>
+    <module>services/waf</module>
     <module>services/marketplacecommerceanalytics</module>
     <module>services/inspector</module>
     <module>services/iot</module>
@@ -204,6 +209,19 @@
               <exclude>**/*CucumberTest.java</exclude>
             </excludes>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.19.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

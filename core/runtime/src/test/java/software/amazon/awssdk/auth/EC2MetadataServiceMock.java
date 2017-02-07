@@ -50,7 +50,7 @@ public class EC2MetadataServiceMock {
 
     /**
      * Sets the name of the file that should be sent back as the response from
-     * this mock server. The files are loaded from the com/amazonaws/auth
+     * this mock server. The files are loaded from the software/amazon/awssdk/auth
      * directory of the tst folder, and no file extension should be specified.
      *
      * @param responseFileName
@@ -146,7 +146,7 @@ public class EC2MetadataServiceMock {
                         outputStream.write(httpResponse.getBytes());
 
                     } else if (resourcePath.startsWith(EC2MetadataUtils.SECURITY_CREDENTIALS_RESOURCE)) {
-                        String responseFilePath = "/com/amazonaws/auth/" + responseFileName + ".json";
+                        String responseFilePath = "/software/amazon/awssdk/auth/" + responseFileName + ".json";
                         System.out.println("Serving: " + responseFilePath);
 
                         InputStream responseFileInputStream = this.getClass().getResourceAsStream(responseFilePath);

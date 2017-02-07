@@ -23,10 +23,6 @@ import org.apache.commons.logging.LogFactory;
 
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.internal.config.InternalConfig;
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.internal.config.InternalConfig;
-
-import static software.amazon.awssdk.util.IOUtils.closeQuietly;
 
 /**
  * Utility class for accessing AWS SDK versioning information.
@@ -34,7 +30,7 @@ import static software.amazon.awssdk.util.IOUtils.closeQuietly;
 @ThreadSafe
 public class VersionInfoUtils {
     /** The AWS SDK version info file with SDK versioning info */
-    static final String VERSION_INFO_FILE = "/com/amazonaws/sdk/versionInfo.properties";
+    static final String VERSION_INFO_FILE = "/software/amazon/awssdk/sdk/versionInfo.properties";
 
     /** SDK version info */
     private static volatile String version;

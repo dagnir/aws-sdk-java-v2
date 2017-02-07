@@ -26,10 +26,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.partitions.model.Partitions;
-import software.amazon.awssdk.regions.RegionMetadata;
-import software.amazon.awssdk.util.IOUtils;
 
 /**
  * Loads all the partition files into memory.
@@ -41,13 +37,13 @@ public class PartitionsLoader {
      * class path from where all partition files are loaded.
      */
     public static final String PARTITIONS_RESOURCE_PATH =
-            "com/amazonaws/partitions/endpoints.json";
+            "software/amazon/awssdk/partitions/endpoints.json";
 
     /**
      * override class path from where all partition files are loaded.
      */
     public static final String PARTITIONS_OVERRIDE_RESOURCE_PATH =
-            "com/amazonaws/partitions/override/endpoints.json";
+            "software/amazon/awssdk/partitions/override/endpoints.json";
 
     /**
      * Jackson object mapper that is used for parsing the partition files.

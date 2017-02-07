@@ -22,9 +22,6 @@ import java.util.regex.Pattern;
 import software.amazon.awssdk.internal.config.HostRegexToRegionMapping;
 import software.amazon.awssdk.internal.config.InternalConfig;
 import software.amazon.awssdk.log.InternalLogFactory;
-import software.amazon.awssdk.internal.config.HostRegexToRegionMapping;
-import software.amazon.awssdk.internal.config.InternalConfig;
-import software.amazon.awssdk.log.InternalLogFactory;
 
 public class AwsHostNameUtils {
 

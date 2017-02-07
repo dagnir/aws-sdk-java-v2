@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.annotation.Immutable;
 
 @Immutable
 public class HostRegexToRegionMapping {
