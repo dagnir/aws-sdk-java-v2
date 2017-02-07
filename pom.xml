@@ -121,16 +121,16 @@
     <module>core/runtime</module>
     <module>services/opensdk</module>
     <module>bom</module>
-    <module>core/test-utils</module>
     <module>codegen</module>
     <module>codegen-maven-plugin</module>
     <module>jmespath-java</module>
     <module>models</module>
     <module>bundle</module>
     <module>build-tools</module>
-    <module>test/protocol-tests-core</module>
-    <module>test/protocol-tests</module>
     <module>test/apigateway-mockservice-integration-tests</module>
+    <module>test/protocol-tests</module>
+    <module>test/protocol-tests-core</module>
+    <module>test/test-utils</module>
   </modules>
   <scm>
     <url>https://github.com/aws/aws-sdk-java.git</url>
@@ -225,6 +225,30 @@
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
         <version>${httpcomponents.httpclient.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>cucumber-java</artifactId>
+        <groupId>info.cukes</groupId>
+        <optional>false</optional>
+        <version>${cucumber.info.cukes.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>cucumber-junit</artifactId>
+        <groupId>info.cukes</groupId>
+        <optional>false</optional>
+        <version>${cucumber.info.cukes.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>cucumber-guice</artifactId>
+        <groupId>info.cukes</groupId>
+        <optional>false</optional>
+        <version>${cucumber.info.cukes.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>guice</artifactId>
+        <groupId>com.google.inject</groupId>
+        <optional>false</optional>
+        <version>${cucumber.guice.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

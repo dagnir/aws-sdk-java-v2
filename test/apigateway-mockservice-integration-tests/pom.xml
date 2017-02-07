@@ -11,6 +11,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>apigateway-mockservice-integration-tests</artifactId>
+    <name>API Gateway Mock Service Integration Tests</name>
+    <description>Tests an API Gateway style client using a mock service.</description>
 
     <dependencies>
         <dependency>
