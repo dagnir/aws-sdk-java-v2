@@ -23,7 +23,7 @@
 	    <artifactId>core</artifactId>
 	    <groupId>software.amazon.awssdk</groupId>
 	    <optional>false</optional>
-	   <version>0.1-SNAPSHOT</version>
+	   <version>${awsjavasdk.version}</version>
 	</dependency>
     </dependencies>
     <build>
