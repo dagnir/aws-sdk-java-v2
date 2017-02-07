@@ -136,6 +136,7 @@
     <module>test/protocol-tests-restxml-client</module>
     <module>test/protocol-tests-apigateway-client</module>
     <module>test/protocol-tests-awsjson-client</module>
+    <module>test/apigateway-mockservice-integration-tests</module>
   </modules>
   <scm>
     <url>https://github.com/aws/aws-sdk-java.git</url>
@@ -220,6 +221,16 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-annotations</artifactId>
         <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpcomponents.httpclient.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
