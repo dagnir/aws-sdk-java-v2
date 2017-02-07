@@ -33,7 +33,7 @@ public class ApiGatewayProtocolMetadataProvider extends BaseJsonProtocolMetadata
 
     @Override
     public String getRequestBaseFqcn() {
-        return "software.amazon.awssdk.BaseRequest";
+        return "software.amazon.awssdk.opensdk.BaseRequest";
     }
 
 }

@@ -1,0 +1,21 @@
+[
+  {
+    "description": "X-Amz-Target, Content-Type, and URI are set correctly for operation",
+    "when": {
+      "action": "marshall",
+      "operation": "AllTypes"
+    },
+    "then": {
+      "serializedAs": {
+        "headers": {
+          "contains": {
+            "X-Amz-Target": "ProtocolTestsJsonRpcService.AllTypes",
+            "Content-Type": "application/x-amz-json-1.1"
+          }
+        },
+        "uri": "/",
+        "method": "POST"
+      }
+    }
+  }
+]
