@@ -656,9 +656,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
         HandlerChainFactory chainFactory = new HandlerChainFactory();
         requestHandler2s.addAll(chainFactory.newRequestHandlerChain(
-                "/com/amazonaws/services/s3/request.handlers"));
+                "/software/amazon/awssdk/services/s3/request.handlers"));
         requestHandler2s.addAll(chainFactory.newRequestHandler2Chain(
-                "/com/amazonaws/services/s3/request.handler2s"));
+                "/software/amazon/awssdk/services/s3/request.handler2s"));
         requestHandler2s.addAll(chainFactory.getGlobalHandlers());
     }
 

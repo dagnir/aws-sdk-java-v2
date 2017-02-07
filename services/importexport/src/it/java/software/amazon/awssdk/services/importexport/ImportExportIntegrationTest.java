@@ -40,9 +40,9 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     private static final String IMPORT_EXPORT_BUCKET_PREFIX = "import-export-test-bucket";
 
     private static final String IMPORT_MANIFEST_PATH =
-        "/com/amazonaws/services/importexport/sampleImportManifest.yml";
+        "/software/amazon/awssdk/services/importexport/sampleImportManifest.yml";
     private static final String EXPORT_MANIFEST_PATH =
-        "/com/amazonaws/services/importexport/sampleExportManifest.yml";
+        "/software/amazon/awssdk/services/importexport/sampleExportManifest.yml";
 
 
     /** Releases resources used by tests */

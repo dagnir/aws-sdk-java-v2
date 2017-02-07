@@ -130,7 +130,7 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
 
         DeleteObjectsResultUnmarshaller unmarshaller = new Unmarshallers.DeleteObjectsResultUnmarshaller();
         DeleteObjectsResponse response = unmarshaller.unmarshall(this.getClass().getResourceAsStream(
-                "/com/amazonaws/services/s3/multiObjectDelete/testResponses/errorResponse.xml"));
+                "/software/amazon/awssdk/services/s3/multiObjectDelete/testResponses/errorResponse.xml"));
 
         assertEquals(1, response.getDeletedObjects().size());
         assertEquals(1, response.getErrors().size());
@@ -151,7 +151,7 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
     public void testFullServiceResponse() throws Exception {
         DeleteObjectsResultUnmarshaller unmarshaller = new Unmarshallers.DeleteObjectsResultUnmarshaller();
         DeleteObjectsResponse response = unmarshaller.unmarshall(this.getClass().getResourceAsStream(
-                "/com/amazonaws/services/s3/multiObjectDelete/testResponses/fullResponse.xml"));
+                "/software/amazon/awssdk/services/s3/multiObjectDelete/testResponses/fullResponse.xml"));
 
         assertEquals(2, response.getDeletedObjects().size());
         assertEquals(1, response.getErrors().size());
