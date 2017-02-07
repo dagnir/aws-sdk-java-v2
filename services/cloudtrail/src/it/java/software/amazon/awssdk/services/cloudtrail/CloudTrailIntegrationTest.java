@@ -38,7 +38,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
     /**
      * Path to the sample policy for this test
      */
-    private static final String POLICY_FILE = "/com/amazonaws/services/cloudtrail/samplePolicy.json";
+    private static final String POLICY_FILE = "/software/amazon/awssdk/services/cloudtrail/samplePolicy.json";
 
     @BeforeClass
     public static void setUp() throws IOException {

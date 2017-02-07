@@ -25,7 +25,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
 
     public static String DESTINATION;
     public static String SOURCE;
-    protected static final String RAW_MESSAGE_FILE_PATH = "/com/amazonaws/services/email/rawMimeMessage.txt";
+    protected static final String RAW_MESSAGE_FILE_PATH = "/software/amazon/awssdk/services/email/rawMimeMessage.txt";
 
     protected static AmazonSimpleEmailService email;
 

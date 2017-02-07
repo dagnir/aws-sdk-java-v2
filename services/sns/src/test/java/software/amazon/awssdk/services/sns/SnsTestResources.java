@@ -5,7 +5,7 @@ package software.amazon.awssdk.services.sns;
  */
 public class SnsTestResources {
 
-    public static final String PACKAGE_ROOT = "/com/amazonaws/services/sns/";
+    public static final String PACKAGE_ROOT = "/software/amazon/awssdk/services/sns/";
 
     /**
      * A sample notification message from SNS

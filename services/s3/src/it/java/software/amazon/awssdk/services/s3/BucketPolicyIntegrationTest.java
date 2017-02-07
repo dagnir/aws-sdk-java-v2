@@ -20,7 +20,7 @@ public class BucketPolicyIntegrationTest extends S3IntegrationTestBase {
     private final String bucketName = "java-bucket-policy-integ-test-" + System.currentTimeMillis();
 
     /** Path to the sample policy for this test */
-    private static final String POLICY_FILE = "/com/amazonaws/services/s3/samplePolicy.json";
+    private static final String POLICY_FILE = "/software/amazon/awssdk/services/s3/samplePolicy.json";
 
     /** Release all allocated resources */
     @After
