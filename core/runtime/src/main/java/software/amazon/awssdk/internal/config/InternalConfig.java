@@ -32,8 +32,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.util.ClassLoaderHelper;
 
 /**
  * Internal configuration for the AWS Java SDK.
@@ -51,7 +49,7 @@ public class InternalConfig {
     private static final InternalLogApi log = InternalLogFactory.getLog(InternalConfig.class);
 
     static final String DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH = "awssdk_config_default.json";
-    static final String DEFAULT_CONFIG_RESOURCE_ABSOLUTE_PATH = "/com/amazonaws/internal/config/"
+    static final String DEFAULT_CONFIG_RESOURCE_ABSOLUTE_PATH = "/software/amazon/awssdk/internal/config/"
             + DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH;
 
     static final String CONFIG_OVERRIDE_RESOURCE = "awssdk_config_override.json";

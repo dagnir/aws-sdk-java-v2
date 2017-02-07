@@ -42,7 +42,7 @@ public class LegacyRegionXmlMetadataBuilder implements Builder<RegionMetadata> {
             SDKGlobalConfiguration.REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY;
 
     private static final String OVERRIDE_ENDPOINTS_RESOURCE_PATH =
-            "/com/amazonaws/regions/override/regions.xml";
+            "/software/amazon/awssdk/regions/override/regions.xml";
 
     private static final Log LOG = LogFactory.getLog(LegacyRegionXmlMetadataBuilder.class);
 

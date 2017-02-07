@@ -173,6 +173,7 @@ public class InternalConfigTest {
     }
 
     private void loadFrom(String resource) throws Exception {
+        System.out.println(resource);
         URL url = ClassLoaderHelper.getResource(resource);
         assertNotNull(url);
         InternalConfigJsonHelper config = InternalConfig.loadfrom(url);

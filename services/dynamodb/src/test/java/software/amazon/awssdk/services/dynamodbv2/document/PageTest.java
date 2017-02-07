@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import software.amazon.awssdk.services.dynamodbv2.document.Page;
-
 public class PageTest {
 
     private static class TestPage extends Page<String, Object> {

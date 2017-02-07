@@ -627,7 +627,7 @@
                           <includeDependencySources>true</includeDependencySources>
                           <show>public</show>
                           <defaultexcludes>yes</defaultexcludes>
-                          <stylesheetfile>com/amazonaws/JavaDoc.css</stylesheetfile>
+                          <stylesheetfile>software/amazon/awssdk/JavaDoc.css</stylesheetfile>
                           <author>false</author>
                           <version>true</version>
                           <use>false</use>

@@ -24,8 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
-import software.amazon.awssdk.services.dynamodbv2.document.ScanFilter;
-import software.amazon.awssdk.services.dynamodbv2.document.Table;
 import software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils;
 import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.Condition;

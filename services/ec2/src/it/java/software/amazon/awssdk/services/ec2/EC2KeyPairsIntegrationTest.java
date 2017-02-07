@@ -96,7 +96,7 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
      */
     private void testImportKeyPair() throws Exception {
         String keyName = "import-key-test-" + System.currentTimeMillis();
-        String keyMaterial = loadResource("com/amazonaws/services/ec2/public-key.txt");
+        String keyMaterial = loadResource("software/amazon/awssdk/services/ec2/public-key.txt");
 
         ImportKeyPairResult result = ec2.importKeyPair(
                 new ImportKeyPairRequest(keyName, keyMaterial));

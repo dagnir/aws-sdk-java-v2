@@ -50,6 +50,7 @@
     <module>services/rds</module>
     <module>services/redshift</module>
     <module>services/elasticbeanstalk</module>
+    <module>services/glacier</module>
     <module>services/iam</module>
     <module>services/datapipeline</module>
     <module>services/elasticloadbalancing</module>
@@ -57,6 +58,8 @@
     <module>services/emr</module>
     <module>services/elasticache</module>
     <module>services/elastictranscoder</module>
+    <module>services/ec2</module>
+    <module>services/dynamodb</module>
     <module>services/sns</module>
     <module>services/budgets</module>
     <module>services/cloudtrail</module>
@@ -74,6 +77,7 @@
     <module>services/ses</module>
     <module>services/autoscaling</module>
     <module>services/cloudsearch</module>
+    <module>services/cloudwatchmetrics</module>
     <module>services/codedeploy</module>
     <module>services/codepipeline</module>
     <module>services/kms</module>
@@ -90,6 +94,7 @@
     <module>services/codecommit</module>
     <module>services/devicefarm</module>
     <module>services/elasticsearch</module>
+    <module>services/waf</module>
     <module>services/marketplacecommerceanalytics</module>
     <module>services/inspector</module>
     <module>services/iot</module>
@@ -123,6 +128,7 @@
     <module>jmespath-java</module>
     <module>models</module>
     <module>bundle</module>
+    <module>build-tools</module>
 </modules>
   <scm>
     <url>https://github.com/aws/aws-sdk-java.git</url>
@@ -157,6 +163,7 @@
       <cucumber.guice.version>4.0</cucumber.guice.version>
       <unitils.version>3.3</unitils.version>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -166,6 +173,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -202,9 +210,60 @@
             </excludes>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.19.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.17</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>7.5</version>
+          </dependency>
+          <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>build-tools</artifactId>
+            <version>0.1-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>checkstyle</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <headerLocation>checkstyle-header.txt</headerLocation>
+          <consoleOutput>false</consoleOutput>
+          <failsOnError>false</failsOnError>
+          <logViolationsToConsole>false</logViolationsToConsole>
+          <failOnViolation>false</failOnViolation>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
+
   <profiles>
     <profile>
       <id>publishing</id>
@@ -236,6 +295,7 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>disable-java8-doclint</id>
         <activation>
@@ -245,12 +305,13 @@
           <additionalparam>-Xdoclint:none</additionalparam>
         </properties>
     </profile>
+
     <profile>
       <id>smoketests</id>
       <build>
         <pluginManagement>
           <plugins>
-            <plugin >
+            <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-plugin</artifactId>
               <version>2.19.1</version>

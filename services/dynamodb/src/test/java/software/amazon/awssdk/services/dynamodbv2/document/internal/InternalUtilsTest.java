@@ -42,7 +42,6 @@ import software.amazon.awssdk.services.dynamodbv2.document.Expected;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;
 import software.amazon.awssdk.services.dynamodbv2.document.PrimaryKey;
-import software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils;
 import software.amazon.awssdk.services.dynamodbv2.document.utils.FluentHashSet;
 import software.amazon.awssdk.services.dynamodbv2.document.utils.ValueMap;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;

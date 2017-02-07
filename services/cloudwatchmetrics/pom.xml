@@ -1,40 +1,43 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+     xmlns="http://maven.apache.org/POM/4.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>aws-java-sdk-pom</artifactId>
     <version>0.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
-   </parent>
+  </parent>
   <groupId>software.amazon.awssdk</groupId>
   <artifactId>cloudwatchmetrics</artifactId>
   <name>CloudWatch Metrics for AWS Java SDK</name>
-  <description>This package holds the classes for uploading the clientside metrics collected from AWS Java SDK to Amazon CloudWatch</description>
+  <description>This package holds the classes for uploading the clientside metrics collected from AWS Java SDK to
+    Amazon CloudWatch
+  </description>
   <url>https://aws.amazon.com/sdkforjava</url>
 
   <!-- The dependencies section in pom.xml is auto generated. No manual changes are allowed -->
   <dependencies>
     <dependency>
-        <artifactId>cloudwatch</artifactId>
-        <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
-        <version>${awsjavasdk.version}</version>
+      <artifactId>cloudwatch</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <optional>false</optional>
+      <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
-        <artifactId>dynamodb</artifactId>
-        <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
-        <version>${awsjavasdk.version}</version>
+      <artifactId>dynamodb</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <optional>false</optional>
+      <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
-        <artifactId>core</artifactId>
-        <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
-        <version>${awsjavasdk.version}</version>
+      <artifactId>core</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <optional>false</optional>
+      <version>${awsjavasdk.version}</version>
     </dependency>
-</dependencies>
+  </dependencies>
 
   <build>
     <plugins>
@@ -47,19 +50,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
-     <plugin>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>codegen-maven-plugin</artifactId>
-        <executions>
-            <execution>
-                <phase>generate-sources</phase>
-                    <goals>
-                        <goal>generate</goal>
-                    </goals>
-            </execution>
-        </executions>
-     </plugin>
-     </plugins>
+    </plugins>
   </build>
 
   <!-- This profile uses the JAPICMP plugin to generate a report of changes between the release version and the latest version -->
@@ -98,7 +89,8 @@
                 <onlyModified>true</onlyModified>
                 <accessModifier>public</accessModifier>
                 <breakBuildOnModifications>false</breakBuildOnModifications>
-                <breakBuildOnBinaryIncompatibleModifications>false</breakBuildOnBinaryIncompatibleModifications>
+                <breakBuildOnBinaryIncompatibleModifications>false
+                </breakBuildOnBinaryIncompatibleModifications>
                 <onlyBinaryIncompatible>false</onlyBinaryIncompatible>
               </parameter>
             </configuration>
