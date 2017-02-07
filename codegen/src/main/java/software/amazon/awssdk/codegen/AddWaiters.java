@@ -15,6 +15,15 @@
 
 package software.amazon.awssdk.codegen;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.Validate;
 import software.amazon.awssdk.codegen.model.intermediate.AcceptorModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.WaiterDefinitionModel;
@@ -23,14 +32,6 @@ import software.amazon.awssdk.codegen.model.service.WaiterDefinition;
 import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
 import software.amazon.awssdk.util.IOUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 class AddWaiters {
 
@@ -43,11 +44,10 @@ class AddWaiters {
     AddWaiters(Waiters waiters, Map<String, OperationModel> operations, String codeGenBinDirectory) {
         this.waiters = waiters;
         this.operations = operations;
-        this.codeGenBinDirectory = codeGenBinDirectory;
+        this.codeGenBinDirectory = FilenameUtils.normalizeNoEndSeparator(codeGenBinDirectory);
     }
 
     Map<String, WaiterDefinitionModel> constructWaiters() throws IOException {
-
 
         Map<String, WaiterDefinitionModel> javaWaiterModels = new HashMap<>();
         Map<String, JmesPathExpression> argumentToAstMap = new HashMap<>();
@@ -87,7 +87,7 @@ class AddWaiters {
 
             final Process p = executeToAstProcess(argument);
 
-            if(p.exitValue()!= 0) {
+            if(p.exitValue() != 0) {
                 throw new RuntimeException(IOUtils.toString(p.getErrorStream()));
             }
 
