@@ -130,12 +130,6 @@
     <module>build-tools</module>
     <module>test/protocol-tests-core</module>
     <module>test/protocol-tests</module>
-    <module>test/protocol-tests-restjson-client</module>
-    <module>test/protocol-tests-query-client</module>
-    <module>test/protocol-tests-ec2-client</module>
-    <module>test/protocol-tests-restxml-client</module>
-    <module>test/protocol-tests-apigateway-client</module>
-    <module>test/protocol-tests-awsjson-client</module>
     <module>test/apigateway-mockservice-integration-tests</module>
   </modules>
   <scm>

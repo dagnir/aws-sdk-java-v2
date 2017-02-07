@@ -11,13 +11,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>protocol-tests</artifactId>
+    <name>Protocol Tests for all protocols</name>
+    <description>Contains functional tests for all supported protocols.</description>
 
     <dependencies>
+        <!--Normal Dependencies-->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>aws-java-sdk-opensdk</artifactId>
+            <version>${awsjavasdk.version}</version>
         </dependency>
+
+        <!--Test Dependencies-->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>protocol-tests-core</artifactId>
@@ -25,48 +30,116 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>protocol-tests-awsjson-client</artifactId>
-            <version>${awsjavasdk.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>protocol-tests-restjson-client</artifactId>
-            <version>${awsjavasdk.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>protocol-tests-query-client</artifactId>
-            <version>${awsjavasdk.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>protocol-tests-ec2-client</artifactId>
-            <version>${awsjavasdk.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>protocol-tests-restxml-client</artifactId>
-            <version>${awsjavasdk.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>protocol-tests-apigateway-client</artifactId>
-            <version>${awsjavasdk.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>codegen-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>apigateway</id>
+                        <configuration>
+                            <serviceModelLocation>codegen-resources/apigateway/service-2.json</serviceModelLocation>
+                            <codeGenConfigLocation>codegen-resources/apigateway/codegen.config</codeGenConfigLocation>
+                            <customizationConfigLocation>codegen-resources/apigateway/customization.config</customizationConfigLocation>
+                        </configuration>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>awsjson</id>
+                        <configuration>
+                            <serviceModelLocation>codegen-resources/awsjson/service-2.json</serviceModelLocation>
+                            <codeGenConfigLocation>codegen-resources/awsjson/codegen.config</codeGenConfigLocation>
+                        </configuration>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>restjson</id>
+                        <configuration>
+                            <serviceModelLocation>codegen-resources/restjson/service-2.json</serviceModelLocation>
+                            <codeGenConfigLocation>codegen-resources/restjson/codegen.config</codeGenConfigLocation>
+                        </configuration>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>ec2</id>
+                        <configuration>
+                            <serviceModelLocation>codegen-resources/ec2/service-2.json</serviceModelLocation>
+                            <codeGenConfigLocation>codegen-resources/ec2/codegen.config</codeGenConfigLocation>
+                        </configuration>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>query</id>
+                        <configuration>
+                            <serviceModelLocation>codegen-resources/query/service-2.json</serviceModelLocation>
+                            <codeGenConfigLocation>codegen-resources/query/codegen.config</codeGenConfigLocation>
+                        </configuration>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>restxml</id>
+                        <configuration>
+                            <serviceModelLocation>codegen-resources/restxml/service-2.json</serviceModelLocation>
+                            <codeGenConfigLocation>codegen-resources/restxml/codegen.config</codeGenConfigLocation>
+                        </configuration>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/generated-src/models</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
