@@ -491,19 +491,13 @@
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
-        <artifactId>core</artifactId>
+        <artifactId>runtime</artifactId>
         <groupId>software.amazon.awssdk</groupId>
         <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>codegen</artifactId>
-        <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
-        <version>${awsjavasdk.version}</version>
-    </dependency>
-    <dependency>
-        <artifactId>models</artifactId>
         <groupId>software.amazon.awssdk</groupId>
         <optional>false</optional>
         <version>${awsjavasdk.version}</version>

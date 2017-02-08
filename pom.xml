@@ -124,7 +124,6 @@
     <module>codegen</module>
     <module>codegen-maven-plugin</module>
     <module>jmespath-java</module>
-    <module>models</module>
     <module>bundle</module>
     <module>build-tools</module>
     <module>test/apigateway-mockservice-integration-tests</module>
