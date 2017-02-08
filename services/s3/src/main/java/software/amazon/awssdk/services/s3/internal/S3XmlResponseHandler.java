@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 
 /**
  * S3 Implementation of HttpResponseHandler. Relies on a SAX unmarshaller for

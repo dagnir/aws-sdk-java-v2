@@ -12,7 +12,7 @@
     @Deprecated
     public java.util.List<String> getIpRanges() {
         if (ipv4Ranges == null) {
-            ipv4Ranges = new software.amazon.awssdk.internal.SdkInternalList<IpRange>();
+            ipv4Ranges = new software.amazon.awssdk.runtime.SdkInternalList<IpRange>();
         }
         return newLegacyIpRangeList(ipv4Ranges);
     }
@@ -54,7 +54,7 @@
     @Deprecated
     public IpPermission withIpRanges(String... ipRanges) {
         if (this.ipv4Ranges == null) {
-            setIpRanges(new software.amazon.awssdk.internal.SdkInternalList<String>(ipRanges.length));
+            setIpRanges(new software.amazon.awssdk.runtime.SdkInternalList<String>(ipRanges.length));
         }
         for (String ele : ipRanges) {
             this.ipv4Ranges.add(newIpRange(ele));
@@ -82,8 +82,8 @@
         return new IpRange().withCidrIp(ipRange);
     }
 
-    private software.amazon.awssdk.internal.SdkInternalList<IpRange> newIpRangeList(java.util.Collection<String> ipRanges) {
-        software.amazon.awssdk.internal.SdkInternalList<IpRange> ipRangeList = new software.amazon.awssdk.internal.SdkInternalList<IpRange>(ipRanges.size());
+    private software.amazon.awssdk.runtime.SdkInternalList<IpRange> newIpRangeList(java.util.Collection<String> ipRanges) {
+        software.amazon.awssdk.runtime.SdkInternalList<IpRange> ipRangeList = new software.amazon.awssdk.runtime.SdkInternalList<IpRange>(ipRanges.size());
         for (String ipRange : ipRanges) {
             ipRangeList.add(newIpRange(ipRange));
         }

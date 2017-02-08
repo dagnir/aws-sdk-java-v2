@@ -32,7 +32,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.JsonErrorResponseHandler;
-import software.amazon.awssdk.transform.JsonErrorUnmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 
 import software.amazon.ion.IonStruct;
 import software.amazon.ion.IonSystem;

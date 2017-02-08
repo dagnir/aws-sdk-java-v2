@@ -17,7 +17,7 @@ package software.amazon.awssdk.opensdk.internal.protocol;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.opensdk.internal.BaseException;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.util.ValidationUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,7 +31,7 @@ import java.util.Optional;
 @SdkInternalApi
 @ThreadSafe
 public class ApiGatewayErrorUnmarshaller implements
-        Unmarshaller<BaseException, JsonNode> {
+                                         Unmarshaller<BaseException, JsonNode> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

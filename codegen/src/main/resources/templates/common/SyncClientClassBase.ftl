@@ -23,7 +23,7 @@ import software.amazon.awssdk.internal.*;
 import software.amazon.awssdk.internal.auth.*;
 import software.amazon.awssdk.metrics.*;
 import software.amazon.awssdk.regions.*;
-import software.amazon.awssdk.transform.*;
+import software.amazon.awssdk.runtime.transform.*;
 import software.amazon.awssdk.util.*;
 import software.amazon.awssdk.protocol.json.*;
 import software.amazon.awssdk.util.AWSRequestMetrics.Field;

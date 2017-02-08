@@ -20,13 +20,13 @@ import java.util.Map.Entry;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.XMLEvent;
 
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.BucketNotificationConfiguration;
 import software.amazon.awssdk.services.s3.model.NotificationConfiguration;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
 
 public class BucketNotificationConfigurationStaxUnmarshaller implements
-        Unmarshaller<BucketNotificationConfiguration, InputStream> {
+                                                             Unmarshaller<BucketNotificationConfiguration, InputStream> {
 
     private static BucketNotificationConfigurationStaxUnmarshaller instance = new BucketNotificationConfigurationStaxUnmarshaller();
 

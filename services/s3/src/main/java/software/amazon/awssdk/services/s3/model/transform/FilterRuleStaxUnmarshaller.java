@@ -16,10 +16,10 @@ package software.amazon.awssdk.services.s3.model.transform;
 
 import javax.xml.stream.events.XMLEvent;
 
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers;
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.FilterRule;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
-import software.amazon.awssdk.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
 
 class FilterRuleStaxUnmarshaller implements Unmarshaller<FilterRule, StaxUnmarshallerContext> {
 
@@ -50,9 +50,9 @@ class FilterRuleStaxUnmarshaller implements Unmarshaller<FilterRule, StaxUnmarsh
             }
             if (xmlEvent.isAttribute() || xmlEvent.isStartElement()) {
                 if (context.testExpression("Name", targetDepth)) {
-                    filter.setName(StringStaxUnmarshaller.getInstance().unmarshall(context));
+                    filter.setName(SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller.getInstance().unmarshall(context));
                 } else if (context.testExpression("Value", targetDepth)) {
-                    filter.setValue(StringStaxUnmarshaller.getInstance().unmarshall(context));
+                    filter.setValue(SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller.getInstance().unmarshall(context));
                 }
             } else if (xmlEvent.isEndElement()) {
                 if (context.getCurrentDepth() < originalDepth) {

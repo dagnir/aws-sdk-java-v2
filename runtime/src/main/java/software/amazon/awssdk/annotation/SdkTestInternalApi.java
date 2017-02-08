@@ -26,6 +26,6 @@ import java.lang.annotation.Target;
  * TODO: Write a linter that makes sure only test code depends on methods or constructors annotated
  * with this method
  */
-@Target({ ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.FIELD, ElementType.TYPE })
 public @interface SdkTestInternalApi {
 }

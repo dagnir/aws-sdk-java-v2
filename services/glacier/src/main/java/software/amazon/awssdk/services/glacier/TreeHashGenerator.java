@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.internal.ResettableInputStream;
+import software.amazon.awssdk.internal.io.ResettableInputStream;
 import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;
 import software.amazon.awssdk.util.BinaryUtils;
 

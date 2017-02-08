@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import software.amazon.awssdk.internal.Releasable;
+import software.amazon.awssdk.internal.io.Releasable;
 
 
 /**

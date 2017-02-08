@@ -19,11 +19,10 @@ import software.amazon.awssdk.http.JsonResponseHandler;
 import software.amazon.awssdk.internal.http.ErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
-import software.amazon.awssdk.transform.JsonErrorUnmarshaller;
-import software.amazon.awssdk.transform.JsonUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import com.fasterxml.jackson.core.JsonFactory;
-import software.amazon.awssdk.http.JsonErrorResponseHandler;
 
 import java.util.List;
 import java.util.Map;

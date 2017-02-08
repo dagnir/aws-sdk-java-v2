@@ -16,23 +16,18 @@ package software.amazon.awssdk.http;
 
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.http.timers.client.ClientExecutionAbortTrackerTask;
+import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.internal.auth.SignerProvider;
 import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.AWSRequestMetricsFullSupport;
-import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
-import software.amazon.awssdk.util.AWSRequestMetrics;
 
 import java.net.URI;
 import java.util.List;
@@ -42,6 +37,7 @@ import java.util.List;
  *                a single request lifecycle.
  */
 @NotThreadSafe
+@SdkInternalApi
 public class ExecutionContext {
     private final AWSRequestMetrics awsRequestMetrics;
     private final List<RequestHandler2> requestHandler2s;

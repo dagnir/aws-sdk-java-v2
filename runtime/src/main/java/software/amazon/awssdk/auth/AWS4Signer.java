@@ -21,20 +21,14 @@ import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.internal.AWS4SignerRequestParams;
 import software.amazon.awssdk.auth.internal.AWS4SignerUtils;
 import software.amazon.awssdk.auth.internal.SignerKey;
-import software.amazon.awssdk.internal.FIFOCache;
+import software.amazon.awssdk.internal.collections.FIFOCache;
 import software.amazon.awssdk.log.InternalLogApi;
 import software.amazon.awssdk.log.InternalLogFactory;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.auth.internal.SignerConstants;
-import software.amazon.awssdk.auth.internal.SignerKey;
-import software.amazon.awssdk.internal.FIFOCache;
-import software.amazon.awssdk.log.InternalLogApi;
-import software.amazon.awssdk.util.SdkHttpUtils;
-import software.amazon.awssdk.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,21 +41,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static software.amazon.awssdk.auth.internal.SignerConstants.AUTHORIZATION;
-import static software.amazon.awssdk.auth.internal.SignerConstants.AWS4_SIGNING_ALGORITHM;
-import static software.amazon.awssdk.auth.internal.SignerConstants.AWS4_TERMINATOR;
-import static software.amazon.awssdk.auth.internal.SignerConstants.HOST;
-import static software.amazon.awssdk.auth.internal.SignerConstants.LINE_SEPARATOR;
-import static software.amazon.awssdk.auth.internal.SignerConstants.PRESIGN_URL_MAX_EXPIRATION_SECONDS;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_ALGORITHM;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_CONTENT_SHA256;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_CREDENTIAL;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_DATE;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_EXPIRES;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_SECURITY_TOKEN;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_SIGNATURE;
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_SIGNED_HEADER;
 
 /**
  * Signer implementation that signs requests with the AWS4 signing protocol.

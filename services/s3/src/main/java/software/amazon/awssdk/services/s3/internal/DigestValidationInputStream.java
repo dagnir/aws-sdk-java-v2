@@ -20,7 +20,7 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.internal.SdkDigestInputStream;
+import software.amazon.awssdk.internal.io.SdkDigestInputStream;
 
 /**
  * Input stream extends MD5DigestValidationInputStream, when you finish reading the stream, it

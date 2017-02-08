@@ -15,6 +15,7 @@
 package software.amazon.awssdk.http;
 
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.annotation.SdkPublicApi;
 import software.amazon.awssdk.util.CRC32ChecksumCalculatingInputStream;
 
 import org.apache.http.client.methods.HttpRequestBase;
@@ -29,6 +30,7 @@ import java.util.Map;
  * Represents an HTTP response returned by an AWS service in response to a
  * service request.
  */
+@SdkPublicApi
 public class HttpResponse {
 
     private final Request<?> request;

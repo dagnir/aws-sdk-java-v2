@@ -14,9 +14,10 @@
  */
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.annotation.SdkPublicApi;
 import software.amazon.awssdk.util.StringUtils;
 
+@SdkPublicApi
 public enum HttpMethodName {
 
     GET,

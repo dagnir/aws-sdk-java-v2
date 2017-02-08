@@ -14,19 +14,13 @@
  */
 package software.amazon.awssdk.client;
 
-import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.transform.Marshaller;
-import software.amazon.awssdk.RequestConfig;
-import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.transform.Marshaller;
+import software.amazon.awssdk.runtime.transform.Marshaller;
 
 /**
  * Encapsulates parameters needed for a particular API call. Captures input and output pojo types.

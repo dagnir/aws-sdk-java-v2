@@ -14,10 +14,13 @@
  */
 package software.amazon.awssdk.http;
 
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
+
 /**
  * Used to configure the conditions for injecting content input stream failures
  * for testing purposes.
  */
+@SdkTestInternalApi
 class UnreliableTestConfig {
     private int maxNumErrors = 1;
     private int bytesReadBeforeException = 100;

@@ -19,8 +19,8 @@ import software.amazon.awssdk.opensdk.model.RawResult;
 import software.amazon.awssdk.opensdk.model.ResultContentConsumer;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.SdkHttpMetadata;
-import software.amazon.awssdk.transform.JsonUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 
 import java.io.IOException;
 

@@ -14,8 +14,7 @@
  */
 package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.partitions.PartitionsLoader;
-import software.amazon.awssdk.partitions.PartitionsLoader;
+import software.amazon.awssdk.internal.partitions.PartitionsLoader;
 
 /**
  * A factory to create {@link RegionMetadata}

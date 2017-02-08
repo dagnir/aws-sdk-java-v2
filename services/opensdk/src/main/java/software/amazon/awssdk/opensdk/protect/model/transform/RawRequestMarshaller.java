@@ -19,7 +19,7 @@ import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.opensdk.model.RawRequest;
 import software.amazon.awssdk.protocol.json.SdkJsonMarshallerFactory;
-import software.amazon.awssdk.transform.Marshaller;
+import software.amazon.awssdk.runtime.transform.Marshaller;
 
 public class RawRequestMarshaller implements Marshaller<Request<RawRequest>, RawRequest> {
 

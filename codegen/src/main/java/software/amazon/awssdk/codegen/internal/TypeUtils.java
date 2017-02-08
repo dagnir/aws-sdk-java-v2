@@ -18,9 +18,9 @@ package software.amazon.awssdk.codegen.internal;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
-import software.amazon.awssdk.internal.SdkInternalList;
-import software.amazon.awssdk.internal.SdkInternalMap;
 import software.amazon.awssdk.codegen.model.service.ShapeTypes;
+import software.amazon.awssdk.runtime.SdkInternalList;
+import software.amazon.awssdk.runtime.SdkInternalMap;
 
 import java.io.InputStream;
 import java.math.BigDecimal;

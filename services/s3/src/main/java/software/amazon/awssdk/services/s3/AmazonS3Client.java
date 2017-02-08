@@ -47,8 +47,8 @@ import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.internal.IdentityEndpointBuilder;
-import software.amazon.awssdk.internal.ReleasableInputStream;
-import software.amazon.awssdk.internal.ResettableInputStream;
+import software.amazon.awssdk.internal.io.ReleasableInputStream;
+import software.amazon.awssdk.internal.io.ResettableInputStream;
 import software.amazon.awssdk.internal.ServiceEndpointBuilder;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.internal.auth.SignerProvider;
@@ -249,7 +249,7 @@ import software.amazon.awssdk.services.s3.model.transform.XmlResponsesSaxParser.
 import software.amazon.awssdk.services.s3.model.transform.XmlResponsesSaxParser.CopyObjectResultHandler;
 import software.amazon.awssdk.services.s3.request.S3HandlerContextKeys;
 import software.amazon.awssdk.services.s3.waiters.AmazonS3Waiters;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.AWSRequestMetrics.Field;
 import software.amazon.awssdk.util.AwsHostNameUtils;
@@ -299,7 +299,7 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
-import static software.amazon.awssdk.internal.ResettableInputStream.newResettableInputStream;
+import static software.amazon.awssdk.internal.io.ResettableInputStream.newResettableInputStream;
 import static software.amazon.awssdk.services.s3.model.S3DataSource.Utils.cleanupDataSource;
 import static software.amazon.awssdk.util.LengthCheckInputStream.EXCLUDE_SKIPPED_BYTES;
 import static software.amazon.awssdk.util.LengthCheckInputStream.INCLUDE_SKIPPED_BYTES;

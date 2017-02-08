@@ -20,7 +20,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.http.ErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
 import software.amazon.awssdk.protocol.json.JsonContent;
-import software.amazon.awssdk.transform.JsonErrorUnmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import com.fasterxml.jackson.core.JsonFactory;
 
 import org.apache.commons.logging.Log;

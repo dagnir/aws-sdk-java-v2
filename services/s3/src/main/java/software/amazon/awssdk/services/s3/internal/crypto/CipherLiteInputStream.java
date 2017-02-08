@@ -20,7 +20,7 @@ import java.io.InputStream;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
-import software.amazon.awssdk.internal.SdkFilterInputStream;
+import software.amazon.awssdk.internal.io.SdkFilterInputStream;
 
 /**
  * @author Hanson Char

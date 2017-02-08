@@ -7,9 +7,9 @@ import javax.xml.stream.XMLInputFactory;
 
 import org.junit.Test;
 
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.services.simpledb.model.Item;
 import software.amazon.awssdk.services.simpledb.model.SelectResult;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
 
 public class SelectResultUnmarshallerTest {
 

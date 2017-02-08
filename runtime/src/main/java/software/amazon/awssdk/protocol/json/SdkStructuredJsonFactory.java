@@ -18,14 +18,9 @@ package software.amazon.awssdk.protocol.json;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.JsonErrorResponseHandler;
 import software.amazon.awssdk.http.JsonResponseHandler;
-import software.amazon.awssdk.transform.JsonErrorUnmarshaller;
-import software.amazon.awssdk.transform.JsonUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.http.JsonErrorResponseHandler;
-import software.amazon.awssdk.http.JsonResponseHandler;
-import software.amazon.awssdk.transform.JsonErrorUnmarshaller;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 
 import java.util.List;
 
