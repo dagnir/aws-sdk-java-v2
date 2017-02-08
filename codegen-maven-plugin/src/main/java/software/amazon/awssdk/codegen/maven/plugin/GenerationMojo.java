@@ -55,7 +55,7 @@ public class GenerationMojo extends AbstractMojo {
     @Parameter(property = "waitersFile", defaultValue = "codegen-resources/waiters-2.json")
     private String waitersLocation;
 
-    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-src")
+    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources/aws")
     private String outputDirectory;
 
     @Parameter(property = "resourcesDirectory", defaultValue = "${basedir}/src/main/resources")
