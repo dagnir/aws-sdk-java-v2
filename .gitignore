@@ -12,7 +12,6 @@
 .DS_Store
 
 # Maven
-log/
 target/
 
 **/dependency-reduced-pom.xml
