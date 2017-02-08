@@ -37,6 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.internal.net.ConnectionUtils;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryParameters;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;

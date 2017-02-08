@@ -15,9 +15,10 @@
  */
 package software.amazon.awssdk.codegen.model.config.customization;
 
-import software.amazon.awssdk.adapters.types.StringToInputStreamAdapter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import software.amazon.awssdk.runtime.adapters.types.StringToInputStreamAdapter;
 
 /**
  * Basically a facade POJO over {@link ConvenienceTypeOverload} that hides (i.e. hard codes) some

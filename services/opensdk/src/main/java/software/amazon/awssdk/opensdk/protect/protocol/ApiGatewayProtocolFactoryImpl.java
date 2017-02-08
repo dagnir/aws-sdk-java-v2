@@ -30,8 +30,8 @@ import software.amazon.awssdk.protocol.json.SdkJsonMarshallerFactory;
 import software.amazon.awssdk.protocol.json.SdkStructuredJsonFactory;
 import software.amazon.awssdk.protocol.json.SdkStructuredPlainJsonFactory;
 import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
-import software.amazon.awssdk.transform.JsonUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 
 import java.util.List;
 import java.util.Optional;

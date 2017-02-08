@@ -16,9 +16,9 @@ package software.amazon.awssdk.services.s3.model.transform;
 
 import javax.xml.stream.events.XMLEvent;
 
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.S3KeyFilter;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
 
 class S3KeyFilterStaxUnmarshaller implements Unmarshaller<S3KeyFilter, StaxUnmarshallerContext> {
 

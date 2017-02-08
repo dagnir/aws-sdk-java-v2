@@ -17,7 +17,7 @@ package software.amazon.awssdk.http;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.util.IOUtils;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.XpathUtils;
@@ -27,18 +27,12 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.util.IOUtils;
-import software.amazon.awssdk.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-
-import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_SDK_TRANSACTION_ID;
 
 /**
  * Implementation of HttpResponseHandler that handles only error responses from Amazon Web Services.

@@ -14,8 +14,6 @@
  */
 package software.amazon.awssdk.auth;
 
-import static software.amazon.awssdk.util.StringUtils.UTF8;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -33,15 +31,10 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.SDKGlobalTime;
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.internal.SdkDigestInputStream;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.internal.io.SdkDigestInputStream;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.SDKGlobalTime;
-import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.internal.SdkDigestInputStream;
-import software.amazon.awssdk.util.*;
 
 /**
  * Abstract base class for AWS signing protocol implementations. Provides

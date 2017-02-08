@@ -7,9 +7,9 @@ import javax.xml.stream.XMLInputFactory;
 
 import org.junit.Test;
 
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.GetAttributesResult;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
 
 public class GetAttributesResultUnmarshallerTest {
 

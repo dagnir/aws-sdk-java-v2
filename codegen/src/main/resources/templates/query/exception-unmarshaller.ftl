@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.util.XpathUtils;
-import software.amazon.awssdk.transform.${exceptionUnmarshallerImpl};
+import software.amazon.awssdk.runtime.transform.${exceptionUnmarshallerImpl};
 
 import ${metadata.packageName}.model.${shape.shapeName};
 

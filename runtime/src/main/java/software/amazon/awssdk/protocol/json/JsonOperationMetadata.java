@@ -17,9 +17,6 @@ package software.amazon.awssdk.protocol.json;
 
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.transform.JsonUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.JsonResponseHandler;
 
 /**

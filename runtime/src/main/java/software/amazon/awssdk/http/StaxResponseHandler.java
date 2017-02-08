@@ -16,14 +16,14 @@ package software.amazon.awssdk.http;
 
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.ResponseMetadata;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
-import software.amazon.awssdk.transform.VoidStaxUnmarshaller;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.VoidStaxUnmarshaller;
 import software.amazon.awssdk.util.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -41,6 +41,7 @@ import javax.xml.stream.XMLStreamException;
  * @param <T>
  *            Indicates the type being unmarshalled by this response handler.
  */
+@SdkProtectedApi
 public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServiceResponse<T>> {
 
     /** The StAX unmarshaller to use when handling the response */

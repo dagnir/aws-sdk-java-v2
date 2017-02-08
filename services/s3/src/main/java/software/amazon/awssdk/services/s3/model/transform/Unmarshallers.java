@@ -17,13 +17,13 @@ package software.amazon.awssdk.services.s3.model.transform;
 import java.io.InputStream;
 import java.util.List;
 
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.internal.DeleteObjectsResponse;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.model.GetBucketAnalyticsConfigurationResult;
 import software.amazon.awssdk.services.s3.model.ListBucketAnalyticsConfigurationsResult;
 import software.amazon.awssdk.services.s3.model.transform.XmlResponsesSaxParser.CompleteMultipartUploadHandler;
 import software.amazon.awssdk.services.s3.model.transform.XmlResponsesSaxParser.CopyObjectResultHandler;
-import software.amazon.awssdk.transform.Unmarshaller;
 
 /**
  * Collection of unmarshallers for S3 XML responses.
@@ -34,7 +34,7 @@ public class Unmarshallers {
      * Unmarshaller for the ListBuckets XML response.
      */
     public static final class ListBucketsUnmarshaller implements
-            Unmarshaller<List<Bucket>, InputStream> {
+                                                      Unmarshaller<List<Bucket>, InputStream> {
         public List<Bucket> unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser()
                     .parseListMyBucketsResponse(in).getBuckets();

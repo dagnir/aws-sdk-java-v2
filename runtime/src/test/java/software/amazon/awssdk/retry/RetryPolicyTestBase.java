@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
-import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttpClient;
+import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;

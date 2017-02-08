@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.internal.SdkFilterInputStream;
+import software.amazon.awssdk.internal.io.SdkFilterInputStream;
 
 /**
  * Filtered input stream implementation that exposes a range of an input stream

@@ -17,11 +17,7 @@ package software.amazon.awssdk.event;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.SdkFilterInputStream;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.SdkFilterInputStream;
+import software.amazon.awssdk.internal.io.SdkFilterInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;

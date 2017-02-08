@@ -32,11 +32,11 @@ import com.fasterxml.jackson.core.JsonParser;
 
 import org.junit.Test;
 
-import software.amazon.awssdk.transform.JsonUnmarshallerContext;
-import software.amazon.awssdk.transform.JsonUnmarshallerContextImpl;
-import software.amazon.awssdk.transform.ListUnmarshaller;
-import software.amazon.awssdk.transform.MapUnmarshaller;
-import software.amazon.awssdk.transform.SimpleTypeJsonUnmarshallers;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContextImpl;
+import software.amazon.awssdk.runtime.transform.ListUnmarshaller;
+import software.amazon.awssdk.runtime.transform.MapUnmarshaller;
+import software.amazon.awssdk.runtime.transform.SimpleTypeJsonUnmarshallers;
 
 
 public class JsonUnmarshallerTest {

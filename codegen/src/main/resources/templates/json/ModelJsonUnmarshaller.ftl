@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 import javax.annotation.Generated;
 
 import ${metadata.packageName}.model.*;
-import software.amazon.awssdk.transform.SimpleTypeJsonUnmarshallers.*;
-import software.amazon.awssdk.transform.*;
+import software.amazon.awssdk.runtime.transform.SimpleTypeJsonUnmarshallers.*;
+import software.amazon.awssdk.runtime.transform.*;
 
 import com.fasterxml.jackson.core.JsonToken;
 import static com.fasterxml.jackson.core.JsonToken.*;

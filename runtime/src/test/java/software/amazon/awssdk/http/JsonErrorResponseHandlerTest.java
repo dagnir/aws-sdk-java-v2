@@ -20,7 +20,7 @@ import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.internal.http.JsonErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
 import software.amazon.awssdk.protocol.json.JsonContent;
-import software.amazon.awssdk.transform.JsonErrorUnmarshaller;
+import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.util.StringInputStream;
 import software.amazon.awssdk.util.StringUtils;
 import com.fasterxml.jackson.core.JsonFactory;

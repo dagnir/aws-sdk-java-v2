@@ -14,9 +14,9 @@
  */
 package software.amazon.awssdk.services.s3.model.transform;
 
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
 import software.amazon.awssdk.services.s3.model.QueueConfiguration;
-import software.amazon.awssdk.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
 
 class QueueConfigurationStaxUnmarshaller extends NotificationConfigurationStaxUnmarshaller<QueueConfiguration> {
 

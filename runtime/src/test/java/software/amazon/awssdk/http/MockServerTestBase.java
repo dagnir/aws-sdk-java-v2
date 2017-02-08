@@ -21,8 +21,7 @@ package software.amazon.awssdk.http;
 import org.junit.After;
 import org.junit.Before;
 
-import software.amazon.awssdk.http.request.EmptyHttpRequest;
-import software.amazon.awssdk.http.server.MockServer;
+import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.http.server.MockServer;
 
 public abstract class MockServerTestBase {

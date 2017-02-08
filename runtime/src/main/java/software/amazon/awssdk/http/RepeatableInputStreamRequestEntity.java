@@ -15,6 +15,7 @@
 package software.amazon.awssdk.http;
 
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.metrics.MetricInputStreamEntity;
 import software.amazon.awssdk.metrics.ServiceMetricType;
 import software.amazon.awssdk.metrics.ThroughputMetricType;
@@ -39,6 +40,7 @@ import java.io.OutputStream;
  *
  * TODO : Move this to apache specific package.
  */
+@SdkInternalApi
 public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
 
     /** True if the request entity hasn't been written out yet */

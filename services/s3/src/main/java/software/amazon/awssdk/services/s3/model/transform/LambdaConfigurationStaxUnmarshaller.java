@@ -21,13 +21,13 @@ import java.util.Map.Entry;
 
 import javax.xml.stream.events.XMLEvent;
 
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.*;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.CloudFunctionConfiguration;
 import software.amazon.awssdk.services.s3.model.Filter;
 import software.amazon.awssdk.services.s3.model.LambdaConfiguration;
 import software.amazon.awssdk.services.s3.model.NotificationConfiguration;
-import software.amazon.awssdk.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
 
 /**
  * CloudFunctionConfiguration is a little different then Topic or Queue Configurations and thus
@@ -38,7 +38,7 @@ import software.amazon.awssdk.transform.Unmarshaller;
  * {@link LambdaConfiguration}.
  */
 class LambdaConfigurationStaxUnmarshaller implements
-        Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
+                                          Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
 
     private static LambdaConfigurationStaxUnmarshaller instance = new LambdaConfigurationStaxUnmarshaller();
 

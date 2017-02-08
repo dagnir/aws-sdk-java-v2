@@ -14,6 +14,8 @@
  */
 package software.amazon.awssdk.http;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * Responsible for handling an HTTP response and returning an object of type T.
  * For example, a typical response handler might accept a response, and
@@ -22,6 +24,7 @@ package software.amazon.awssdk.http;
  * @param <T>
  *            The output of this response handler.
  */
+@SdkProtectedApi
 public interface HttpResponseHandler<T> {
 
     String X_AMZN_REQUEST_ID_HEADER = "x-amzn-RequestId";

@@ -19,7 +19,7 @@ import java.io.InputStream;
 
 import org.apache.http.client.HttpClient;
 
-import software.amazon.awssdk.internal.SdkFilterInputStream;
+import software.amazon.awssdk.internal.io.SdkFilterInputStream;
 
 /**
  * An {@code InputStream} that closes the associated {@code HttpClient}

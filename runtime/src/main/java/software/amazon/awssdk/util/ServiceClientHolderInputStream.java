@@ -17,8 +17,7 @@ package software.amazon.awssdk.util;
 import java.io.InputStream;
 
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.internal.SdkFilterInputStream;
-import software.amazon.awssdk.AmazonWebServiceClient;
+import software.amazon.awssdk.internal.io.SdkFilterInputStream;
 
 /**
  * This wrapper input stream holds a reference to the service client. This is

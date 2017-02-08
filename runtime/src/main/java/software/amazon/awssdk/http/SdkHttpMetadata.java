@@ -16,6 +16,7 @@ package software.amazon.awssdk.http;
 
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.Immutable;
+import software.amazon.awssdk.annotation.SdkPublicApi;
 
 import java.util.Collections;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
  * Metadata about the HTTP response.
  */
 @Immutable
+@SdkPublicApi
 public class SdkHttpMetadata {
 
     private final Map<String, String> httpHeaders;

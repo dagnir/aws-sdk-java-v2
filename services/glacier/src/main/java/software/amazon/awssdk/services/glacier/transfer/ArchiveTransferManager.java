@@ -16,7 +16,7 @@ package software.amazon.awssdk.services.glacier.transfer;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseBytesDiscarded;
-import static software.amazon.awssdk.internal.ResettableInputStream.newResettableInputStream;
+import static software.amazon.awssdk.internal.io.ResettableInputStream.newResettableInputStream;
 import static software.amazon.awssdk.util.IOUtils.closeQuietly;
 import static software.amazon.awssdk.util.IOUtils.release;
 import static software.amazon.awssdk.util.Throwables.failure;
@@ -41,8 +41,8 @@ import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.internal.ResettableInputStream;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
+import software.amazon.awssdk.internal.io.ResettableInputStream;
 import software.amazon.awssdk.services.glacier.AmazonGlacier;
 import software.amazon.awssdk.services.glacier.AmazonGlacierClient;
 import software.amazon.awssdk.services.glacier.TreeHashGenerator;

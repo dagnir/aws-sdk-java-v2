@@ -22,7 +22,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.EofSensorInputStream;
 
 import software.amazon.awssdk.internal.MetricAware;
-import software.amazon.awssdk.internal.SdkFilterInputStream;
+import software.amazon.awssdk.internal.io.SdkFilterInputStream;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricFilterInputStream;
 import software.amazon.awssdk.services.s3.metrics.S3ServiceMetric;

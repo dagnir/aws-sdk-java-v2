@@ -23,9 +23,9 @@ import software.amazon.awssdk.services.s3.model.BucketNotificationConfiguration;
 import software.amazon.awssdk.services.s3.model.NotificationConfiguration;
 import software.amazon.awssdk.services.s3.model.QueueConfiguration;
 import software.amazon.awssdk.services.s3.model.TopicConfiguration;
-import software.amazon.awssdk.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
-import software.amazon.awssdk.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.*;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 
 /**
  * Base class for unmarshalling into subclasses of {@link NotificationConfiguration}. Current only

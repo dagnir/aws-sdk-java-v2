@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
-import software.amazon.awssdk.http.timers.client.ClientExecutionTimeoutException;
+import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.opensdk.SdkRequestConfig;
 import software.amazon.awssdk.services.apigateway.mockservice.MyService;
 import software.amazon.awssdk.services.apigateway.mockservice.model.*;
