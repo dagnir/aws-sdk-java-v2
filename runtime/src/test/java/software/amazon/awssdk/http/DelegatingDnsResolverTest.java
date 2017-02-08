@@ -12,13 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.*;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -27,8 +25,16 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.DefaultRequest;
+import software.amazon.awssdk.DnsResolver;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.SystemDefaultDnsResolver;
 
 public class DelegatingDnsResolverTest {
 

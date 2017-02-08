@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.File;
@@ -20,11 +21,9 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.ThreadSafe;
-
 import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
 import software.amazon.awssdk.util.IOUtils;
 

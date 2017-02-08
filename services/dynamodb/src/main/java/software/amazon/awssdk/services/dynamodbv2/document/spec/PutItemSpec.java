@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.spec;
 
 import java.util.Arrays;
@@ -21,18 +22,17 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
 import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.services.dynamodbv2.document.Expected;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.PutItemExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnItemCollectionMetrics;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnValue;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.PutItemExpressionSpec;
 
 /**
  * Full parameter specification for the PutItem API.

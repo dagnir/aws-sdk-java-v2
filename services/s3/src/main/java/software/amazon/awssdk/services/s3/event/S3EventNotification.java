@@ -12,19 +12,18 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.event;
 
-import java.util.List;
-
-import software.amazon.awssdk.util.SdkHttpUtils;
-import org.joda.time.DateTime;
-
-import software.amazon.awssdk.internal.DateTimeJsonSerializer;
-import software.amazon.awssdk.util.json.Jackson;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.List;
+import org.joda.time.DateTime;
+import software.amazon.awssdk.internal.DateTimeJsonSerializer;
+import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.util.json.Jackson;
 
 /**
 * A helper class that represents a strongly typed S3 EventNotification item sent

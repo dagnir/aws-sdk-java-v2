@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.io.IOException;
@@ -19,7 +20,6 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Stack;
-
 import software.amazon.awssdk.SdkClientException;
 
 /**

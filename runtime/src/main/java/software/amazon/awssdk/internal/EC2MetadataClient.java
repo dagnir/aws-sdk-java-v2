@@ -12,21 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.internal;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY;
+package software.amazon.awssdk.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.util.EC2MetadataUtils;
 import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.util.EC2MetadataUtils;
 
 /**

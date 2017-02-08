@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.securitytoken.auth;
 
+import java.util.Date;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AWSSessionCredentials;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.services.securitytoken.model.Credentials;
-
-import java.util.Date;
 
 /**
  * Holder class used to atomically store a session with its expiration time.

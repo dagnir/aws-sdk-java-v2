@@ -7,10 +7,8 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elasticache.model.CacheCluster;
 import software.amazon.awssdk.services.elasticache.model.CacheClusterNotFoundException;
 import software.amazon.awssdk.services.elasticache.model.CacheEngineVersion;

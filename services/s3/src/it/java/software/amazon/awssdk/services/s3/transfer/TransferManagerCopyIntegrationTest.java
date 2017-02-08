@@ -1,5 +1,30 @@
 package software.amazon.awssdk.services.s3.transfer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.Constants.GB;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.regions.Regions;
@@ -30,34 +55,6 @@ import software.amazon.awssdk.services.s3.transfer.model.CopyResult;
 import software.amazon.awssdk.services.s3.transfer.model.UploadResult;
 import software.amazon.awssdk.test.AWSTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-
-import static software.amazon.awssdk.services.s3.internal.Constants.GB;
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * Tests the copy operation functionality of the TransferManager. A mock S3

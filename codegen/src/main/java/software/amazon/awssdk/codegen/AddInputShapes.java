@@ -15,16 +15,15 @@
 
 package software.amazon.awssdk.codegen;
 
+import static software.amazon.awssdk.codegen.internal.Utils.createInputShapeMarshaller;
+
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.model.service.Input;
 import software.amazon.awssdk.codegen.model.service.Operation;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static software.amazon.awssdk.codegen.internal.Utils.createInputShapeMarshaller;
 
 /**
  * Constructs the request shapes for the intermediate model. Analyzes the operations in the service

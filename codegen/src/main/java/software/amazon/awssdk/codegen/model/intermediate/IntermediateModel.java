@@ -15,20 +15,18 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.Utils;
-import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
-import software.amazon.awssdk.util.IOUtils;
-import software.amazon.awssdk.util.ValidationUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.joda.time.DateTime;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+import org.joda.time.DateTime;
+import software.amazon.awssdk.codegen.internal.Utils;
+import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
+import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.ValidationUtils;
 
 public class IntermediateModel {
 

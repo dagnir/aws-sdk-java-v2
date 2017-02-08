@@ -12,8 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
@@ -27,18 +38,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 import software.amazon.awssdk.waiters.WaiterHandler;
 import software.amazon.awssdk.waiters.WaiterParameters;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Created by meghbyar on 6/15/16.

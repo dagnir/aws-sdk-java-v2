@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 

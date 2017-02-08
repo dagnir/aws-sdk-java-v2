@@ -12,10 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.Date;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.auth.AWSCredentials;

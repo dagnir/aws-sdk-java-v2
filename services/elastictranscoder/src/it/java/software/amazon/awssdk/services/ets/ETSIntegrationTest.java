@@ -12,11 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.elastictranscoder.model.AudioCodecOptions;
 import software.amazon.awssdk.services.elastictranscoder.model.AudioParameters;

@@ -12,8 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestConfig;
@@ -21,10 +25,6 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Adapts the configuration present in {@link AmazonWebServiceRequest} to {@link RequestConfig}.

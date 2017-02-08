@@ -16,8 +16,8 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.model.service.Location;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import software.amazon.awssdk.codegen.model.service.Location;
 
 public class AuthorizerModel extends DocumentationModel {
     private final String name;

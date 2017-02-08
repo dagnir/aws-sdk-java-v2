@@ -12,21 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.apigateway.mockservice;
-
-import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
@@ -36,6 +23,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
+
+import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.services.apigateway.mockservice.MyService;
+import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
+import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
 
 public class ServiceApiKeyComponentTest {
     private static final UrlMatchingStrategy URI = urlMatching(".*");

@@ -16,10 +16,11 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.regions;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY;
 import static org.junit.Assert.assertEquals;
+import static software.amazon.awssdk.SDKGlobalConfiguration.REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY;
 
 import org.junit.After;
 import org.junit.Before;

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.spec;
 
 import java.util.Arrays;
@@ -21,19 +22,18 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
 import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.services.dynamodbv2.document.Expected;
 import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;
 import software.amazon.awssdk.services.dynamodbv2.document.PrimaryKey;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.DeleteItemExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.DeleteItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnItemCollectionMetrics;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnValue;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.DeleteItemExpressionSpec;
 
 /**
  * Full parameter specification for the DeleteItem API.

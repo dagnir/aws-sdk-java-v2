@@ -7,13 +7,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Map;
-
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
 import software.amazon.awssdk.services.s3.model.BucketNotificationConfiguration;
 import software.amazon.awssdk.services.s3.model.NotificationConfiguration;

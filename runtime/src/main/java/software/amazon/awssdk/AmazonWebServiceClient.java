@@ -12,14 +12,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk;
 
+import java.net.URI;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.RegionAwareSigner;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerFactory;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.handlers.RequestHandler;
@@ -37,35 +43,10 @@ import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.AWSRequestMetrics.Field;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.Classes;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.RegionAwareSigner;
-import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.auth.SignerFactory;
-import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler;
-import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.metrics.AwsSdkMetrics;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.StringUtils;
-
-import java.net.URI;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import static software.amazon.awssdk.SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY;
 
 /**
  * Abstract base class for Amazon Web Service Java clients.

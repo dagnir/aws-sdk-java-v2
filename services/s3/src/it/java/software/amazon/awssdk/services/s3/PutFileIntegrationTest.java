@@ -9,11 +9,9 @@ import java.io.File;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.model.AccessControlList;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.CanonicalGrantee;

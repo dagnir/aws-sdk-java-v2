@@ -15,13 +15,12 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
-import software.amazon.awssdk.codegen.internal.Utils;
+import static software.amazon.awssdk.codegen.internal.Constants.JAVA_FILE_NAME_SUFFIX;
+import static software.amazon.awssdk.codegen.internal.Utils.closeQuietly;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import static software.amazon.awssdk.codegen.internal.Constants.JAVA_FILE_NAME_SUFFIX;
-import static software.amazon.awssdk.codegen.internal.Utils.closeQuietly;
+import software.amazon.awssdk.codegen.internal.Utils;
 
 /**
  * Formats the generated code and write it to the underlying file. The caller should call the flush

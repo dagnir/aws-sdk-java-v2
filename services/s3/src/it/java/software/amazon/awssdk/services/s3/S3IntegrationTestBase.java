@@ -7,10 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-
-import software.amazon.awssdk.services.s3.model.*;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;

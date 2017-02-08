@@ -1,11 +1,11 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,11 +17,9 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.s3.AmazonS3;

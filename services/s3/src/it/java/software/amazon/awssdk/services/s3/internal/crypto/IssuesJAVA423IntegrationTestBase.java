@@ -1,14 +1,14 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.awsTestCredentials;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.bytesOf;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.generateRandomAsciiFile;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.getTestKeyPair;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.valueOf;
 import static software.amazon.awssdk.util.StringUtils.UTF8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,14 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
-
 import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.handlers.RequestHandler2;

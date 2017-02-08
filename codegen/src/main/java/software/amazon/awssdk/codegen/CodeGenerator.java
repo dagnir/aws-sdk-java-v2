@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.codegen;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import software.amazon.awssdk.codegen.emitters.CodeEmitter;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskExecutor;
@@ -25,10 +28,6 @@ import software.amazon.awssdk.codegen.internal.Jackson;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 public class CodeGenerator {
 

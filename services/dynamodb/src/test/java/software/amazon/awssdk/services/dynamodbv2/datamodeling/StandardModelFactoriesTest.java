@@ -12,19 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
-import software.amazon.awssdk.services.dynamodbv2.pojos.AutoKeyAndVal;
-import software.amazon.awssdk.services.dynamodbv2.pojos.Currency;
-import software.amazon.awssdk.services.dynamodbv2.pojos.DateRange;
-import software.amazon.awssdk.services.dynamodbv2.pojos.KeyAndVal;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -40,8 +32,15 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
+import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodbv2.pojos.AutoKeyAndVal;
+import software.amazon.awssdk.services.dynamodbv2.pojos.Currency;
+import software.amazon.awssdk.services.dynamodbv2.pojos.DateRange;
+import software.amazon.awssdk.services.dynamodbv2.pojos.KeyAndVal;
 
 /**
  * Unit tests for {@link DynamoDBMapperModelFactory.TableFactory}.

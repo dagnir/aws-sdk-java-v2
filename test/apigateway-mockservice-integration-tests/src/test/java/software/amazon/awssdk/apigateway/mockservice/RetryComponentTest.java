@@ -12,21 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.apigateway.mockservice;
-
-import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import org.junit.Rule;
-import org.junit.Test;
-
-import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.opensdk.retry.RetryPolicyBuilder;
-import software.amazon.awssdk.retry.v2.RetryPolicy;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthErrorsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.InternalServerErrorException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
@@ -35,6 +22,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static software.amazon.awssdk.apigateway.mockservice.WireMockExtensions.anyRequestedFor;
+
+import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Rule;
+import org.junit.Test;
+import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.opensdk.retry.RetryPolicyBuilder;
+import software.amazon.awssdk.retry.v2.RetryPolicy;
+import software.amazon.awssdk.services.apigateway.mockservice.MyService;
+import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
+import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthErrorsRequest;
+import software.amazon.awssdk.services.apigateway.mockservice.model.InternalServerErrorException;
 
 public class RetryComponentTest {
 

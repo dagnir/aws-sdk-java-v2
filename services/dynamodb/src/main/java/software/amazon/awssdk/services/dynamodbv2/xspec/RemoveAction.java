@@ -14,9 +14,8 @@
  */
  package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import software.amazon.awssdk.annotation.Immutable;
-
 import software.amazon.awssdk.annotation.Beta;
+import software.amazon.awssdk.annotation.Immutable;
 
 /**
  * Represents a <a href=

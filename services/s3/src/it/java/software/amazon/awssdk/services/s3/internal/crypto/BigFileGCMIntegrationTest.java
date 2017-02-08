@@ -1,20 +1,17 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.encodeHexString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.encodeHexString;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.Cipher;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.internal.ResettableInputStream;
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.internal.MD5DigestCalculatingInputStream;

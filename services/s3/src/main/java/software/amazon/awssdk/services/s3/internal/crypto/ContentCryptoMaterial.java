@@ -12,14 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.internal.crypto.KMSSecuredCEK.isKMSKeyWrapped;
 import static software.amazon.awssdk.services.s3.model.ExtraMaterialsDescription.NONE;
 import static software.amazon.awssdk.util.BinaryUtils.copyAllBytesFrom;
-
-import software.amazon.awssdk.services.kms.AWSKMS;
-import software.amazon.awssdk.util.StringUtils;
 import static software.amazon.awssdk.util.Throwables.failure;
 
 import java.io.BufferedReader;
@@ -35,13 +33,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.kms.model.DecryptRequest;
 import software.amazon.awssdk.services.kms.model.DecryptResult;
 import software.amazon.awssdk.services.kms.model.EncryptRequest;
@@ -57,6 +54,7 @@ import software.amazon.awssdk.services.s3.model.MaterialsDescriptionProvider;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**

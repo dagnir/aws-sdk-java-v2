@@ -12,17 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.runtime.transform;
+
+import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
+import static software.amazon.awssdk.util.ValidationUtils.assertStringNotEmpty;
 
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.IdempotentUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.util.IdempotentUtils;
-import software.amazon.awssdk.util.SdkHttpUtils;
-
-import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
-import static software.amazon.awssdk.util.ValidationUtils.assertStringNotEmpty;
 
 @SdkProtectedApi
 public class PathMarshallers {

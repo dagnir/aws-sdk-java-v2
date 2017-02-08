@@ -12,8 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.http.JsonErrorResponseHandler;
 import software.amazon.awssdk.http.JsonResponseHandler;
 import software.amazon.awssdk.internal.http.ErrorCodeParser;
@@ -22,10 +26,6 @@ import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
-import com.fasterxml.jackson.core.JsonFactory;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Generic implementation of a structured JSON factory that is pluggable for different variants of

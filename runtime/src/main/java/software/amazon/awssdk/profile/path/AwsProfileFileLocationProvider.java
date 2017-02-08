@@ -12,21 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.profile.path;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.config.SharedConfigDefaultLocationProvider;
-import software.amazon.awssdk.profile.path.config.ConfigEnvVarOverrideLocationProvider;
-import software.amazon.awssdk.profile.path.cred.CredentialsDefaultLocationProvider;
-import software.amazon.awssdk.profile.path.cred.CredentialsEnvVarOverrideLocationProvider;
-import software.amazon.awssdk.profile.path.cred.CredentialsLegacyConfigLocationProvider;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.config.ConfigEnvVarOverrideLocationProvider;
-import software.amazon.awssdk.profile.path.cred.CredentialsDefaultLocationProvider;
-import software.amazon.awssdk.profile.path.cred.CredentialsEnvVarOverrideLocationProvider;
-import software.amazon.awssdk.profile.path.cred.CredentialsLegacyConfigLocationProvider;
-
 import java.io.File;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.profile.path.config.ConfigEnvVarOverrideLocationProvider;
+import software.amazon.awssdk.profile.path.config.SharedConfigDefaultLocationProvider;
+import software.amazon.awssdk.profile.path.cred.CredentialsDefaultLocationProvider;
+import software.amazon.awssdk.profile.path.cred.CredentialsEnvVarOverrideLocationProvider;
+import software.amazon.awssdk.profile.path.cred.CredentialsLegacyConfigLocationProvider;
 
 /**
  * Provides the location of both the AWS Shared credentials file (~/.aws/credentials) or the AWS

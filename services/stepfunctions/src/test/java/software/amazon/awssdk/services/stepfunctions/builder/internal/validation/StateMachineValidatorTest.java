@@ -12,12 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.internal.validation;
-
-import software.amazon.awssdk.services.stepfunctions.builder.ErrorCodes;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.NotCondition;
-
-import org.junit.Test;
 
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.and;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.branch;
@@ -39,6 +35,10 @@ import static software.amazon.awssdk.services.stepfunctions.builder.StepFunction
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.timestamp;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.timestampPath;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.waitState;
+
+import org.junit.Test;
+import software.amazon.awssdk.services.stepfunctions.builder.ErrorCodes;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.NotCondition;
 
 public class StateMachineValidatorTest {
 

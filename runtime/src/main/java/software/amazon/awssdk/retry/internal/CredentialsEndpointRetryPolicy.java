@@ -12,13 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.retry.internal;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.ContainerCredentialsProvider;
 import software.amazon.awssdk.auth.InstanceProfileCredentialsProvider;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.ContainerCredentialsProvider;
 
 /**
  * Custom retry policy for credentials providers ({@link InstanceProfileCredentialsProvider},

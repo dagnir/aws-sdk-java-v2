@@ -1,11 +1,11 @@
 package software.amazon.awssdk.services.redshift;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.redshift.model.Cluster;
 import software.amazon.awssdk.services.redshift.model.CreateClusterRequest;
 import software.amazon.awssdk.services.redshift.model.CreateClusterSnapshotRequest;

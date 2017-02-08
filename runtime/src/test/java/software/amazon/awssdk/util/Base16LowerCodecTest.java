@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.io.UnsupportedEncodingException;
@@ -23,7 +24,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
 

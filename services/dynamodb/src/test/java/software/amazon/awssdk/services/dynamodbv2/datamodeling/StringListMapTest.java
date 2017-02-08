@@ -12,16 +12,14 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.junit.Assert.assertEquals;
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.StringListMap;
-
 import java.util.List;
-import java.util.Map.Entry;
-
 import org.junit.Test;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.StringListMap;
 
 /**
  * Unit tests for {@link StringListMap}.

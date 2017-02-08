@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry;
 
+import java.io.IOException;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-
-import java.io.IOException;
 
 /**
  * This class includes a set of pre-defined retry policies, including default

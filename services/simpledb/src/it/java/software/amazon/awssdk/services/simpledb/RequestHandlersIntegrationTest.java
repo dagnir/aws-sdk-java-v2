@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.RequestHandler;

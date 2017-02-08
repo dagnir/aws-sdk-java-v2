@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.waiters;
 
-import software.amazon.awssdk.annotation.SdkProtectedApi;
 import com.fasterxml.jackson.databind.JsonNode;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 

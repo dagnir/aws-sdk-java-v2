@@ -12,23 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
-
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.RequestClientOptions;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.metrics.RequestMetricCollector;
-
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import utils.model.EmptyAmazonWebServiceRequest;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
@@ -37,6 +22,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.RequestClientOptions;
+import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.event.ProgressListener;
+import software.amazon.awssdk.metrics.RequestMetricCollector;
+import utils.model.EmptyAmazonWebServiceRequest;
 
 public class AmazonWebServiceRequestAdapterTest {
 

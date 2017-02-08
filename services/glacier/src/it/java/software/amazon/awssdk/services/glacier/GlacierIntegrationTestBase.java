@@ -1,7 +1,6 @@
 package software.amazon.awssdk.services.glacier;
 
 import org.junit.AfterClass;
-
 import software.amazon.awssdk.services.glacier.model.DeleteVaultRequest;
 import software.amazon.awssdk.test.AWSTestBase;
 

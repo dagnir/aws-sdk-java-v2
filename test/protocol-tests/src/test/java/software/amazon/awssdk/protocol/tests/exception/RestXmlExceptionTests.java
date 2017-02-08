@@ -12,25 +12,24 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.tests.exception;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static util.exception.ExceptionTestUtils.stub404Response;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.services.protocol.restxml.AmazonProtocolRestXmlClient;
 import software.amazon.awssdk.services.protocol.restxml.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocol.restxml.model.AmazonProtocolRestXmlException;
 import software.amazon.awssdk.services.protocol.restxml.model.EmptyModeledException;
 import software.amazon.awssdk.services.protocol.restxml.model.MultiLocationOperationRequest;
-
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static util.exception.ExceptionTestUtils.stub404Response;
 
 public class RestXmlExceptionTests {
 

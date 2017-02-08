@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.s3.model;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.event.ProgressListener;
+package software.amazon.awssdk.services.s3.model;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
+import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.event.ProgressListener;
 
 /**
  * Abstract base class for a put object or put object like request.

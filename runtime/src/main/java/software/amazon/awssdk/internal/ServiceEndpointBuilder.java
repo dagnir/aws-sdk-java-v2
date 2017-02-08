@@ -12,11 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
 
 import java.net.URI;
-
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Region;
 
 /**

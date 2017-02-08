@@ -5,12 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
-
 import junit.framework.Assert;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.event.ProgressEventType;

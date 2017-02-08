@@ -12,17 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
-
-import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
-import org.junit.Test;
-
-import java.net.URI;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import java.net.URI;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonWebServiceClient;
+import software.amazon.awssdk.internal.auth.SignerProviderContext;
 
 public class ExecutionContextTest {
 

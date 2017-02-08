@@ -13,6 +13,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.easymock.EasyMock.anyObject;
@@ -28,21 +29,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.BatchGetItemException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.BatchLoadRetryStrategy;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchGetItemResult;
 import software.amazon.awssdk.services.dynamodbv2.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodbv2.model.PutRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.BatchLoadRetryStrategy;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.BatchGetItemException;
 
 public class BatchLoadRetryStrategyTest {
 

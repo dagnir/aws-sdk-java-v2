@@ -12,8 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http.timers.request;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.spy;
+import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfRetries;
+import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfTasksTriggered;
+import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
+
+import java.io.IOException;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
@@ -27,18 +38,6 @@ import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHand
 import software.amazon.awssdk.http.response.NullErrorResponseHandler;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.http.settings.HttpClientSettings;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfRetries;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfTasksTriggered;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.spy;
 
 /**
  * Tests that use a server that returns a predetermined response within the timeout limit

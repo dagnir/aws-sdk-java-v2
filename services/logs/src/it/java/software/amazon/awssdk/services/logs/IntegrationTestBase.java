@@ -12,13 +12,12 @@
 * express or implied. See the License for the specific language governing
 * permissions and limitations under the License.
 */
+
 package software.amazon.awssdk.services.logs;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.logs.model.DescribeLogGroupsRequest;
 import software.amazon.awssdk.services.logs.model.DescribeLogGroupsResult;
 import software.amazon.awssdk.services.logs.model.DescribeLogStreamsRequest;

@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http.settings;
 
 import java.net.InetAddress;
 import java.security.SecureRandom;
-
 import software.amazon.awssdk.ApacheHttpClientConfig;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.DnsResolver;

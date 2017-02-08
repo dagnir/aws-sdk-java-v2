@@ -12,29 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.policy.internal;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.auth.policy.Condition;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Principal;
-import software.amazon.awssdk.auth.policy.Principal.WebIdentityProviders;
 import software.amazon.awssdk.auth.policy.Resource;
-import software.amazon.awssdk.auth.policy.Statement;
-import software.amazon.awssdk.auth.policy.Statement.Effect;
-import software.amazon.awssdk.util.json.Jackson;
-import com.fasterxml.jackson.databind.JsonNode;
-import software.amazon.awssdk.auth.policy.Action;
-import software.amazon.awssdk.auth.policy.Condition;
-import software.amazon.awssdk.auth.policy.Policy;
-import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.util.json.Jackson;
 

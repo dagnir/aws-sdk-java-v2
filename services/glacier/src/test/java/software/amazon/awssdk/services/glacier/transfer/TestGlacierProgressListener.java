@@ -1,7 +1,6 @@
 package software.amazon.awssdk.services.glacier.transfer;
 
 import org.junit.Assert;
-
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.SyncProgressListener;
 

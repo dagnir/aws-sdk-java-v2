@@ -18,10 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.services.sqs.model.AddPermissionRequest;

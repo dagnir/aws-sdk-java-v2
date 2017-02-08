@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.securitytoken.auth;
 
+import java.util.concurrent.Callable;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AWSCredentials;
@@ -27,8 +28,6 @@ import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClie
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleResult;
 import software.amazon.awssdk.util.ValidationUtils;
-
-import java.util.concurrent.Callable;
 
 /**
  * AWSCredentialsProvider implementation that uses the AWS Security Token Service to assume a Role

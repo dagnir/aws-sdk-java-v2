@@ -12,14 +12,16 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -38,8 +40,6 @@ import software.amazon.awssdk.services.s3.model.S3ObjectInputStream;
 import software.amazon.awssdk.services.s3.model.SetObjectAclRequest;
 import software.amazon.awssdk.services.s3.transfer.TransferManager;
 import software.amazon.awssdk.util.json.Jackson;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * An S3 Link that works with {@link DynamoDBMapper}.

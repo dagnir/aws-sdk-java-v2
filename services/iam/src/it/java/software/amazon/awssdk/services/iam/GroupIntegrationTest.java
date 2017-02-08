@@ -3,10 +3,8 @@ package software.amazon.awssdk.services.iam;
 import static org.junit.Assert.*;
 
 import java.util.UUID;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.identitymanagement.model.AddUserToGroupRequest;
 import software.amazon.awssdk.services.identitymanagement.model.CreateGroupRequest;
 import software.amazon.awssdk.services.identitymanagement.model.CreateUserRequest;

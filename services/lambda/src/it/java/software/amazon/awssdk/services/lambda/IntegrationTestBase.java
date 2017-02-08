@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagement;
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
 import software.amazon.awssdk.services.identitymanagement.model.AttachRolePolicyRequest;

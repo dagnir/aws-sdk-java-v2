@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.codegen.model.config;
 
-import software.amazon.awssdk.util.StringUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import software.amazon.awssdk.util.StringUtils;
 
 public class BasicCodeGenConfig {
 

@@ -12,8 +12,19 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.DeleteBucketInventoryConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketInventoryConfigurationRequest;
@@ -31,17 +42,6 @@ import software.amazon.awssdk.services.s3.model.inventory.InventoryPrefixPredica
 import software.amazon.awssdk.services.s3.model.inventory.InventoryS3BucketDestination;
 import software.amazon.awssdk.services.s3.model.inventory.InventorySchedule;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTestBase {
 

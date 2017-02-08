@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.conn.ssl;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;

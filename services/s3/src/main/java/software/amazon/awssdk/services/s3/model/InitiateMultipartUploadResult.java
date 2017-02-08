@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.s3.model;
 
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
-import software.amazon.awssdk.services.s3.internal.SSEResultBase;
+package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import software.amazon.awssdk.services.s3.AmazonS3;
+import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
+import software.amazon.awssdk.services.s3.internal.SSEResultBase;
 
 /**
  * Contains the results of initiating a multipart upload, particularly the

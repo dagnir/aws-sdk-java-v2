@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.policy;
 
 import static org.hamcrest.Matchers.contains;
@@ -20,9 +21,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.policy.Principal.Services;
 import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.conditions.ConditionFactory;

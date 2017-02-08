@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package utils.builder;
 
-import software.amazon.awssdk.client.builder.ExecutorFactory;
-
 import java.util.concurrent.ExecutorService;
+import software.amazon.awssdk.client.builder.ExecutorFactory;
 
 /**
  * Mock {@link ExecutorFactory} that just returns the same executor every time.

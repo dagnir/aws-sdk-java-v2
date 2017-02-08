@@ -5,10 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elasticache.model.CacheNodeTypeSpecificParameter;
 import software.amazon.awssdk.services.elasticache.model.CacheParameterGroup;
 import software.amazon.awssdk.services.elasticache.model.CreateCacheParameterGroupRequest;

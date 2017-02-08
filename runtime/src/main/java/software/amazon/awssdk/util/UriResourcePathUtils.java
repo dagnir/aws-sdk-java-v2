@@ -12,9 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Request;
 
 public final class UriResourcePathUtils {

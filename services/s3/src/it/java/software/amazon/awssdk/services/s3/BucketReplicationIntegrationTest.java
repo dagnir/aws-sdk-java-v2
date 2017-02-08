@@ -1,23 +1,20 @@
 package software.amazon.awssdk.services.s3;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.BucketReplicationConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;
-import software.amazon.awssdk.services.s3.model.GenericBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketReplicationConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.ReplicationDestinationConfig;
 import software.amazon.awssdk.services.s3.model.ReplicationRule;

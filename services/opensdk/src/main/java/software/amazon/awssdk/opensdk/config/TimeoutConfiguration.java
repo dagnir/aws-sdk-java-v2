@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.config;
 
-import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfigurationFactory;
-
 import java.util.Optional;
+import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfigurationFactory;
 
 /**
  * Configuration options to customize the various timeouts used by the client.

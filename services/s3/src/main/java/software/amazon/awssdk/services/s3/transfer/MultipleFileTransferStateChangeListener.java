@@ -12,10 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import java.util.concurrent.CountDownLatch;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.services.s3.transfer.Transfer.TransferState;
 import software.amazon.awssdk.services.s3.transfer.internal.MultipleFileTransfer;

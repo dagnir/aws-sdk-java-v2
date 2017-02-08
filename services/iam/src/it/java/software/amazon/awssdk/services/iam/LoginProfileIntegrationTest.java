@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.identitymanagement.model.CreateLoginProfileRequest;
 import software.amazon.awssdk.services.identitymanagement.model.CreateLoginProfileResult;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteLoginProfileRequest;

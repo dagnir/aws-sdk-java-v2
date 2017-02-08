@@ -7,11 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elastictranscoder.model.Artwork;
 import software.amazon.awssdk.services.elastictranscoder.model.AudioParameters;
 import software.amazon.awssdk.services.elastictranscoder.model.CancelJobRequest;

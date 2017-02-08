@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -24,20 +25,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
-
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.IOUtils;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class EC2CredentialsFetcherTest {
 

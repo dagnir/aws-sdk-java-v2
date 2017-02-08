@@ -12,25 +12,25 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.runners;
-
-import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
-import software.amazon.awssdk.protocol.model.TestCase;
-import software.amazon.awssdk.protocol.reflect.ClientReflector;
-import software.amazon.awssdk.protocol.reflect.ShapeModelReflector;
-import software.amazon.awssdk.protocol.wiremock.WireMockUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.verification.LoggedRequest;
-
-import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.assertEquals;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
+import java.util.List;
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+import software.amazon.awssdk.protocol.model.TestCase;
+import software.amazon.awssdk.protocol.reflect.ClientReflector;
+import software.amazon.awssdk.protocol.reflect.ShapeModelReflector;
+import software.amazon.awssdk.protocol.wiremock.WireMockUtils;
 
 /**
  * Test runner for test cases exercising the client marshallers.

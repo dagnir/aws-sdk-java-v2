@@ -1,14 +1,14 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static software.amazon.awssdk.services.s3.internal.crypto.ContentCryptoScheme.AES_CBC;
 import static software.amazon.awssdk.services.s3.internal.crypto.ContentCryptoScheme.AES_GCM;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.awsTestCredentials;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.valueOf;
 import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly;
 import static software.amazon.awssdk.services.s3.model.CryptoMode.StrictAuthenticatedEncryption;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,14 +17,12 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.jmx.JmxInfoProviderSupport;
 import software.amazon.awssdk.kms.utils.KmsTestKeyCache;

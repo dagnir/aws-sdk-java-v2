@@ -12,9 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.util.ValidationUtils;
+package software.amazon.awssdk.regions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * An implementation of {@link RegionImpl} that holds all information in memory.

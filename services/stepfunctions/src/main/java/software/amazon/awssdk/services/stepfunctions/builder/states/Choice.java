@@ -12,12 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.states;
 
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition;
-import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
-import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.ConditionDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.core.JsonParser;
@@ -25,8 +22,11 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-
 import java.io.IOException;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.ConditionDeserializer;
+import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
+import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 
 /**
  * Class representing a choice rule to be included in a {@link ChoiceState}. A choice consists of a condition and a state that

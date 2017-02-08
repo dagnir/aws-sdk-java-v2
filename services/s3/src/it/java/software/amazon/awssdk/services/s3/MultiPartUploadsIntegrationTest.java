@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.s3.categories.S3Categories;

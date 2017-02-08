@@ -12,10 +12,10 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.marshallers;
 
 import java.util.Map;
-
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.MapAttributeMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ItemConverter;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;

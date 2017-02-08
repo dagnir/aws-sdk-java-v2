@@ -12,12 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.apache.utils;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
-import software.amazon.awssdk.util.FakeIOException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -31,12 +31,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.FakeIOException;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 @SdkInternalApi
 public class ApacheUtils {

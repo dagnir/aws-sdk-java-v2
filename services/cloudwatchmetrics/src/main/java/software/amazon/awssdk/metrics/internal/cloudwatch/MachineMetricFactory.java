@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import static software.amazon.awssdk.metrics.internal.cloudwatch.MachineMetric.DaemonThreadCount;
@@ -32,9 +33,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.jmx.spi.JmxInfoProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricType;

@@ -1,15 +1,18 @@
 package software.amazon.awssdk.protocol.tests.crc32;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
 import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
@@ -19,11 +22,6 @@ import software.amazon.awssdk.services.protocol.jsonrpc.AmazonProtocolJsonRpc;
 import software.amazon.awssdk.services.protocol.jsonrpc.AmazonProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocol.jsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocol.jsonrpc.model.AllTypesResult;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 public class AwsJsonCRC32ChecksumTests {
 

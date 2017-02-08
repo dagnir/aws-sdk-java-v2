@@ -15,14 +15,11 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
+import static org.junit.Assert.assertEquals;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import software.amazon.awssdk.services.dynamodbv2.xspec.SetAction;
-import software.amazon.awssdk.services.dynamodbv2.xspec.SubstitutionContext;
 
 public class SetActionTest {
 

@@ -12,13 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.internal.partitions;
 
-import software.amazon.awssdk.internal.partitions.model.Endpoint;
-import software.amazon.awssdk.internal.partitions.model.Service;
-import software.amazon.awssdk.internal.partitions.model.Partition;
-import software.amazon.awssdk.regions.RegionImpl;
-import software.amazon.awssdk.util.ValidationUtils;
+package software.amazon.awssdk.internal.partitions;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +21,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import software.amazon.awssdk.internal.partitions.model.Endpoint;
+import software.amazon.awssdk.internal.partitions.model.Partition;
+import software.amazon.awssdk.internal.partitions.model.Service;
+import software.amazon.awssdk.regions.RegionImpl;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * A region implementation backed by the partition.

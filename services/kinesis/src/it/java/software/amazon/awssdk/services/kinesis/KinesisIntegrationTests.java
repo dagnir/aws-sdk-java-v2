@@ -2,12 +2,7 @@ package software.amazon.awssdk.services.kinesis;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.*;
-
-import org.junit.*;
-
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.services.kinesis.model.*;
 
 public class KinesisIntegrationTests extends AbstractTestCase {
 

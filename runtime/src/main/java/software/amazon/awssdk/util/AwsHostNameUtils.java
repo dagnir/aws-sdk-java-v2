@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.net.InetAddress;
 import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import software.amazon.awssdk.internal.config.HostRegexToRegionMapping;
 import software.amazon.awssdk.internal.config.InternalConfig;
 import software.amazon.awssdk.log.InternalLogFactory;

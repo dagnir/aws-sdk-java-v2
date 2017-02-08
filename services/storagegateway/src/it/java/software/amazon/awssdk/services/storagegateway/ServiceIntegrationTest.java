@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.storagegateway;
 
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -20,7 +21,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.storagegateway.model.DeleteGatewayRequest;

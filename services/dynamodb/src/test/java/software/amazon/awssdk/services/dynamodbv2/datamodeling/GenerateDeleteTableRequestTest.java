@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
 
 /**

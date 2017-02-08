@@ -12,8 +12,42 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY;
+import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SDKProgressPublisher.publishRequestContentLength;
+import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseContentLength;
+import static software.amazon.awssdk.util.IOUtils.closeQuietly;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.UUID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.pool.ConnPoolControl;
+import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
@@ -44,26 +78,26 @@ import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.handlers.CredentialsRequestHandler;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
+import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
+import software.amazon.awssdk.http.exception.SdkInterruptedException;
+import software.amazon.awssdk.http.response.AwsResponseHandlerAdapter;
+import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
+import software.amazon.awssdk.internal.CRC32MismatchException;
+import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
 import software.amazon.awssdk.internal.http.apache.utils.ApacheUtils;
 import software.amazon.awssdk.internal.http.client.HttpClientFactory;
-import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
-import software.amazon.awssdk.http.response.AwsResponseHandlerAdapter;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
-import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
-import software.amazon.awssdk.http.exception.SdkInterruptedException;
 import software.amazon.awssdk.internal.http.timers.request.HttpRequestAbortTaskTracker;
 import software.amazon.awssdk.internal.http.timers.request.HttpRequestTimer;
-import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.internal.CRC32MismatchException;
 import software.amazon.awssdk.internal.io.ReleasableInputStream;
 import software.amazon.awssdk.internal.io.ResettableInputStream;
 import software.amazon.awssdk.internal.io.SdkBufferedInputStream;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicyAdapter;
@@ -85,41 +119,6 @@ import software.amazon.awssdk.util.ResponseMetadataCache;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.UnreliableFilterInputStream;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.pool.ConnPoolControl;
-import org.apache.http.protocol.HttpContext;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.UUID;
-
-import static software.amazon.awssdk.SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishRequestContentLength;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseContentLength;
-import static software.amazon.awssdk.util.IOUtils.closeQuietly;
 
 @ThreadSafe
 @SdkProtectedApi

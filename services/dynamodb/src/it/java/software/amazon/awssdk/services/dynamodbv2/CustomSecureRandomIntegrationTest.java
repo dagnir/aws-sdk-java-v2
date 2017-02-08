@@ -5,10 +5,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.security.SecureRandom;
-
 import org.junit.Test;
 import org.mockito.Mockito;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 

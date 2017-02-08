@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 
 public class CreateBucketLocationConstraintIntegrationTest extends
         S3IntegrationTestBase{

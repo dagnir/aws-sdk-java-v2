@@ -23,9 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.QueryOutcome;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodbv2.model.Capacity;

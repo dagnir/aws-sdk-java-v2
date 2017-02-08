@@ -12,24 +12,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.tests.exception;
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.services.protocol.jsonrpc.AmazonProtocolJsonRpcClient;
-import software.amazon.awssdk.services.protocol.jsonrpc.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocol.jsonrpc.model.AmazonProtocolJsonRpcException;
-import software.amazon.awssdk.services.protocol.jsonrpc.model.EmptyModeledException;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static util.exception.ExceptionTestUtils.stub404Response;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.services.protocol.jsonrpc.AmazonProtocolJsonRpcClient;
+import software.amazon.awssdk.services.protocol.jsonrpc.model.AllTypesRequest;
+import software.amazon.awssdk.services.protocol.jsonrpc.model.AmazonProtocolJsonRpcException;
+import software.amazon.awssdk.services.protocol.jsonrpc.model.EmptyModeledException;
 
 /**
  * Exception related tests for AWS/JSON RPC.

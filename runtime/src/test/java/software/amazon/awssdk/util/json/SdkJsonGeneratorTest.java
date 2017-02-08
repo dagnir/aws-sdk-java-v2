@@ -12,24 +12,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util.json;
-
-import software.amazon.awssdk.protocol.json.SdkJsonGenerator;
-import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
-import software.amazon.awssdk.util.Base64;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Date;
+import org.junit.Before;
+import org.junit.Test;
+import software.amazon.awssdk.protocol.json.SdkJsonGenerator;
+import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
+import software.amazon.awssdk.util.Base64;
 
 public class SdkJsonGeneratorTest {
 

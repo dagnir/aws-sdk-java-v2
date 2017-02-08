@@ -1,8 +1,8 @@
 package software.amazon.awssdk.services.route53;
 
 import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
+import org.junit.Test;
 import software.amazon.awssdk.services.route53.internal.Route53IdRequestHandler;
 import software.amazon.awssdk.services.route53.model.CreateHostedZoneResult;
 import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResult;

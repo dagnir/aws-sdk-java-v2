@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import java.util.List;
 import java.util.Map;
-
 import software.amazon.awssdk.services.dynamodbv2.document.api.BatchWriteItemApi;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.BatchWriteItemSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchWriteItemResult;

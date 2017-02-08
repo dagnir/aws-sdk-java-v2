@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.document.Page;
 import software.amazon.awssdk.services.dynamodbv2.document.Table;

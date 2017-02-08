@@ -1,14 +1,12 @@
 package software.amazon.awssdk.services.waf;
 
-import software.amazon.awssdk.services.waf.model.*;
-import software.amazon.awssdk.test.AWSTestBase;
-import org.junit.Assert;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.List;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import software.amazon.awssdk.test.AWSTestBase;
 
 public class WafIntegrationTest extends AWSTestBase {
 

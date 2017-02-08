@@ -24,6 +24,7 @@
  * <http://www.apache.org/>.
  *
  */
+
 package software.amazon.awssdk.annotation;
 
 import java.lang.annotation.Documented;

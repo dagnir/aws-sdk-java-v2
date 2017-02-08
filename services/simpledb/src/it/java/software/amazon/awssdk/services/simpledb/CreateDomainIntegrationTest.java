@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.simpledb;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
 import software.amazon.awssdk.services.simpledb.model.InvalidParameterValueException;
 import software.amazon.awssdk.services.simpledb.model.MissingParameterException;

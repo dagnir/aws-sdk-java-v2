@@ -12,12 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen;
 
+import java.util.Map;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-
-import java.util.Map;
 
 /**
  * Interface used by the {@link IntermediateModelBuilder} to process the service model to add and

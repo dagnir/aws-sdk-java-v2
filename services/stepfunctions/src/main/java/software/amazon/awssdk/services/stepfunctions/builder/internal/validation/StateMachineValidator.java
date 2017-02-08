@@ -12,8 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.internal.validation;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.services.stepfunctions.builder.ErrorCodes;
 import software.amazon.awssdk.services.stepfunctions.builder.StateMachine;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.BinaryCondition;
@@ -42,11 +47,6 @@ import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForSecon
 import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForTimestamp;
 import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForTimestampPath;
 import software.amazon.awssdk.services.stepfunctions.builder.states.WaitState;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Validator for a {@link StateMachine} object.

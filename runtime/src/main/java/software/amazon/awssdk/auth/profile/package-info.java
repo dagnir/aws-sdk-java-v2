@@ -60,4 +60,5 @@
  * For more information on setting up AWS configuration profiles, see:
  * http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
  */
+
 package software.amazon.awssdk.auth.profile;

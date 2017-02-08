@@ -29,4 +29,5 @@
  * In addition to the primary condition types, service specific functionality
  * is also provided.
  */
+
 package software.amazon.awssdk.auth.policy.conditions;

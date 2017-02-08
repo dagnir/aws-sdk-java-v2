@@ -15,10 +15,8 @@
  package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import java.util.Map;
-
-import software.amazon.awssdk.annotation.Immutable;
-
 import software.amazon.awssdk.annotation.Beta;
+import software.amazon.awssdk.annotation.Immutable;
 
 /**
  * A path operand that refers to a <a href=

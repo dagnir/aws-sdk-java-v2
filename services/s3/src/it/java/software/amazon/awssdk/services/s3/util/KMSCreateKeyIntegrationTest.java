@@ -1,9 +1,7 @@
 package software.amazon.awssdk.services.s3.util;
 
 import java.io.IOException;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.kms.AWSKMSClient;
 import software.amazon.awssdk.services.kms.model.CreateKeyResult;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;

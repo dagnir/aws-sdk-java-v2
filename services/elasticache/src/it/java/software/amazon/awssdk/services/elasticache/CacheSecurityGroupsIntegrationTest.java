@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elasticache.model.CacheSecurityGroup;
 import software.amazon.awssdk.services.elasticache.model.CreateCacheSecurityGroupRequest;
 import software.amazon.awssdk.services.elasticache.model.DeleteCacheSecurityGroupRequest;

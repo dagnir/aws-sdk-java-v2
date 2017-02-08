@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.L;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
@@ -22,15 +25,11 @@ import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBui
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.if_not_exists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.list_append;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.remove;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 
 //http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html#Expressions.Modifying.UpdateExpressions.SET.Functions

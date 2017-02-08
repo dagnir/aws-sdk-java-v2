@@ -12,10 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,21 +29,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import software.amazon.awssdk.AmazonClientException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.internal.EC2CredentialsUtils;
-import software.amazon.awssdk.util.json.Jackson;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.internal.EC2CredentialsUtils;
 import software.amazon.awssdk.util.json.Jackson;
 

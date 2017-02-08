@@ -12,16 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.runtime;
 
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Test;
+package software.amazon.awssdk.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import software.amazon.awssdk.runtime.SdkInternalMap;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for SdkInternalMap

@@ -23,9 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.RequestClientOptions.Marker;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
@@ -33,7 +31,6 @@ import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.SyncProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-
 import utils.model.EmptyAmazonWebServiceRequest;
 
 public class AmazonWebServiceRequestTest {

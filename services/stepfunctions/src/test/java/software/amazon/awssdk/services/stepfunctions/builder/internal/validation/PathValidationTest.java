@@ -12,15 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.internal.validation;
-
-import software.amazon.awssdk.services.stepfunctions.builder.states.Catcher;
-import software.amazon.awssdk.services.stepfunctions.builder.states.ParallelState;
-import software.amazon.awssdk.services.stepfunctions.builder.states.PassState;
-import software.amazon.awssdk.services.stepfunctions.builder.states.TaskState;
-import software.amazon.awssdk.services.stepfunctions.builder.states.WaitState;
-
-import org.junit.Test;
 
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.branch;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.catcher;
@@ -36,6 +29,13 @@ import static software.amazon.awssdk.services.stepfunctions.builder.StepFunction
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.succeedState;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.taskState;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.waitState;
+
+import org.junit.Test;
+import software.amazon.awssdk.services.stepfunctions.builder.states.Catcher;
+import software.amazon.awssdk.services.stepfunctions.builder.states.ParallelState;
+import software.amazon.awssdk.services.stepfunctions.builder.states.PassState;
+import software.amazon.awssdk.services.stepfunctions.builder.states.TaskState;
+import software.amazon.awssdk.services.stepfunctions.builder.states.WaitState;
 
 public class PathValidationTest {
 

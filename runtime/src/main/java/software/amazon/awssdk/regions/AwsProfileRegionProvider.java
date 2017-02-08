@@ -12,9 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.regions;
 
-
+import java.io.File;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.profile.internal.AllProfiles;
@@ -23,12 +24,6 @@ import software.amazon.awssdk.auth.profile.internal.BasicProfile;
 import software.amazon.awssdk.auth.profile.internal.BasicProfileConfigLoader;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.auth.profile.internal.AllProfiles;
-import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
-import software.amazon.awssdk.auth.profile.internal.BasicProfileConfigLoader;
-import software.amazon.awssdk.util.StringUtils;
-
-import java.io.File;
 
 /**
  * Loads region information from the shared AWS config file. Uses the default profile unless

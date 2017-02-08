@@ -15,7 +15,11 @@
 
 package software.amazon.awssdk.codegen;
 
+import java.util.List;
+import java.util.Map;
+import software.amazon.awssdk.codegen.internal.DocumentationUtils;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
+import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.EnumModel;
 import software.amazon.awssdk.codegen.model.intermediate.ListModel;
@@ -32,11 +36,6 @@ import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
-import software.amazon.awssdk.codegen.internal.Utils;
-
-import java.util.List;
-import java.util.Map;
 
 abstract class AddShapes {
 

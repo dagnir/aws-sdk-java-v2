@@ -15,9 +15,18 @@
 
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
+import static software.amazon.awssdk.metrics.internal.cloudwatch.spi.MetricData.newMetricDatum;
+import static software.amazon.awssdk.metrics.internal.cloudwatch.spi.RequestMetricTransformer.Utils.endTimestamp;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
+import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.MetricType;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AWSMetricTransformerFactory;
@@ -28,16 +37,6 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.AWSRequestMetrics.Field;
 import software.amazon.awssdk.util.TimingInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.annotation.ThreadSafe;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static software.amazon.awssdk.metrics.internal.cloudwatch.spi.MetricData.newMetricDatum;
-import static software.amazon.awssdk.metrics.internal.cloudwatch.spi.RequestMetricTransformer.Utils.endTimestamp;
 /**
  * Used to transform the predefined metrics of the AWS SDK into instances of
  * {@link MetricDatum}.

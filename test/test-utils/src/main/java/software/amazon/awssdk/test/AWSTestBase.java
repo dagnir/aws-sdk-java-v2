@@ -12,12 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.test;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProviderChain;
@@ -28,7 +28,6 @@ import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
 import software.amazon.awssdk.test.util.InputStreamUtils;
 import software.amazon.awssdk.test.util.SdkAsserts;
 import software.amazon.awssdk.util.IOUtils;
-import software.amazon.awssdk.test.util.SdkAsserts;
 
 public abstract class AWSTestBase {
 

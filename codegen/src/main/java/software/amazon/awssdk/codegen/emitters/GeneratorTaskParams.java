@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.codegen.emitters;
 
-import software.amazon.awssdk.codegen.internal.Freemarker;
-import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+package software.amazon.awssdk.codegen.emitters;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import software.amazon.awssdk.codegen.internal.Freemarker;
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 
 /**
  * Parameters for generator tasks.

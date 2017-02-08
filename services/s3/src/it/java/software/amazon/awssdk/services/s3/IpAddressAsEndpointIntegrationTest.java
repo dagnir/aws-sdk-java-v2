@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.s3;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;

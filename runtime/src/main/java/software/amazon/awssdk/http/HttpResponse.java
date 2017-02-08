@@ -12,19 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
-
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.annotation.SdkPublicApi;
-import software.amazon.awssdk.util.CRC32ChecksumCalculatingInputStream;
-
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.protocol.HttpContext;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.annotation.SdkPublicApi;
+import software.amazon.awssdk.util.CRC32ChecksumCalculatingInputStream;
 
 /**
  * Represents an HTTP response returned by an AWS service in response to a

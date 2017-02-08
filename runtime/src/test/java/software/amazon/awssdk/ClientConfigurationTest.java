@@ -12,25 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk;
-
-import software.amazon.awssdk.retry.PredefinedRetryPolicies;
-import software.amazon.awssdk.retry.RetryPolicy;
-import software.amazon.awssdk.util.ImmutableMapParameter;
-
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -39,6 +22,22 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.util.Random;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.junit.Test;
+import org.mockito.Mockito;
+import software.amazon.awssdk.retry.PredefinedRetryPolicies;
+import software.amazon.awssdk.retry.RetryPolicy;
+import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class ClientConfigurationTest {
 

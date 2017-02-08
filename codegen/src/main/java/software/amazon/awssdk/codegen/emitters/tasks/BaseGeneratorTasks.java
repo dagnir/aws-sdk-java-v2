@@ -12,18 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.emitters.tasks;
-
-import software.amazon.awssdk.codegen.emitters.GeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
-import software.amazon.awssdk.codegen.internal.Freemarker;
-import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
-
-import org.apache.commons.logging.Log;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import software.amazon.awssdk.codegen.emitters.GeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.internal.Freemarker;
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 
 public abstract class BaseGeneratorTasks implements Iterable<GeneratorTask> {
 

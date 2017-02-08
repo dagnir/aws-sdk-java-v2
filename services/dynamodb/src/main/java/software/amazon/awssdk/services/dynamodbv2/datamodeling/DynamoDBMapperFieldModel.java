@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAutoGenerateStrategy.ALWAYS;
@@ -23,23 +24,21 @@ import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperato
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.GE;
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.GT;
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.IN;
-import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.NULL;
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.LE;
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.LT;
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.NE;
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.NOT_CONTAINS;
 import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.NOT_NULL;
-
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
-import software.amazon.awssdk.services.dynamodbv2.model.Condition;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
+import static software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator.NULL;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodbv2.model.Condition;
+import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
 
 /**
  * Field model.

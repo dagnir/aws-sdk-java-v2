@@ -13,8 +13,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.maven.plugin;
 
+import java.io.File;
+import java.util.Optional;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -30,9 +33,6 @@ import software.amazon.awssdk.codegen.model.intermediate.ServiceExamples;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
-
-import java.io.File;
-import java.util.Optional;
 
 /**
  * The Maven mojo to generate Java client code using aws-java-sdk-codegen-resourceserator.

@@ -1,7 +1,5 @@
 package software.amazon.awssdk.services.ec2;
 
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -9,9 +7,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
-
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.AvailabilityZone;
 import software.amazon.awssdk.services.ec2.model.BlockDeviceMapping;
 import software.amazon.awssdk.services.ec2.model.CancelSpotInstanceRequestsRequest;

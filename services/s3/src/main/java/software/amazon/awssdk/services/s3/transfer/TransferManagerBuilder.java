@@ -12,8 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
+import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.builder.ExecutorFactory;
@@ -21,8 +23,6 @@ import software.amazon.awssdk.internal.SdkFunction;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3ClientBuilder;
 import software.amazon.awssdk.services.s3.transfer.internal.TransferManagerUtils;
-
-import java.util.concurrent.ExecutorService;
 
 /**
  * Fluent builder for {@link TransferManager}. Use of the builder is preferred over constructors in

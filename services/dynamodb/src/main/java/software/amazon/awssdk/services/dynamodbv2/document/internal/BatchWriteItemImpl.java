@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.internal;
 
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.toAttributeValueMap;
@@ -22,7 +23,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.document.BatchWriteItemOutcome;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;

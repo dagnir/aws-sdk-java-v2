@@ -5,10 +5,8 @@ import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.simpleemail.AmazonSimpleEmailService;
 import software.amazon.awssdk.services.simpleemail.AmazonSimpleEmailServiceClient;
 import software.amazon.awssdk.services.simpleemail.model.ListVerifiedEmailAddressesResult;

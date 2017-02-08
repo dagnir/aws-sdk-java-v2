@@ -1,14 +1,12 @@
 package software.amazon.awssdk.services.s3.transfer;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;

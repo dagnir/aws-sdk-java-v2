@@ -2,11 +2,8 @@ package software.amazon.awssdk.services.route53;
 
 import java.util.List;
 import java.util.Map;
-
 import junit.framework.Assert;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.services.route53.model.GetHealthCheckLastFailureReasonRequest;
 import software.amazon.awssdk.services.route53.model.ListHealthChecksRequest;

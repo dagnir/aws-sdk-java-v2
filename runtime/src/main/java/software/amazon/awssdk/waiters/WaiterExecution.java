@@ -15,12 +15,10 @@
 
 package software.amazon.awssdk.waiters;
 
-import software.amazon.awssdk.*;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.util.ValidationUtils;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.util.ValidationUtils;
 
 @SdkProtectedApi
 public class WaiterExecution<Input extends AmazonWebServiceRequest, Output> {

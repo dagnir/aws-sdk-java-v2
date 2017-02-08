@@ -12,13 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.internal;
 
 import java.util.Date;
-
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.SignableRequest;
 
 /**
  * Parameters that are used for computing a AWS 4 signature for a request.

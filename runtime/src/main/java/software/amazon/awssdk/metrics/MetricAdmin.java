@@ -12,12 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.metrics;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.regions.Regions;
 
 /**

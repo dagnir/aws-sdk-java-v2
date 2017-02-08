@@ -12,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
+
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.checkInvalidAttrName;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.checkInvalidAttribute;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.rejectNullInput;
@@ -34,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils;
 import software.amazon.awssdk.services.dynamodbv2.document.internal.ItemValueConformer;
 import software.amazon.awssdk.util.Base64;

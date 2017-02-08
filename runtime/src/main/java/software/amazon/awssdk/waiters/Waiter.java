@@ -15,11 +15,9 @@
 
 package software.amazon.awssdk.waiters;
 
+import java.util.concurrent.Future;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-
-import java.util.concurrent.Future;
 
 public interface Waiter<Input extends AmazonWebServiceRequest> {
 

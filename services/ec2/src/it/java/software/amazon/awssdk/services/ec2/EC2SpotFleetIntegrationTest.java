@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2;
 
 import java.util.Date;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.ec2.model.CancelSpotFleetRequestsRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotFleetRequestHistoryRequest;
@@ -28,8 +27,8 @@ import software.amazon.awssdk.services.ec2.model.DescribeSpotFleetRequestHistory
 import software.amazon.awssdk.services.ec2.model.DescribeSpotFleetRequestsRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotFleetRequestsResult;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
-import software.amazon.awssdk.services.ec2.model.SpotFleetLaunchSpecification;
 import software.amazon.awssdk.services.ec2.model.RequestSpotFleetRequest;
+import software.amazon.awssdk.services.ec2.model.SpotFleetLaunchSpecification;
 import software.amazon.awssdk.services.ec2.model.SpotFleetRequestConfigData;
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
 import software.amazon.awssdk.services.identitymanagement.model.AttachRolePolicyRequest;

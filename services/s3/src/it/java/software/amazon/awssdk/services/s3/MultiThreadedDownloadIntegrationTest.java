@@ -10,10 +10,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.test.util.RandomTempFile;
 

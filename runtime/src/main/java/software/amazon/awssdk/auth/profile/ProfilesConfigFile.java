@@ -12,8 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.profile;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
@@ -29,24 +34,6 @@ import software.amazon.awssdk.auth.profile.internal.securitytoken.STSProfileCred
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 import software.amazon.awssdk.util.ValidationUtils;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.profile.internal.AllProfiles;
-import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
-import software.amazon.awssdk.auth.profile.internal.BasicProfileConfigLoader;
-import software.amazon.awssdk.auth.profile.internal.Profile;
-import software.amazon.awssdk.auth.profile.internal.ProfileAssumeRoleCredentialsProvider;
-import software.amazon.awssdk.auth.profile.internal.ProfileStaticCredentialsProvider;
-import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
-import software.amazon.awssdk.auth.profile.internal.securitytoken.STSProfileCredentialsServiceLoader;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
-import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
-import software.amazon.awssdk.util.ValidationUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Loads the local AWS credential profiles from the standard location (~/.aws/credentials), which

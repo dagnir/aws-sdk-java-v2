@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry.v2;
-
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import org.junit.Test;
 
 public class RetryOnStatusCodeConditionTest {
 

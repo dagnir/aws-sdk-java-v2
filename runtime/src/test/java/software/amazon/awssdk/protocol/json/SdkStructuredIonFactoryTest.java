@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -22,18 +23,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.JsonErrorResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
-
 import software.amazon.ion.IonStruct;
 import software.amazon.ion.IonSystem;
 import software.amazon.ion.IonWriter;

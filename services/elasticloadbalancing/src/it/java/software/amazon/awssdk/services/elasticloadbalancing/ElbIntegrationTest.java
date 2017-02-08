@@ -12,12 +12,10 @@ import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.AmazonEC2;
 import software.amazon.awssdk.services.ec2.AmazonEC2Client;
 import software.amazon.awssdk.services.ec2.model.Placement;
@@ -27,7 +25,6 @@ import software.amazon.awssdk.services.elasticloadbalancing.model.ConfigureHealt
 import software.amazon.awssdk.services.elasticloadbalancing.model.ConnectionDraining;
 import software.amazon.awssdk.services.elasticloadbalancing.model.CreateLBCookieStickinessPolicyRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.CreateLoadBalancerListenersRequest;
-import software.amazon.awssdk.services.elasticloadbalancing.model.CreateLoadBalancerPolicyRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.CreateLoadBalancerRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.CrossZoneLoadBalancing;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DeleteLoadBalancerListenersRequest;

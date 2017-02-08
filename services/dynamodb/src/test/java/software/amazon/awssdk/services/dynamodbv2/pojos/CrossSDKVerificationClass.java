@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.pojos;
 
 import java.math.BigDecimal;
@@ -19,7 +20,6 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;

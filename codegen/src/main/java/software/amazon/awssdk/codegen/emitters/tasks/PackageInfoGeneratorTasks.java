@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.codegen.emitters.tasks;
 
-import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+package software.amazon.awssdk.codegen.emitters.tasks;
 
 import java.util.Collections;
 import java.util.List;
+import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
 
 public class PackageInfoGeneratorTasks extends BaseGeneratorTasks {
 

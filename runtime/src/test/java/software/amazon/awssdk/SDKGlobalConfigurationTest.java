@@ -15,9 +15,9 @@
 
 package software.amazon.awssdk;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.DISABLE_CERT_CHECKING_SYSTEM_PROPERTY;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.SDKGlobalConfiguration.DISABLE_CERT_CHECKING_SYSTEM_PROPERTY;
 
 import org.junit.After;
 import org.junit.Test;

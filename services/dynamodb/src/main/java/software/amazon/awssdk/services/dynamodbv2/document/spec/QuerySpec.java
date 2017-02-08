@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.spec;
 
 import java.util.Arrays;
@@ -22,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -30,11 +30,11 @@ import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;
 import software.amazon.awssdk.services.dynamodbv2.document.PrimaryKey;
 import software.amazon.awssdk.services.dynamodbv2.document.QueryFilter;
 import software.amazon.awssdk.services.dynamodbv2.document.RangeKeyCondition;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.QueryExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodbv2.model.Select;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.QueryExpressionSpec;
 
 /**
  * Full parameter specification for the Query API.

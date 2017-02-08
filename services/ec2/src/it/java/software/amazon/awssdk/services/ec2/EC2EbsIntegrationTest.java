@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertEquals;
@@ -22,10 +23,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.ec2.model.CreateVolumeRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteTagsRequest;

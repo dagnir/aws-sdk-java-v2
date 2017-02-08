@@ -12,24 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.http.IdleConnectionReaper;
-import software.amazon.awssdk.retry.PredefinedRetryPolicies;
-import software.amazon.awssdk.retry.RetryPolicy;
-import software.amazon.awssdk.util.VersionInfoUtils;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.http.IdleConnectionReaper;
-import software.amazon.awssdk.retry.PredefinedRetryPolicies;
-import software.amazon.awssdk.retry.RetryPolicy;
-import software.amazon.awssdk.util.VersionInfoUtils;
+package software.amazon.awssdk;
 
 import java.net.InetAddress;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.http.IdleConnectionReaper;
+import software.amazon.awssdk.retry.PredefinedRetryPolicies;
+import software.amazon.awssdk.retry.RetryPolicy;
+import software.amazon.awssdk.util.VersionInfoUtils;
 
 /**
  * Client configuration options such as proxy settings, user agent string, max retry attempts, etc.

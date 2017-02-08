@@ -16,17 +16,16 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.event;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
 
 import java.util.concurrent.CountDownLatch;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.event.ProgressListener.ExceptionReporter;
 

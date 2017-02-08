@@ -12,12 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry.internal;
 
 import java.net.URI;
-
-import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.auth.Signer;
 

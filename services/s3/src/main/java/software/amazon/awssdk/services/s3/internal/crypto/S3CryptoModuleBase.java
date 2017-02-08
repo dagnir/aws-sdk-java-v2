@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.AmazonS3EncryptionClient.USER_AGENT;
@@ -37,23 +38,19 @@ import java.security.Provider;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import software.amazon.awssdk.internal.io.ResettableInputStream;
-import software.amazon.awssdk.services.kms.AWSKMS;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.internal.io.ReleasableInputStream;
 import software.amazon.awssdk.internal.io.ResettableInputStream;
 import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyRequest;
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyResult;
 import software.amazon.awssdk.services.s3.Headers;

@@ -17,8 +17,6 @@ package software.amazon.awssdk.waiters;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.annotation.SdkInternalApi;
 
 @SdkInternalApi
 public class NoOpWaiterHandler extends WaiterHandler<AmazonWebServiceRequest>{

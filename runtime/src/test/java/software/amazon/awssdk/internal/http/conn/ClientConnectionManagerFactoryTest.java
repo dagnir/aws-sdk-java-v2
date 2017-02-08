@@ -12,21 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.conn;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpClientConnection;
 import org.apache.http.conn.ConnectionRequest;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.protocol.HttpContext;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import software.amazon.awssdk.internal.http.conn.ClientConnectionManagerFactory;
-import software.amazon.awssdk.internal.http.conn.Wrapped;
 
 public class ClientConnectionManagerFactoryTest {
     HttpClientConnectionManager noop = new HttpClientConnectionManager() {

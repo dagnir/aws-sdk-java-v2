@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.ec2.model.AcceptVpcPeeringConnectionRequest;
 import software.amazon.awssdk.services.ec2.model.AcceptVpcPeeringConnectionResult;

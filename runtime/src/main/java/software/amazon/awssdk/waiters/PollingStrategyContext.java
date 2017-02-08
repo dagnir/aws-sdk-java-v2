@@ -17,8 +17,6 @@ package software.amazon.awssdk.waiters;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
 public class PollingStrategyContext {

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import static org.junit.Assert.assertEquals;
@@ -20,9 +21,7 @@ import static org.junit.Assert.fail;
 
 import java.util.AbstractMap;
 import java.util.Map;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ScanRequest;

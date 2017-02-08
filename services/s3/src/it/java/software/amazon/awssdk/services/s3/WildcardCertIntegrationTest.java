@@ -12,8 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
+import java.io.UnsupportedEncodingException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
@@ -22,12 +27,6 @@ import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 import software.amazon.awssdk.util.StringInputStream;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * S3 uses a wildcard certificate which is needed when using DNS style addressing with buckets that

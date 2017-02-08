@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.glacier.model.DescribeJobRequest;
 import software.amazon.awssdk.services.glacier.model.ListJobsRequest;

@@ -12,6 +12,7 @@
 * express or implied. See the License for the specific language governing
 * permissions and limitations under the License.
 */
+
 package software.amazon.awssdk.services.logs;
 
 import static org.junit.Assert.assertNotNull;
@@ -20,12 +21,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.logs.model.CreateLogGroupRequest;
 import software.amazon.awssdk.services.logs.model.CreateLogStreamRequest;

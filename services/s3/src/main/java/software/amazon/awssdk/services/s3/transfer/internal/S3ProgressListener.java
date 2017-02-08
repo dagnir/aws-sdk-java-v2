@@ -12,10 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.event.ProgressListener.ExceptionReporter;
 import software.amazon.awssdk.services.s3.transfer.PersistableTransfer;
 
 /**

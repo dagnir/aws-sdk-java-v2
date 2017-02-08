@@ -1,16 +1,14 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.awsTestCredentials;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.awsTestCredentials;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.SyncProgressListener;

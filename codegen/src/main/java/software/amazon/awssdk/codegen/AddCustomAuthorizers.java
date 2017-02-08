@@ -16,12 +16,11 @@
 
 package software.amazon.awssdk.codegen;
 
+import java.util.Map;
+import java.util.stream.Collectors;
 import software.amazon.awssdk.codegen.model.intermediate.AuthorizerModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AddCustomAuthorizers {
     private final ServiceModel service;

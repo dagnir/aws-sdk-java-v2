@@ -12,9 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
-import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_SDK_RETRY_INFO;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -23,14 +23,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_SDK_RETRY_INFO;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.retry.RetryPolicy;
-
 import utils.http.WireMockTestBase;
 import utils.retry.AlwaysRetryCondition;
 import utils.retry.SimpleArrayBackoffStrategy;

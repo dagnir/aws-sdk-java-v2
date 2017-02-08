@@ -12,29 +12,8 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
-
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.Reflect;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperModelFactory.TableFactory;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverter.AbstractConverter;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverter.DelegateConverter;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.Bean;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.Beans;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import static software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Scalar.BOOLEAN;
 import static software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Scalar.DEFAULT;
@@ -45,6 +24,26 @@ import static software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTy
 import static software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType.B;
 import static software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType.N;
 import static software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType.S;
+
+import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.Reflect;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperModelFactory.TableFactory;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverter.AbstractConverter;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverter.DelegateConverter;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.Bean;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.Beans;
+import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**
  * Pre-defined strategies for mapping between Java types and DynamoDB types.

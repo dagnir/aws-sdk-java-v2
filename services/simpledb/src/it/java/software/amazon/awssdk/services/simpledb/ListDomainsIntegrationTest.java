@@ -6,9 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.simpledb.model.InvalidParameterValueException;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsResult;

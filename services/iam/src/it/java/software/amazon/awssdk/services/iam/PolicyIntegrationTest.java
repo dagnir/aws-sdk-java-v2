@@ -4,10 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.identitymanagement.model.CreateGroupRequest;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteGroupPolicyRequest;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteGroupRequest;

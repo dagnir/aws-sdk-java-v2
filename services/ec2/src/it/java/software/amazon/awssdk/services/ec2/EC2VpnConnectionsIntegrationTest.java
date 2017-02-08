@@ -12,8 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2;
 
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayRequest;
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayResult;
 import software.amazon.awssdk.services.ec2.model.CreateVpnConnectionRequest;
@@ -27,10 +32,6 @@ import software.amazon.awssdk.services.ec2.model.DeleteVpnGatewayRequest;
 import software.amazon.awssdk.services.ec2.model.GatewayType;
 import software.amazon.awssdk.services.ec2.model.VpnConnection;
 import software.amazon.awssdk.services.ec2.model.VpnGateway;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class EC2VpnConnectionsIntegrationTest extends EC2IntegrationTestBase {
 

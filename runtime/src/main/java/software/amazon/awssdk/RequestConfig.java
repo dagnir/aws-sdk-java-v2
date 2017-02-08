@@ -12,21 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk;
 
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.retry.RetryPolicy;
+package software.amazon.awssdk;
 
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.event.ProgressListener;
+import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
+import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.retry.RetryPolicy;
 
 /**
  * Generic representation of request level configuration. The customer interface for specifying

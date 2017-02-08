@@ -1,12 +1,10 @@
 package software.amazon.awssdk.services.gamelift;
 
 import java.io.IOException;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.gamelift.model.Alias;
 import software.amazon.awssdk.services.gamelift.model.CreateAliasRequest;
 import software.amazon.awssdk.services.gamelift.model.CreateAliasResult;

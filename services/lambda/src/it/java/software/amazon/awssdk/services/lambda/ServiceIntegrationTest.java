@@ -12,8 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.lambda;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResult;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
@@ -39,19 +52,6 @@ import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.test.retry.RetryRule;
 import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.StringUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.concurrent.TimeUnit;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 

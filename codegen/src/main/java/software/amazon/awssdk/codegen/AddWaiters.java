@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Validate;
 import software.amazon.awssdk.codegen.model.intermediate.AcceptorModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.WaiterDefinitionModel;

@@ -12,8 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
@@ -26,9 +29,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.UpdateItemRequest;
 import software.amazon.awssdk.services.s3.model.Region;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Interface for DynamoDBMapper.

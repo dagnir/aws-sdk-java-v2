@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.codegen;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -22,10 +25,6 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.model.service.ErrorMap;
 import software.amazon.awssdk.codegen.model.service.ErrorTrait;
 import software.amazon.awssdk.codegen.model.service.Operation;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Constructs the exception shapes for the intermediate model. Analyzes the operations in the

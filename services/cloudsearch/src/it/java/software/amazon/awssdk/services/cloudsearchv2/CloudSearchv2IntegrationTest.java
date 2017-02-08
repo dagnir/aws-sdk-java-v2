@@ -7,12 +7,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.cloudsearchv2.model.AccessPoliciesStatus;
 import software.amazon.awssdk.services.cloudsearchv2.model.AnalysisScheme;
 import software.amazon.awssdk.services.cloudsearchv2.model.AnalysisSchemeLanguage;
@@ -57,7 +55,6 @@ import software.amazon.awssdk.services.cloudsearchv2.model.TextOptions;
 import software.amazon.awssdk.services.cloudsearchv2.model.UpdateScalingParametersRequest;
 import software.amazon.awssdk.services.cloudsearchv2.model.UpdateServiceAccessPoliciesRequest;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import software.amazon.awssdk.test.AWSTestBase;
 
 public class CloudSearchv2IntegrationTest extends AWSIntegrationTestBase {
 

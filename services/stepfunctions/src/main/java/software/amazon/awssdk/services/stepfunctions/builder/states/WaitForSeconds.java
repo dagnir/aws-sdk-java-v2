@@ -12,10 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.states;
 
-import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 
 /**
  * {@link WaitFor} implementation that can be used in a {@link WaitState}. Corresponds to the "{@value

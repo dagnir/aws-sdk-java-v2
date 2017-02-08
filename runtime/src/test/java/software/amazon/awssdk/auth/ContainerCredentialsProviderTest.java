@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -22,20 +23,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 /**
  * Tests for the ContainerCredentialsProvider.

@@ -5,9 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.rds.model.AuthorizeDBSecurityGroupIngressRequest;
 import software.amazon.awssdk.services.rds.model.CreateDBSecurityGroupRequest;
 import software.amazon.awssdk.services.rds.model.DBSecurityGroup;

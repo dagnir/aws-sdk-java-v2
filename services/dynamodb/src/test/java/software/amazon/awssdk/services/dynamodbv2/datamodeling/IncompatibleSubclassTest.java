@@ -12,12 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.Map;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**

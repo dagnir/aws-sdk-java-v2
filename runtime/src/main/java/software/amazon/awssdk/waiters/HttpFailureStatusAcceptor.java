@@ -17,8 +17,6 @@ package software.amazon.awssdk.waiters;
 
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
 public class HttpFailureStatusAcceptor<Output> extends WaiterAcceptor<Output> {

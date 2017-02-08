@@ -15,14 +15,11 @@
 
 package software.amazon.awssdk.waiters;
 
+import java.util.ArrayList;
+import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.ValidationUtils;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SdkInternalApi
 class CompositeAcceptor<Output> {

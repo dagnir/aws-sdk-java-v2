@@ -12,16 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.regions.CustomRegionFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.regions.CustomRegionFactory;
 
 public class DefaultServiceEndpointBuilderTest {
 

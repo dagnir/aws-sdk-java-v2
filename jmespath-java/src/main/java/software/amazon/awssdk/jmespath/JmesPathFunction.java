@@ -16,7 +16,6 @@
 package software.amazon.awssdk.jmespath;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.List;
 
 /**

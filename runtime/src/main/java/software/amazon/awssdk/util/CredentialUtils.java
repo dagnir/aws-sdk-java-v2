@@ -16,13 +16,12 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 
 public class CredentialUtils {
 

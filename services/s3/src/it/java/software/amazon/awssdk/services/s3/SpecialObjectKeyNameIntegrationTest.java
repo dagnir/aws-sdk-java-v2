@@ -7,11 +7,9 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.model.Bucket;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;

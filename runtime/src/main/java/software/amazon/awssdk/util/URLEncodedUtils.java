@@ -31,8 +31,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.BitSet;
 import java.util.List;
-
-import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.Immutable;
 
 // Copied and extracted from httpcomponents-client-4.3.6.

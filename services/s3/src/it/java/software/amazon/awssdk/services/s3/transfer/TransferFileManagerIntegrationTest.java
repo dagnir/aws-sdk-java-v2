@@ -1,10 +1,10 @@
 package software.amazon.awssdk.services.s3.transfer;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,9 +12,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;

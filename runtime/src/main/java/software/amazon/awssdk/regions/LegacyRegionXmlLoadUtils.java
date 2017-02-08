@@ -12,12 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.util.RuntimeHttpUtils;
-import software.amazon.awssdk.annotation.SdkInternalApi;
+package software.amazon.awssdk.regions;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -26,6 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.util.RuntimeHttpUtils;
 
 @Deprecated
 @SdkInternalApi

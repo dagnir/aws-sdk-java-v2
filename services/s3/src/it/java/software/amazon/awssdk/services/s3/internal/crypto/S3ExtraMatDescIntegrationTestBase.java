@@ -1,25 +1,22 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.awsTestCredentials;
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.valueOf;
-import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.awsTestCredentials;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.valueOf;
+import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-
 import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.Headers;

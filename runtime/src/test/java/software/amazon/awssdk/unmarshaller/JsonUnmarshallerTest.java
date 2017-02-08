@@ -16,22 +16,20 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.unmarshaller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import software.amazon.awssdk.protocol.json.SdkStructuredPlainJsonFactory;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-
 import org.junit.Test;
-
+import software.amazon.awssdk.protocol.json.SdkStructuredPlainJsonFactory;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContextImpl;
 import software.amazon.awssdk.runtime.transform.ListUnmarshaller;

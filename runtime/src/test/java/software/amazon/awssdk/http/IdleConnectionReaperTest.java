@@ -16,12 +16,9 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
-import org.apache.http.HttpClientConnection;
-import org.apache.http.conn.ConnectionRequest;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.protocol.HttpContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,12 +29,11 @@ import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.ClientConnectionRequest;
-import org.apache.http.conn.ManagedClientConnection;
+import org.apache.http.HttpClientConnection;
+import org.apache.http.conn.ConnectionRequest;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.protocol.HttpContext;
 import org.junit.Before;
 import org.junit.Test;
 

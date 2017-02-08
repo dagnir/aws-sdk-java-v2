@@ -16,25 +16,23 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.io;
 
-import static software.amazon.awssdk.util.FileUtils.generateRandomAsciiFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.util.FileUtils.generateRandomAsciiFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.ClosedChannelException;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import software.amazon.awssdk.internal.io.ResettableInputStream;
 
 public class ResettableInputStreamTest {
 

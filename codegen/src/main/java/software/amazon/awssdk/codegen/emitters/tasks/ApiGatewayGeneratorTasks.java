@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.emitters.tasks;
 
+import java.util.Iterator;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
 import software.amazon.awssdk.codegen.utils.CompositeIterable;
-
-import java.util.Iterator;
 
 /**
  * Generator tasks for API Gateway style clients.

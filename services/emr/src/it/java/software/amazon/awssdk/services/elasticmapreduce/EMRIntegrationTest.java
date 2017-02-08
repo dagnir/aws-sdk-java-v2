@@ -5,10 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elasticmapreduce.model.ActionOnFailure;
 import software.amazon.awssdk.services.elasticmapreduce.model.AddTagsRequest;
 import software.amazon.awssdk.services.elasticmapreduce.model.Cluster;

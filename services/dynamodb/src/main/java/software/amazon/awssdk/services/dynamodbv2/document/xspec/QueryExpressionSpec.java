@@ -16,7 +16,6 @@
 
 import java.util.Collections;
 import java.util.Map;
-
 import software.amazon.awssdk.annotation.Beta;
 
 /**

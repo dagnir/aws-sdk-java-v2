@@ -12,16 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.apache.client.impl;
 
-import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.DelegatingDnsResolver;
-import software.amazon.awssdk.internal.http.client.ConnectionManagerFactory;
-import software.amazon.awssdk.internal.http.conn.ssl.SdkTLSSocketFactory;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
-import software.amazon.awssdk.internal.net.SdkSSLContext;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
@@ -37,19 +42,14 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.concurrent.TimeUnit;
+import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.AmazonHttpClient;
+import software.amazon.awssdk.http.DelegatingDnsResolver;
+import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.client.ConnectionManagerFactory;
+import software.amazon.awssdk.internal.http.conn.ssl.SdkTLSSocketFactory;
+import software.amazon.awssdk.internal.net.SdkSSLContext;
 
 /**
  * Factory class to create connection manager used by the apache client.

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -25,10 +26,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.ion.system.IonSystemBuilder;
 
 public class IonFactoryTest {

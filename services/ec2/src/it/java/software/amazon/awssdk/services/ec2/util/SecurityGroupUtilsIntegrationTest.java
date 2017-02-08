@@ -1,12 +1,10 @@
 package software.amazon.awssdk.services.ec2.util;
 
 import java.util.UUID;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.services.ec2.AmazonEC2;

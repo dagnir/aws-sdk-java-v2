@@ -12,11 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResult;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResult.DeletedObject;

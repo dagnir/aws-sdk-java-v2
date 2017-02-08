@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.route53.internal;
 
 import software.amazon.awssdk.Request;
@@ -19,22 +20,22 @@ import software.amazon.awssdk.handlers.AbstractRequestHandler;
 import software.amazon.awssdk.services.route53.model.AliasTarget;
 import software.amazon.awssdk.services.route53.model.ChangeInfo;
 import software.amazon.awssdk.services.route53.model.ChangeResourceRecordSetsResult;
+import software.amazon.awssdk.services.route53.model.CreateHealthCheckResult;
 import software.amazon.awssdk.services.route53.model.CreateHostedZoneResult;
 import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResult;
 import software.amazon.awssdk.services.route53.model.DelegationSet;
 import software.amazon.awssdk.services.route53.model.DeleteHostedZoneResult;
 import software.amazon.awssdk.services.route53.model.GetChangeResult;
+import software.amazon.awssdk.services.route53.model.GetHealthCheckResult;
 import software.amazon.awssdk.services.route53.model.GetHostedZoneResult;
 import software.amazon.awssdk.services.route53.model.GetReusableDelegationSetResult;
+import software.amazon.awssdk.services.route53.model.HealthCheck;
 import software.amazon.awssdk.services.route53.model.HostedZone;
+import software.amazon.awssdk.services.route53.model.ListHealthChecksResult;
 import software.amazon.awssdk.services.route53.model.ListHostedZonesResult;
 import software.amazon.awssdk.services.route53.model.ListResourceRecordSetsResult;
 import software.amazon.awssdk.services.route53.model.ListReusableDelegationSetsResult;
 import software.amazon.awssdk.services.route53.model.ResourceRecordSet;
-import software.amazon.awssdk.services.route53.model.CreateHealthCheckResult;
-import software.amazon.awssdk.services.route53.model.GetHealthCheckResult;
-import software.amazon.awssdk.services.route53.model.ListHealthChecksResult;
-import software.amazon.awssdk.services.route53.model.HealthCheck;
 import software.amazon.awssdk.util.TimingInfo;
 
 /**

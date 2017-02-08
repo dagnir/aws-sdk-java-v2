@@ -2,9 +2,7 @@ package software.amazon.awssdk.services.support;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 
 public class IntegrationTestBase extends AWSIntegrationTestBase {

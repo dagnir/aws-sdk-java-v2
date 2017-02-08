@@ -15,13 +15,13 @@
 
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.Request;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+
 import org.junit.Before;
 import org.junit.Test;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.Request;
 import utils.http.WireMockTestBase;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class AmazonHttpClientIntegrationTest extends WireMockTestBase {
     private static final String OPERATION = "/some-operation";

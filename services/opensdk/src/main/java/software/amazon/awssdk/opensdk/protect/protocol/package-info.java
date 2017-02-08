@@ -17,4 +17,5 @@
  * Protected SDK APIs. These APIs are only to be used by generated clients. Do not rely on these
  * classes.
  */
+
 package software.amazon.awssdk.opensdk.protect.protocol;

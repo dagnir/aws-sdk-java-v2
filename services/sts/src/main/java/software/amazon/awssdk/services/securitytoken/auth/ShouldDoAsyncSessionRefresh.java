@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.securitytoken.auth;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.internal.SdkPredicate;
+package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.annotation.ThreadSafe;
+import software.amazon.awssdk.internal.SdkPredicate;
 
 /**
  * Predicate to determine when it is sufficient to do an async refresh of session credentials and

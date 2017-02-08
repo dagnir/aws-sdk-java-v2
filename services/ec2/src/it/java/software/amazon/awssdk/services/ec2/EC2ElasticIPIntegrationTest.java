@@ -8,10 +8,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.Address;
 import software.amazon.awssdk.services.ec2.model.AllocateAddressResult;
 import software.amazon.awssdk.services.ec2.model.DescribeAddressesRequest;

@@ -15,17 +15,16 @@
 
 package software.amazon.awssdk.codegen;
 
+import static software.amazon.awssdk.codegen.internal.Utils.isStructure;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeUnmarshaller;
 import software.amazon.awssdk.codegen.model.service.Shape;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static software.amazon.awssdk.codegen.internal.Utils.isStructure;
 
 /**
  * Constructs the shapes (other than request, response and exception) from the service model.

@@ -16,4 +16,5 @@
 /**
  * Internal SDK APIs. Do not rely on these classes.
  */
+
 package software.amazon.awssdk.opensdk.internal.protocol;

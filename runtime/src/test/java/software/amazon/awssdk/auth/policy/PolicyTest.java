@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.policy;
 
 import static org.junit.Assert.assertEquals;
@@ -19,13 +20,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashSet;
 import java.util.Set;
-
 import junit.framework.Assert;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.policy.Principal.Services;
 import software.amazon.awssdk.auth.policy.Principal.WebIdentityProviders;
 import software.amazon.awssdk.auth.policy.Statement.Effect;
@@ -34,7 +33,6 @@ import software.amazon.awssdk.auth.policy.conditions.IpAddressCondition.IpAddres
 import software.amazon.awssdk.auth.policy.conditions.StringCondition;
 import software.amazon.awssdk.auth.policy.conditions.StringCondition.StringComparisonType;
 import software.amazon.awssdk.util.json.Jackson;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Unit tests for constructing policy objects and serializing them to JSON.

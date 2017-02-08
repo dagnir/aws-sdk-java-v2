@@ -12,16 +12,16 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.s3.transfer.internal;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.s3.internal.ServiceUtils;
-import software.amazon.awssdk.services.s3.transfer.Transfer;
+package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.s3.internal.ServiceUtils;
+import software.amazon.awssdk.services.s3.transfer.Transfer;
 
 /**
  * Helper class to merge all the individual part files into a destinationFile.

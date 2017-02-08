@@ -17,9 +17,7 @@ package software.amazon.awssdk.internal.net;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.net.ssl.SSLSocket;
-
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.internal.io.MetricsInputStream;
 import software.amazon.awssdk.util.AWSRequestMetrics;

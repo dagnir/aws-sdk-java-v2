@@ -12,19 +12,18 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.metrics.RequestMetricCollector;

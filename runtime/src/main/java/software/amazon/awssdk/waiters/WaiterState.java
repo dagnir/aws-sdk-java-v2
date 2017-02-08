@@ -16,7 +16,6 @@
 package software.amazon.awssdk.waiters;
 
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
 public enum WaiterState {

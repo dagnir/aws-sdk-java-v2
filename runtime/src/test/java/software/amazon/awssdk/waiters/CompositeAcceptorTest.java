@@ -15,12 +15,11 @@
 
 package software.amazon.awssdk.waiters;
 
-import software.amazon.awssdk.AmazonServiceException;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonServiceException;
 
 public class CompositeAcceptorTest {
 

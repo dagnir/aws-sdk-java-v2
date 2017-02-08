@@ -16,13 +16,13 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.net.URI;
-
 import org.junit.Test;
 
 /** Unit tests for the utility methods that parse information from AWS URLs. */

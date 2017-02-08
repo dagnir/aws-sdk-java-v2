@@ -8,9 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;

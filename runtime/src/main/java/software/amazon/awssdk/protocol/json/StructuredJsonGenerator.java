@@ -17,12 +17,11 @@
 
 package software.amazon.awssdk.protocol.json;
 
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
  * Interface for generating a JSON

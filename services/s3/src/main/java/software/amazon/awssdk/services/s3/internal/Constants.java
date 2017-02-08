@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.services.s3.AmazonS3Client;

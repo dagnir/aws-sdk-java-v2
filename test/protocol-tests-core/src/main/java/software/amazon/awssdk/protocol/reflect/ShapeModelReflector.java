@@ -12,15 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.reflect;
 
-import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
-import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.util.StringInputStream;
-import software.amazon.awssdk.util.ValidationUtils;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -30,6 +25,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.util.StringInputStream;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Transforms a JSON representation (using C2J member names) of a modeled POJO into that POJO.

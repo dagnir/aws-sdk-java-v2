@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import static software.amazon.awssdk.util.DateUtils.cloneDate;
@@ -19,9 +20,8 @@ import static software.amazon.awssdk.util.DateUtils.cloneDate;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
-import java.util.TreeMap;
 import java.util.Map;
-
+import java.util.TreeMap;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.internal.Constants;

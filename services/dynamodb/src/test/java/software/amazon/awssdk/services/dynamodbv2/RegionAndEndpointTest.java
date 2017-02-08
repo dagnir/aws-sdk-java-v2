@@ -1,9 +1,7 @@
 package software.amazon.awssdk.services.dynamodbv2;
 
-import org.junit.Test;
-
 import junit.framework.Assert;
-
+import org.junit.Test;
 import software.amazon.awssdk.auth.AWS4Signer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;

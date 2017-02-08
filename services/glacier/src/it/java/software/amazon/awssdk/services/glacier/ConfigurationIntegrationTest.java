@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.glacier.model.GetVaultNotificationsRequest;
 import software.amazon.awssdk.services.glacier.model.SetVaultNotificationsRequest;
 import software.amazon.awssdk.services.glacier.model.VaultNotificationConfig;

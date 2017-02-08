@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import static software.amazon.awssdk.metrics.internal.cloudwatch.CloudWatchMetricConfig.NAMESPACE_DELIMITER;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;

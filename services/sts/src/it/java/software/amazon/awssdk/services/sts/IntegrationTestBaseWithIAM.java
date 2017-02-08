@@ -2,9 +2,7 @@ package software.amazon.awssdk.services.sts;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
 
 /**

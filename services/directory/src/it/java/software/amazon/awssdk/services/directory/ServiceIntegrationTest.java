@@ -3,9 +3,8 @@ package software.amazon.awssdk.services.directory;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
-
+import junit.framework.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.directory.model.CreateDirectoryRequest;
 import software.amazon.awssdk.services.directory.model.DeleteDirectoryRequest;
 import software.amazon.awssdk.services.directory.model.DescribeDirectoriesRequest;
@@ -16,8 +15,6 @@ import software.amazon.awssdk.services.ec2.model.DescribeSubnetsRequest;
 import software.amazon.awssdk.services.ec2.model.Filter;
 import software.amazon.awssdk.services.ec2.model.Subnet;
 import software.amazon.awssdk.services.ec2.model.Vpc;
-
-import junit.framework.Assert;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 

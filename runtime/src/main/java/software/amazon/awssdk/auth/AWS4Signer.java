@@ -12,23 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.ReadLimitInfo;
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.annotation.SdkTestInternalApi;
-import software.amazon.awssdk.auth.internal.AWS4SignerRequestParams;
-import software.amazon.awssdk.auth.internal.AWS4SignerUtils;
-import software.amazon.awssdk.auth.internal.SignerKey;
-import software.amazon.awssdk.internal.collections.FIFOCache;
-import software.amazon.awssdk.log.InternalLogApi;
-import software.amazon.awssdk.log.InternalLogFactory;
-import software.amazon.awssdk.util.BinaryUtils;
-import software.amazon.awssdk.util.DateUtils;
-import software.amazon.awssdk.util.SdkHttpUtils;
-import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.auth.internal.SignerConstants;
+package software.amazon.awssdk.auth;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +26,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import software.amazon.awssdk.ReadLimitInfo;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import software.amazon.awssdk.auth.internal.AWS4SignerRequestParams;
+import software.amazon.awssdk.auth.internal.AWS4SignerUtils;
+import software.amazon.awssdk.auth.internal.SignerConstants;
+import software.amazon.awssdk.auth.internal.SignerKey;
+import software.amazon.awssdk.internal.collections.FIFOCache;
+import software.amazon.awssdk.log.InternalLogApi;
+import software.amazon.awssdk.log.InternalLogFactory;
+import software.amazon.awssdk.util.BinaryUtils;
+import software.amazon.awssdk.util.DateUtils;
+import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.util.StringUtils;
 
 /**
  * Signer implementation that signs requests with the AWS4 signing protocol.

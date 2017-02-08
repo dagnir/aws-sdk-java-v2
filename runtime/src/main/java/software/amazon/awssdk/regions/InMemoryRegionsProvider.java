@@ -12,16 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.util.ValidationUtils;
-import software.amazon.awssdk.annotation.SdkInternalApi;
+package software.amazon.awssdk.regions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Region metadata provider that holds all data in memory and returns data

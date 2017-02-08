@@ -12,15 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAutoGenerateStrategy.CREATE;
 import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.HASH;
 import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.RANGE;
-
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -33,6 +30,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
 
 /**
  * Map of DynamoDB annotations.

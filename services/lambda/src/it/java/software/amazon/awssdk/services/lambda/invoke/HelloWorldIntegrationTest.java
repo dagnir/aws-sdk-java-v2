@@ -1,5 +1,14 @@
 package software.amazon.awssdk.services.lambda.invoke;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import software.amazon.awssdk.services.lambda.IntegrationTestBase;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
@@ -8,16 +17,6 @@ import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.LogType;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.test.retry.RetryRule;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.concurrent.TimeUnit;
 
 public class HelloWorldIntegrationTest extends IntegrationTestBase {
 

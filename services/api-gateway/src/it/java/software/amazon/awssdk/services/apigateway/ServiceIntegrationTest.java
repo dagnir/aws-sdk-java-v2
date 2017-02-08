@@ -1,13 +1,10 @@
 package software.amazon.awssdk.services.apigateway;
 
 import java.util.List;
-
 import junit.framework.Assert;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.apigateway.model.CreateApiKeyRequest;
 import software.amazon.awssdk.services.apigateway.model.CreateApiKeyResult;
 import software.amazon.awssdk.services.apigateway.model.CreateResourceRequest;
@@ -17,8 +14,6 @@ import software.amazon.awssdk.services.apigateway.model.CreateRestApiResult;
 import software.amazon.awssdk.services.apigateway.model.DeleteRestApiRequest;
 import software.amazon.awssdk.services.apigateway.model.GetApiKeyRequest;
 import software.amazon.awssdk.services.apigateway.model.GetApiKeyResult;
-import software.amazon.awssdk.services.apigateway.model.GetMethodRequest;
-import software.amazon.awssdk.services.apigateway.model.GetMethodResult;
 import software.amazon.awssdk.services.apigateway.model.GetResourceRequest;
 import software.amazon.awssdk.services.apigateway.model.GetResourceResult;
 import software.amazon.awssdk.services.apigateway.model.GetResourcesRequest;
@@ -26,6 +21,7 @@ import software.amazon.awssdk.services.apigateway.model.GetResourcesResult;
 import software.amazon.awssdk.services.apigateway.model.GetRestApiRequest;
 import software.amazon.awssdk.services.apigateway.model.GetRestApiResult;
 import software.amazon.awssdk.services.apigateway.model.IntegrationType;
+import software.amazon.awssdk.services.apigateway.model.Op;
 import software.amazon.awssdk.services.apigateway.model.PatchOperation;
 import software.amazon.awssdk.services.apigateway.model.PutIntegrationRequest;
 import software.amazon.awssdk.services.apigateway.model.PutIntegrationResult;
@@ -35,7 +31,6 @@ import software.amazon.awssdk.services.apigateway.model.Resource;
 import software.amazon.awssdk.services.apigateway.model.UpdateApiKeyRequest;
 import software.amazon.awssdk.services.apigateway.model.UpdateResourceRequest;
 import software.amazon.awssdk.services.apigateway.model.UpdateRestApiRequest;
-import software.amazon.awssdk.services.apigateway.model.Op;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 

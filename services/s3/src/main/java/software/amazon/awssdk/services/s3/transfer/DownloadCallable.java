@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import java.io.File;
@@ -22,16 +23,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLProtocolException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -44,10 +42,10 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.transfer.Transfer.TransferState;
 import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
 import software.amazon.awssdk.services.s3.transfer.internal.AbstractTransfer;
+import software.amazon.awssdk.services.s3.transfer.internal.CompleteMultipartDownload;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadImpl;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadMonitor;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadPartCallable;
-import software.amazon.awssdk.services.s3.transfer.internal.CompleteMultipartDownload;
 import software.amazon.awssdk.util.IOUtils;
 
 @SdkInternalApi

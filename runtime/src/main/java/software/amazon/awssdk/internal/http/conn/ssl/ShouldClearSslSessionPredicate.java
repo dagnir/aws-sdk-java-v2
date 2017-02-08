@@ -15,13 +15,12 @@
 
 package software.amazon.awssdk.internal.http.conn.ssl;
 
+import java.util.Arrays;
+import java.util.List;
+import javax.net.ssl.SSLException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.SdkPredicate;
 import software.amazon.awssdk.util.JavaVersionParser.JavaVersion;
-
-import javax.net.ssl.SSLException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Determines whether we should apply the workaround to bug that causes the SSL session cache to be

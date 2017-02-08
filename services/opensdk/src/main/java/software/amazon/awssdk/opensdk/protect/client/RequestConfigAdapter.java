@@ -12,19 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.opensdk.protect.client;
 
-import software.amazon.awssdk.RequestClientOptions;
-import software.amazon.awssdk.RequestConfig;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.opensdk.BaseRequest;
-import software.amazon.awssdk.opensdk.SdkRequestConfig;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.metrics.RequestMetricCollector;
+package software.amazon.awssdk.opensdk.protect.client;
 
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.RequestClientOptions;
+import software.amazon.awssdk.RequestConfig;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.event.ProgressListener;
+import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.opensdk.BaseRequest;
+import software.amazon.awssdk.opensdk.SdkRequestConfig;
 
 /**
  * Adapts {@link SdkRequestConfig} to {@link RequestConfig}.

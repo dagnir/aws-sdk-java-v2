@@ -6,11 +6,9 @@ import static org.junit.Assert.assertNull;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.model.BucketWebsiteConfiguration;
 import software.amazon.awssdk.services.s3.model.RedirectRule;

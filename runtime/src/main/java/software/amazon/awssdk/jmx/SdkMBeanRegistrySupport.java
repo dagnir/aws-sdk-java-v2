@@ -12,13 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.jmx;
 
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
 import software.amazon.awssdk.metrics.MetricAdmin;
-import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
 
 public class SdkMBeanRegistrySupport implements SdkMBeanRegistry {
     ;

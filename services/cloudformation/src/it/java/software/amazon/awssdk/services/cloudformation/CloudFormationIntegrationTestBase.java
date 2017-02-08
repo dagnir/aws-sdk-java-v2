@@ -2,10 +2,8 @@ package software.amazon.awssdk.services.cloudformation;
 
 import java.io.File;
 import java.util.Iterator;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.ObjectListing;

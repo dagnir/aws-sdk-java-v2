@@ -1,7 +1,6 @@
 package software.amazon.awssdk.services.elasticache;
 
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.test.AWSTestBase;
 
 public class ElastiCacheIntegrationTestBase extends AWSTestBase {

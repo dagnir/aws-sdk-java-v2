@@ -12,18 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.http.response;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.AmazonWebServiceResult;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.http.SdkHttpMetadata;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.MetadataCache;
+package software.amazon.awssdk.http.response;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +23,8 @@ import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.http.SdkHttpMetadata;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.MetadataCache;
 

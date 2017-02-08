@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.dynamodbv2.xspec;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
-
 import org.junit.Test;
 
 public class GetItemExpressionTest {

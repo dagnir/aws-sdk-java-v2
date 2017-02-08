@@ -28,5 +28,6 @@
  * href="http://docs.aws.amazon.com/amazonswf/latest/developerguide/">Amazon SWF Developer Guide</a>.
  * </p>
  */
+
 package software.amazon.awssdk.services.simpleworkflow;
 

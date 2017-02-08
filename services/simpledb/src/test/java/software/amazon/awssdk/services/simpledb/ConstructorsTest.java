@@ -1,7 +1,6 @@
 package software.amazon.awssdk.services.simpledb;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.simpledb.model.BatchPutAttributesRequest;
 import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
 import software.amazon.awssdk.services.simpledb.model.DeleteAttributesRequest;

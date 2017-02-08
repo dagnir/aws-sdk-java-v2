@@ -12,11 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.reflect.Method;
 import java.text.ParseException;
-
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**

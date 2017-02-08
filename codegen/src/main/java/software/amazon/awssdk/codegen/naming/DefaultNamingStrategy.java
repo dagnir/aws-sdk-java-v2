@@ -12,20 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.naming;
-
-import software.amazon.awssdk.codegen.internal.Utils;
-import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
-import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
-import software.amazon.awssdk.codegen.model.intermediate.Protocol;
-import software.amazon.awssdk.codegen.model.service.Output;
-import software.amazon.awssdk.codegen.model.service.ServiceModel;
-import software.amazon.awssdk.util.StringUtils;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static software.amazon.awssdk.codegen.internal.Constants.AUTHORIZER_NAME_PREFIX;
 import static software.amazon.awssdk.codegen.internal.Constants.EXCEPTION_CLASS_SUFFIX;
@@ -35,6 +23,18 @@ import static software.amazon.awssdk.codegen.internal.Constants.RESPONSE_CLASS_S
 import static software.amazon.awssdk.codegen.internal.Constants.VARIABLE_NAME_SUFFIX;
 import static software.amazon.awssdk.codegen.internal.Utils.capitialize;
 import static software.amazon.awssdk.codegen.internal.Utils.unCapitialize;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import software.amazon.awssdk.codegen.internal.Utils;
+import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
+import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
+import software.amazon.awssdk.codegen.model.intermediate.Protocol;
+import software.amazon.awssdk.codegen.model.service.Output;
+import software.amazon.awssdk.codegen.model.service.ServiceModel;
+import software.amazon.awssdk.util.StringUtils;
 
 /**
  * Default implementation of naming strategy respecting customizations supplied by {@link

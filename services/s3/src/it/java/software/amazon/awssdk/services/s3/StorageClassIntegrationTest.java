@@ -4,12 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.Iterator;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;

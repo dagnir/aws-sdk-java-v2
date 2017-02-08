@@ -12,16 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.internal.validation;
 
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
+import java.util.Collection;
+import java.util.Map;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 import software.amazon.awssdk.util.CollectionUtils;
 import software.amazon.awssdk.util.StringUtils;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.JsonPath;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * Contains context about the current validation scope and factory methods

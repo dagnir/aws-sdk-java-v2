@@ -16,21 +16,20 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry;
 
+import java.util.Random;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
-import software.amazon.awssdk.http.response.NullResponseHandler;
 import software.amazon.awssdk.util.RetryTestUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Random;
 
 /**
  * Tests the behavior when both

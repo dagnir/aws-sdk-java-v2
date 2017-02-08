@@ -1,20 +1,18 @@
 package software.amazon.awssdk.protocol.asserts.marshalling;
 
-import com.github.tomakehurst.wiremock.verification.LoggedRequest;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import java.math.BigInteger;
 import java.util.Objects;
-
 import software.amazon.ion.Decimal;
 import software.amazon.ion.IonReader;
 import software.amazon.ion.IonSystem;
 import software.amazon.ion.IonType;
 import software.amazon.ion.Timestamp;
 import software.amazon.ion.system.IonSystemBuilder;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class IonBodyAssertion extends MarshallingAssertion {
     private static final double DOUBLE_DELTA = 0.0001d;

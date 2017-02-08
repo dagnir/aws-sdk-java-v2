@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen;
 
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringEscapeUtils;
 import software.amazon.awssdk.jmespath.Comparator;
 import software.amazon.awssdk.jmespath.InvalidTypeException;
 import software.amazon.awssdk.jmespath.JmesPathAndExpression;
@@ -30,10 +32,6 @@ import software.amazon.awssdk.jmespath.JmesPathProjection;
 import software.amazon.awssdk.jmespath.JmesPathSubExpression;
 import software.amazon.awssdk.jmespath.JmesPathValueProjection;
 import software.amazon.awssdk.jmespath.JmesPathVisitor;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import java.util.stream.Collectors;
 
 public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
 

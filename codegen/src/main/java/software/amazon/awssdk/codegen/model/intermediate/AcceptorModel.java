@@ -15,14 +15,12 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import java.math.BigDecimal;
+import org.apache.commons.lang3.StringEscapeUtils;
 import software.amazon.awssdk.codegen.JmesPathCodeGenVisitor;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import java.math.BigDecimal;
 
 public class AcceptorModel {
 

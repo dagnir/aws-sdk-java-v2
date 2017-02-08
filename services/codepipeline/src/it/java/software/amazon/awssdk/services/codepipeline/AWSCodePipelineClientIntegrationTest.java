@@ -5,10 +5,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.codepipeline.AWSCodePipelineClient;
 import software.amazon.awssdk.services.codepipeline.model.ActionCategory;
 import software.amazon.awssdk.services.codepipeline.model.ActionOwner;

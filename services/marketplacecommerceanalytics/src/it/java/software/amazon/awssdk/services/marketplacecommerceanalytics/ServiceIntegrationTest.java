@@ -2,11 +2,9 @@ package software.amazon.awssdk.services.marketplacecommerceanalytics;
 
 import java.io.IOException;
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;

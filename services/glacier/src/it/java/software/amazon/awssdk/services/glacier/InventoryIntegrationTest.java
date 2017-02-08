@@ -1,7 +1,6 @@
 package software.amazon.awssdk.services.glacier;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.glacier.model.InitiateJobRequest;
 import software.amazon.awssdk.services.glacier.model.JobParameters;
 

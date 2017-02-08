@@ -1,7 +1,6 @@
 package software.amazon.awssdk.services.sns;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.test.AWSTestBase;
 
 /**

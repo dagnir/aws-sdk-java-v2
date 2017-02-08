@@ -12,18 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.http.HttpResponse;
 import com.fasterxml.jackson.databind.JsonNode;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.http.HttpResponse;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.http.HttpResponse;
 
 @SdkProtectedApi
 public class JsonErrorMessageParser {

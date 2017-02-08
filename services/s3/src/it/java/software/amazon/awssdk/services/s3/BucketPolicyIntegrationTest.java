@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 
 /**

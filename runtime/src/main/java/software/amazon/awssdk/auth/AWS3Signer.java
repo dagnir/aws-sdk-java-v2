@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import static software.amazon.awssdk.util.StringUtils.UTF8;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.log.InternalLogApi;
@@ -33,8 +33,6 @@ import software.amazon.awssdk.log.InternalLogFactory;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.util.SdkHttpUtils;
 
 /**
  * Signer implementation that signs requests with the AWS3 signing protocol.

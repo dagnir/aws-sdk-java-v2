@@ -12,10 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.api;
 
 import software.amazon.awssdk.annotation.ThreadSafe;
-
 import software.amazon.awssdk.services.dynamodbv2.document.TableCollection;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.ListTablesSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;

@@ -12,19 +12,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.http.response.EmptyAWSResponseHandler;
 import software.amazon.awssdk.http.server.MockServer;
-import org.apache.http.conn.ConnectionPoolTimeoutException;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class ConnectionPoolMaxConnectionsIntegrationTest {
 

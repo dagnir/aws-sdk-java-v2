@@ -5,10 +5,8 @@ import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.model.BucketTaggingConfiguration;
 import software.amazon.awssdk.services.s3.model.TagSet;
 

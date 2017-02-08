@@ -2,12 +2,10 @@ package software.amazon.awssdk.services.ecs;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ecs.model.ContainerDefinition;
 import software.amazon.awssdk.services.ecs.model.CreateClusterRequest;
 import software.amazon.awssdk.services.ecs.model.CreateClusterResult;

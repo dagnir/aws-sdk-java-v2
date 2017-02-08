@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.sqs.buffered;
 
 import java.util.concurrent.ExecutionException;
@@ -20,7 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.handlers.AsyncHandler;
 import software.amazon.awssdk.services.sqs.AmazonSQSAsync;

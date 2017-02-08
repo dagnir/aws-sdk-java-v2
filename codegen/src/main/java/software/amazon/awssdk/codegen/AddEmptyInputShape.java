@@ -15,6 +15,12 @@
 
 package software.amazon.awssdk.codegen;
 
+import static software.amazon.awssdk.codegen.internal.Constants.REQUEST_CLASS_SUFFIX;
+import static software.amazon.awssdk.codegen.internal.Utils.createInputShapeMarshaller;
+import static software.amazon.awssdk.codegen.internal.Utils.unCapitialize;
+
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -24,13 +30,6 @@ import software.amazon.awssdk.codegen.model.service.Input;
 import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static software.amazon.awssdk.codegen.internal.Constants.REQUEST_CLASS_SUFFIX;
-import static software.amazon.awssdk.codegen.internal.Utils.createInputShapeMarshaller;
-import static software.amazon.awssdk.codegen.internal.Utils.unCapitialize;
 
 /**
  * This class adds empty input shapes to those operations which doesn't accept any input params. It

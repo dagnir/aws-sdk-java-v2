@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.xspec;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-
-import software.amazon.awssdk.annotation.Immutable;
-
 import software.amazon.awssdk.annotation.Beta;
+import software.amazon.awssdk.annotation.Immutable;
 
 /**
  * A path operand that refers to a <a href=

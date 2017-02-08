@@ -1,7 +1,6 @@
 package software.amazon.awssdk.services.directory;
 
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.ec2.AmazonEC2Client;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 

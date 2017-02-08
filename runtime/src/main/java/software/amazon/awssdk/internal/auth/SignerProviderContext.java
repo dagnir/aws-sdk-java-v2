@@ -13,14 +13,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.auth;
 
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.RequestConfig;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.RequestConfig;
-
 import java.net.URI;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.RequestConfig;
 
 public class SignerProviderContext {
 

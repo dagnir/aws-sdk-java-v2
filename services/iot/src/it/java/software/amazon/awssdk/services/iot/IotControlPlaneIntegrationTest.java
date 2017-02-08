@@ -1,16 +1,14 @@
 package software.amazon.awssdk.services.iot;
 
-import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.iot.model.*;
-import software.amazon.awssdk.test.AWSTestBase;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.test.AWSTestBase;
 
 /**
  * Integration tests for Iot control plane APIs.

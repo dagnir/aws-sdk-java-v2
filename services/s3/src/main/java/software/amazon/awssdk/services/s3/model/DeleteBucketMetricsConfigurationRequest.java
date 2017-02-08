@@ -12,11 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
-
 import java.io.Serializable;
+import software.amazon.awssdk.AmazonWebServiceRequest;
 
 /**
  * Request object to delete a metrics configuration from a bucket.

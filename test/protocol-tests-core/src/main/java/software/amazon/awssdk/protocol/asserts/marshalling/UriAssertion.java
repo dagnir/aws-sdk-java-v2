@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.asserts.marshalling;
 
-import com.github.tomakehurst.wiremock.verification.LoggedRequest;
-
-import java.net.URI;
-
 import static org.junit.Assert.assertEquals;
+
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
+import java.net.URI;
 
 /**
  * Asserts on the URI of a marshalled request.

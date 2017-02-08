@@ -12,8 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
+import static software.amazon.awssdk.util.StringUtils.UTF8;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponse;
@@ -21,21 +34,6 @@ import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.util.IOUtils;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 /**
  * Response handler for S3 error responses. S3 error responses are different

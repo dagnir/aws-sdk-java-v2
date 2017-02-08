@@ -1,19 +1,17 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.generateKeyPair;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.generateRandomAsciiFile;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.security.KeyPair;
 import java.util.Arrays;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;

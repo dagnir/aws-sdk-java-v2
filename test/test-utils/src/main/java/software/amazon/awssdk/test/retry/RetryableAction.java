@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.test.retry;
 
-import software.amazon.awssdk.util.ValidationUtils;
-
 import java.util.concurrent.Callable;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Utility to repeatedly invoke an action that returns a result until it succeeds or the max allowed

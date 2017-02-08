@@ -12,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
+
 import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.io.IOException;
@@ -21,13 +23,10 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.internal.io.SdkInputStream;
 import software.amazon.awssdk.util.BinaryUtils;

@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.ec2.model.CreateVpcResult;
 import software.amazon.awssdk.services.ec2.model.DescribeVpcAttributeResult;

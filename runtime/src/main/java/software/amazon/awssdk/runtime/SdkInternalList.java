@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.runtime;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**

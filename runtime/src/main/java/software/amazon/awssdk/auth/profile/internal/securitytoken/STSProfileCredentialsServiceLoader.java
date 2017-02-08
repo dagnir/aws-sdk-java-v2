@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.profile.internal.securitytoken;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
  * Loads <code>software.amazon.awssdk.services.securitytoken.internal.STSProfileCredentialsService</code>

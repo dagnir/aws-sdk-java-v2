@@ -12,12 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
+import java.io.Serializable;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsConfiguration;
-
-import java.io.Serializable;
 
 /**
  * Request object to set analytics configuration to a bucket.

@@ -12,19 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.HASH;
 import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.RANGE;
 import static software.amazon.awssdk.services.dynamodbv2.model.ProjectionType.KEYS_ONLY;
-
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
-import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodbv2.model.LocalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.Projection;
-import software.amazon.awssdk.services.dynamodbv2.model.ProjectionType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +25,12 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
+import software.amazon.awssdk.services.dynamodbv2.model.LocalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodbv2.model.Projection;
 
 /**
  * Table model.

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.conn.ssl;
 
 import static org.junit.Assert.assertTrue;
@@ -22,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import javax.net.ssl.SSLContext;
-
 import org.junit.Test;
 
 public class SdkTLSSocketFactoryTest {

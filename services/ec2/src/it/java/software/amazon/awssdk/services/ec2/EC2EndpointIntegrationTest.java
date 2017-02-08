@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.ec2;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.AvailabilityZone;
 import software.amazon.awssdk.services.ec2.model.DescribeAvailabilityZonesResult;
 

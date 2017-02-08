@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.Date;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.auth.AWSSessionCredentials;
 import software.amazon.awssdk.auth.AWSSessionCredentialsProvider;

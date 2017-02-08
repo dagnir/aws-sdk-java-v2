@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.handlers;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +25,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.util.TimingInfo;
 

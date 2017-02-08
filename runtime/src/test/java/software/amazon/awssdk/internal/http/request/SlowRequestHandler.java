@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.request;
 
 import software.amazon.awssdk.Request;

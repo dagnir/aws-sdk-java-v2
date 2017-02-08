@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 

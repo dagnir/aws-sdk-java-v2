@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
 import software.amazon.awssdk.services.simpledb.model.DeleteDomainRequest;

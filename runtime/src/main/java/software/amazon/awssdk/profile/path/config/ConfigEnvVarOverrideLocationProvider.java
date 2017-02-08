@@ -12,15 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.profile.path.config;
 
+import java.io.File;
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
-import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-
-import java.io.File;
 
 /**
  * If the {@value SDKGlobalConfiguration#AWS_CONFIG_FILE_ENV_VAR} environment variable is set then we source

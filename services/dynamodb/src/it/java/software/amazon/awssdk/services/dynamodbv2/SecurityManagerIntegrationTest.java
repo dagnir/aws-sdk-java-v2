@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 
 public class SecurityManagerIntegrationTest extends AWSIntegrationTestBase {

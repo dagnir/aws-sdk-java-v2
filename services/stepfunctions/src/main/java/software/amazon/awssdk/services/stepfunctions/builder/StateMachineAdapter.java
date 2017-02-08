@@ -12,10 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder;
 
-import software.amazon.awssdk.runtime.adapters.types.TypeAdapter;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.runtime.adapters.types.TypeAdapter;
 
 /**
  * This is an internal API.

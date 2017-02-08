@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.simpledb.internal;
 
+import java.util.Map;
 import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.http.StaxResponseHandler;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.simpledb.SimpleDBResponseMetadata;
-
-import java.util.Map;
 
 public class SimpleDBStaxResponseHandler<T> extends StaxResponseHandler<T> {
 

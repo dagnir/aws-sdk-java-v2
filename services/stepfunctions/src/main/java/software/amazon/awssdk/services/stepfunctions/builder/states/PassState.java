@@ -12,10 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.states;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -23,8 +22,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 
 /**
  * The Pass State simply passes its input to its output, performing no work. Pass States are useful when constructing and

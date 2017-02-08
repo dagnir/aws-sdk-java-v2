@@ -15,6 +15,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.io.BufferedInputStream;
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import org.apache.commons.logging.LogFactory;
 
 /**

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import java.io.IOException;
@@ -20,16 +21,10 @@ import java.net.URISyntaxException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import software.amazon.awssdk.AmazonClientException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.internal.CredentialsEndpointProvider;
-import software.amazon.awssdk.internal.EC2CredentialsUtils;
-import software.amazon.awssdk.util.EC2MetadataUtils;
 import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.internal.EC2CredentialsUtils;
 import software.amazon.awssdk.util.EC2MetadataUtils;

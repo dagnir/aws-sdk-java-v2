@@ -15,13 +15,6 @@
 
 package software.amazon.awssdk.codegen.internal;
 
-import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
-import software.amazon.awssdk.codegen.model.service.Shape;
-import software.amazon.awssdk.codegen.naming.NamingStrategy;
-import software.amazon.awssdk.codegen.model.service.ShapeTypes;
-import software.amazon.awssdk.runtime.SdkInternalList;
-import software.amazon.awssdk.runtime.SdkInternalMap;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -31,6 +24,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
+import software.amazon.awssdk.codegen.model.service.Shape;
+import software.amazon.awssdk.codegen.model.service.ShapeTypes;
+import software.amazon.awssdk.codegen.naming.NamingStrategy;
+import software.amazon.awssdk.runtime.SdkInternalList;
+import software.amazon.awssdk.runtime.SdkInternalMap;
 
 /**
  * Used to determine the Java types for the service model.

@@ -1,10 +1,8 @@
 package software.amazon.awssdk.services.dynamodbv2;
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBAsyncClient;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 
 public class DynamoDBJavaClientServiceNameTest {
 

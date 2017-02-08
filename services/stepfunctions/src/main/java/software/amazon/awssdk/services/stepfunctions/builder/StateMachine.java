@@ -12,22 +12,22 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.DateModule;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.validation.StateMachineValidator;
 import software.amazon.awssdk.services.stepfunctions.builder.states.State;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Represents a StepFunctions state machine. A state machine must have at least one state.

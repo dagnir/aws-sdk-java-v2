@@ -16,7 +16,6 @@
 package software.amazon.awssdk.waiters;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 
 public final class WaiterParameters<Input extends AmazonWebServiceRequest> {
 

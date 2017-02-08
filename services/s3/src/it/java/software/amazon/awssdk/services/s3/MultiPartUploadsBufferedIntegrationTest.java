@@ -11,11 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.services.s3.categories.S3Categories;

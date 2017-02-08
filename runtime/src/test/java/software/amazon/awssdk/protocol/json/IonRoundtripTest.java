@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json;
 
 import static org.junit.Assert.assertEquals;
@@ -19,27 +20,24 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.core.JsonToken;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
-
-import software.amazon.awssdk.util.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
+import software.amazon.awssdk.util.StringUtils;
 import software.amazon.ion.IonException;
 import software.amazon.ion.IonSystem;
 import software.amazon.ion.system.IonBinaryWriterBuilder;
 import software.amazon.ion.system.IonSystemBuilder;
-
-import com.fasterxml.jackson.core.JsonToken;
 
 /**
  * Tests that data written by the {@link SdkIonGenerator} is correctly read

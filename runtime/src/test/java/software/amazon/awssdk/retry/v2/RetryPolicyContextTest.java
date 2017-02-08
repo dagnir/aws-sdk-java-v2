@@ -12,17 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry.v2;
-
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.SdkClientException;
-
-import org.junit.Test;
-
-import utils.model.EmptyAmazonWebServiceRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
+import software.amazon.awssdk.DefaultRequest;
+import software.amazon.awssdk.SdkClientException;
+import utils.model.EmptyAmazonWebServiceRequest;
 
 public class RetryPolicyContextTest {
 

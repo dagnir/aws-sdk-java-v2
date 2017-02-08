@@ -1,5 +1,15 @@
 package software.amazon.awssdk.services.s3.transfer;
 
+import static org.junit.Assert.assertNull;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Encryption;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
@@ -13,17 +23,6 @@ import software.amazon.awssdk.services.s3.model.ObjectTagging;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.Tag;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
-import static org.junit.Assert.assertNull;
 
 /**
  * Object tagging related integration tests for {@link TransferManager}.

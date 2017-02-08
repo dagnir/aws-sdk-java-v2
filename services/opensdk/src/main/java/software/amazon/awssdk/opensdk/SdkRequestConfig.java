@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.opensdk;
 
-import software.amazon.awssdk.annotation.Immutable;
+package software.amazon.awssdk.opensdk;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.annotation.Immutable;
 
 /**
  * Configuration scoped to the request level. To create see {@link #builder()}

@@ -12,15 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.protect.client;
 
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.opensdk.BaseRequest;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.client.ClientHandler;
 import software.amazon.awssdk.client.ClientHandlerImpl;
 import software.amazon.awssdk.client.ClientHandlerParams;
+import software.amazon.awssdk.opensdk.BaseRequest;
 
 /**
  * Client handler for Open SDK generated clients. Handles exception translation and delegates to the default implementation of

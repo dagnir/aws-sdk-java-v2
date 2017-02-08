@@ -16,7 +16,6 @@
 package software.amazon.awssdk.codegen.model.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class ConstructorFormsWrapper {

@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.io.IOException;

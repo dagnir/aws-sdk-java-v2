@@ -12,24 +12,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.InputStreamEntity;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.metrics.MetricInputStreamEntity;
 import software.amazon.awssdk.metrics.ServiceMetricType;
 import software.amazon.awssdk.metrics.ThroughputMetricType;
 import software.amazon.awssdk.metrics.internal.ServiceMetricTypeGuesser;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.InputStreamEntity;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * Custom implementation of {@link RequestEntity} that delegates to an

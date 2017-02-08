@@ -15,15 +15,14 @@
 
 package software.amazon.awssdk.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.junit.After;
 import org.junit.Before;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A test utility that allows inspection of log statements

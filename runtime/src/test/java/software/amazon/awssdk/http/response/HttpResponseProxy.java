@@ -16,20 +16,20 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http.response;
 
 import java.io.IOException;
 import java.util.Locale;
-
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
-import software.amazon.awssdk.annotation.NotThreadSafe;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.params.HttpParams;
+import software.amazon.awssdk.annotation.NotThreadSafe;
 
 /**
  * A proxy class for {@link org.apache.http.HttpResponse}.

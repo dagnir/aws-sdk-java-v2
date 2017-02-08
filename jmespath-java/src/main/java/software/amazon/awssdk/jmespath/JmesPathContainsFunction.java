@@ -17,7 +17,6 @@ package software.amazon.awssdk.jmespath;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

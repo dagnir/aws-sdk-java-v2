@@ -12,19 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder;
 
-import software.amazon.awssdk.services.stepfunctions.builder.states.PassState;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.junit.Test;
-
-import java.io.IOException;
-
-import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.end;
-import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.passState;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.end;
+import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.passState;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import org.junit.Test;
+import software.amazon.awssdk.services.stepfunctions.builder.states.PassState;
 
 public class PassStateTest {
 

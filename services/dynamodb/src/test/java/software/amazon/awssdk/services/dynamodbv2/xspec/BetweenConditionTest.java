@@ -15,13 +15,10 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
 import static org.junit.Assert.assertEquals;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
 
 import org.junit.Test;
-
-import software.amazon.awssdk.services.dynamodbv2.xspec.BetweenCondition;
-import software.amazon.awssdk.services.dynamodbv2.xspec.SubstitutionContext;
 
 public class BetweenConditionTest {
 

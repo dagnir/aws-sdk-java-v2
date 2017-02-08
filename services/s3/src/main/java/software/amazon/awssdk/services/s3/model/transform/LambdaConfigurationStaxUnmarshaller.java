@@ -12,17 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.xml.stream.events.XMLEvent;
-
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.*;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.CloudFunctionConfiguration;
 import software.amazon.awssdk.services.s3.model.Filter;

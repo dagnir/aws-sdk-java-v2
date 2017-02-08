@@ -1,11 +1,11 @@
 package software.amazon.awssdk.services.s3;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.awsTestCredentials;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.deleteBucketAndAllContents;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tryCreateBucket;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +13,9 @@ import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;

@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.metrics;
 
 import static org.junit.Assert.assertFalse;
@@ -28,10 +29,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.util.AWSRequestMetrics.Field;
 
 public class AwsSdkMetricsTest {

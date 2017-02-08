@@ -1,11 +1,7 @@
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
-import software.amazon.awssdk.services.s3.model.*;
-import software.amazon.awssdk.test.util.RandomInputStream;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -13,9 +9,11 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
+import software.amazon.awssdk.test.util.RandomInputStream;
 
 /**
  * Integration tests for the listObjectsV2 operation in the Amazon S3 Java

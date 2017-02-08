@@ -16,10 +16,11 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
-import static software.amazon.awssdk.util.XpathUtils.asString;
 import static org.junit.Assert.assertEquals;
+import static software.amazon.awssdk.util.XpathUtils.asString;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -28,10 +29,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
-
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

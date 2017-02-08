@@ -12,8 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.profile;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
@@ -22,14 +29,6 @@ import software.amazon.awssdk.auth.profile.internal.Profile;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Map;
 
 public class ProfileCredentialsProviderTest {
 

@@ -1,10 +1,5 @@
 package software.amazon.awssdk.services.cloudwatch;
 
-import software.amazon.awssdk.services.cloudwatch.model.HistoryItemType;
-import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
-import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import software.amazon.awssdk.test.util.SdkAsserts;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -15,12 +10,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
 import software.amazon.awssdk.services.cloudwatch.model.DeleteAlarmsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmHistoryRequest;
@@ -34,12 +28,16 @@ import software.amazon.awssdk.services.cloudwatch.model.DisableAlarmActionsReque
 import software.amazon.awssdk.services.cloudwatch.model.EnableAlarmActionsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsResult;
+import software.amazon.awssdk.services.cloudwatch.model.HistoryItemType;
 import software.amazon.awssdk.services.cloudwatch.model.ListMetricsResult;
 import software.amazon.awssdk.services.cloudwatch.model.Metric;
 import software.amazon.awssdk.services.cloudwatch.model.MetricAlarm;
+import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricAlarmRequest;
+import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.services.cloudwatch.model.SetAlarmStateRequest;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.util.SdkAsserts;
 
 /**
  * Integration tests for the AWS CloudWatch service.

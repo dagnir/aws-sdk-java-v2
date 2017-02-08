@@ -15,13 +15,12 @@
 
 package software.amazon.awssdk.test.util.hamcrest;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 public class CollectionContainsOnly<T> extends TypeSafeMatcher<Collection<T>> {
     private final List<Matcher<? super T>> matchers;

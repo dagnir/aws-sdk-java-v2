@@ -12,12 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.auth.internal.AWS4SignerUtils;
-
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
@@ -26,10 +26,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.auth.internal.AWS4SignerUtils;
 
 /**
  * Unit tests for the

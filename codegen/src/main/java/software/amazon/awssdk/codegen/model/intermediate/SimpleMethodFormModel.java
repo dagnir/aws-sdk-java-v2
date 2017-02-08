@@ -15,10 +15,9 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.Utils;
-
 import java.util.Iterator;
 import java.util.List;
+import software.amazon.awssdk.codegen.internal.Utils;
 
 public class SimpleMethodFormModel {
 

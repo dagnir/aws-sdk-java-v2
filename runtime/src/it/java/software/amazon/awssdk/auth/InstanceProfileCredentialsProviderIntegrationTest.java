@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -26,12 +27,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 
-import software.amazon.awssdk.util.LogCaptor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.util.LogCaptor;
 
 /**
  * Unit tests for the InstanceProfileCredentialsProvider.

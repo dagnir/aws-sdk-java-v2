@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.identitymanagement.model.LimitExceededException;
 import software.amazon.awssdk.services.identitymanagement.model.ListSigningCertificatesRequest;
 import software.amazon.awssdk.services.identitymanagement.model.ListSigningCertificatesResult;

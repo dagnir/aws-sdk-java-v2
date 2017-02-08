@@ -2,9 +2,7 @@ package software.amazon.awssdk.services.ets;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.elastictranscoder.AmazonElasticTranscoderClient;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.sns.AmazonSNSClient;

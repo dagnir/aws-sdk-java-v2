@@ -16,8 +16,6 @@
 
 package software.amazon.awssdk.auth;
 
-
-import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.SignableRequest;
 
 /**

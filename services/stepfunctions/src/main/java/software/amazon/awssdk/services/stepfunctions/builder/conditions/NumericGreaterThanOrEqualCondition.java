@@ -12,15 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.conditions;
 
-import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
+import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 
 /**
  * Binary condition for Numeric greater then or equal to comparison. Supports both integral and floating point numeric types.

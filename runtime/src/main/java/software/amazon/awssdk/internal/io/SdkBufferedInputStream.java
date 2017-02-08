@@ -12,15 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.internal.io;
 
-import static software.amazon.awssdk.util.SdkRuntime.shouldAbort;
+package software.amazon.awssdk.internal.io;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.internal.MetricAware;
 import software.amazon.awssdk.util.SdkRuntime;

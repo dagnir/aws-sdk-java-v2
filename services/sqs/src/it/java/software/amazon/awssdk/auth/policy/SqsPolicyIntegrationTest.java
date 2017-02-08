@@ -3,10 +3,8 @@ package software.amazon.awssdk.auth.policy;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SQSActions;
 import software.amazon.awssdk.auth.policy.conditions.DateCondition;

@@ -2,9 +2,7 @@ package software.amazon.awssdk.services.charlie;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.elasticloadbalancing.AmazonElasticLoadBalancing;
 import software.amazon.awssdk.services.elasticloadbalancing.AmazonElasticLoadBalancingClient;
 import software.amazon.awssdk.services.elasticloadbalancing.model.CreateLoadBalancerRequest;

@@ -12,17 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.joda.time.DateTime;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Date;
-
+import static org.junit.Assert.assertEquals;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.and;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.branch;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.catcher;
@@ -49,7 +42,13 @@ import static software.amazon.awssdk.services.stepfunctions.builder.StepFunction
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.timestamp;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.timestampPath;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.waitState;
-import static org.junit.Assert.assertEquals;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Date;
+import org.joda.time.DateTime;
+import org.junit.Test;
 
 public class StepFunctionBuilderTest {
 

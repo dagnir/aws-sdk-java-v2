@@ -1,11 +1,9 @@
 package software.amazon.awssdk.services.ecr;
 
 import junit.framework.Assert;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ecr.model.CreateRepositoryRequest;
 import software.amazon.awssdk.services.ecr.model.CreateRepositoryResult;
 import software.amazon.awssdk.services.ecr.model.DeleteRepositoryRequest;

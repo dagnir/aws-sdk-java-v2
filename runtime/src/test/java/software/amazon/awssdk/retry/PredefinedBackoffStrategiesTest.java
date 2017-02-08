@@ -16,13 +16,13 @@
  * governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.retry;
 
-import org.junit.Assert;
-import org.junit.Test;
+package software.amazon.awssdk.retry;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class PredefinedBackoffStrategiesTest {
 

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.cognitosync;
 
 import static org.junit.Assert.*;
@@ -19,11 +20,9 @@ import static org.junit.Assert.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.cognitoidentity.AmazonCognitoIdentity;
 import software.amazon.awssdk.services.cognitoidentity.AmazonCognitoIdentityClient;
 import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolRequest;

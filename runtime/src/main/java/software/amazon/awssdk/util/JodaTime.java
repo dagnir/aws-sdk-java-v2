@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.text.ParseException;
@@ -22,10 +23,8 @@ import java.util.SimpleTimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import software.amazon.awssdk.log.InternalLogFactory;
 
 /**

@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elasticbeanstalk.model.ConfigurationOptionSetting;
 import software.amazon.awssdk.services.elasticbeanstalk.model.CreateApplicationRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.CreateEnvironmentRequest;

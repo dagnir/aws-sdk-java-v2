@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.simpledb;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.SDKGlobalTime;
 
 public class ClockSkewIntegrationTest extends IntegrationTestBase {

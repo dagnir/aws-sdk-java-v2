@@ -12,15 +12,15 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.internal.net;
 
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.SSLInitializationException;
-
-import javax.net.ssl.SSLContext;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import javax.net.ssl.SSLContext;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.SSLInitializationException;
 
 public class SdkSSLContext {
 

@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import software.amazon.awssdk.annotation.GuardedBy;
-
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.GuardedBy;
 
 class MultipartUploadCryptoContext extends MultipartUploadContext {
     private final ContentCryptoMaterial cekMaterial;

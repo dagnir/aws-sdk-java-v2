@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.internal;
 
 import java.util.Collection;
 import java.util.Map;
-
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.document.ItemCollection;
 import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;

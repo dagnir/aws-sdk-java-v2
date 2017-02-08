@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.profile.internal.securitytoken;
 
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.annotation.ThreadSafe;
 
 @ThreadSafe
 public class STSProfileCredentialsServiceProvider implements AWSCredentialsProvider {

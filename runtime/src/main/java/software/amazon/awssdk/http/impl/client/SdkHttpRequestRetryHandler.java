@@ -12,16 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http.impl.client;
 
 import java.io.IOException;
-
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
-
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.AWSRequestMetrics.Field;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 

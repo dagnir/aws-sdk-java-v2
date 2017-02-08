@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import java.io.ByteArrayInputStream;
@@ -21,15 +22,19 @@ import java.net.URI;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.internal.io.SdkDigestInputStream;
 import software.amazon.awssdk.util.BinaryUtils;

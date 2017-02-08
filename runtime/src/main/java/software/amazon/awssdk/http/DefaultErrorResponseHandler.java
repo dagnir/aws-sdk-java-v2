@@ -12,27 +12,25 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.runtime.transform.Unmarshaller;
-import software.amazon.awssdk.util.IOUtils;
-import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.util.XpathUtils;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
+import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.util.XpathUtils;
 
 /**
  * Implementation of HttpResponseHandler that handles only error responses from Amazon Web Services.

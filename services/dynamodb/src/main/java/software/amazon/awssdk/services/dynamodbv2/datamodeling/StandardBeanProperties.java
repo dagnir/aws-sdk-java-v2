@@ -12,13 +12,8 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.Reflect;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.FieldMap;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.TableMap;
-import software.amazon.awssdk.util.StringUtils;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -26,6 +21,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.Reflect;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.FieldMap;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.TableMap;
+import software.amazon.awssdk.util.StringUtils;
 
 /**
  * Reflection assistant for {@link DynamoDBMapper}

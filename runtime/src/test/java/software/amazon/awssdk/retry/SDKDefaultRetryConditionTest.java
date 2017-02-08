@@ -16,15 +16,15 @@
  * governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.retry;
 
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonServiceException;
-import org.junit.Assert;
-import org.junit.Test;
+package software.amazon.awssdk.retry;
 
 import java.io.IOException;
 import java.util.Random;
+import org.junit.Assert;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.AmazonServiceException;
 
 public class SDKDefaultRetryConditionTest {
 

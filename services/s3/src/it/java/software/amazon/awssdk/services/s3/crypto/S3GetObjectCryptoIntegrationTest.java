@@ -12,25 +12,23 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static org.junit.Assert.assertEquals;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.tools.ant.filters.StringInputStream;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoRuntime;

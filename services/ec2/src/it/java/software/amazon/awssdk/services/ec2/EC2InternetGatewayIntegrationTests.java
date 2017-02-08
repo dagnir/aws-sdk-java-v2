@@ -12,16 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2;
 
-import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.AttachInternetGatewayRequest;
 import software.amazon.awssdk.services.ec2.model.CreateVpcRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteInternetGatewayRequest;

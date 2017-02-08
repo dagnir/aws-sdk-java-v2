@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.Arrays;
 import java.util.List;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.internal.SdkPredicate;
 

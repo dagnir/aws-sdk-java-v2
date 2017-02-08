@@ -12,11 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.pojos;
 
 import java.nio.ByteBuffer;
 import java.util.Set;
-
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;

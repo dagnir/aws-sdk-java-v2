@@ -16,10 +16,10 @@
 package software.amazon.awssdk.services.s3.waiters;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.model.GetObjectMetadataRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.waiters.SdkFunction;
-import software.amazon.awssdk.services.s3.AmazonS3;
 
 @SdkInternalApi
 public class HeadObjectFunction implements

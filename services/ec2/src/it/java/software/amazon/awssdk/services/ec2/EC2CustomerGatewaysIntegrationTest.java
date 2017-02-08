@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayRequest;
 import software.amazon.awssdk.services.ec2.model.CustomerGateway;
 import software.amazon.awssdk.services.ec2.model.DeleteCustomerGatewayRequest;

@@ -12,12 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers;
 
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
-
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**

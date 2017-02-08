@@ -12,8 +12,20 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertFalse;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.DeleteBucketAnalyticsConfigurationRequest;
@@ -21,33 +33,21 @@ import software.amazon.awssdk.services.s3.model.GetBucketAnalyticsConfigurationR
 import software.amazon.awssdk.services.s3.model.ListBucketAnalyticsConfigurationsRequest;
 import software.amazon.awssdk.services.s3.model.ListBucketAnalyticsConfigurationsResult;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.SetBucketAnalyticsConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.Tag;
+import software.amazon.awssdk.services.s3.model.analytics.AnalyticsAndOperator;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsConfiguration;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsExportDestination;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsFilter;
+import software.amazon.awssdk.services.s3.model.analytics.AnalyticsFilterPredicate;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsPrefixPredicate;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsS3BucketDestination;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsS3ExportFileFormat;
-import software.amazon.awssdk.services.s3.model.analytics.AnalyticsAndOperator;
-import software.amazon.awssdk.services.s3.model.analytics.AnalyticsFilterPredicate;
-import software.amazon.awssdk.services.s3.model.SetBucketAnalyticsConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.analytics.AnalyticsTagPredicate;
 import software.amazon.awssdk.services.s3.model.analytics.StorageClassAnalysis;
 import software.amazon.awssdk.services.s3.model.analytics.StorageClassAnalysisDataExport;
 import software.amazon.awssdk.services.s3.model.analytics.StorageClassAnalysisSchemaVersion;
-import software.amazon.awssdk.services.s3.model.analytics.AnalyticsTagPredicate;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertFalse;
 
 public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTestBase {
 

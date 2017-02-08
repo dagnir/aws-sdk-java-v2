@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.iam;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.identitymanagement.model.DeleteServerCertificateRequest;
 import software.amazon.awssdk.services.identitymanagement.model.GetServerCertificateRequest;
 import software.amazon.awssdk.services.identitymanagement.model.GetServerCertificateResult;

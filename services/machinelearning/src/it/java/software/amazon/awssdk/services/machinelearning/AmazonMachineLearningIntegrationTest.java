@@ -3,13 +3,11 @@ package software.amazon.awssdk.services.machinelearning;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-
 import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromS3Request;
 import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromS3Result;

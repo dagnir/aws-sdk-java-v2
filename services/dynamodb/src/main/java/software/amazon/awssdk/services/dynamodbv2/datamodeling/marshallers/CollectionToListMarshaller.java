@@ -12,12 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.marshallers;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.ListAttributeMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;

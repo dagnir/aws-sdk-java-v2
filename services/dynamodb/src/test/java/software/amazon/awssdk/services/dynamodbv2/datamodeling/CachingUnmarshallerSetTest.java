@@ -12,16 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.Deque;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ConversionSchemas.CachingUnmarshallerSet;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ConversionSchemas.UnmarshallerSet;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;

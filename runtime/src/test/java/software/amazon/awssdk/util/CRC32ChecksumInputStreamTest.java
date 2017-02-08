@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import static org.junit.Assert.assertEquals;
@@ -23,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.zip.CRC32;
-
 import org.junit.Test;
 
 /**

@@ -12,17 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.protect.model.transform;
 
+import java.io.IOException;
+import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpMetadata;
 import software.amazon.awssdk.opensdk.SdkResponseMetadata;
 import software.amazon.awssdk.opensdk.model.RawResult;
 import software.amazon.awssdk.opensdk.model.ResultContentConsumer;
-import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.http.SdkHttpMetadata;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
-
-import java.io.IOException;
 
 public class RawResultUnmarshaller implements Unmarshaller<RawResult, JsonUnmarshallerContext> {
 

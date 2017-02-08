@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -20,9 +21,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.services.s3.internal.MultiFileOutputStream;
 import software.amazon.awssdk.services.s3.internal.PartCreationEvent;

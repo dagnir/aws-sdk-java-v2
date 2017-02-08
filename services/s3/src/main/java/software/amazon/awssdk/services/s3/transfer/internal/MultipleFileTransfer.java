@@ -12,11 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListenerChain;
 import software.amazon.awssdk.services.s3.transfer.Transfer;

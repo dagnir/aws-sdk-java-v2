@@ -12,10 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.reflect.Method;
-
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 public class V2MarshallerTest extends StandardModelFactoriesV2Test {

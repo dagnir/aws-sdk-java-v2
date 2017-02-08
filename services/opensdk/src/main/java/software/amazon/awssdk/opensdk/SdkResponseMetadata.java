@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk;
 
+import java.util.Optional;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.SdkHttpMetadata;
-
-import java.util.Optional;
 
 /**
  * Metadata from the HTTP response. Primarily used for detailed logging or debugging.

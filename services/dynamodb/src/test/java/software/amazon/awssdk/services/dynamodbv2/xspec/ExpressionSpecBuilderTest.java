@@ -15,6 +15,10 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.B;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.BOOL;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.BS;
@@ -27,17 +31,11 @@ import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBui
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.SS;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute_exists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.if_not_exists;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Map;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.utils.ValueMap;
 
 public class ExpressionSpecBuilderTest {

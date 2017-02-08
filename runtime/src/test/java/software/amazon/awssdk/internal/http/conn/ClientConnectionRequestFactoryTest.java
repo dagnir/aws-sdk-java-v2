@@ -12,19 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.conn;
 
-import org.apache.http.HttpClientConnection;
-import org.apache.http.conn.ConnectionPoolTimeoutException;
-import org.apache.http.conn.ConnectionRequest;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import software.amazon.awssdk.internal.http.conn.ClientConnectionRequestFactory;
-import software.amazon.awssdk.internal.http.conn.Wrapped;
+import org.apache.http.HttpClientConnection;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.conn.ConnectionRequest;
+import org.junit.Test;
 
 public class ClientConnectionRequestFactoryTest {
     ConnectionRequest noop = new ConnectionRequest() {

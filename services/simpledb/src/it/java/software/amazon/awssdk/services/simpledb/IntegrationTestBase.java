@@ -11,11 +11,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
 import software.amazon.awssdk.services.simpledb.model.DeletableItem;

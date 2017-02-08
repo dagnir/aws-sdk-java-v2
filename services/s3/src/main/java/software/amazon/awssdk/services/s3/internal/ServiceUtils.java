@@ -15,8 +15,30 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
+import static software.amazon.awssdk.util.IOUtils.closeQuietly;
+import static software.amazon.awssdk.util.StringUtils.UTF8;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.URL;
+import java.nio.channels.FileChannel;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import javax.net.ssl.SSLProtocolException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.services.s3.AmazonS3;
@@ -32,32 +54,6 @@ import software.amazon.awssdk.util.Md5Utils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.ValidationUtils;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.net.URL;
-import java.nio.channels.FileChannel;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.net.ssl.SSLProtocolException;
-
-import static software.amazon.awssdk.services.s3.internal.Constants.KB;
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
-import static software.amazon.awssdk.util.IOUtils.closeQuietly;
-import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 /**
  * General utility methods used throughout the AWS S3 Java client.

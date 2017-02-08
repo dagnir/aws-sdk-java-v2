@@ -12,34 +12,30 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http.timers.client;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertClientExecutionTimerExecutorNotCreated;
 import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfTasksTriggered;
 import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.interruptCurrentThreadAfterDelay;
 import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
 import static software.amazon.awssdk.http.timers.TimeoutTestConstants.PRECISION_MULTIPLIER;
 import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.UnresponsiveMockServerTestBase;
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
-import software.amazon.awssdk.http.response.NullErrorResponseHandler;
-import software.amazon.awssdk.http.response.NullResponseHandler;
 import software.amazon.awssdk.retry.FixedTimeBackoffStrategy;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;

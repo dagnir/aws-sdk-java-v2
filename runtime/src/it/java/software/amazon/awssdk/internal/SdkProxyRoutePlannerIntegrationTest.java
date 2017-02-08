@@ -20,14 +20,12 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.UUID;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.http.MockServerTestBase;
 import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;

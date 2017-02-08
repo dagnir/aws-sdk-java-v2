@@ -12,38 +12,37 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
+import static org.junit.Assert.*;
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static software.amazon.awssdk.services.s3.transfer.internal.TransferManagerUtils.createDefaultExecutorService;
-import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
-
-import software.amazon.awssdk.services.s3.categories.S3Categories;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.transfer.internal.DownloadPartCallable;
-import software.amazon.awssdk.test.util.TestExecutors;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import software.amazon.awssdk.test.util.SdkAsserts;
+import org.junit.experimental.categories.Category;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
+import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.SSECustomerKey;
 import software.amazon.awssdk.services.s3.model.SetBucketVersioningConfigurationRequest;
 import software.amazon.awssdk.services.s3.transfer.Transfer.TransferState;
 import software.amazon.awssdk.services.s3.transfer.exception.PauseException;
+import software.amazon.awssdk.services.s3.transfer.internal.DownloadPartCallable;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import org.junit.experimental.categories.Category;
+import software.amazon.awssdk.test.util.SdkAsserts;
+import software.amazon.awssdk.test.util.TestExecutors;
 
 @Category(S3Categories.Slow.class)
 public class TransferManagerParallelDownloadsIntegrationTest extends

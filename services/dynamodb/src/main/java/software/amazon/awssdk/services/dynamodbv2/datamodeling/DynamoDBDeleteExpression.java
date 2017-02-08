@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.DeleteItemRequest;

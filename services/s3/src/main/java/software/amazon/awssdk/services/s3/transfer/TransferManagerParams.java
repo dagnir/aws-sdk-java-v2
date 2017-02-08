@@ -12,12 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
+import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.s3.AmazonS3;
-
-import java.util.concurrent.ExecutorService;
 
 /**
  * Internal class to wrap all params needed by {@link TransferManager}. Used by {@link

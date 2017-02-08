@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json;
 
+import java.util.List;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.JsonErrorResponseHandler;
-
-import java.util.List;
 
 /**
  * Contains various metadata needed to create an appropriate {@link JsonErrorResponseHandler}

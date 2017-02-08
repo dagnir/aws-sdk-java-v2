@@ -12,14 +12,8 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.annotation.SdkTestInternalApi;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.ScanResult;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +24,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
+import software.amazon.awssdk.services.dynamodbv2.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodbv2.model.ScanResult;
 
 public class ParallelScanTask {
 

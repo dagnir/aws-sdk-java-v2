@@ -16,20 +16,20 @@
  * governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.internal.http.request;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.ReadLimitInfo;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+package software.amazon.awssdk.internal.http.request;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.ReadLimitInfo;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.util.AWSRequestMetrics;
 
 public class EmptyHttpRequest implements Request<Object> {
 

@@ -12,18 +12,16 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 
 /**
  * <p>

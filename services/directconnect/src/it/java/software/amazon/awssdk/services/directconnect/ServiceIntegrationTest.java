@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.SDKGlobalTime;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionRequest;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionResult;

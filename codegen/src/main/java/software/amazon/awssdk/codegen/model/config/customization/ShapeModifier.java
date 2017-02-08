@@ -15,10 +15,9 @@
 
 package software.amazon.awssdk.codegen.model.config.customization;
 
-import software.amazon.awssdk.codegen.model.service.Member;
-
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.codegen.model.service.Member;
 
 /**
  * Use shapeModifiers customization to add/remove shape members or to modify the

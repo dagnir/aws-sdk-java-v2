@@ -12,20 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.unmarshaller;
-
-import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.UUID;
+import org.junit.Before;
+import org.junit.Test;
+import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
 
 public class JsonErrorMessageParserTest {
 

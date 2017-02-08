@@ -2,23 +2,21 @@ package software.amazon.awssdk.services.sns;
 
 import static org.junit.Assert.fail;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.sns.model.Subscription;
 import software.amazon.awssdk.services.sns.model.Topic;
 import software.amazon.awssdk.services.sqs.AmazonSQSClient;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 /**
  * Base class for SNS integration tests; responsible for loading AWS account info for running the

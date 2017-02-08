@@ -2,30 +2,18 @@ package software.amazon.awssdk.services.sts;
 
 import static org.junit.Assert.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
-
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SecurityTokenServiceActions;
-import software.amazon.awssdk.auth.policy.conditions.IpAddressCondition;
 import software.amazon.awssdk.services.identitymanagement.model.AccessKeyMetadata;
 import software.amazon.awssdk.services.identitymanagement.model.CreateAccessKeyRequest;
 import software.amazon.awssdk.services.identitymanagement.model.CreateAccessKeyResult;
-import software.amazon.awssdk.services.identitymanagement.model.CreateRoleRequest;
 import software.amazon.awssdk.services.identitymanagement.model.CreateUserRequest;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteAccessKeyRequest;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteLoginProfileRequest;
@@ -40,11 +28,6 @@ import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleResult;
-import software.amazon.awssdk.services.securitytoken.model.DecodeAuthorizationMessageRequest;
-import software.amazon.awssdk.services.securitytoken.model.GetFederationTokenRequest;
-import software.amazon.awssdk.services.securitytoken.model.GetFederationTokenResult;
-import software.amazon.awssdk.services.securitytoken.model.GetSessionTokenRequest;
-import software.amazon.awssdk.services.securitytoken.model.GetSessionTokenResult;
 
 public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
 

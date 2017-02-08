@@ -12,14 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.profile.path.config;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.AwsDirectoryBasePathProvider;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.AwsDirectoryBasePathProvider;
-
 import java.io.File;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.profile.path.AwsDirectoryBasePathProvider;
 
 /**
  * Checks if there is a config file present at the default location (~/.aws/config).

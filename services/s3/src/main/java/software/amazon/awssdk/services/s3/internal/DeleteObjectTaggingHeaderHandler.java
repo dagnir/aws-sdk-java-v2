@@ -12,13 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.DeleteObjectTaggingResult;
-
-import java.util.Map;
 
 /**
  * Handler for retrieving headers from the {@link

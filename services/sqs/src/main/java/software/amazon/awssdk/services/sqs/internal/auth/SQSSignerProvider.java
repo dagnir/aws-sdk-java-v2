@@ -13,12 +13,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.sqs.internal.auth;
 
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.internal.auth.SignerProvider;
+import software.amazon.awssdk.internal.auth.SignerProviderContext;
 
 /**
  * SQS alters the request endpoint as part of a request handler which inspects

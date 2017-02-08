@@ -12,8 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -21,14 +28,6 @@ import software.amazon.awssdk.internal.http.ErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
 import software.amazon.awssdk.protocol.json.JsonContent;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
-import com.fasterxml.jackson.core.JsonFactory;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 @SdkInternalApi
 public class JsonErrorResponseHandler implements HttpResponseHandler<AmazonServiceException> {

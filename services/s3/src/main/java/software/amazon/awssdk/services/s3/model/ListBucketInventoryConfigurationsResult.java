@@ -12,12 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.s3.model;
 
-import software.amazon.awssdk.services.s3.model.inventory.InventoryConfiguration;
+package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.util.List;
+import software.amazon.awssdk.services.s3.model.inventory.InventoryConfiguration;
 
 /**
  * Result object to contain the response returned from

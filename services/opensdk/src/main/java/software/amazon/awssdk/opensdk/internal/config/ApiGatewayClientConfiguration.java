@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.internal.config;
 
+import java.util.Optional;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
 import software.amazon.awssdk.opensdk.config.ProxyConfiguration;
 import software.amazon.awssdk.opensdk.config.TimeoutConfiguration;
-
-import java.util.Optional;
 
 /**
  * Client configuration options such as proxy settings, timeouts, connections etc.

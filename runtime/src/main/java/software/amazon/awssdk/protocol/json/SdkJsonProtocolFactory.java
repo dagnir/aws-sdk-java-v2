@@ -17,6 +17,8 @@
 
 package software.amazon.awssdk.protocol.json;
 
+import java.util.ArrayList;
+import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.SDKGlobalConfiguration;
@@ -26,9 +28,6 @@ import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Factory to generate the various JSON protocol handlers and generators depending on the wire protocol to be used for

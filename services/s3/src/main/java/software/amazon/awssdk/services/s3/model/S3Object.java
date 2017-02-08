@@ -15,12 +15,13 @@
  * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
  * for applicable license terms and NOTICE.txt for applicable notices.
  */
+
 package software.amazon.awssdk.services.s3.model;
-import java.io.Serializable;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.io.Serializable;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
 

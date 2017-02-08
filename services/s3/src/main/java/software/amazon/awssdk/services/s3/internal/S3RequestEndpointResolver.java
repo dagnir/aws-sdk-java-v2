@@ -12,17 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
-import software.amazon.awssdk.SdkClientException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.internal.ServiceEndpointBuilder;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Sets endpoint and resource path on a request object

@@ -12,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2.util;
+
 import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.io.UnsupportedEncodingException;
@@ -21,10 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.SimpleTimeZone;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import software.amazon.awssdk.util.Base64;
 
 /**

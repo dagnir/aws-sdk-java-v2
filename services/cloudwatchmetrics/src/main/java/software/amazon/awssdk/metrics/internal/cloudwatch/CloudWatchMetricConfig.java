@@ -11,13 +11,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import java.util.concurrent.TimeUnit;
-
-import software.amazon.awssdk.annotation.NotThreadSafe;
-
 import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 

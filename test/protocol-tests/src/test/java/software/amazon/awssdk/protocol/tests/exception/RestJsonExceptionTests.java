@@ -12,22 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.tests.exception;
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import org.apache.log4j.BasicConfigurator;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
-import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocol.restjson.model.AmazonProtocolRestJsonException;
-import software.amazon.awssdk.services.protocol.restjson.model.EmptyModeledException;
-import software.amazon.awssdk.services.protocol.restjson.model.HeadOperationRequest;
-import software.amazon.awssdk.services.protocol.restjson.model.MultiLocationOperationRequest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.head;
@@ -35,6 +21,19 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static util.exception.ExceptionTestUtils.stub404Response;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.log4j.BasicConfigurator;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
+import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
+import software.amazon.awssdk.services.protocol.restjson.model.AmazonProtocolRestJsonException;
+import software.amazon.awssdk.services.protocol.restjson.model.EmptyModeledException;
+import software.amazon.awssdk.services.protocol.restjson.model.HeadOperationRequest;
+import software.amazon.awssdk.services.protocol.restjson.model.MultiLocationOperationRequest;
 
 /**
  * Exception related tests for AWS REST JSON.

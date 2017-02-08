@@ -16,20 +16,15 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
-import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -43,14 +38,18 @@ import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
-
-import static org.junit.Assert.assertEquals;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
+import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
+import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
 
 public class AmazonHttpClientTest {
 

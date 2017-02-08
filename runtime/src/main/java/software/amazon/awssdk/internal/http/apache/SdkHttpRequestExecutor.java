@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.apache;
 
 import java.io.IOException;
 import java.net.Socket;
-
 import org.apache.http.HttpClientConnection;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -24,7 +24,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.conn.ManagedHttpClientConnection;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestExecutor;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.net.SdkMetricsSocket;
 import software.amazon.awssdk.internal.net.SdkSSLMetricsSocket;

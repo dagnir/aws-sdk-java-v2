@@ -8,11 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.glacier.model.CreateVaultRequest;
 import software.amazon.awssdk.services.glacier.model.CreateVaultResult;
 import software.amazon.awssdk.services.glacier.model.DeleteArchiveRequest;

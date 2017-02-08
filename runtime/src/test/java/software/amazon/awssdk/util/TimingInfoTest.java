@@ -16,16 +16,16 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
-import static software.amazon.awssdk.util.TimingInfo.UNKNOWN;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.util.TimingInfo.UNKNOWN;
 
 import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 
 public class TimingInfoTest {

@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.protocol.json;
 
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
+package software.amazon.awssdk.protocol.json;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
  * Wrapper object to provide additional metadata about a client and protocol to {@link

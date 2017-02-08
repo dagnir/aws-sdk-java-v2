@@ -12,17 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.ACCESS_KEY_ENV_VAR;
-import static software.amazon.awssdk.SDKGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR;
-import static software.amazon.awssdk.SDKGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR;
-import static software.amazon.awssdk.SDKGlobalConfiguration.SECRET_KEY_ENV_VAR;
-import static software.amazon.awssdk.SDKGlobalConfiguration.AWS_SESSION_TOKEN_ENV_VAR;
-
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.util.StringUtils;
 
 /**

@@ -7,9 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.elasticbeanstalk.model.DescribeEnvironmentsRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentDescription;

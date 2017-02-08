@@ -12,20 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughputExceededException;
-import software.amazon.awssdk.services.dynamodbv2.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.ScanResult;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +28,17 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
+import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughputExceededException;
+import software.amazon.awssdk.services.dynamodbv2.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodbv2.model.ScanResult;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaginatedScanTaskTest {

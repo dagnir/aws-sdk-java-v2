@@ -1,5 +1,19 @@
 package software.amazon.awssdk.services.s3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.Constants.KB;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.BucketAccelerateConfiguration;
@@ -19,22 +33,6 @@ import software.amazon.awssdk.services.s3.transfer.Upload;
 import software.amazon.awssdk.test.retry.AssertCallable;
 import software.amazon.awssdk.test.retry.RetryableAssertion;
 import software.amazon.awssdk.test.retry.RetryableParams;
-
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-
-import static software.amazon.awssdk.services.s3.internal.Constants.KB;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 
 /**

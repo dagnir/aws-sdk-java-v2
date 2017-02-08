@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.TypeUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import software.amazon.awssdk.codegen.internal.TypeUtils;
 
 public class MapModel {
 

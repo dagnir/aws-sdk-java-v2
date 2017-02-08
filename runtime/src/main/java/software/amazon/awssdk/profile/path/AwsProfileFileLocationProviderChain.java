@@ -12,16 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.profile.path;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
-import software.amazon.awssdk.annotation.SdkInternalApi;
+package software.amazon.awssdk.profile.path;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
  * Delegates to a chain of {@link AwsProfileFileLocationProvider}. Returns null if no provider in

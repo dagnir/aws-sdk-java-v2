@@ -1,11 +1,11 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,11 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.kms.utils.KmsTestKeyCache;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.kms.AWSKMSClient;

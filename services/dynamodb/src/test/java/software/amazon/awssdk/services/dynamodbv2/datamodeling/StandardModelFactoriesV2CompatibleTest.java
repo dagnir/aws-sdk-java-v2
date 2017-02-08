@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.junit.Assert.assertEquals;
@@ -30,10 +31,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.pojos.SubClass;

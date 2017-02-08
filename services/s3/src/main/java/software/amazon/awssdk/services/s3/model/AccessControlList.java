@@ -15,9 +15,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.s3.model;
 
-import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
+package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.security.Permissions;
@@ -26,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
 
 /**
  * <p>

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.spec;
 
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -31,11 +31,11 @@ import software.amazon.awssdk.services.dynamodbv2.document.AttributeUpdate;
 import software.amazon.awssdk.services.dynamodbv2.document.Expected;
 import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;
 import software.amazon.awssdk.services.dynamodbv2.document.PrimaryKey;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.UpdateItemExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnItemCollectionMetrics;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnValue;
 import software.amazon.awssdk.services.dynamodbv2.model.UpdateItemRequest;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.UpdateItemExpressionSpec;
 
 /**
  * Full parameter specification for the UpdateItem API.

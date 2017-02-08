@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.apache;
 
 import org.apache.http.HttpException;
@@ -20,11 +21,10 @@ import org.apache.http.HttpRequest;
 import org.apache.http.impl.conn.DefaultRoutePlanner;
 import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.protocol.HttpContext;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 
 /**
  * SdkProxyRoutePlanner delegates a Proxy Route Planner from the settings instead of the

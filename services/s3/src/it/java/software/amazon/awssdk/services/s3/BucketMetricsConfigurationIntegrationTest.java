@@ -12,8 +12,18 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.DeleteBucketMetricsConfigurationRequest;
@@ -30,16 +40,6 @@ import software.amazon.awssdk.services.s3.model.metrics.MetricsFilterPredicate;
 import software.amazon.awssdk.services.s3.model.metrics.MetricsPrefixPredicate;
 import software.amazon.awssdk.services.s3.model.metrics.MetricsTagPredicate;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTestBase {
 

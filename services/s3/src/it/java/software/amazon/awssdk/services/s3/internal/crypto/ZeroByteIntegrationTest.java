@@ -1,20 +1,17 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tryCreateBucket;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tryCreateBucket;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.Headers;

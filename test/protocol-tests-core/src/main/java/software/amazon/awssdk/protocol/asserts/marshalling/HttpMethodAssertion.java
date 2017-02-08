@@ -12,13 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.asserts.marshalling;
 
+import static org.junit.Assert.assertEquals;
+
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.util.ValidationUtils;
-import com.github.tomakehurst.wiremock.verification.LoggedRequest;
-
-import static org.junit.Assert.assertEquals;
 
 public class HttpMethodAssertion extends MarshallingAssertion {
 

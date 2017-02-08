@@ -10,14 +10,13 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package software.amazon.awssdk.services.appstream.smoketests;
-
-import javax.annotation.Generated;
-
-import org.junit.runner.RunWith;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
+import javax.annotation.Generated;
+import org.junit.runner.RunWith;
 
 @CucumberOptions(glue = { "software.amazon.awssdk.smoketest" })
 @RunWith(Cucumber.class)

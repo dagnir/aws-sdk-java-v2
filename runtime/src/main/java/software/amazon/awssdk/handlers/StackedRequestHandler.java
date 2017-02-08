@@ -12,22 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.handlers;
 
-import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-
-import software.amazon.awssdk.util.ValidationUtils;
+import java.util.List;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Composite {@link RequestHandler2} to execute a chain of {@link RequestHandler2} implementations

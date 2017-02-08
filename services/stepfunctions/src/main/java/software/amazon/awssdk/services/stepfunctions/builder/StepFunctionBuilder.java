@@ -12,49 +12,49 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder;
 
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.NumericGreaterThanCondition;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.OrCondition;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.StringGreaterThanCondition;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.StringLessThanCondition;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.TimestampEqualsCondition;
-import software.amazon.awssdk.services.stepfunctions.builder.conditions.TimestampLessThanCondition;
-import software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState;
-import software.amazon.awssdk.services.stepfunctions.builder.states.ParallelState;
-import software.amazon.awssdk.services.stepfunctions.builder.states.SucceedState;
-import software.amazon.awssdk.services.stepfunctions.builder.states.TaskState;
-import software.amazon.awssdk.services.stepfunctions.builder.states.WaitFor;
-import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForTimestamp;
+import java.util.Date;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.AndCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.BooleanEqualsCondition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.NotCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.NumericEqualsCondition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.NumericGreaterThanCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.NumericGreaterThanOrEqualCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.NumericLessThanCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.NumericLessThanOrEqualCondition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.OrCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.StringEqualsCondition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.StringGreaterThanCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.StringGreaterThanOrEqualCondition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.StringLessThanCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.StringLessThanOrEqualCondition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.TimestampEqualsCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.TimestampGreaterThanCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.TimestampGreaterThanOrEqualCondition;
+import software.amazon.awssdk.services.stepfunctions.builder.conditions.TimestampLessThanCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.conditions.TimestampLessThanOrEqualCondition;
 import software.amazon.awssdk.services.stepfunctions.builder.states.Branch;
 import software.amazon.awssdk.services.stepfunctions.builder.states.Catcher;
 import software.amazon.awssdk.services.stepfunctions.builder.states.Choice;
+import software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState;
 import software.amazon.awssdk.services.stepfunctions.builder.states.EndTransition;
 import software.amazon.awssdk.services.stepfunctions.builder.states.FailState;
 import software.amazon.awssdk.services.stepfunctions.builder.states.NextStateTransition;
+import software.amazon.awssdk.services.stepfunctions.builder.states.ParallelState;
 import software.amazon.awssdk.services.stepfunctions.builder.states.PassState;
 import software.amazon.awssdk.services.stepfunctions.builder.states.Retrier;
+import software.amazon.awssdk.services.stepfunctions.builder.states.SucceedState;
+import software.amazon.awssdk.services.stepfunctions.builder.states.TaskState;
 import software.amazon.awssdk.services.stepfunctions.builder.states.Transition;
+import software.amazon.awssdk.services.stepfunctions.builder.states.WaitFor;
 import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForSeconds;
 import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForSecondsPath;
+import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForTimestamp;
 import software.amazon.awssdk.services.stepfunctions.builder.states.WaitForTimestampPath;
 import software.amazon.awssdk.services.stepfunctions.builder.states.WaitState;
-
-import java.util.Date;
 
 /**
  * Fluent API for creating a {@link StateMachine} object.

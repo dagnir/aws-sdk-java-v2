@@ -3,13 +3,10 @@ package software.amazon.awssdk.services.s3;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
-
 import junit.framework.Assert;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.services.s3.internal.AmazonS3TestClient;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;

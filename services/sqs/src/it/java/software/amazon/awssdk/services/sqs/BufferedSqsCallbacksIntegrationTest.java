@@ -8,12 +8,10 @@ import static org.mockito.Mockito.verify;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
 import software.amazon.awssdk.handlers.AsyncHandler;
 import software.amazon.awssdk.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;

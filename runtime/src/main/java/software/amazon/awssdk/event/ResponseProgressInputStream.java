@@ -12,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.event;
+
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseBytesTransferred;
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseReset;
 

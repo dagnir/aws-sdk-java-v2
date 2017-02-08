@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.cloudfront;
 
-import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.loadPrivateKey;
-import static software.amazon.awssdk.util.StringUtils.UTF8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,6 @@ import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Calendar;
 import java.util.Date;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.cloudfront.util.SignerUtils;
 import software.amazon.awssdk.util.DateUtils;

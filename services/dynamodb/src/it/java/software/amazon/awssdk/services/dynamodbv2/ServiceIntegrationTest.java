@@ -2,7 +2,6 @@ package software.amazon.awssdk.services.dynamodbv2;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodbv2.model.ListStreamsRequest;

@@ -12,8 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen;
 
+import static software.amazon.awssdk.codegen.internal.Constants.RESPONSE_CLASS_SUFFIX;
+
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ReturnTypeModel;
@@ -25,11 +30,6 @@ import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.Output;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static software.amazon.awssdk.codegen.internal.Constants.RESPONSE_CLASS_SUFFIX;
 
 public class AddEmptyOutputShape implements IntermediateModelShapeProcessor {
 

@@ -1,11 +1,9 @@
 package software.amazon.awssdk.services.charlie;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.AmazonEC2Client;
 import software.amazon.awssdk.services.ec2.model.CreateSubnetRequest;
 import software.amazon.awssdk.services.ec2.model.CreateVpcRequest;

@@ -12,8 +12,27 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
+import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.HASH;
+import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.RANGE;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.SdkClientException;
@@ -59,26 +78,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.UpdateItemResult;
 import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
 import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.util.VersionInfoUtils;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.HASH;
-import static software.amazon.awssdk.services.dynamodbv2.model.KeyType.RANGE;
 
 /**
  * Object mapper for domain-object interaction with DynamoDB.

@@ -4,10 +4,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.identitymanagement.model.CreateVirtualMFADeviceRequest;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteVirtualMFADeviceRequest;
 import software.amazon.awssdk.services.identitymanagement.model.ListMFADevicesRequest;

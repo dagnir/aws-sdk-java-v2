@@ -15,6 +15,11 @@
 
 package software.amazon.awssdk.codegen.customization.processors;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcessor;
 import software.amazon.awssdk.codegen.internal.Constants;
 import software.amazon.awssdk.codegen.model.config.customization.OperationModifier;
@@ -27,12 +32,6 @@ import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.model.service.ShapeTypes;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * This processor internally keeps track of all the result wrapper shapes it

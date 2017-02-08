@@ -12,13 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.profile.path.cred;
 
+import java.io.File;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-
-import java.io.File;
 
 /**
  * If {@value #CREDENTIAL_PROFILES_FILE_ENVIRONMENT_VARIABLE} environment variable is set then the

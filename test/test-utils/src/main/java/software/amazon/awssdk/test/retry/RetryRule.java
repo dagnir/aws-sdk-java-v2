@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.test.retry;
 
-import software.amazon.awssdk.util.ValidationUtils;
+import java.util.concurrent.TimeUnit;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import java.util.concurrent.TimeUnit;
+import software.amazon.awssdk.util.ValidationUtils;
 
 public class RetryRule implements TestRule {
 

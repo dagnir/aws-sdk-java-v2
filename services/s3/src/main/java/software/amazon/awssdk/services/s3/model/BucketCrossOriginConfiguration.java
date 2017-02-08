@@ -12,15 +12,16 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Container for bucket cross origin configuration operations.
  */
-
-import java.util.Arrays;
-import java.util.List;
 
 public class BucketCrossOriginConfiguration implements Serializable {
 

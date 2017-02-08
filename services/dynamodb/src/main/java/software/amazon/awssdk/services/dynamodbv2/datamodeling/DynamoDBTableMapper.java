@@ -12,25 +12,23 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndex;
 import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodbv2.model.ResourceInUseException;
 import software.amazon.awssdk.services.dynamodbv2.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A wrapper for {@code DynamoDBMapper} which operates only on a specified

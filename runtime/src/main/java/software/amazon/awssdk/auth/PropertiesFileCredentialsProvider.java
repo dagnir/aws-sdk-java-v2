@@ -12,12 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SdkClientException;
+package software.amazon.awssdk.auth;
 
 import java.io.File;
 import java.io.IOException;
+import software.amazon.awssdk.SdkClientException;
 
 /**
  * {@link AWSCredentialsProvider} implementation that loads AWS security

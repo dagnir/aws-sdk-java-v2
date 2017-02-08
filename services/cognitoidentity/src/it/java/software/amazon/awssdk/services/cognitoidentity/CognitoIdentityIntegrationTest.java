@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.cognitoidentity;
 
 import static org.junit.Assert.assertEquals;
@@ -24,11 +25,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolRequest;
 import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolResult;

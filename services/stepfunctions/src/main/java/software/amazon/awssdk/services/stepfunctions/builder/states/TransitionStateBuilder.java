@@ -12,11 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.states;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Base class for states that allow transitions to either another state or

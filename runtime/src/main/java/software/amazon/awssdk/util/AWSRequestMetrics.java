@@ -15,12 +15,11 @@
 
 package software.amazon.awssdk.util;
 
+import java.util.Collections;
+import java.util.List;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.metrics.MetricType;
 import software.amazon.awssdk.metrics.RequestMetricType;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Used as both a base class and a minimal support of AWS SDK request metrics.

@@ -16,14 +16,14 @@
 
 package software.amazon.awssdk.services.certificatemanager;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.certificatemanager.model.GetCertificateRequest;
 import software.amazon.awssdk.services.certificatemanager.model.ListCertificatesRequest;
 import software.amazon.awssdk.services.certificatemanager.model.ListCertificatesResult;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class AWSCertficateManagerIntegrationTest extends
         AWSIntegrationTestBase {

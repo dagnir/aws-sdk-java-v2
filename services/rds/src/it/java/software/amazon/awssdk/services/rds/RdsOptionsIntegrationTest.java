@@ -18,11 +18,7 @@ package software.amazon.awssdk.services.rds;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import org.junit.*;
-import software.amazon.awssdk.services.rds.model.*;
 
 /**
  * Integration tests for RDS Options

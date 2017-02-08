@@ -12,15 +12,25 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.s3.waiters;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.model.*;
-import software.amazon.awssdk.waiters.*;
+package software.amazon.awssdk.services.s3.waiters;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.s3.AmazonS3;
+import software.amazon.awssdk.services.s3.model.GetObjectMetadataRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketResult;
+import software.amazon.awssdk.services.s3.model.ObjectMetadata;
+import software.amazon.awssdk.waiters.FixedDelayStrategy;
+import software.amazon.awssdk.waiters.HttpFailureStatusAcceptor;
+import software.amazon.awssdk.waiters.HttpSuccessStatusAcceptor;
+import software.amazon.awssdk.waiters.MaxAttemptsRetryStrategy;
+import software.amazon.awssdk.waiters.PollingStrategy;
+import software.amazon.awssdk.waiters.Waiter;
+import software.amazon.awssdk.waiters.WaiterBuilder;
+import software.amazon.awssdk.waiters.WaiterState;
 
 public class AmazonS3Waiters {
 

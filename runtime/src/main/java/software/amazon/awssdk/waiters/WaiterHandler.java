@@ -16,7 +16,6 @@
 package software.amazon.awssdk.waiters;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 
 /**
  * Callbacks are executed synchronously. That is the same thread the waiter

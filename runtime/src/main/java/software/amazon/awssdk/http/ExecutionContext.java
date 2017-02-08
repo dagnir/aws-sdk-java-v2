@@ -12,8 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
+import java.net.URI;
+import java.util.List;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -21,16 +24,13 @@ import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.internal.auth.SignerProvider;
+import software.amazon.awssdk.internal.auth.SignerProviderContext;
+import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.AWSRequestMetricsFullSupport;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * @NotThreadSafe This class should only be accessed by a single thread and be used throughout

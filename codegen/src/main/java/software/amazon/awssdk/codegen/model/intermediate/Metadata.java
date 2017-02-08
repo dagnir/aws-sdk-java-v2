@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.protocol.ProtocolMetadataProvider;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import static software.amazon.awssdk.codegen.internal.Constants.SMOKE_TESTS_DIR_NAME;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import software.amazon.awssdk.codegen.protocol.ProtocolMetadataProvider;
 
 
 public class Metadata {

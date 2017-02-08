@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.internal;
 
 import static software.amazon.awssdk.util.BinaryUtils.copyAllBytesFrom;
@@ -27,7 +28,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.services.dynamodbv2.document.AttributeUpdate;
 import software.amazon.awssdk.services.dynamodbv2.document.Expected;

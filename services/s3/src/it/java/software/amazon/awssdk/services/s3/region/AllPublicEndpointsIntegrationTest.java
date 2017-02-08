@@ -2,13 +2,10 @@ package software.amazon.awssdk.services.s3.region;
 
 import java.io.File;
 import java.io.IOException;
-
 import junit.framework.Assert;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
 import software.amazon.awssdk.services.s3.categories.S3Categories;

@@ -16,10 +16,8 @@
 
 import java.util.Collections;
 import java.util.Map;
-
-import software.amazon.awssdk.annotation.Immutable;
-
 import software.amazon.awssdk.annotation.Beta;
+import software.amazon.awssdk.annotation.Immutable;
 
 /**
  * Expression specification for making GetItem request to Amazon DynamoDB.

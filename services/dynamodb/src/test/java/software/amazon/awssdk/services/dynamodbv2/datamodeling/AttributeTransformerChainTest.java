@@ -12,12 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import java.util.*;
-
-import org.junit.*;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.AttributeTransformer.Parameters;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 

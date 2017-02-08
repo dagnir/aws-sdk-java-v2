@@ -6,12 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.services.cloudfront.model.Aliases;
 import software.amazon.awssdk.services.cloudfront.model.AllowedMethods;
 import software.amazon.awssdk.services.cloudfront.model.CacheBehavior;

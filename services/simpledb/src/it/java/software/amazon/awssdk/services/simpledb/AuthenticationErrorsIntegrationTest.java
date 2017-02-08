@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;

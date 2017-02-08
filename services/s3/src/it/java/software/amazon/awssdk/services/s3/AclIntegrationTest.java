@@ -8,12 +8,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
-
 import junit.framework.AssertionFailedError;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.model.AccessControlList;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.CanonicalGrantee;

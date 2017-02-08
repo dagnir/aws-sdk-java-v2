@@ -12,8 +12,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.regions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.util.HashMap;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import software.amazon.awssdk.auth.profile.ProfileResourceLoader;
 import software.amazon.awssdk.auth.profile.internal.AllProfiles;
 import software.amazon.awssdk.auth.profile.internal.BasicProfile;
@@ -21,20 +33,6 @@ import software.amazon.awssdk.auth.profile.internal.BasicProfileConfigLoader;
 import software.amazon.awssdk.auth.profile.internal.ProfileKeyConstants;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 import software.amazon.awssdk.util.ImmutableMapParameter;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import software.amazon.awssdk.auth.profile.ProfileResourceLoader;
-
-import java.io.File;
-import java.util.HashMap;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 public class AwsProfileRegionProviderTest {
 

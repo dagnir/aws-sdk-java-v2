@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.sns;
 
 import static org.junit.Assert.assertTrue;
@@ -22,9 +23,7 @@ import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.sns.util.SignatureChecker;
 import software.amazon.awssdk.test.AWSTestBase;
 

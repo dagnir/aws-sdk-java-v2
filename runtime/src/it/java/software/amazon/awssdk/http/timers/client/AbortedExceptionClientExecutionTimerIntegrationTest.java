@@ -15,6 +15,19 @@
 
 package software.amazon.awssdk.http.timers.client;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.createMockGetRequest;
+import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy;
+import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.execute;
+import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
+
+import java.io.IOException;
+import java.io.InputStream;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.protocol.HttpContext;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
@@ -25,21 +38,6 @@ import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttp
 import software.amazon.awssdk.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.internal.SdkBufferedInputStream;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.protocol.HttpContext;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.createMockGetRequest;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.execute;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants
-        .CLIENT_EXECUTION_TIMEOUT;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
 
 /**
  *

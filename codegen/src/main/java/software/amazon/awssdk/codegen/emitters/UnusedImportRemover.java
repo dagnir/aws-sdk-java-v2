@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,8 +24,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.toSet;
 
 public class UnusedImportRemover implements ContentProcessor {
     private static Pattern IMPORT_PATTERN = Pattern.compile("import(?:\\s+)(?:static\\s+)?(.*)(?:\\s*);");

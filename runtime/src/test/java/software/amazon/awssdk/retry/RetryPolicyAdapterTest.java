@@ -12,20 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry;
-
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.retry.v2.RetryPolicyContext;
-import software.amazon.awssdk.retry.v2.RetryPolicyContexts;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import software.amazon.awssdk.retry.v2.RetryPolicyContexts;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -35,6 +23,17 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.retry.v2.RetryPolicyContext;
+import software.amazon.awssdk.retry.v2.RetryPolicyContexts;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RetryPolicyAdapterTest {

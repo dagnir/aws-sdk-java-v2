@@ -4,13 +4,13 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.iotdata.AWSIotDataClient;
 import software.amazon.awssdk.services.iotdata.model.DeleteThingShadowRequest;
@@ -24,8 +24,6 @@ import software.amazon.awssdk.services.iotdata.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.iotdata.model.UpdateThingShadowRequest;
 import software.amazon.awssdk.services.iotdata.model.UpdateThingShadowResult;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 

@@ -13,24 +13,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
-import software.amazon.awssdk.services.s3.model.Tag;
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleAndOperator;
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilter;
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilterPredicate;
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecyclePrefixPredicate;
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleTagPredicate;
-
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.internal.ServiceUtils;
 import software.amazon.awssdk.services.s3.model.AbortIncompleteMultipartUpload;
+import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.BucketLifecycleConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketLifecycleConfiguration.Rule;
 import software.amazon.awssdk.services.s3.model.BucketLifecycleConfiguration.Transition;
@@ -38,6 +28,12 @@ import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.StorageClass;
+import software.amazon.awssdk.services.s3.model.Tag;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleAndOperator;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilter;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilterPredicate;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecyclePrefixPredicate;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleTagPredicate;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
 /**

@@ -1,11 +1,11 @@
 package software.amazon.awssdk.services.s3.transfer;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -13,12 +13,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.CancellationException;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.s3.AmazonS3Client;

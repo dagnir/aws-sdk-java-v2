@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.polly.presign;
 
+import java.io.Serializable;
+import java.util.Date;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
 import software.amazon.awssdk.services.polly.model.TextType;
 import software.amazon.awssdk.services.polly.model.VoiceId;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Presigning input for {@link AmazonPollyPresigners#getPresignedSynthesizeSpeechUrl(SynthesizeSpeechPresignRequest)}.

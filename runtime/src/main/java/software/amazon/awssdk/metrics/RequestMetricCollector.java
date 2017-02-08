@@ -17,8 +17,6 @@ package software.amazon.awssdk.metrics;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 
 /**
  * A service provider interface that can be used to implement an AWS SDK

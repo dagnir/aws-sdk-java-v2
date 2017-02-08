@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.metrics.internal.cloudwatch.spi;
 
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;

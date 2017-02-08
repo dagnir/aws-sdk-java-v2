@@ -15,14 +15,13 @@
 
 package software.amazon.awssdk.test.util.hamcrest;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 public class CollectionContainsOnlyInOrder<T> extends TypeSafeMatcher<Collection<T>> {
 

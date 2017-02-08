@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.conditions;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Date;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.DateModule;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.Date;
 
 @SdkInternalApi
 abstract class BinaryTimestampConditionBuilder extends BinaryConditionBuilder {

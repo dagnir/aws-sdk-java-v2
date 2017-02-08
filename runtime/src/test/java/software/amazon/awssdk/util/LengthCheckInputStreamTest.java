@@ -16,19 +16,18 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
-import static software.amazon.awssdk.util.LengthCheckInputStream.EXCLUDE_SKIPPED_BYTES;
-import static software.amazon.awssdk.util.LengthCheckInputStream.INCLUDE_SKIPPED_BYTES;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.util.LengthCheckInputStream.EXCLUDE_SKIPPED_BYTES;
+import static software.amazon.awssdk.util.LengthCheckInputStream.INCLUDE_SKIPPED_BYTES;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 
 public class LengthCheckInputStreamTest {

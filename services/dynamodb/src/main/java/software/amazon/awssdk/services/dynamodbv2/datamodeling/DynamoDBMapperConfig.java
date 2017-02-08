@@ -12,15 +12,15 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.services.dynamodbv2.model.KeysAndAttributes;
-import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.services.dynamodbv2.model.KeysAndAttributes;
+import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
 
 /**
  * Immutable configuration object for service call behavior. An instance of this

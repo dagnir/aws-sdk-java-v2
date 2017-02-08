@@ -12,22 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
-import software.amazon.awssdk.waiters.FixedDelayStrategy;
-import software.amazon.awssdk.waiters.MaxAttemptsRetryStrategy;
-import software.amazon.awssdk.waiters.PollingStrategy;
-import software.amazon.awssdk.waiters.Waiter;
-import software.amazon.awssdk.waiters.WaiterParameters;
-
 import software.amazon.awssdk.annotation.Beta;
+import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.document.api.DeleteItemApi;
 import software.amazon.awssdk.services.dynamodbv2.document.api.GetItemApi;
@@ -49,8 +41,15 @@ import software.amazon.awssdk.services.dynamodbv2.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.ScanSpec;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.UpdateItemSpec;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.UpdateTableSpec;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.DeleteItemExpressionSpec;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.GetItemExpressionSpec;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.QueryExpressionSpec;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.ScanExpressionSpec;
+import software.amazon.awssdk.services.dynamodbv2.document.xspec.UpdateItemExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateGlobalSecondaryIndexAction;
+import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableResult;
 import software.amazon.awssdk.services.dynamodbv2.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.DescribeTableResult;
@@ -63,11 +62,11 @@ import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
 import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
 import software.amazon.awssdk.services.dynamodbv2.model.UpdateTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.UpdateTableResult;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.DeleteItemExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.GetItemExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.QueryExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.ScanExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.UpdateItemExpressionSpec;
+import software.amazon.awssdk.waiters.FixedDelayStrategy;
+import software.amazon.awssdk.waiters.MaxAttemptsRetryStrategy;
+import software.amazon.awssdk.waiters.PollingStrategy;
+import software.amazon.awssdk.waiters.Waiter;
+import software.amazon.awssdk.waiters.WaiterParameters;
 
 /**
  * A DynamoDB table. Instance of this class is typically obtained via

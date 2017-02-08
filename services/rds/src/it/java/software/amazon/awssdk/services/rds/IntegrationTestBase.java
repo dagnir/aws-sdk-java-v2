@@ -8,10 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.rds.model.DeleteDBInstanceRequest;
 import software.amazon.awssdk.services.rds.model.DeleteDBParameterGroupRequest;
 import software.amazon.awssdk.services.rds.model.DeleteDBSecurityGroupRequest;
@@ -22,7 +20,6 @@ import software.amazon.awssdk.services.rds.model.DescribeDBSnapshotsRequest;
 import software.amazon.awssdk.services.rds.model.IPRange;
 import software.amazon.awssdk.services.sns.AmazonSNSClient;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import software.amazon.awssdk.test.AWSTestBase;
 
 /**
  * Base class for all RDS integration tests. Loads AWS credentials from a

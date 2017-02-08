@@ -1,13 +1,13 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.newBouncyCastleProvider;
-import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.newBouncyCastleProvider;
+import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.tempBucketName;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -21,14 +21,11 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.s3.AmazonS3;

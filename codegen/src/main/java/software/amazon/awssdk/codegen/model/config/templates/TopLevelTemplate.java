@@ -17,7 +17,6 @@ package software.amazon.awssdk.codegen.model.config.templates;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.LinkedList;
 import java.util.List;
 

@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.glacier;
 
 import java.io.BufferedInputStream;
@@ -23,7 +24,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.internal.io.ResettableInputStream;
 import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;

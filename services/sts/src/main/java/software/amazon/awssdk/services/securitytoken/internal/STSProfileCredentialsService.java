@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.securitytoken.internal;
 
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.services.securitytoken.auth.STSAssumeRoleSessionCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
+import software.amazon.awssdk.services.securitytoken.auth.STSAssumeRoleSessionCredentialsProvider;
 
 /**
  * Loaded via reflection by the core module when role assumption is configured in a

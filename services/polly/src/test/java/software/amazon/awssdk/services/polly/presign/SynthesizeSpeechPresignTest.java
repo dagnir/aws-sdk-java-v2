@@ -12,22 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.polly.presign;
 
-import software.amazon.awssdk.auth.AWS4Signer;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.auth.SdkClock;
-import software.amazon.awssdk.auth.StaticSignerProvider;
-import software.amazon.awssdk.auth.presign.PresignerParams;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.services.polly.model.OutputFormat;
-import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
-
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -38,9 +27,19 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import software.amazon.awssdk.auth.AWS4Signer;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.SdkClock;
+import software.amazon.awssdk.auth.StaticSignerProvider;
+import software.amazon.awssdk.auth.presign.PresignerParams;
+import software.amazon.awssdk.internal.auth.SignerProvider;
+import software.amazon.awssdk.services.polly.model.OutputFormat;
+import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
 
 public class SynthesizeSpeechPresignTest {
 

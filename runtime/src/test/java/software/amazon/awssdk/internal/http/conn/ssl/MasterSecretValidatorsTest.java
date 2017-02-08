@@ -12,14 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.conn.ssl;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-
-import software.amazon.awssdk.internal.http.conn.ssl.MasterSecretValidators;
 import software.amazon.awssdk.internal.http.conn.ssl.MasterSecretValidators.MasterSecretValidator;
 import software.amazon.awssdk.internal.http.conn.ssl.MasterSecretValidators.NoOpMasterSecretValidator;
 import software.amazon.awssdk.internal.http.conn.ssl.privileged.PrivilegedMasterSecretValidator;

@@ -12,18 +12,18 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.TypedMap;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Scalar;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Vector;
 import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /**
  * Generic type helper.

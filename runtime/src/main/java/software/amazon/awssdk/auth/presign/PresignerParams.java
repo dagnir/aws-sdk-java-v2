@@ -12,20 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.presign;
 
+import java.net.URI;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.SdkClock;
 import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.SdkClock;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-
-import java.net.URI;
 
 /**
  * Params object passed to the presigner extension class for a service client and also for {@link PresignerFacade}.

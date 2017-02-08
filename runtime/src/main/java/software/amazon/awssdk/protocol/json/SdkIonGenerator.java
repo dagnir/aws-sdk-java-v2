@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json;
 
 import java.io.ByteArrayOutputStream;
@@ -20,11 +21,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
-
-import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.ion.IonType;
 import software.amazon.ion.IonWriter;
 import software.amazon.ion.Timestamp;

@@ -12,16 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.util.ValidationUtils;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
+package software.amazon.awssdk.regions;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import software.amazon.awssdk.AmazonWebServiceClient;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Metadata for an AWS region, including its name and what services

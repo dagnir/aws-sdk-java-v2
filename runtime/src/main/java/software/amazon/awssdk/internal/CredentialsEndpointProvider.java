@@ -12,12 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
 

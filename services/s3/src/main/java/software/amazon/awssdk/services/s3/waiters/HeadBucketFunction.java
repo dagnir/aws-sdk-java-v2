@@ -16,10 +16,10 @@
 package software.amazon.awssdk.services.s3.waiters;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.waiters.SdkFunction;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketResult;
-import software.amazon.awssdk.services.s3.AmazonS3;
+import software.amazon.awssdk.waiters.SdkFunction;
 
 @SdkInternalApi
 public class HeadBucketFunction implements

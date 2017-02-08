@@ -9,10 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.cloudsearchdomain.AmazonCloudSearchDomain;

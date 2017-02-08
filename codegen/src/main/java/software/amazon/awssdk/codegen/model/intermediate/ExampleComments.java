@@ -16,7 +16,6 @@
 package software.amazon.awssdk.codegen.model.intermediate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Map;
 
 public class ExampleComments {

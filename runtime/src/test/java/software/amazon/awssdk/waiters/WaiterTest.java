@@ -15,19 +15,22 @@
 
 package software.amazon.awssdk.waiters;
 
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Mockito.*;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.AmazonWebServiceRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WaiterTest {

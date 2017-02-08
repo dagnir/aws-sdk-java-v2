@@ -16,12 +16,11 @@
 
 package software.amazon.awssdk;
 
-import software.amazon.awssdk.http.HttpMethodName;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.http.HttpMethodName;
 
 /**
  * Represents a request being sent to an Amazon Web Service, including the

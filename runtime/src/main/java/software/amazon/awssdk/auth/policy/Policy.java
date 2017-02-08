@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.policy;
 
 import java.util.ArrayList;
@@ -20,9 +21,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import software.amazon.awssdk.auth.policy.internal.JsonPolicyReader;
-import software.amazon.awssdk.auth.policy.internal.JsonPolicyWriter;
 import software.amazon.awssdk.auth.policy.internal.JsonPolicyWriter;
 
 /**

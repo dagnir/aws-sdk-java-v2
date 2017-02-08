@@ -12,8 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.polly.presign;
 
+import java.net.URI;
+import java.net.URL;
+import java.util.Date;
+import org.joda.time.DateTime;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -24,12 +29,6 @@ import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.services.polly.AmazonPolly;
 import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
-
-import org.joda.time.DateTime;
-
-import java.net.URI;
-import java.net.URL;
-import java.util.Date;
 
 /**
  * Presigning extensions methods for {@link AmazonPolly}.

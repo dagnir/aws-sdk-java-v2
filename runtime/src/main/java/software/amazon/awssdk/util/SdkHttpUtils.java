@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.io.UnsupportedEncodingException;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.http.HttpMethodName;
 

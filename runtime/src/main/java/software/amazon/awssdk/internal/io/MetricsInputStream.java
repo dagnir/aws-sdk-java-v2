@@ -17,7 +17,6 @@ package software.amazon.awssdk.internal.io;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import software.amazon.awssdk.util.AWSRequestMetrics;
 
 /**

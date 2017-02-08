@@ -25,9 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.utils.FluentHashSet;
 
 public class ItemValueConformerTest {

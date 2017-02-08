@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.profile;
 
+import java.util.concurrent.Semaphore;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
-
-import java.util.concurrent.Semaphore;
 
 /**
  * Credentials provider based on AWS configuration profiles. This provider vends AWSCredentials from

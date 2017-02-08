@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.protect.auth;
 
-import software.amazon.awssdk.auth.RequestSigner;
-
 import java.util.Optional;
+import software.amazon.awssdk.auth.RequestSigner;
 
 public interface RequestSignerProvider {
     Optional<RequestSigner> getSigner(Class<? extends RequestSigner> requestSignerType);

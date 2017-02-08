@@ -15,22 +15,6 @@
 
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.transform.Unmarshaller;
-import software.amazon.awssdk.util.LogCaptor;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
-import org.junit.Before;
-import org.junit.Test;
-import org.w3c.dom.Node;
-import utils.http.WireMockTestBase;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static software.amazon.awssdk.http.HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -39,6 +23,21 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThat;
+import static software.amazon.awssdk.http.HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.spi.LoggingEvent;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.Node;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.util.LogCaptor;
+import utils.http.WireMockTestBase;
 
 public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase {
 

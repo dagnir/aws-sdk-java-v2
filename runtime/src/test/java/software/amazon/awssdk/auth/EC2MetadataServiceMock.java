@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import static software.amazon.awssdk.SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY;
@@ -28,9 +29,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
-
 import org.apache.commons.io.IOUtils;
-
 import software.amazon.awssdk.util.EC2MetadataUtils;
 
 /**

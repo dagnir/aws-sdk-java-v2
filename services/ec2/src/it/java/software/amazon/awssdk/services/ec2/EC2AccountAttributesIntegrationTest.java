@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.AccountAttribute;
 import software.amazon.awssdk.services.ec2.model.DescribeAccountAttributesRequest;
 

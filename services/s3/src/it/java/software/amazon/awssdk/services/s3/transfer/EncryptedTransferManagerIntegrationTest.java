@@ -1,16 +1,14 @@
 package software.amazon.awssdk.services.s3.transfer;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.File;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterials;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;

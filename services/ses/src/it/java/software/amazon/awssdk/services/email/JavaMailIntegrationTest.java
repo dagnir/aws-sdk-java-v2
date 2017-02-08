@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.email;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
-
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
@@ -27,11 +26,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.simpleemail.AWSJavaMailTransport;
 
 /**

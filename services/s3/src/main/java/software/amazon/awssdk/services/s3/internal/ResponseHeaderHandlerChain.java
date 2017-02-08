@@ -12,12 +12,12 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;

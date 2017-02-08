@@ -15,14 +15,12 @@
 
 package software.amazon.awssdk.internal;
 
-import java.io.IOException;
-
-import org.joda.time.DateTime;
-
-import software.amazon.awssdk.util.DateUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import java.io.IOException;
+import org.joda.time.DateTime;
+import software.amazon.awssdk.util.DateUtils;
 
 /**
  * A Jackson serializer for Joda {@code DateTime}s.

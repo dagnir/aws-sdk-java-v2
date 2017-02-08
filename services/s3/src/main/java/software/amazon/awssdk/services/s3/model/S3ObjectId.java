@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
-import java.io.Serializable;
 
 import static software.amazon.awssdk.services.s3.model.InstructionFileId.DEFAULT_INSTRUCTION_FILE_SUFFIX;
 import static software.amazon.awssdk.services.s3.model.InstructionFileId.DOT;
 
+import java.io.Serializable;
 import software.amazon.awssdk.annotation.Immutable;
 
 /**

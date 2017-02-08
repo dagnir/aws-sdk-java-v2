@@ -11,7 +11,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -25,7 +24,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.SDKGlobalConfiguration;

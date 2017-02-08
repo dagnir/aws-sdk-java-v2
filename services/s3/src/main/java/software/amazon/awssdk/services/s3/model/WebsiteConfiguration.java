@@ -14,8 +14,8 @@
  */
 
 package software.amazon.awssdk.services.s3.model;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 

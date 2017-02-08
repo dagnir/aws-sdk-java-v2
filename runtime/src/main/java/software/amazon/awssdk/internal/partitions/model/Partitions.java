@@ -10,12 +10,12 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.partitions.model;
 
-import software.amazon.awssdk.util.ValidationUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Metadata of all partitions.

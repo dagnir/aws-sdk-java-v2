@@ -5,10 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.BucketLoggingConfiguration;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;

@@ -12,25 +12,24 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.net.ConnectionUtils;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryParameters;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
 import software.amazon.awssdk.util.IOUtils;
 import software.amazon.awssdk.util.json.Jackson;
-import com.fasterxml.jackson.databind.JsonNode;
 
 @SdkInternalApi
 public final class EC2CredentialsUtils {

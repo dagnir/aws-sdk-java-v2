@@ -12,10 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.conditions;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
 import com.fasterxml.jackson.databind.JsonNode;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
  * Base class for Binary String conditions. Handles marshalling a {@link JsonNode} into String.

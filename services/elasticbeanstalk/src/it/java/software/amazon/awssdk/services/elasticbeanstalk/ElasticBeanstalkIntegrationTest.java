@@ -7,10 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elasticbeanstalk.model.ApplicationDescription;
 import software.amazon.awssdk.services.elasticbeanstalk.model.ApplicationVersionDescription;
 import software.amazon.awssdk.services.elasticbeanstalk.model.CheckDNSAvailabilityRequest;

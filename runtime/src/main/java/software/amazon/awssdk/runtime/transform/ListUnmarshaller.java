@@ -12,16 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.runtime.transform;
 
-import com.fasterxml.jackson.core.JsonToken;
+import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
 
+import com.fasterxml.jackson.core.JsonToken;
 import java.util.ArrayList;
 import java.util.List;
-
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-
-import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
 
 /**
  * This unmarshaller assumes that the start array token as already been consumed before getting

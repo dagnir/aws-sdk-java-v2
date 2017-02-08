@@ -12,23 +12,26 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.apigateway.mockservice;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.log4j.BasicConfigurator;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.core.IsInstanceOf;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
+import org.apache.log4j.BasicConfigurator;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsInstanceOf;
+import org.junit.Before;
+import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
@@ -83,11 +86,6 @@ import software.amazon.awssdk.services.apigateway.mockservice.model.ScalarTypes;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 

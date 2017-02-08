@@ -12,10 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.runtime.transform;
 
 import java.lang.reflect.Constructor;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 

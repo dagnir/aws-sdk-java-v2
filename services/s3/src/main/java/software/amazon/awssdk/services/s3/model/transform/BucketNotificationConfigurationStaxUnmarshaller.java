@@ -12,14 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.io.InputStream;
 import java.util.Map.Entry;
-
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.XMLEvent;
-
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.BucketNotificationConfiguration;

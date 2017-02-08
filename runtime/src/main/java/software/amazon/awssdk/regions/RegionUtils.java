@@ -12,17 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfiguration;
+package software.amazon.awssdk.regions;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.SdkClientException;
 
 /**
  * Utilities for working with regions.

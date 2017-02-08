@@ -15,7 +15,6 @@
  package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import java.util.List;
-
 import software.amazon.awssdk.annotation.Beta;
 
 /**

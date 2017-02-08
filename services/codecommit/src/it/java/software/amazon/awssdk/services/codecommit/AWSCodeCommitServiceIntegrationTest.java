@@ -3,12 +3,10 @@ package software.amazon.awssdk.services.codecommit;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.codecommit.AWSCodeCommit;
 import software.amazon.awssdk.services.codecommit.AWSCodeCommitClient;
 import software.amazon.awssdk.services.codecommit.model.CreateRepositoryRequest;

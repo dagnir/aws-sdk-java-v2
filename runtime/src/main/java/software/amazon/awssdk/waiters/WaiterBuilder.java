@@ -15,15 +15,12 @@
 
 package software.amazon.awssdk.waiters;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
 public class WaiterBuilder<Input extends AmazonWebServiceRequest, Output> {

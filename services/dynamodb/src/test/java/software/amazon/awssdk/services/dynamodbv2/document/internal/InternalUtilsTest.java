@@ -14,15 +14,16 @@
  */
 
 package software.amazon.awssdk.services.dynamodbv2.document.internal;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.toAttributeValues;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.toItemList;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.toSimpleList;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.toSimpleValue;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.valToString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -35,9 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.Expected;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;

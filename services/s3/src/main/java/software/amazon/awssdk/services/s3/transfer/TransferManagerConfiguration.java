@@ -12,11 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
-import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import static software.amazon.awssdk.services.s3.internal.Constants.GB;
+import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
-import static software.amazon.awssdk.services.s3.internal.Constants.*;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 
 /**
  * Configuration options for how {@link TransferManager} processes requests.

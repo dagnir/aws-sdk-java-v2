@@ -15,6 +15,11 @@
 
 package software.amazon.awssdk.codegen.internal;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
+import java.io.IOException;
+import java.util.List;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.config.templates.ChildTemplate;
 import software.amazon.awssdk.codegen.model.config.templates.CodeGenTemplatesConfig;
@@ -22,13 +27,6 @@ import software.amazon.awssdk.codegen.model.config.templates.TopLevelTemplate;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateExceptionHandler;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Util class that sets up the freemarker configuration and loads the templates.

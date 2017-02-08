@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.http.HttpMethodName;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -26,11 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.http.HttpMethodName;
 
 class MockRequestBuilder {
     private final SignableRequest<?> request;

@@ -1,4 +1,5 @@
 package software.amazon.awssdk.http;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -7,15 +8,13 @@ import java.nio.charset.Charset;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-
-import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
-
 import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
+import software.amazon.awssdk.http.settings.HttpClientSettings;
 
 
 public class TTE004146470IntegrationTest {

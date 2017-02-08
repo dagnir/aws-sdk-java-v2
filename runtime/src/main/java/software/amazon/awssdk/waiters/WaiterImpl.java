@@ -15,17 +15,13 @@
 
 package software.amazon.awssdk.waiters;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.ValidationUtils;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 @SdkProtectedApi
 public class WaiterImpl<Input extends AmazonWebServiceRequest, Output> implements Waiter<Input>{

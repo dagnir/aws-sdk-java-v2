@@ -12,14 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.internal.protocol;
 
 import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.opensdk.SdkResponseMetadata;
-import software.amazon.awssdk.opensdk.BaseResult;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.SdkHttpMetadata;
+import software.amazon.awssdk.opensdk.BaseResult;
+import software.amazon.awssdk.opensdk.SdkResponseMetadata;
 
 public class ApiGatewayResponseHandler<T extends BaseResult> implements
                                                              HttpResponseHandler<T> {

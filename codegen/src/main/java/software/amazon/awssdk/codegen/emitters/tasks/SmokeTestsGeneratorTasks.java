@@ -12,17 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.emitters.tasks;
 
+import static software.amazon.awssdk.codegen.internal.Constants.PROPERTIES_FILE_NAME_SUFFIX;
+
+import java.util.Arrays;
+import java.util.List;
 import software.amazon.awssdk.codegen.emitters.CodeWriter;
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static software.amazon.awssdk.codegen.internal.Constants.PROPERTIES_FILE_NAME_SUFFIX;
 
 public class SmokeTestsGeneratorTasks extends BaseGeneratorTasks {
 

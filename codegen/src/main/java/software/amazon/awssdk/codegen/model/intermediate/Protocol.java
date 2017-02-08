@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import software.amazon.awssdk.codegen.protocol.ApiGatewayProtocolMetadataProvider;
 import software.amazon.awssdk.codegen.protocol.AwsCborProtocolMetadataProvider;
 import software.amazon.awssdk.codegen.protocol.AwsJsonProtocolMetadataProvider;
@@ -24,8 +26,6 @@ import software.amazon.awssdk.codegen.protocol.ProtocolMetadataProvider;
 import software.amazon.awssdk.codegen.protocol.QueryProtocolMetadataProvider;
 import software.amazon.awssdk.codegen.protocol.RestJsonProtocolMetdataProvider;
 import software.amazon.awssdk.codegen.protocol.RestXmlProtocolMetadataProvider;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Protocol {
     EC2("ec2", new Ec2ProtocolMetdataProvider()),

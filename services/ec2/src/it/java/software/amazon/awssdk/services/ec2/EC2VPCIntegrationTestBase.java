@@ -2,7 +2,6 @@ package software.amazon.awssdk.services.ec2;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.services.ec2.model.DeleteNetworkAclRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteRouteRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteRouteTableRequest;

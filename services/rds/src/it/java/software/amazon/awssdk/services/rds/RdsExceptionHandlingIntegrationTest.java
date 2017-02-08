@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.services.rds.model.DBInstanceNotFoundException;
 import software.amazon.awssdk.services.rds.model.DescribeDBInstancesRequest;

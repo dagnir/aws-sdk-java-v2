@@ -12,20 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry.v2;
 
-import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.SdkClientException;
-
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Collections;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.SdkClientException;
 
 public class RetryOnExceptionsConditionTest {
 

@@ -12,16 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.codegen.utils;
 
-import software.amazon.awssdk.codegen.internal.Jackson;
-import software.amazon.awssdk.codegen.internal.Utils;
-import software.amazon.awssdk.codegen.model.service.ServiceModel;
+package software.amazon.awssdk.codegen.utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import software.amazon.awssdk.codegen.internal.Jackson;
+import software.amazon.awssdk.codegen.internal.Utils;
+import software.amazon.awssdk.codegen.model.service.ServiceModel;
 
 public class ModelLoaderUtils {
 

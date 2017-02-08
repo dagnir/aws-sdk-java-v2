@@ -21,10 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.sqs.AmazonSQS;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;

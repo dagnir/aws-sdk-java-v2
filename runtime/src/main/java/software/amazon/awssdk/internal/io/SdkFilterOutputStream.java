@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.io;
 
 import java.io.FilterOutputStream;
 import java.io.OutputStream;
-
 import software.amazon.awssdk.internal.MetricAware;
 import software.amazon.awssdk.util.IOUtils;
 

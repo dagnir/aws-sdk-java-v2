@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.request;
 
-import java.util.List;
 import java.util.ArrayList;
-
+import java.util.List;
 import software.amazon.awssdk.handlers.RequestHandler2;
 
 public class RequestHandlerTestUtils {

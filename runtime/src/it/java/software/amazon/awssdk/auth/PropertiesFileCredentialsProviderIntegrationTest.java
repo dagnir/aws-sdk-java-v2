@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import static org.junit.Assert.assertEquals;
@@ -23,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileWriter;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

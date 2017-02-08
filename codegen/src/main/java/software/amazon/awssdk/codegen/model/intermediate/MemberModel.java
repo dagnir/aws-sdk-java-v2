@@ -15,12 +15,12 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.TypeUtils;
+import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import software.amazon.awssdk.codegen.internal.DocumentationUtils;
+import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.runtime.transform.PathMarshallers;
-
-import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
 
 public class MemberModel extends DocumentationModel {
 

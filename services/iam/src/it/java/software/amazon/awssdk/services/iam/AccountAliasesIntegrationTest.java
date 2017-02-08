@@ -5,9 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.identitymanagement.model.CreateAccountAliasRequest;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteAccountAliasRequest;
 

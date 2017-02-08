@@ -15,22 +15,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.tz.FixedDateTimeZone;
-
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.annotation.ThreadSafe;
 
 /**

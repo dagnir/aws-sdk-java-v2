@@ -12,9 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
-import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_SDK_TRANSACTION_ID;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.findAll;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -24,13 +24,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_SDK_TRANSACTION_ID;
 
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
-import com.github.tomakehurst.wiremock.verification.LoggedRequest;
-
 import utils.http.WireMockTestBase;
 
 public class SdkTransactionIdInHeaderTest extends WireMockTestBase {

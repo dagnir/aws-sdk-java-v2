@@ -3,12 +3,10 @@ package software.amazon.awssdk.services.dynamodbv2;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;

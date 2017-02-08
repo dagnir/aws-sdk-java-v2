@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import software.amazon.awssdk.services.dynamodbv2.document.internal.PageBasedCollection;
 import software.amazon.awssdk.services.dynamodbv2.document.internal.PageIterable;
 import software.amazon.awssdk.services.dynamodbv2.model.Capacity;

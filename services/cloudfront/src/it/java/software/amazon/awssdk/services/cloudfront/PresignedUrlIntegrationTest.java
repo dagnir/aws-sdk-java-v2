@@ -1,12 +1,11 @@
 package software.amazon.awssdk.services.cloudfront;
 
-import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
 import static org.junit.Assert.assertEquals;
+import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.Date;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -14,7 +13,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.cloudfront.CloudFrontCookieSigner.CookiesForCannedPolicy;
 import software.amazon.awssdk.services.cloudfront.model.Aliases;
 import software.amazon.awssdk.services.cloudfront.model.CacheBehavior;

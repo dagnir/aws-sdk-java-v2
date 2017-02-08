@@ -12,13 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.runtime.transform;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
-
 import org.w3c.dom.Node;
-
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.XpathUtils;
 

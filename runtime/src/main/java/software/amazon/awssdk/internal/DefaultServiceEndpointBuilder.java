@@ -12,17 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.regions.Region;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.regions.Region;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Uses region metdata to construct an endpoint for a specific service

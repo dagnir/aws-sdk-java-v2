@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry;
-
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.SdkBaseException;
-
-import org.apache.http.HttpStatus;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.http.HttpStatus;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.SdkBaseException;
 
 public class RetryUtils {
 

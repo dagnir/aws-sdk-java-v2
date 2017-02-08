@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import static org.junit.Assert.assertNotNull;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 

@@ -1,21 +1,20 @@
 package software.amazon.awssdk.services.ec2;
 
-import software.amazon.awssdk.regions.Regions;
-import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import org.hamcrest.Matchers;
+import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.STSSessionCredentialsProvider;
+import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.ec2.model.CopySnapshotRequest;
 import software.amazon.awssdk.services.ec2.model.CopySnapshotResult;
 import software.amazon.awssdk.services.ec2.model.CreateSnapshotRequest;

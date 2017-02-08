@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.File;
@@ -20,11 +21,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
-
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.services.s3.OnFileDelete;
 import software.amazon.awssdk.services.s3.UploadObjectObserver;

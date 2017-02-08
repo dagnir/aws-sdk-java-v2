@@ -12,8 +12,26 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.BinaryAttributeMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.BinarySetAttributeMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.BooleanAttributeMarshaller;
@@ -88,25 +106,6 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers.Str
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers.UUIDSetUnmarshaller;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers.UUIDUnmarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Pre-defined strategies for mapping between Java types and DynamoDB types.

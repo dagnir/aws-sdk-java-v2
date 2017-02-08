@@ -13,10 +13,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.cloudfront.util;
 
-import static software.amazon.awssdk.util.StringUtils.UTF8;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +31,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.cloudfront.auth.PEM;
 import software.amazon.awssdk.services.cloudfront.auth.RSA;

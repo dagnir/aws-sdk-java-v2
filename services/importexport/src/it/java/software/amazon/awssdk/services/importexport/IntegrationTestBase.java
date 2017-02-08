@@ -1,14 +1,10 @@
 package software.amazon.awssdk.services.importexport;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-
 import software.amazon.awssdk.test.AWSTestBase;
 
 /**

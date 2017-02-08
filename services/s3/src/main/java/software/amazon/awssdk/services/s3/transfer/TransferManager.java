@@ -12,8 +12,28 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
+import static software.amazon.awssdk.services.s3.internal.ServiceUtils.APPEND_MODE;
+import static software.amazon.awssdk.services.s3.internal.ServiceUtils.OVERWRITE_MODE;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
@@ -60,27 +80,6 @@ import software.amazon.awssdk.services.s3.transfer.internal.UploadCallable;
 import software.amazon.awssdk.services.s3.transfer.internal.UploadImpl;
 import software.amazon.awssdk.services.s3.transfer.internal.UploadMonitor;
 import software.amazon.awssdk.util.VersionInfoUtils;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static software.amazon.awssdk.services.s3.internal.ServiceUtils.APPEND_MODE;
-import static software.amazon.awssdk.services.s3.internal.ServiceUtils.OVERWRITE_MODE;
 
 /**
  * High level utility for managing transfers to Amazon S3.

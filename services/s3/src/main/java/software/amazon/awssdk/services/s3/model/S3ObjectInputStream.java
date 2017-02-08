@@ -12,15 +12,14 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.EofSensorInputStream;
-
 import software.amazon.awssdk.internal.MetricAware;
 import software.amazon.awssdk.internal.io.SdkFilterInputStream;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;

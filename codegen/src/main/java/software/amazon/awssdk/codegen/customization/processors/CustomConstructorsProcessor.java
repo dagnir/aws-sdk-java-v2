@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen.customization.processors;
 
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcessor;
 import software.amazon.awssdk.codegen.model.config.ConstructorFormsWrapper;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
@@ -25,9 +27,6 @@ import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.VariableModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Looks at the customization configuration and adds new additional constructors

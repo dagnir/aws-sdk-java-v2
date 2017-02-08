@@ -10,18 +10,16 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
-package software.amazon.awssdk.services.certificatemanager.smoketests;
 
-import javax.annotation.Generated;
+package software.amazon.awssdk.services.certificatemanager.smoketests;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
-
 import cucumber.api.guice.CucumberModules;
 import cucumber.runtime.java.guice.InjectorSource;
-
+import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.services.certificatemanager.AWSCertificateManagerClient;
 

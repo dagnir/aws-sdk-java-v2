@@ -12,21 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2;
-
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.dynamodbv2.model.ListTablesRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasKey;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.junit.Before;
+import org.junit.Test;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.dynamodbv2.model.ListTablesRequest;
+import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
+import software.amazon.awssdk.test.AWSIntegrationTestBase;
 
 public class BaseResultIntegrationTest extends AWSIntegrationTestBase {
 

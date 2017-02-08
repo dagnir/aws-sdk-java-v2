@@ -1,19 +1,17 @@
 package software.amazon.awssdk.services.sts;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityResult;
 import software.amazon.awssdk.services.securitytoken.model.InvalidIdentityTokenException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 
 

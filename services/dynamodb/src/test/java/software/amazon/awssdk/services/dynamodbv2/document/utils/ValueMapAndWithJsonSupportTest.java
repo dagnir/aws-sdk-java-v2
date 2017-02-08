@@ -15,15 +15,14 @@
 
 package software.amazon.awssdk.services.dynamodbv2.document.utils;
 
-import software.amazon.awssdk.AmazonClientException;
-import org.junit.Test;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
+
+import java.util.List;
+import java.util.Map;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonClientException;
 
 
 public class ValueMapAndWithJsonSupportTest {

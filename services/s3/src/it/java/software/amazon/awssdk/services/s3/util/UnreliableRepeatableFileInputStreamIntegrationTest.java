@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.s3.util;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class UnreliableRepeatableFileInputStreamIntegrationTest {

@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.internal;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -23,10 +24,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -34,14 +35,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.internal.net.ConnectionUtils;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryParameters;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
 import utils.http.SocketUtils;
 
 @RunWith(MockitoJUnitRunner.class)

@@ -30,10 +30,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.utils.FluentArrayList;
 import software.amazon.awssdk.services.dynamodbv2.document.utils.FluentHashSet;
 import software.amazon.awssdk.services.dynamodbv2.document.utils.ValueMap;

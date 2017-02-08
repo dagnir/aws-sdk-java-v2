@@ -12,8 +12,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http.timers.client;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.interruptCurrentThreadAfterDelay;
+import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
+import static software.amazon.awssdk.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
+import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
+
+import java.io.IOException;
+import java.util.List;
+import org.apache.http.pool.ConnPoolControl;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
@@ -30,21 +45,6 @@ import software.amazon.awssdk.http.response.DummyResponseHandler;
 import software.amazon.awssdk.http.response.UnresponsiveResponseHandler;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.http.settings.HttpClientSettings;
-import org.apache.http.pool.ConnPoolControl;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.List;
-
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.interruptCurrentThreadAfterDelay;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 public class DummySuccessfulResponseServerIntegrationTests extends MockServerTestBase {
 

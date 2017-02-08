@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.waf;
 
+import org.junit.Test;
 import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.waf.model.ListResourcesForWebACLRequest;
 import software.amazon.awssdk.services.waf.model.WAFNonexistentItemException;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-
-import org.junit.Test;
 
 public class WafRegionalIntegrationTest extends AWSIntegrationTestBase {
 

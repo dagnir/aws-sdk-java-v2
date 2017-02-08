@@ -8,13 +8,11 @@ import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;

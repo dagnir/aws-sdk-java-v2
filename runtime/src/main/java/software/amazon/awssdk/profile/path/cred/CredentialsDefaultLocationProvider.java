@@ -12,14 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.profile.path.cred;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.AwsDirectoryBasePathProvider;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.AwsDirectoryBasePathProvider;
-
 import java.io.File;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.profile.path.AwsDirectoryBasePathProvider;
 
 /**
  * Load shared credentials file from the default location (~/.aws/credentials).

@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.rds;
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.rds.model.DescribeOrderableDBInstanceOptionsRequest;
 import software.amazon.awssdk.services.rds.model.DescribeOrderableDBInstanceOptionsResult;

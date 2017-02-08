@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
-
 import org.apache.http.conn.socket.ConnectionSocketFactory;
+import software.amazon.awssdk.annotation.NotThreadSafe;
 
 /**
  * Used for Apache HTTP client specific custom configurations.

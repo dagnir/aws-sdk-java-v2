@@ -13,11 +13,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.model.config.customization;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import software.amazon.awssdk.runtime.adapters.types.StringToByteBufferAdapter;
 
 /**

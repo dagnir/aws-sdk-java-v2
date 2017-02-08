@@ -15,14 +15,13 @@
 
 package software.amazon.awssdk.codegen.model.config.customization;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.codegen.internal.Constants;
 import software.amazon.awssdk.codegen.model.config.ConstructorFormsWrapper;
 import software.amazon.awssdk.codegen.model.config.templates.CodeGenTemplatesConfig;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class CustomizationConfig {
 

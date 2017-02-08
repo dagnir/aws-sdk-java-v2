@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertEquals;
@@ -21,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.CreateNetworkAclEntryRequest;
 import software.amazon.awssdk.services.ec2.model.CreateNetworkAclRequest;
 import software.amazon.awssdk.services.ec2.model.CreateSubnetRequest;

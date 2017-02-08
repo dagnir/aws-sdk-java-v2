@@ -1,12 +1,9 @@
 package software.amazon.awssdk.services.dynamodbv2;
 
 import java.util.UUID;
-
 import junit.framework.Assert;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.services.dynamodbv2.model.ResourceNotFoundException;

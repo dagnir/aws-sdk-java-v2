@@ -12,15 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.securitytoken.auth;
 
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.internal.SdkPredicate;
-import software.amazon.awssdk.util.ValidationUtils;
+package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +24,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.annotation.ThreadSafe;
+import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Handles refreshing a value with a simple synchronization policy. Does a blocking, synchronous

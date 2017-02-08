@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder;
 
-import software.amazon.awssdk.SdkClientException;
-
 import org.junit.Test;
+import software.amazon.awssdk.SdkClientException;
 
 public class ChoiceStateTest {
 

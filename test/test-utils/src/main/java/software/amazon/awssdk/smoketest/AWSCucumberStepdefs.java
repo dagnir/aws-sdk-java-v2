@@ -12,29 +12,27 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.smoketest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import java.util.Arrays;
-import java.util.Map;
-
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.util.Classes;
 import com.google.inject.Inject;
-
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import cucumber.runtime.java.guice.ScenarioScoped;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.AmazonWebServiceClient;
+import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.util.Classes;
 
 /**
  * Step definitions that perform actions for every matcher that is agreed.

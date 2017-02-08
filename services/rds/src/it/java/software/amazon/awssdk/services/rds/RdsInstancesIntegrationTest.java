@@ -8,10 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
-
 import org.junit.Test;
-
-import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
 import software.amazon.awssdk.services.rds.model.CreateDBInstanceReadReplicaRequest;
 import software.amazon.awssdk.services.rds.model.CreateDBInstanceRequest;
 import software.amazon.awssdk.services.rds.model.CreateDBSnapshotRequest;

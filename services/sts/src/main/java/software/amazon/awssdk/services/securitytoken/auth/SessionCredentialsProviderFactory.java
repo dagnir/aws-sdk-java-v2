@@ -12,11 +12,11 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.auth.AWSCredentials;
 

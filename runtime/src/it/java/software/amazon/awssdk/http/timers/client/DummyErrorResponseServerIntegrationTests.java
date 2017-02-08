@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http.timers.client;
 
 import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
@@ -19,10 +20,8 @@ import static software.amazon.awssdk.http.timers.TimeoutTestConstants.SLOW_REQUE
 import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
 
 import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.handlers.RequestHandler2;
@@ -32,7 +31,6 @@ import software.amazon.awssdk.http.MockServerTestBase;
 import software.amazon.awssdk.http.request.RequestHandlerTestUtils;
 import software.amazon.awssdk.http.request.SlowRequestHandler;
 import software.amazon.awssdk.http.response.NullErrorResponseHandler;
-import software.amazon.awssdk.http.response.NullResponseHandler;
 import software.amazon.awssdk.http.response.UnresponsiveErrorResponseHandler;
 import software.amazon.awssdk.http.server.MockServer;
 

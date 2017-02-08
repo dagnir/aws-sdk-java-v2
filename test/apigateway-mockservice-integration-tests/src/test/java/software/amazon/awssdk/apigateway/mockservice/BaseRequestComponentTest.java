@@ -1,21 +1,5 @@
 package software.amazon.awssdk.apigateway.mockservice;
 
-import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
-import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
-import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
-import software.amazon.awssdk.opensdk.SdkRequestConfig;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.model.*;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -25,11 +9,25 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static software.amazon.awssdk.apigateway.mockservice.WireMockExtensions.anyRequestedFor;
+
+import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
+import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
+import software.amazon.awssdk.opensdk.SdkRequestConfig;
+import software.amazon.awssdk.services.apigateway.mockservice.MyService;
+import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
+import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
 
 /**
  * For this test GETs are stubbed with a dummy successful response and PUTS are stubbed with a

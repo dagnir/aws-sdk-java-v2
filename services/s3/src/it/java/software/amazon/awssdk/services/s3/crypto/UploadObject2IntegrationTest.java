@@ -1,7 +1,7 @@
 package software.amazon.awssdk.services.s3.crypto;
 
-import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +10,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;

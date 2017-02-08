@@ -12,25 +12,21 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.internal.EC2CredentialsUtils;
 import software.amazon.awssdk.util.DateUtils;
-import software.amazon.awssdk.util.json.Jackson;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**

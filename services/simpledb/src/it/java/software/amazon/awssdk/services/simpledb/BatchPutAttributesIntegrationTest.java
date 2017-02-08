@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.simpledb;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.simpledb.model.BatchPutAttributesRequest;
 import software.amazon.awssdk.services.simpledb.model.DuplicateItemNameException;
 import software.amazon.awssdk.services.simpledb.model.MissingParameterException;

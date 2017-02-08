@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.opensdk.protect.auth;
 
-import software.amazon.awssdk.auth.RequestSigner;
+package software.amazon.awssdk.opensdk.protect.auth;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import software.amazon.awssdk.auth.RequestSigner;
 
 /**
  * Hold references to all of the available RequestSigners and can

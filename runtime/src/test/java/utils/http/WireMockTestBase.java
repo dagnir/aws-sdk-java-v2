@@ -12,16 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package utils.http;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.net.URI;
-
 import org.junit.Rule;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
@@ -29,7 +29,6 @@ import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.JsonErrorResponseHandler;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 /**
  * Base class for tests that use a WireMock server

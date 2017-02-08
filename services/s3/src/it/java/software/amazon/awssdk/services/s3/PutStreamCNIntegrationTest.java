@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.internal.Mimetypes;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;

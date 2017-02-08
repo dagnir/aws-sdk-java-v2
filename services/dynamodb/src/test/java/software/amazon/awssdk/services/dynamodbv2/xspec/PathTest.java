@@ -20,9 +20,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import software.amazon.awssdk.services.dynamodbv2.xspec.Path;
-import software.amazon.awssdk.services.dynamodbv2.xspec.SubstitutionContext;
-
 public class PathTest {
 
     @Test

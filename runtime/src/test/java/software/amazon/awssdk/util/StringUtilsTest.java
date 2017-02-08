@@ -16,20 +16,17 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
-import static software.amazon.awssdk.util.StringUtils.UTF8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.nio.ByteBuffer;
-import java.util.Locale;
 import java.util.Random;
-
 import org.hamcrest.Matchers;
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.text.IsEmptyString;
 import org.junit.Assert;
 import org.junit.Test;
 

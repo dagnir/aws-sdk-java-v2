@@ -19,10 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.net.ssl.SSLException;
-
 import org.junit.Test;
-
-import software.amazon.awssdk.internal.http.conn.ssl.ShouldClearSslSessionPredicate;
 import software.amazon.awssdk.util.JavaVersionParser.JavaVersion;
 
 public class ShouldClearSslSessionsPredicateTest {

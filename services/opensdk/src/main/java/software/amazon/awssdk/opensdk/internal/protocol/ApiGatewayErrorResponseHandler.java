@@ -12,25 +12,24 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.internal.protocol;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.opensdk.internal.BaseException;
-import software.amazon.awssdk.opensdk.SdkErrorHttpMetadata;
 import software.amazon.awssdk.http.SdkHttpMetadata;
 import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
+import software.amazon.awssdk.opensdk.SdkErrorHttpMetadata;
+import software.amazon.awssdk.opensdk.internal.BaseException;
 import software.amazon.awssdk.protocol.json.JsonContent;
 import software.amazon.awssdk.util.ValidationUtils;
-import com.fasterxml.jackson.core.JsonFactory;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.List;
 
 /**
  * Error response handler for API Gateway clients. API Gateway errors are identified by their HTTP

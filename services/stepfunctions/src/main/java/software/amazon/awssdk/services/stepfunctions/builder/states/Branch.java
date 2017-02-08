@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.states;
 
-import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
-import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
+import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 
 /**
  * A single branch of parallel execution in a state machine. See {@link ParallelState}.

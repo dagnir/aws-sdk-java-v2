@@ -12,18 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.apache.request.impl;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.http.RepeatableInputStreamRequestEntity;
-import software.amazon.awssdk.internal.http.apache.utils.ApacheUtils;
-import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
-import software.amazon.awssdk.util.FakeIOException;
-import software.amazon.awssdk.util.SdkHttpUtils;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.config.RequestConfig;
@@ -36,11 +31,16 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.http.RepeatableInputStreamRequestEntity;
+import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.apache.utils.ApacheUtils;
+import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
+import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.SdkHttpUtils;
 
 /**
  * Responsible for creating Apache HttpClient 4 request objects.

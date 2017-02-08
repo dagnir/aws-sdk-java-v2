@@ -12,8 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.internal.ServiceUtils;
@@ -79,9 +82,6 @@ import software.amazon.awssdk.services.s3.model.metrics.MetricsPredicateVisitor;
 import software.amazon.awssdk.services.s3.model.metrics.MetricsPrefixPredicate;
 import software.amazon.awssdk.services.s3.model.metrics.MetricsTagPredicate;
 import software.amazon.awssdk.util.CollectionUtils;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Converts bucket configuration objects into XML byte arrays.

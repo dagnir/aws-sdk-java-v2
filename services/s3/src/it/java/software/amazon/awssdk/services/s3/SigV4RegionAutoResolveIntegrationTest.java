@@ -1,5 +1,21 @@
 package software.amazon.awssdk.services.s3;
 
+import static software.amazon.awssdk.test.util.SdkAsserts.assertFileEqualsFile;
+import static software.amazon.awssdk.test.util.SdkAsserts.assertStreamEqualsStream;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.services.s3.internal.AWSS3V4Signer;
@@ -18,24 +34,6 @@ import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.StringInputStream;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-
-import static software.amazon.awssdk.test.util.SdkAsserts.assertFileEqualsFile;
-import static software.amazon.awssdk.test.util.SdkAsserts.assertStreamEqualsStream;
 
 public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBase {
 

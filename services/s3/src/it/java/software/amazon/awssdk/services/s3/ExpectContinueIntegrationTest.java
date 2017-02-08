@@ -5,10 +5,8 @@ import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.test.util.RandomInputStream;

@@ -12,15 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.event;
 
+import java.io.IOException;
+import java.io.InputStream;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.io.SdkFilterInputStream;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Used for input stream progress tracking purposes.

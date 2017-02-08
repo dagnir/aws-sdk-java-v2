@@ -1,8 +1,8 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
+import static org.junit.Assert.assertEquals;
 import static software.amazon.awssdk.services.s3.internal.Constants.GB;
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
-import static org.junit.Assert.assertEquals;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -12,11 +12,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;

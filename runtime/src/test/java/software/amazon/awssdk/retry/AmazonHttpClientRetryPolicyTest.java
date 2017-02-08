@@ -16,16 +16,15 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry;
 
 import java.io.IOException;
 import java.util.Random;
 import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.Request;

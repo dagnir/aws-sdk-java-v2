@@ -12,10 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
-import software.amazon.awssdk.services.s3.model.ResponseHeaderOverrides;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import software.amazon.awssdk.services.s3.model.ResponseHeaderOverrides;
 
 /**
  * An opaque token that holds some private state and can be used to resume a

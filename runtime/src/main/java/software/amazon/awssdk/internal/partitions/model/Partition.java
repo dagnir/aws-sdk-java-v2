@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.partitions.model;
 
-import software.amazon.awssdk.util.ValidationUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import software.amazon.awssdk.AmazonWebServiceClient;
-
 import java.util.Map;
 import java.util.regex.Pattern;
+import software.amazon.awssdk.AmazonWebServiceClient;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * This class models a AWS partition and contains all metadata about it.

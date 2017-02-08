@@ -2,7 +2,6 @@ package software.amazon.awssdk.services.iam;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.identitymanagement.model.CreateSAMLProviderRequest;
 import software.amazon.awssdk.services.identitymanagement.model.DeleteSAMLProviderRequest;

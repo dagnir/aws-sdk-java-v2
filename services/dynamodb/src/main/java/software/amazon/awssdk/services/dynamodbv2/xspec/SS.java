@@ -17,10 +17,8 @@
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import software.amazon.awssdk.annotation.Immutable;
-
 import software.amazon.awssdk.annotation.Beta;
+import software.amazon.awssdk.annotation.Immutable;
 
 /**
  * A path operand that refers to a <a href=

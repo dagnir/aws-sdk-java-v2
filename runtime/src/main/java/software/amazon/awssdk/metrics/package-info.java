@@ -116,5 +116,6 @@
  * operating system minus OpenFileDescriptorCount.</li>
  * </ol>
  */
+
 package software.amazon.awssdk.metrics;
 

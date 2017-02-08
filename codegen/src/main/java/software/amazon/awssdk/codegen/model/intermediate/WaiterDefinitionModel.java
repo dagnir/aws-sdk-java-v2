@@ -15,9 +15,8 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.Utils;
-
 import java.util.List;
+import software.amazon.awssdk.codegen.internal.Utils;
 
 public class WaiterDefinitionModel {
 

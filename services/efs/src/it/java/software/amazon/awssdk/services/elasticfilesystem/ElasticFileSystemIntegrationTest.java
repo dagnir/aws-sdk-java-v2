@@ -12,18 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.elasticfilesystem;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.UUID;
-
 import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.elasticfilesystem.model.CreateFileSystemRequest;
 import software.amazon.awssdk.services.elasticfilesystem.model.DeleteFileSystemRequest;

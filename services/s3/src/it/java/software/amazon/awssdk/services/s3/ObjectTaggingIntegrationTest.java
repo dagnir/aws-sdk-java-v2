@@ -12,8 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static software.amazon.awssdk.services.s3.internal.Constants.KB;
+
+import java.io.File;
+import java.util.Arrays;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
@@ -32,16 +42,6 @@ import software.amazon.awssdk.services.s3.model.SetObjectTaggingRequest;
 import software.amazon.awssdk.services.s3.model.SetObjectTaggingResult;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.File;
-import java.util.Arrays;
-
-import static software.amazon.awssdk.services.s3.internal.Constants.KB;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Integration tests for object tagging support.

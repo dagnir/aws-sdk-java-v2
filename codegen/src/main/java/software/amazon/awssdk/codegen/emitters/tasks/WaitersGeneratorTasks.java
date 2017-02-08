@@ -12,14 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.codegen.emitters.tasks;
 
-import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
-import software.amazon.awssdk.codegen.model.intermediate.Metadata;
-import software.amazon.awssdk.codegen.model.intermediate.WaiterDefinitionModel;
-import software.amazon.awssdk.util.ImmutableMapParameter;
+package software.amazon.awssdk.codegen.emitters.tasks;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.model.intermediate.Metadata;
+import software.amazon.awssdk.codegen.model.intermediate.WaiterDefinitionModel;
+import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class WaitersGeneratorTasks extends BaseGeneratorTasks {
 

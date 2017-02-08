@@ -12,8 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.reflect;
 
+import java.lang.reflect.Method;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
@@ -25,8 +27,6 @@ import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.opensdk.protect.client.SdkSyncClientBuilder;
 import software.amazon.awssdk.protocol.model.TestCase;
 import software.amazon.awssdk.protocol.wiremock.WireMockUtils;
-
-import java.lang.reflect.Method;
 
 /**
  * Reflection utils to create the client class and invoke operation methods.

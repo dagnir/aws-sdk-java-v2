@@ -1,11 +1,8 @@
 package software.amazon.awssdk.services.edp;
 
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.datapipeline.DataPipelineClient;
 import software.amazon.awssdk.test.AWSTestBase;
 

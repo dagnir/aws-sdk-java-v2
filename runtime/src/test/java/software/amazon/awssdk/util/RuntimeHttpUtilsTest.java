@@ -12,21 +12,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.SdkClientException;
-
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+import software.amazon.awssdk.DefaultRequest;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.SdkClientException;
 
 /**
  * Unit tests for utility methods in {@link RuntimeHttpUtils}.

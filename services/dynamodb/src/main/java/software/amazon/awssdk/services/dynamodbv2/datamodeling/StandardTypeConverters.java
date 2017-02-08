@@ -12,19 +12,16 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
-import software.amazon.awssdk.util.DateUtils;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Currency;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -35,8 +32,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-
 import org.joda.time.DateTime;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
+import software.amazon.awssdk.util.DateUtils;
 
 /**
  * Type conversions.

@@ -12,12 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
-import software.amazon.awssdk.SdkClientException;
+import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_CONTENT_SHA256;
+
+import java.io.IOException;
+import java.io.InputStream;
 import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.auth.AWS4Signer;
 import software.amazon.awssdk.auth.AwsChunkedEncodingInputStream;
@@ -27,11 +32,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.request.S3HandlerContextKeys;
 import software.amazon.awssdk.util.BinaryUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_CONTENT_SHA256;
 
 /**
  * AWS4 signer implementation for AWS S3

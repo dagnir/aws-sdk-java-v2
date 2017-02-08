@@ -12,8 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.policy.internal;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -22,10 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.auth.policy.Condition;
@@ -33,11 +34,6 @@ import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
-import software.amazon.awssdk.util.json.Jackson;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import software.amazon.awssdk.auth.policy.Condition;
-import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**

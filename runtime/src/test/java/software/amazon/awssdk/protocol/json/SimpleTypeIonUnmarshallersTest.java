@@ -12,18 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json;
 
 import static org.junit.Assert.assertEquals;
 
+import com.fasterxml.jackson.core.JsonParser;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.TimeZone;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContextImpl;
 import software.amazon.awssdk.runtime.transform.SimpleTypeIonUnmarshallers.BigDecimalIonUnmarshaller;
@@ -39,8 +39,6 @@ import software.amazon.awssdk.runtime.transform.SimpleTypeIonUnmarshallers.LongI
 import software.amazon.awssdk.runtime.transform.SimpleTypeIonUnmarshallers.ShortIonUnmarshaller;
 import software.amazon.awssdk.runtime.transform.SimpleTypeIonUnmarshallers.StringIonUnmarshaller;
 import software.amazon.awssdk.util.StringInputStream;
-import com.fasterxml.jackson.core.JsonParser;
-
 import software.amazon.ion.system.IonSystemBuilder;
 
 public class SimpleTypeIonUnmarshallersTest {

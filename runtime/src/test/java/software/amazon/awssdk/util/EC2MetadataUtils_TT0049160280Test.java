@@ -16,11 +16,11 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.util.EC2MetadataUtils.InstanceInfo;
 
 public class EC2MetadataUtils_TT0049160280Test {

@@ -12,15 +12,14 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.marshallers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.StringSetAttributeMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 

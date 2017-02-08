@@ -7,10 +7,8 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.SDKGlobalTime;

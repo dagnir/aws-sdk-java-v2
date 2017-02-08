@@ -15,17 +15,16 @@
 
 package software.amazon.awssdk.codegen.internal;
 
-import software.amazon.awssdk.codegen.model.intermediate.Metadata;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import static software.amazon.awssdk.codegen.internal.Constants.AWS_DOCS_HOST;
 import static software.amazon.awssdk.codegen.model.intermediate.ShapeType.Model;
 import static software.amazon.awssdk.codegen.model.intermediate.ShapeType.Request;
 import static software.amazon.awssdk.codegen.model.intermediate.ShapeType.Response;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import software.amazon.awssdk.codegen.model.intermediate.Metadata;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 
 public class DocumentationUtils {
 

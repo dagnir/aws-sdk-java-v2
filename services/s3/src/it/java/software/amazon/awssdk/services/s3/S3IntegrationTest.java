@@ -17,14 +17,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.SDKGlobalConfiguration;

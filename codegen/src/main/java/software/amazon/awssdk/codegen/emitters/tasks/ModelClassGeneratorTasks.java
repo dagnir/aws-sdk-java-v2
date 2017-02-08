@@ -12,25 +12,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.codegen.emitters.tasks;
 
-import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
-import software.amazon.awssdk.codegen.model.intermediate.Metadata;
-import software.amazon.awssdk.codegen.model.intermediate.Protocol;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
-import software.amazon.awssdk.util.ImmutableMapParameter;
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
-import software.amazon.awssdk.codegen.utils.FunctionalUtils;
+package software.amazon.awssdk.codegen.emitters.tasks;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
+import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.internal.DocumentationUtils;
+import software.amazon.awssdk.codegen.model.intermediate.Metadata;
+import software.amazon.awssdk.codegen.model.intermediate.Protocol;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
+import software.amazon.awssdk.codegen.utils.FunctionalUtils;
+import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
 

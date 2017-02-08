@@ -12,17 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.opensdk.model;
 
-import software.amazon.awssdk.opensdk.BaseRequest;
-import software.amazon.awssdk.opensdk.SdkRequestConfig;
-import software.amazon.awssdk.http.HttpMethodName;
+package software.amazon.awssdk.opensdk.model;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.opensdk.BaseRequest;
+import software.amazon.awssdk.opensdk.SdkRequestConfig;
 
 /**
  * Low level request class for accessing the service resources. This class is

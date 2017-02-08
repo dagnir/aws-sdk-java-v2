@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.codegen.customization.processors;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcessor;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.ShapeModifier;
@@ -26,10 +29,6 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.service.Member;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * This processor handles all the modification on the shape members in the

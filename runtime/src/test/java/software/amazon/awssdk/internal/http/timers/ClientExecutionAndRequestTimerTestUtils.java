@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.timers;
 
 import static org.junit.Assert.assertEquals;
@@ -30,11 +31,6 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
-import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHandler;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import org.apache.http.HttpEntity;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
@@ -44,15 +40,18 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.protocol.HttpContext;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.internal.http.client.HttpClientFactory;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
+import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHandler;
 import software.amazon.awssdk.http.response.HttpResponseProxy;
 import software.amazon.awssdk.http.response.NullErrorResponseHandler;
+import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
+import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
+import software.amazon.awssdk.internal.http.client.HttpClientFactory;
+import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.internal.http.timers.request.HttpRequestTimer;
 

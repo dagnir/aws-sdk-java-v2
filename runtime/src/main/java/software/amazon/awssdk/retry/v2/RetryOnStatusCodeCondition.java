@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry.v2;
+
+import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
 
 /**
  * Retry condition implementation that retries if the HTTP status code matches one of the provided status codes.

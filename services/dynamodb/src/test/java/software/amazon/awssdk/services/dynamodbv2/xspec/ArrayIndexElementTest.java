@@ -15,7 +15,8 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 

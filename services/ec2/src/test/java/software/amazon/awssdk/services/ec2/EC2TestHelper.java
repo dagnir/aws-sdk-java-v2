@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.ec2;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.ec2.model.AssociateDhcpOptionsRequest;

@@ -12,8 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
-import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;

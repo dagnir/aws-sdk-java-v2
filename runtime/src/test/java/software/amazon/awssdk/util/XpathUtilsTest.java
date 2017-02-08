@@ -16,8 +16,14 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static software.amazon.awssdk.util.XpathUtils.asBoolean;
 import static software.amazon.awssdk.util.XpathUtils.asByte;
 import static software.amazon.awssdk.util.XpathUtils.asByteBuffer;
@@ -31,11 +37,6 @@ import static software.amazon.awssdk.util.XpathUtils.asString;
 import static software.amazon.awssdk.util.XpathUtils.documentFrom;
 import static software.amazon.awssdk.util.XpathUtils.isEmpty;
 import static software.amazon.awssdk.util.XpathUtils.xpath;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,10 +46,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.SimpleTimeZone;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;

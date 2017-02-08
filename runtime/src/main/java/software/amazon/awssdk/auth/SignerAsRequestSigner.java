@@ -17,7 +17,6 @@
 package software.amazon.awssdk.auth;
 
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.SignableRequest;
 
 /**
  * An adapter class that allows a {@link Signer} to implement the

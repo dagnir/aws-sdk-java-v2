@@ -7,10 +7,8 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.route53domains.model.CheckDomainAvailabilityRequest;
 import software.amazon.awssdk.services.route53domains.model.CheckDomainAvailabilityResult;
 import software.amazon.awssdk.services.route53domains.model.ContactDetail;

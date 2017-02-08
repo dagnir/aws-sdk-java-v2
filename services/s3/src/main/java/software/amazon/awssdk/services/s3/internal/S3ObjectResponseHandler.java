@@ -12,8 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.s3.internal;
 
+package software.amazon.awssdk.services.s3.internal;
 
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
@@ -21,7 +21,6 @@ import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectInputStream;
-import software.amazon.awssdk.util.BinaryUtils;
 
 /**
  * S3 HTTP response handler that knows how to pull S3 object content and

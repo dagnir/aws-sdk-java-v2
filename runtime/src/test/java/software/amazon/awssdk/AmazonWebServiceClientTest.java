@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk;
 
 import static org.junit.Assert.assertEquals;
@@ -19,12 +20,9 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.AWS4Signer;
 import software.amazon.awssdk.auth.QueryStringSigner;
 import software.amazon.awssdk.http.IdleConnectionReaper;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
 
 public class AmazonWebServiceClientTest {
 

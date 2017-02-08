@@ -12,14 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.retry;
 
+import java.util.Random;
 import software.amazon.awssdk.retry.v2.BackoffStrategy;
 import software.amazon.awssdk.retry.v2.RetryPolicyContext;
 import software.amazon.awssdk.util.ValidationUtils;
-import software.amazon.awssdk.retry.v2.RetryPolicyContext;
-
-import java.util.Random;
 
 /**
  * This class includes a set of pre-defined backoff policies.

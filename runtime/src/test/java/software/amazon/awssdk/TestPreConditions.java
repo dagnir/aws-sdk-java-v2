@@ -16,7 +16,6 @@
 package software.amazon.awssdk;
 
 import org.junit.Assume;
-
 import software.amazon.awssdk.util.JavaVersionParser;
 import software.amazon.awssdk.util.JavaVersionParser.KnownJavaVersions;
 

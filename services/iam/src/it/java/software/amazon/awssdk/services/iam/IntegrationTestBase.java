@@ -2,9 +2,7 @@ package software.amazon.awssdk.services.iam;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.Before;
-
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagement;
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
 import software.amazon.awssdk.test.AWSTestBase;

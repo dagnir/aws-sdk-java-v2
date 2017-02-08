@@ -12,16 +12,16 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.Bean;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.BeanMap;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.regex.Pattern;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.Bean;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.BeanMap;
 
 /**
  * Annotation to convert an object into a single delimited {@link String}

@@ -12,16 +12,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
+import java.util.concurrent.Future;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.event.DeliveryMode;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.SDKProgressPublisher;
 import software.amazon.awssdk.services.s3.transfer.PersistableTransfer;
-
-import org.apache.commons.logging.LogFactory;
-
-import java.util.concurrent.Future;
 
 /**
  * Used to publish transfer events.

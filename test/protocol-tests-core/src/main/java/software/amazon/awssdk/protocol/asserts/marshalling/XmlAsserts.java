@@ -12,16 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.asserts.marshalling;
 
-import software.amazon.awssdk.util.StringInputStream;
-
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
-import org.w3c.dom.Document;
+import static org.junit.Assert.fail;
 
 import java.io.StringWriter;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,8 +26,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import static org.junit.Assert.fail;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
+import org.w3c.dom.Document;
+import software.amazon.awssdk.util.StringInputStream;
 
 public class XmlAsserts {
 

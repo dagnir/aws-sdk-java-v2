@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.cloudformation;
 
 import static org.junit.Assert.assertEquals;
@@ -22,10 +23,8 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.services.cloudformation.model.EstimateTemplateCostRequest;

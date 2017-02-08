@@ -1,5 +1,16 @@
 package software.amazon.awssdk.services.cloudtrail;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Iterator;
+import org.apache.commons.io.IOUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.cloudtrail.model.CreateTrailRequest;
 import software.amazon.awssdk.services.cloudtrail.model.CreateTrailResult;
 import software.amazon.awssdk.services.cloudtrail.model.DeleteTrailRequest;
@@ -16,20 +27,6 @@ import software.amazon.awssdk.services.s3.model.ObjectListing;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.services.s3.model.S3VersionSummary;
 import software.amazon.awssdk.services.s3.model.VersionListing;
-
-import org.apache.commons.io.IOUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Iterator;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class CloudTrailIntegrationTest extends IntegrationTestBase {
     private static final String BUCKET_NAME =

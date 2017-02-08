@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.util;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.NotThreadSafe;
+package software.amazon.awssdk.util;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import software.amazon.awssdk.annotation.NotThreadSafe;
 
 /**
  * Used both as a base class and a minimal support of timing info.

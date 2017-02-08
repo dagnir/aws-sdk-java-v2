@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.model;
 
-import software.amazon.awssdk.http.HttpMethodName;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-
 import java.io.IOException;
+import software.amazon.awssdk.http.HttpMethodName;
 
 public class HttpMethodNameDeserializer extends JsonDeserializer<HttpMethodName> {
 

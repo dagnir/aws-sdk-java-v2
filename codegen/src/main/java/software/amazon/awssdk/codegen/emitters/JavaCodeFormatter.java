@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
-import software.amazon.awssdk.codegen.internal.Constants;
-
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
@@ -24,9 +24,7 @@ import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
-
-import java.util.HashMap;
-import java.util.Map;
+import software.amazon.awssdk.codegen.internal.Constants;
 
 /**
  * Formats the generated java source code. Uses Eclipse JDT core plugin from the Eclipse SDK.

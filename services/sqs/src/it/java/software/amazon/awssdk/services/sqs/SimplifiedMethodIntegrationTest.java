@@ -12,10 +12,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResult;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResult;
 import software.amazon.awssdk.services.sqs.model.ListQueuesResult;

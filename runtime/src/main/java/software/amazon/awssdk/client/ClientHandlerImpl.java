@@ -12,8 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.client;
 
+import java.net.URI;
+import java.util.List;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
@@ -32,21 +35,6 @@ import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.CredentialUtils;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.RequestConfig;
-import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.metrics.AwsSdkMetrics;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.CredentialUtils;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Default implementation of {@link ClientHandler}.

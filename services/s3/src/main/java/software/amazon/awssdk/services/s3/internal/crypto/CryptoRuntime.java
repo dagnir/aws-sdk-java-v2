@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.internal.crypto.S3KeyWrapScheme.RSA_ECB_OAEPWithSHA256AndMGF1Padding;
 
 import java.security.Provider;
 import java.security.Security;
-
 import javax.crypto.Cipher;
-
 import org.apache.commons.logging.LogFactory;
 
 public class CryptoRuntime {

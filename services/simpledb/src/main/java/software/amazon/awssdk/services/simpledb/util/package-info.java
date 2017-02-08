@@ -16,5 +16,6 @@
  * Common utilities for working with Amazon SimpleDB, such
  * as padding numeric datatypes so they can be compared as strings.
  */
+
 package software.amazon.awssdk.services.simpledb.util;
 

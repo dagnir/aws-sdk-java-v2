@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.conditions;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Custom deserializer for a {@link Condition}.

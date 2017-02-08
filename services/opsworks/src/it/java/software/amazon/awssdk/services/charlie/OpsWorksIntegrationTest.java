@@ -9,10 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DeleteLoadBalancerRequest;
 import software.amazon.awssdk.services.opsworks.model.AppType;

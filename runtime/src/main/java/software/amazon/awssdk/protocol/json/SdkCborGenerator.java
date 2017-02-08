@@ -14,15 +14,14 @@
  * permissions and limitations under the License.
  *
  */
+
 package software.amazon.awssdk.protocol.json;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.dataformat.cbor.CBORGenerator;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-
 import java.io.IOException;
 import java.util.Date;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
  * Thin wrapper around Jackson's JSON generator for CBOR.

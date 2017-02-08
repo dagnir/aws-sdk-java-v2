@@ -15,16 +15,15 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.internal.io;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
+package software.amazon.awssdk.internal.io;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
  * An input stream that can have the close operation disabled (to avoid

@@ -17,7 +17,6 @@ package software.amazon.awssdk.test.util;
 
 import com.google.common.util.concurrent.ForwardingExecutorService;
 import com.google.common.util.concurrent.Futures;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;

@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -32,7 +32,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.auth.STSSessionCredentialsProvider;
 import software.amazon.awssdk.services.s3.model.GeneratePresignedUrlRequest;

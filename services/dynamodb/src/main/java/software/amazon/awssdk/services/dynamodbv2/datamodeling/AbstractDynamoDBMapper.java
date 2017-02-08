@@ -12,18 +12,18 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.FailedBatch;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
-import software.amazon.awssdk.services.s3.model.Region;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.FailedBatch;
+import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
+import software.amazon.awssdk.services.s3.model.Region;
 
 /**
  * Abstract implementation of {@code IDynamoDBMapper}. Convenient method forms pass through to the

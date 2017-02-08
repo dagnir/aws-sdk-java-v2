@@ -6,9 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.services.rds.model.CreateDBParameterGroupRequest;
 import software.amazon.awssdk.services.rds.model.DBParameterGroup;
 import software.amazon.awssdk.services.rds.model.DeleteDBParameterGroupRequest;

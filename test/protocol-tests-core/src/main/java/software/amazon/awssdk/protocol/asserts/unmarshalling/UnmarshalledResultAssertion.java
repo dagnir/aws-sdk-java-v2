@@ -12,18 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.asserts.unmarshalling;
-
-import software.amazon.awssdk.protocol.reflect.ShapeModelReflector;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import org.apache.commons.io.IOUtils;
-
-import java.io.InputStream;
-import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertTrue;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import org.apache.commons.io.IOUtils;
+import software.amazon.awssdk.protocol.reflect.ShapeModelReflector;
 
 /**
  * Asserts on the unmarshalled result of a given operation.

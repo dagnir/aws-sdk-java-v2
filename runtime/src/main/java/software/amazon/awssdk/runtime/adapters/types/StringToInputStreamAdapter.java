@@ -13,11 +13,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.runtime.adapters.types;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.StringInputStream;

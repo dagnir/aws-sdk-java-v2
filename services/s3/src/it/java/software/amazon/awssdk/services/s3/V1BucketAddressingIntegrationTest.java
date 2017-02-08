@@ -4,10 +4,8 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.ExecutionContext;

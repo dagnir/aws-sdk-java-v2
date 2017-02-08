@@ -12,14 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.codedeploy;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.test.AWSTestBase;
 
 public class IntegrationTestBase extends AWSTestBase {

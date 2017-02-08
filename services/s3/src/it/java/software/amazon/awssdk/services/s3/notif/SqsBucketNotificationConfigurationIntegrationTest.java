@@ -7,11 +7,9 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.actions.SQSActions;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;

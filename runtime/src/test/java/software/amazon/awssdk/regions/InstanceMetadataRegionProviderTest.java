@@ -12,23 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.util.EC2MetadataUtilsServer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.util.EC2MetadataUtilsServer;
-
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Tests broken up by fixture.

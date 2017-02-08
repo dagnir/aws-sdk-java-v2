@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import static org.junit.Assert.assertEquals;
@@ -23,20 +24,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
-
-import software.amazon.awssdk.protocol.json.SdkJsonGenerator;
-import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
-import com.fasterxml.jackson.core.JsonFactory;
-
 import org.joda.time.DateTime;
 import org.joda.time.IllegalFieldValueException;
 import org.junit.Test;
+import software.amazon.awssdk.protocol.json.SdkJsonGenerator;
+import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
 
 public class DateUtilsTest {
     private static final boolean DEBUG = false;

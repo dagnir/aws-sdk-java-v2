@@ -8,12 +8,10 @@ import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.test.util.ConstantInputStream;

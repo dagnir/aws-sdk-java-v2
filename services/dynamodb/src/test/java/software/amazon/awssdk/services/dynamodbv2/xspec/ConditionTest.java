@@ -15,20 +15,16 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder._;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute_not_exists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-
 import org.junit.Test;
-
-import software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder;
-import software.amazon.awssdk.services.dynamodbv2.xspec.UpdateItemExpressionSpec;
 
 public class ConditionTest {
     /*

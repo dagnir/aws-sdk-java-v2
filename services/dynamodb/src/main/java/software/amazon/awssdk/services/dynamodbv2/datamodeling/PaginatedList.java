@@ -12,10 +12,8 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
 
 /**
  * Unmodifiable list supporting paginated result sets from Amazon DynamoDB.

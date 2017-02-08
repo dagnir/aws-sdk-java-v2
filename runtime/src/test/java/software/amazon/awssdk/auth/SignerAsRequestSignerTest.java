@@ -16,15 +16,15 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SignableRequest;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import software.amazon.awssdk.SignableRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SignerAsRequestSignerTest {

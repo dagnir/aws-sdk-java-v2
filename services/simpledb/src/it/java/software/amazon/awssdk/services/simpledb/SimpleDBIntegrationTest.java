@@ -15,10 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.services.simpledb.model.Attribute;

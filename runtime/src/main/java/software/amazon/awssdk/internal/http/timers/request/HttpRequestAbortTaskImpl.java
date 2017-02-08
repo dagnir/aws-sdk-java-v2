@@ -12,10 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.timers.request;
 
 import org.apache.http.client.methods.HttpRequestBase;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**

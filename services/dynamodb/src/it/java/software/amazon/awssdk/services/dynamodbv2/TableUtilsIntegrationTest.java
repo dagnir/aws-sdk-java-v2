@@ -1,5 +1,14 @@
 package software.amazon.awssdk.services.dynamodbv2;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
@@ -13,16 +22,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
 import software.amazon.awssdk.services.dynamodbv2.util.TableUtils;
 import software.amazon.awssdk.services.dynamodbv2.util.TableUtils.TableNeverTransitionedToStateException;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class TableUtilsIntegrationTest extends AWSIntegrationTestBase {
 

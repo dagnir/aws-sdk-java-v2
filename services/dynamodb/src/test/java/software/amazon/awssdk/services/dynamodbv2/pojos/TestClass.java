@@ -12,14 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.pojos;
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMarshalling;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBNativeBoolean;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.RandomUUIDMarshaller;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.S3Link;
+package software.amazon.awssdk.services.dynamodbv2.pojos;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -30,6 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMarshalling;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBNativeBoolean;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.RandomUUIDMarshaller;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.S3Link;
 
 @DynamoDBTable(tableName="nonexisting-test-tablename")
 public class TestClass {

@@ -3,9 +3,7 @@ package software.amazon.awssdk.services.cloudfront;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionRequest;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionResult;
 import software.amazon.awssdk.services.s3.AmazonS3Client;

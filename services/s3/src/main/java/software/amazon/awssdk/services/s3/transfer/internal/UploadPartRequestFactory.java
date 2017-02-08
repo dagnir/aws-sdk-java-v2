@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
-
 import software.amazon.awssdk.internal.io.ReleasableInputStream;
 import software.amazon.awssdk.services.s3.internal.InputSubstream;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;

@@ -16,10 +16,9 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.http.server.MockServer.ServerBehavior;
 import software.amazon.awssdk.http.server.MockServer;
 
 public abstract class UnresponsiveMockServerTestBase extends MockServerTestBase {

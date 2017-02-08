@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen;
 
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
@@ -22,9 +24,6 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeUnmarshaller;
 import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.Output;
 import software.amazon.awssdk.codegen.model.service.Shape;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Constructs the result shapes for the intermediate model. Analyzes the operations in the service

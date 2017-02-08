@@ -12,8 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.retry;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.v2.AndRetryCondition;
 import software.amazon.awssdk.retry.v2.BackoffStrategy;
@@ -25,10 +29,6 @@ import software.amazon.awssdk.retry.v2.RetryOnExceptionsCondition;
 import software.amazon.awssdk.retry.v2.RetryOnStatusCodeCondition;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.retry.v2.SimpleRetryPolicy;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Fluent builder to construct a {@link RetryPolicy} implementation.

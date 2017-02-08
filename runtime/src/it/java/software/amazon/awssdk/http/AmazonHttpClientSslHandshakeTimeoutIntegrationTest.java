@@ -16,12 +16,9 @@
 
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.http.request.EmptyHttpRequest;
-import software.amazon.awssdk.http.response.NullErrorResponseHandler;
-import software.amazon.awssdk.http.response.NullResponseHandler;
-import software.amazon.awssdk.http.server.MockServer;
+import static org.junit.Assert.fail;
+
+import java.net.InetSocketAddress;
 import org.apache.http.HttpHost;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -29,10 +26,9 @@ import org.apache.http.conn.ManagedHttpClientConnection;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.net.InetSocketAddress;
-
-import static org.junit.Assert.fail;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.http.request.EmptyHttpRequest;
 
 /**
  * This test is to verify that the apache-httpclient library has fixed the bug where socket timeout configuration is

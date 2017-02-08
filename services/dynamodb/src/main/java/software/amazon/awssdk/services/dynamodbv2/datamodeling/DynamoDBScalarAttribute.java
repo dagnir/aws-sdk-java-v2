@@ -12,14 +12,14 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 
 /**
  * @Deprecated - Replaced by {@link DynamoDBTyped}

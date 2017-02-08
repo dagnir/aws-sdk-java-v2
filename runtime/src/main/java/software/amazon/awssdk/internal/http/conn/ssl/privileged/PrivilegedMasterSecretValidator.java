@@ -12,19 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.conn.ssl.privileged;
 
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.http.conn.ssl.MasterSecretValidators;
 

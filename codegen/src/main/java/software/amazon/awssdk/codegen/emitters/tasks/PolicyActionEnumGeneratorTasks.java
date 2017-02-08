@@ -12,8 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.emitters.tasks;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.codegen.emitters.CodeWriter;
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
@@ -22,10 +26,6 @@ import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.AuthPolicyActions;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.util.ImmutableMapParameter;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class PolicyActionEnumGeneratorTasks extends BaseGeneratorTasks {
 

@@ -12,21 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.event;
 
-import static software.amazon.awssdk.event.ProgressEventType.HTTP_REQUEST_CONTENT_RESET_EVENT;
-import static software.amazon.awssdk.event.ProgressEventType.HTTP_RESPONSE_CONTENT_RESET_EVENT;
-import static software.amazon.awssdk.event.ProgressEventType.REQUEST_BYTE_TRANSFER_EVENT;
-import static software.amazon.awssdk.event.ProgressEventType.REQUEST_CONTENT_LENGTH_EVENT;
-import static software.amazon.awssdk.event.ProgressEventType.RESPONSE_BYTE_TRANSFER_EVENT;
-import static software.amazon.awssdk.event.ProgressEventType.RESPONSE_CONTENT_LENGTH_EVENT;
+package software.amazon.awssdk.event;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-
 import org.apache.commons.logging.LogFactory;
 
 /**

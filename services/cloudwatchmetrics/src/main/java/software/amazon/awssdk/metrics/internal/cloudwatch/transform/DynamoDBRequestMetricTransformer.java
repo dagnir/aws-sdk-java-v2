@@ -20,12 +20,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.annotation.ThreadSafe;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
+import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.MetricType;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AWSMetricTransformerFactory;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;

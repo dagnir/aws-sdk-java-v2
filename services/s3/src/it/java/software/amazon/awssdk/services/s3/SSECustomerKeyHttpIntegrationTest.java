@@ -10,10 +10,8 @@ import java.net.URI;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Date;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -21,7 +19,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.Protocol;

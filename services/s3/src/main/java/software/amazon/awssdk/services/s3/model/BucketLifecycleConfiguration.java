@@ -12,15 +12,15 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.s3.model;
 
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilter;
+package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilter;
 
 /**
  * Container for bucket lifecycle configuration operations.

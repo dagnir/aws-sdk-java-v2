@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.services.identitymanagement.model.AccessKeyMetadata;
 import software.amazon.awssdk.services.identitymanagement.model.CreateAccessKeyRequest;

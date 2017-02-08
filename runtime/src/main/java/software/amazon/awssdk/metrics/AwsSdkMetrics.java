@@ -14,6 +14,7 @@
  */
 
 package software.amazon.awssdk.metrics;
+
 import static software.amazon.awssdk.SDKGlobalConfiguration.DEFAULT_METRICS_SYSTEM_PROPERTY;
 
 import java.io.File;
@@ -24,27 +25,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
-import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.AWSRequestMetrics.Field;
-import software.amazon.awssdk.util.AWSServiceMetrics;
-import software.amazon.awssdk.auth.PropertiesCredentials;
-import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AWSServiceMetrics;
 
 /**
  * Used to control the default AWS SDK metric collection system.

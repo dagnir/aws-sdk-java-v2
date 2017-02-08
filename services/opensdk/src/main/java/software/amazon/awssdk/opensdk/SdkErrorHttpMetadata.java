@@ -12,13 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.opensdk;
 
-import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.http.SdkHttpMetadata;
+package software.amazon.awssdk.opensdk;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
+import software.amazon.awssdk.annotation.Immutable;
+import software.amazon.awssdk.http.SdkHttpMetadata;
 
 /**
  * Metadata about the HTTP error response. Also includes the raw body content for debugging.

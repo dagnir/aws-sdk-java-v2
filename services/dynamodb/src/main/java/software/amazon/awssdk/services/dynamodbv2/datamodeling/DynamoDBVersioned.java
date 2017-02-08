@@ -12,9 +12,8 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Scalar;
+package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,6 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.math.BigInteger;
 import java.util.Arrays;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Scalar;
 
 /**
  * Annotation for marking a property as an optimistic locking version attribute.

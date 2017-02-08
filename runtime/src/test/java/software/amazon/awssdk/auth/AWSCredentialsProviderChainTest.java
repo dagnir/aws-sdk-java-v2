@@ -16,14 +16,13 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 
 public class AWSCredentialsProviderChainTest {

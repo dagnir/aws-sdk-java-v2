@@ -8,15 +8,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-
-import software.amazon.awssdk.services.s3.model.Bucket;
-import software.amazon.awssdk.services.s3.model.ObjectListing;
-import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.services.importexport.model.CancelJobRequest;
 import software.amazon.awssdk.services.importexport.model.CreateJobRequest;
@@ -29,6 +24,9 @@ import software.amazon.awssdk.services.importexport.model.JobType;
 import software.amazon.awssdk.services.importexport.model.ListJobsRequest;
 import software.amazon.awssdk.services.importexport.model.ListJobsResult;
 import software.amazon.awssdk.services.importexport.model.UpdateJobRequest;
+import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.ObjectListing;
+import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 
 /**
  * Integration tests for the AWS ImportExport Java client.

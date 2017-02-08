@@ -12,10 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.partitions.model;
 
-import software.amazon.awssdk.util.ValidationUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Metadata about a region in partition.

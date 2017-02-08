@@ -12,20 +12,17 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.protect.client;
 
+import java.net.BindException;
+import java.net.ConnectException;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import org.apache.http.conn.ConnectTimeoutException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.ClientConfigurationFactory;
-import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
-import software.amazon.awssdk.opensdk.config.ProxyConfiguration;
-import software.amazon.awssdk.opensdk.config.TimeoutConfiguration;
-import software.amazon.awssdk.opensdk.internal.auth.IamSignerFactory;
-import software.amazon.awssdk.opensdk.internal.auth.SignerProviderAdapter;
-import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfiguration;
-import software.amazon.awssdk.opensdk.internal.config.ClientConfigurationAdapter;
-import software.amazon.awssdk.opensdk.protect.auth.RequestSignerRegistry;
-import software.amazon.awssdk.opensdk.retry.RetryPolicyBuilder;
-import software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.NoOpSigner;
@@ -36,17 +33,19 @@ import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.internal.auth.SignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
+import software.amazon.awssdk.opensdk.config.ProxyConfiguration;
+import software.amazon.awssdk.opensdk.config.TimeoutConfiguration;
+import software.amazon.awssdk.opensdk.internal.auth.IamSignerFactory;
+import software.amazon.awssdk.opensdk.internal.auth.SignerProviderAdapter;
+import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfiguration;
+import software.amazon.awssdk.opensdk.internal.config.ClientConfigurationAdapter;
+import software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner;
+import software.amazon.awssdk.opensdk.protect.auth.RequestSignerRegistry;
+import software.amazon.awssdk.opensdk.retry.RetryPolicyBuilder;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.util.VersionInfoUtils;
-
-import org.apache.http.conn.ConnectTimeoutException;
-
-import java.net.BindException;
-import java.net.ConnectException;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Base class for all Open SDK client builders.

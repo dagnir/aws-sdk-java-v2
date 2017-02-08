@@ -12,11 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.asserts.marshalling;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.protocol.model.HttpMethodNameDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Main composite for marshalling assertions. Contains sub assertions for each component of an HTTP

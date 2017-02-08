@@ -12,13 +12,13 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;

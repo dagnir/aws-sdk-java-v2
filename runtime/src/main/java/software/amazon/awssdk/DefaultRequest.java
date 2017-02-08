@@ -12,19 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.event.ProgressInputStream;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.json.Jackson;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.json.Jackson;
+package software.amazon.awssdk;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -33,6 +22,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.event.ProgressInputStream;
+import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.json.Jackson;
 
 /**
  * Default implementation of the {@linkplain Request} interface.

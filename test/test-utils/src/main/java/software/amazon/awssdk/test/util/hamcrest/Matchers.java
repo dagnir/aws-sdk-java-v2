@@ -15,13 +15,12 @@
 
 package software.amazon.awssdk.test.util.hamcrest;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 
 public class Matchers {
 

@@ -15,16 +15,15 @@
 
 package software.amazon.awssdk.codegen.model.config.templates;
 
-import software.amazon.awssdk.codegen.internal.ClassLoaderHelper;
-import software.amazon.awssdk.codegen.internal.Jackson;
-import software.amazon.awssdk.codegen.model.intermediate.Protocol;
+import static software.amazon.awssdk.codegen.internal.Constants.PROTOCOL_CONFIG_LOCATION;
 
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import static software.amazon.awssdk.codegen.internal.Constants.PROTOCOL_CONFIG_LOCATION;
+import software.amazon.awssdk.codegen.internal.ClassLoaderHelper;
+import software.amazon.awssdk.codegen.internal.Jackson;
+import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 
 public class CodeGenTemplatesConfig {
 

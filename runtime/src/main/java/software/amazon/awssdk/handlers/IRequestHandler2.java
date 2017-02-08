@@ -21,12 +21,6 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.HttpResponse;
 
 /**
  * Interface for {@link RequestHandler2}. Do not use this outside the core SDK. We can and will add

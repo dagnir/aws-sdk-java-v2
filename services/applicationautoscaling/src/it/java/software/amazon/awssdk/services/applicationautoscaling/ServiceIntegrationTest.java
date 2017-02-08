@@ -1,10 +1,9 @@
 package software.amazon.awssdk.services.applicationautoscaling;
 
-import software.amazon.awssdk.services.applicationautoscaling.model.*;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.test.AWSIntegrationTestBase;
 
 public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 

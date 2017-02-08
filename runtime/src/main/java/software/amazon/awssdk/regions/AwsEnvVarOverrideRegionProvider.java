@@ -12,12 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.regions;
 
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SDKGlobalConfiguration;
-
-import static software.amazon.awssdk.SDKGlobalConfiguration.AWS_REGION_ENV_VAR;
+import software.amazon.awssdk.SdkClientException;
 
 /**
  * Loads region information from the '{@value SDKGlobalConfiguration#AWS_REGION_ENV_VAR}'

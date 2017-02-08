@@ -15,6 +15,10 @@
 
 package software.amazon.awssdk.codegen;
 
+import static software.amazon.awssdk.codegen.internal.Utils.unCapitialize;
+
+import java.util.Map;
+import java.util.TreeMap;
 import software.amazon.awssdk.codegen.model.intermediate.ExceptionModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ReturnTypeModel;
@@ -29,11 +33,6 @@ import software.amazon.awssdk.codegen.model.service.Output;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
-
-import java.util.Map;
-import java.util.TreeMap;
-
-import static software.amazon.awssdk.codegen.internal.Utils.unCapitialize;
 
 /**
  * Constructs the operation model for every operation defined by the service.

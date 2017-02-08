@@ -15,6 +15,10 @@
 
 package software.amazon.awssdk.codegen;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import software.amazon.awssdk.jmespath.InvalidTypeException;
 import software.amazon.awssdk.jmespath.JmesPathAndExpression;
 import software.amazon.awssdk.jmespath.JmesPathContainsFunction;
@@ -36,11 +40,6 @@ import software.amazon.awssdk.jmespath.OpGreaterThanOrEqualTo;
 import software.amazon.awssdk.jmespath.OpLessThan;
 import software.amazon.awssdk.jmespath.OpLessThanOrEqualTo;
 import software.amazon.awssdk.jmespath.OpNotEquals;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 
 public class AstJsonToAstJava {

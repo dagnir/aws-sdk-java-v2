@@ -12,20 +12,17 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.jmx;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.List;
-
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
 import org.apache.commons.logging.LogFactory;
-
-import software.amazon.awssdk.jmx.spi.JmxInfoProvider;
 import software.amazon.awssdk.jmx.spi.JmxInfoProvider;
 
 public class JmxInfoProviderSupport implements JmxInfoProvider {

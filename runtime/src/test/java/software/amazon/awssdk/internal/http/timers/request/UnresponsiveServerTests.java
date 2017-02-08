@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.timers.request;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -19,10 +20,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.net.SocketTimeoutException;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
@@ -30,7 +29,6 @@ import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.UnresponsiveMockServerTestBase;
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
-
 import software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils;
 import software.amazon.awssdk.internal.http.timers.TimeoutTestConstants;
 import utils.model.EmptyAmazonWebServiceRequest;

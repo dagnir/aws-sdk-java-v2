@@ -16,7 +16,6 @@
 package software.amazon.awssdk.auth;
 
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.SignableRequest;
 
 /**
  * Used to explicitly indicate that a {@link Signer} can gracefully handle

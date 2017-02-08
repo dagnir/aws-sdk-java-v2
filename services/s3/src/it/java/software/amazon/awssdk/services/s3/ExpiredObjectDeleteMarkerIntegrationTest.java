@@ -5,19 +5,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
-
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilter;
-import software.amazon.awssdk.services.s3.model.lifecycle.LifecyclePrefixPredicate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.BucketLifecycleConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketLifecycleConfiguration.Rule;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.SetBucketLifecycleConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecycleFilter;
+import software.amazon.awssdk.services.s3.model.lifecycle.LifecyclePrefixPredicate;
 
 public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestBase {
 

@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.util;
 
-import software.amazon.awssdk.http.ExecutionContext;
 import org.junit.Assert;
+import software.amazon.awssdk.http.ExecutionContext;
 
 public class RetryTestUtils {
 

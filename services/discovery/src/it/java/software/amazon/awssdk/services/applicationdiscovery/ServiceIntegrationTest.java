@@ -1,12 +1,12 @@
 package software.amazon.awssdk.services.applicationdiscovery;
 
+import junit.framework.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.services.applicationdiscovery.model.ConfigurationItemType;
 import software.amazon.awssdk.services.applicationdiscovery.model.ListConfigurationsRequest;
 import software.amazon.awssdk.services.applicationdiscovery.model.ListConfigurationsResult;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import junit.framework.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.support.model.AddCommunicationToCaseRequest;
 import software.amazon.awssdk.services.support.model.AddCommunicationToCaseResult;
 import software.amazon.awssdk.services.support.model.CreateCaseRequest;

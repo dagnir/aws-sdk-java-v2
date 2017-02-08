@@ -16,6 +16,7 @@
  * governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import static org.junit.Assert.assertEquals;
@@ -23,9 +24,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
 import java.util.Random;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.ResponseMetadata;
 

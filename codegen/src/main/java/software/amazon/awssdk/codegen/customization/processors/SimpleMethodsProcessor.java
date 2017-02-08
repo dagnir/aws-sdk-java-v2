@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.codegen.customization.processors;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcessor;
 import software.amazon.awssdk.codegen.model.config.customization.SimpleMethodFormsWrapper;
 import software.amazon.awssdk.codegen.model.intermediate.ArgumentModel;
@@ -23,10 +26,6 @@ import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This processor adds the simple methods to each OperationModel from the customization config.

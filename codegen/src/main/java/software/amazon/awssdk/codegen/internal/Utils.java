@@ -15,6 +15,12 @@
 
 package software.amazon.awssdk.codegen.internal;
 
+import static software.amazon.awssdk.codegen.internal.Constants.LOGGER;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeMarshaller;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -25,13 +31,6 @@ import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.model.service.XmlNamespace;
 import software.amazon.awssdk.util.StringUtils;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static software.amazon.awssdk.codegen.internal.Constants.LOGGER;
 
 public class Utils {
 

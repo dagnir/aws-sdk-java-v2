@@ -2,9 +2,7 @@ package software.amazon.awssdk.services.route53;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.junit.Before;
-
 import software.amazon.awssdk.test.AWSTestBase;
 
 /**

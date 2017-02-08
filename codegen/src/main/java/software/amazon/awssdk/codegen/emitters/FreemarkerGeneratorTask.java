@@ -15,12 +15,11 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
-import freemarker.template.Template;
+import static software.amazon.awssdk.codegen.internal.Utils.closeQuietly;
 
+import freemarker.template.Template;
 import java.io.IOException;
 import java.io.Writer;
-
-import static software.amazon.awssdk.codegen.internal.Utils.closeQuietly;
 
 /**
  * Runs the template on the data model. By default the freemarker template calls the flush at the

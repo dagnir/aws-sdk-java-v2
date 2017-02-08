@@ -3,10 +3,8 @@ package software.amazon.awssdk.services.s3.transfer;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.kms.utils.KmsTestKeyCache;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.Headers;

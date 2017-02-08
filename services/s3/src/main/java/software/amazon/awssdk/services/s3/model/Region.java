@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.s3.model;
 
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
+package software.amazon.awssdk.services.s3.model;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.services.s3.AmazonS3Client;
 
 
 /**

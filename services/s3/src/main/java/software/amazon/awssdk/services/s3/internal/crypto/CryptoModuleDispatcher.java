@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.model.CryptoMode.AuthenticatedEncryption;
@@ -20,9 +21,8 @@ import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.s3.internal.S3Direct;

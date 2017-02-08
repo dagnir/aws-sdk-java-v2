@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.services.s3.internal.Constants.MAXIMUM_UPLOAD_PARTS;
@@ -20,7 +21,6 @@ import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Encryption;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;

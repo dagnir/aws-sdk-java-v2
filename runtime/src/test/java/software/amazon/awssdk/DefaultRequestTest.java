@@ -12,11 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk;
 
-import software.amazon.awssdk.handlers.HandlerContextKey;
 import org.junit.Assert;
 import org.junit.Test;
+import software.amazon.awssdk.handlers.HandlerContextKey;
 
 /**
  * Unit tests for context in a DefaultRequest class.

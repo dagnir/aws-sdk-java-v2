@@ -16,7 +16,6 @@
 package software.amazon.awssdk.util;
 
 import software.amazon.awssdk.metrics.ServiceMetricType;
-import software.amazon.awssdk.metrics.ServiceMetricType;
 
 /**
  * Predefined AWS SDK non-request specific metric types general across all AWS

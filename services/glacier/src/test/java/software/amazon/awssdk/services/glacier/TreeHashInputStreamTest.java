@@ -12,6 +12,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.glacier;
 
 import static org.junit.Assert.assertEquals;
@@ -26,14 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import software.amazon.awssdk.util.IOUtils;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;
 import software.amazon.awssdk.test.AWSTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.BinaryUtils;
+import software.amazon.awssdk.util.IOUtils;
 
 /**
  * Tests of the TreeHashInputStream class.

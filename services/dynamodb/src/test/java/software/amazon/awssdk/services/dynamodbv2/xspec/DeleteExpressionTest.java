@@ -15,11 +15,10 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
 import static org.junit.Assert.assertEquals;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
 
 import java.util.Map;
-
 import org.junit.Test;
 
 // http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.SpecifyingConditions.html

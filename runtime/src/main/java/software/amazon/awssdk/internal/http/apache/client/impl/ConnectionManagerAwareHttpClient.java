@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.apache.client.impl;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.HttpClientConnectionManager;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**

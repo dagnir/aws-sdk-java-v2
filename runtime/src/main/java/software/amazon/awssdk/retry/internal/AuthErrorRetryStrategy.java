@@ -12,8 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.retry.internal;
 
+package software.amazon.awssdk.retry.internal;
 
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.Request;

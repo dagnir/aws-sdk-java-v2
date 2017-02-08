@@ -19,11 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Map;
-
 import org.junit.Test;
-
-import software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder;
-import software.amazon.awssdk.services.dynamodbv2.xspec.QueryExpressionSpec;
 
 // http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.AccessingItemAttributes.html#Expressions.AccessingItemAttributes.ProjectionExpressions
 public class ProjectionExpressionTest {

@@ -12,24 +12,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.profile;
-
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.auth.profile.internal.Profile;
-
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AWSSessionCredentials;
+import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.profile.internal.Profile;
 
 public class CredentialProfilesTest {
 

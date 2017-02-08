@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.timers.request;
 
 import static org.junit.Assert.assertEquals;
@@ -21,22 +22,20 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-
-import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHandler;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.protocol.HttpContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
+import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHandler;
 import software.amazon.awssdk.http.response.HttpResponseProxy;
 import software.amazon.awssdk.http.response.NullResponseHandler;
+import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils;
 
 /**

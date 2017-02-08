@@ -2,7 +2,6 @@ package software.amazon.awssdk.auth.policy;
 
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SNSActions;
 import software.amazon.awssdk.auth.policy.conditions.SNSConditionFactory;

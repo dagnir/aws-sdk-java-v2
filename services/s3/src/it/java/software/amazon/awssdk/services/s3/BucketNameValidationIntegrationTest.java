@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.s3;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 

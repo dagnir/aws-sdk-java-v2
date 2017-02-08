@@ -1,13 +1,11 @@
 package software.amazon.awssdk.services.ec2;
 
-import org.hamcrest.Matchers;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
+import org.hamcrest.Matchers;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.ec2.model.AvailabilityZone;
 import software.amazon.awssdk.services.ec2.model.DescribeAvailabilityZonesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeAvailabilityZonesResult;

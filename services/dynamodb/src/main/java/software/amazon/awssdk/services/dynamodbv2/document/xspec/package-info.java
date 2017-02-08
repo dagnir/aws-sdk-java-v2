@@ -183,5 +183,6 @@
  * >Using Placeholders for Attribute Names and Values</a>.</li>
  * </ol>
  */
+
 package software.amazon.awssdk.services.dynamodbv2.document.xspec;
     

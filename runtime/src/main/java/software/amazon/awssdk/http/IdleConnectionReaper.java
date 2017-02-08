@@ -12,21 +12,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.http;
-
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.annotation.SdkTestInternalApi;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.conn.HttpClientConnectionManager;
-import software.amazon.awssdk.annotation.SdkInternalApi;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.conn.HttpClientConnectionManager;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 
 /**
  * Daemon thread to periodically check connection pools for idle connections.

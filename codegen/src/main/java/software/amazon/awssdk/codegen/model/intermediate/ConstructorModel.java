@@ -15,12 +15,11 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.Constants;
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import software.amazon.awssdk.codegen.internal.Constants;
+import software.amazon.awssdk.codegen.internal.DocumentationUtils;
 
 public class ConstructorModel extends DocumentationModel {
 

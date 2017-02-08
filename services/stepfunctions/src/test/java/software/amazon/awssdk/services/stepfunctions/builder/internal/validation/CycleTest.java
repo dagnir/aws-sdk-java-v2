@@ -12,12 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.stepfunctions.builder.internal.validation;
 
-import software.amazon.awssdk.services.stepfunctions.builder.StateMachine;
-
-import org.junit.Test;
-
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.branch;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.choice;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.choiceState;
@@ -28,8 +27,9 @@ import static software.amazon.awssdk.services.stepfunctions.builder.StepFunction
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.passState;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.stateMachine;
 import static software.amazon.awssdk.services.stepfunctions.builder.StepFunctionBuilder.succeedState;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+
+import org.junit.Test;
+import software.amazon.awssdk.services.stepfunctions.builder.StateMachine;
 
 public class CycleTest {
 

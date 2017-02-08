@@ -12,21 +12,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.util;
 
 import static org.hamcrest.Matchers.comparesEqualTo;
-import static software.amazon.awssdk.util.JavaVersionParser.JAVA_VERSION_PROPERTY;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
-import software.amazon.awssdk.util.JavaVersionParser.JavaVersion;
-import software.amazon.awssdk.util.JavaVersionParser.KnownJavaVersions;
+import static software.amazon.awssdk.util.JavaVersionParser.JAVA_VERSION_PROPERTY;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.Test;
+import software.amazon.awssdk.util.JavaVersionParser.JavaVersion;
+import software.amazon.awssdk.util.JavaVersionParser.KnownJavaVersions;
 
 public class JavaVersionParserTest {
 

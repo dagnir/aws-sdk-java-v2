@@ -12,15 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.policy;
 
 import java.util.Arrays;
 import java.util.List;
-
 import software.amazon.awssdk.auth.policy.conditions.ConditionFactory;
 import software.amazon.awssdk.auth.policy.conditions.NumericCondition;
 import software.amazon.awssdk.auth.policy.conditions.NumericCondition.NumericComparisonType;
-import software.amazon.awssdk.auth.policy.conditions.ConditionFactory;
 
 /**
  * AWS access control policy conditions are contained in {@link Statement}

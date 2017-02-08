@@ -12,15 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.TimingInfo;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
-import software.amazon.awssdk.util.AWSRequestMetrics;
 
 /**
  * Internal class used to adapt a request handler that implements the

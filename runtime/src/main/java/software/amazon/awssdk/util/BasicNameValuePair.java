@@ -28,8 +28,6 @@
 package software.amazon.awssdk.util;
 
 import java.io.Serializable;
-
-import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.Immutable;
 
 /**

@@ -12,16 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.opensdk.protect.protocol;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.http.JsonResponseHandler;
 import software.amazon.awssdk.opensdk.BaseResult;
 import software.amazon.awssdk.opensdk.internal.BaseException;
 import software.amazon.awssdk.opensdk.internal.protocol.ApiGatewayErrorResponseHandler;
 import software.amazon.awssdk.opensdk.internal.protocol.ApiGatewayErrorUnmarshaller;
 import software.amazon.awssdk.opensdk.internal.protocol.ApiGatewayResponseHandler;
-import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.http.JsonResponseHandler;
 import software.amazon.awssdk.protocol.json.JsonClientMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorResponseMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorShapeMetadata;
@@ -32,11 +37,6 @@ import software.amazon.awssdk.protocol.json.SdkStructuredPlainJsonFactory;
 import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Protocol factory implementation for API Gateway clients.

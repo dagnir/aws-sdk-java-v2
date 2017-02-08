@@ -12,16 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.tests.exception;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.junit.Assert.assertEquals;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.shorea.ApiGatewayProtocol;
@@ -30,12 +35,6 @@ import software.amazon.awssdk.services.shorea.model.NoModeledExceptionsRequest;
 import software.amazon.awssdk.services.shorea.model.SameShapeDifferentStatusCodesRequest;
 import software.amazon.awssdk.services.shorea.model.SharedExceptionsAcrossOperationsWithDifferentStatusCodesRequest;
 import software.amazon.awssdk.services.shorea.model.SomeModeledException;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
 public class ApiGatewayExceptionTests {

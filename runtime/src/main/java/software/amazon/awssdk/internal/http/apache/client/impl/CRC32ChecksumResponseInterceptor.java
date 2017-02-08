@@ -12,12 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.apache.client.impl;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.util.CRC32ChecksumCalculatingInputStream;
-import software.amazon.awssdk.util.IOUtils;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
@@ -25,12 +25,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.protocol.HttpContext;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.CRC32ChecksumCalculatingInputStream;
 import software.amazon.awssdk.util.IOUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 @SdkInternalApi
 public class CRC32ChecksumResponseInterceptor implements HttpResponseInterceptor {

@@ -13,19 +13,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.auth;
 
+import java.net.URI;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.auth.RegionAwareSigner;
 import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.internal.auth.SignerProvider;
+import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.services.s3.internal.ServiceUtils;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.net.URI;
 
 public class S3SignerProvider extends SignerProvider {
 

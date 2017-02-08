@@ -16,7 +16,6 @@
 package software.amazon.awssdk.jmespath;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.math.BigDecimal;
 
 public abstract class NumericComparator extends Comparator {

@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.simplesystemsmanagement.model.CreateDocumentRequest;
 import software.amazon.awssdk.services.simplesystemsmanagement.model.CreateDocumentResult;
 import software.amazon.awssdk.services.simplesystemsmanagement.model.DeleteDocumentRequest;

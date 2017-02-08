@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.client;
 
-import software.amazon.awssdk.annotation.SdkProtectedApi;
-
 import java.util.concurrent.ExecutorService;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
  * Provides access to all params needed in a asynchronous AWS service client constructor. Abstract

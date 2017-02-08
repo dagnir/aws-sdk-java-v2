@@ -15,22 +15,21 @@
 
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
-import software.amazon.awssdk.services.s3.model.Region;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringEndsWith.endsWith;
+import static software.amazon.awssdk.test.util.hamcrest.Matchers.containsOnly;
+import static software.amazon.awssdk.test.util.hamcrest.Matchers.containsOnlyInOrder;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
+import software.amazon.awssdk.services.s3.model.Region;
 import utils.http.RecordingSocketFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static software.amazon.awssdk.test.util.hamcrest.Matchers.containsOnly;
-import static software.amazon.awssdk.test.util.hamcrest.Matchers.containsOnlyInOrder;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringEndsWith.endsWith;
 
 @SuppressWarnings("unchecked")
 public class GlobalEndpointHeadBucketIntegrationTest extends S3IntegrationTestBase {

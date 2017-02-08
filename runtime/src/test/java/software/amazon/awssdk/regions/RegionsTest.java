@@ -19,9 +19,10 @@
 
 package software.amazon.awssdk.regions;
 
-import org.junit.*;
-
-import software.amazon.awssdk.*;
+import org.junit.Assert;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonWebServiceClient;
+import software.amazon.awssdk.ClientConfiguration;
 
 public class RegionsTest {
 
