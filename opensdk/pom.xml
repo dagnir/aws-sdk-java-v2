@@ -3,10 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-		<groupId>software.amazon.awssdk</groupId>
-		<artifactId>aws-java-sdk-pom</artifactId>
-		<version>0.1-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>aws-java-sdk-pom</artifactId>
+        <version>0.1-SNAPSHOT</version>
     </parent>
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>aws-java-sdk-opensdk</artifactId>
