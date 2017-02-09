@@ -61,9 +61,6 @@ public class GenerationMojo extends AbstractMojo {
     @Parameter(property = "resourcesDirectory", defaultValue = "${basedir}/src/main/resources")
     private String resourcesDirectory;
 
-    @Parameter(property = "codeGenDirectory", defaultValue = "${session.executionRootDirectory}/codegen/src/main/resources/")
-    private String codeGenDirectory;
-
     @Component
     private MavenProject project;
 
@@ -80,7 +77,7 @@ public class GenerationMojo extends AbstractMojo {
     }
 
     private void generateCode(C2jModels models) {
-        new CodeGenerator(models, outputDirectory, codeGenDirectory, Utils.getFileNamePrefix(models.serviceModel())).execute();
+        new CodeGenerator(models, outputDirectory, Utils.getFileNamePrefix(models.serviceModel())).execute();
     }
 
     private BasicCodeGenConfig loadCodeGenConfig() throws MojoExecutionException {
