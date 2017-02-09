@@ -27,7 +27,7 @@ public class AwsJsonProtocolTest {
 
     @BeforeClass
     public static void setupFixture() {
-        testRunner = new ProtocolTestRunner("/jsonrpc-2016-03-11-intermediate.json");
+        testRunner = new ProtocolTestRunner("/models/jsonrpc-2016-03-11-intermediate.json");
     }
 
     @Test

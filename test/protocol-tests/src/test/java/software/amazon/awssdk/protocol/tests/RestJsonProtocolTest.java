@@ -27,7 +27,7 @@ public class RestJsonProtocolTest {
 
     @BeforeClass
     public static void setupFixture() {
-        testRunner = new ProtocolTestRunner("/restjson-2016-03-11-intermediate.json");
+        testRunner = new ProtocolTestRunner("/models/restjson-2016-03-11-intermediate.json");
     }
 
     @Test

@@ -132,7 +132,7 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>${project.build.directory}/generated-src/models</directory>
+                                    <directory>${project.build.directory}/generated-sources/aws</directory>
                                 </resource>
                             </resources>
                         </configuration>

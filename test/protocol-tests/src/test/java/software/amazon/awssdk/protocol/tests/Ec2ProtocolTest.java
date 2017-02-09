@@ -27,7 +27,7 @@ public class Ec2ProtocolTest {
 
     @BeforeClass
     public static void setupFixture() {
-        testRunner = new ProtocolTestRunner("/ec2-2016-03-11-intermediate.json");
+        testRunner = new ProtocolTestRunner("/models/ec2-2016-03-11-intermediate.json");
     }
 
     @Test

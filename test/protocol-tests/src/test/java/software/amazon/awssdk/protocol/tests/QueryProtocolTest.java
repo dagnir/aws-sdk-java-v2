@@ -27,7 +27,7 @@ public class QueryProtocolTest {
 
     @BeforeClass
     public static void setupFixture() {
-        testRunner = new ProtocolTestRunner("/query-2016-03-11-intermediate.json");
+        testRunner = new ProtocolTestRunner("/models/query-2016-03-11-intermediate.json");
     }
 
     @Test

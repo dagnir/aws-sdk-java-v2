@@ -27,7 +27,7 @@ public class ApiGatewayProtocolTest {
 
     @BeforeClass
     public static void setupFixture() {
-        testRunner = new ProtocolTestRunner("/7pa86qnoj3.execute-api-2016-06-23-intermediate.json");
+        testRunner = new ProtocolTestRunner("/models/7pa86qnoj3.execute-api-2016-06-23-intermediate.json");
     }
 
     @Test

@@ -299,7 +299,7 @@ public class LambdaInvokerFactoryTest {
                         .withStatusCode(200)
                         .withFunctionError("Handled")
                         .withPayload(
-                                ByteBuffer.wrap(("{\"errorMessage\":\"I'm the message\"," + "\"errorType\":\"com.amazonaws.services.lambda.invoke.LambdaInvokerFactoryTest$CustomException\","
+                                ByteBuffer.wrap(("{\"errorMessage\":\"I'm the message\"," + "\"errorType\":\"software.amazon.awssdk.services.lambda.invoke.LambdaInvokerFactoryTest$CustomException\","
                                                  + "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes())));
 
         try {

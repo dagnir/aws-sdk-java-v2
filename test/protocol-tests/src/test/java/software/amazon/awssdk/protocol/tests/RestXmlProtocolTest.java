@@ -27,7 +27,7 @@ public class RestXmlProtocolTest {
 
     @BeforeClass
     public static void setupFixture() {
-        testRunner = new ProtocolTestRunner("/restxml-2016-03-11-intermediate.json");
+        testRunner = new ProtocolTestRunner("/models/restxml-2016-03-11-intermediate.json");
     }
 
     @Test
