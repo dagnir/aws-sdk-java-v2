@@ -1,66 +1,29 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-     xmlns="http://maven.apache.org/POM/4.0.0"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>software.amazon.awssdk</groupId>
-    <artifactId>aws-java-sdk-pom</artifactId>
+    <artifactId>services</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
   </parent>
-  <groupId>software.amazon.awssdk</groupId>
   <artifactId>kinesis</artifactId>
   <name>AWS Java SDK for Amazon Kinesis</name>
-  <description>The AWS Java SDK for Amazon Kinesis module holds the client classes that are used for communicating
-    with Amazon Kinesis Service
-  </description>
+  <description>The AWS Java SDK for Amazon Kinesis module holds the client classes that are used for communicating with Amazon Kinesis Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
-
-  <!-- The dependencies section in pom.xml is auto generated. No manual changes are allowed -->
-  <dependencies>
-    <dependency>
-      <artifactId>core</artifactId>
-      <groupId>software.amazon.awssdk</groupId>
-      <optional>false</optional>
-      <version>${awsjavasdk.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>test-utils</artifactId>
-      <groupId>software.amazon.awssdk</groupId>
-      <optional>false</optional>
-      <scope>test</scope>
-      <version>${awsjavasdk.version}</version>
-    </dependency>
-    <dependency>
-      <artifactId>jmespath-java</artifactId>
-      <groupId>software.amazon.awssdk</groupId>
-      <optional>false</optional>
-    </dependency>
-  </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>   
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>codegen-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>kinesisanalytics</id>
             <configuration>
-              <serviceModelLocation>codegen-resources/kinesisanalytics/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/kinesisanalytics/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/kinesisanalytics/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/kinesisanalytics/examples.json</serviceExamplesLocation>
+              <serviceModelLocation>codegen-resources/kinesis/service-2.json</serviceModelLocation>
+              <codeGenConfigLocation>codegen-resources/kinesis/codegen.config</codeGenConfigLocation>
+              <customizationConfigLocation>codegen-resources/kinesis/customization.config</customizationConfigLocation>
+              <serviceExamplesLocation>codegen-resources/kinesis/examples.json</serviceExamplesLocation>
             </configuration>
             <phase>generate-sources</phase>
             <goals>
@@ -68,12 +31,12 @@
             </goals>
           </execution>
           <execution>
-            <id>kinesis</id>
+            <id>kinesisanalytics</id>
             <configuration>
-              <serviceModelLocation>codegen-resources/kinesis/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/kinesis/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/kinesis/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/kinesis/examples.json</serviceExamplesLocation>
+              <serviceModelLocation>codegen-resources/kinesisanalytics/service-2.json</serviceModelLocation>
+              <codeGenConfigLocation>codegen-resources/kinesisanalytics/codegen.config</codeGenConfigLocation>
+              <customizationConfigLocation>codegen-resources/kinesisanalytics/customization.config</customizationConfigLocation>
+              <serviceExamplesLocation>codegen-resources/kinesisanalytics/examples.json</serviceExamplesLocation>
             </configuration>
             <phase>generate-sources</phase>
             <goals>
@@ -95,53 +58,14 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
-
-  <!-- This profile uses the JAPICMP plugin to generate a report of changes between the release version and the latest version -->
-  <!-- For more information on the plugin, see https://github.com/siom79/japicmp -->
-  <profiles>
-    <profile>
-      <id>versiondiff</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.siom79.japicmp</groupId>
-            <artifactId>japicmp-maven-plugin</artifactId>
-            <version>0.5.0</version>
-            <executions>
-              <execution>
-                <phase>verify</phase>
-                <goals>
-                  <goal>cmp</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <oldVersion>
-                <dependency>
-                  <groupId>software.amazon.awssdk</groupId>
-                  <artifactId>kinesis</artifactId>
-                  <version>RELEASE</version>
-                </dependency>
-              </oldVersion>
-              <newVersion>
-                <file>
-                  <path>${project.build.directory}/${project.artifactId}-${project.version}.jar</path>
-                </file>
-              </newVersion>
-              <parameter>
-                <onlyModified>true</onlyModified>
-                <accessModifier>public</accessModifier>
-                <breakBuildOnModifications>false</breakBuildOnModifications>
-                <breakBuildOnBinaryIncompatibleModifications>false
-                </breakBuildOnBinaryIncompatibleModifications>
-                <onlyBinaryIncompatible>false</onlyBinaryIncompatible>
-              </parameter>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
