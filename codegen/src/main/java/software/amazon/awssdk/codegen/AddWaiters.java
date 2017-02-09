@@ -62,7 +62,12 @@ class AddWaiters {
             waiterDefinitionModel.setDelay(waiterDefinition.getDelay());
             waiterDefinitionModel.setMaxAttempts(waiterDefinition.getMaxAttempts());
             waiterDefinitionModel.setWaiterName(waiterName);
-            waiterDefinitionModel.setOperationModel(operations.get(waiterDefinition.getOperation()));
+            OperationModel opModel = operations.get(waiterDefinition.getOperation());
+            if (opModel == null) {
+                throw new RuntimeException(String.format("Waiter defines operation '%s' which does not exist in service model.",
+                        waiterDefinition.getOperation()));
+            }
+            waiterDefinitionModel.setOperationModel(opModel);
             for (Acceptor acceptor : waiterDefinition.getAcceptors()) {
                 AcceptorModel acceptorModel = new AcceptorModel();
                 acceptorModel.setMatcher(acceptor.getMatcher());
