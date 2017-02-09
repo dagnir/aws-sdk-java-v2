@@ -15,11 +15,13 @@
 
 package software.amazon.awssdk.auth;
 
+import software.amazon.awssdk.annotation.SdkPublicApi;
 import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Simple implementation of AWSCredentialsProvider that just wraps static AWSCredentials.
  */
+@SdkPublicApi
 public class AWSStaticCredentialsProvider implements AWSCredentialsProvider {
 
     private final AWSCredentials credentials;

@@ -18,6 +18,8 @@ package software.amazon.awssdk.internal.auth;
 
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.auth.Signer;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 
 public class DefaultSignerProvider extends SignerProvider {
 

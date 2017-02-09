@@ -39,13 +39,13 @@ import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.ClientConfigurationFactory;
 import software.amazon.awssdk.PredefinedClientConfigurations;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.AwsRegionProvider;
 import software.amazon.awssdk.regions.Regions;
@@ -179,7 +179,7 @@ public class AwsClientBuilderTest {
 
     @Test
     public void credentialsExplicitlySet_UsesExplicitCredentials() throws Exception {
-        AWSCredentialsProvider provider = new StaticCredentialsProvider(
+        AWSCredentialsProvider provider = new AWSStaticCredentialsProvider(
                 new BasicAWSCredentials("akid", "skid"));
         AwsAsyncClientParams params = builderWithRegion().withCredentials(provider).build()
                 .getAsyncParams();

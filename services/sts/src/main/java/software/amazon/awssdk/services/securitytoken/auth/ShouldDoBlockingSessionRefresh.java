@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.securitytoken.auth;
 import java.util.Date;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.function.SdkPredicate;
 
 /**
  * Predicate to determine when we do a blocking, synchronous refresh of session credentials in

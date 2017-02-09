@@ -30,9 +30,9 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.internal.auth.SignerProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.CredentialUtils;
 

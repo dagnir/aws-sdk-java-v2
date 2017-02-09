@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.internal.SdkFunction;
+import software.amazon.awssdk.function.SdkFunction;
 
 /**
  * Fluent builder for AmazonS3. Capable of building synchronous and asynchronous clients. Use of the

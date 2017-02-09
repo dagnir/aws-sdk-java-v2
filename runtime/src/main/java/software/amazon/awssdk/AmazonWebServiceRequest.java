@@ -25,7 +25,6 @@ import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 
 /**
@@ -90,7 +89,7 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      */
     @Deprecated
     public void setRequestCredentials(AWSCredentials credentials) {
-        this.credentialsProvider = credentials == null ? null : new StaticCredentialsProvider(credentials);
+        this.credentialsProvider = credentials == null ? null : new AWSStaticCredentialsProvider(credentials);
     }
 
     /**

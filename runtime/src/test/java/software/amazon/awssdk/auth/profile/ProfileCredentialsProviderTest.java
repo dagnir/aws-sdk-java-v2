@@ -23,12 +23,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
 import software.amazon.awssdk.auth.profile.internal.Profile;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 
 public class ProfileCredentialsProviderTest {
 
@@ -276,7 +276,7 @@ public class ProfileCredentialsProviderTest {
                 Assert.assertNull("external_id", targetRoleInfo.getExternalId());
                 Assert.assertTrue("role_session_name",
                                   targetRoleInfo.getRoleSessionName().startsWith("aws-sdk-java-"));
-                return new StaticCredentialsProvider(
+                return new AWSStaticCredentialsProvider(
                         new BasicAWSCredentials("sessionAccessKey", "sessionSecretKey"));
             }
         });
@@ -308,7 +308,7 @@ public class ProfileCredentialsProviderTest {
                                     targetRoleInfo.getExternalId());
                 Assert.assertEquals("role_session_name", "testSessionName",
                                     targetRoleInfo.getRoleSessionName());
-                return new StaticCredentialsProvider(
+                return new AWSStaticCredentialsProvider(
                         new BasicAWSCredentials("sessionAccessKey", "sessionSecretKey"));
             }
         });
@@ -340,7 +340,7 @@ public class ProfileCredentialsProviderTest {
                         Assert.assertNull("external_id", targetRoleInfo.getExternalId());
                         Assert.assertTrue("role_session_name", targetRoleInfo.getRoleSessionName()
                                 .startsWith("aws-sdk-java-"));
-                        return new StaticCredentialsProvider(
+                        return new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials("sessionAccessKey", "sessionSecretKey"));
                     }
                 });

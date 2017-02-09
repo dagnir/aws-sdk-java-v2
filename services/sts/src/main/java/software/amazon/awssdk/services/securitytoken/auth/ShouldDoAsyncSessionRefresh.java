@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.function.SdkPredicate;
 
 /**
  * Predicate to determine when it is sufficient to do an async refresh of session credentials and

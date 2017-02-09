@@ -17,7 +17,7 @@ package software.amazon.awssdk.metrics;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
  * Used to capture the input stream throughput metrics, but excluding the

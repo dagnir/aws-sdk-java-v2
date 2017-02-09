@@ -22,7 +22,6 @@ import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.s3.internal.SkipMd5CheckStrategy;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;

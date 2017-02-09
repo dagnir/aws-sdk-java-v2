@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3.internal;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
-import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.function.SdkPredicate;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.util.ValidationUtils;

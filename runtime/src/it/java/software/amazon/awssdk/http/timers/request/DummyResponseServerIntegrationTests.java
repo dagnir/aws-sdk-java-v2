@@ -34,10 +34,10 @@ import software.amazon.awssdk.http.MockServerTestBase;
 import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.client.HttpClientFactory;
-import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHandler;
-import software.amazon.awssdk.http.response.NullErrorResponseHandler;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.response.ErrorDuringUnmarshallingResponseHandler;
+import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
  * Tests that use a server that returns a predetermined response within the timeout limit

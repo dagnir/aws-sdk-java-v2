@@ -18,7 +18,7 @@ package software.amazon.awssdk.internal.http.request;
 import java.io.IOException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
  * An interface that can be used to create the http requests that is

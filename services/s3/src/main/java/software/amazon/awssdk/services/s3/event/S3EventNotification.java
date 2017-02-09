@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.List;
 import org.joda.time.DateTime;
-import software.amazon.awssdk.internal.DateTimeJsonSerializer;
+import software.amazon.awssdk.runtime.DateTimeJsonSerializer;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.json.Jackson;
 

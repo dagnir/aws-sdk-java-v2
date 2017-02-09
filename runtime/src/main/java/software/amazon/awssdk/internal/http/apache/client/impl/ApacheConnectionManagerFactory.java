@@ -45,10 +45,10 @@ import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.DelegatingDnsResolver;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.DelegatingDnsResolver;
+import software.amazon.awssdk.internal.http.apache.conn.SdkTLSSocketFactory;
 import software.amazon.awssdk.internal.http.client.ConnectionManagerFactory;
-import software.amazon.awssdk.internal.http.conn.ssl.SdkTLSSocketFactory;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.net.SdkSSLContext;
 
 /**

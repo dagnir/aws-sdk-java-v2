@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.glacier.GlacierIntegrationTestBase;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 

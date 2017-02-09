@@ -31,7 +31,6 @@ import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerAsRequestSigner;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.internal.auth.SignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
 import software.amazon.awssdk.opensdk.config.ProxyConfiguration;
@@ -45,6 +44,7 @@ import software.amazon.awssdk.opensdk.protect.auth.RequestSignerRegistry;
 import software.amazon.awssdk.opensdk.retry.RetryPolicyBuilder;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.util.VersionInfoUtils;
 
 /**

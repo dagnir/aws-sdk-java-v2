@@ -36,7 +36,7 @@ import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.SDKGlobalTime;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.internal.io.SdkDigestInputStream;
+import software.amazon.awssdk.runtime.io.SdkDigestInputStream;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;

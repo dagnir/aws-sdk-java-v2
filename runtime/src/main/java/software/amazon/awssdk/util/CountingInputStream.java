@@ -17,7 +17,7 @@ package software.amazon.awssdk.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
  * Simple input stream wrapper utility to count the bytes read from a stream.

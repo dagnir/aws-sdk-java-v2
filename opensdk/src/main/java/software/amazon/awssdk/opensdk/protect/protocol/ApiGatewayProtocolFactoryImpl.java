@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.http.JsonResponseHandler;
 import software.amazon.awssdk.opensdk.BaseResult;
 import software.amazon.awssdk.opensdk.internal.BaseException;
 import software.amazon.awssdk.opensdk.internal.protocol.ApiGatewayErrorResponseHandler;
@@ -35,6 +34,7 @@ import software.amazon.awssdk.protocol.json.SdkJsonMarshallerFactory;
 import software.amazon.awssdk.protocol.json.SdkStructuredJsonFactory;
 import software.amazon.awssdk.protocol.json.SdkStructuredPlainJsonFactory;
 import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
+import software.amazon.awssdk.runtime.http.response.JsonResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 

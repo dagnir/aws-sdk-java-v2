@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Random;
-import software.amazon.awssdk.internal.io.SdkInputStream;
+import software.amazon.awssdk.runtime.io.SdkInputStream;
 
 /**
  * A test input stream that always return the same value.

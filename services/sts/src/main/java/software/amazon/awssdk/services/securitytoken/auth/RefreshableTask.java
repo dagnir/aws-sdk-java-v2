@@ -29,7 +29,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.function.SdkPredicate;
 import software.amazon.awssdk.util.ValidationUtils;
 
 /**

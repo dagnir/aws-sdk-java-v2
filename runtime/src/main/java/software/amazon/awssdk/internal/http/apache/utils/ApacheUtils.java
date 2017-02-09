@@ -33,7 +33,7 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.FakeIOException;
 
 @SdkInternalApi

@@ -41,10 +41,10 @@ import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttp
 import software.amazon.awssdk.http.apache.client.impl.SdkHttpClient;
 import software.amazon.awssdk.http.request.RequestHandlerTestUtils;
 import software.amazon.awssdk.http.request.SlowRequestHandler;
-import software.amazon.awssdk.http.response.DummyResponseHandler;
-import software.amazon.awssdk.http.response.UnresponsiveResponseHandler;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.response.DummyResponseHandler;
+import software.amazon.awssdk.internal.http.response.UnresponsiveResponseHandler;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 public class DummySuccessfulResponseServerIntegrationTests extends MockServerTestBase {
 

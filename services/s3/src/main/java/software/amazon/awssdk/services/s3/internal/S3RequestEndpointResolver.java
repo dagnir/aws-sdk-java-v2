@@ -19,9 +19,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.internal.ServiceEndpointBuilder;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.runtime.endpoint.ServiceEndpointBuilder;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
 /**

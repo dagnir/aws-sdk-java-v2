@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import org.junit.Test;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 
 public class AWSCredentialsProviderChainTest {
 
@@ -81,7 +80,7 @@ public class AWSCredentialsProviderChainTest {
     }
 
 
-    private static final class MockCredentialsProvider extends StaticCredentialsProvider {
+    private static final class MockCredentialsProvider extends AWSStaticCredentialsProvider {
         public int getCredentialsCallCount = 0;
         public boolean throwException = false;
 

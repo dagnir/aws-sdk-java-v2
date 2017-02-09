@@ -19,6 +19,8 @@ package software.amazon.awssdk.internal.auth;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.NoOpSigner;
 import software.amazon.awssdk.auth.Signer;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 
 @SdkInternalApi
 public class NoOpSignerProvider extends SignerProvider {

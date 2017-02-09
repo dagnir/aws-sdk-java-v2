@@ -22,8 +22,8 @@ import org.apache.http.impl.conn.DefaultRoutePlanner;
 import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.StringUtils;
 
 /**

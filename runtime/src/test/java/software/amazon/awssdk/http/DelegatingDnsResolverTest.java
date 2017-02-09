@@ -35,6 +35,7 @@ import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.DnsResolver;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SystemDefaultDnsResolver;
+import software.amazon.awssdk.internal.http.DelegatingDnsResolver;
 
 public class DelegatingDnsResolverTest {
 

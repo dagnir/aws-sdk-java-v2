@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.s3;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
-import static software.amazon.awssdk.internal.io.ResettableInputStream.newResettableInputStream;
+import static software.amazon.awssdk.runtime.io.ResettableInputStream.newResettableInputStream;
 import static software.amazon.awssdk.services.s3.model.S3DataSource.Utils.cleanupDataSource;
 import static software.amazon.awssdk.util.LengthCheckInputStream.EXCLUDE_SKIPPED_BYTES;
 import static software.amazon.awssdk.util.LengthCheckInputStream.INCLUDE_SKIPPED_BYTES;
@@ -72,6 +72,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
 import software.amazon.awssdk.auth.Presigner;
 import software.amazon.awssdk.auth.Signer;
@@ -85,18 +86,17 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.internal.DefaultServiceEndpointBuilder;
-import software.amazon.awssdk.internal.IdentityEndpointBuilder;
-import software.amazon.awssdk.internal.ServiceEndpointBuilder;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.internal.io.ReleasableInputStream;
-import software.amazon.awssdk.internal.io.ResettableInputStream;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
+import software.amazon.awssdk.runtime.endpoint.IdentityEndpointBuilder;
+import software.amazon.awssdk.runtime.endpoint.ServiceEndpointBuilder;
+import software.amazon.awssdk.runtime.io.ReleasableInputStream;
+import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.internal.AWSS3V4Signer;
 import software.amazon.awssdk.services.s3.internal.BucketNameUtils;
@@ -501,7 +501,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client(AWSCredentials awsCredentials, ClientConfiguration clientConfiguration) {
-        this(new StaticCredentialsProvider(awsCredentials), clientConfiguration);
+        this(new AWSStaticCredentialsProvider(awsCredentials), clientConfiguration);
     }
 
     /**

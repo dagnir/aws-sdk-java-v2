@@ -25,10 +25,10 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.SdkHttpMetadata;
-import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
 import software.amazon.awssdk.opensdk.SdkErrorHttpMetadata;
 import software.amazon.awssdk.opensdk.internal.BaseException;
 import software.amazon.awssdk.protocol.json.JsonContent;
+import software.amazon.awssdk.runtime.http.JsonErrorMessageParser;
 import software.amazon.awssdk.util.ValidationUtils;
 
 /**

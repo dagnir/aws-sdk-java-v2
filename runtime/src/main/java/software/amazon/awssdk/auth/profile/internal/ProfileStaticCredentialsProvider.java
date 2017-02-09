@@ -20,9 +20,9 @@ import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.util.StringUtils;
 
 /**
@@ -38,7 +38,7 @@ public class ProfileStaticCredentialsProvider implements AWSCredentialsProvider 
 
     public ProfileStaticCredentialsProvider(BasicProfile profile) {
         this.profile = profile;
-        this.credentialsProvider = new StaticCredentialsProvider(fromStaticCredentials());
+        this.credentialsProvider = new AWSStaticCredentialsProvider(fromStaticCredentials());
     }
 
     @Override

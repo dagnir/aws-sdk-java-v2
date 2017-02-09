@@ -22,7 +22,7 @@ import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.AWSSessionCredentials;
 import software.amazon.awssdk.auth.AWSSessionCredentialsProvider;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
@@ -253,7 +253,7 @@ public class STSAssumeRoleSessionCredentialsProvider implements AWSSessionCreden
 
         AWSCredentialsProvider longLivedCredentialsProvider = null;
         if (builder.longLivedCredentials != null) {
-            longLivedCredentialsProvider = new StaticCredentialsProvider(
+            longLivedCredentialsProvider = new AWSStaticCredentialsProvider(
                     builder.longLivedCredentials);
         } else if (builder.longLivedCredentialsProvider != null) {
             longLivedCredentialsProvider = builder.longLivedCredentialsProvider;

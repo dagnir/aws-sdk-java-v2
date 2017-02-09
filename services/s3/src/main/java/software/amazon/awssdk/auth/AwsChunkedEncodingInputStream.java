@@ -28,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.internal.io.SdkInputStream;
+import software.amazon.awssdk.runtime.io.SdkInputStream;
 import software.amazon.awssdk.util.BinaryUtils;
 
 /**

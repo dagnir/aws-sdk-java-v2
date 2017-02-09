@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.http.IdleConnectionReaper;
+import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.util.VersionInfoUtils;

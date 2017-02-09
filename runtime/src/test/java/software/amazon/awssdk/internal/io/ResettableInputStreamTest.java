@@ -33,6 +33,7 @@ import java.nio.channels.ClosedChannelException;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.runtime.io.ResettableInputStream;
 
 public class ResettableInputStreamTest {
 

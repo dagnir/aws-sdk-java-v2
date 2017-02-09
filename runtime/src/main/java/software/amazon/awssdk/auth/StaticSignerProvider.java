@@ -16,8 +16,8 @@
 package software.amazon.awssdk.auth;
 
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 
 /**
  * Implementation of {@link SignerProvider} that always returns the same signer regardless of

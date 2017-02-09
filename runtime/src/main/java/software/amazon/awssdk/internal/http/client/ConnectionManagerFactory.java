@@ -16,7 +16,7 @@
 package software.amazon.awssdk.internal.http.client;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
  * Factory interface that can be used for create ConnectionManager used by

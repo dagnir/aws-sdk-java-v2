@@ -20,11 +20,11 @@ import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.CanHandleNullCredentials;
 import software.amazon.awssdk.auth.RequestSigner;
 import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
 import software.amazon.awssdk.opensdk.protect.auth.RequestSignerAware;
 import software.amazon.awssdk.opensdk.protect.auth.RequestSignerNotFoundException;
 import software.amazon.awssdk.opensdk.protect.auth.RequestSignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 
 public final class SignerProviderAdapter extends SignerProvider {
 

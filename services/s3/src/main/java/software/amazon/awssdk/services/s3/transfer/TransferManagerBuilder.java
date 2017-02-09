@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.builder.ExecutorFactory;
-import software.amazon.awssdk.internal.SdkFunction;
+import software.amazon.awssdk.function.SdkFunction;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3ClientBuilder;
 import software.amazon.awssdk.services.s3.transfer.internal.TransferManagerUtils;

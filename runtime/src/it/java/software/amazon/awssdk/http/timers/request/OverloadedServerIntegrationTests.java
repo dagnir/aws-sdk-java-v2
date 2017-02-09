@@ -38,7 +38,7 @@ import software.amazon.awssdk.http.client.HttpClientFactory;
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.http.server.MockServer.ServerBehavior;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
  * Tests requiring an Overloaded server, that is a server that responds but can't close the connection in a timely

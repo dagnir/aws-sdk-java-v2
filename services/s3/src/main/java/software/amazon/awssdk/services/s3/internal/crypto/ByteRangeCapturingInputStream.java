@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.internal.crypto;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
  * FilterInputStream that captures a range of bytes from a wrapped input stream.

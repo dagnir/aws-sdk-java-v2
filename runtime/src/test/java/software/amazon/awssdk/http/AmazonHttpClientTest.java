@@ -46,10 +46,10 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
 import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 public class AmazonHttpClientTest {
 
