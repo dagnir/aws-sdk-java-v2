@@ -6,7 +6,6 @@
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>services</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>ecr</artifactId>
   <name>AWS Java SDK for the Amazon EC2 Container Registry</name>
