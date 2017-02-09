@@ -87,8 +87,8 @@ class AddWaiters {
         return javaWaiterModels;
     }
 
-    private JmesPathExpression getAstFromArgument(String argument, Map<String, JmesPathExpression> argumentToAstMap) throws
-                                                                                                                            IOException {
+    private JmesPathExpression getAstFromArgument(String argument, Map<String, JmesPathExpression> argumentToAstMap)
+            throws IOException {
         if (argument != null && !argumentToAstMap.containsKey(argument)) {
 
             final Process p = executeToAstProcess(argument);

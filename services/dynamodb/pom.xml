@@ -43,35 +43,6 @@
       <plugin>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>codegen-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <configuration>
-              <serviceModelLocation>codegen-resources/dynamodb/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/dynamodb/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/dynamodb/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/dynamodb/examples.json</serviceExamplesLocation>
-              <waitersLocation>codegen-resources/dynamodb/waiters-2.json</waitersLocation>
-            </configuration>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>dynamodbstreams</id>
-            <configuration>
-              <serviceModelLocation>codegen-resources/dynamodbstreams/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/dynamodbstreams/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/dynamodbstreams/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/dynamodbstreams/examples.json</serviceExamplesLocation>
-              <waitersLocation>codegen-resources/dynamodbstreams/waiters-2.json</waitersLocation>
-            </configuration>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

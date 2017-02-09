@@ -17,33 +17,6 @@
       <plugin>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>codegen-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <configuration>
-              <serviceModelLocation>codegen-resources/iot/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/iot/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/iot/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/iot/examples.json</serviceExamplesLocation>
-            </configuration>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>iotdata</id>
-            <configuration>
-              <serviceModelLocation>codegen-resources/iotdata/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/iotdata/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/iotdata/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/iotdata/examples.json</serviceExamplesLocation>
-            </configuration>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
