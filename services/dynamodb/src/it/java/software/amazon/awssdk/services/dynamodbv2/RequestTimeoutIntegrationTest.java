@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.dynamodbv2;
 
 import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 

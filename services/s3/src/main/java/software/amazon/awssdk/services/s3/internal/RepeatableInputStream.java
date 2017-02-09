@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.internal.io.ResettableInputStream;
-import software.amazon.awssdk.internal.io.SdkBufferedInputStream;
-import software.amazon.awssdk.internal.io.SdkInputStream;
+import software.amazon.awssdk.runtime.io.ResettableInputStream;
+import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
+import software.amazon.awssdk.runtime.io.SdkInputStream;
 
 /**
  * @deprecated by {@link SdkBufferedInputStream}.

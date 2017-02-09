@@ -21,7 +21,7 @@ package software.amazon.awssdk.retry;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.internal.io.SdkInputStream;
+import software.amazon.awssdk.runtime.io.SdkInputStream;
 
 class NonRepeatableInputStream extends SdkInputStream {
 

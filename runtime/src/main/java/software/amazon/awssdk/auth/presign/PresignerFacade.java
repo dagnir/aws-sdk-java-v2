@@ -25,8 +25,8 @@ import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.Presigner;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.util.CredentialUtils;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 

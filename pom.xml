@@ -33,11 +33,11 @@
   </developers>
   <!-- The module section in pom.xml is auto generated. No manual changes are allowed -->
   <modules>
-    <module>services/cloudwatchmetrics</module>
     <module>services</module>
     <module>aws-java-sdk</module>
     <module>runtime</module>
-    <module>services/opensdk</module>
+    <module>opensdk</module>
+    <module>cloudwatchmetrics</module>
     <module>bom</module>
     <module>codegen</module>
     <module>codegen-maven-plugin</module>

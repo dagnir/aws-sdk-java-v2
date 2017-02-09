@@ -29,8 +29,8 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.AnonymousAWSCredentials;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.AWSKMS;
@@ -160,7 +160,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     public AmazonS3EncryptionClient(
             EncryptionMaterialsProvider encryptionMaterialsProvider) {
 
-        this(new StaticCredentialsProvider(new AnonymousAWSCredentials()),
+        this(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()),
                 encryptionMaterialsProvider,
                 configFactory.getConfig(), new CryptoConfiguration());
     }
@@ -246,7 +246,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             EncryptionMaterialsProvider encryptionMaterialsProvider,
             CryptoConfiguration cryptoConfig) {
 
-        this(new StaticCredentialsProvider(new AnonymousAWSCredentials()),
+        this(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()),
                 encryptionMaterialsProvider,
                 configFactory.getConfig(), cryptoConfig);
     }
@@ -443,7 +443,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     public AmazonS3EncryptionClient(AWSCredentials credentials,
             EncryptionMaterialsProvider encryptionMaterialsProvider,
             ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
-        this(new StaticCredentialsProvider(credentials),
+        this(new AWSStaticCredentialsProvider(credentials),
                 encryptionMaterialsProvider, clientConfig, cryptoConfig);
     }
 

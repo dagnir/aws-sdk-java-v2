@@ -21,10 +21,10 @@ import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.internal.auth.SignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicyAdapter;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
 
 /**
  * Provides access to all params needed in a synchronous AWS service client constructor. Abstract

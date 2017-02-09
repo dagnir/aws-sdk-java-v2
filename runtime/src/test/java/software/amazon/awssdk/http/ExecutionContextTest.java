@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 import java.net.URI;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 
 public class ExecutionContextTest {
 

@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.glacier.transfer;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseBytesDiscarded;
-import static software.amazon.awssdk.internal.io.ResettableInputStream.newResettableInputStream;
+import static software.amazon.awssdk.runtime.io.ResettableInputStream.newResettableInputStream;
 import static software.amazon.awssdk.util.IOUtils.closeQuietly;
 import static software.amazon.awssdk.util.IOUtils.release;
 import static software.amazon.awssdk.util.Throwables.failure;
@@ -38,10 +38,10 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
-import software.amazon.awssdk.internal.io.ResettableInputStream;
+import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.services.glacier.AmazonGlacier;
 import software.amazon.awssdk.services.glacier.AmazonGlacierClient;
 import software.amazon.awssdk.services.glacier.TreeHashGenerator;
@@ -107,7 +107,7 @@ public class ArchiveTransferManager {
      *            The AWS credentials used to authenticate requests.
      */
     public ArchiveTransferManager(AWSCredentials credentials) {
-        this(new StaticCredentialsProvider(credentials), new ClientConfiguration());
+        this(new AWSStaticCredentialsProvider(credentials), new ClientConfiguration());
     }
 
     /**
@@ -146,7 +146,7 @@ public class ArchiveTransferManager {
      *            The AWS credentials used to authenticate requests.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AWSCredentials credentials) {
-        this(glacier, new StaticCredentialsProvider(credentials), new ClientConfiguration());
+        this(glacier, new AWSStaticCredentialsProvider(credentials), new ClientConfiguration());
     }
 
     /**

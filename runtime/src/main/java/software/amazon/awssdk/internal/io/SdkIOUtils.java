@@ -23,11 +23,11 @@ import software.amazon.awssdk.log.InternalLogFactory;
 /**
  * Utilities for IO operations.
  */
-enum SdkIOUtils {
+public enum SdkIOUtils {
     ;
     private static final InternalLogApi defaultLog = InternalLogFactory.getLog(SdkIOUtils.class);
 
-    static void closeQuietly(Closeable is) {
+    public static void closeQuietly(Closeable is) {
         closeQuietly(is, null);
     }
     /**

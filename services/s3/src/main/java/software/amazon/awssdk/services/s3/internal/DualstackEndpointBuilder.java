@@ -17,8 +17,8 @@ package software.amazon.awssdk.services.s3.internal;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import software.amazon.awssdk.internal.ServiceEndpointBuilder;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.runtime.endpoint.ServiceEndpointBuilder;
 
 
 /**

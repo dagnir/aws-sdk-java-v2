@@ -20,7 +20,7 @@ import java.io.InputStream;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
  * Used for input stream progress tracking purposes.

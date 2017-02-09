@@ -17,7 +17,7 @@ package software.amazon.awssdk.protocol.json;
 
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.http.JsonResponseHandler;
+import software.amazon.awssdk.runtime.http.response.JsonResponseHandler;
 
 /**
  * Contains various information needed to create a {@link JsonResponseHandler}

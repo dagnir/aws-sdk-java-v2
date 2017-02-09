@@ -24,15 +24,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.IdleConnectionReaper;
 import software.amazon.awssdk.http.conn.SdkConnectionKeepAliveStrategy;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.apache.SdkHttpRequestExecutor;
 import software.amazon.awssdk.internal.http.apache.SdkProxyRoutePlanner;
+import software.amazon.awssdk.internal.http.apache.conn.ClientConnectionManagerFactory;
 import software.amazon.awssdk.internal.http.apache.utils.ApacheUtils;
 import software.amazon.awssdk.internal.http.client.ConnectionManagerFactory;
 import software.amazon.awssdk.internal.http.client.HttpClientFactory;
-import software.amazon.awssdk.internal.http.conn.ClientConnectionManagerFactory;
+import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
  * Factory class that builds the apache http client from the settings.

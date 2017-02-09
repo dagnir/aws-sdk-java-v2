@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;

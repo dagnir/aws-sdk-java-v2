@@ -18,7 +18,7 @@ package software.amazon.awssdk.util;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
  * FilterInputStream implementation that wraps an InputStream containing an XML

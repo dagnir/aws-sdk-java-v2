@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AWS4Signer;
 import software.amazon.awssdk.auth.QueryStringSigner;
-import software.amazon.awssdk.http.IdleConnectionReaper;
+import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 
 public class AmazonWebServiceClientTest {
 

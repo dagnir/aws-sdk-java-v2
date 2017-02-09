@@ -14,7 +14,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 
 public class TTE004146470IntegrationTest {

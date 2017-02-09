@@ -18,7 +18,7 @@ package software.amazon.awssdk.util;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.http.client.HttpClient;
-import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
  * An {@code InputStream} that closes the associated {@code HttpClient}

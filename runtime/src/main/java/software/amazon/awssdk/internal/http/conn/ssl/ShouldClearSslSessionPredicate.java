@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.net.ssl.SSLException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.function.SdkPredicate;
 import software.amazon.awssdk.util.JavaVersionParser.JavaVersion;
 
 /**

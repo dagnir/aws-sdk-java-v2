@@ -30,9 +30,9 @@ import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
 import software.amazon.awssdk.http.request.RequestHandlerTestUtils;
 import software.amazon.awssdk.http.request.SlowRequestHandler;
-import software.amazon.awssdk.http.response.NullErrorResponseHandler;
-import software.amazon.awssdk.http.response.UnresponsiveErrorResponseHandler;
 import software.amazon.awssdk.http.server.MockServer;
+import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
+import software.amazon.awssdk.internal.http.response.UnresponsiveErrorResponseHandler;
 
 /**
  * Tests that use a server that returns a predetermined error response within the timeout limit

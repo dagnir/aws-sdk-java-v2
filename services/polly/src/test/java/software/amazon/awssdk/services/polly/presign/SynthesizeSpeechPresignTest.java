@@ -37,7 +37,7 @@ import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.auth.SdkClock;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.auth.presign.PresignerParams;
-import software.amazon.awssdk.internal.auth.SignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
 import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
 

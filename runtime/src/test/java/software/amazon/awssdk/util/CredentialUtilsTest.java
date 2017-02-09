@@ -30,9 +30,9 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import utils.model.EmptyAmazonWebServiceRequest;
 
 public class CredentialUtilsTest {
@@ -50,8 +50,7 @@ public class CredentialUtilsTest {
         AWSCredentialsProvider actual = CredentialUtils.getCredentialsProvider(req,
                                                                                null);
 
-        Assert.assertThat(actual, Matchers.instanceOf(StaticCredentialsProvider
-                                                              .class));
+        Assert.assertThat(actual, Matchers.instanceOf(AWSStaticCredentialsProvider.class));
         assertEquals(awsAccessKeyId, actual.getCredentials().getAWSAccessKeyId());
         assertEquals(awsSecretAccessKey, actual.getCredentials().getAWSSecretKey());
     }
@@ -60,13 +59,12 @@ public class CredentialUtilsTest {
     public void base_credentials_returned_when_no_request_credentials_is_present() {
         final String awsAccessKeyId = "foo";
         final String awsSecretAccessKey = "bar";
-        final StaticCredentialsProvider base = new StaticCredentialsProvider
+        final AWSCredentialsProvider base = new AWSStaticCredentialsProvider
                 (new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey));
 
         AWSCredentialsProvider actual = CredentialUtils
                 .getCredentialsProvider((AmazonWebServiceRequest) null, base);
-        Assert.assertThat(actual, Matchers.instanceOf(StaticCredentialsProvider
-                                                              .class));
+        Assert.assertThat(actual, Matchers.instanceOf(AWSStaticCredentialsProvider.class));
         assertEquals(awsAccessKeyId, actual.getCredentials().getAWSAccessKeyId());
         assertEquals(awsSecretAccessKey, actual.getCredentials().getAWSSecretKey());
     }

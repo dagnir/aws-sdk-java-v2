@@ -24,7 +24,7 @@ import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.internal.http.JsonErrorMessageParser;
+import software.amazon.awssdk.runtime.http.JsonErrorMessageParser;
 
 public class JsonErrorMessageParserTest {
 

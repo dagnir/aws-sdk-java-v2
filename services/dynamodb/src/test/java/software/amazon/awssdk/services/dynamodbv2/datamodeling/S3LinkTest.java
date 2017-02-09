@@ -20,8 +20,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.s3.model.Region;
@@ -34,7 +34,7 @@ public class S3LinkTest
     public void setUp() {
         AWSCredentials credentials = new BasicAWSCredentials("mock", "mock");
         AmazonDynamoDB db = new AmazonDynamoDBClient(credentials);
-        mapper = new DynamoDBMapper(db, new StaticCredentialsProvider(credentials));
+        mapper = new DynamoDBMapper(db, new AWSStaticCredentialsProvider(credentials));
     }
 
     @Test(expected=IllegalArgumentException.class)

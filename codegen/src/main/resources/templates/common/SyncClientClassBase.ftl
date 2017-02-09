@@ -19,8 +19,6 @@ import software.amazon.awssdk.auth.*;
 import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.handlers.*;
 import software.amazon.awssdk.http.*;
-import software.amazon.awssdk.internal.*;
-import software.amazon.awssdk.internal.auth.*;
 import software.amazon.awssdk.metrics.*;
 import software.amazon.awssdk.regions.*;
 import software.amazon.awssdk.runtime.transform.*;
@@ -164,7 +162,7 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
     @Deprecated
     public ${metadata.syncClient}(AWSCredentials awsCredentials, ClientConfiguration clientConfiguration) {
         super(clientConfiguration);
-        this.awsCredentialsProvider = new StaticCredentialsProvider(awsCredentials);
+        this.awsCredentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
         init();
     }
 
@@ -296,7 +294,7 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
 
     <#if customizationConfig.customSignerProvider?has_content>
     @Override
-    protected final SignerProvider createSignerProvider(Signer signer) {
+    protected final software.amazon.awssdk.runtime.auth.SignerProvider createSignerProvider(Signer signer) {
         return new ${customizationConfig.customSignerProvider}(this, signer);
     }
     </#if>

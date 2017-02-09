@@ -32,7 +32,7 @@ import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.client.HttpClientFactory;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
  * This class starts a mock proxy server, and once a request is sent to this mock proxy server,

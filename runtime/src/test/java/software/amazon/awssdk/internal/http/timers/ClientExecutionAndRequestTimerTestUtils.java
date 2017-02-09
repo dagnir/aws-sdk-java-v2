@@ -44,14 +44,14 @@ import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHandler;
-import software.amazon.awssdk.http.response.HttpResponseProxy;
-import software.amazon.awssdk.http.response.NullErrorResponseHandler;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.internal.http.client.HttpClientFactory;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
+import software.amazon.awssdk.internal.http.response.ErrorDuringUnmarshallingResponseHandler;
+import software.amazon.awssdk.internal.http.response.HttpResponseProxy;
+import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.internal.http.timers.request.HttpRequestTimer;
 

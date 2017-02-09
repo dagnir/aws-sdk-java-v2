@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.builder.AwsSyncClientBuilder;
-import software.amazon.awssdk.internal.SdkFunction;
+import software.amazon.awssdk.function.SdkFunction;
 
 
 @NotThreadSafe

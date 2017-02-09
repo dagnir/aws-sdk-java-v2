@@ -16,8 +16,8 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJson;
 import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
@@ -36,7 +36,7 @@ public class RestJsonCRC32ChecksumTests {
     private static final String JSON_BODY_GZIP_CRC32_CHECKSUM = "3023995622";
     private static final String RESOURCE_PATH = "/2016-03-11/allTypes";
 
-    private static final StaticCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new StaticCredentialsProvider(
+    private static final AWSCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new AWSStaticCredentialsProvider(
             new BasicAWSCredentials("foo", "bar"));
 
     @BeforeClass

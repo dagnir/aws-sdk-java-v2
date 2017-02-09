@@ -32,10 +32,10 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.response.ErrorDuringUnmarshallingResponseHandler;
-import software.amazon.awssdk.http.response.HttpResponseProxy;
-import software.amazon.awssdk.http.response.NullResponseHandler;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
+import software.amazon.awssdk.internal.http.response.ErrorDuringUnmarshallingResponseHandler;
+import software.amazon.awssdk.internal.http.response.HttpResponseProxy;
+import software.amazon.awssdk.internal.http.response.NullResponseHandler;
 import software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils;
 
 /**

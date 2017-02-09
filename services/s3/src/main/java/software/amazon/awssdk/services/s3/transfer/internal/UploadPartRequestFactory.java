@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
-import software.amazon.awssdk.internal.io.ReleasableInputStream;
+import software.amazon.awssdk.runtime.io.ReleasableInputStream;
 import software.amazon.awssdk.services.s3.internal.InputSubstream;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.SSECustomerKey;

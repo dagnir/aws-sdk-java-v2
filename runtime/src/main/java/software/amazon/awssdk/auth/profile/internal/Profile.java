@@ -21,8 +21,8 @@ import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.AWSSessionCredentials;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 
 /**
  * Contains the information stored in an AWS profile, such as AWS security
@@ -53,7 +53,7 @@ public class Profile {
 
         this.profileName = profileName;
         this.properties = properties;
-        this.awsCredentials = new StaticCredentialsProvider(awsCredentials);
+        this.awsCredentials = new AWSStaticCredentialsProvider(awsCredentials);
     }
 
     public Profile(String profileName, String sourceProfile, AWSCredentialsProvider awsCredentials, RoleInfo roleInfo) {

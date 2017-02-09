@@ -19,7 +19,6 @@ import software.amazon.awssdk.opensdk.protect.model.transform.*;
 import software.amazon.awssdk.auth.*;
 import software.amazon.awssdk.handlers.*;
 import software.amazon.awssdk.http.*;
-import software.amazon.awssdk.internal.*;
 import software.amazon.awssdk.metrics.*;
 import software.amazon.awssdk.regions.*;
 import software.amazon.awssdk.runtime.transform.*;

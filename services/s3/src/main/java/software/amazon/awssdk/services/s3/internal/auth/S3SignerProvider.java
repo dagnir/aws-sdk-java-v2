@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.auth.RegionAwareSigner;
 import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.internal.auth.SignerProvider;
-import software.amazon.awssdk.internal.auth.SignerProviderContext;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.services.s3.internal.ServiceUtils;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 

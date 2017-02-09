@@ -28,7 +28,7 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.http.JsonErrorResponseHandler;
+import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;
 
 /**
  * Base class for tests that use a WireMock server

@@ -20,7 +20,7 @@ import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly
 import java.io.File;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
-import software.amazon.awssdk.internal.io.SdkFilterInputStream;
+import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;

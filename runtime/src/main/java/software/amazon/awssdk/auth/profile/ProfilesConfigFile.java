@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.AllProfiles;
 import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
 import software.amazon.awssdk.auth.profile.internal.BasicProfile;
@@ -31,7 +32,6 @@ import software.amazon.awssdk.auth.profile.internal.ProfileAssumeRoleCredentials
 import software.amazon.awssdk.auth.profile.internal.ProfileStaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.STSProfileCredentialsServiceLoader;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 import software.amazon.awssdk.util.ValidationUtils;
 
@@ -185,7 +185,7 @@ public class ProfilesConfigFile {
             final String profileName = entry.getKey();
             legacyProfiles.put(profileName,
                                new Profile(profileName, entry.getValue().getProperties(),
-                                           new StaticCredentialsProvider(
+                                           new AWSStaticCredentialsProvider(
                                                    getCredentials(profileName))));
         }
         return legacyProfiles;

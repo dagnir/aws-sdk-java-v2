@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3.internal;
 import java.util.Arrays;
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.function.SdkPredicate;
 
 public class IsSigV4RetryablePredicate extends SdkPredicate<AmazonServiceException> {
 

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.internal;
 
-import software.amazon.awssdk.internal.SdkPredicate;
+import software.amazon.awssdk.function.SdkPredicate;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 
 /**

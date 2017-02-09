@@ -35,10 +35,10 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.http.RepeatableInputStreamRequestEntity;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
+import software.amazon.awssdk.internal.http.apache.RepeatableInputStreamRequestEntity;
 import software.amazon.awssdk.internal.http.apache.utils.ApacheUtils;
 import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.FakeIOException;
 import software.amazon.awssdk.util.SdkHttpUtils;
 

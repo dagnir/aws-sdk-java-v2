@@ -37,9 +37,9 @@ import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
 import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
+import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.IOUtils;
 import software.amazon.awssdk.util.StringInputStream;
 
