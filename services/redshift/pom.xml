@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>redshift</artifactId>
-  <name>AWS Java SDK for Amazon Redshift</name>
+  <name>AWS Java SDK :: Services :: Amazon Redshift</name>
   <description>The AWS Java SDK for Amazon Redshift module holds the client classes that are used for communicating with Amazon Redshift Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

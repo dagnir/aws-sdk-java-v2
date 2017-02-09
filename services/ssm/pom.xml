@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>ssm</artifactId>
-    <name>AWS Java SDK for the AWS Simple Systems Management (SSM) Service</name>
+    <name>AWS Java SDK :: Services :: AWS Simple Systems Management (SSM)</name>
     <description>The AWS Java SDK for AWS Simple Systems Management Service holds the client classes that are used for communicating with
         the AWS Simple Systems Management Service
     </description>

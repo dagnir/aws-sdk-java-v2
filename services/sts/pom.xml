@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>sts</artifactId>
-  <name>AWS Java SDK for AWS STS</name>
+  <name>AWS Java SDK :: Services :: AWS STS</name>
   <description>The AWS Java SDK for AWS STS module holds the client classes that are used for communicating with AWS Security Token Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

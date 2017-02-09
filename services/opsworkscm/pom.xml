@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>opsworkscm</artifactId>
-  <name>AWS Java SDK for AWS OpsWorks for Chef Automate</name>
+  <name>AWS Java SDK :: Services :: AWS OpsWorks for Chef Automate</name>
   <description>The AWS Java SDK for AWS OpsWorks for Chef Automate module holds the client classes that are used for communicating with AWS OpsWorks for Chef Automate Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

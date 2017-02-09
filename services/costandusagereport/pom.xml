@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>costandusagereport</artifactId>
-  <name>AWS Java SDK for AWS Cost and Usage Report</name>
+  <name>AWS Java SDK :: Services :: AWS Cost and Usage Report</name>
   <description>The AWS Java SDK for AWS Cost and Usage Report module holds the client classes that are used for communicating with AWS Cost and Usage Report service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

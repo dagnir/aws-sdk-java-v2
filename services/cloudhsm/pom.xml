@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>cloudhsm</artifactId>
-    <name>AWS Java SDK for the AWS CloudHSM</name>
+    <name>AWS Java SDK :: Services :: AWS CloudHSM</name>
     <description>The AWS Java SDK for AWS CloudHSM holds the client classes that are used for communicating with the AWS CloudHSM Service
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>

@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>iot</artifactId>
-  <name>AWS Java SDK for AWS IoT</name>
+  <name>AWS Java SDK :: Services :: AWS IoT</name>
   <description>The AWS Java SDK for AWS Iot Service module holds the client classes that are used for communicating with AWS IoT Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

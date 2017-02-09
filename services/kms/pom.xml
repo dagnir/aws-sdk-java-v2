@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>kms</artifactId>
-  <name>AWS Java SDK for AWS KMS</name>
+  <name>AWS Java SDK :: Services :: AWS KMS</name>
   <description>The AWS Java SDK for AWS KMS module holds the client classes that are used for communicating with AWS Key Management Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

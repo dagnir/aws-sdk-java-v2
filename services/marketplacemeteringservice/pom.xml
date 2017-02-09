@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>marketplacemeteringservice</artifactId>
-  <name>AWS Java SDK for AWS Marketplace Metering Service</name>
+  <name>AWS Java SDK :: Services :: AWS Marketplace Metering Service</name>
   <description>The AWS Java SDK for AWS Marketplace Metering Service module holds the client classes that are used for communicating with AWS Marketplace Metering Service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

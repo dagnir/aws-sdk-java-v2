@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>codedeploy</artifactId>
-    <name>AWS Java SDK for AWS CodeDeploy</name>
+    <name>AWS Java SDK :: Services :: AWS CodeDeploy</name>
     <description>The AWS Java SDK for AWS CodeDeploy module holds the client classes that are used for communicating with AWS CodeDeploy
         Service
     </description>

@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>marketplacecommerceanalytics</artifactId>
-    <name>AWS Java SDK for AWS Marketplace Commerce Analytics</name>
+    <name>AWS Java SDK :: Services :: AWS Marketplace Commerce Analytics</name>
     <description>The AWS Java SDK for AWS Marketplace Commerce Analytics Service module holds the client classes that are used for
         communicating with AWS Marketplace Commerce Analytics Service
     </description>

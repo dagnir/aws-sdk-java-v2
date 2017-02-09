@@ -12,7 +12,7 @@
   <artifactId>codegen-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
 
-  <name>AWS SDK for Java - Code Generator Maven Plugin</name>
+  <name>AWS Java SDK :: Code Generator Maven Plugin</name>
   <description>The AWS SDK for Java - Code Generator Maven Plugin module holds a mojo to generate the AWS Java SDK clients for AWS services.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

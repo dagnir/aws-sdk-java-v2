@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>sqs</artifactId>
-    <name>AWS Java SDK for Amazon SQS</name>
+    <name>AWS Java SDK :: Services :: Amazon SQS</name>
     <description>The AWS Java SDK for Amazon SQS module holds the client classes that are used for communicating with Amazon Simple Queue
         Service
     </description>

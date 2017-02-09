@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>config</artifactId>
-  <name>AWS Java SDK for AWS Config</name>
+  <name>AWS Java SDK :: Services :: AWS Config</name>
   <description>The AWS Java SDK for AWS Config module holds the client classes that are used for communicating with AWS Config Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

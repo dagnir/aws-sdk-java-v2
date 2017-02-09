@@ -9,9 +9,8 @@
         <version>0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>software.amazon.awssdk</groupId>
     <artifactId>core</artifactId>
-    <name>AWS SDK for Java - Runtime</name>
+    <name>AWS Java SDK :: Runtime</name>
     <description>The AWS SDK for Java - Runtime module holds the classes that are used by the individual service clients to interact with
         Amazon Web Services. Users need to depend on aws-java-sdk artifact for accessing individual client classes.
     </description>

@@ -10,7 +10,7 @@
     <artifactId>bundle</artifactId>
     <packaging>jar</packaging>
 
-    <name>AWS SDK for Java - Bundle</name>
+    <name>AWS Java SDK :: Bundle</name>
     <description>A single bundled dependency that includes all service and dependent JARs with third-party libraries relocated to different namespaces.</description>
     <url>https://aws.amazon.com/sdkforjava</url>
 

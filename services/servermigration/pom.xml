@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>servermigration</artifactId>
-  <name>AWS Java SDK for AWS Server Migration</name>
+  <name>AWS Java SDK :: Services :: AWS Server Migration</name>
   <description>The AWS Java SDK for AWS Server Migration module holds the client classes that are used for communicating with AWS Server Migration Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

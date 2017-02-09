@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>cloudtrail</artifactId>
-    <name>AWS Java SDK for AWS CloudTrail</name>
+    <name>AWS Java SDK :: Services :: AWS CloudTrail</name>
     <description>The AWS Java SDK for AWS CloudTrail module holds the client classes that are used for communicating with AWS CloudTrail
         Service
     </description>

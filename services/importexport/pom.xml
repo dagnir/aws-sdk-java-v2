@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>importexport</artifactId>
-  <name>AWS Java SDK for AWS Import/Export</name>
+  <name>AWS Java SDK :: Services :: AWS Import/Export</name>
   <description>The AWS Java SDK for AWS Import/Export module holds the client classes that are used for communicating with AWS Import/Export Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

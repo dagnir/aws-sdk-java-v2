@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>xray</artifactId>
-  <name>AWS Java SDK for AWS X-Ray</name>
+  <name>AWS Java SDK :: Services :: AWS X-Ray</name>
   <description>The AWS Java SDK for AWS X-Ray module holds the client classes that are used for communicating with AWS X-Ray Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

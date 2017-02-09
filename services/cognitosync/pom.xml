@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>cognitosync</artifactId>
-  <name>AWS Java SDK for Amazon Cognito Sync</name>
+  <name>AWS Java SDK :: Services :: Amazon Cognito Sync</name>
   <description>The AWS Java SDK for Amazon Cognito Sync module holds the client classes that are used for communicating with Amazon Cognito Sync Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

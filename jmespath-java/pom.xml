@@ -7,9 +7,8 @@
     <artifactId>aws-java-sdk-pom</artifactId>
     <version>0.1-SNAPSHOT</version>
    </parent>
-  <groupId>software.amazon.awssdk</groupId>
   <artifactId>jmespath-java</artifactId>
-  <name>JMES Path Query library</name>
+  <name>AWS Java SDK :: JMES Path Query library</name>
   <description>Implementation of the JMES Path JSON Query langauge for Java.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
   <licenses>

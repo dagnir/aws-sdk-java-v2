@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>sns</artifactId>
-  <name>AWS Java SDK for Amazon SNS</name>
+  <name>AWS Java SDK :: Services :: Amazon SNS</name>
   <description>The AWS Java SDK for Amazon SNS module holds the client classes that are used for communicating with Amazon Simple Notification Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

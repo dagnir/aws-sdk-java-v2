@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>discovery</artifactId>
-  <name>AWS Java SDK for AWS Application Discovery Service</name>
+  <name>AWS Java SDK :: Services :: AWS Application Discovery Service</name>
   <description>The AWS Java SDK for AWS Application Discovery Service module holds the client classes that are used for communicating with AWS Application Discovery Service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

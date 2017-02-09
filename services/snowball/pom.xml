@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>snowball</artifactId>
-  <name>AWS Java SDK for Amazon Snowball</name>
+  <name>AWS Java SDK :: Services :: Amazon Snowball</name>
   <description>The AWS Java SDK for Amazon Snowball module holds the client classes that are used for communicating with Amazon Snowball.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

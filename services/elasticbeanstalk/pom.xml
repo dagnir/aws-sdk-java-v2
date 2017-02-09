@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>elasticbeanstalk</artifactId>
-  <name>AWS Java SDK for AWS Elastic Beanstalk</name>
+  <name>AWS Java SDK :: Services :: AWS Elastic Beanstalk</name>
   <description>The AWS Java SDK for AWS Elastic Beanstalk module holds the client classes that are used for communicating with AWS Elastic Beanstalk Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

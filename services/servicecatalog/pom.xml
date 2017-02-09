@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>servicecatalog</artifactId>
-  <name>AWS Java SDK for AWS Service Catalog</name>
+  <name>AWS Java SDK :: Services :: AWS Service Catalog</name>
   <description>The AWS Java SDK for AWS Service Catalog module holds the client classes that are used for communicating with AWS Service Catalog</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

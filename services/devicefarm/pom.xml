@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>devicefarm</artifactId>
-    <name>AWS Java SDK for AWS Device Farm</name>
+    <name>AWS Java SDK :: Services :: AWS Device Farm</name>
     <description>The AWS Java SDK for AWS Device Farm module holds the client classes that are used for communicating with AWS Device Farm
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>

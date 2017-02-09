@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>cloudwatch</artifactId>
-  <name>AWS Java SDK for Amazon CloudWatch</name>
+  <name>AWS Java SDK :: Services :: Amazon CloudWatch</name>
   <description>The AWS Java SDK for Amazon CloudWatch module holds the client classes that are used for communicating with Amazon CloudWatch Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

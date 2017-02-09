@@ -7,9 +7,8 @@
     <artifactId>aws-java-sdk-pom</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
-  <groupId>software.amazon.awssdk</groupId>
   <artifactId>codegen</artifactId>
-  <name>AWS SDK for Java - Code Generator</name>
+  <name>AWS Java SDK :: Code Generator</name>
   <description>The AWS SDK for Java - Code Generator module holds the classes and templates required to generate the AWS Java SDK clients for AWS services.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

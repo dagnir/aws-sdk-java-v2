@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>shield</artifactId>
-  <name>AWS Java SDK for AWS Shield</name>
+  <name>AWS Java SDK :: Services :: AWS Shield</name>
   <description>The AWS Java SDK for AWS Shield module holds the client classes that are used for communicating with AWS Shield.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

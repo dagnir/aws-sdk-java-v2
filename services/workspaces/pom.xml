@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>workspaces</artifactId>
-    <name>AWS Java SDK for Amazon WorkSpaces</name>
+    <name>AWS Java SDK :: Services :: Amazon WorkSpaces</name>
     <description>The AWS Java SDK for Amazon WorkSpaces module holds the client classes that are used for communicating with Amazon
         WorkSpaces Service
     </description>

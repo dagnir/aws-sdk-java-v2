@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>api-gateway</artifactId>
-    <name>AWS Java SDK for Amazon API Gateway</name>
+    <name>AWS Java SDK :: Services :: Amazon API Gateway</name>
     <description>The AWS Java SDK for Amazon API Gateway module holds the client classes that are used for communicating with Amazon API
         Gateway
     </description>

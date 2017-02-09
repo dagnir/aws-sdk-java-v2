@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>simpledb</artifactId>
-    <name>AWS Java SDK for Amazon SimpleDB</name>
+    <name>AWS Java SDK :: Services :: Amazon SimpleDB</name>
     <description>The AWS Java SDK for Amazon SimpleDB module holds the client classes that are used for communicating with Amazon SimpleDB
         Service
     </description>

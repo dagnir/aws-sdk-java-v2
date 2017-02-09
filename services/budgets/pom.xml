@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>budgets</artifactId>
-  <name>AWS Java SDK for AWS Budgets</name>
+  <name>AWS Java SDK :: Services :: AWS Budgets</name>
   <description>The AWS Java SDK for AWS Budgets module holds the client classes that are used for communicating with AWS Budgets Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

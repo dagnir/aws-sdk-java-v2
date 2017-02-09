@@ -8,9 +8,8 @@
     <artifactId>aws-java-sdk-pom</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
-  <groupId>software.amazon.awssdk</groupId>
   <artifactId>cloudwatchmetrics</artifactId>
-  <name>CloudWatch Metrics for AWS Java SDK</name>
+  <name>AWS Java SDK :: CloudWatch Metrics</name>
   <description>This package holds the classes for uploading the clientside metrics collected from AWS Java SDK to
     Amazon CloudWatch
   </description>

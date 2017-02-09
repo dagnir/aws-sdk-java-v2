@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>kinesis</artifactId>
-  <name>AWS Java SDK for Amazon Kinesis</name>
+  <name>AWS Java SDK :: Services :: Amazon Kinesis</name>
   <description>The AWS Java SDK for Amazon Kinesis module holds the client classes that are used for communicating with Amazon Kinesis Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

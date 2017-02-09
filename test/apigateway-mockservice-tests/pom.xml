@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>apigateway-mockservice-tests</artifactId>
-    <name>API Gateway Mock Service Tests</name>
+    <name>AWS Java SDK :: Test :: API Gateway Mock Service Tests</name>
     <description>Tests an API Gateway style client using a mock service.</description>
 
     <dependencies>

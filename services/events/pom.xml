@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>events</artifactId>
-    <name>AWS Java SDK for Amazon CloudWatch Events</name>
+    <name>AWS Java SDK :: Services :: Amazon CloudWatch Events</name>
     <description>The AWS Java SDK for Amazon CloudWatch Events module holds the client classes that are used for communicating with Amazon
         CloudWatch Events Service
     </description>

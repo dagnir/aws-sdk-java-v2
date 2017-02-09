@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>stepfunctions</artifactId>
-  <name>AWS Java SDK for AWS Step Functions</name>
+  <name>AWS Java SDK :: Services :: AWS Step Functions</name>
   <description>The AWS Java SDK for AWS Step Functions module holds the client classes that are used for communicating with AWS Step Functions.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 
