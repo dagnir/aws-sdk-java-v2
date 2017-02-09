@@ -33,93 +33,11 @@
   </developers>
   <!-- The module section in pom.xml is auto generated. No manual changes are allowed -->
   <modules>
-    <module>services/pinpoint</module>
-    <module>services/xray</module>
-    <module>services/opsworkscm</module>
-    <module>services/support</module>
-    <module>services/simpledb</module>
-    <module>services/servicecatalog</module>
-    <module>services/servermigration</module>
-    <module>services/simpleworkflow</module>
-    <module>services/storagegateway</module>
-    <module>services/route53</module>
-    <module>services/s3</module>
-    <module>services/importexport</module>
-    <module>services/sts</module>
-    <module>services/sqs</module>
-    <module>services/rds</module>
-    <module>services/redshift</module>
-    <module>services/elasticbeanstalk</module>
-    <module>services/glacier</module>
-    <module>services/iam</module>
-    <module>services/datapipeline</module>
-    <module>services/elasticloadbalancing</module>
-    <module>services/elasticloadbalancingv2</module>
-    <module>services/emr</module>
-    <module>services/elasticache</module>
-    <module>services/elastictranscoder</module>
-    <module>services/ec2</module>
-    <module>services/dynamodb</module>
-    <module>services/sns</module>
-    <module>services/budgets</module>
-    <module>services/cloudtrail</module>
-    <module>services/cloudwatch</module>
-    <module>services/logs</module>
-    <module>services/events</module>
-    <module>services/cognitoidentity</module>
-    <module>services/cognitosync</module>
-    <module>services/directconnect</module>
-    <module>services/cloudformation</module>
-    <module>services/cloudfront</module>
-    <module>services/clouddirectory</module>
-    <module>services/kinesis</module>
-    <module>services/opsworks</module>
-    <module>services/ses</module>
-    <module>services/autoscaling</module>
-    <module>services/cloudsearch</module>
-    <module>cloudwatchmetrics</module>
-    <module>services/codedeploy</module>
-    <module>services/codepipeline</module>
-    <module>services/kms</module>
-    <module>services/config</module>
-    <module>services/lambda</module>
-    <module>services/ecs</module>
-    <module>services/ecr</module>
-    <module>services/cloudhsm</module>
-    <module>services/ssm</module>
-    <module>services/workspaces</module>
-    <module>services/machinelearning</module>
-    <module>services/directory</module>
-    <module>services/efs</module>
-    <module>services/codecommit</module>
-    <module>services/devicefarm</module>
-    <module>services/elasticsearch</module>
-    <module>services/waf</module>
-    <module>services/marketplacecommerceanalytics</module>
-    <module>services/inspector</module>
-    <module>services/iot</module>
-    <module>services/api-gateway</module>
-    <module>services/acm</module>
-    <module>services/gamelift</module>
-    <module>services/dms</module>
-    <module>services/marketplacemeteringservice</module>
-    <module>services/cognitoidp</module>
-    <module>services/discovery</module>
-    <module>services/applicationautoscaling</module>
-    <module>services/snowball</module>
-    <module>services/rekognition</module>
-    <module>services/polly</module>
-    <module>services/lightsail</module>
-    <module>services/stepfunctions</module>
-    <module>services/health</module>
-    <module>services/costandusagereport</module>
-    <module>services/codebuild</module>
-    <module>services/appstream</module>
-    <module>services/shield</module>
-    <module>services/batch</module>
+    <module>services</module>
     <module>aws-java-sdk</module>
     <module>runtime</module>
     <module>opensdk</module>
+    <module>cloudwatchmetrics</module>
     <module>bom</module>
     <module>codegen</module>
     <module>codegen-maven-plugin</module>
@@ -398,7 +316,7 @@
               <version>2.19.1</version>
               <configuration>
                 <excludes combine.self="override">
-                  <exclude></exclude>
+                  <exclude/>
                 </excludes>
               </configuration>
             </plugin>
