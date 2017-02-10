@@ -17,46 +17,6 @@
       <plugin>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>codegen-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <configuration>
-              <serviceModelLocation>codegen-resources/kinesis/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/kinesis/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/kinesis/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/kinesis/examples.json</serviceExamplesLocation>
-            </configuration>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>kinesisanalytics</id>
-            <configuration>
-              <serviceModelLocation>codegen-resources/kinesisanalytics/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/kinesisanalytics/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/kinesisanalytics/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/kinesisanalytics/examples.json</serviceExamplesLocation>
-            </configuration>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>kinesisfirehose</id>
-            <configuration>
-              <serviceModelLocation>codegen-resources/kinesisfirehose/service-2.json</serviceModelLocation>
-              <codeGenConfigLocation>codegen-resources/kinesisfirehose/codegen.config</codeGenConfigLocation>
-              <customizationConfigLocation>codegen-resources/kinesisfirehose/customization.config</customizationConfigLocation>
-              <serviceExamplesLocation>codegen-resources/kinesisfirehose/examples.json</serviceExamplesLocation>
-            </configuration>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
