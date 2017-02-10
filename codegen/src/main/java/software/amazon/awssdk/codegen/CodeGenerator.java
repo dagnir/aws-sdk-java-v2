@@ -34,18 +34,18 @@ public class CodeGenerator {
     private static final String MODEL_DIR_NAME = "models";
 
     private final C2jModels models;
-    private final String outputDirectory;
+    private final String sourcesDirectory;
+    private final String testsDirectory;
     /**
      * The prefix for the file name that contains the intermediate model.
      */
     private final String fileNamePrefix;
 
-    public CodeGenerator(C2jModels models,
-                         String outputDirectory,
-                         String fileNamePrefix) {
-        this.models = models;
-        this.outputDirectory = outputDirectory;
-        this.fileNamePrefix = fileNamePrefix;
+    public CodeGenerator(Builder builder) {
+        this.models = builder.models;
+        this.sourcesDirectory = builder.sourcesDirectory;
+        this.testsDirectory = builder.testsDirectory;
+        this.fileNamePrefix = builder.fileNamePrefix;
     }
 
     /**
@@ -71,10 +71,10 @@ public class CodeGenerator {
 
     private void writeIntermediateModel(IntermediateModel model)
             throws IOException {
-        final File modelDir = getModelDirectory(outputDirectory);
+        final File modelDir = getModelDirectory(sourcesDirectory);
         PrintWriter writer = null;
         try {
-            File outDir = new File(outputDirectory);
+            File outDir = new File(sourcesDirectory);
             if (!outDir.exists()) {
                 if (!outDir.mkdirs()) {
                     throw new RuntimeException("Failed to create "
@@ -110,7 +110,7 @@ public class CodeGenerator {
 
     private Iterable<GeneratorTask> createGeneratorTasks(IntermediateModel intermediateModel) {
         // For clients built internally, the output directory and source directory are the same.
-        GeneratorTaskParams params = GeneratorTaskParams.create(intermediateModel, outputDirectory, outputDirectory);
+        GeneratorTaskParams params = GeneratorTaskParams.create(intermediateModel, sourcesDirectory, testsDirectory);
         if (params.getModel().getMetadata().getProtocol() == Protocol.API_GATEWAY) {
             return new ApiGatewayGeneratorTasks(params);
         } else {
@@ -123,4 +123,53 @@ public class CodeGenerator {
         Utils.createDirectory(dir);
         return dir;
     }
+
+    /**
+     * @return Builder instance to construct a {@link CodeGenerator}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Builder for a {@link CodeGenerator}.
+     */
+    public static final class Builder {
+
+        private C2jModels models;
+        private String sourcesDirectory;
+        private String testsDirectory;
+        private String fileNamePrefix;
+
+        private Builder() {
+        }
+
+        public Builder models(C2jModels models) {
+            this.models = models;
+            return this;
+        }
+
+        public Builder sourcesDirectory(String sourcesDirectory) {
+            this.sourcesDirectory = sourcesDirectory;
+            return this;
+        }
+
+        public Builder testsDirectory(String smokeTestsDirectory) {
+            this.testsDirectory = smokeTestsDirectory;
+            return this;
+        }
+
+        public Builder fileNamePrefix(String fileNamePrefix) {
+            this.fileNamePrefix = fileNamePrefix;
+            return this;
+        }
+
+        /**
+         * @return An immutable {@link CodeGenerator} object.
+         */
+        public CodeGenerator build() {
+            return new CodeGenerator(this);
+        }
+    }
+
 }

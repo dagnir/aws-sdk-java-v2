@@ -24,15 +24,13 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 public class GeneratorPathProvider {
 
     private final IntermediateModel model;
-    private final String outputDirectory;
     private final String sourceDirectory;
+    private final String testDirectory;
 
-    public GeneratorPathProvider(IntermediateModel model,
-                          String outputDirectory,
-                          String sourceDirectory) {
+    public GeneratorPathProvider(IntermediateModel model, String sourceDirectory, String testDirectory) {
         this.model = model;
-        this.outputDirectory = outputDirectory;
         this.sourceDirectory = sourceDirectory;
+        this.testDirectory = testDirectory;
     }
 
     public String getModelDirectory() {
@@ -47,15 +45,11 @@ public class GeneratorPathProvider {
         return sourceDirectory + "/" + getPackagePath();
     }
 
-    public String getOutputDirectory() {
-        return outputDirectory;
-    }
-
     public String getSmokeTestDirectory() {
-        return String.format("%s/../%s/%s/%s",
-                             getOutputDirectory(),
-                             Constants.SMOKE_TESTS_DIR_NAME,
+        return String.format("%s/%s/%s",
+                             testDirectory,
                              getPackagePath(),
+
                              Constants.SMOKE_TESTS_DIR_NAME);
     }
 
@@ -64,7 +58,7 @@ public class GeneratorPathProvider {
     }
 
     public String getPolicyEnumDirectory() {
-        return getOutputDirectory() + "/" + Constants.AUTH_POLICY_ENUM_CLASS_DIR;
+        return sourceDirectory + "/" + Constants.AUTH_POLICY_ENUM_CLASS_DIR;
     }
 
     public String getAuthorizerDirectory() {
