@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.io.InputStream;
@@ -64,7 +63,7 @@ public class Unmarshallers {
      * Unmarshaller for the ListBuckets XML response.
      */
     public static final class ListBucketsUnmarshaller implements
-                                                      Unmarshaller<List<Bucket>, InputStream> {
+            Unmarshaller<List<Bucket>, InputStream> {
         public List<Bucket> unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser()
                     .parseListMyBucketsResponse(in).getBuckets();

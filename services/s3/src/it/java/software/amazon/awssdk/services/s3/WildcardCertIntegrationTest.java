@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
@@ -44,7 +45,7 @@ public class WildcardCertIntegrationTest extends AWSIntegrationTestBase {
     public static void setup() {
         S3 = AmazonS3ClientBuilder.standard()
                 .withRegion(Regions.US_WEST_2)
-                .withCredentials(new StaticCredentialsProvider(getCredentials()))
+                .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
                 .build();
         S3.createBucket(BUCKET_NAME);
     }

@@ -33,13 +33,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.HttpMethod;
-import software.amazon.awssdk.auth.STSSessionCredentialsProvider;
 import software.amazon.awssdk.services.s3.model.GeneratePresignedUrlRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.securitytoken.auth.STSSessionCredentialsProvider;
 import software.amazon.awssdk.test.util.RandomTempFile;
-
 
 /**
  * Tests integraton with STS tokens.

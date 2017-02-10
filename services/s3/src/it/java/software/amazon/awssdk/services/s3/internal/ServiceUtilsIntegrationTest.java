@@ -15,7 +15,9 @@
 
 package software.amazon.awssdk.services.s3.internal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static software.amazon.awssdk.services.s3.internal.Constants.KB;
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 

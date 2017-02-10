@@ -14,6 +14,27 @@ import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.AmazonS3TestClient;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
+import software.amazon.awssdk.services.s3.model.AccessControlList;
+import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
+import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.CanonicalGrantee;
+import software.amazon.awssdk.services.s3.model.DeleteVersionRequest;
+import software.amazon.awssdk.services.s3.model.EmailAddressGrantee;
+import software.amazon.awssdk.services.s3.model.GetObjectMetadataRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.Grant;
+import software.amazon.awssdk.services.s3.model.Grantee;
+import software.amazon.awssdk.services.s3.model.GroupGrantee;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListVersionsRequest;
+import software.amazon.awssdk.services.s3.model.ObjectListing;
+import software.amazon.awssdk.services.s3.model.ObjectMetadata;
+import software.amazon.awssdk.services.s3.model.Permission;
+import software.amazon.awssdk.services.s3.model.PutObjectResult;
+import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.services.s3.model.S3VersionSummary;
+import software.amazon.awssdk.services.s3.model.VersionListing;
 import software.amazon.awssdk.test.AWSTestBase;
 import software.amazon.awssdk.test.util.RandomInputStream;
 import software.amazon.awssdk.test.util.RandomTempFile;
@@ -95,7 +116,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
      *         group grantee and permission, otherwise false.
      */
     protected static boolean doesAclContainGroupGrant(
-            AccessControlList acl, GroupGrantee expectedGrantee, Permission expectedPermission) {
+        AccessControlList acl, GroupGrantee expectedGrantee, Permission expectedPermission) {
 
         for (Grant grant: acl.getGrantsAsList()) {
             Grantee grantee = grant.getGrantee();
@@ -247,7 +268,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
 
     public boolean doesObjectExist(String bucketName, String key) {
         return !s3.listObjects(new ListObjectsRequest(bucketName, key, null, null, null)).getObjectSummaries()
-                .isEmpty();
+                  .isEmpty();
     }
 
     public boolean doesObjectExist(String bucketName, String key, String version) throws Exception {
@@ -299,7 +320,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
     protected Set<Grant> translateEmailAclsIntoCanonical(AccessControlList acl) {
         Set<Grant> expectedGrants = new HashSet<Grant>();
         for ( Grant grant : acl.getGrantsAsList() ) {
-            if ( grant.getGrantee() instanceof EmailAddressGrantee ) {
+            if ( grant.getGrantee() instanceof EmailAddressGrantee) {
                 if ( grant.getGrantee().getIdentifier().equals(AWS_DR_TOOLS_EMAIL_ADDRESS) ) {
                     expectedGrants.add(new Grant(new CanonicalGrantee(AWS_DR_TOOLS_ACCT_ID), grant.getPermission()));
                 } else {

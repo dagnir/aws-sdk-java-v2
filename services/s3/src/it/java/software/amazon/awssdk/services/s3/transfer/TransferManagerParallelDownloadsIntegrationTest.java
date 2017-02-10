@@ -15,7 +15,8 @@
 
 package software.amazon.awssdk.services.s3.transfer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import static software.amazon.awssdk.services.s3.transfer.internal.TransferManagerUtils.createDefaultExecutorService;
 

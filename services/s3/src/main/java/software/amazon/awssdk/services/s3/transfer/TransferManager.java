@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.services.s3.transfer;
 
 import static software.amazon.awssdk.services.s3.internal.ServiceUtils.APPEND_MODE;
@@ -1085,6 +1084,9 @@ public class TransferManager {
                 throw new AmazonClientException("The requested object in bucket " + getObjectRequest.getBucketName()
                         + " with key " + getObjectRequest.getKey() + " is modified on Amazon S3 since the last pause.");
             }
+            // There's still a chance the object is modified while the request
+            // is in flight. Set this header so S3 fails the request if this happens.
+            getObjectRequest.setUnmodifiedSinceConstraint(new Date(lastModifiedTime));
 
             if (!isDownloadParallel) {
                 if (!FileLocks.lock(file)) {

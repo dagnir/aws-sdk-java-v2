@@ -13,7 +13,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
+import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 

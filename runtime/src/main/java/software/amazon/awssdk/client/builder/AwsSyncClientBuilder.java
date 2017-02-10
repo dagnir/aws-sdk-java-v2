@@ -17,8 +17,10 @@ package software.amazon.awssdk.client.builder;
 
 import software.amazon.awssdk.ClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.client.AwsSyncClientParams;
+import software.amazon.awssdk.regions.AwsRegionProvider;
 
 /**
  * Base class for all service specific sync client builders.
@@ -33,6 +35,12 @@ public abstract class AwsSyncClientBuilder<Subclass extends AwsSyncClientBuilder
     protected AwsSyncClientBuilder(ClientConfigurationFactory clientConfigFactory) {
         super(clientConfigFactory);
     }
+
+    @SdkInternalApi
+    protected AwsSyncClientBuilder(ClientConfigurationFactory clientConfigFactory, AwsRegionProvider regionProvider) {
+        super(clientConfigFactory, regionProvider);
+    }
+
 
     @Override
     public final TypeToBuild build() {

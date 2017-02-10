@@ -12,14 +12,71 @@
   <description>The AWS Java SDK for Amazon S3 module holds the client classes that are used for communicating with Amazon Simple Storage Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 
+  <!-- The dependencies section in pom.xml is auto generated. No manual changes are allowed -->
   <dependencies>
     <dependency>
-      <artifactId>kms</artifactId>
-      <groupId>software.amazon.awssdk</groupId>
-      <optional>false</optional>
-      <version>${awsjavasdk.version}</version>
+        <artifactId>kms</artifactId>
+        <groupId>software.amazon.awssdk</groupId>
+        <optional>false</optional>
+        <version>${awsjavasdk.version}</version>
     </dependency>
-  </dependencies>
+
+    <!-- Test Dependencies -->
+    <dependency>
+      <artifactId>wiremock</artifactId>
+      <groupId>com.github.tomakehurst</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>mockito-all</artifactId>
+      <groupId>org.mockito</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>commons-io</artifactId>
+      <groupId>commons-io</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>hamcrest-all</artifactId>
+      <groupId>org.hamcrest</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>sns</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <version>${awsjavasdk.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>lambda</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <version>${awsjavasdk.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>iam</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <version>${awsjavasdk.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>sts</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <version>${awsjavasdk.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.takari.junit</groupId>
+      <artifactId>takari-cpsuite</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <scope>test</scope>
+    </dependency>
+</dependencies>
 
   <build>
     <plugins>

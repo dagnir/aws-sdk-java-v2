@@ -20,6 +20,7 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.s3.internal.SkipMd5CheckStrategy;
@@ -53,8 +54,8 @@ public class SkipMd5CheckIntegrationTest extends AWSIntegrationTestBase {
         normalS3.createBucket(BUCKET);
         normalS3.putObject(new PutObjectRequest(BUCKET, GET_KEY, getContent(), null));
 
-        md5TamperingS3 = new AmazonS3Client(new StaticCredentialsProvider(getCredentials()), new ClientConfiguration(),
-                null, mockStrategy);
+        md5TamperingS3 = new AmazonS3Client(new AWSStaticCredentialsProvider(getCredentials()), new ClientConfiguration(),
+                                            null, mockStrategy);
         md5TamperingS3.addRequestHandler(new RequestHandler2() {
             @Override
             public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse httpResponse) {

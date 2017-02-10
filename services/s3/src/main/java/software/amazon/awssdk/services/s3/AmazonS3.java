@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -4324,6 +4323,13 @@ public interface AmazonS3 extends S3DirectSpi {
      * to do this, see
      * http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#
      * specify-signature-version
+     * </p>
+     * <p>
+     * When supplying an {@link InputStream} using {@link
+     * UploadPartRequest#withInputStream(InputStream)} or {@link
+     * UploadPartRequest#setInputStream(InputStream)}, the stream will only be
+     * closed by the client if {@link UploadPartRequest#isLastPart()} is {@code
+     * true}. If this is not the last part, the stream will be left open.
      * </p>
      * @param request
      *            The UploadPartRequest object that specifies all the parameters

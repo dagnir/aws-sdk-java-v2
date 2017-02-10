@@ -67,18 +67,25 @@
       <mockito.all.version>1.10.19</mockito.all.version>
       <equalsverifier.version>1.7.5</equalsverifier.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <!-- These properties are used by SWF for it's dependencies -->
+
+      <!-- These properties are used by SWF for its dependencies -->
       <spring.version>3.0.7.RELEASE</spring.version>
       <freemarker.version>2.3.9</freemarker.version>
       <aspectj.version>1.8.2</aspectj.version>
-      <!-- This property is used by SES for it's optional dependency -->
+
+      <!-- These properties are used by SES for its optional dependencies -->
       <javax.mail.version>1.4.6</javax.mail.version>
       <jre.version>1.8</jre.version>
       <httpcomponents.httpclient.version>4.5.2</httpcomponents.httpclient.version>
+
       <!-- These properties are used by cucumber tests related code -->
       <cucumber.info.cukes.version>1.2.4</cucumber.info.cukes.version>
       <cucumber.guice.version>4.0</cucumber.guice.version>
       <unitils.version>3.3</unitils.version>
+
+      <!-- These properties are used by S3 for its test dependencies -->
+      <takari.cpsuite.version>1.2.7</takari.cpsuite.version>
+      <bouncycastle.version>1.56</bouncycastle.version>
   </properties>
 
   <dependencyManagement>
@@ -171,6 +178,16 @@
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
         <version>${mockito.all.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.takari.junit</groupId>
+        <artifactId>takari-cpsuite</artifactId>
+        <version>${takari.cpsuite.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>${bouncycastle.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

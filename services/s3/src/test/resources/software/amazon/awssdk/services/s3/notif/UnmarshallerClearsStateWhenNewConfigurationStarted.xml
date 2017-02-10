@@ -1,0 +1,21 @@
+<!-- Test data for BucketNotificationUnmarshallerTest -->
+<NotificationConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+	<TopicConfiguration>
+		<Id>notif-one</Id>
+		<Topic>some-arn-one</Topic>
+		<Event>s3:ObjectRemoved:Delete</Event>
+		<Filter>
+			<S3Key>
+				<FilterRule>
+					<Name>Prefix</Name>
+					<Value>some-prefix/</Value>
+				</FilterRule>
+			</S3Key>
+		</Filter>
+	</TopicConfiguration>
+	<TopicConfiguration>
+		<Id>notif-two</Id>
+		<Topic>some-arn-two</Topic>
+		<Event>s3:ObjectRemoved:Delete</Event>
+	</TopicConfiguration>
+</NotificationConfiguration>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -526,6 +525,10 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
                         params.getClientParams().getRequestMetricCollector()) : params.getKmsClient();
         this.crypto = new CryptoModuleDispatcher(this.kms, new S3DirectImpl(),
                 params.getClientParams().getCredentialsProvider(), params.getEncryptionMaterials(), params.getCryptoConfiguration());
+    }
+
+    public static AmazonS3EncryptionClientBuilder encryptionBuilder() {
+        return AmazonS3EncryptionClientBuilder.standard();
     }
 
     /**

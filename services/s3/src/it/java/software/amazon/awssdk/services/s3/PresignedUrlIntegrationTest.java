@@ -27,7 +27,6 @@ import org.junit.experimental.categories.Category;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.auth.STSSessionCredentialsProvider;
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.internal.AmazonS3TestClient;
 import software.amazon.awssdk.services.s3.internal.MD5DigestCalculatingInputStream;
@@ -35,6 +34,7 @@ import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.GeneratePresignedUrlRequest;
 import software.amazon.awssdk.services.s3.model.ResponseHeaderOverrides;
 import software.amazon.awssdk.services.s3.util.SpecialObjectKeyNameGenerator;
+import software.amazon.awssdk.services.securitytoken.auth.STSSessionCredentialsProvider;
 import software.amazon.awssdk.util.BinaryUtils;
 
 /**

@@ -15,7 +15,9 @@
 
 package software.amazon.awssdk.services.s3;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 
 import java.io.File;
@@ -26,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tools.ant.filters.StringInputStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,6 +48,7 @@ import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResult;
 import software.amazon.awssdk.test.util.RandomInputStream;
 import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.StringInputStream;
 
 /**
  * Tests for AmazonS3Client#getObjectMetadata operations with partNumber.
