@@ -30,8 +30,8 @@ public class GeneratorTaskParams {
     private final GeneratorPathProvider pathProvider;
     private final Log log = LogFactory.getLog(GeneratorTaskParams.class);
 
-    public static GeneratorTaskParams create(IntermediateModel model, String outputDirectory, String sourceDirectory) {
-        final GeneratorPathProvider pathProvider = new GeneratorPathProvider(model, outputDirectory, sourceDirectory);
+    public static GeneratorTaskParams create(IntermediateModel model, String sourceDirectory, String testDirectory) {
+        final GeneratorPathProvider pathProvider = new GeneratorPathProvider(model, sourceDirectory, testDirectory);
         return new GeneratorTaskParams(Freemarker.create(model), model, pathProvider);
     }
 

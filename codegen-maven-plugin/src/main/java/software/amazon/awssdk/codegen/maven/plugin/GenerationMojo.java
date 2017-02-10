@@ -20,6 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Optional;
+import java.util.stream.Stream;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -55,13 +59,18 @@ public class GenerationMojo extends AbstractMojo {
     @Parameter(property = "codeGenResources", defaultValue = "${basedir}/src/main/resources/codegen-resources/")
     private File codeGenResources;
 
-    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/generated-sources/aws")
+    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}")
     private String outputDirectory;
 
     @Component
     private MavenProject project;
 
+    private Path sourcesDirectory;
+    private Path testsDirectory;
+
     public void execute() throws MojoExecutionException {
+        this.sourcesDirectory = Paths.get(outputDirectory).resolve("generated-sources").resolve("sdk");
+        this.testsDirectory = Paths.get(outputDirectory).resolve("generated-test-sources").resolve("sdk-tests");
         findModelRoots().forEach(p -> {
             try {
                 getLog().info("Loading from: " + p.toString());
@@ -76,7 +85,8 @@ public class GenerationMojo extends AbstractMojo {
                 throw new RuntimeException(e);
             }
         });
-        project.addCompileSourceRoot(outputDirectory);
+        project.addCompileSourceRoot(sourcesDirectory.toFile().getAbsolutePath());
+        project.addTestCompileSourceRoot(testsDirectory.toFile().getAbsolutePath());
     }
 
     private Stream<Path> findModelRoots() throws MojoExecutionException {
@@ -92,7 +102,13 @@ public class GenerationMojo extends AbstractMojo {
     }
 
     private void generateCode(C2jModels models) {
-        new CodeGenerator(models, outputDirectory, Utils.getFileNamePrefix(models.serviceModel())).execute();
+        CodeGenerator.builder()
+                .models(models)
+                .sourcesDirectory(sourcesDirectory.toFile().getAbsolutePath())
+                .testsDirectory(testsDirectory.toFile().getAbsolutePath())
+                .fileNamePrefix(Utils.getFileNamePrefix(models.serviceModel()))
+                .build()
+                .execute();
     }
 
     private BasicCodeGenConfig loadCodeGenConfig(Path root) throws MojoExecutionException {
