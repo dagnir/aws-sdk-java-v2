@@ -225,6 +225,8 @@
           <configuration>
               <excludes>
                   <exclude>**/*CucumberTest.java</exclude>
+                  <exclude>**/*IntegrationTest.java</exclude>
+                  <exclude>**/*IntegTest.java</exclude>
               </excludes>
               <includes>
                   <include>**/Test*.java</include>
@@ -243,7 +245,47 @@
             <execution>
               <goals>
                 <goal>integration-test</goal>
+                <goal>verify</goal>
               </goals>
+              <configuration>
+                <includes>
+                  <include>**/*IntegrationTest.java</include>
+                  <include>**/*IntegTest.java</include>
+                </includes>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.0.0</version>
+          <executions>
+            <execution>
+              <id>add-integ-sources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>add-test-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${basedir}/src/it/java</source>
+                </sources>
+              </configuration>
+            </execution>
+            <execution>
+              <id>add-integ-resources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>add-test-resource</goal>
+              </goals>
+              <configuration>
+                <resources>
+                  <resource>
+                    <directory>${basedir}/src/it/resources</directory>
+                  </resource>
+                </resources>
+              </configuration>
             </execution>
           </executions>
         </plugin>
