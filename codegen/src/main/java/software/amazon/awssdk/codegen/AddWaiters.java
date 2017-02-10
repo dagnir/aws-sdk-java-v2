@@ -18,11 +18,13 @@ package software.amazon.awssdk.codegen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.io.FilenameUtils;
+
 import software.amazon.awssdk.codegen.model.intermediate.AcceptorModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.WaiterDefinitionModel;
@@ -32,18 +34,18 @@ import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
 import software.amazon.awssdk.util.IOUtils;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 class AddWaiters {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private final Waiters waiters;
     private final Map<String, OperationModel> operations;
-    private final String codeGenBinDirectory;
 
-    AddWaiters(Waiters waiters, Map<String, OperationModel> operations, String codeGenBinDirectory) {
+    AddWaiters(Waiters waiters, Map<String, OperationModel> operations) {
         this.waiters = waiters;
         this.operations = operations;
-        this.codeGenBinDirectory = FilenameUtils.normalizeNoEndSeparator(codeGenBinDirectory);
     }
 
     Map<String, WaiterDefinitionModel> constructWaiters() throws IOException {
@@ -117,12 +119,19 @@ class AddWaiters {
      */
     private Process executeToAstProcess(String argument) throws IOException {
         try {
-            Process p = new ProcessBuilder("python", codeGenBinDirectory + "/jp-to-ast.py", argument).start();
+            Process p = new ProcessBuilder("python", extractAstTransformer(), argument).start();
             p.waitFor();
             return p;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
+    }
+
+    private String extractAstTransformer() throws IOException {
+        Path tempFile = Files.createTempFile("jp-to-ast", ".py");
+        tempFile.toFile().deleteOnExit();
+        Files.copy(CodeGenerator.class.getClassLoader().getResourceAsStream("jp-to-ast.py"), tempFile, REPLACE_EXISTING);
+        return tempFile.toString();
     }
 }

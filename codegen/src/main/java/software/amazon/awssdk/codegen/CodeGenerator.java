@@ -35,7 +35,6 @@ public class CodeGenerator {
 
     private final C2jModels models;
     private final String outputDirectory;
-    private final String codeGenBinDirectory;
     /**
      * The prefix for the file name that contains the intermediate model.
      */
@@ -43,11 +42,9 @@ public class CodeGenerator {
 
     public CodeGenerator(C2jModels models,
                          String outputDirectory,
-                         String codeGenBinDirectory,
                          String fileNamePrefix) {
         this.models = models;
         this.outputDirectory = outputDirectory;
-        this.codeGenBinDirectory = codeGenBinDirectory;
         this.fileNamePrefix = fileNamePrefix;
     }
 
@@ -57,8 +54,7 @@ public class CodeGenerator {
      */
     public void execute() {
         try {
-            final IntermediateModel intermediateModel =
-                    new IntermediateModelBuilder(models, codeGenBinDirectory).build();
+            final IntermediateModel intermediateModel = new IntermediateModelBuilder(models).build();
 
             // Dump the intermediate model to a file
             writeIntermediateModel(intermediateModel);

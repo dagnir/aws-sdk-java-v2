@@ -58,10 +58,8 @@ public class IntermediateModelBuilder {
     private final TypeUtils typeUtils;
     private final List<IntermediateModelShapeProcessor> shapeProcessors;
     private final Waiters waiters;
-    private final String codeGenBinDirectory;
 
-    public IntermediateModelBuilder(C2jModels models,
-                                    String codeGenBinDirectory) {
+    public IntermediateModelBuilder(C2jModels models) {
         this.customConfig = models.customizationConfig();
         this.codeGenConfig = models.codeGenConfig();
         this.service = models.serviceModel();
@@ -70,7 +68,6 @@ public class IntermediateModelBuilder {
         this.typeUtils = new TypeUtils(namingStrategy);
         this.shapeProcessors = createShapeProcessors();
         this.waiters = models.waitersModel();
-        this.codeGenBinDirectory = codeGenBinDirectory;
     }
 
 
@@ -108,7 +105,7 @@ public class IntermediateModelBuilder {
         final Map<String, AuthorizerModel> authorizers = new HashMap<>();
 
         operations.putAll(new AddOperations(this).constructOperations());
-        waiters.putAll(new AddWaiters(this.waiters, operations, codeGenBinDirectory).constructWaiters());
+        waiters.putAll(new AddWaiters(this.waiters, operations).constructWaiters());
         authorizers.putAll(new AddCustomAuthorizers(this.service, getNamingStrategy()).constructAuthorizers());
 
         for (IntermediateModelShapeProcessor processor : shapeProcessors) {

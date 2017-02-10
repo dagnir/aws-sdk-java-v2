@@ -53,12 +53,6 @@
       <optional>false</optional>
       <version>3.4</version>
     </dependency>
-    <dependency>
-      <artifactId>commons-io</artifactId>
-      <groupId>org.apache.commons</groupId>
-      <optional>false</optional>
-      <version>1.3.2</version>
-    </dependency>
 </dependencies>
 
   <build>
