@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -24,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import software.amazon.awssdk.codegen.model.intermediate.AcceptorModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.WaiterDefinitionModel;
@@ -33,8 +34,6 @@ import software.amazon.awssdk.codegen.model.service.WaiterDefinition;
 import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
 import software.amazon.awssdk.util.IOUtils;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 class AddWaiters {
 
