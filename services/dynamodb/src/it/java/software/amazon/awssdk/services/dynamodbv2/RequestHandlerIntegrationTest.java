@@ -8,8 +8,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.UnsupportedEncodingException;
 import java.util.zip.CRC32;
-import org.apache.tools.ant.filters.StringInputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,6 +23,7 @@ import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.util.StringInputStream;
 
 public class RequestHandlerIntegrationTest extends AWSIntegrationTestBase {
 
@@ -100,7 +101,11 @@ public class RequestHandlerIntegrationTest extends AWSIntegrationTestBase {
                 newHttpResponse.setStatusText(origHttpResponse.getStatusText());
 
                 final String newContent = "{\"TableNames\":[\"" + injectedTableName + "\"]}";
-                newHttpResponse.setContent(new StringInputStream(newContent));
+                try {
+                    newHttpResponse.setContent(new StringInputStream(newContent));
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
                 // Replacing the content requires updating the checksum and content length
                 newHttpResponse.addHeader("Content-Length", String.valueOf(newContent.length()));
                 return newHttpResponse;

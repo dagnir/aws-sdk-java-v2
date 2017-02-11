@@ -17,6 +17,7 @@ package software.amazon.awssdk.services.dynamodbv2;
 
 import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 
@@ -34,7 +35,7 @@ public class RequestTimeoutIntegrationTest extends AWSIntegrationTestBase {
     public void requestTimeoutEnabled_CalculatesCorrectCrc32() {
         AmazonDynamoDBClientBuilder
                 .standard()
-                .withCredentials(new StaticCredentialsProvider(getCredentials()))
+                .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
                 .withRegion(Regions.US_WEST_2)
                 .withClientConfiguration(new ClientConfiguration().withRequestTimeout(5000))
                 .build()
