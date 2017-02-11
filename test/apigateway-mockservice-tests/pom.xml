@@ -10,8 +10,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apigateway-mockservice-integration-tests</artifactId>
-    <name>API Gateway Mock Service Integration Tests</name>
+    <artifactId>apigateway-mockservice-tests</artifactId>
+    <name>API Gateway Mock Service Tests</name>
     <description>Tests an API Gateway style client using a mock service.</description>
 
     <dependencies>
@@ -65,6 +65,10 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
