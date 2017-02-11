@@ -7,7 +7,7 @@ import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodbv2.model.ListStreamsRequest;
 import software.amazon.awssdk.test.AWSTestBase;
 
-public class ServiceIntegrationTest extends AWSTestBase {
+public class StreamsIntegrationTest extends AWSTestBase {
 
     private AmazonDynamoDBStreams streams;
 
