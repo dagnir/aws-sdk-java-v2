@@ -97,7 +97,7 @@ public class RequestHandlerIntegrationTest extends AWSIntegrationTestBase {
             @Override
             public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
                 final HttpResponse newHttpResponse = new HttpResponse(origHttpResponse.getRequest(),
-                        origHttpResponse.getHttpRequest());
+                                                                      origHttpResponse.getHttpRequest());
                 newHttpResponse.setStatusCode(origHttpResponse.getStatusCode());
                 newHttpResponse.setStatusText(origHttpResponse.getStatusText());
 
