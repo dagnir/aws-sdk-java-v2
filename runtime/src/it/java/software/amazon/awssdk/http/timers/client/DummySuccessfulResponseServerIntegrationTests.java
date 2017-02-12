@@ -19,10 +19,10 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.interruptCurrentThreadAfterDelay;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.interruptCurrentThreadAfterDelay;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,12 +36,13 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
-import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
-import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.http.apache.client.impl.SdkHttpClient;
-import software.amazon.awssdk.http.request.RequestHandlerTestUtils;
-import software.amazon.awssdk.http.request.SlowRequestHandler;
+import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
+import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
+import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
+import software.amazon.awssdk.internal.http.apache.client.impl.SdkHttpClient;
+import software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils;
+import software.amazon.awssdk.internal.http.request.SlowRequestHandler;
 import software.amazon.awssdk.internal.http.response.DummyResponseHandler;
 import software.amazon.awssdk.internal.http.response.UnresponsiveResponseHandler;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
@@ -112,18 +113,22 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
         List<RequestHandler2> requestHandlers = RequestHandlerTestUtils
                 .buildRequestHandlerList(new SlowRequestHandler().withAfterResponseWaitInSeconds(10));
         try {
-            requestBuilder().executionContext(withHandlers(requestHandlers)).execute(new DummyResponseHandler().leaveConnectionOpen());
+            requestBuilder().executionContext(withHandlers(requestHandlers))
+                    .execute(new DummyResponseHandler().leaveConnectionOpen());
             fail("Expected exception");
         } catch (AmazonClientException e) {
             assertThat(e.getCause(), instanceOf(InterruptedException.class));
         }
 
         @SuppressWarnings("deprecation")
-        int leasedConnections = ((ConnPoolControl<?>) ((SdkHttpClient)rawHttpClient).getHttpClientConnectionManager()).getTotalStats().getLeased();
+        int leasedConnections = ((ConnPoolControl<?>) ((SdkHttpClient) rawHttpClient).getHttpClientConnectionManager())
+                .getTotalStats().getLeased();
         assertEquals(0, leasedConnections);
     }
 
-    private AmazonHttpClient.RequestExecutionBuilder requestBuilder() { return httpClient.requestExecutionBuilder().request(newGetRequest()); }
+    private AmazonHttpClient.RequestExecutionBuilder requestBuilder() {
+        return httpClient.requestExecutionBuilder().request(newGetRequest());
+    }
 
     private ExecutionContext withHandlers(List<RequestHandler2> requestHandlers) {
         return ExecutionContext.builder().withRequestHandler2s(requestHandlers).build();

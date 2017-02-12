@@ -24,10 +24,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;

@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.UUID;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,8 +38,6 @@ public class ElasticFileSystemIntegrationTest extends AWSIntegrationTestBase {
 
     @BeforeClass
     public static void setupFixture() throws Exception {
-        BasicConfigurator.configure();
-
         client = new AmazonElasticFileSystemClient(getCredentials());
         client.configureRegion(Regions.US_WEST_2);
     }

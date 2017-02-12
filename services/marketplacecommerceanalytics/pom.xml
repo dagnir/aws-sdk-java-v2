@@ -1,31 +1,59 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>software.amazon.awssdk</groupId>
-    <artifactId>services</artifactId>
-    <version>0.1-SNAPSHOT</version>
-  </parent>
-  <artifactId>marketplacecommerceanalytics</artifactId>
-  <name>AWS Java SDK for AWS Marketplace Commerce Analytics</name>
-  <description>The AWS Java SDK for AWS Marketplace Commerce Analytics Service module holds the client classes that are used for communicating with AWS Marketplace Commerce Analytics Service</description>
-  <url>https://aws.amazon.com/sdkforjava</url>
-
-  <build>
-    <plugins>
-      <plugin>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
         <groupId>software.amazon.awssdk</groupId>
-        <artifactId>codegen-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-     </plugins>
-  </build>
+        <artifactId>services</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>marketplacecommerceanalytics</artifactId>
+    <name>AWS Java SDK for AWS Marketplace Commerce Analytics</name>
+    <description>The AWS Java SDK for AWS Marketplace Commerce Analytics Service module holds the client classes that are used for
+        communicating with AWS Marketplace Commerce Analytics Service
+    </description>
+    <url>https://aws.amazon.com/sdkforjava</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>iam</artifactId>
+            <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sns</artifactId>
+            <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>codegen-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

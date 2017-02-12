@@ -8,6 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.CRC32;
 import org.junit.After;
@@ -96,7 +97,7 @@ public class RequestHandlerIntegrationTest extends AWSIntegrationTestBase {
             @Override
             public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
                 final HttpResponse newHttpResponse = new HttpResponse(origHttpResponse.getRequest(),
-                        origHttpResponse.getHttpRequest());
+                                                                      origHttpResponse.getHttpRequest());
                 newHttpResponse.setStatusCode(origHttpResponse.getStatusCode());
                 newHttpResponse.setStatusText(origHttpResponse.getStatusText());
 
@@ -104,7 +105,7 @@ public class RequestHandlerIntegrationTest extends AWSIntegrationTestBase {
                 try {
                     newHttpResponse.setContent(new StringInputStream(newContent));
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
                 // Replacing the content requires updating the checksum and content length
                 newHttpResponse.addHeader("Content-Length", String.valueOf(newContent.length()));

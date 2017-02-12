@@ -45,10 +45,10 @@ public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
         ddb = new AmazonDynamoDBClient(credentials);
 
         ddb.createTable(new CreateTableRequest()
-                .withTableName(TABLE)
-                .withKeySchema(new KeySchemaElement(HASH, KeyType.HASH))
-                .withAttributeDefinitions(new AttributeDefinition(HASH, ScalarAttributeType.S))
-                .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L)));
+                                .withTableName(TABLE)
+                                .withKeySchema(new KeySchemaElement(HASH, KeyType.HASH))
+                                .withAttributeDefinitions(new AttributeDefinition(HASH, ScalarAttributeType.S))
+                                .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L)));
 
         TableUtils.waitUntilActive(ddb, TABLE);
     }
@@ -65,14 +65,14 @@ public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
         item.put(JSON_MAP_ATTRIBUTE, nestedJson);
 
         ddb.putItem(new PutItemRequest()
-            .withTableName(TABLE)
-            .withItem(item));
+                            .withTableName(TABLE)
+                            .withItem(item));
 
         // Make sure we can read the max-depth item
         GetItemResult getItemResult = ddb.getItem(
                 TABLE,
                 Collections.singletonMap(HASH,
-                        new AttributeValue().withS("foo")));
+                                         new AttributeValue().withS("foo")));
         int mapDepth = computeDepthOfNestedMapAttribute(
                 getItemResult.getItem().get(JSON_MAP_ATTRIBUTE));
         Assert.assertEquals(MAX_MAP_DEPTH, mapDepth);
@@ -87,10 +87,11 @@ public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
 
         try {
             ddb.putItem(new PutItemRequest()
-                .withTableName(TABLE)
-                .withItem(item_OverLimit));
+                                .withTableName(TABLE)
+                                .withItem(item_OverLimit));
             Assert.fail("ValidationException is expected, since the depth exceeds the service limit.");
-        } catch (AmazonServiceException expected) {}
+        } catch (AmazonServiceException expected) {
+        }
     }
 
     private AttributeValue buildNestedMapAttribute(int depth) {

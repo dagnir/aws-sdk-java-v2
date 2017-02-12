@@ -28,7 +28,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.http.request.EmptyHttpRequest;
+import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 
 /**
  * This test is to verify that the apache-httpclient library has fixed the bug where socket timeout configuration is

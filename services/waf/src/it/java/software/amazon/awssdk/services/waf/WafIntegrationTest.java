@@ -6,6 +6,21 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.services.waf.model.ChangeAction;
+import software.amazon.awssdk.services.waf.model.CreateIPSetRequest;
+import software.amazon.awssdk.services.waf.model.CreateIPSetResult;
+import software.amazon.awssdk.services.waf.model.DeleteIPSetRequest;
+import software.amazon.awssdk.services.waf.model.GetChangeTokenRequest;
+import software.amazon.awssdk.services.waf.model.GetChangeTokenResult;
+import software.amazon.awssdk.services.waf.model.GetIPSetRequest;
+import software.amazon.awssdk.services.waf.model.GetIPSetResult;
+import software.amazon.awssdk.services.waf.model.IPSet;
+import software.amazon.awssdk.services.waf.model.IPSetDescriptor;
+import software.amazon.awssdk.services.waf.model.IPSetDescriptorType;
+import software.amazon.awssdk.services.waf.model.IPSetUpdate;
+import software.amazon.awssdk.services.waf.model.ListIPSetsRequest;
+import software.amazon.awssdk.services.waf.model.ListIPSetsResult;
+import software.amazon.awssdk.services.waf.model.UpdateIPSetRequest;
 import software.amazon.awssdk.test.AWSTestBase;
 
 public class WafIntegrationTest extends AWSTestBase {
@@ -41,8 +56,8 @@ public class WafIntegrationTest extends AWSTestBase {
         if (ipSetId != null) {
             final String changeToken = getNewChangeToken();
             client.deleteIPSet(new DeleteIPSetRequest()
-                                    .withIPSetId(ipSetId)
-                                    .withChangeToken(changeToken));
+                                       .withIPSetId(ipSetId)
+                                       .withChangeToken(changeToken));
         }
     }
 
@@ -73,7 +88,7 @@ public class WafIntegrationTest extends AWSTestBase {
 
     private void testGetIpSet() {
         GetIPSetResult getResult = client.getIPSet(new GetIPSetRequest()
-                                                        .withIPSetId(ipSetId));
+                                                           .withIPSetId(ipSetId));
         IPSet ipSet = getResult.getIPSet();
         Assert.assertNotNull(ipSet);
         Assert.assertEquals(IP_SET_NAME, ipSet.getName());
@@ -86,7 +101,7 @@ public class WafIntegrationTest extends AWSTestBase {
         Assert.assertFalse(listResult.getIPSets().isEmpty());
     }
 
-    private void testUpdateIpSet(){
+    private void testUpdateIpSet() {
         final IPSetDescriptor ipSetDescriptor = new IPSetDescriptor()
                 .withType(IPSetDescriptorType.IPV4)
                 .withValue(IP_ADDRESS_RANGE);
@@ -96,11 +111,11 @@ public class WafIntegrationTest extends AWSTestBase {
 
 
         client.updateIPSet(new UpdateIPSetRequest()
-                                .withIPSetId(ipSetId)
-                                .withChangeToken(getNewChangeToken())
-                                .withUpdates(ipToInsert));
+                                   .withIPSetId(ipSetId)
+                                   .withChangeToken(getNewChangeToken())
+                                   .withUpdates(ipToInsert));
         GetIPSetResult getResult = client.getIPSet(new GetIPSetRequest()
-                .withIPSetId(ipSetId));
+                                                           .withIPSetId(ipSetId));
 
         IPSet ipSet = getResult.getIPSet();
         Assert.assertNotNull(ipSet);
@@ -117,13 +132,13 @@ public class WafIntegrationTest extends AWSTestBase {
         Assert.assertEquals(ipSetDescriptor.getValue(), actualIpSetDescriptor.getValue());
 
         final IPSetUpdate ipToDelete = new IPSetUpdate()
-                                            .withIPSetDescriptor(ipSetDescriptor)
-                                            .withAction(ChangeAction.DELETE);
+                .withIPSetDescriptor(ipSetDescriptor)
+                .withAction(ChangeAction.DELETE);
 
         client.updateIPSet(new UpdateIPSetRequest()
-                                .withIPSetId(ipSetId)
-                                .withChangeToken(getNewChangeToken())
-                                .withUpdates(ipToDelete));
+                                   .withIPSetId(ipSetId)
+                                   .withChangeToken(getNewChangeToken())
+                                   .withUpdates(ipToDelete));
     }
 
     private static String getNewChangeToken() {

@@ -31,19 +31,16 @@
             <artifactId>junit</artifactId>
             <groupId>junit</groupId>
             <scope>test</scope>
-            <version>${junit.version}</version>
         </dependency>
         <dependency>
             <artifactId>easymock</artifactId>
             <groupId>org.easymock</groupId>
             <scope>test</scope>
-            <version>${easymock.version}</version>
         </dependency>
         <dependency>
             <artifactId>mockito-all</artifactId>
             <groupId>org.mockito</groupId>
             <scope>test</scope>
-            <version>${mockito.all.version}</version>
         </dependency>
     </dependencies>
 
@@ -64,10 +61,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

@@ -21,7 +21,7 @@ public class CustomSecureRandomIntegrationTest extends AWSIntegrationTestBase {
     public void customSecureRandomConfigured_UsesCustomImplementation() {
         CustomSecureRandomImpl customSecureRandom = spy(new CustomSecureRandomImpl());
         AmazonDynamoDB ddb = new AmazonDynamoDBClient(getCredentials(),
-                new ClientConfiguration().withSecureRandom(customSecureRandom));
+                                                      new ClientConfiguration().withSecureRandom(customSecureRandom));
         ddb.listTables();
         verify(customSecureRandom, atLeastOnce()).nextBytes((byte[]) Mockito.any());
     }

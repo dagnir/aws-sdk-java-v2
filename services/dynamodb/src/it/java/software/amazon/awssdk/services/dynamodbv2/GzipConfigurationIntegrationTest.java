@@ -32,9 +32,9 @@ public class GzipConfigurationIntegrationTest extends AWSIntegrationTestBase {
 
     @BeforeClass
     public static void setup() throws TableNeverTransitionedToStateException,
-            InterruptedException {
+                                      InterruptedException {
         dynamo = new AmazonDynamoDBClient(getCredentials(),
-                new ClientConfiguration().withGzip(true));
+                                          new ClientConfiguration().withGzip(true));
         createTable();
         // For this integration test, if the payload is not big enough, the service will not compress the data.
         putItems(ITEMS_COUNT);
@@ -47,7 +47,7 @@ public class GzipConfigurationIntegrationTest extends AWSIntegrationTestBase {
 
     @Test
     public void gzipConfigurationIntegrationTest() throws TableNeverTransitionedToStateException,
-            InterruptedException {
+                                                          InterruptedException {
         int count = dynamo.scan(new ScanRequest().withTableName(TABLE_NAME))
                 .getCount();
         Assert.assertEquals(ITEMS_COUNT, count);
@@ -55,15 +55,15 @@ public class GzipConfigurationIntegrationTest extends AWSIntegrationTestBase {
 
     private static void createTable() throws TableNeverTransitionedToStateException, InterruptedException {
         dynamo.createTable(new CreateTableRequest()
-                .withTableName(TABLE_NAME)
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(KEY_NAME)
-                                .withAttributeType(ScalarAttributeType.S))
-                .withKeySchema(
-                        new KeySchemaElement().withKeyType(KeyType.HASH)
-                                .withAttributeName(KEY_NAME))
-                .withProvisionedThroughput(
-                        new ProvisionedThroughput(100L, 100L)));
+                                   .withTableName(TABLE_NAME)
+                                   .withAttributeDefinitions(
+                                           new AttributeDefinition().withAttributeName(KEY_NAME)
+                                                   .withAttributeType(ScalarAttributeType.S))
+                                   .withKeySchema(
+                                           new KeySchemaElement().withKeyType(KeyType.HASH)
+                                                   .withAttributeName(KEY_NAME))
+                                   .withProvisionedThroughput(
+                                           new ProvisionedThroughput(100L, 100L)));
 
         TableUtils.waitUntilActive(dynamo, TABLE_NAME);
     }
@@ -72,14 +72,14 @@ public class GzipConfigurationIntegrationTest extends AWSIntegrationTestBase {
     private static void putItems(int count) {
         for (int i = 0; i < count; ++i) {
             dynamo.putItem(new PutItemRequest().withTableName(TABLE_NAME)
-                    .withItem(new HashMap<String, AttributeValue>() {
-                        {
-                            put(KEY_NAME, new AttributeValue().withS(UUID
-                                    .randomUUID().toString()));
-                            put(VALUE_NAME, new AttributeValue().withS(UUID
-                                    .randomUUID().toString()));
-                        }
-                    }));
+                                   .withItem(new HashMap<String, AttributeValue>() {
+                                       {
+                                           put(KEY_NAME, new AttributeValue().withS(UUID
+                                                                                            .randomUUID().toString()));
+                                           put(VALUE_NAME, new AttributeValue().withS(UUID
+                                                                                              .randomUUID().toString()));
+                                       }
+                                   }));
         }
     }
 

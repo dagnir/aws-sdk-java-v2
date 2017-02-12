@@ -3,7 +3,6 @@ package software.amazon.awssdk.services.machinelearning;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -82,7 +81,6 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
         setUpCredentials();
         setUpS3();
 
-        BasicConfigurator.configure();
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
 
         client = new AmazonMachineLearningClient(credentials);
