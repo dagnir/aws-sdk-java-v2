@@ -15,9 +15,9 @@
 
 package software.amazon.awssdk.http.timers.client;
 
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
 
 import java.util.List;
 import org.junit.BeforeClass;
@@ -28,9 +28,10 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
-import software.amazon.awssdk.http.request.RequestHandlerTestUtils;
-import software.amazon.awssdk.http.request.SlowRequestHandler;
+import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
+import software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils;
+import software.amazon.awssdk.internal.http.request.SlowRequestHandler;
 import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
 import software.amazon.awssdk.internal.http.response.UnresponsiveErrorResponseHandler;
 
@@ -59,7 +60,8 @@ public class DummyErrorResponseServerIntegrationTests extends MockServerTestBase
         httpClient = new AmazonHttpClient(
                 new ClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
 
-        httpClient.requestExecutionBuilder().request(newGetRequest()).errorResponseHandler(new UnresponsiveErrorResponseHandler()).execute();
+        httpClient.requestExecutionBuilder().request(newGetRequest()).errorResponseHandler(new UnresponsiveErrorResponseHandler())
+                .execute();
     }
 
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)

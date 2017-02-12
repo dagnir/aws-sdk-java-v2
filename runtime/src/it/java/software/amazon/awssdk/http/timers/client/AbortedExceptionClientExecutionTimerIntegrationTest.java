@@ -17,10 +17,10 @@ package software.amazon.awssdk.http.timers.client;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.createMockGetRequest;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.execute;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.createMockGetRequest;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.execute;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,16 +34,17 @@ import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.MockServerTestBase;
-import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.http.request.EmptyHttpRequest;
+import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.internal.SdkBufferedInputStream;
+import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
+import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
+import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
 
 /**
  *
  */
 public class AbortedExceptionClientExecutionTimerIntegrationTest extends
-        MockServerTestBase {
+                                                                 MockServerTestBase {
 
     private AmazonHttpClient httpClient;
 
@@ -56,7 +57,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends
     protected MockServer buildMockServer() {
         return new MockServer(
                 MockServer.DummyResponseServerBehavior.build(200, "Hi",
-                        "Dummy response"));
+                                                             "Dummy response"));
     }
 
     @Test(expected = AbortedException.class)
@@ -70,7 +71,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends
                 createRawHttpClientSpy(config);
 
         doThrow(new AbortedException()).when(rawHttpClient).execute(any
-                (HttpRequestBase.class), any(HttpContext.class));
+                                                                            (HttpRequestBase.class), any(HttpContext.class));
 
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
@@ -90,7 +91,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
         execute(httpClient, new EmptyHttpRequest(server.getEndpoint(),
-                HttpMethodName.PUT, new SdkBufferedInputStream(new InputStream() {
+                                                 HttpMethodName.PUT, new SdkBufferedInputStream(new InputStream() {
             @Override
             public int read() throws IOException {
                 // Sleeping here to avoid OOM issues from a limitless InputStream

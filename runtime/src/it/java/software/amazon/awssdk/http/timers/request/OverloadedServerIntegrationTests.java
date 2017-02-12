@@ -19,10 +19,10 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfRetries;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfTasksTriggered;
-import static software.amazon.awssdk.http.timers.ClientExecutionAndRequestTimerTestUtils.execute;
-import static software.amazon.awssdk.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfRetries;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.assertNumberOfTasksTriggered;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.execute;
+import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
 
 import java.io.IOException;
 import org.junit.BeforeClass;
@@ -32,12 +32,12 @@ import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.OverloadedMockServerTestBase;
-import software.amazon.awssdk.http.apache.client.impl.ApacheHttpClientFactory;
-import software.amazon.awssdk.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.http.client.HttpClientFactory;
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.http.server.MockServer.ServerBehavior;
+import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
+import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
+import software.amazon.awssdk.internal.http.client.HttpClientFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**

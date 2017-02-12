@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.w3c.dom.Node;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.util.LogCaptor;
 import utils.http.WireMockTestBase;
 

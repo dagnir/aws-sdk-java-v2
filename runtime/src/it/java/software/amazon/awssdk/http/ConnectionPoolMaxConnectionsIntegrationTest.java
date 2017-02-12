@@ -23,8 +23,8 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.http.server.MockServer;
+import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.internal.http.response.EmptyAWSResponseHandler;
 
 public class ConnectionPoolMaxConnectionsIntegrationTest {
