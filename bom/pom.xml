@@ -8,7 +8,6 @@
     <version>0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
    </parent>
-  <groupId>software.amazon.awssdk</groupId>
   <artifactId>bom</artifactId>
   <packaging>pom</packaging>
   <name>AWS SDK for Java - BOM</name>

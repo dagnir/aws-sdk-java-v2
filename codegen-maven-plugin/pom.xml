@@ -9,7 +9,6 @@
     <version>0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
    </parent>
-  <groupId>software.amazon.awssdk</groupId>
   <artifactId>codegen-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
 
