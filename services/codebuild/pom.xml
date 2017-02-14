@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>codebuild</artifactId>
-  <name>AWS Java SDK for AWS Code Build</name>
+  <name>AWS Java SDK :: Services :: AWS Code Build</name>
   <description>The AWS Java SDK for AWS Code Build module holds the client classes that are used for communicating with AWS Code Build.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

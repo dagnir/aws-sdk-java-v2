@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>ec2</artifactId>
-  <name>AWS Java SDK for Amazon EC2</name>
+  <name>AWS Java SDK :: Services :: Amazon EC2</name>
   <description>The AWS Java SDK for Amazon EC2 module holds the client classes that are used for communicating with Amazon EC2 Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

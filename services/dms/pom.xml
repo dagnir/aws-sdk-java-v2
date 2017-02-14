@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>dms</artifactId>
-  <name>AWS Java SDK for AWS Database Migration Service</name>
+  <name>AWS Java SDK :: Services :: AWS Database Migration Service</name>
   <description>The AWS Java SDK for AWS Database Migration Service module holds the client classes that are used for communicating with AWS Database Migration Service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

@@ -10,7 +10,7 @@
    </parent>
   <groupId>software.amazon.awssdk</groupId>
   <artifactId>aws-java-sdk</artifactId>
-  <name>AWS SDK For Java</name>
+  <name>AWS Java SDK</name>
   <description>The Amazon Web Services SDK for Java provides Java APIs for building software on AWS' cost-effective, scalable, and reliable infrastructure products. The AWS Java SDK allows developers to code against APIs for all of Amazon's infrastructure web services (Amazon S3, Amazon EC2, Amazon SQS, Amazon Relational Database Service, Amazon AutoScaling, etc).</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 
@@ -19,487 +19,406 @@
     <dependency>
         <artifactId>pinpoint</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>xray</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>opsworkscm</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>support</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>simpledb</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>servicecatalog</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>servermigration</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>simpleworkflow</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>storagegateway</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>route53</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>s3</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>importexport</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>sts</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>sqs</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>rds</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>redshift</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>elasticbeanstalk</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>iam</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>datapipeline</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>elasticloadbalancing</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>elasticloadbalancingv2</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>emr</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>elasticache</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>elastictranscoder</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>sns</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>budgets</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cloudtrail</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cloudwatch</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>logs</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>events</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cognitoidentity</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cognitosync</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>directconnect</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cloudformation</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cloudfront</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>clouddirectory</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>kinesis</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>opsworks</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>ses</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>autoscaling</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cloudsearch</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>codedeploy</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>codepipeline</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>kms</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>config</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>lambda</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>ecs</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>ecr</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cloudhsm</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>ssm</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>workspaces</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>machinelearning</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>directory</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>efs</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>codecommit</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>devicefarm</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>elasticsearch</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>marketplacecommerceanalytics</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>inspector</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>iot</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>api-gateway</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>acm</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>gamelift</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>dms</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>marketplacemeteringservice</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>cognitoidp</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>discovery</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>applicationautoscaling</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>snowball</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>rekognition</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>polly</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>lightsail</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>stepfunctions</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>health</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>costandusagereport</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>codebuild</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>appstream</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>shield</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>batch</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>core</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
     <dependency>
         <artifactId>codegen</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
 </dependencies>

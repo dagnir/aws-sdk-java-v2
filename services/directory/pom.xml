@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>directory</artifactId>
-    <name>AWS Java SDK for AWS Directory Service</name>
+    <name>AWS Java SDK :: Services :: AWS Directory Service</name>
     <description>The AWS Java SDK for AWS Directory Service module holds the client classes that is used for communicating with AWS
         Directory Service
     </description>

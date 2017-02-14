@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>opsworks</artifactId>
-  <name>AWS Java SDK for AWS OpsWorks</name>
+  <name>AWS Java SDK :: Services :: AWS OpsWorks</name>
   <description>The AWS Java SDK for AWS OpsWorks module holds the client classes that are used for communicating with AWS OpsWorks Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

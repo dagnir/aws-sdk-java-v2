@@ -5,5 +5,5 @@
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>build-tools</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <name>Build Tools</name>
+    <name>AWS Java SDK :: Build Tools</name>
 </project>

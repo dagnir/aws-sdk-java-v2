@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>datapipeline</artifactId>
-    <name>AWS Java SDK for AWS Data Pipeline</name>
+    <name>AWS Java SDK :: Services :: AWS Data Pipeline</name>
     <description>The AWS Java SDK for AWS Data Pipeline module holds the client classes that are used for communicating with AWS Data
         Pipeline Service
     </description>

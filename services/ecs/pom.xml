@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>ecs</artifactId>
-    <name>AWS Java SDK for the Amazon EC2 Container Service</name>
+    <name>AWS Java SDK :: Services :: Amazon EC2 Container Service</name>
     <description>The AWS Java SDK for the Amazon EC2 Container Service holds the client classes that are used for communicating with the
         Amazon EC2 Container Service
     </description>

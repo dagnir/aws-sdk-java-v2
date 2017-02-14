@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>waf</artifactId>
-    <name>AWS Java SDK for AWS WAF</name>
+    <name>AWS Java SDK :: Services :: AWS WAF</name>
     <description>The AWS Java SDK for AWS WAF Service module holds the client classes that are used for communicating with AWS WAF Service
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>

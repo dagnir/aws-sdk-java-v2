@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>inspector</artifactId>
-  <name>AWS Java SDK for Amazon Inspector Service</name>
+  <name>AWS Java SDK :: Services :: Amazon Inspector Service</name>
   <description>The AWS Java SDK for Amazon Inspector Service module holds the client classes that are used for communicating with Amazon Inspector Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

@@ -9,9 +9,8 @@
         <version>0.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>software.amazon.awssdk</groupId>
     <artifactId>test-utils</artifactId>
-    <name>AWS SDK for Java - Test Utils</name>
+    <name>AWS Java SDK :: Test :: Test Utils</name>
     <description>The AWS SDK for Java - Test Utils module holds the all the utilities that are used by the tests.</description>
     <url>https://aws.amazon.com/sdkforjava</url>
 
@@ -20,33 +19,27 @@
         <dependency>
             <artifactId>core</artifactId>
             <groupId>software.amazon.awssdk</groupId>
-            <optional>false</optional>
             <version>${awsjavasdk.version}</version>
         </dependency>
         <dependency>
             <artifactId>junit</artifactId>
             <groupId>junit</groupId>
-            <optional>false</optional>
         </dependency>
         <dependency>
             <artifactId>cucumber-java</artifactId>
             <groupId>info.cukes</groupId>
-            <optional>false</optional>
         </dependency>
         <dependency>
             <artifactId>cucumber-junit</artifactId>
             <groupId>info.cukes</groupId>
-            <optional>false</optional>
         </dependency>
         <dependency>
             <artifactId>cucumber-guice</artifactId>
             <groupId>info.cukes</groupId>
-            <optional>false</optional>
         </dependency>
         <dependency>
             <artifactId>guice</artifactId>
             <groupId>com.google.inject</groupId>
-            <optional>false</optional>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>

@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>storagegateway</artifactId>
-    <name>AWS Java SDK for AWS Storage Gateway</name>
+    <name>AWS Java SDK :: Services :: AWS Storage Gateway</name>
     <description>The AWS Java SDK for AWS Storage Gateway module holds the client classes that are used for communicating with AWS Storage
         Gateway Service
     </description>

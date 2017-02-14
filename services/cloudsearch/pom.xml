@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>cloudsearch</artifactId>
-  <name>AWS Java SDK for Amazon CloudSearch</name>
+  <name>AWS Java SDK :: Services :: Amazon CloudSearch</name>
   <description>The AWS Java SDK for Amazon CloudSearch module holds the client classes that are used for communicating with Amazon CloudSearch Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

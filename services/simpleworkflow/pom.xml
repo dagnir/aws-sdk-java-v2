@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>simpleworkflow</artifactId>
-  <name>AWS Java SDK for Amazon SWF</name>
+  <name>AWS Java SDK :: Services :: Amazon SWF</name>
   <description>The AWS Java SDK for Amazon SWF module holds the client classes that are used for communicating with Amazon Simple Workflow Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

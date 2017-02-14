@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>lightsail</artifactId>
-  <name>AWS Java SDK for Amazon Lightsail</name>
+  <name>AWS Java SDK :: Services :: Amazon Lightsail</name>
   <description>The AWS Java SDK for Amazon Lightsail module holds the client classes that are used for communicating with Amazon Lightsail.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

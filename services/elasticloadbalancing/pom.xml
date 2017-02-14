@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>elasticloadbalancing</artifactId>
-    <name>AWS Java SDK for Elastic Load Balancing</name>
+    <name>AWS Java SDK :: Services :: Elastic Load Balancing</name>
     <description>The AWS Java SDK for Elastic Load Balancing module holds the client classes that are used for communicating with Elastic
         Load Balancing Service (API Version 2012-06-01)
     </description>

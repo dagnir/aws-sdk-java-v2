@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>cloudfront</artifactId>
-  <name>AWS Java SDK for Amazon CloudFront</name>
+  <name>AWS Java SDK :: Services :: Amazon CloudFront</name>
   <description>The AWS Java SDK for Amazon CloudFront module holds the client classes that are used for communicating with Amazon CloudFront Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>ses</artifactId>
-    <name>AWS Java SDK for Amazon SES</name>
+    <name>AWS Java SDK :: Services :: Amazon SES</name>
     <description>The AWS Java SDK for Amazon SES module holds the client classes that are used for communicating with Amazon Simple Email
         Service
     </description>

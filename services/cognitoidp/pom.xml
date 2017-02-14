@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>cognitoidp</artifactId>
-  <name>AWS Java SDK for Amazon Cognito Identity Provider Service</name>
+  <name>AWS Java SDK :: Services :: Amazon Cognito Identity Provider Service</name>
   <description>The AWS Java SDK for Amazon Cognito Identity Provider Service module holds the client classes that are used for communicating with Amazon Cognito Identity Provider Service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

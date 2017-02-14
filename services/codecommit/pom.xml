@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>codecommit</artifactId>
-    <name>AWS Java SDK for AWS CodeCommit</name>
+    <name>AWS Java SDK :: Services :: AWS CodeCommit</name>
     <description>The AWS Java SDK for AWS CodeCommit module holds the client classes that are used for communicating with AWS CodeCommit
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>

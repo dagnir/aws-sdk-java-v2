@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>directconnect</artifactId>
-    <name>AWS Java SDK for AWS Direct Connect</name>
+    <name>AWS Java SDK :: Services :: AWS Direct Connect</name>
     <description>The AWS Java SDK for AWS Direct Connect module holds the client classes that are used for communicating with AWS Direct
         Connect Service
     </description>

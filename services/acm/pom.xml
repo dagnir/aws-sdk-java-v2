@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>acm</artifactId>
-  <name>AWS Java SDK for AWS Certificate Manager</name>
+  <name>AWS Java SDK :: Services :: AWS Certificate Manager</name>
   <description>The AWS Java SDK for AWS Certificate Manager module holds the client classes that are used for communicating with AWS Certificate Manager service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

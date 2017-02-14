@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>glacier</artifactId>
-  <name>AWS Java SDK for Amazon Glacier</name>
+  <name>AWS Java SDK :: Services :: Amazon Glacier</name>
   <description>The AWS Java SDK for Amazon Glacier module holds the client classes that are used for communicating with Amazon Glacier Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

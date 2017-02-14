@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>appstream</artifactId>
-  <name>AWS Java SDK for Amazon AppStream</name>
+  <name>AWS Java SDK :: Services :: Amazon AppStream</name>
   <description>The AWS Java SDK for Amazon AppStream module holds the client classes that are used for communicating with Amazon AppStream.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

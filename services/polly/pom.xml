@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>polly</artifactId>
-  <name>AWS Java SDK for Amazon Polly</name>
+  <name>AWS Java SDK :: Services :: Amazon Polly</name>
   <description>The AWS Java SDK for Amazon Polly module holds the client classes that are used for communicating with Amazon Polly.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

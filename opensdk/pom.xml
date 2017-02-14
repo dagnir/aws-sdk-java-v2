@@ -7,9 +7,8 @@
         <artifactId>aws-java-sdk-pom</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <groupId>software.amazon.awssdk</groupId>
     <artifactId>aws-java-sdk-opensdk</artifactId>
-    <name>AWS SDK for Java - OpenSdk Runtime</name>
+    <name>AWS Java SDK :: OpenSdk Runtime</name>
     <description>A generic runtime built on the AWS SDK for Java</description>
     <url>https://aws.amazon.com/sdkforjava</url>
 
@@ -21,7 +20,6 @@
 	<dependency>
 	    <artifactId>core</artifactId>
 	    <groupId>software.amazon.awssdk</groupId>
-	    <optional>false</optional>
 	   <version>${awsjavasdk.version}</version>
 	</dependency>
     </dependencies>

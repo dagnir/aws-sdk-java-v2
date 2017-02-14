@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>protocol-tests</artifactId>
-    <name>Protocol Tests</name>
+    <name>AWS Java SDK :: Test :: Protocol Tests</name>
     <description>Contains functional tests for all supported protocols.</description>
 
     <dependencies>

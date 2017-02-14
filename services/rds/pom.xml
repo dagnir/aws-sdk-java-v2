@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>rds</artifactId>
-  <name>AWS Java SDK for Amazon RDS</name>
+  <name>AWS Java SDK :: Services :: Amazon RDS</name>
   <description>The AWS Java SDK for Amazon RDS module holds the client classes that are used for communicating with Amazon Relational Database Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

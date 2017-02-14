@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>applicationautoscaling</artifactId>
-  <name>AWS Java SDK for AWS Application Auto Scaling</name>
+  <name>AWS Java SDK :: Services :: AWS Application Auto Scaling</name>
   <description>The AWS Java SDK for AWS Application Auto Scaling module holds the client classes that are used for communicating with AWS Application Auto Scaling service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>support</artifactId>
-  <name>AWS Java SDK for AWS Support</name>
+  <name>AWS Java SDK :: Services :: AWS Support</name>
   <description>The AWS Java SDK for AWS Support module holds the client classes that are used for communicating with AWS Support Service</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

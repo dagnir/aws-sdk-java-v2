@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>gamelift</artifactId>
-  <name>AWS Java SDK for AWS GameLift</name>
+  <name>AWS Java SDK :: Services :: AWS GameLift</name>
   <description>The AWS Java SDK for AWS GameLift module holds the client classes that are used for communicating with AWS GameLift service.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

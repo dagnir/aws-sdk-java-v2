@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>machinelearning</artifactId>
-    <name>AWS Java SDK for Amazon Machine Learning</name>
+    <name>AWS Java SDK :: Services :: Amazon Machine Learning</name>
     <description>The AWS Java SDK for Amazon Machine Learning module holds the client classes that is used for communicating with Amazon
         Machine Learning Service
     </description>

@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>efs</artifactId>
-    <name>AWS Java SDK for Amazon Elastic File System</name>
+    <name>AWS Java SDK :: Services :: Amazon Elastic File System</name>
     <description>The AWS Java SDK for Amazon Elastic File System module holds the client classes that are used for communicating with Amazon
         Elastic File System
     </description>

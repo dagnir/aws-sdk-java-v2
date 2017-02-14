@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>batch</artifactId>
-  <name>AWS Java SDK for AWS Batch</name>
+  <name>AWS Java SDK :: Services :: AWS Batch</name>
   <description>The AWS Java SDK for AWS Batch module holds the client classes that are used for communicating with AWS Batch.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

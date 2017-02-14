@@ -9,7 +9,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <artifactId>codepipeline</artifactId>
-    <name>AWS Java SDK for AWS CodePipeline</name>
+    <name>AWS Java SDK :: Services :: AWS CodePipeline</name>
     <description>The AWS Java SDK for AWS CodePipeline module holds the client classes that are used for communicating with AWS
         CodePipeline
     </description>

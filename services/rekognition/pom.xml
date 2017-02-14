@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <artifactId>rekognition</artifactId>
-  <name>AWS Java SDK for Amazon Rekognition</name>
+  <name>AWS Java SDK :: Services :: Amazon Rekognition</name>
   <description>The AWS Java SDK for Amazon Rekognition module holds the client classes that are used for communicating with Amazon Rekognition.</description>
   <url>https://aws.amazon.com/sdkforjava</url>
 

@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>protocol-tests-core</artifactId>
-    <name>Protocol Tests Core</name>
+    <name>AWS Java SDK :: Test :: Protocol Tests Core</name>
     <description>Contains test drivers and assertions for protocol tests.</description>
 
     <dependencies>
