@@ -10,8 +10,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>core</artifactId>
-    <name>AWS Java SDK :: Runtime</name>
-    <description>The AWS SDK for Java - Runtime module holds the classes that are used by the individual service clients to interact with
+    <name>AWS Java SDK :: Core</name>
+    <description>The AWS SDK for Java - Core runtime module holds the classes that are used by the individual service clients to interact with
         Amazon Web Services. Users need to depend on aws-java-sdk artifact for accessing individual client classes.
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>
