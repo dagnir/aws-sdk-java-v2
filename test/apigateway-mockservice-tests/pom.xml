@@ -18,7 +18,6 @@
         <dependency>
             <artifactId>aws-java-sdk-opensdk</artifactId>
             <groupId>software.amazon.awssdk</groupId>
-            <optional>false</optional>
             <version>${awsjavasdk.version}</version>
         </dependency>
         <dependency>

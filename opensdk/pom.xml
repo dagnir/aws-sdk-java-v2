@@ -20,7 +20,6 @@
 	<dependency>
 	    <artifactId>core</artifactId>
 	    <groupId>software.amazon.awssdk</groupId>
-	    <optional>false</optional>
 	   <version>${awsjavasdk.version}</version>
 	</dependency>
     </dependencies>

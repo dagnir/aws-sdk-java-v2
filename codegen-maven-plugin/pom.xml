@@ -26,25 +26,21 @@
     <dependency>
         <artifactId>maven-plugin-api</artifactId>
         <groupId>org.apache.maven</groupId>
-        <optional>false</optional>
         <version>3.3.9</version>
     </dependency>
     <dependency>
         <artifactId>maven-plugin-annotations</artifactId>
         <groupId>org.apache.maven.plugin-tools</groupId>
-        <optional>false</optional>
         <version>3.4</version>
     </dependency>
     <dependency>
         <artifactId>maven-project</artifactId>
         <groupId>org.apache.maven</groupId>
-        <optional>false</optional>
         <version>2.2.1</version>
     </dependency>
     <dependency>
         <artifactId>codegen</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <optional>false</optional>
         <version>${awsjavasdk.version}</version>
     </dependency>
 </dependencies>
