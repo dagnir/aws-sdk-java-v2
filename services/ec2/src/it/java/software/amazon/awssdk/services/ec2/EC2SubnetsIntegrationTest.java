@@ -26,11 +26,13 @@ public class EC2SubnetsIntegrationTest extends EC2IntegrationTestBase {
     /** Release resources used in testing */
     @After
     public void tearDown() {
-        if (subnet != null)
+        if (subnet != null) {
             EC2TestHelper.deleteSubnet(subnet.getSubnetId());
+        }
 
-        if (vpc != null)
+        if (vpc != null) {
             EC2TestHelper.deleteVpc(vpc.getVpcId());
+        }
     }
 
     /**
@@ -43,15 +45,17 @@ public class EC2SubnetsIntegrationTest extends EC2IntegrationTestBase {
             CreateVpcResult createVpcResult = EC2TestHelper.createVpc(CIDR_BLOCK);
             vpc = createVpcResult.getVpc();
         } catch (AmazonServiceException ase) {
-            if (!ase.getErrorCode().equals("VpcLimitExceeded")) throw ase;
+            if (!ase.getErrorCode().equals("VpcLimitExceeded")) {
+                throw ase;
+            }
             System.err.println("Unable to run " + getClass().getName() + ": "
-                    + ase.getMessage());
+                               + ase.getMessage());
             return;
         }
 
         // Create Subnet
         CreateSubnetResult createResult =
-            EC2TestHelper.createSubnet(vpc.getVpcId(), CIDR_BLOCK_SUBNET);
+                EC2TestHelper.createSubnet(vpc.getVpcId(), CIDR_BLOCK_SUBNET);
         subnet = createResult.getSubnet();
         assertNotNull(subnet);
         assertTrue(subnet.getSubnetId().startsWith("subnet-"));
@@ -59,12 +63,12 @@ public class EC2SubnetsIntegrationTest extends EC2IntegrationTestBase {
 
         // Describe Subnet
         DescribeSubnetsResult describeResult =
-            EC2TestHelper.describeSubnet(subnet.getSubnetId());
+                EC2TestHelper.describeSubnet(subnet.getSubnetId());
 
         assertNotNull(describeResult.getSubnets());
         assertEquals(1, describeResult.getSubnets().size());
         assertEquals(subnet.getSubnetId(),
-                describeResult.getSubnets().get(0).getSubnetId());
+                     describeResult.getSubnets().get(0).getSubnetId());
         assertEqualUnorderedTagLists(TAGS, describeResult.getSubnets().get(0).getTags());
 
         // Delete Subnet
@@ -74,8 +78,8 @@ public class EC2SubnetsIntegrationTest extends EC2IntegrationTestBase {
 
         // We can't use the subnet ID field of the request, because it generates a 404
         describeResult = ec2.describeSubnets(new DescribeSubnetsRequest()
-                .withFilters(new Filter().withName("subnet-id").withValues(
-                        subnetId)));
+                                                     .withFilters(new Filter().withName("subnet-id").withValues(
+                                                             subnetId)));
         assertEquals(0, describeResult.getSubnets().size());
     }
 

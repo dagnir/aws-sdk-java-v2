@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -30,28 +26,27 @@ import org.junit.Test;
 /**
  * @author hchar
  */
-public class Base32CodecTest 
-{
+public class Base32CodecTest {
     // The last character 'L' before the padding characters is not possible
     // in this b32 encoded string.
     // Thanks to srikamur on providing this test string.
     private static final String INVALID_B32_STRING = "C5CYMIHWQUUZMKUGZHGEOSJSQDE4L===";
     private static final String VALID_B32_STRING = "C5CYMIHWQUUZMKUGZHGEOSJSQDE4K===";
     private static final String VALID_B32_STRING2 = "C5CYMIHWQUUZMKUGZHGEOSJSQDE4LAAA";
-    
-    @Test(expected=IllegalArgumentException.class)
+
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidLastChar() {
         Base32.decode(INVALID_B32_STRING);
     }
-    
-//    @Test
-//    public void testInvalidB32AgainstCommons() {
-//        org.apache.commons.codec.binary.Base32 commonsB32 = new org.apache.commons.codec.binary.Base32(0);
-//        // Commons B32 Decoder would blindly decode the invalid B32 string! 
-//        byte[] decoded = commonsB32.decode("QDE4L===");
-//        String encoded = commonsB32.encodeToString(decoded);
-//        Assert.assertEquals("QDE4K===", encoded);
-//    }
+
+    //    @Test
+    //    public void testInvalidB32AgainstCommons() {
+    //        org.apache.commons.codec.binary.Base32 commonsB32 = new org.apache.commons.codec.binary.Base32(0);
+    //        // Commons B32 Decoder would blindly decode the invalid B32 string!
+    //        byte[] decoded = commonsB32.decode("QDE4L===");
+    //        String encoded = commonsB32.encodeToString(decoded);
+    //        Assert.assertEquals("QDE4K===", encoded);
+    //    }
 
     @Test
     public void testInvalidB32AgainstBitPedia() {
@@ -75,7 +70,7 @@ public class Base32CodecTest
         String encoded = Base32.encodeAsString(decoded);
         Assert.assertEquals(VALID_B32_STRING2, encoded);
     }
-    
+
     @Test
     public void test20bytes() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String data = "foobafoobafoobafooba";
@@ -90,7 +85,7 @@ public class Base32CodecTest
             Assert.assertEquals(data, new String(decoded, "UTF-8"));
         }
     }
-    
+
     @Test
     public void testVectorsPerRfc4648() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String[] testVectors = {
@@ -101,7 +96,7 @@ public class Base32CodecTest
                 "foob",
                 "fooba",
                 "foobar",
-        };
+                };
         String[] expected = {
                 "",
                 "MY======",
@@ -110,25 +105,25 @@ public class Base32CodecTest
                 "MZXW6YQ=",
                 "MZXW6YTB",
                 "MZXW6YTBOI======",
-        };
-        
-        for (int i=0; i < testVectors.length; i++) {
+                };
+
+        for (int i = 0; i < testVectors.length; i++) {
             String data = testVectors[i];
             byte[] source = data.getBytes("UTF-8");
             String b32encoded = Base32.encodeAsString(data.getBytes("UTF-8"));
             Assert.assertEquals(expected[i], b32encoded);
             byte[] b32 = b32encoded.getBytes("UTF-8");
-            
+
             byte[] decoded = Base32.decode(b32);
             Assert.assertTrue(Arrays.equals(source, decoded));
         }
     }
-    
+
     @Test
     public void testCodecConsistency() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        byte[] decoded = null;         
+        byte[] decoded = null;
 
-        for (int h=0; h < 1000; h++) {
+        for (int h = 0; h < 1000; h++) {
             byte[] digest = MessageDigest.getInstance("SHA-1").digest(UUID.randomUUID().toString().getBytes("UTF-8"));
             String b32Encoded = Base32.encodeAsString(digest);
             {
@@ -145,17 +140,17 @@ public class Base32CodecTest
     @Test
     public void testImpossibleCases() {
         final String[] INVALIDLY_ENCODED = {
-            "MC======",
-            "MZXE====",
-            "MZXWB===",
-            "MZXW6YB=",
-            "MZXW6YTBOC======",
-        };
-        for (String s: INVALIDLY_ENCODED) {
+                "MC======",
+                "MZXE====",
+                "MZXWB===",
+                "MZXW6YB=",
+                "MZXW6YTBOC======",
+                };
+        for (String s : INVALIDLY_ENCODED) {
             try {
                 Base32.decode(s);
                 Assert.fail();
-            } catch(IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ex) {
                 // expected
             }
         }

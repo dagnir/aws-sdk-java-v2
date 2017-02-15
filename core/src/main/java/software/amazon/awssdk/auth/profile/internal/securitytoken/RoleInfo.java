@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -83,11 +83,10 @@ public class RoleInfo implements Cloneable {
      * The Amazon Resource Name (ARN) of the role to assume.
      * </p>
      *
-     * @param roleArn
-     *        The Amazon Resource Name (ARN) of the role to assume.
+     * @return The Amazon Resource Name (ARN) of the role to assume.
      */
-    public void setRoleArn(String roleArn) {
-        this.roleArn = roleArn;
+    public String getRoleArn() {
+        return this.roleArn;
     }
 
     /**
@@ -95,10 +94,11 @@ public class RoleInfo implements Cloneable {
      * The Amazon Resource Name (ARN) of the role to assume.
      * </p>
      *
-     * @return The Amazon Resource Name (ARN) of the role to assume.
+     * @param roleArn
+     *        The Amazon Resource Name (ARN) of the role to assume.
      */
-    public String getRoleArn() {
-        return this.roleArn;
+    public void setRoleArn(String roleArn) {
+        this.roleArn = roleArn;
     }
 
     /**
@@ -114,37 +114,6 @@ public class RoleInfo implements Cloneable {
     public RoleInfo withRoleArn(String roleArn) {
         setRoleArn(roleArn);
         return this;
-    }
-
-    /**
-     * <p>
-     * An identifier for the assumed role session.
-     * </p>
-     * <p>
-     * Use the role session name to uniquely identify a session when the same
-     * role is assumed by different principals or for different reasons. In
-     * cross-account scenarios, the role session name is visible to, and can be
-     * logged by the account that owns the role. The role session name is also
-     * used in the ARN of the assumed role principal. This means that subsequent
-     * cross-account API requests using the temporary security credentials will
-     * expose the role session name to the external account in their CloudTrail
-     * logs.
-     * </p>
-     *
-     * @param roleSessionName
-     *        An identifier for the assumed role session. </p>
-     *        <p>
-     *        Use the role session name to uniquely identify a session when the
-     *        same role is assumed by different principals or for different
-     *        reasons. In cross-account scenarios, the role session name is
-     *        visible to, and can be logged by the account that owns the role.
-     *        The role session name is also used in the ARN of the assumed role
-     *        principal. This means that subsequent cross-account API requests
-     *        using the temporary security credentials will expose the role
-     *        session name to the external account in their CloudTrail logs.
-     */
-    public void setRoleSessionName(String roleSessionName) {
-        this.roleSessionName = roleSessionName;
     }
 
     /**
@@ -203,45 +172,43 @@ public class RoleInfo implements Cloneable {
      *        principal. This means that subsequent cross-account API requests
      *        using the temporary security credentials will expose the role
      *        session name to the external account in their CloudTrail logs.
+     */
+    public void setRoleSessionName(String roleSessionName) {
+        this.roleSessionName = roleSessionName;
+    }
+
+    /**
+     * <p>
+     * An identifier for the assumed role session.
+     * </p>
+     * <p>
+     * Use the role session name to uniquely identify a session when the same
+     * role is assumed by different principals or for different reasons. In
+     * cross-account scenarios, the role session name is visible to, and can be
+     * logged by the account that owns the role. The role session name is also
+     * used in the ARN of the assumed role principal. This means that subsequent
+     * cross-account API requests using the temporary security credentials will
+     * expose the role session name to the external account in their CloudTrail
+     * logs.
+     * </p>
+     *
+     * @param roleSessionName
+     *        An identifier for the assumed role session. </p>
+     *        <p>
+     *        Use the role session name to uniquely identify a session when the
+     *        same role is assumed by different principals or for different
+     *        reasons. In cross-account scenarios, the role session name is
+     *        visible to, and can be logged by the account that owns the role.
+     *        The role session name is also used in the ARN of the assumed role
+     *        principal. This means that subsequent cross-account API requests
+     *        using the temporary security credentials will expose the role
+     *        session name to the external account in their CloudTrail logs.
      * @return Returns a reference to this object so that method calls can be
      *         chained together.
      */
     public RoleInfo withRoleSessionName(String roleSessionName) {
         setRoleSessionName(roleSessionName);
         return this;
-    }
-
-    /**
-     * <p>
-     * A unique identifier that is used by third parties when assuming roles in
-     * their customers' accounts. For each role that the third party can assume,
-     * they should instruct their customers to ensure the role's trust policy
-     * checks for the external ID that the third party generated. Each time the
-     * third party assumes the role, they should pass the customer's external
-     * ID. The external ID is useful in order to help third parties bind a role
-     * to the customer who created it. For more information about the external
-     * ID, see <a href=
-     * "http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
-     * >How to Use an External ID When Granting Access to Your AWS Resources to
-     * a Third Party</a> in the <i>Using IAM</i>.
-     * </p>
-     *
-     * @param externalId
-     *        A unique identifier that is used by third parties when assuming
-     *        roles in their customers' accounts. For each role that the third
-     *        party can assume, they should instruct their customers to ensure
-     *        the role's trust policy checks for the external ID that the third
-     *        party generated. Each time the third party assumes the role, they
-     *        should pass the customer's external ID. The external ID is useful
-     *        in order to help third parties bind a role to the customer who
-     *        created it. For more information about the external ID, see <a
-     *        href=
-     *        "http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
-     *        >How to Use an External ID When Granting Access to Your AWS
-     *        Resources to a Third Party</a> in the <i>Using IAM</i>.
-     */
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
     }
 
     /**
@@ -304,6 +271,39 @@ public class RoleInfo implements Cloneable {
      *        "http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
      *        >How to Use an External ID When Granting Access to Your AWS
      *        Resources to a Third Party</a> in the <i>Using IAM</i>.
+     */
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    /**
+     * <p>
+     * A unique identifier that is used by third parties when assuming roles in
+     * their customers' accounts. For each role that the third party can assume,
+     * they should instruct their customers to ensure the role's trust policy
+     * checks for the external ID that the third party generated. Each time the
+     * third party assumes the role, they should pass the customer's external
+     * ID. The external ID is useful in order to help third parties bind a role
+     * to the customer who created it. For more information about the external
+     * ID, see <a href=
+     * "http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
+     * >How to Use an External ID When Granting Access to Your AWS Resources to
+     * a Third Party</a> in the <i>Using IAM</i>.
+     * </p>
+     *
+     * @param externalId
+     *        A unique identifier that is used by third parties when assuming
+     *        roles in their customers' accounts. For each role that the third
+     *        party can assume, they should instruct their customers to ensure
+     *        the role's trust policy checks for the external ID that the third
+     *        party generated. Each time the third party assumes the role, they
+     *        should pass the customer's external ID. The external ID is useful
+     *        in order to help third parties bind a role to the customer who
+     *        created it. For more information about the external ID, see <a
+     *        href=
+     *        "http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
+     *        >How to Use an External ID When Granting Access to Your AWS
+     *        Resources to a Third Party</a> in the <i>Using IAM</i>.
      * @return Returns a reference to this object so that method calls can be
      *         chained together.
      */
@@ -316,20 +316,20 @@ public class RoleInfo implements Cloneable {
      * <p>
      * Provides the credentials that are used to assume the role.
      * </p>
-     * @param longLivedCredentialsProvider long lived credentials provider
+     * @return long lived credentials provider
      */
-    public void setLongLivedCredentialsProvider(AWSCredentialsProvider longLivedCredentialsProvider) {
-        this.longLivedCredentialsProvider = longLivedCredentialsProvider;
+    public AWSCredentialsProvider getLongLivedCredentialsProvider() {
+        return this.longLivedCredentialsProvider;
     }
 
     /**
      * <p>
      * Provides the credentials that are used to assume the role.
      * </p>
-     * @return long lived credentials provider
+     * @param longLivedCredentialsProvider long lived credentials provider
      */
-    public AWSCredentialsProvider getLongLivedCredentialsProvider() {
-        return this.longLivedCredentialsProvider;
+    public void setLongLivedCredentialsProvider(AWSCredentialsProvider longLivedCredentialsProvider) {
+        this.longLivedCredentialsProvider = longLivedCredentialsProvider;
     }
 
     /**
@@ -369,45 +369,58 @@ public class RoleInfo implements Cloneable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (getRoleArn() != null)
+        if (getRoleArn() != null) {
             sb.append("RoleArn: " + getRoleArn() + ",");
-        if (getRoleSessionName() != null)
+        }
+        if (getRoleSessionName() != null) {
             sb.append("RoleSessionName: " + getRoleSessionName() + ",");
-        if (getExternalId() != null)
+        }
+        if (getExternalId() != null) {
             sb.append("ExternalId: " + getExternalId() + ",");
+        }
         sb.append("}");
         return sb.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
+        }
 
-        if (obj instanceof RoleInfo == false)
+        if (obj instanceof RoleInfo == false) {
             return false;
+        }
 
         RoleInfo other = (RoleInfo) obj;
-        if (other.getRoleArn() == null ^ this.getRoleArn() == null)
+        if (other.getRoleArn() == null ^ this.getRoleArn() == null) {
             return false;
+        }
         if (other.getRoleArn() != null
-            && other.getRoleArn().equals(this.getRoleArn()) == false)
+            && other.getRoleArn().equals(this.getRoleArn()) == false) {
             return false;
+        }
         if (other.getRoleSessionName() == null
-            ^ this.getRoleSessionName() == null)
+            ^ this.getRoleSessionName() == null) {
             return false;
+        }
         if (other.getRoleSessionName() != null
-            && other.getRoleSessionName().equals(this.getRoleSessionName()) == false)
+            && other.getRoleSessionName().equals(this.getRoleSessionName()) == false) {
             return false;
-        if (other.getExternalId() == null ^ this.getExternalId() == null)
+        }
+        if (other.getExternalId() == null ^ this.getExternalId() == null) {
             return false;
+        }
         if (other.getExternalId() != null
-            && other.getExternalId().equals(this.getExternalId()) == false)
+            && other.getExternalId().equals(this.getExternalId()) == false) {
             return false;
-        if (other.getLongLivedCredentialsProvider() != this.getLongLivedCredentialsProvider())
+        }
+        if (other.getLongLivedCredentialsProvider() != this.getLongLivedCredentialsProvider()) {
             return false;
+        }
         return true;
     }
 

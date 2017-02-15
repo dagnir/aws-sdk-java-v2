@@ -44,8 +44,8 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     private static final String TEST_AMI_ID = "ami-84db39ed";
 
     private static final String DEFAULT_GROUP_NAME = "default";
-    private AvailabilityZone zone;
     private final String UNAVAILABLE_ZONE = "us-east-1a";
+    private AvailabilityZone zone;
 
     /**
      * Tests that we can call the DescribeSpotPriceHistory operation and get
@@ -54,8 +54,8 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeSpotPriceHistory() throws Exception {
         DescribeSpotPriceHistoryResult priceHistoryResult =
-            ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
-                    .withProductDescriptions("Linux/UNIX", "Windows"));
+                ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
+                                                     .withProductDescriptions("Linux/UNIX", "Windows"));
 
         List<SpotPrice> spotPrices = priceHistoryResult.getSpotPriceHistory();
         assertTrue(spotPrices.size() > 2);
@@ -77,9 +77,9 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeSpotPriceHistory_withPagination() throws Exception {
         DescribeSpotPriceHistoryResult priceHistoryResult =
-            ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
-                    .withProductDescriptions("Linux/UNIX", "Windows")
-                    .withMaxResults(10));
+                ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
+                                                     .withProductDescriptions("Linux/UNIX", "Windows")
+                                                     .withMaxResults(10));
 
         String nextToken = priceHistoryResult.getNextToken();
         String availabilityZone = priceHistoryResult.getSpotPriceHistory().get(0).getAvailabilityZone();
@@ -88,9 +88,9 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
         assertNotNull(availabilityZone);
         Assert.assertFalse(priceHistoryResult.getSpotPriceHistory().size() > 10);
         ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
-            .withProductDescriptions("Linux/UNIX", "Windows")
-            .withNextToken(nextToken)
-            .withAvailabilityZone(availabilityZone));
+                                             .withProductDescriptions("Linux/UNIX", "Windows")
+                                             .withNextToken(nextToken)
+                                             .withAvailabilityZone(availabilityZone));
     }
 
     /**
@@ -109,33 +109,33 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
         }
 
         BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping()
-            .withDeviceName("/dev/d2")
-            .withEbs(new EbsBlockDevice()
-                .withDeleteOnTermination(true)
-                .withVolumeSize(1));
+                .withDeviceName("/dev/d2")
+                .withEbs(new EbsBlockDevice()
+                                 .withDeleteOnTermination(true)
+                                 .withVolumeSize(1));
 
         zone = getAvailableZone();
         assertNotNull(zone);
 
         LaunchSpecification launchSpecification = new LaunchSpecification()
-            .withMonitoringEnabled(true)
-            .withSecurityGroups("default")
-            .withBlockDeviceMappings(blockDeviceMapping)
-            .withInstanceType(InstanceType.M1Small.toString())
-            .withImageId(TEST_AMI_ID)
-            .withPlacement(new SpotPlacement(zone.getZoneName()))
-            .withUserData("foobaruserdata")
-            .withKeyName(keyName);
+                .withMonitoringEnabled(true)
+                .withSecurityGroups("default")
+                .withBlockDeviceMappings(blockDeviceMapping)
+                .withInstanceType(InstanceType.M1Small.toString())
+                .withImageId(TEST_AMI_ID)
+                .withPlacement(new SpotPlacement(zone.getZoneName()))
+                .withUserData("foobaruserdata")
+                .withKeyName(keyName);
 
         RequestSpotInstancesResult result = ec2.requestSpotInstances(new RequestSpotInstancesRequest()
-            .withAvailabilityZoneGroup("zone-group")
-            .withInstanceCount(1)
-            .withLaunchGroup("launch-group")
-            .withLaunchSpecification(launchSpecification)
-            .withSpotPrice("0.01")
-            .withType(SpotInstanceType.OneTime.toString())
-            .withValidFrom(new Date(new Date().getTime() + 1000 * 60 * 60))
-            .withValidUntil(new Date(new Date().getTime() + 1000 * 60 * 60 * 24)));
+                                                                             .withAvailabilityZoneGroup("zone-group")
+                                                                             .withInstanceCount(1)
+                                                                             .withLaunchGroup("launch-group")
+                                                                             .withLaunchSpecification(launchSpecification)
+                                                                             .withSpotPrice("0.01")
+                                                                             .withType(SpotInstanceType.OneTime.toString())
+                                                                             .withValidFrom(new Date(new Date().getTime() + 1000 * 60 * 60))
+                                                                             .withValidUntil(new Date(new Date().getTime() + 1000 * 60 * 60 * 24)));
 
         // RequestSpotInstances
         List<SpotInstanceRequest> spotInstanceRequests = result.getSpotInstanceRequests();
@@ -147,25 +147,25 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
 
         // DescribeSpotInstanceRequests
         List<SpotInstanceRequest> describedSpotInstanceRequests =
-            ec2.describeSpotInstanceRequests(new DescribeSpotInstanceRequestsRequest()
-                .withSpotInstanceRequestIds(spotInstanceRequestId)).getSpotInstanceRequests();
+                ec2.describeSpotInstanceRequests(new DescribeSpotInstanceRequestsRequest()
+                                                         .withSpotInstanceRequestIds(spotInstanceRequestId)).getSpotInstanceRequests();
         assertEquals(1, describedSpotInstanceRequests.size());
         assertValidSpotInstanceRequest(describedSpotInstanceRequests.get(0));
         assertEqualUnorderedTagLists(TAGS, describedSpotInstanceRequests.get(0).getTags());
 
         // DescribeSpotInstanceRequests with filters
         describedSpotInstanceRequests = ec2.describeSpotInstanceRequests(new DescribeSpotInstanceRequestsRequest()
-            .withFilters(new Filter("spot-instance-request-id", null).withValues(spotInstanceRequestId))).getSpotInstanceRequests();
+                                                                                 .withFilters(new Filter("spot-instance-request-id", null).withValues(spotInstanceRequestId))).getSpotInstanceRequests();
         assertEquals(1, describedSpotInstanceRequests.size());
         assertValidSpotInstanceRequest(describedSpotInstanceRequests.get(0));
 
         // CancelSpotInstanceRequests
         List<CancelledSpotInstanceRequest> canceledSpotInstanceRequests =
-            ec2.cancelSpotInstanceRequests(new CancelSpotInstanceRequestsRequest()
-                .withSpotInstanceRequestIds(spotInstanceRequestId)).getCancelledSpotInstanceRequests();
+                ec2.cancelSpotInstanceRequests(new CancelSpotInstanceRequestsRequest()
+                                                       .withSpotInstanceRequestIds(spotInstanceRequestId)).getCancelledSpotInstanceRequests();
         assertEquals(1, canceledSpotInstanceRequests.size());
         Assert.assertThat(canceledSpotInstanceRequests.get(0)
-                .getState(), Matchers.not(Matchers.isEmptyOrNullString()));
+                                                      .getState(), Matchers.not(Matchers.isEmptyOrNullString()));
         assertEquals(spotInstanceRequestId, canceledSpotInstanceRequests.get(0).getSpotInstanceRequestId());
     }
 
@@ -183,10 +183,10 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
 
         // Create a datafeed subscription
         SpotDatafeedSubscription datafeedSubscription =
-            ec2.createSpotDatafeedSubscription(
-                    new CreateSpotDatafeedSubscriptionRequest()
-                        .withBucket(bucketName)
-                        .withPrefix(prefix)).getSpotDatafeedSubscription();
+                ec2.createSpotDatafeedSubscription(
+                        new CreateSpotDatafeedSubscriptionRequest()
+                                .withBucket(bucketName)
+                                .withPrefix(prefix)).getSpotDatafeedSubscription();
         assertValidSpotDatafeedSubscription(datafeedSubscription, bucketName, prefix);
 
         // Wait a few seconds for eventual consistency
@@ -217,7 +217,8 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
      * @param prefix
      *            The expected prefix.
      */
-    private void assertValidSpotDatafeedSubscription(SpotDatafeedSubscription datafeedSubscription, String bucketName, String prefix) {
+    private void assertValidSpotDatafeedSubscription(SpotDatafeedSubscription datafeedSubscription, String bucketName,
+                                                     String prefix) {
         assertEquals(bucketName, datafeedSubscription.getBucket());
         assertNull(datafeedSubscription.getFault());
         Assert.assertThat(datafeedSubscription.getOwnerId(), Matchers.not
@@ -280,12 +281,12 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     }
 
     private AvailabilityZone getAvailableZone() {
-       for( AvailabilityZone zone : ec2.describeAvailabilityZones().getAvailabilityZones() ) {
-           if (!zone.getZoneName().equals(UNAVAILABLE_ZONE)) {
-               return zone;
-           }
-       }
-       return null;
+        for (AvailabilityZone zone : ec2.describeAvailabilityZones().getAvailabilityZones()) {
+            if (!zone.getZoneName().equals(UNAVAILABLE_ZONE)) {
+                return zone;
+            }
+        }
+        return null;
     }
 
 }

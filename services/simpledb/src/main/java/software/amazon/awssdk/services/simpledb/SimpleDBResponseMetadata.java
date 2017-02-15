@@ -61,8 +61,9 @@ public class SimpleDBResponseMetadata extends ResponseMetadata {
      */
     public float getBoxUsage() {
         String boxUsage = metadata.get(BOX_USAGE);
-        if (boxUsage == null || boxUsage.trim().length() == 0)
+        if (boxUsage == null || boxUsage.trim().length() == 0) {
             return 0;
+        }
         return Float.parseFloat(boxUsage);
     }
 }

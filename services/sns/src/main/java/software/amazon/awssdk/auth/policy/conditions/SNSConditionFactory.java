@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.policy.conditions;
 
 import software.amazon.awssdk.auth.policy.Condition;
@@ -45,7 +46,8 @@ public class SNSConditionFactory {
      */
     public static final String PROTOCOL_CONDITION_KEY = "sns:Protocol";
 
-    private SNSConditionFactory() {}
+    private SNSConditionFactory() {
+    }
 
     /**
      * Constructs a new access policy condition that compares the requested
@@ -74,7 +76,7 @@ public class SNSConditionFactory {
      */
     public static Condition newEndpointCondition(String endpointPattern) {
         return new StringCondition(StringComparisonType.StringLike,
-                ENDPOINT_CONDITION_KEY, endpointPattern);
+                                   ENDPOINT_CONDITION_KEY, endpointPattern);
     }
 
     /**
@@ -94,7 +96,7 @@ public class SNSConditionFactory {
      */
     public static Condition newProtocolCondition(String protocol) {
         return new StringCondition(StringComparisonType.StringEquals,
-                PROTOCOL_CONDITION_KEY, protocol);
+                                   PROTOCOL_CONDITION_KEY, protocol);
     }
 
 }

@@ -28,10 +28,9 @@ import software.amazon.awssdk.services.ec2.model.GatewayType;
 
 public class EC2CustomerGatewaysIntegrationTest extends EC2IntegrationTestBase {
 
-    private static String customerGatewayId;
-
     private static final String IP_ADDRESS = "1.1.1.1";
     private static final Integer BGP_ASN = 65534;
+    private static String customerGatewayId;
 
     /**
      * Make sure we delete the resource even if the test method fails with
@@ -39,10 +38,11 @@ public class EC2CustomerGatewaysIntegrationTest extends EC2IntegrationTestBase {
      */
     @AfterClass
     public static void tearDown() {
-        if (customerGatewayId != null )
+        if (customerGatewayId != null) {
             ec2.deleteCustomerGateway(new DeleteCustomerGatewayRequest()
-                    .withCustomerGatewayId(customerGatewayId)
-                    );
+                                              .withCustomerGatewayId(customerGatewayId)
+                                     );
+        }
     }
 
     /**
@@ -54,10 +54,10 @@ public class EC2CustomerGatewaysIntegrationTest extends EC2IntegrationTestBase {
         // Create CustomerGateway
         CustomerGateway customerGateway = ec2.createCustomerGateway(
                 new CreateCustomerGatewayRequest()
-                    .withPublicIp(IP_ADDRESS)
-                    .withBgpAsn(BGP_ASN)
-                    .withType(GatewayType.Ipsec1)
-                ).getCustomerGateway();
+                        .withPublicIp(IP_ADDRESS)
+                        .withBgpAsn(BGP_ASN)
+                        .withType(GatewayType.Ipsec1)
+                                                                   ).getCustomerGateway();
 
         customerGatewayId = customerGateway.getCustomerGatewayId();
 
@@ -68,8 +68,8 @@ public class EC2CustomerGatewaysIntegrationTest extends EC2IntegrationTestBase {
         // Describe CustomerGateway
         List<CustomerGateway> gateways = ec2.describeCustomerGateways(
                 new DescribeCustomerGatewaysRequest()
-                    .withCustomerGatewayIds(customerGatewayId)
-                ).getCustomerGateways();
+                        .withCustomerGatewayIds(customerGatewayId)
+                                                                     ).getCustomerGateways();
         assertEquals(1, gateways.size());
         assertEquals(customerGatewayId, gateways.get(0).getCustomerGatewayId());
 
@@ -79,8 +79,8 @@ public class EC2CustomerGatewaysIntegrationTest extends EC2IntegrationTestBase {
         // Check the "deleted" state
         gateways = ec2.describeCustomerGateways(
                 new DescribeCustomerGatewaysRequest()
-                    .withCustomerGatewayIds(customerGatewayId)
-                ).getCustomerGateways();
+                        .withCustomerGatewayIds(customerGatewayId)
+                                               ).getCustomerGateways();
         assertEquals(1, gateways.size());
         assertEquals("deleted", gateways.get(0).getState());
 

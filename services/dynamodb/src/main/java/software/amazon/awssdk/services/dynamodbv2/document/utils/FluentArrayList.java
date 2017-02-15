@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ public class FluentArrayList<E> extends ArrayList<E> {
         super();
     }
 
-//    @SafeVarargs
-    public FluentArrayList(E ... elements) {
+    //    @SafeVarargs
+    public FluentArrayList(E... elements) {
         appendAll(elements);
     }
 
@@ -69,11 +69,12 @@ public class FluentArrayList<E> extends ArrayList<E> {
     /**
      * Fluent method to add the elements to this list.
      */
-//    @SuppressWarnings("unchecked")
-    public FluentArrayList<E> appendAll(E ... elements) {
+    //    @SuppressWarnings("unchecked")
+    public FluentArrayList<E> appendAll(E... elements) {
         if (elements != null) {
-            for (E e: elements)
+            for (E e : elements) {
                 add(e);
+            }
         }
         return this;
     }

@@ -58,8 +58,8 @@ public class DefaultServiceEndpointBuilder extends ServiceEndpointBuilder {
             serviceEndpoint = String.format("%s.%s.%s", serviceName, region.getName(), region.getDomain());
 
             log.info("{" + serviceName + ", " + region.getName() + "} was not "
-                    + "found in region metadata, trying to construct an "
-                    + "endpoint using the standard pattern for this region: '" + serviceEndpoint + "'.");
+                     + "found in region metadata, trying to construct an "
+                     + "endpoint using the standard pattern for this region: '" + serviceEndpoint + "'.");
 
         }
         return toURI(stripProtocol(serviceEndpoint));

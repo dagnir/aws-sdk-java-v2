@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.crypto;
 
 import static org.junit.Assert.assertTrue;
@@ -30,27 +45,27 @@ import software.amazon.awssdk.util.StringMapBuilder;
 public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
     private static final boolean cleanup = true;
     private static final String TEST_BUCKET = CryptoTestUtils.tempBucketName(UploadObject2IntegrationTest.class);
-    private static AmazonS3Client s3direct;
-    private static AmazonS3EncryptionClient ae;
-
     private static final long OBJECT_SIZE = (10 << 20) - 16;   // 10M - 16 bytes
     private static final int PART_SIZE = 5 << 20;   // 5 M
+    private static AmazonS3Client s3direct;
+    private static AmazonS3EncryptionClient ae;
     private static File plaintextFile;
 
     @BeforeClass
-    public static void beforeClass() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedOperationException {
-    	setUpCredentials();
+    public static void beforeClass()
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedOperationException {
+        setUpCredentials();
         s3direct = new AmazonS3Client(credentials);
         ae = new AmazonS3EncryptionClient(
                 credentials,
                 new SimpleMaterialProvider()
-                .withLatest(new EncryptionMaterials(CryptoTestUtils.getTestSecretKey())
-                                .addDescription("name", "testsecretkey")
-                ).addMaterial(new EncryptionMaterials(CryptoTestUtils.getTestPublicKeyPair())
-                                .addDescription("name", "testpublickeypair")),
-                    new ClientConfiguration(),
-                    new CryptoConfiguration()
-                    .withCryptoMode(CryptoMode.AuthenticatedEncryption)
+                        .withLatest(new EncryptionMaterials(CryptoTestUtils.getTestSecretKey())
+                                            .addDescription("name", "testsecretkey")
+                                   ).addMaterial(new EncryptionMaterials(CryptoTestUtils.getTestPublicKeyPair())
+                                                         .addDescription("name", "testpublickeypair")),
+                new ClientConfiguration(),
+                new CryptoConfiguration()
+                        .withCryptoMode(CryptoMode.AuthenticatedEncryption)
         );
         s3direct.createBucket(TEST_BUCKET);
         plaintextFile = CryptoTestUtils.generateRandomAsciiFile(OBJECT_SIZE);
@@ -58,23 +73,28 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
 
     @AfterClass
     public static void afterClass() {
-        if (cleanup)
+        if (cleanup) {
             CryptoTestUtils.deleteBucketAndAllContents(s3direct, TEST_BUCKET);
+        }
         ae.shutdown();
         s3direct.shutdown();
     }
 
+    private static void p(Object o) {
+        System.err.println(String.valueOf(o));
+    }
+
     @Test
     public void testMaterialDescrption_forPublicKeyPair() throws IOException,
-            InterruptedException, ExecutionException, NoSuchAlgorithmException, InvalidKeySpecException {
+                                                                 InterruptedException, ExecutionException,
+                                                                 NoSuchAlgorithmException, InvalidKeySpecException {
         final long start = System.nanoTime();
         // Initiate upload
         final String key = "testMaterialDescrption_forPublicKeyPair" + "-" + yyMMdd_hhmmss();
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
-                    .withPartSize(PART_SIZE)
-                    .withMaterialsDescription(new StringMapBuilder("name", "testpublickeypair").build())
-                    ;
+                        .withPartSize(PART_SIZE)
+                        .withMaterialsDescription(new StringMapBuilder("name", "testpublickeypair").build());
         ae.uploadObject(req);
         final long end = System.nanoTime();
         final long elapsed = TimeUnit.NANOSECONDS.toMillis(end - start);
@@ -96,15 +116,15 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testMaterialDescrption_forSecretKey() throws IOException,
-            InterruptedException, ExecutionException, NoSuchAlgorithmException, InvalidKeySpecException {
+                                                             InterruptedException, ExecutionException, NoSuchAlgorithmException,
+                                                             InvalidKeySpecException {
         final long start = System.nanoTime();
         // Initiate upload
         final String key = "testMaterialDescrption_forSecretKey" + "-" + yyMMdd_hhmmss();
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
-                    .withPartSize(PART_SIZE)
-                    .withMaterialsDescription(new StringMapBuilder("name", "testsecretkey").build())
-                    ;
+                        .withPartSize(PART_SIZE)
+                        .withMaterialsDescription(new StringMapBuilder("name", "testsecretkey").build());
         ae.uploadObject(req);
         final long end = System.nanoTime();
         final long elapsed = TimeUnit.NANOSECONDS.toMillis(end - start);
@@ -126,14 +146,14 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testDefaultMaterialDescrption() throws IOException,
-            InterruptedException, ExecutionException, NoSuchAlgorithmException, InvalidKeySpecException {
+                                                       InterruptedException, ExecutionException, NoSuchAlgorithmException,
+                                                       InvalidKeySpecException {
         final long start = System.nanoTime();
         // Initiate upload
         final String key = "testDefaultMaterialDescrption" + "-" + yyMMdd_hhmmss();
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
-                    .withPartSize(PART_SIZE)
-                    ;
+                        .withPartSize(PART_SIZE);
         ae.uploadObject(req);
         final long end = System.nanoTime();
         final long elapsed = TimeUnit.NANOSECONDS.toMillis(end - start);
@@ -151,9 +171,5 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
         assertTrue(Arrays.equals(srcMD5, destMD5));
         client.shutdown();
         return;
-    }
-
-    private static void p(Object o) {
-        System.err.println(String.valueOf(o));
     }
 }

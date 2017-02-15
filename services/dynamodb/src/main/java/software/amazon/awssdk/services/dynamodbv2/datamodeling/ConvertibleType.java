@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 @SdkInternalApi
 final class ConvertibleType<T> {
 
-    private final DynamoDBTypeConverter<?,T> typeConverter;
+    private final DynamoDBTypeConverter<?, T> typeConverter;
     private final DynamoDBAttributeType attributeType;
     private final ConvertibleType<T>[] params;
     private final Class<T> targetType;
@@ -52,7 +52,7 @@ final class ConvertibleType<T> {
             this.targetType = target.targetType;
             this.params = target.params;
         } else if (genericType instanceof ParameterizedType) {
-            final Type[] paramTypes = ((ParameterizedType)genericType).getActualTypeArguments();
+            final Type[] paramTypes = ((ParameterizedType) genericType).getActualTypeArguments();
             this.targetType = annotations.targetType();
             this.params = new ConvertibleType[paramTypes.length];
             for (int i = 0; i < paramTypes.length; i++) {
@@ -68,10 +68,61 @@ final class ConvertibleType<T> {
     }
 
     /**
+     * Returns the conversion type for the method and annotations.
+     */
+    static <T> ConvertibleType<T> of(Method getter, TypedMap<T> annotations) {
+        return new ConvertibleType<T>(getter.getGenericReturnType(), annotations, getter);
+    }
+
+    /**
+     * Returns the conversion type for the converter.
+     */
+    private static <T> ConvertibleType<T> of(final DynamoDBTypeConverter<?, T> converter) {
+        final Class<?> clazz = converter.getClass();
+        if (!clazz.isInterface()) {
+            for (Class<?> c = clazz; Object.class != c; c = c.getSuperclass()) {
+                for (final Type genericType : c.getGenericInterfaces()) {
+                    final ConvertibleType<T> type = ConvertibleType.<T>of(genericType);
+                    if (type.is(DynamoDBTypeConverter.class)) {
+                        if (type.params.length == 2 && type.param(0).targetType() != Object.class) {
+                            return type.param(0);
+                        }
+                    }
+                }
+            }
+            final ConvertibleType<T> type = ConvertibleType.<T>of(clazz.getGenericSuperclass());
+            if (type.is(DynamoDBTypeConverter.class)) {
+                if (type.params.length > 0 && type.param(0).targetType() != Object.class) {
+                    return type.param(0);
+                }
+            }
+        }
+        throw new DynamoDBMappingException("could not resolve type of " + clazz);
+    }
+
+    /**
+     * Returns the conversion type for the generic type.
+     */
+    private static <T> ConvertibleType<T> of(Type genericType) {
+        final Class<T> targetType;
+        if (genericType instanceof Class) {
+            targetType = (Class<T>) genericType;
+        } else if (genericType instanceof ParameterizedType) {
+            targetType = (Class<T>) ((ParameterizedType) genericType).getRawType();
+        } else if (genericType.toString().equals("byte[]")) {
+            targetType = (Class<T>) byte[].class;
+        } else {
+            targetType = (Class<T>) Object.class;
+        }
+        final TypedMap<T> annotations = StandardAnnotationMaps.<T>of(targetType);
+        return new ConvertibleType<T>(genericType, annotations, null);
+    }
+
+    /**
      * Gets the target custom type-converter.
      */
-    final <S> DynamoDBTypeConverter<S,T> typeConverter() {
-        return (DynamoDBTypeConverter<S,T>)this.typeConverter;
+    final <S> DynamoDBTypeConverter<S, T> typeConverter() {
+        return (DynamoDBTypeConverter<S, T>) this.typeConverter;
     }
 
     /**
@@ -101,7 +152,7 @@ final class ConvertibleType<T> {
      * Gets the scalar parameter types.
      */
     final <t> ConvertibleType<t> param(final int index) {
-        return this.params.length > index ? (ConvertibleType<t>)this.params[index] : null;
+        return this.params.length > index ? (ConvertibleType<t>) this.params[index] : null;
     }
 
     /**
@@ -160,57 +211,6 @@ final class ConvertibleType<T> {
             builder.append(">");
         }
         return builder.toString();
-    }
-
-    /**
-     * Returns the conversion type for the method and annotations.
-     */
-    static <T> ConvertibleType<T> of(Method getter, TypedMap<T> annotations) {
-        return new ConvertibleType<T>(getter.getGenericReturnType(), annotations, getter);
-    }
-
-    /**
-     * Returns the conversion type for the converter.
-     */
-    private static <T> ConvertibleType<T> of(final DynamoDBTypeConverter<?,T> converter) {
-        final Class<?> clazz = converter.getClass();
-        if (!clazz.isInterface()) {
-            for (Class<?> c = clazz; Object.class != c; c = c.getSuperclass()) {
-                for (final Type genericType : c.getGenericInterfaces()) {
-                    final ConvertibleType<T> type = ConvertibleType.<T>of(genericType);
-                    if (type.is(DynamoDBTypeConverter.class)) {
-                        if (type.params.length == 2 && type.param(0).targetType() != Object.class) {
-                            return type.param(0);
-                        }
-                    }
-                }
-            }
-            final ConvertibleType<T> type = ConvertibleType.<T>of(clazz.getGenericSuperclass());
-            if (type.is(DynamoDBTypeConverter.class)) {
-                if (type.params.length > 0 && type.param(0).targetType() != Object.class) {
-                    return type.param(0);
-                }
-            }
-        }
-        throw new DynamoDBMappingException("could not resolve type of " + clazz);
-    }
-
-    /**
-     * Returns the conversion type for the generic type.
-     */
-    private static <T> ConvertibleType<T> of(Type genericType) {
-        final Class<T> targetType;
-        if (genericType instanceof Class) {
-            targetType = (Class<T>)genericType;
-        } else if (genericType instanceof ParameterizedType) {
-            targetType = (Class<T>)((ParameterizedType)genericType).getRawType();
-        } else if (genericType.toString().equals("byte[]")) {
-            targetType = (Class<T>)byte[].class;
-        } else {
-            targetType = (Class<T>)Object.class;
-        }
-        final TypedMap<T> annotations = StandardAnnotationMaps.<T>of(targetType);
-        return new ConvertibleType<T>(genericType, annotations, null);
     }
 
 }

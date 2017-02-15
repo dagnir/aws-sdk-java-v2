@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertFalse;
@@ -35,26 +50,20 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
 
-    /** S3 client for requester while the default S3 client s3 is for owner. */
-    private static AmazonS3Client requester;
-
     /** The name of the Amazon S3 bucket used for testing requester pays options.*/
-    private static final String REQUESTER_PAYS_BUCKET_NAME = "java-requester-pays-test-"+System.currentTimeMillis();
-
+    private static final String REQUESTER_PAYS_BUCKET_NAME = "java-requester-pays-test-" + System.currentTimeMillis();
     /** The key used in these tests */
     private static final String KEY = "key";
-
     /** The file size of the file containing the test data uploaded to S3*/
     private static final long FILE_SIZE = 100000L;
-
-    /** The file containing the test data uploaded to S3 */
-    private static File file;
-
     private static final long SLEEP_TIME_IN_MILLIS = 3000;
-
     /** Additional Credentials file path used for Requester Pays testing*/
     private static final String REQUESTER_PAYS_CREDENTIALS_FILE_PATH = System.getProperty("user.home")
-            + "/.aws/requsterPaysTestAccount.properties";
+                                                                       + "/.aws/requsterPaysTestAccount.properties";
+    /** S3 client for requester while the default S3 client s3 is for owner. */
+    private static AmazonS3Client requester;
+    /** The file containing the test data uploaded to S3 */
+    private static File file;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -95,7 +104,7 @@ public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
         assertFalse(s3.isRequesterPaysEnabled(REQUESTER_PAYS_BUCKET_NAME));
         CryptoTestUtils.deleteBucketAndAllContents(s3, REQUESTER_PAYS_BUCKET_NAME);
 
-        if ( file != null ) {
+        if (file != null) {
             file.delete();
         }
     }
@@ -104,34 +113,34 @@ public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
     public void testMultipartUpload() {
         InitiateMultipartUploadRequest initMultipartUploadRequest =
                 new InitiateMultipartUploadRequest(REQUESTER_PAYS_BUCKET_NAME, KEY)
-                    .withRequesterPays(true);
+                        .withRequesterPays(true);
         InitiateMultipartUploadResult initMultipartUploadResult = requester.initiateMultipartUpload(initMultipartUploadRequest);
         assertTrue(initMultipartUploadResult.isRequesterCharged());
 
         String uploadId = initMultipartUploadResult.getUploadId();
 
         UploadPartResult uploadPartResult = requester.uploadPart(new UploadPartRequest()
-                .withBucketName(REQUESTER_PAYS_BUCKET_NAME)
-                .withKey(KEY)
-                .withUploadId(uploadId)
-                .withRequesterPays(true)
-                .withPartNumber(1)
-                .withFile(file));
+                                                                         .withBucketName(REQUESTER_PAYS_BUCKET_NAME)
+                                                                         .withKey(KEY)
+                                                                         .withUploadId(uploadId)
+                                                                         .withRequesterPays(true)
+                                                                         .withPartNumber(1)
+                                                                         .withFile(file));
 
         assertTrue(uploadPartResult.isRequesterCharged());
 
         PartListing partListing = requester.listParts(
                 new ListPartsRequest(REQUESTER_PAYS_BUCKET_NAME, KEY, uploadId)
-                .withRequesterPays(true));
+                        .withRequesterPays(true));
         assertTrue(partListing.isRequesterCharged());
 
         CompleteMultipartUploadResult completeMultipartUploadResult = requester.completeMultipartUpload(
                 new CompleteMultipartUploadRequest()
-                .withBucketName(REQUESTER_PAYS_BUCKET_NAME)
-                .withKey(KEY)
-                .withUploadId(uploadId)
-                .withRequesterPays(true)
-                .withPartETags(uploadPartResult));
+                        .withBucketName(REQUESTER_PAYS_BUCKET_NAME)
+                        .withKey(KEY)
+                        .withUploadId(uploadId)
+                        .withRequesterPays(true)
+                        .withPartETags(uploadPartResult));
 
         assertTrue(completeMultipartUploadResult.isRequesterCharged());
     }
@@ -141,17 +150,18 @@ public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
         final String PUT_OBJECT_KEY = "put-object-key";
         PutObjectResult putObjectResult = requester.putObject(
                 new PutObjectRequest(REQUESTER_PAYS_BUCKET_NAME, PUT_OBJECT_KEY, file)
-                .withRequesterPays(true));
+                        .withRequesterPays(true));
 
         assertTrue(putObjectResult.isRequesterCharged());
 
         DeleteObjectsResult deleteObjectsResult = requester.deleteObjects(
                 new DeleteObjectsRequest(REQUESTER_PAYS_BUCKET_NAME)
-                .withKeys(PUT_OBJECT_KEY)
-                .withRequesterPays(true));
+                        .withKeys(PUT_OBJECT_KEY)
+                        .withRequesterPays(true));
 
         assertTrue(deleteObjectsResult.isRequesterCharged());
     }
+
     @Test
     public void testGetObject() throws InterruptedException {
 
@@ -166,7 +176,7 @@ public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
     public void testHeadObject() {
         ObjectMetadata metadata = requester.getObjectMetadata(
                 new GetObjectMetadataRequest(REQUESTER_PAYS_BUCKET_NAME, KEY)
-                .withRequesterPays(true));
+                        .withRequesterPays(true));
 
         assertTrue(metadata.isRequesterCharged());
     }
@@ -176,7 +186,7 @@ public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
         final String TARGET_KEY = "target-key";
         CopyObjectResult copyObjectResult = requester.copyObject(
                 new CopyObjectRequest(REQUESTER_PAYS_BUCKET_NAME, KEY, REQUESTER_PAYS_BUCKET_NAME, TARGET_KEY)
-                .withRequesterPays(true));
+                        .withRequesterPays(true));
 
         assertTrue(copyObjectResult.isRequesterCharged());
 
@@ -187,7 +197,7 @@ public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
     public void testGetObjectAcl() {
         AccessControlList acl = requester.getObjectAcl(
                 new GetObjectAclRequest(REQUESTER_PAYS_BUCKET_NAME, KEY)
-                .withRequesterPays(true));
+                        .withRequesterPays(true));
 
         assertTrue(acl.isRequesterCharged());
     }

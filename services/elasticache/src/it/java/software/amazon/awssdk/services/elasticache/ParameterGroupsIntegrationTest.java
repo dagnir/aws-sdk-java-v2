@@ -26,83 +26,84 @@ import software.amazon.awssdk.services.elasticache.model.ResetCacheParameterGrou
 
 public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBase {
 
-	private static final String DESCRIPTION = "Java SDK integ test param group";
-	private static final String CACHE_PARAMETER_GROUP_FAMILY = "memcached1.4";
+    private static final String DESCRIPTION = "Java SDK integ test param group";
+    private static final String CACHE_PARAMETER_GROUP_FAMILY = "memcached1.4";
 
-	private String cacheParameterGroupName;
+    private String cacheParameterGroupName;
 
-	/** Releases all resources created by tests. */
-	@After
-	public void tearDown() throws Exception {
-		if (cacheParameterGroupName != null) {
-			try {
-				elasticache.deleteCacheParameterGroup(new DeleteCacheParameterGroupRequest(cacheParameterGroupName));
-			} catch (Exception e) {}
-		}
-	}
+    /** Releases all resources created by tests. */
+    @After
+    public void tearDown() throws Exception {
+        if (cacheParameterGroupName != null) {
+            try {
+                elasticache.deleteCacheParameterGroup(new DeleteCacheParameterGroupRequest(cacheParameterGroupName));
+            } catch (Exception e) {
+            }
+        }
+    }
 
-	/** Tests that we can call the parameter group operations in the ElastiCache API. */
-	@Test
-	public void testParameterGroupOperations() throws Exception {
+    /** Tests that we can call the parameter group operations in the ElastiCache API. */
+    @Test
+    public void testParameterGroupOperations() throws Exception {
 
-		// Describe Engine Default Parameters
-		EngineDefaults engineDefaults = elasticache.describeEngineDefaultParameters(new DescribeEngineDefaultParametersRequest(CACHE_PARAMETER_GROUP_FAMILY));
-		assertTrue(engineDefaults.getCacheNodeTypeSpecificParameters().size() > 0);
-		CacheNodeTypeSpecificParameter cacheNodeParameter = engineDefaults.getCacheNodeTypeSpecificParameters().get(0);
-		assertNotEmpty(cacheNodeParameter.getParameterName());
-		assertTrue(cacheNodeParameter.getCacheNodeTypeSpecificValues().size() > 0);
-		assertEquals(CACHE_PARAMETER_GROUP_FAMILY, engineDefaults.getCacheParameterGroupFamily());
-		assertTrue(engineDefaults.getParameters().size() > 0);
-		Parameter parameter = engineDefaults.getParameters().get(0);
-		assertNotEmpty(parameter.getParameterName());
-		assertNotEmpty(parameter.getParameterValue());
-
-
-		// Create Cache Parameter Group
-		cacheParameterGroupName = "java-sdk-integ-test-" + System.currentTimeMillis();
-		CacheParameterGroup cacheParameterGroup = elasticache.createCacheParameterGroup(new CreateCacheParameterGroupRequest(cacheParameterGroupName, CACHE_PARAMETER_GROUP_FAMILY, DESCRIPTION));
-		assertEquals(CACHE_PARAMETER_GROUP_FAMILY, cacheParameterGroup.getCacheParameterGroupFamily());
-		assertEquals(cacheParameterGroupName, cacheParameterGroup.getCacheParameterGroupName());
-		assertEquals(DESCRIPTION, cacheParameterGroup.getDescription());
+        // Describe Engine Default Parameters
+        EngineDefaults engineDefaults = elasticache.describeEngineDefaultParameters(new DescribeEngineDefaultParametersRequest(CACHE_PARAMETER_GROUP_FAMILY));
+        assertTrue(engineDefaults.getCacheNodeTypeSpecificParameters().size() > 0);
+        CacheNodeTypeSpecificParameter cacheNodeParameter = engineDefaults.getCacheNodeTypeSpecificParameters().get(0);
+        assertNotEmpty(cacheNodeParameter.getParameterName());
+        assertTrue(cacheNodeParameter.getCacheNodeTypeSpecificValues().size() > 0);
+        assertEquals(CACHE_PARAMETER_GROUP_FAMILY, engineDefaults.getCacheParameterGroupFamily());
+        assertTrue(engineDefaults.getParameters().size() > 0);
+        Parameter parameter = engineDefaults.getParameters().get(0);
+        assertNotEmpty(parameter.getParameterName());
+        assertNotEmpty(parameter.getParameterValue());
 
 
-		// Describe Cache Parameters
-		DescribeCacheParametersResult describeCacheParameters = elasticache.describeCacheParameters(new DescribeCacheParametersRequest(cacheParameterGroupName));
-		assertTrue(describeCacheParameters.getCacheNodeTypeSpecificParameters().size() > 0);
-		cacheNodeParameter = describeCacheParameters.getCacheNodeTypeSpecificParameters().get(0);
-		assertNotEmpty(cacheNodeParameter.getParameterName());
-		assertTrue(cacheNodeParameter.getCacheNodeTypeSpecificValues().size() > 0);
-		assertTrue(describeCacheParameters.getParameters().size() > 0);
-		parameter = describeCacheParameters.getParameters().get(0);
-		assertNotEmpty(parameter.getParameterName());
-		assertNotEmpty(parameter.getParameterValue());
+        // Create Cache Parameter Group
+        cacheParameterGroupName = "java-sdk-integ-test-" + System.currentTimeMillis();
+        CacheParameterGroup cacheParameterGroup = elasticache.createCacheParameterGroup(new CreateCacheParameterGroupRequest(cacheParameterGroupName, CACHE_PARAMETER_GROUP_FAMILY, DESCRIPTION));
+        assertEquals(CACHE_PARAMETER_GROUP_FAMILY, cacheParameterGroup.getCacheParameterGroupFamily());
+        assertEquals(cacheParameterGroupName, cacheParameterGroup.getCacheParameterGroupName());
+        assertEquals(DESCRIPTION, cacheParameterGroup.getDescription());
 
 
-		// Modify Cache Parameter Group
-		List<ParameterNameValue> paramsToModify = new ArrayList<ParameterNameValue>();
-		paramsToModify.add(new ParameterNameValue("max_item_size", "100000"));
-		ModifyCacheParameterGroupResult modifyCacheParameterGroup = elasticache.modifyCacheParameterGroup(new ModifyCacheParameterGroupRequest(cacheParameterGroupName, paramsToModify));
-		assertEquals(cacheParameterGroupName, modifyCacheParameterGroup.getCacheParameterGroupName());
+        // Describe Cache Parameters
+        DescribeCacheParametersResult describeCacheParameters = elasticache.describeCacheParameters(new DescribeCacheParametersRequest(cacheParameterGroupName));
+        assertTrue(describeCacheParameters.getCacheNodeTypeSpecificParameters().size() > 0);
+        cacheNodeParameter = describeCacheParameters.getCacheNodeTypeSpecificParameters().get(0);
+        assertNotEmpty(cacheNodeParameter.getParameterName());
+        assertTrue(cacheNodeParameter.getCacheNodeTypeSpecificValues().size() > 0);
+        assertTrue(describeCacheParameters.getParameters().size() > 0);
+        parameter = describeCacheParameters.getParameters().get(0);
+        assertNotEmpty(parameter.getParameterName());
+        assertNotEmpty(parameter.getParameterValue());
 
 
-		// Reset Cache Parameter Group
-		List<ParameterNameValue> paramsToReset = new ArrayList<ParameterNameValue>();
-		paramsToReset.add(new ParameterNameValue().withParameterName("binding_protocol"));
-		ResetCacheParameterGroupResult resetCacheParameterGroup = elasticache.resetCacheParameterGroup(new ResetCacheParameterGroupRequest(cacheParameterGroupName, paramsToReset));
-		assertEquals(cacheParameterGroupName, resetCacheParameterGroup.getCacheParameterGroupName());
+        // Modify Cache Parameter Group
+        List<ParameterNameValue> paramsToModify = new ArrayList<ParameterNameValue>();
+        paramsToModify.add(new ParameterNameValue("max_item_size", "100000"));
+        ModifyCacheParameterGroupResult modifyCacheParameterGroup = elasticache.modifyCacheParameterGroup(new ModifyCacheParameterGroupRequest(cacheParameterGroupName, paramsToModify));
+        assertEquals(cacheParameterGroupName, modifyCacheParameterGroup.getCacheParameterGroupName());
 
 
-		// Describe Cache Parameter Groups
-		DescribeCacheParameterGroupsResult describeCacheParameterGroups = elasticache.describeCacheParameterGroups(new DescribeCacheParameterGroupsRequest(cacheParameterGroupName));
-		assertEquals(1, describeCacheParameterGroups.getCacheParameterGroups().size());
-		CacheParameterGroup parameterGroup = describeCacheParameterGroups.getCacheParameterGroups().get(0);
-		assertEquals(CACHE_PARAMETER_GROUP_FAMILY, parameterGroup.getCacheParameterGroupFamily());
-		assertEquals(cacheParameterGroupName, parameterGroup.getCacheParameterGroupName());
-		assertEquals(DESCRIPTION, parameterGroup.getDescription());
+        // Reset Cache Parameter Group
+        List<ParameterNameValue> paramsToReset = new ArrayList<ParameterNameValue>();
+        paramsToReset.add(new ParameterNameValue().withParameterName("binding_protocol"));
+        ResetCacheParameterGroupResult resetCacheParameterGroup = elasticache.resetCacheParameterGroup(new ResetCacheParameterGroupRequest(cacheParameterGroupName, paramsToReset));
+        assertEquals(cacheParameterGroupName, resetCacheParameterGroup.getCacheParameterGroupName());
 
 
-		// Delete Cache Parameter Group
-		elasticache.deleteCacheParameterGroup(new DeleteCacheParameterGroupRequest(cacheParameterGroupName));
-	}
+        // Describe Cache Parameter Groups
+        DescribeCacheParameterGroupsResult describeCacheParameterGroups = elasticache.describeCacheParameterGroups(new DescribeCacheParameterGroupsRequest(cacheParameterGroupName));
+        assertEquals(1, describeCacheParameterGroups.getCacheParameterGroups().size());
+        CacheParameterGroup parameterGroup = describeCacheParameterGroups.getCacheParameterGroups().get(0);
+        assertEquals(CACHE_PARAMETER_GROUP_FAMILY, parameterGroup.getCacheParameterGroupFamily());
+        assertEquals(cacheParameterGroupName, parameterGroup.getCacheParameterGroupName());
+        assertEquals(DESCRIPTION, parameterGroup.getDescription());
+
+
+        // Delete Cache Parameter Group
+        elasticache.deleteCacheParameterGroup(new DeleteCacheParameterGroupRequest(cacheParameterGroupName));
+    }
 
 }

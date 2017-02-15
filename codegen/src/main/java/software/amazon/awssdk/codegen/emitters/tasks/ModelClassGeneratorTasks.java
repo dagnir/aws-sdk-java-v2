@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting model classes");
         return model.getShapes().entrySet().stream()
-                .filter(e -> shouldGenerateShape(e.getValue()))
-                .map(FunctionalUtils.safeFunction(e -> createTask(e.getKey(), e.getValue())))
-                .collect(Collectors.toList());
+                    .filter(e -> shouldGenerateShape(e.getValue()))
+                    .map(FunctionalUtils.safeFunction(e -> createTask(e.getKey(), e.getValue())))
+                    .collect(Collectors.toList());
     }
 
     private boolean shouldGenerateShape(ShapeModel shapeModel) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class InMemoryRegionsProvider extends AbstractRegionMetadataProvider {
     public InMemoryRegionsProvider(List<Region> regions) {
         ValidationUtils.assertNotNull(regions, "regions");
         this.regions = Collections.unmodifiableList(new ArrayList<Region>
-                (regions));
+                                                            (regions));
     }
 
     @Override

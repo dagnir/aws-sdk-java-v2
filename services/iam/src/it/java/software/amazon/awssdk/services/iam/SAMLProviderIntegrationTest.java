@@ -13,10 +13,10 @@ public class SAMLProviderIntegrationTest extends IntegrationTestBase {
 
     private static final String fakeProviderARN = "arn:aws:sts::599169622985:saml-provider/ImaginaryProvider";
     private static String fakeIdPMetadataDocumentContent;
-    
+
     static {
         int DOCUMENT_LENGTH = 1200; // The api requires a metadata document with
-                                    // minimum length of 1000 characters.
+        // minimum length of 1000 characters.
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < DOCUMENT_LENGTH; i++) {
             sb.append("a");
@@ -40,7 +40,7 @@ public class SAMLProviderIntegrationTest extends IntegrationTestBase {
             Assert.assertEquals("InvalidInput", ase.getErrorCode());
             Assert.assertTrue(ase.getMessage().contains("Could not parse metadata"));
         }
-        
+
         // No SAML providers
         ListSAMLProvidersResult listSAMLProvidersResult = iam.listSAMLProviders();
         Assert.assertEquals(0, listSAMLProvidersResult.getSAMLProviderList().size());
@@ -51,7 +51,7 @@ public class SAMLProviderIntegrationTest extends IntegrationTestBase {
         } catch (AmazonServiceException ase) {
             Assert.assertEquals("NoSuchEntity", ase.getErrorCode());
         }
-        
+
         try {
             iam.deleteSAMLProvider(new DeleteSAMLProviderRequest().withSAMLProviderArn(fakeProviderARN));
         } catch (AmazonServiceException ase) {

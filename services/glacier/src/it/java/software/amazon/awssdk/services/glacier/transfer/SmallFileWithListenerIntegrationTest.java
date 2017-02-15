@@ -19,15 +19,17 @@ public class SmallFileWithListenerIntegrationTest extends GlacierIntegrationTest
     private static final boolean cleanup = true;
     private File randomTempFile;
     private File downloadFile;
+    private TestGlacierProgressListener progressListener = new TestGlacierProgressListener();
 
     @Before
     public void setup() throws IOException {
         randomTempFile = new RandomTempFile("SmallFileWithListenerIntegrationTest-", contentLength, true);
-        if (DEBUG)
+        if (DEBUG) {
             System.out.println("randomTempFile.length(): " + randomTempFile.length());
+        }
         downloadFile = new File(randomTempFile.getParentFile(),
-                randomTempFile.getName() + ".download");
-        
+                                randomTempFile.getName() + ".download");
+
     }
 
     @After
@@ -38,13 +40,12 @@ public class SmallFileWithListenerIntegrationTest extends GlacierIntegrationTest
         }
     }
 
-    private TestGlacierProgressListener progressListener = new TestGlacierProgressListener();
-
     private ArchiveTransferManager newArchiveTransferManager() {
         return new ArchiveTransferManager(glacier, new StaticCredentialsProvider(credentials), new ClientConfiguration());
     }
 
     // hchar: This test took about 4.2 hours to finish last time 
+
     /**
      * Tests that the progress listener can work correctly when doing single part upload and download.
      */
@@ -55,7 +56,7 @@ public class SmallFileWithListenerIntegrationTest extends GlacierIntegrationTest
         ArchiveTransferManager manager = newArchiveTransferManager();
         // Upload
         UploadResult uploadResult = manager.upload(accountId, vaultName,
-                "archive-description", randomTempFile, progressListener);
+                                                   "archive-description", randomTempFile, progressListener);
         String archiveId = uploadResult.getArchiveId();
         assertNotNull(archiveId);
         assertEquals(contentLength, progressListener.getTotalRequestBytesTransferred());

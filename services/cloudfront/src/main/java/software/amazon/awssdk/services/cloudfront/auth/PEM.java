@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,11 +40,11 @@ import software.amazon.awssdk.util.Base64;
  * load PEM key encoded in PKCS#8 encoding.</li>
  * <li>One the other hand, one can use openssl to convert a PEM file from PKCS#1
  * to PKCS#8. Example:
- * 
+ *
  * <pre>
  * openssl pkcs8 -topk8 -in pk-APKAJM22QV32R3I2XVIQ.pem -inform pem -out pk-APKAJM22QV32R3I2XVIQ_pk8.pem  -outform pem -nocrypt
  * </pre>
- * 
+ *
  * </li>
  * </ul>
  */
@@ -55,7 +55,7 @@ public enum PEM {
     /**
      * Returns the first private key that is found from the input stream of a
      * PEM file.
-     * 
+     *
      * @throws InvalidKeySpecException
      *             if failed to convert the DER bytes into a private key.
      * @throws IllegalArgumentException
@@ -66,12 +66,12 @@ public enum PEM {
         List<PEMObject> objects = readPEMObjects(is);
         for (PEMObject object : objects) {
             switch (object.getPEMObjectType()) {
-            case PRIVATE_KEY_PKCS1:
-                return RSA.privateKeyFromPKCS1(object.getDerBytes());
-            case PRIVATE_KEY_PKCS8:
-                return RSA.privateKeyFromPKCS8(object.getDerBytes());
-            default:
-                break;
+                case PRIVATE_KEY_PKCS1:
+                    return RSA.privateKeyFromPKCS1(object.getDerBytes());
+                case PRIVATE_KEY_PKCS8:
+                    return RSA.privateKeyFromPKCS8(object.getDerBytes());
+                default:
+                    break;
             }
         }
         throw new IllegalArgumentException("Found no private key");
@@ -80,7 +80,7 @@ public enum PEM {
     /**
      * Returns the first public key that is found from the input stream of a PEM
      * file.
-     * 
+     *
      * @throws InvalidKeySpecException
      *             if failed to convert the DER bytes into a public key.
      * @throws IllegalArgumentException
@@ -91,10 +91,10 @@ public enum PEM {
         List<PEMObject> objects = readPEMObjects(is);
         for (PEMObject object : objects) {
             switch (object.getPEMObjectType()) {
-            case PUBLIC_KEY_X509:
-                return RSA.publicKeyFrom(object.getDerBytes());
-            default:
-                break;
+                case PUBLIC_KEY_X509:
+                    return RSA.publicKeyFrom(object.getDerBytes());
+                default:
+                    break;
             }
         }
         throw new IllegalArgumentException("Found no public key");
@@ -125,8 +125,8 @@ public enum PEM {
                 if (readingContent) {
                     if (line.indexOf(endMarker) != -1) {
                         pemContents.add( // completed reading one PEM object
-                                new PEMObject(beginMarker, Base64.decode(sb
-                                        .toString())));
+                                         new PEMObject(beginMarker, Base64.decode(sb
+                                                                                          .toString())));
                         readingContent = false;
                     } else {
                         sb.append(line.trim());

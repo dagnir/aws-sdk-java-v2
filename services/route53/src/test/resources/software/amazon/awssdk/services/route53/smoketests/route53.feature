@@ -8,5 +8,5 @@ Feature: Amazon Route 53
 
   Scenario: Handling errors
     When I attempt to call the "GetHostedZone" API with:
-    | Id | fake-zone |
+      | Id | fake-zone |
     Then I expect the response error code to be "NoSuchHostedZone"

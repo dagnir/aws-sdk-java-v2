@@ -112,76 +112,61 @@ public class ClientConfiguration {
      * The default response metadata cache size.
      */
     public static final int DEFAULT_RESPONSE_METADATA_CACHE_SIZE = 50;
-
-
+    /**
+     * Can be used to specify custom specific Apache HTTP client configurations.
+     */
+    private final ApacheHttpClientConfig apacheHttpClientConfig;
     /** A prefix to the HTTP user agent header passed with all HTTP requests.  */
     private String userAgentPrefix = DEFAULT_USER_AGENT;
-
     /** A suffix to the HTTP user agent header. */
     private String userAgentSuffix;
-
     /**
      * The maximum number of times that a retryable failed request (ex: a 5xx response from a
      * service) will be retried. Or -1 if the user has not explicitly set this value, in which case
      * the configured RetryPolicy will be used to control the retry count.
      */
     private int maxErrorRetry = -1;
-
     /** The retry policy upon failed requests. **/
     private RetryPolicy retryPolicy = DEFAULT_RETRY_POLICY;
-
     /** Optionally specifies the local address to bind to */
     private InetAddress localAddress;
-
     /**
      * The protocol to use when connecting to Amazon Web Services.
      * <p>
      * The default configuration is to use HTTPS for all requests for increased security.
      */
     private Protocol protocol = Protocol.HTTPS;
-
     /** Optionally specifies the proxy host to connect through. */
     private String proxyHost = null;
-
     /** Optionally specifies the port on the proxy host to connect through. */
     private int proxyPort = -1;
-
     /** Optionally specifies the user name to use when connecting through a proxy. */
     private String proxyUsername = null;
-
     /** Optionally specifies the password to use when connecting through a proxy. */
     private String proxyPassword = null;
-
     /** Optional Windows domain name for configuring NTLM proxy support. */
     private String proxyDomain = null;
-
     /** Optional Windows workstation name for configuring NTLM proxy support. */
     private String proxyWorkstation = null;
-
     /** Optional specifies the hosts that should be accessed without going through the proxy. */
     private String nonProxyHosts = null;
-
     /**
      * Whether to pre-emptively authenticate against a proxy server using basic authentication
      */
     private boolean preemptiveBasicProxyAuth;
-
     /** The maximum number of open HTTP connections. */
     private int maxConnections = DEFAULT_MAX_CONNECTIONS;
-
     /**
      * The amount of time to wait (in milliseconds) for data to be transfered over an established,
      * open connection before the connection is timed out. A value of 0 means infinity, and is not
      * recommended.
      */
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-
     /**
      * The amount of time to wait (in milliseconds) when initially establishing a connection before
      * giving up and timing out. A value of 0 means infinity, and is not recommended.
      */
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
-
     /**
      * The amount of time to wait (in milliseconds) for a request to complete before giving up and
      * timing out. A value of 0 means infinity. Consider setting this if a harder guarantee is
@@ -189,56 +174,46 @@ public class ClientConfiguration {
      * are willing to spin up a background thread to enforce it.
      */
     private int requestTimeout = DEFAULT_REQUEST_TIMEOUT;
-
     private int clientExecutionTimeout = DEFAULT_CLIENT_EXECUTION_TIMEOUT;
-
     private boolean throttleRetries = DEFAULT_THROTTLE_RETRIES;
-
     /**
      * Optional size hint (in bytes) for the low level TCP send buffer. This is an advanced option
      * for advanced users who want to tune low level TCP parameters to try and squeeze out more
      * performance.
      */
     private int socketSendBufferSizeHint = 0;
-
     /**
      * Optional size hint (in bytes) for the low level TCP receive buffer. This is an advanced
      * option for advanced users who want to tune low level TCP parameters to try and squeeze out
      * more performance.
      */
     private int socketReceiveBufferSizeHint = 0;
-
     /**
      * Optional whether to use the {@link IdleConnectionReaper} to manage stale connections. A
      * reason for not running the {@link IdleConnectionReaper} can be if running in an environment
      * where the modifyThread and modifyThreadGroup permissions are not allowed.
      */
     private boolean useReaper = DEFAULT_USE_REAPER;
-
     /**
      * Optional whether to use gzip compression when making HTTP requests.
      */
     private boolean useGzip = DEFAULT_USE_GZIP;
-
     /**
      * Optional override to control which signature algorithm should be used to sign requests to the
      * service. If not explicitly set, the client will determine the algorithm to use by inspecting
      * a configuration file baked in to the SDK.
      */
     private String signerOverride;
-
     /**
      * Optional expiration time for a connection in the connection pool. When a connection is
      * retrieved from the connection pool, this parameter is checked to see if the connection can be
      * reused.
      */
     private long connectionTTL = DEFAULT_CONNECTION_TTL;
-
     /**
      * The maximum idle time for a connection in the connection pool.
      */
     private long connectionMaxIdleMillis = DEFAULT_CONNECTION_MAX_IDLE_MILLIS;
-
     /**
      * Optional override to enable support for TCP KeepAlive (not to be confused with HTTP
      * KeepAlive). TCP KeepAlive can be used to detect misbehaving routers or down servers through
@@ -248,7 +223,6 @@ public class ClientConfiguration {
      * operating system (sysctl on Linux, and Registry values on Windows).
      */
     private boolean tcpKeepAlive = DEFAULT_TCP_KEEP_ALIVE;
-
     /**
      * Whether or not to cache response metadata.
      * <p>
@@ -261,7 +235,6 @@ public class ClientConfiguration {
      * </p>
      */
     private boolean cacheResponseMetadata = DEFAULT_CACHE_RESPONSE_METADATA;
-
     /**
      * Size of the response metadata cache, if it is enabled.
      * <p>
@@ -269,23 +242,19 @@ public class ClientConfiguration {
      * services aren't acting as expected.
      */
     private int responseMetadataCacheSize = DEFAULT_RESPONSE_METADATA_CACHE_SIZE;
-
     /**
      * The DNS Resolver to resolve IP addresses of Amazon Web Services.
      */
     private DnsResolver dnsResolver = new SystemDefaultDnsResolver();
-
     /**
      * An instance of {@link SecureRandom} configured by the user; or the JDK default will be used
      * if it is set to null or not explicitly configured.
      */
     private SecureRandom secureRandom;
-
     /**
      * Headers to be added to all requests
      */
     private Map<String, String> headers = new HashMap<String, String>();
-
     /**
      * Optional override to enable/disable support for HTTP/1.1 handshake utilizing EXPECT:
      * 100-Continue. The default value is true.
@@ -297,11 +266,6 @@ public class ClientConfiguration {
      * large amount of data to the server, such as uploading a big file to S3 bucket.
      */
     private boolean useExpectContinue = DEFAULT_USE_EXPECT_CONTINUE;
-
-    /**
-     * Can be used to specify custom specific Apache HTTP client configurations.
-     */
-    private final ApacheHttpClientConfig apacheHttpClientConfig;
 
     public ClientConfiguration() {
         apacheHttpClientConfig = new ApacheHttpClientConfig();
@@ -567,8 +531,8 @@ public class ClientConfiguration {
      */
     private String getProxyHostProperty() {
         return getProtocol() == Protocol.HTTPS
-                ? getSystemProperty("https.proxyHost")
-                : getSystemProperty("http.proxyHost");
+               ? getSystemProperty("https.proxyHost")
+               : getSystemProperty("http.proxyHost");
     }
 
     /**
@@ -617,8 +581,8 @@ public class ClientConfiguration {
      */
     private int getProxyPortProperty() {
         final String proxyPortString = (getProtocol() == Protocol.HTTPS)
-                    ? getSystemProperty("https.proxyPort")
-                    : getSystemProperty("http.proxyPort");
+                                       ? getSystemProperty("https.proxyPort")
+                                       : getSystemProperty("http.proxyPort");
         try {
             return Integer.parseInt(proxyPortString);
         } catch (NumberFormatException e) {
@@ -671,8 +635,8 @@ public class ClientConfiguration {
      */
     private String getProxyUsernameProperty() {
         return (getProtocol() == Protocol.HTTPS)
-                ? getSystemProperty("https.proxyUser")
-                : getSystemProperty("http.proxyUser");
+               ? getSystemProperty("https.proxyUser")
+               : getSystemProperty("http.proxyUser");
     }
 
     /**
@@ -721,8 +685,8 @@ public class ClientConfiguration {
      */
     private String getProxyPasswordProperty() {
         return (getProtocol() == Protocol.HTTPS)
-                ? getSystemProperty("https.proxyPassword")
-                : getSystemProperty("http.proxyPassword");
+               ? getSystemProperty("https.proxyPassword")
+               : getSystemProperty("http.proxyPassword");
     }
 
     /**
@@ -1303,7 +1267,9 @@ public class ClientConfiguration {
      * @param use
      *            true if throttled retries should be used
      */
-    public void setUseThrottleRetries(boolean use) { this.throttleRetries = use; }
+    public void setUseThrottleRetries(boolean use) {
+        this.throttleRetries = use;
+    }
 
     /**
      * Sets whether throttled retries should be used
@@ -1394,7 +1360,7 @@ public class ClientConfiguration {
      *         receive buffer size hint.
      */
     public int[] getSocketBufferSizeHints() {
-        return new int[] { socketSendBufferSizeHint, socketReceiveBufferSizeHint };
+        return new int[] {socketSendBufferSizeHint, socketReceiveBufferSizeHint};
     }
 
     /**
@@ -1772,7 +1738,9 @@ public class ClientConfiguration {
      *
      * @return true if response metadata will be cached
      */
-    public boolean getCacheResponseMetadata() { return cacheResponseMetadata; }
+    public boolean getCacheResponseMetadata() {
+        return cacheResponseMetadata;
+    }
 
     /**
      * Sets whether or not to cache response metadata.
@@ -1856,8 +1824,9 @@ public class ClientConfiguration {
      * @return a non-null instance of SecureRandom.
      */
     public SecureRandom getSecureRandom() {
-        if (secureRandom == null)
+        if (secureRandom == null) {
             secureRandom = new SecureRandom();
+        }
         return secureRandom;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.util.Collections;
@@ -75,16 +76,18 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      *            suffix of the instruction file to be put
      */
     public PutInstructionFileRequest(S3ObjectId s3ObjectId,
-            Map<String, String> matDesc, String suffix) {
-        if (s3ObjectId == null || s3ObjectId instanceof InstructionFileId)
+                                     Map<String, String> matDesc, String suffix) {
+        if (s3ObjectId == null || s3ObjectId instanceof InstructionFileId) {
             throw new IllegalArgumentException("Invalid s3 object id");
-        if (suffix == null || suffix.trim().isEmpty())
+        }
+        if (suffix == null || suffix.trim().isEmpty()) {
             throw new IllegalArgumentException("suffix must be specified");
+        }
         this.s3ObjectId = s3ObjectId;
         @SuppressWarnings("unchecked")
-         Map<String,String> md = matDesc == null
-             ? Collections.EMPTY_MAP
-             : Collections.unmodifiableMap(new HashMap<String, String>(matDesc));
+        Map<String, String> md = matDesc == null
+                                 ? Collections.EMPTY_MAP
+                                 : Collections.unmodifiableMap(new HashMap<String, String>(matDesc));
         this.matDesc = md;
         this.suffix = suffix;
         this.encryptionMaterials = null;
@@ -99,13 +102,16 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      *            suffix of the instruction file to be put
      */
     public PutInstructionFileRequest(S3ObjectId s3ObjectId,
-            EncryptionMaterials encryptionMaterials, String suffix) {
-        if (s3ObjectId == null || s3ObjectId instanceof InstructionFileId)
+                                     EncryptionMaterials encryptionMaterials, String suffix) {
+        if (s3ObjectId == null || s3ObjectId instanceof InstructionFileId) {
             throw new IllegalArgumentException("Invalid s3 object id");
-        if (suffix == null || suffix.trim().isEmpty())
+        }
+        if (suffix == null || suffix.trim().isEmpty()) {
             throw new IllegalArgumentException("suffix must be specified");
-        if (encryptionMaterials == null)
+        }
+        if (encryptionMaterials == null) {
             throw new IllegalArgumentException("encryption materials must be specified");
+        }
         this.s3ObjectId = s3ObjectId;
         this.suffix = suffix;
         this.encryptionMaterials = encryptionMaterials;
@@ -126,9 +132,9 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
     @Override
     public Map<String, String> getMaterialsDescription() {
         return matDesc == null
-             ? encryptionMaterials.getMaterialsDescription()
-             : matDesc
-             ;
+               ? encryptionMaterials.getMaterialsDescription()
+               : matDesc
+                ;
     }
 
     /**
@@ -138,6 +144,7 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
     public EncryptionMaterials getEncryptionMaterials() {
         return encryptionMaterials;
     }
+
     /**
      * Returns the suffix for the new instruction file.
      */
@@ -148,10 +155,10 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
     /**
      * Gets the optional pre-configured access control policy to use for the new
      * object.
-     * 
+     *
      * @return The optional pre-configured access control policy to use for the
      *         new object.
-     * 
+     *
      * @see PutObjectRequest#setCannedAcl(CannedAccessControlList)
      * @see PutObjectRequest#withCannedAcl(CannedAccessControlList)
      */
@@ -162,11 +169,11 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
     /**
      * Sets the optional pre-configured access control policy to use for the new
      * object.
-     * 
+     *
      * @param cannedAcl
      *            The optional pre-configured access control policy to use for
      *            the new object.
-     * 
+     *
      * @see PutObjectRequest#getCannedAcl()
      * @see PutObjectRequest#withCannedAcl(CannedAccessControlList)
      */
@@ -178,14 +185,14 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      * Sets the optional pre-configured access control policy to use for the new
      * object. Returns this {@link PutObjectRequest}, enabling additional method
      * calls to be chained together.
-     * 
+     *
      * @param cannedAcl
      *            The optional pre-configured access control policy to use for
      *            the new object.
-     * 
+     *
      * @return This {@link PutObjectRequest}, enabling additional method calls
      *         to be chained together.
-     * 
+     *
      * @see PutObjectRequest#getCannedAcl()
      * @see PutObjectRequest#setCannedAcl(CannedAccessControlList)
      */
@@ -206,7 +213,7 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
     /**
      * Sets the optional access control list for the new object. If specified,
      * cannedAcl will be ignored.
-     * 
+     *
      * @param accessControlList
      *            The access control list for the new object.
      */
@@ -218,7 +225,7 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      * Sets the optional access control list for the new object. If specified,
      * cannedAcl will be ignored. Returns this {@link PutObjectRequest},
      * enabling additional method calls to be chained together.
-     * 
+     *
      * @param accessControlList
      *            The access control list for the new object.
      */
@@ -237,7 +244,7 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
 
     /**
      * Sets the optional redirect location for the new object.
-     * 
+     *
      * @param redirectLocation
      *            The redirect location for the new object.
      */
@@ -249,7 +256,7 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      * Sets the optional redirect location for the new object.Returns this
      * {@link PutObjectRequest}, enabling additional method calls to be chained
      * together.
-     * 
+     *
      * @param redirectLocation
      *            The redirect location for the new object.
      */
@@ -267,10 +274,10 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      * For more information on available Amazon S3 storage classes, see the
      * {@link StorageClass} enumeration.
      * </p>
-     * 
+     *
      * @return The Amazon S3 storage class to use when storing the newly copied
      *         object.
-     * 
+     *
      * @see #setStorageClass(String)
      * @see #setStorageClass(StorageClass)
      * @see #withStorageClass(StorageClass)
@@ -283,15 +290,34 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
     /**
      * Sets the optional Amazon S3 storage class to use when storing the new
      * object. If not specified, the default standard storage class will be used
+     * when storing the object.
+     * <p>
+     * For more information on Amazon S3 storage classes and available values,
+     * see the {@link StorageClass} enumeration.
+     * </p>
+     *
+     * @param storageClass
+     *            The storage class to use when storing the new object.
+     *
+     * @see #getStorageClass()
+     * @see #setStorageClass(String)
+     */
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass.toString();
+    }
+
+    /**
+     * Sets the optional Amazon S3 storage class to use when storing the new
+     * object. If not specified, the default standard storage class will be used
      * when storing the new object.
      * <p>
      * For more information on Amazon S3 storage classes and available values,
      * see the {@link StorageClass} enumeration.
      * </p>
-     * 
+     *
      * @param storageClass
      *            The storage class to use when storing the new object.
-     * 
+     *
      * @see #getStorageClass()
      * @see #setStorageClass(String)
      * @see #withStorageClass(StorageClass)
@@ -310,13 +336,13 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      * For more information on Amazon S3 storage classes and available values,
      * see the {@link StorageClass} enumeration.
      * </p>
-     * 
+     *
      * @param storageClass
      *            The storage class to use when storing the new object.
-     * 
+     *
      * @return This {@link PutObjectRequest}, enabling additional method calls
      *         to be chained together.
-     * 
+     *
      * @see #getStorageClass()
      * @see #setStorageClass(StorageClass)
      * @see #setStorageClass(String)
@@ -329,25 +355,6 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
 
     /**
      * Sets the optional Amazon S3 storage class to use when storing the new
-     * object. If not specified, the default standard storage class will be used
-     * when storing the object.
-     * <p>
-     * For more information on Amazon S3 storage classes and available values,
-     * see the {@link StorageClass} enumeration.
-     * </p>
-     * 
-     * @param storageClass
-     *            The storage class to use when storing the new object.
-     * 
-     * @see #getStorageClass()
-     * @see #setStorageClass(String)
-     */
-    public void setStorageClass(StorageClass storageClass) {
-        this.storageClass = storageClass.toString();
-    }
-
-    /**
-     * Sets the optional Amazon S3 storage class to use when storing the new
      * object. Returns this {@link PutObjectRequest}, enabling additional method
      * calls to be chained together. If not specified, the default standard
      * storage class will be used when storing the object.
@@ -355,13 +362,13 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      * For more information on Amazon S3 storage classes and available values,
      * see the {@link StorageClass} enumeration.
      * </p>
-     * 
+     *
      * @param storageClass
      *            The storage class to use when storing the new object.
-     * 
+     *
      * @return This {@link PutObjectRequest}, enabling additional method calls
      *         to be chained together.
-     * 
+     *
      * @see #getStorageClass()
      * @see #setStorageClass(StorageClass)
      * @see #setStorageClass(String)
@@ -378,21 +385,21 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      */
     public PutObjectRequest createPutObjectRequest(S3Object s3Object) {
         if (!s3Object.getBucketName().equals(s3ObjectId.getBucket())
-        ||  !s3Object.getKey().equals(s3ObjectId.getKey())) {
+            || !s3Object.getKey().equals(s3ObjectId.getKey())) {
             throw new IllegalArgumentException("s3Object passed inconsistent with the instruction file being created");
         }
-        InstructionFileId ifid= s3ObjectId.instructionFileId(suffix);
-//        ObjectMetadata metadata = s3Object.getObjectMetadata();
+        InstructionFileId ifid = s3ObjectId.instructionFileId(suffix);
+        //        ObjectMetadata metadata = s3Object.getObjectMetadata();
         return new PutObjectRequest(ifid.getBucket(), ifid.getKey(), redirectLocation)
-            .withAccessControlList(accessControlList)
-            .withCannedAcl(cannedAcl)
-//            .withFile(file)
-//            .withInputStream(inputStream)
-// don't want the metadata for the new instruction file
-//            .withMetadata(metadata == null ? null : metadata.clone())
-            .withStorageClass(storageClass)
-            .withGeneralProgressListener(getGeneralProgressListener())
-            .withRequestMetricCollector(getRequestMetricCollector())
-            ;
+                .withAccessControlList(accessControlList)
+                .withCannedAcl(cannedAcl)
+                //            .withFile(file)
+                //            .withInputStream(inputStream)
+                // don't want the metadata for the new instruction file
+                //            .withMetadata(metadata == null ? null : metadata.clone())
+                .withStorageClass(storageClass)
+                .withGeneralProgressListener(getGeneralProgressListener())
+                .withRequestMetricCollector(getRequestMetricCollector())
+                ;
     }
 }

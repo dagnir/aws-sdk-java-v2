@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class Profile {
         properties.put(ProfileKeyConstants.AWS_SECRET_ACCESS_KEY, awsCredentials.getAWSSecretKey());
 
         if (awsCredentials instanceof AWSSessionCredentials) {
-            AWSSessionCredentials sessionCred = (AWSSessionCredentials)awsCredentials;
+            AWSSessionCredentials sessionCred = (AWSSessionCredentials) awsCredentials;
             properties.put(ProfileKeyConstants.AWS_SESSION_TOKEN, sessionCred.getSessionToken());
         }
 
@@ -75,7 +75,7 @@ public class Profile {
     }
 
     public Profile(String profileName, Map<String, String> properties,
-                    AWSCredentialsProvider awsCredentials) {
+                   AWSCredentialsProvider awsCredentials) {
         this.profileName = profileName;
         this.properties = properties;
         this.awsCredentials = awsCredentials;

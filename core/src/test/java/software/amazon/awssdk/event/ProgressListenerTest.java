@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -40,7 +36,7 @@ public class ProgressListenerTest {
             }
         };
         ExceptionReporter reporter =
-            ExceptionReporter.wrap(syncListener);
+                ExceptionReporter.wrap(syncListener);
         publishProgress(syncListener, ProgressEventType.CLIENT_REQUEST_STARTED_EVENT);
         assertNull(reporter.getCause());
         publishProgress(reporter, ProgressEventType.CLIENT_REQUEST_STARTED_EVENT);
@@ -48,7 +44,7 @@ public class ProgressListenerTest {
         try {
             reporter.throwExceptionIfAny();
             fail();
-        } catch(AmazonClientException ex) {
+        } catch (AmazonClientException ex) {
             // expected
         }
     }
@@ -64,7 +60,8 @@ public class ProgressListenerTest {
             }
         };
         ExceptionReporter reporter = new ExceptionReporter(asyncListener) {
-            @Override public void progressChanged(ProgressEvent progressEvent) {
+            @Override
+            public void progressChanged(ProgressEvent progressEvent) {
                 super.progressChanged(progressEvent);
                 latch.countDown();
             }
@@ -75,7 +72,7 @@ public class ProgressListenerTest {
         try {
             reporter.throwExceptionIfAny();
             fail();
-        } catch(AmazonClientException ex) {
+        } catch (AmazonClientException ex) {
             // expected
         }
     }

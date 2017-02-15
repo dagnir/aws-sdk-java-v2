@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -34,7 +49,7 @@ import software.amazon.awssdk.util.json.Jackson;
 /**
  * Generate some plaintext, upload to S3 using v1 and v2 encryption formats,
  * compare the results to make sure they are as expected.
- * 
+ *
  * @author hchar
  */
 public abstract class S3PutGetAEIntegrationTestBase {
@@ -119,7 +134,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
             try {
                 s3object = s3v2.getObject(bucketName, v1key);
                 fail();
-            } catch(SecurityException expected) {
+            } catch (SecurityException expected) {
             }
         } else {
             s3object = s3v2.getObject(bucketName, v1key);
@@ -150,7 +165,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
         assertEquals(ContentCryptoScheme.AES_GCM.getCipherAlgorithm(), map.get(Headers.CRYPTO_CEK_ALGORITHM));
         if (kekMaterial.getKeyPair() == null) {
             assertEquals(S3KeyWrapScheme.AESWrap,
-                    map.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
+                         map.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
         } else {
             assertEquals(
                     S3KeyWrapScheme.RSA_ECB_OAEPWithSHA256AndMGF1Padding,
@@ -200,15 +215,15 @@ public abstract class S3PutGetAEIntegrationTestBase {
                 awsTestCredentials(),
                 kekMaterial,
                 new CryptoConfiguration()
-                    .withStorageMode(CryptoStorageMode.InstructionFile)
+                        .withStorageMode(CryptoStorageMode.InstructionFile)
         );
         // s3v2 will put using v2 format but is able to read either v1 or v2 formats
         AmazonS3EncryptionClient s3v2 = new AmazonS3EncryptionClient(
                 awsTestCredentials(),
-                kekMaterial, 
+                kekMaterial,
                 new CryptoConfiguration()
-                    .withStorageMode(CryptoStorageMode.InstructionFile)
-                    .withCryptoMode(cryptoMode())
+                        .withStorageMode(CryptoStorageMode.InstructionFile)
+                        .withCryptoMode(cryptoMode())
         );
         // A S3 raw client used to inspect the raw data
         AmazonS3Client s3 = new AmazonS3Client(awsTestCredentials());
@@ -220,7 +235,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
         // upload file to s3 using v1 and get it back
         s3v1.putObject(bucketName, v1key, file);
         // verify s3v1 is able to read back and decrypt the s3 object
-        
+
         S3Object s3object = s3v1.getObject(bucketName, v1key);
         assertEquals(plaintext, valueOf(s3object));
         // verify s3v2 is able to read back and decrypt the v1 format
@@ -228,7 +243,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
             try {
                 s3object = s3v2.getObject(bucketName, v1key);
                 fail();
-            } catch(SecurityException expected) {
+            } catch (SecurityException expected) {
             }
         } else {
             s3object = s3v2.getObject(bucketName, v1key);
@@ -239,7 +254,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
         s3object = s3v1.getObject(bucketName, v1key + ".instruction");
         String json = ContentCryptoMaterial.parseInstructionFile(s3object);
         @SuppressWarnings("unchecked")
-        Map<String,String> imap = Jackson.fromJsonString(json, Map.class);
+        Map<String, String> imap = Jackson.fromJsonString(json, Map.class);
         assertNull(imap.get(Headers.CRYPTO_CEK_ALGORITHM));
         assertNull(imap.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
 
@@ -259,7 +274,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
             try {
                 s3object = s3v2.getObject(bucketName, v1key);
                 fail();
-            } catch(SecurityException expected) {
+            } catch (SecurityException expected) {
             }
         } else {
             s3object = s3v2.getObject(bucketName, v1key);
@@ -272,21 +287,23 @@ public abstract class S3PutGetAEIntegrationTestBase {
         // Check the instruction file for v2 format
         try {
             s3object = s3v2.getObject(bucketName, v2key + ".instruction");
-            if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode()))
+            if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode())) {
                 fail(); // instruction file is un-encrypted so it should have failed
-        } catch(SecurityException ex) {
-            if (!CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode()))
+            }
+        } catch (SecurityException ex) {
+            if (!CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode())) {
                 throw ex;   // unexpected
+            }
             s3object = s3.getObject(bucketName, v2key + ".instruction");
         }
         json = ContentCryptoMaterial.parseInstructionFile(s3object);
         @SuppressWarnings("unchecked")
-        Map<String,String> imap2 = Jackson.fromJsonString(json, Map.class);
+        Map<String, String> imap2 = Jackson.fromJsonString(json, Map.class);
         imap = imap2;
         assertEquals(ContentCryptoScheme.AES_GCM.getCipherAlgorithm(), imap.get(Headers.CRYPTO_CEK_ALGORITHM));
         if (kekMaterial.getKeyPair() == null) {
             assertEquals(S3KeyWrapScheme.AESWrap,
-                    imap.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
+                         imap.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
         } else {
             assertEquals(
                     S3KeyWrapScheme.RSA_ECB_OAEPWithSHA256AndMGF1Padding,

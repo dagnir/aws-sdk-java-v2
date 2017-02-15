@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 public class RequestHandlerTestUtils {
 
     public static List<RequestHandler2> buildRequestHandlerList(RequestHandler2... requestHandlers) {
-       List<RequestHandler2> requestHandlerList = new ArrayList<RequestHandler2>(); 
-       for(RequestHandler2 requestHandler : requestHandlers) {
-           requestHandlerList.add(requestHandler);
-       }
-       return requestHandlerList;
+        List<RequestHandler2> requestHandlerList = new ArrayList<RequestHandler2>();
+        for (RequestHandler2 requestHandler : requestHandlers) {
+            requestHandlerList.add(requestHandler);
+        }
+        return requestHandlerList;
     }
 }

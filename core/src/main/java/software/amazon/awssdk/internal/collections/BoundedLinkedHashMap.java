@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,16 +22,17 @@ import java.util.Map;
  * A bounded linked hash map that would remove the eldest entry when the map
  * size exceeds a configurable maximum.
  */
-final class BoundedLinkedHashMap<K,V> extends LinkedHashMap<K,V> {
+final class BoundedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
     private static final long serialVersionUID = 1L;
     private final int maxSize;
+
     BoundedLinkedHashMap(int maxSize) {
         this.maxSize = maxSize;
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns true if the size of this map exceeds the maximum.
      */
     @Override

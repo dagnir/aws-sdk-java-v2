@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -47,7 +47,7 @@ import software.amazon.awssdk.util.SdkHttpUtils;
  */
 @SdkInternalApi
 public class ApacheHttpRequestFactory implements
-        HttpRequestFactory<HttpRequestBase> {
+                                      HttpRequestFactory<HttpRequestBase> {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
@@ -98,7 +98,7 @@ public class ApacheHttpRequestFactory implements
                 .setConnectTimeout(settings.getConnectionTimeout())
                 .setSocketTimeout(settings.getSocketTimeout())
                 .setStaleConnectionCheckEnabled(true) // TODO Handle
-                        // deprecation here.
+                // deprecation here.
                 .setLocalAddress(settings.getLocalAddress());
 
         /*
@@ -198,11 +198,11 @@ public class ApacheHttpRequestFactory implements
 
         /* Set content type and encoding */
         if (httpRequest.getHeaders(HttpHeaders.CONTENT_TYPE) == null || httpRequest
-                .getHeaders
-                        (HttpHeaders.CONTENT_TYPE).length == 0) {
+                                                                                .getHeaders
+                                                                                        (HttpHeaders.CONTENT_TYPE).length == 0) {
             httpRequest.addHeader(HttpHeaders.CONTENT_TYPE,
-                    "application/x-www-form-urlencoded; " +
-                            "charset=" + DEFAULT_ENCODING.toLowerCase());
+                                  "application/x-www-form-urlencoded; " +
+                                  "charset=" + DEFAULT_ENCODING.toLowerCase());
         }
     }
 
@@ -216,7 +216,7 @@ public class ApacheHttpRequestFactory implements
          * same behavior here and in the QueryString signer.
          */
         return SdkHttpUtils.isUsingNonDefaultPort(endpoint)
-                ? endpoint.getHost() + ":" + endpoint.getPort()
-                : endpoint.getHost();
+               ? endpoint.getHost() + ":" + endpoint.getPort()
+               : endpoint.getHost();
     }
 }

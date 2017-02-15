@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import org.apache.commons.logging.Log;
@@ -82,6 +83,15 @@ public class Constants {
      * against BufferedInputStream.
      */
     public static final int DEFAULT_STREAM_BUFFER_SIZE = RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE;
+    public static final int NO_SUCH_BUCKET_STATUS_CODE = 404;
+    public static final int BUCKET_ACCESS_FORBIDDEN_STATUS_CODE = 403;
+    public static final int BUCKET_REDIRECT_STATUS_CODE = 301;
+    // Constant indicating the requester pays for data transfer cost for a bucket.
+    public static final String REQUESTER_PAYS = "requester";
+    public static final String SSE_AWS_KMS_ENCRYPTION_SCHEME =
+            SSEAlgorithm.KMS.getAlgorithm();
+    /** Shared logger for client events */
+    private static Log log = LogFactory.getLog(AmazonS3Client.class);
 
     /**
      * Returns the buffer size override if it is specified in the system property,
@@ -91,7 +101,7 @@ public class Constants {
     public static int getStreamBufferSize() {
         int streamBufferSize = DEFAULT_STREAM_BUFFER_SIZE;
         String bufferSizeOverride =
-            System.getProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
+                System.getProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
 
         if (bufferSizeOverride != null) {
             try {
@@ -111,9 +121,10 @@ public class Constants {
      */
     public static Integer getS3StreamBufferSize() {
         String s =
-            System.getProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
-        if (s == null)
+                System.getProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
+        if (s == null) {
             return null;
+        }
         try {
             return Integer.valueOf(s);
         } catch (Exception e) {
@@ -121,19 +132,4 @@ public class Constants {
         }
         return null;
     }
-
-    /** Shared logger for client events */
-    private static Log log = LogFactory.getLog(AmazonS3Client.class);
-
-    public static final int NO_SUCH_BUCKET_STATUS_CODE = 404;
-
-    public static final int BUCKET_ACCESS_FORBIDDEN_STATUS_CODE = 403;
-
-    public static final int BUCKET_REDIRECT_STATUS_CODE = 301;
-
-    // Constant indicating the requester pays for data transfer cost for a bucket.
-    public static final String REQUESTER_PAYS = "requester";
-
-    public static final String SSE_AWS_KMS_ENCRYPTION_SCHEME =
-            SSEAlgorithm.KMS.getAlgorithm();
 }

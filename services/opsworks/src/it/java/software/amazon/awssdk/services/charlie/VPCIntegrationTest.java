@@ -37,26 +37,26 @@ import software.amazon.awssdk.services.opsworks.model.StackConfigurationManager;
 public class VPCIntegrationTest extends IntegrationTestBase {
 
     private static String TRUST_POLICY = "{"
-                       + "\"Version\": \"2008-10-17\","
-                       + "\"Statement\": ["
-                       +"{"
-                       + "\"Sid\": \"dotnettestProd\","
-                       + "\"Effect\": \"Allow\","
-                       + "\"Principal\": {"
-                       + "\"Service\": \"opsworks.amazonaws.com\""
-                       + "},"
-                       + "\"Action\": \"sts:AssumeRole\""
-                       + "},"
-                       + "{"
-                       + "\"Sid\": \"dotnettestAlpha\","
-                       + "\"Effect\": \"Allow\","
-                       + "\"Principal\": {"
-                       + "\"AWS\": \"arn:aws:iam::225123898355:root\""
-                       + "},"
-                       + "\"Action\": \"sts:AssumeRole\""
-                       + "}"
-                       + "]"
-                       + "}";
+                                         + "\"Version\": \"2008-10-17\","
+                                         + "\"Statement\": ["
+                                         + "{"
+                                         + "\"Sid\": \"dotnettestProd\","
+                                         + "\"Effect\": \"Allow\","
+                                         + "\"Principal\": {"
+                                         + "\"Service\": \"opsworks.amazonaws.com\""
+                                         + "},"
+                                         + "\"Action\": \"sts:AssumeRole\""
+                                         + "},"
+                                         + "{"
+                                         + "\"Sid\": \"dotnettestAlpha\","
+                                         + "\"Effect\": \"Allow\","
+                                         + "\"Principal\": {"
+                                         + "\"AWS\": \"arn:aws:iam::225123898355:root\""
+                                         + "},"
+                                         + "\"Action\": \"sts:AssumeRole\""
+                                         + "}"
+                                         + "]"
+                                         + "}";
 
 
     private static String PERMISSIONS = "{\"Statement\": [{\"Action\": [\"ec2:*\", \"iam:PassRole\","
@@ -74,7 +74,7 @@ public class VPCIntegrationTest extends IntegrationTestBase {
 
     private AmazonEC2Client ec2;
 
-    private   AmazonIdentityManagementClient iam;
+    private AmazonIdentityManagementClient iam;
 
     private String profileName;
 
@@ -90,14 +90,14 @@ public class VPCIntegrationTest extends IntegrationTestBase {
 
         try {
             String stackId = opsWorks.createStack(new CreateStackRequest()
-                                   .withName(stackName)
-                                   .withRegion("us-east-1")
-                                   .withVpcId(vpcId)
-                                   .withDefaultSubnetId(subId)
-                                   .withServiceRoleArn(role.getArn())
-                                   .withDefaultInstanceProfileArn(instanceProfile.getArn())
-                                   .withConfigurationManager(new StackConfigurationManager().withName("Chef").withVersion("0.9"))
-                                    ).getStackId();
+                                                          .withName(stackName)
+                                                          .withRegion("us-east-1")
+                                                          .withVpcId(vpcId)
+                                                          .withDefaultSubnetId(subId)
+                                                          .withServiceRoleArn(role.getArn())
+                                                          .withDefaultInstanceProfileArn(instanceProfile.getArn())
+                                                          .withConfigurationManager(new StackConfigurationManager().withName("Chef").withVersion("0.9"))
+                                                 ).getStackId();
 
 
             Stack stack = opsWorks.describeStacks(new DescribeStacksRequest().withStackIds(stackId)).getStacks().get(0);
@@ -106,29 +106,28 @@ public class VPCIntegrationTest extends IntegrationTestBase {
             assertEquals(subId, stack.getDefaultSubnetId());
 
 
-
             String layerId = opsWorks.createLayer(new CreateLayerRequest()
-                                         .withName("foo")
-                                         .withShortname("fo")
-                                         .withStackId(stackId)
-                                         .withType("custom")).getLayerId();
+                                                          .withName("foo")
+                                                          .withShortname("fo")
+                                                          .withStackId(stackId)
+                                                          .withType("custom")).getLayerId();
 
 
             String instanceId = opsWorks.createInstance(new CreateInstanceRequest()
-                                                .withStackId(stackId)
-                                                .withLayerIds(layerId)
-                                                .withSubnetId(subId)
-                                                .withInstanceType("m1.small")
-                                                ).getInstanceId();
+                                                                .withStackId(stackId)
+                                                                .withLayerIds(layerId)
+                                                                .withSubnetId(subId)
+                                                                .withInstanceType("m1.small")
+                                                       ).getInstanceId();
 
 
             Instance instance = opsWorks.describeInstances(new DescribeInstancesRequest()
-                                                  .withInstanceIds(instanceId)).getInstances().get(0);
+                                                                   .withInstanceIds(instanceId)).getInstances().get(0);
 
             assertEquals(subId, instance.getSubnetId());
 
             DescribeStackSummaryResult describeStackSummaryResult =
-            		opsWorks.describeStackSummary(new DescribeStackSummaryRequest().withStackId(stackId));
+                    opsWorks.describeStackSummary(new DescribeStackSummaryRequest().withStackId(stackId));
 
             assertEquals(stackId, describeStackSummaryResult.getStackSummary().getStackId());
             assertEquals(stackName, describeStackSummaryResult.getStackSummary().getName());
@@ -140,8 +139,7 @@ public class VPCIntegrationTest extends IntegrationTestBase {
 
             opsWorks.deleteLayer(new DeleteLayerRequest().withLayerId(layerId));
             opsWorks.deleteStack(new DeleteStackRequest().withStackId(stackId));
-        }
- finally {
+        } finally {
             try {
                 ec2.deleteSubnet(new DeleteSubnetRequest().withSubnetId(subId));
 
@@ -176,7 +174,8 @@ public class VPCIntegrationTest extends IntegrationTestBase {
 
         do {
             Thread.sleep(1000 * 2);
-        } while (!ec2.describeSubnets(new DescribeSubnetsRequest().withSubnetIds(subId)).getSubnets().get(0).getState().equals("available"));
+        }
+        while (!ec2.describeSubnets(new DescribeSubnetsRequest().withSubnetIds(subId)).getSubnets().get(0).getState().equals("available"));
     }
 
 }

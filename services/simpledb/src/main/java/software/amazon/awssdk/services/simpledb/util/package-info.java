@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 /**
  * Common utilities for working with Amazon SimpleDB, such
  * as padding numeric datatypes so they can be compared as strings.

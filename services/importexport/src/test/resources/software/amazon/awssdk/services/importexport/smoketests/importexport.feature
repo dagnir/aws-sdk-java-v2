@@ -8,7 +8,7 @@ Feature: AWS Import Export
 
   Scenario: Handling errors
     When I attempt to call the "CreateJob" API with:
-      | JobType       | Import |
-      | ValidateOnly  | Import |
-      | Manifest      | invalid-manifest |
+      | JobType      | Import           |
+      | ValidateOnly | Import           |
+      | Manifest     | invalid-manifest |
     Then I expect the response error code to be "MalformedManifestException"

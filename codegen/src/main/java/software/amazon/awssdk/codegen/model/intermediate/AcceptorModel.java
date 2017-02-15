@@ -34,50 +34,50 @@ public class AcceptorModel {
 
     private JmesPathExpression ast;
 
-    public void setAst(JmesPathExpression ast) {
-        this.ast = ast;
-    }
-
     public String getAst() {
-        if(ast != null) {
+        if (ast != null) {
             return ast.accept(new JmesPathCodeGenVisitor(), null);
         }
         return null;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setAst(JmesPathExpression ast) {
+        this.ast = ast;
     }
 
     public String getState() {
         return state;
     }
 
-    public void setMatcher(String matcher) {
-        this.matcher = matcher;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getMatcher() {
         return matcher;
     }
 
-    public void setArgument(String argument) {
-        this.argument = argument;
+    public void setMatcher(String matcher) {
+        this.matcher = matcher;
     }
 
     public String getArgument() {
         return argument;
     }
 
-    public void setExpected(JsonNode expected) {
-        this.expected = expected;
+    public void setArgument(String argument) {
+        this.argument = argument;
     }
 
     public JsonNode getExpected() {
         return expected;
     }
 
-    public String getExpectedAsCamelCase(){
+    public void setExpected(JsonNode expected) {
+        this.expected = expected;
+    }
+
+    public String getExpectedAsCamelCase() {
         return Utils.capitialize(this.expected.asText().replaceAll("\\W", ""));
     }
 
@@ -86,14 +86,14 @@ public class AcceptorModel {
     }
 
     public String getExpectedAsString() {
-        if(expected.isTextual()) {
+        if (expected.isTextual()) {
             return expected.toString();
         }
         return null;
     }
 
     public BigDecimal getExpectedAsNumber() {
-        if(expected.isNumber()) {
+        if (expected.isNumber()) {
             return expected.decimalValue();
         }
         return null;
@@ -103,11 +103,11 @@ public class AcceptorModel {
         return "WaiterState." + this.state.toUpperCase();
     }
 
-    public boolean getIsStatusMatcher(){
+    public boolean getIsStatusMatcher() {
         return this.matcher.equals("status");
     }
 
-    public boolean getIsErrorMatcher(){
+    public boolean getIsErrorMatcher() {
         return this.matcher.equals("error");
     }
 }

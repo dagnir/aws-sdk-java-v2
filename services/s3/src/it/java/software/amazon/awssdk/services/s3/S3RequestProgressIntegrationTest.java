@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -23,15 +38,40 @@ import software.amazon.awssdk.test.util.RandomInputStream;
 
 public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
     private static final String bucketName = "s3-request-progress-integ-test-"
-            + new Date().getTime();
+                                             + new Date().getTime();
     private static final String KEY = "key";
     private static final long CONTENT_LENGTH = 10L * 1024L * 1024L;
+
+    private static PutObjectRequest generatePutObjectRequest(String bucketName, String key, long contentLength) {
+        InputStream input = new RandomInputStream(contentLength);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(contentLength);
+        return new PutObjectRequest(bucketName, key, input, metadata);
+    }
+
+    private static void waitTillListenerCallbacksComplete() {
+        try {
+            SDKProgressPublisher.waitTillCompletion();
+        } catch (InterruptedException e) {
+            Assert.fail("Interrupted when waiting for the progress listener callbacks to return. "
+                        + e.getMessage());
+        } catch (ExecutionException e) {
+            Assert.fail("Error when executing the progress listner callbacks. "
+                        + e.getCause().getMessage());
+        }
+    }
 
     /** Releases all resources created by this test */
     @After
     public void tearDown() {
-        try {s3.deleteObject(bucketName, KEY);} catch (Exception e) {}
-        try {s3.deleteBucket(bucketName);} catch (Exception e) {}
+        try {
+            s3.deleteObject(bucketName, KEY);
+        } catch (Exception e) {
+        }
+        try {
+            s3.deleteBucket(bucketName);
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -76,10 +116,10 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
             SDKProgressPublisher.waitTillCompletion();
         } catch (InterruptedException e) {
             Assert.fail("Interrupted when waiting for the progress listener callbacks to return. "
-                    + e.getMessage());
+                        + e.getMessage());
         } catch (ExecutionException e) {
             Assert.fail("Error when executing the progress listner callbacks. "
-                    + e.getCause().getMessage());
+                        + e.getCause().getMessage());
         }
         listener.throwExceptionIfAny();
     }
@@ -91,10 +131,9 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
         /* PubObject */
 
         ProgressTracker putTracker = new ProgressTracker();
-        PutObjectRequest putRequest = 
+        PutObjectRequest putRequest =
                 generatePutObjectRequest(bucketName, KEY, CONTENT_LENGTH)
-                .withGeneralProgressListener(putTracker)
-                ;
+                        .withGeneralProgressListener(putTracker);
         s3.putObject(putRequest);
         Progress putProgress = putTracker.getProgress();
 
@@ -109,8 +148,7 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
 
         ProgressTracker getTracker = new ProgressTracker();
         GetObjectRequest getRequest = new GetObjectRequest(bucketName, KEY)
-            .withGeneralProgressListener(getTracker)
-            ;
+                .withGeneralProgressListener(getTracker);
         File tmpfile = File.createTempFile("s3-request-progress-integ-test-", "");
         tmpfile.deleteOnExit();
         s3.getObject(getRequest, tmpfile);
@@ -126,27 +164,8 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
         Assert.assertTrue(getProgress.getRequestContentLength() == -1);
         Assert.assertTrue(getProgress.getRequestBytesTransferred() == 0);
         Assert.assertTrue(getProgress.getResponseContentLength() == CONTENT_LENGTH);
-        Assert.assertEquals((Long)getProgress.getResponseContentLength(),
-                            (Long)getProgress.getResponseBytesTransferred());
+        Assert.assertEquals((Long) getProgress.getResponseContentLength(),
+                            (Long) getProgress.getResponseBytesTransferred());
 
-    }
-
-    private static PutObjectRequest generatePutObjectRequest(String bucketName, String key, long contentLength) {
-        InputStream input = new RandomInputStream(contentLength);
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(contentLength);
-        return new PutObjectRequest(bucketName, key, input, metadata);
-    }
-
-    private static void waitTillListenerCallbacksComplete() {
-        try {
-            SDKProgressPublisher.waitTillCompletion();
-        } catch (InterruptedException e) {
-            Assert.fail("Interrupted when waiting for the progress listener callbacks to return. "
-                    + e.getMessage());
-        } catch (ExecutionException e) {
-            Assert.fail("Error when executing the progress listner callbacks. "
-                    + e.getCause().getMessage());
-        }
     }
 }

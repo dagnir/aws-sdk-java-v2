@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,13 +31,13 @@ public class SystemPropertiesCredentialsProvider implements AWSCredentialsProvid
     @Override
     public AWSCredentials getCredentials() {
         String accessKey =
-            StringUtils.trim(System.getProperty(ACCESS_KEY_SYSTEM_PROPERTY));
+                StringUtils.trim(System.getProperty(ACCESS_KEY_SYSTEM_PROPERTY));
 
         String secretKey =
-            StringUtils.trim(System.getProperty(SECRET_KEY_SYSTEM_PROPERTY));
+                StringUtils.trim(System.getProperty(SECRET_KEY_SYSTEM_PROPERTY));
 
         if (StringUtils.isNullOrEmpty(accessKey)
-                || StringUtils.isNullOrEmpty(secretKey)) {
+            || StringUtils.isNullOrEmpty(secretKey)) {
 
             throw new SdkClientException(
                     "Unable to load AWS credentials from Java system "
@@ -49,7 +49,8 @@ public class SystemPropertiesCredentialsProvider implements AWSCredentialsProvid
     }
 
     @Override
-    public void refresh() {}
+    public void refresh() {
+    }
 
     @Override
     public String toString() {

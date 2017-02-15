@@ -21,4 +21,5 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  * An internal marker interface to defend against accidental recursive wrappings.
  */
 @SdkInternalApi
-interface Wrapped {}
+interface Wrapped {
+}

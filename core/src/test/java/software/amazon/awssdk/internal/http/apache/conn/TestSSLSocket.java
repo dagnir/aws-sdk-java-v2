@@ -70,16 +70,12 @@ class TestSSLSocket extends SSLSocket {
     }
 
     @Override
-    public void setUseClientMode(boolean mode) {
-    }
-
-    @Override
     public boolean getUseClientMode() {
         return false;
     }
 
     @Override
-    public void setNeedClientAuth(boolean need) {
+    public void setUseClientMode(boolean mode) {
     }
 
     @Override
@@ -88,7 +84,7 @@ class TestSSLSocket extends SSLSocket {
     }
 
     @Override
-    public void setWantClientAuth(boolean want) {
+    public void setNeedClientAuth(boolean need) {
     }
 
     @Override
@@ -97,11 +93,15 @@ class TestSSLSocket extends SSLSocket {
     }
 
     @Override
-    public void setEnableSessionCreation(boolean flag) {
+    public void setWantClientAuth(boolean want) {
     }
 
     @Override
     public boolean getEnableSessionCreation() {
         return false;
+    }
+
+    @Override
+    public void setEnableSessionCreation(boolean flag) {
     }
 }

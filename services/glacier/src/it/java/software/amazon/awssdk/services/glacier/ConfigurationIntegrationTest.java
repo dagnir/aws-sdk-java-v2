@@ -21,7 +21,7 @@ public class ConfigurationIntegrationTest extends GlacierIntegrationTestBase {
         // TODO: It would be nice to have enums in the Coral model for event types
         String event = "ArchiveRetrievalCompleted";
         glacier.setVaultNotifications(new SetVaultNotificationsRequest().withAccountId(accountId).withVaultName(vaultName)
-                .withVaultNotificationConfig(new VaultNotificationConfig().withSNSTopic(topic).withEvents(event)));
+                                                                        .withVaultNotificationConfig(new VaultNotificationConfig().withSNSTopic(topic).withEvents(event)));
 
         Thread.sleep(1000 * 5);
 
@@ -30,4 +30,4 @@ public class ConfigurationIntegrationTest extends GlacierIntegrationTestBase {
         assertEquals(event, config.getEvents().get(0));
         assertEquals(topic, config.getSNSTopic());
     }
- }
+}

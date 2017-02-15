@@ -40,7 +40,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
 
     /**
      * Tests for mobile push API
-     * 
+     *
      * @throws InterruptedException
      */
     @Test
@@ -73,7 +73,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             attributes.put("EventDeliveryFailure", "");
             CreatePlatformApplicationResult createPlatformAppResult = sns
                     .createPlatformApplication(new CreatePlatformApplicationRequest().withName(platformAppName)
-                            .withPlatform("GCM").withAttributes(attributes));
+                                                                                     .withPlatform("GCM").withAttributes(attributes));
             assertNotNull(createPlatformAppResult.getPlatformApplicationArn());
             platformApplicationArn = createPlatformAppResult.getPlatformApplicationArn();
 
@@ -91,7 +91,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             attributes.put("EventDeliveryFailure", topicArn);
 
             sns.setPlatformApplicationAttributes(new SetPlatformApplicationAttributesRequest()
-                    .withPlatformApplicationArn(platformApplicationArn).withAttributes(attributes));
+                                                         .withPlatformApplicationArn(platformApplicationArn).withAttributes(attributes));
 
             Thread.sleep(1 * 1000);
             // Verify attribute change
@@ -102,7 +102,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             // Create platform endpoint
             CreatePlatformEndpointResult createPlatformEndpointResult = sns.createPlatformEndpoint(
                     new CreatePlatformEndpointRequest().withPlatformApplicationArn(platformApplicationArn)
-                            .withCustomUserData("Custom Data").withToken(token));
+                                                       .withCustomUserData("Custom Data").withToken(token));
             assertNotNull(createPlatformEndpointResult.getEndpointArn());
             endpointArn = createPlatformEndpointResult.getEndpointArn();
 
@@ -118,7 +118,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
 
             // Publish to the endpoint
             PublishResult publishResult = sns.publish(new PublishRequest().withMessage("Mobile push test message")
-                    .withSubject("Mobile Push test subject").withTargetArn(endpointArn));
+                                                                          .withSubject("Mobile Push test subject").withTargetArn(endpointArn));
             assertNotNull(publishResult.getMessageId());
 
             // Get endpoint attributes
@@ -168,7 +168,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
                 return;
             }
             fail(String.format("The key %s didn't have the expected value %s. Actual value : %s ", key, expectedValue,
-                    attributes.get(key)));
+                               attributes.get(key)));
         }
         fail(String.format("The key %s wasn't present in the Map.", key));
     }

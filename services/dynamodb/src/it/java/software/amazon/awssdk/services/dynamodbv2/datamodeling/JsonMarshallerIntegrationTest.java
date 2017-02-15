@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.junit.Assert.assertEquals;
@@ -78,46 +79,18 @@ public class JsonMarshallerIntegrationTest extends DynamoDBMapperIntegrationTest
 
     @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class TestObject {
-        public static class OneItemJsonMarshaller extends JsonMarshaller<OneItem> {
-        }
-
-        ;
-
-        public static class OneListJsonMarshaller extends JsonMarshaller<OneListJsonMarshaller.Type> {
-            public static final class Type extends ArrayList<OneItem> {
-            }
-
-            ;
-
-            public OneListJsonMarshaller() {
-                super(Type.class);
-            }
-        }
-
-        ;
-
-        public static class TwoItemJsonMarshaller extends JsonMarshaller<TwoItem> {
-        }
-
-        ;
-
-        public static class TwoListJsonMarshaller extends JsonMarshaller<TwoListJsonMarshaller.Type> {
-            public static final class Type extends ArrayList<TwoItem> {
-            }
-
-            ;
-
-            public TwoListJsonMarshaller() {
-                super(Type.class);
-            }
-        }
-
-        ;
-
         private String key;
+
+        ;
         private OneItem aitem;
+
+        ;
         private List<OneItem> oneItems;
+
+        ;
         private TwoItem bitem;
+
+        ;
         private List<TwoItem> twoItems;
 
         @DynamoDBHashKey
@@ -178,6 +151,34 @@ public class JsonMarshallerIntegrationTest extends DynamoDBMapperIntegrationTest
                 this.twoItems = new ArrayList<TwoItem>();
             }
             this.twoItems.add(bitem);
+        }
+
+        public static class OneItemJsonMarshaller extends JsonMarshaller<OneItem> {
+        }
+
+        public static class OneListJsonMarshaller extends JsonMarshaller<OneListJsonMarshaller.Type> {
+            public OneListJsonMarshaller() {
+                super(Type.class);
+            }
+
+            ;
+
+            public static final class Type extends ArrayList<OneItem> {
+            }
+        }
+
+        public static class TwoItemJsonMarshaller extends JsonMarshaller<TwoItem> {
+        }
+
+        public static class TwoListJsonMarshaller extends JsonMarshaller<TwoListJsonMarshaller.Type> {
+            public TwoListJsonMarshaller() {
+                super(Type.class);
+            }
+
+            ;
+
+            public static final class Type extends ArrayList<TwoItem> {
+            }
         }
 
         public static class OneItem {

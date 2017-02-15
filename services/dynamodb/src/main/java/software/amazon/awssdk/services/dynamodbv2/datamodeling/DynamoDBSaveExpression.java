@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -38,7 +38,7 @@ public class DynamoDBSaveExpression {
 
     /**
      * Gets the map of attribute names to expected attribute values to check on save.
-     * 
+     *
      * @return The map of attribute names to expected attribute value conditions to check on save
      */
     public Map<String, ExpectedAttributeValue> getExpected() {
@@ -47,7 +47,7 @@ public class DynamoDBSaveExpression {
 
     /**
      * Sets the expected condition to the map of attribute names to expected attribute values given.
-     * 
+     *
      * @param expectedAttributes
      *            The map of attribute names to expected attribute value conditions to check on save
      */
@@ -59,7 +59,7 @@ public class DynamoDBSaveExpression {
      * Sets the expected condition to the map of attribute names to expected
      * attribute values given and returns a pointer to this object for
      * method-chaining.
-     * 
+     *
      * @param expectedAttributes
      *            The map of attribute names to expected attribute value
      *            conditions to check on save
@@ -72,7 +72,7 @@ public class DynamoDBSaveExpression {
     /**
      * Adds one entry to the expected conditions and returns a pointer to this
      * object for method-chaining.
-     * 
+     *
      * @param attributeName
      *            The name of the attribute.
      * @param expected
@@ -80,7 +80,7 @@ public class DynamoDBSaveExpression {
      */
     public DynamoDBSaveExpression withExpectedEntry(String attributeName, ExpectedAttributeValue expected) {
         if (expectedAttributes == null) {
-            expectedAttributes = new HashMap<String,ExpectedAttributeValue>();
+            expectedAttributes = new HashMap<String, ExpectedAttributeValue>();
         }
         expectedAttributes.put(attributeName, expected);
         return this;
@@ -98,6 +98,14 @@ public class DynamoDBSaveExpression {
      * Sets the logical operator on the expected value conditions of this save
      * operation.
      */
+    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
+        setConditionalOperator(conditionalOperator.toString());
+    }
+
+    /**
+     * Sets the logical operator on the expected value conditions of this save
+     * operation.
+     */
     public void setConditionalOperator(String conditionalOperator) {
         this.conditionalOperator = conditionalOperator;
     }
@@ -109,14 +117,6 @@ public class DynamoDBSaveExpression {
     public DynamoDBSaveExpression withConditionalOperator(String conditionalOperator) {
         setConditionalOperator(conditionalOperator);
         return this;
-    }
-    
-    /**
-     * Sets the logical operator on the expected value conditions of this save
-     * operation. 
-     */
-    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
-        setConditionalOperator(conditionalOperator.toString());
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,6 +19,5 @@ package software.amazon.awssdk.metrics.internal.cloudwatch.provider.transform;
  * DynamoDB specific metric dimentsions.
  */
 public enum DynamoDBDimensions {
-    TableName,
-    ;
+    TableName,;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 package software.amazon.awssdk.internal;
 
 public class DynamoDBBackoffStrategy extends CustomBackoffStrategy {
-	public int getBackoffPeriod(int retries) {
-
-		if (retries <= 0) {
-			return 0;
-		} else {
-
-			int delay = 50 * (int) Math.pow(2, retries - 1);
-
-			if (delay < 0) {
-				delay = Integer.MAX_VALUE;
-			}
-
-			return delay;
-		}
-
-	}
-
     public static final CustomBackoffStrategy DEFAULT = new DynamoDBBackoffStrategy();
+
+    public int getBackoffPeriod(int retries) {
+
+        if (retries <= 0) {
+            return 0;
+        } else {
+
+            int delay = 50 * (int) Math.pow(2, retries - 1);
+
+            if (delay < 0) {
+                delay = Integer.MAX_VALUE;
+            }
+
+            return delay;
+        }
+
+    }
 }

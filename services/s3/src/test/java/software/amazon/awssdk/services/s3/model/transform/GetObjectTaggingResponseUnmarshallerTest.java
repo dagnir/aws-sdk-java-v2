@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import static org.junit.Assert.assertEquals;
@@ -25,18 +26,19 @@ import software.amazon.awssdk.services.s3.model.Tag;
 
 public class GetObjectTaggingResponseUnmarshallerTest {
     private static final String TEST_RESULT_FILE = "GetObjectTagsResponse.xml";
+
     @Test
     public void testUnmarshallResult() throws IOException {
         List<Tag> expectedTagSet = Arrays.asList(
                 new Tag("Foo", "1"),
                 new Tag("Bar", "2"),
                 new Tag("Baz", "3")
-        );
+                                                );
         List<Tag> receivedTagSet = new XmlResponsesSaxParser()
                 .parseObjectTaggingResponse(getClass().getResourceAsStream(TEST_RESULT_FILE))
                 .getResult().getTagSet();
 
         assertEquals(ObjectTaggingTestUtil.convertTagSetToMap(expectedTagSet),
-                ObjectTaggingTestUtil.convertTagSetToMap(receivedTagSet));
+                     ObjectTaggingTestUtil.convertTagSetToMap(receivedTagSet));
     }
 }

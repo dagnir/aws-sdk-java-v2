@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -57,13 +57,6 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
 
     private static final String USER_AGENT_PREFIX = "apig-java";
     private static final String UA_NAME_VERSION_SEPERATOR = "/";
-
-    private AWSCredentialsProvider iamCredentials;
-    private String endpoint;
-    private String apiKey;
-    private String region = defaultRegion();
-    private RetryPolicy retryPolicy;
-    private RequestSignerRegistry signerRegistry = new RequestSignerRegistry();
     private final ApiGatewayClientConfiguration apiGatewayClientConfiguration
             = new ApiGatewayClientConfiguration();
     /*
@@ -71,6 +64,12 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
      * tailored for that service.
      */
     private final ClientConfigurationFactory clientConfigFactory;
+    private AWSCredentialsProvider iamCredentials;
+    private String endpoint;
+    private String apiKey;
+    private String region = defaultRegion();
+    private RetryPolicy retryPolicy;
+    private RequestSignerRegistry signerRegistry = new RequestSignerRegistry();
 
     protected SdkSyncClientBuilder(ClientConfigurationFactory clientConfigFactory) {
         this.clientConfigFactory = clientConfigFactory;
@@ -206,6 +205,30 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
         return getSubclass();
     }
 
+    /**
+     * Returns the default retry policy for ApiGateway clients.
+     */
+    private RetryPolicy getDefaultRetryPolicy() {
+        return RetryPolicyBuilder.standard()
+                                 .retryOnExceptions(ConnectException.class, BindException.class, ConnectTimeoutException.class)
+                                 .retryOnStatusCodes(429)
+                                 .backoffStrategy(PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY_V2)
+                                 .maxNumberOfRetries(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY)
+                                 .build();
+    }
+
+    private static class AnonymousCredentialsProvider implements AWSCredentialsProvider {
+
+        @Override
+        public AWSCredentials getCredentials() {
+            return null;
+        }
+
+        @Override
+        public void refresh() {
+        }
+    }
+
     private class BuilderParams extends AwsSyncClientParams {
 
         private AWSCredentialsProvider resolveCredentials() {
@@ -261,30 +284,6 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
         public RetryPolicy getRetryPolicy() {
             return retryPolicy == null ? getDefaultRetryPolicy() : retryPolicy;
         }
-    }
-
-    private static class AnonymousCredentialsProvider implements AWSCredentialsProvider {
-
-        @Override
-        public AWSCredentials getCredentials() {
-            return null;
-        }
-
-        @Override
-        public void refresh() {
-        }
-    }
-
-    /**
-     * Returns the default retry policy for ApiGateway clients.
-     */
-    private RetryPolicy getDefaultRetryPolicy() {
-        return RetryPolicyBuilder.standard()
-                .retryOnExceptions(ConnectException.class, BindException.class, ConnectTimeoutException.class)
-                .retryOnStatusCodes(429)
-                .backoffStrategy(PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY_V2)
-                .maxNumberOfRetries(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY)
-                .build();
     }
 
 }

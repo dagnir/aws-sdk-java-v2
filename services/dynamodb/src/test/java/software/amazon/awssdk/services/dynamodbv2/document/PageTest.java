@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -21,20 +21,14 @@ import org.junit.Test;
 
 public class PageTest {
 
-    private static class TestPage extends Page<String, Object> {
-        TestPage(List<String> content, Object result) {
-            super(content, result);
-        };
-        @Override public boolean hasNextPage() { return false; }
-        @Override public TestPage nextPage() { return null; }
-    };
-
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testNull_content() {
         new TestPage(null, new Object());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    ;
+
+    @Test(expected = IllegalArgumentException.class)
     public void testNull_result() {
         new TestPage(new ArrayList<String>(), null);
     }
@@ -42,6 +36,24 @@ public class PageTest {
     @Test
     public void test_toString() {
         System.out.println(new TestPage(new ArrayList<String>(), new Object())
-            .toString());
+                                   .toString());
+    }
+
+    private static class TestPage extends Page<String, Object> {
+        TestPage(List<String> content, Object result) {
+            super(content, result);
+        }
+
+        ;
+
+        @Override
+        public boolean hasNextPage() {
+            return false;
+        }
+
+        @Override
+        public TestPage nextPage() {
+            return null;
+        }
     }
 }

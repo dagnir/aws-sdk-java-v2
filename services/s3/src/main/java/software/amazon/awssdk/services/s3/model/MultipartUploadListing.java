@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -42,10 +43,10 @@ public class MultipartUploadListing implements Serializable {
      */
     private String delimiter;
 
-	/**
-	 * The optional prefix specified in the original request to limit the
-	 * returned multipart uploads to those for keys that match this prefix.
-	 */
+    /**
+     * The optional prefix specified in the original request to limit the
+     * returned multipart uploads to those for keys that match this prefix.
+     */
     private String prefix;
 
     /**
@@ -246,7 +247,7 @@ public class MultipartUploadListing implements Serializable {
      * parameter, Amazon S3 includes this element in the response, and returns
      * encoded key name values in the following response elements:
      * <code>Delimiter, KeyMarker, Prefix, NextKeyMarker, Key</code>.
-     * 
+     *
      * @return <code>Null</code> if <code>encodingType</code> is not specified
      *         in the request parameter.
      */
@@ -257,7 +258,7 @@ public class MultipartUploadListing implements Serializable {
     /**
      * For internal use only. Sets the encoding type used by Amazon S3 to encode
      * object key names in the XML response.
-     * 
+     *
      * @param encodingType
      *            <code>Null</code> if <code>encodingType</code> is not
      *            specified in the request parameter.
@@ -295,7 +296,9 @@ public class MultipartUploadListing implements Serializable {
      * @return The list of multipart uploads.
      */
     public List<MultipartUpload> getMultipartUploads() {
-        if (multipartUploads == null) multipartUploads = new ArrayList<MultipartUpload>();
+        if (multipartUploads == null) {
+            multipartUploads = new ArrayList<MultipartUpload>();
+        }
         return multipartUploads;
     }
 
@@ -343,72 +346,72 @@ public class MultipartUploadListing implements Serializable {
         return commonPrefixes;
     }
 
-	/**
-	 * For internal use only. Sets the common prefixes for this multipart upload
-	 * listing, representing the uploads for key prefixes that were rolled up
-	 * because of the request's delimiter parameter.
-	 *
-	 * @param commonPrefixes
-	 *            The common prefixes for this multipart upload listing.
-	 */
+    /**
+     * For internal use only. Sets the common prefixes for this multipart upload
+     * listing, representing the uploads for key prefixes that were rolled up
+     * because of the request's delimiter parameter.
+     *
+     * @param commonPrefixes
+     *            The common prefixes for this multipart upload listing.
+     */
     public void setCommonPrefixes(List<String> commonPrefixes) {
         this.commonPrefixes = commonPrefixes;
     }
 
-	/**
-	 * Gets the delimiter parameter originally used to request this multipart
-	 * upload listing, or <code>null</code> if no delimiter specified.
-	 * <p>
-	 * The delimiter value allows callers to condense multipart uploads for keys
-	 * with common prefixes. For example, if a caller specifies a delimiter of
-	 * "/" (a commonly used value for delimiter), any multipart uploads for keys
-	 * that contain a common prefix between the start of the key and the first
-	 * occurrence of "/" will not be included in the list of multipart uploads.
-	 * Instead, the common prefixes list will have one entry for the common
-	 * prefix.
-	 * </p>
-	 *
-	 * @return The delimiter parameter originally used to request this multipart
-	 *         upload listing. Returns <code>null</code> if no delimiter was
-	 *         specified.
-	 */
+    /**
+     * Gets the delimiter parameter originally used to request this multipart
+     * upload listing, or <code>null</code> if no delimiter specified.
+     * <p>
+     * The delimiter value allows callers to condense multipart uploads for keys
+     * with common prefixes. For example, if a caller specifies a delimiter of
+     * "/" (a commonly used value for delimiter), any multipart uploads for keys
+     * that contain a common prefix between the start of the key and the first
+     * occurrence of "/" will not be included in the list of multipart uploads.
+     * Instead, the common prefixes list will have one entry for the common
+     * prefix.
+     * </p>
+     *
+     * @return The delimiter parameter originally used to request this multipart
+     *         upload listing. Returns <code>null</code> if no delimiter was
+     *         specified.
+     */
     public String getDelimiter() {
         return delimiter;
     }
 
-	/**
-	 * For internal use only. Sets the delimiter parameter originally used to
-	 * request this multipart upload listing.
-	 *
-	 * @param delimiter
-	 *            The delimiter parameter originally used to request this
-	 *            multipart upload listing.
-	 */
+    /**
+     * For internal use only. Sets the delimiter parameter originally used to
+     * request this multipart upload listing.
+     *
+     * @param delimiter
+     *            The delimiter parameter originally used to request this
+     *            multipart upload listing.
+     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
     }
 
-	/**
-	 * Returns the prefix parameter originally used to request this multipart
-	 * upload listing, or <code>null</code> if no prefix was specified. All
-	 * objects and common prefixes included in this multipart upload listing
-	 * start with the specified prefix.
-	 *
-	 * @return The prefix parameter originally used to request this multipart upload
-	 *         listing. Returns <code>null</code> if no prefix was specified.
-	 */
+    /**
+     * Returns the prefix parameter originally used to request this multipart
+     * upload listing, or <code>null</code> if no prefix was specified. All
+     * objects and common prefixes included in this multipart upload listing
+     * start with the specified prefix.
+     *
+     * @return The prefix parameter originally used to request this multipart upload
+     *         listing. Returns <code>null</code> if no prefix was specified.
+     */
     public String getPrefix() {
         return prefix;
     }
 
-	/**
-	 * For internal use only. Sets the prefix parameter originally used to
-	 * request this multipart upload listing.
-	 *
-	 * @param prefix
-	 *            The prefix parameter originally used to request this multipart
-	 *            upload listing.
-	 */
+    /**
+     * For internal use only. Sets the prefix parameter originally used to
+     * request this multipart upload listing.
+     *
+     * @param prefix
+     *            The prefix parameter originally used to request this multipart
+     *            upload listing.
+     */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }

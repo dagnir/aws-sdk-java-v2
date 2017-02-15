@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,16 +32,6 @@ public class AbstractAmazonS3Test {
 
     private static final String BUCKET_NAME = "foo-bucket";
 
-    static class TestAmazonS3 extends AbstractAmazonS3 {
-
-        @Override
-        public Bucket createBucket(CreateBucketRequest createBucketRequest)
-                throws AmazonClientException, AmazonServiceException {
-            return new Bucket(createBucketRequest.getBucketName());
-        }
-
-    }
-
     @Test
     public void testAbstractClient_ImplementedMethodExpectedToReturnSuccess() {
         final TestAmazonS3 s3 = new TestAmazonS3();
@@ -52,6 +42,16 @@ public class AbstractAmazonS3Test {
     @Test(expected = UnsupportedOperationException.class)
     public void testAbstractClient_UnimplementedMethodExpectedToThrowException() {
         final TestAmazonS3 s3 = new TestAmazonS3();
-        s3.putObject(new PutObjectRequest(BUCKET_NAME, "key", (File)null));
+        s3.putObject(new PutObjectRequest(BUCKET_NAME, "key", (File) null));
+    }
+
+    static class TestAmazonS3 extends AbstractAmazonS3 {
+
+        @Override
+        public Bucket createBucket(CreateBucketRequest createBucketRequest)
+                throws AmazonClientException, AmazonServiceException {
+            return new Bucket(createBucketRequest.getBucketName());
+        }
+
     }
 }

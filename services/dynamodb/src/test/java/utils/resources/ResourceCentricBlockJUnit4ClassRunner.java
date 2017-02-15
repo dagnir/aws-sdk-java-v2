@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package utils.resources;
 
 import java.util.HashSet;
@@ -43,6 +44,20 @@ public class ResourceCentricBlockJUnit4ClassRunner extends BlockJUnit4ClassRunne
 
         classRequiredResourcesAnnotation = klass.getAnnotation(RequiredResources.class);
         resourcesToBeDestroyedAfterAllTests = new HashSet<TestResource>();
+    }
+
+    /**
+     *
+     * @throws IllegalAccessException
+     */
+    private static TestResource createResourceInstance(RequiredResource resourceAnnotation)
+            throws InstantiationException, IllegalAccessException {
+        Class<? extends TestResource> resourceClazz = resourceAnnotation.resource();
+        if (resourceClazz == null) {
+            throw new IllegalArgumentException(
+                    "resource parameter is missing for the @RequiredResource annotation.");
+        }
+        return resourceClazz.newInstance();
     }
 
     @Override
@@ -153,19 +168,5 @@ public class ResourceCentricBlockJUnit4ClassRunner extends BlockJUnit4ClassRunne
                 TestResourceUtils.deleteResource(resource);
             }
         }
-    }
-
-    /**
-     *
-     * @throws IllegalAccessException
-     */
-    private static TestResource createResourceInstance(RequiredResource resourceAnnotation)
-            throws InstantiationException, IllegalAccessException {
-        Class<? extends TestResource> resourceClazz = resourceAnnotation.resource();
-        if (resourceClazz == null) {
-            throw new IllegalArgumentException(
-                    "resource parameter is missing for the @RequiredResource annotation.");
-        }
-        return resourceClazz.newInstance();
     }
 }

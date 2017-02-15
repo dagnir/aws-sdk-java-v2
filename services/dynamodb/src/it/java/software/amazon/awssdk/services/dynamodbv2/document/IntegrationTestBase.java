@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import java.io.File;
@@ -28,8 +43,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
  * gsi (hashkey + range key)
  */
 public class IntegrationTestBase {
-    protected static DynamoDB dynamo;
-    protected static DynamoDB dynamoOld;
     // Table names
     protected static final String HASH_ONLY_TABLE_NAME = "DynamoDBTest_PrimaryHashKeyOnly";
     protected static final String RANGE_TABLE_NAME = "DynamoDBTest_PrimaryHashAndRangeKey";
@@ -45,9 +58,10 @@ public class IntegrationTestBase {
     protected static final String GSI_RANGE_KEY_NAME = "gsiRangekeyAttr";
     // attribute names for the LSI keys (Note an LSI must share the same hash key as the table.)
     protected static final String LSI_RANGE_KEY_NAME = "lsiRangekeyAttr";
-
     private static final ProvisionedThroughput THRUPUT = new ProvisionedThroughput(1L, 2L);
     private static final Projection PROJECTION = new Projection().withProjectionType(ProjectionType.ALL);
+    protected static DynamoDB dynamo;
+    protected static DynamoDB dynamoOld;
 
     //    private static final boolean IS_SERVICE_BUILDER_USED = false;
     @BeforeClass
@@ -80,20 +94,20 @@ public class IntegrationTestBase {
                                                 new AttributeDefinition(HASH_KEY_NAME, ScalarAttributeType.S),
                                                 new AttributeDefinition(GSI_HASH_KEY_NAME, ScalarAttributeType.S),
                                                 new AttributeDefinition(GSI_RANGE_KEY_NAME, ScalarAttributeType.N)
-                                        )
+                                                                 )
                                         .withKeySchema(new KeySchemaElement(HASH_KEY_NAME, KeyType.HASH))
                                         .withGlobalSecondaryIndexes(
                                                 new GlobalSecondaryIndex().withIndexName(HASH_ONLY_GSI_NAME)
-                                                        .withKeySchema(new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH))
-                                                        .withProjection(PROJECTION)
-                                                        .withProvisionedThroughput(THRUPUT),
+                                                                          .withKeySchema(new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH))
+                                                                          .withProjection(PROJECTION)
+                                                                          .withProvisionedThroughput(THRUPUT),
                                                 new GlobalSecondaryIndex().withIndexName(RANGE_GSI_NAME)
-                                                        .withKeySchema(
-                                                                new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH),
-                                                                new KeySchemaElement(GSI_RANGE_KEY_NAME, KeyType.RANGE))
-                                                        .withProjection(PROJECTION)
-                                                        .withProvisionedThroughput(THRUPUT)
-                                        ).withProvisionedThroughput(THRUPUT));
+                                                                          .withKeySchema(
+                                                                                  new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH),
+                                                                                  new KeySchemaElement(GSI_RANGE_KEY_NAME, KeyType.RANGE))
+                                                                          .withProjection(PROJECTION)
+                                                                          .withProvisionedThroughput(THRUPUT)
+                                                                   ).withProvisionedThroughput(THRUPUT));
                 // waits until table becomes active
                 table.waitForActive();
             }
@@ -118,7 +132,7 @@ public class IntegrationTestBase {
                                 new AttributeDefinition(LSI_RANGE_KEY_NAME, ScalarAttributeType.N),
                                 new AttributeDefinition(GSI_HASH_KEY_NAME, ScalarAttributeType.S),
                                 new AttributeDefinition(GSI_RANGE_KEY_NAME, ScalarAttributeType.N)
-                        )
+                                                 )
                         .withKeySchema(
                                 new KeySchemaElement(HASH_KEY_NAME, KeyType.HASH),
                                 new KeySchemaElement(RANGE_KEY_NAME, KeyType.RANGE))
@@ -143,7 +157,7 @@ public class IntegrationTestBase {
                                                 new KeySchemaElement(HASH_KEY_NAME, KeyType.HASH),
                                                 new KeySchemaElement(LSI_RANGE_KEY_NAME, KeyType.RANGE))
                                         .withProjection(PROJECTION)
-                        );
+                                                  );
                 ddb.createTable(req);
                 // waits until table becomes active
                 table.waitForActive();
@@ -175,8 +189,8 @@ public class IntegrationTestBase {
         Table table = dynamo.getTable(RANGE_TABLE_NAME);
         Item item = new Item()
                 .withPrimaryKey(HASH_KEY_NAME, hashKeyValue, RANGE_KEY_NAME, 0)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withInt("intAttr", 1234)
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")

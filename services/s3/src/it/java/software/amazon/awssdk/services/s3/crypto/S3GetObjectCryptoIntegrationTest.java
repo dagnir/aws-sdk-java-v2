@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3.crypto;
@@ -70,32 +70,22 @@ public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
 
     /** The key used for testing MultiPart object */
     private final static String MULTIPART_OBJECT_KEY = "multiPartkeyCryptoKey";
-
-    /** The unique Id that is returned when we initiate a MultipartUpload */
-    private static String uploadId;
-
     /** The minimum size of a part in MultiPartObject */
     private final static long MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
-
     /** The test content that is used for testing part 2 of MultiPartObject. Contains only ASCII characters */
     private final static String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
-
     /** The size of the TEST_STRING **/
     private final static long TEST_STRING_LENGTH = TEST_STRING.length();
-
-
-    /** Encryption provider with StrictAuthenticatedEncryption */
-    private static AmazonS3EncryptionClient strictAEClient;
-
-    /** The file containing the nonMultiPartObject data uploaded to S3 */
-    private static File nonMultiPartDataFile;
-
-    /** The file containing the first part data of MultiPartObject uploaded to S3 */
-    private static File firstPartDataFile;
-
     /** The name of the file containing the nonMultiPartObject data uploaded to S3 */
     private static final String nonMultiPartDataFileName = "nonMultiPartObject";
-
+    /** The unique Id that is returned when we initiate a MultipartUpload */
+    private static String uploadId;
+    /** Encryption provider with StrictAuthenticatedEncryption */
+    private static AmazonS3EncryptionClient strictAEClient;
+    /** The file containing the nonMultiPartObject data uploaded to S3 */
+    private static File nonMultiPartDataFile;
+    /** The file containing the first part data of MultiPartObject uploaded to S3 */
+    private static File firstPartDataFile;
     /** The name of the file containing the first part data of MultiPartObject uploaded to S3 */
     private static String firstPartDataFileName = "multiPartObject";
 
@@ -113,14 +103,14 @@ public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
     public static void setUp() throws Exception {
         S3IntegrationTestBase.setUp();
 
-        if(!CryptoRuntime.isBouncyCastleAvailable()) {
+        if (!CryptoRuntime.isBouncyCastleAvailable()) {
             CryptoRuntime.enableBouncyCastle();
         }
         CryptoRuntime.recheckAesGcmAvailablility();
 
         strictAEClient = new AmazonS3EncryptionClient(credentials,
-                new EncryptionMaterials(new SecretKeySpec(new byte[32], "AES")),
-                new CryptoConfiguration(CryptoMode.StrictAuthenticatedEncryption));
+                                                      new EncryptionMaterials(new SecretKeySpec(new byte[32], "AES")),
+                                                      new CryptoConfiguration(CryptoMode.StrictAuthenticatedEncryption));
 
         createRandomFiles();
         strictAEClient.createBucket(BUCKET_NAME);
@@ -153,14 +143,14 @@ public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
     private static void doMultiPartUpload() throws Exception {
         InitiateMultipartUploadResult initiateResult = strictAEClient.initiateMultipartUpload(
                 new InitiateMultipartUploadRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY)
-                    .withStorageClass(StorageClass.ReducedRedundancy));
+                        .withStorageClass(StorageClass.ReducedRedundancy));
         uploadId = initiateResult.getUploadId();
 
         try {
             List<PartETag> partETags = uploadParts(BUCKET_NAME, uploadId);
             strictAEClient.completeMultipartUpload(new CompleteMultipartUploadRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY, uploadId, partETags));
         } catch (Exception exception) {
-            System.out.println("Exception occured during multipartUpload with ID " + uploadId );
+            System.out.println("Exception occured during multipartUpload with ID " + uploadId);
             strictAEClient.abortMultipartUpload(new AbortMultipartUploadRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY, uploadId));
             throw exception;
         }
@@ -170,27 +160,35 @@ public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
         List<PartETag> partETags = new ArrayList<PartETag>();
 
         UploadPartResult uploadPartResult = strictAEClient.uploadPart(new UploadPartRequest()
-            .withBucketName(bucketName)
-            .withInputStream(new ByteArrayInputStream(firstPartByteData))
-            .withKey(MULTIPART_OBJECT_KEY)
-            .withPartNumber(1)
-            .withPartSize(MIN_SIZE_FIRST_PART_IN_MB)
-            .withUploadId(uploadId));
+                                                                              .withBucketName(bucketName)
+                                                                              .withInputStream(new ByteArrayInputStream(firstPartByteData))
+                                                                              .withKey(MULTIPART_OBJECT_KEY)
+                                                                              .withPartNumber(1)
+                                                                              .withPartSize(MIN_SIZE_FIRST_PART_IN_MB)
+                                                                              .withUploadId(uploadId));
         assertEquals(1, uploadPartResult.getPartNumber());
         partETags.add(new PartETag(uploadPartResult.getPartNumber(), uploadPartResult.getETag()));
 
         uploadPartResult = strictAEClient.uploadPart(new UploadPartRequest()
-            .withBucketName(bucketName)
-            .withInputStream(new StringInputStream(TEST_STRING))
-            .withKey(MULTIPART_OBJECT_KEY)
-            .withPartNumber(2)
-            .withPartSize(TEST_STRING_LENGTH)
-            .withUploadId(uploadId)
-            .withLastPart(true));
+                                                             .withBucketName(bucketName)
+                                                             .withInputStream(new StringInputStream(TEST_STRING))
+                                                             .withKey(MULTIPART_OBJECT_KEY)
+                                                             .withPartNumber(2)
+                                                             .withPartSize(TEST_STRING_LENGTH)
+                                                             .withUploadId(uploadId)
+                                                             .withLastPart(true));
         assertEquals(2, uploadPartResult.getPartNumber());
         partETags.add(new PartETag(uploadPartResult.getPartNumber(), uploadPartResult.getETag()));
 
         return partETags;
+    }
+
+    /**
+     * Closes all the resources after the tests have finished
+     */
+    @AfterClass
+    public static void tearDown() throws Exception {
+        CryptoTestUtils.deleteBucketAndAllContents(strictAEClient, BUCKET_NAME);
     }
 
     /**
@@ -216,34 +214,26 @@ public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
         System.arraycopy(firstPartByteData, 0, multipartByteData, 0, firstPartByteData.length);
         System.arraycopy(secondPartByteData, 0, multipartByteData, firstPartByteData.length, secondPartByteData.length);
 
-        Assert.assertArrayEquals(multipartByteData , IOUtils.toByteArray(cryptoObject.getObjectContent()));
+        Assert.assertArrayEquals(multipartByteData, IOUtils.toByteArray(cryptoObject.getObjectContent()));
     }
 
     /**
      * When getObject is called on nonMultiPartObject with specific range,
      * SecurityException is thrown.
      */
-    @Test (expected = SecurityException.class)
+    @Test(expected = SecurityException.class)
     public void testGetObjectOnNonMultiPartObjectGivenValidRangeThrowsSecurityException() throws Exception {
         strictAEClient.getObject(new GetObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY)
-                                                                .withRange(RANGE_BEGIN, RANGE_END));
+                                         .withRange(RANGE_BEGIN, RANGE_END));
     }
 
     /**
      * When getObject is called on multiPartObject with valid part number,
      * SecurityException is thrown.
      */
-    @Test (expected = SecurityException.class)
+    @Test(expected = SecurityException.class)
     public void testGetObjectOnMultiPartObjectGivenValidPartNumberThrowsSecurityException() throws Exception {
         strictAEClient.getObject(new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY)
-                                                                .withPartNumber(1));
-    }
-
-    /**
-     * Closes all the resources after the tests have finished
-     */
-    @AfterClass
-    public static void tearDown() throws Exception {
-        CryptoTestUtils.deleteBucketAndAllContents(strictAEClient, BUCKET_NAME);
+                                         .withPartNumber(1));
     }
 }

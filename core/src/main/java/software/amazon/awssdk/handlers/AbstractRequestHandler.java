@@ -25,7 +25,12 @@ import software.amazon.awssdk.util.TimingInfo;
  */
 @Deprecated
 public abstract class AbstractRequestHandler implements RequestHandler {
-	public void beforeRequest(Request<?> request) {}
-	public void afterResponse(Request<?> request, Object response, TimingInfo timingInfo) {}
-	public void afterError(Request<?> request, Exception e) {}
+    public void beforeRequest(Request<?> request) {
+    }
+
+    public void afterResponse(Request<?> request, Object response, TimingInfo timingInfo) {
+    }
+
+    public void afterError(Request<?> request, Exception e) {
+    }
 }

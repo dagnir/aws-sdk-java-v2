@@ -53,16 +53,16 @@ public class AdjustedRangeInputStream extends SdkInputStream {
         // preliminary cipher block, and then possibly skip a few more bytes into the next block
         // to where the the left-most byte is located.
         int numBytesToSkip;
-        if(rangeBeginning < JceEncryptionConstants.SYMMETRIC_CIPHER_BLOCK_SIZE) {
-            numBytesToSkip = (int)rangeBeginning;
+        if (rangeBeginning < JceEncryptionConstants.SYMMETRIC_CIPHER_BLOCK_SIZE) {
+            numBytesToSkip = (int) rangeBeginning;
         } else {
-            int offsetIntoBlock = (int)(rangeBeginning % JceEncryptionConstants.SYMMETRIC_CIPHER_BLOCK_SIZE);
+            int offsetIntoBlock = (int) (rangeBeginning % JceEncryptionConstants.SYMMETRIC_CIPHER_BLOCK_SIZE);
             numBytesToSkip = JceEncryptionConstants.SYMMETRIC_CIPHER_BLOCK_SIZE + offsetIntoBlock;
         }
-        if(numBytesToSkip != 0) {
+        if (numBytesToSkip != 0) {
             // Skip to the left-most desired byte.  The read() method is used instead of the skip() method
             // since the skip() method will not block if the underlying input stream is waiting for more input.
-            while(numBytesToSkip > 0) {
+            while (numBytesToSkip > 0) {
                 this.decryptedContents.read();
                 numBytesToSkip--;
             }
@@ -106,21 +106,21 @@ public class AdjustedRangeInputStream extends SdkInputStream {
         abortIfNeeded();
         int numBytesRead;
         // If no more bytes are available, do not read any bytes into the buffer
-        if(this.virtualAvailable <= 0) {
+        if (this.virtualAvailable <= 0) {
             numBytesRead = -1;
         } else {
             // If the desired read length is greater than the number of available bytes,
             // shorten the read length to the number of available bytes.
-            if(length > this.virtualAvailable) {
+            if (length > this.virtualAvailable) {
                 // If the number of available bytes is greater than the maximum value of a 32 bit int, then
                 // read as many bytes as an int can.
-                length = (this.virtualAvailable < Integer.MAX_VALUE) ? (int)this.virtualAvailable : Integer.MAX_VALUE;
+                length = (this.virtualAvailable < Integer.MAX_VALUE) ? (int) this.virtualAvailable : Integer.MAX_VALUE;
             }
             // Read bytes into the buffer.
             numBytesRead = this.decryptedContents.read(buffer, offset, length);
         }
         // If we were able to read bytes, decrement the number of bytes available to be read.
-        if(numBytesRead != -1) {
+        if (numBytesRead != -1) {
             this.virtualAvailable -= numBytesRead;
         } else {
             // If we've reached the end of the stream, close it
@@ -137,12 +137,12 @@ public class AdjustedRangeInputStream extends SdkInputStream {
     public int available() throws IOException {
         abortIfNeeded();
         int available = this.decryptedContents.available();
-        if(available < this.virtualAvailable) {
+        if (available < this.virtualAvailable) {
             return available;
         } else {
             // Limit the number of bytes available to the number
             // of bytes remaining in the range.
-            return (int)this.virtualAvailable;
+            return (int) this.virtualAvailable;
         }
     }
 
@@ -152,7 +152,7 @@ public class AdjustedRangeInputStream extends SdkInputStream {
     @Override
     public void close() throws IOException {
         // If not already closed, then close the input stream.
-        if(!this.closed) {
+        if (!this.closed) {
             this.closed = true;
             this.decryptedContents.close();
         }

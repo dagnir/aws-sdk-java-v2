@@ -8,5 +8,5 @@ Feature: AWS Elastic Beanstalk
 
   Scenario: Handling errors
     When I attempt to call the "DescribeEnvironmentResources" API with:
-    | EnvironmentId | fake_environment |
+      | EnvironmentId | fake_environment |
     Then I expect the response error code to be "InvalidParameterValue"

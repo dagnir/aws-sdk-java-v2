@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -60,16 +60,18 @@ public class SdkProxyRoutePlanner extends DefaultRoutePlanner {
         }
         String targetHost = target.getHostName().toLowerCase();
         for (String pattern : hostPatterns) {
-            if (targetHost.matches(pattern)) return true;
+            if (targetHost.matches(pattern)) {
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     protected HttpHost determineProxy(
-        final HttpHost target,
-        final HttpRequest request,
-        final HttpContext context) throws HttpException {
+            final HttpHost target,
+            final HttpRequest request,
+            final HttpContext context) throws HttpException {
 
         return doesTargetMatchNonProxyHosts(target) ? null : proxy;
     }

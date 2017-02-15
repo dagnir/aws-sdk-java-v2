@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class PartitionMetadataProvider extends AbstractRegionMetadataProvider {
             for (Map.Entry<String, software.amazon.awssdk.internal.partitions.model.Region>
                     entry : p.getRegions().entrySet()) {
                 regions.add(new Region(new PartitionRegionImpl(entry.getKey(),
-                        p)));
+                                                               p)));
             }
         }
         return Collections.unmodifiableList(regions);
@@ -63,7 +63,9 @@ public class PartitionMetadataProvider extends AbstractRegionMetadataProvider {
     @Override
     public Region getRegion(String regionName) {
 
-        if (regionName == null) return null;
+        if (regionName == null) {
+            return null;
+        }
 
         final Region regionFromCache = getRegionFromCache(regionName);
 

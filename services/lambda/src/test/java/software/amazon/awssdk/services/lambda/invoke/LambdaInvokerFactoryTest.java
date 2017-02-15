@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.lambda.invoke;
 
 
@@ -51,8 +52,8 @@ public class LambdaInvokerFactoryTest {
 
         mock = mock(AWSLambda.class);
         invoker = LambdaInvokerFactory.builder()
-                .lambdaClient(mock)
-                .build(Invoker.class);
+                                      .lambdaClient(mock)
+                                      .build(Invoker.class);
     }
 
     @Test(expected = LambdaSerializationException.class)
@@ -68,7 +69,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_NoArgs_Void_Default() {
         InvokeRequest request = new InvokeRequest().withFunctionName("doIt").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(new InvokeResult().withStatusCode(204));
 
@@ -78,7 +79,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_NoArgs_Void_Async() {
         InvokeRequest request = new InvokeRequest().withFunctionName("doIt").withInvocationType("Event")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(new InvokeResult().withStatusCode(202));
 
@@ -88,7 +89,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_NoArgs_Void_Logs() {
         InvokeRequest request = new InvokeRequest().withFunctionName("doIt").withInvocationType("RequestResponse")
-                .withLogType("Tail");
+                                                   .withLogType("Tail");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult().withStatusCode(204).withLogResult("TG9nZ2l0eSBsb2dnaW5n"));
@@ -109,7 +110,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_NoArgs_String_Default() {
         InvokeRequest request = new InvokeRequest().withFunctionName("getString").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request))
                 .thenReturn(getStringSuccessResult());
@@ -121,7 +122,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_String_Void_Default() {
         InvokeRequest request = new InvokeRequest().withFunctionName("setString").withInvocationType("RequestResponse")
-                .withLogType("None").withPayload("\"Hello World\"");
+                                                   .withLogType("None").withPayload("\"Hello World\"");
 
         when(mock.invoke(request)).thenReturn(new InvokeResult().withStatusCode(204));
 
@@ -131,7 +132,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_List_Map_Default() {
         InvokeRequest request = new InvokeRequest().withFunctionName("keySet").withInvocationType("RequestResponse")
-                .withLogType("None").withPayload("{\"a\":\"b\",\"c\":\"d\"}");
+                                                   .withLogType("None").withPayload("{\"a\":\"b\",\"c\":\"d\"}");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult().withStatusCode(200).withPayload(ByteBuffer.wrap("[\"a\",\"c\"]".getBytes())));
@@ -152,7 +153,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_Pojo_Pojo_Default() {
         InvokeRequest request = new InvokeRequest().withFunctionName("transform").withInvocationType("RequestResponse")
-                .withLogType("None").withPayload("{\"string\":\"Hello World\",\"integer\":12345}");
+                                                   .withLogType("None").withPayload("{\"string\":\"Hello World\",\"integer\":12345}");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult().withStatusCode(200).withPayload(
@@ -171,7 +172,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_UnhandledException() {
         InvokeRequest request = new InvokeRequest().withFunctionName("fail").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult()
@@ -251,7 +252,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_HandledException() {
         InvokeRequest request = new InvokeRequest().withFunctionName("fail").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult()
@@ -291,7 +292,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void customExceptionTypeWithFullyQualifiedName_ThrowsCustomException() {
         InvokeRequest request = new InvokeRequest().withFunctionName("fail").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult()
@@ -328,7 +329,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void customExceptionTypeWithShortName_ThrowsCustomException() {
         InvokeRequest request = new InvokeRequest().withFunctionName("fail").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult()
@@ -358,7 +359,7 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_DeserializationException() {
         InvokeRequest request = new InvokeRequest().withFunctionName("broken").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult().withStatusCode(200).withPayload(ByteBuffer.wrap("I'm not even JSON!".getBytes())));
@@ -373,11 +374,11 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void test_BogusLog() {
         InvokeRequest request = new InvokeRequest().withFunctionName("doIt").withInvocationType("RequestResponse")
-                .withLogType("Tail");
+                                                   .withLogType("Tail");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult().withStatusCode(200).withLogResult("I'm not valid Base-64")
-                        .withPayload(ByteBuffer.wrap("I should be ignored".getBytes())));
+                                  .withPayload(ByteBuffer.wrap("I should be ignored".getBytes())));
 
         // Should not fail just because the logged data is invalid.
         invoker.doItWithLogs();
@@ -386,11 +387,11 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void testBogusException() {
         InvokeRequest request = new InvokeRequest().withFunctionName("fail").withInvocationType("RequestResponse")
-                .withLogType("None");
+                                                   .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
                 new InvokeResult().withStatusCode(200).withFunctionError("Handled")
-                        .withPayload(ByteBuffer.wrap("Bogus".getBytes())));
+                                  .withPayload(ByteBuffer.wrap("Bogus".getBytes())));
 
         try {
             invoker.fail();
@@ -411,9 +412,9 @@ public class LambdaInvokerFactoryTest {
     public void functionAliasConfigured_SetsQualifierOnInvokeRequest() {
         final String alias = "MyAlias";
         invoker = LambdaInvokerFactory.builder()
-                .lambdaClient(mock)
-                .functionAlias(alias)
-                .build(Invoker.class);
+                                      .lambdaClient(mock)
+                                      .functionAlias(alias)
+                                      .build(Invoker.class);
 
         ArgumentCaptor<InvokeRequest> invokeArgCaptor = ArgumentCaptor
                 .forClass(InvokeRequest.class);
@@ -429,9 +430,9 @@ public class LambdaInvokerFactoryTest {
     public void functionVersionConfigured_SetsQualifierOnInvokeRequest() {
         final String functionVersion = "1234";
         invoker = LambdaInvokerFactory.builder()
-                .lambdaClient(mock)
-                .functionVersion(functionVersion)
-                .build(Invoker.class);
+                                      .lambdaClient(mock)
+                                      .functionVersion(functionVersion)
+                                      .build(Invoker.class);
 
         ArgumentCaptor<InvokeRequest> invokeArgCaptor = ArgumentCaptor
                 .forClass(InvokeRequest.class);

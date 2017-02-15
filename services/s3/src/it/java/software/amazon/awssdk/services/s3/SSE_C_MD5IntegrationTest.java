@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -26,7 +41,7 @@ public class SSE_C_MD5IntegrationTest extends S3IntegrationTestBase {
 
     @BeforeClass
     public static void setup() throws Exception {
-    	setUpCredentials();
+        setUpCredentials();
         s3 = new AmazonS3TestClient(credentials);
         CryptoTestUtils.tryCreateBucket(s3, bucketName);
         file = CryptoTestUtils.generateRandomAsciiFile(contentLength);
@@ -46,7 +61,7 @@ public class SSE_C_MD5IntegrationTest extends S3IntegrationTestBase {
         TransferManager tm = new TransferManager(s3);
         File dest = new File("/tmp", UUID.randomUUID().toString());
         Download download = tm.download(new GetObjectRequest(bucketName, key)
-            .withSSECustomerKey(sse_c), dest);
+                                                .withSSECustomerKey(sse_c), dest);
         download.waitForCompletion();
         tm.shutdownNow(false);
         byte[] expected = Md5Utils.computeMD5Hash(file);

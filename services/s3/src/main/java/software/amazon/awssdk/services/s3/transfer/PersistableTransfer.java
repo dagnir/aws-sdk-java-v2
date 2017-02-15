@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static software.amazon.awssdk.util.StringUtils.UTF8;
@@ -35,23 +36,6 @@ public abstract class PersistableTransfer {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
-     * Returns the serialized representation of the paused transfer state.
-     */
-    public final String serialize() {
-        return Jackson.toJsonString(this);
-    }
-
-    /**
-     * Writes the serialized representation of the paused transfer state to the
-     * given <code>OutputStream</code>. Caller of this method should explicitly
-     * close the <code>OutputStream</code>.
-     */
-    public final void serialize(OutputStream out) throws IOException {
-        out.write(Jackson.toJsonString(this).getBytes(UTF8));
-        out.flush();
-    }
-
-    /**
      * Returns the deserialized transfer state of the given serialized
      * representation. Caller of this method should explicitly close the
      * <code>InputStream</code>.
@@ -66,9 +50,10 @@ public abstract class PersistableTransfer {
         try {
             tree = MAPPER.readTree(in);
             JsonNode pauseType = tree.get("pauseType");
-            if (pauseType == null)
+            if (pauseType == null) {
                 throw new IllegalArgumentException(
                         "Unrecognized serialized state");
+            }
             type = pauseType.asText();
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
@@ -101,14 +86,36 @@ public abstract class PersistableTransfer {
      */
     public static <T extends PersistableTransfer> T deserializeFrom(
             String serialized) {
-        if (serialized == null)
+        if (serialized == null) {
             return null;
+        }
         ByteArrayInputStream byteStream = new ByteArrayInputStream(
                 serialized.getBytes(UTF8));
-        try{
+        try {
             return deserializeFrom(byteStream);
-        }finally{
-            try { byteStream.close(); } catch(IOException ioe) { } ;
+        } finally {
+            try {
+                byteStream.close();
+            } catch (IOException ioe) {
+            }
+            ;
         }
+    }
+
+    /**
+     * Returns the serialized representation of the paused transfer state.
+     */
+    public final String serialize() {
+        return Jackson.toJsonString(this);
+    }
+
+    /**
+     * Writes the serialized representation of the paused transfer state to the
+     * given <code>OutputStream</code>. Caller of this method should explicitly
+     * close the <code>OutputStream</code>.
+     */
+    public final void serialize(OutputStream out) throws IOException {
+        out.write(Jackson.toJsonString(this).getBytes(UTF8));
+        out.flush();
     }
 }

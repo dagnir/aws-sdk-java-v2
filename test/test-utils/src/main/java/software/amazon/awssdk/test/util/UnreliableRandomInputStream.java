@@ -58,8 +58,9 @@ public class UnreliableRandomInputStream extends RandomInputStream {
         if (remainingBytes <= (lengthInBytes / 2) && !hasTriggeredAnException) {
             hasTriggeredAnException = true;
             final String msg = "UnreliableBogusInputStream fired an IOException after reading " + getBytesRead() + " bytes.";
-            if (DEBUG)
+            if (DEBUG) {
                 System.err.println(msg);
+            }
             throw new IOException(msg);
         }
     }
@@ -68,8 +69,9 @@ public class UnreliableRandomInputStream extends RandomInputStream {
     public int read(byte[] b, int off, int len) throws IOException {
         triggerException();
         int read = super.read(b, off, len);
-        if (DEBUG)
-            System.err.println("read=" + read + ", off=" + off + ", len=" +len +", b.length=" + b.length);
+        if (DEBUG) {
+            System.err.println("read=" + read + ", off=" + off + ", len=" + len + ", b.length=" + b.length);
+        }
         return read;
     }
 }

@@ -37,27 +37,15 @@ import javax.xml.stream.events.XMLEvent;
  */
 public class StaxUnmarshallerContext {
 
-    private XMLEvent currentEvent;
-    private final XMLEventReader eventReader;
-
     public final Stack<String> stack = new Stack<String>();
+    private final XMLEventReader eventReader;
+    private final Map<String, String> headers;
+    private XMLEvent currentEvent;
     private String stackString = "";
-
     private Map<String, String> metadata = new HashMap<String, String>();
     private List<MetadataExpression> metadataExpressions = new ArrayList<MetadataExpression>();
-
     private Iterator<?> attributeIterator;
-    private final Map<String, String> headers;
-
     private String currentHeader;
-
-    public void setCurrentHeader(String currentHeader) {
-        this.currentHeader = currentHeader;
-    }
-
-    public boolean isInsideResponseHeader() {
-        return currentEvent == null;
-    }
 
     /**
      * Constructs a new unmarshaller context using the specified source of XML events.
@@ -84,6 +72,14 @@ public class StaxUnmarshallerContext {
         this.headers = headers;
     }
 
+    public void setCurrentHeader(String currentHeader) {
+        this.currentHeader = currentHeader;
+    }
+
+    public boolean isInsideResponseHeader() {
+        return currentEvent == null;
+    }
+
     /**
      * Returns the value of the header with the specified name from the
      * response, or null if not present.
@@ -95,7 +91,9 @@ public class StaxUnmarshallerContext {
      *         response, or null if not present.
      */
     public String getHeader(String header) {
-        if (headers == null) return null;
+        if (headers == null) {
+            return null;
+        }
 
         return headers.get(header);
     }
@@ -111,7 +109,7 @@ public class StaxUnmarshallerContext {
             return getHeader(currentHeader);
         }
         if (currentEvent.isAttribute()) {
-            Attribute attribute = (Attribute)currentEvent;
+            Attribute attribute = (Attribute) currentEvent;
             return attribute.getValue();
         }
 
@@ -150,7 +148,9 @@ public class StaxUnmarshallerContext {
      *         otherwise false.
      */
     public boolean testExpression(String expression) {
-        if (expression.equals(".")) return true;
+        if (expression.equals(".")) {
+            return true;
+        }
         return stackString.endsWith(expression);
     }
 
@@ -169,7 +169,9 @@ public class StaxUnmarshallerContext {
      *         the XML document, starting from the specified depth.
      */
     public boolean testExpression(String expression, int startingStackDepth) {
-        if (expression.equals(".")) return true;
+        if (expression.equals(".")) {
+            return true;
+        }
 
         int index = -1;
         while ((index = expression.indexOf("/", index + 1)) > -1) {
@@ -205,7 +207,7 @@ public class StaxUnmarshallerContext {
      */
     public XMLEvent nextEvent() throws XMLStreamException {
         if (attributeIterator != null && attributeIterator.hasNext()) {
-            currentEvent = (XMLEvent)attributeIterator.next();
+            currentEvent = (XMLEvent) attributeIterator.next();
         } else {
             currentEvent = eventReader.nextEvent();
         }
@@ -264,6 +266,30 @@ public class StaxUnmarshallerContext {
      * Private Interface
      */
 
+    private void updateContext(XMLEvent event) {
+        if (event == null) {
+            return;
+        }
+
+        if (event.isEndElement()) {
+            stack.pop();
+            stackString = "";
+            for (String s : stack) {
+                stackString += "/" + s;
+            }
+        } else if (event.isStartElement()) {
+            stack.push(event.asStartElement().getName().getLocalPart());
+            stackString += "/" + event.asStartElement().getName().getLocalPart();
+        } else if (event.isAttribute()) {
+            Attribute attribute = (Attribute) event;
+            stackString = "";
+            for (String s : stack) {
+                stackString += "/" + s;
+            }
+            stackString += "/@" + attribute.getName().getLocalPart();
+        }
+    }
+
     /**
      * Simple container for the details of a metadata expression this
      * unmarshaller context is looking for.
@@ -277,28 +303,6 @@ public class StaxUnmarshallerContext {
             this.expression = expression;
             this.targetDepth = targetDepth;
             this.key = key;
-        }
-    }
-
-    private void updateContext(XMLEvent event) {
-        if (event == null) return;
-
-        if (event.isEndElement()) {
-            stack.pop();
-            stackString = "";
-            for (String s : stack) {
-                stackString += "/" + s;
-            }
-        } else if (event.isStartElement()) {
-            stack.push(event.asStartElement().getName().getLocalPart());
-            stackString += "/" + event.asStartElement().getName().getLocalPart();
-        } else if (event.isAttribute()) {
-            Attribute attribute = (Attribute)event;
-            stackString = "";
-            for (String s : stack) {
-                stackString += "/" + s;
-            }
-            stackString += "/@" + attribute.getName().getLocalPart();
         }
     }
 

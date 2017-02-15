@@ -47,28 +47,6 @@ import software.amazon.awssdk.auth.policy.Condition;
 public class ArnCondition extends Condition {
 
     /**
-     * Enumeration of the supported ways an ARN comparison can be evaluated.
-     */
-    public static enum ArnComparisonType {
-        /** Exact matching */
-        ArnEquals,
-
-        /**
-         * Loose case-insensitive matching of the ARN. Each of the six
-         * colon-delimited components of the ARN is checked separately and each
-         * can include a multi-character match wildcard (*) or a
-         * single-character match wildcard (?).
-         */
-        ArnLike,
-
-        /** Negated form of {@link #ArnEquals} */
-        ArnNotEquals,
-
-        /** Negated form of {@link #ArnLike} */
-        ArnNotLike;
-    };
-
-    /**
      * Constructs a new access control policy condition that compares ARNs
      * (Amazon Resource Names).
      *
@@ -89,6 +67,30 @@ public class ArnCondition extends Condition {
         super.type = type.toString();
         super.conditionKey = key;
         super.values = Arrays.asList(new String[] {value});
+    }
+
+    ;
+
+    /**
+     * Enumeration of the supported ways an ARN comparison can be evaluated.
+     */
+    public static enum ArnComparisonType {
+        /** Exact matching */
+        ArnEquals,
+
+        /**
+         * Loose case-insensitive matching of the ARN. Each of the six
+         * colon-delimited components of the ARN is checked separately and each
+         * can include a multi-character match wildcard (*) or a
+         * single-character match wildcard (?).
+         */
+        ArnLike,
+
+        /** Negated form of {@link #ArnEquals} */
+        ArnNotEquals,
+
+        /** Negated form of {@link #ArnLike} */
+        ArnNotLike;
     }
 
 }

@@ -17,12 +17,14 @@ package software.amazon.awssdk.metrics;
 
 public class SimpleThroughputMetricType extends SimpleServiceMetricType implements ThroughputMetricType {
     private final ServiceMetricType byteCountMetricType;
+
     public SimpleThroughputMetricType(String name, String serviceName, String byteCountMetricName) {
         super(name, serviceName);
         this.byteCountMetricType = new SimpleServiceMetricType(byteCountMetricName, serviceName);
     }
 
-    @Override public ServiceMetricType getByteCountMetricType() {
+    @Override
+    public ServiceMetricType getByteCountMetricType() {
         return byteCountMetricType;
     }
 }

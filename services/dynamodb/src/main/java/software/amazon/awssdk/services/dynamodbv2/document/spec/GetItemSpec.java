@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
     }
 
     @Override
-    public GetItemSpec withPrimaryKey(KeyAttribute ... components) {
+    public GetItemSpec withPrimaryKey(KeyAttribute... components) {
         super.withPrimaryKey(components);
         return this;
     }
@@ -59,7 +59,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
 
     @Override
     public GetItemSpec withPrimaryKey(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
+                                      String rangeKeyName, Object rangeKeyValue) {
         super.withPrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue);
         return this;
     }
@@ -77,11 +77,12 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
         return getRequest().getAttributesToGet();
     }
 
-    public GetItemSpec withAttributesToGet(String ... attrNames) {
-        if (attrNames == null)
+    public GetItemSpec withAttributesToGet(String... attrNames) {
+        if (attrNames == null) {
             getRequest().setAttributesToGet(null);
-        else
+        } else {
             getRequest().setAttributesToGet(Arrays.asList(attrNames));
+        }
         return this;
     }
 
@@ -109,7 +110,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
         return this;
     }
 
-    public Map<String,String> getNameMap() {
+    public Map<String, String> getNameMap() {
         return nameMap;
     }
 
@@ -119,12 +120,12 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
      * where the value in the map can either be string for simple attribute
      * name, or a JSON path expression.
      */
-    public GetItemSpec withNameMap(Map<String,String> nameMap) {
+    public GetItemSpec withNameMap(Map<String, String> nameMap) {
         if (nameMap == null) {
             this.nameMap = null;
         } else {
             this.nameMap = Collections.unmodifiableMap(
-                new LinkedHashMap<String, String>(nameMap));
+                    new LinkedHashMap<String, String>(nameMap));
         }
         return this;
     }
@@ -149,7 +150,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
     @Beta
     public GetItemSpec withExpressionSpec(GetItemExpressionSpec xspec) {
         return withProjectionExpression(xspec.getProjectionExpression())
-              .withNameMap(xspec.getNameMap())
-              ;
+                .withNameMap(xspec.getNameMap())
+                ;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  */
 @SdkInternalApi
 public class TimeoutThreadPoolBuilder {
-    
+
     /**
      * Creates a {@link ScheduledThreadPoolExecutor} with custom name for the threads.
      *
@@ -62,7 +62,7 @@ public class TimeoutThreadPoolBuilder {
     /**
      * {@link ScheduledThreadPoolExecutor#setRemoveOnCancelPolicy(boolean)} is not available in Java
      * 6 so we invoke it with reflection to be able to compile against Java 6.
-     * 
+     *
      * @param executor
      */
     private static void safeSetRemoveOnCancel(ScheduledThreadPoolExecutor executor) {
@@ -83,7 +83,7 @@ public class TimeoutThreadPoolBuilder {
 
     /**
      * Wrap exception caused by calling setRemoveOnCancel in a {@link SdkClientException}.
-     * 
+     *
      * @param cause
      *            Root cause of exception
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -46,7 +47,7 @@ public class CloudFunctionConfiguration extends NotificationConfiguration implem
      *            the events for which the notifications are to be sent
      */
     public CloudFunctionConfiguration(String invocationRole, String function,
-            EnumSet<S3Event> events) {
+                                      EnumSet<S3Event> events) {
         super(events);
         this.invocationRoleARN = invocationRole;
         this.cloudFunctionARN = function;
@@ -64,7 +65,7 @@ public class CloudFunctionConfiguration extends NotificationConfiguration implem
      *            the events for which the notifications are to be sent
      */
     public CloudFunctionConfiguration(String invocationRole, String function,
-            String... events) {
+                                      String... events) {
         super(events);
         this.invocationRoleARN = invocationRole;
         this.cloudFunctionARN = function;

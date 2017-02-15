@@ -59,207 +59,207 @@ import software.amazon.awssdk.services.elasticmapreduce.model.HadoopJarStepConfi
  * </pre>
  */
 public class StreamingStep {
-  private List<String> inputs = new ArrayList<String>();
-  private String output;
-  private String mapper;
-  private String reducer;
-  private Map<String, String> hadoopConfig = new HashMap<String, String>();
+    private List<String> inputs = new ArrayList<String>();
+    private String output;
+    private String mapper;
+    private String reducer;
+    private Map<String, String> hadoopConfig = new HashMap<String, String>();
 
 
-  /**
-   * Creates a new default StreamingStep.
-   */
-  public StreamingStep() {
-  }
-
-
-  /**
-   * Get list of step input paths.
-   * @return List of step inputs
-   */
-  public List<String> getInputs() {
-    return inputs;
-  }
-
-  /**
-   * Set the list of step input paths.
-   * @param inputs List of step inputs.
-   */
-  public void setInputs(Collection<String> inputs) {
-    List<String> newInputs = new ArrayList<String>();
-    if (inputs != null) {
-      newInputs.addAll(inputs);
-    }
-    this.inputs = newInputs;
-  }
-
-  /**
-   * Add more input paths to this step.
-   * @param inputs A list of inputs to this step.
-   * @return A reference to this updated object so that method calls can be chained
-   *         together.
-   */
-  public StreamingStep withInputs(String ... inputs) {
-    for (String input : inputs) {
-      this.inputs.add(input);
-    }
-    return this;
-  }
-
-
-  /**
-   * Get output path.
-   * @return Output path.
-   */
-  public String getOutput() {
-    return output;
-  }
-
-  /**
-   * Set the output path for this step.
-   * @param output Output path.
-   */
-  public void setOutput(String output) {
-    this.output = output;
-  }
-
-  /**
-   * Set the output path for this step.
-   * @param output Output path
-   * @return A reference to this updated object so that method calls can be chained
-   *         together.
-   */
-  public StreamingStep withOutput(String output) {
-    this.output = output;
-    return this;
-  }
-
-
-  /**
-   * Get the mapper.
-   * @return Mapper.
-   */
-  public String getMapper() {
-    return mapper;
-  }
-
-  /**
-   * Set the mapper.
-   * @param mapper Mapper
-   */
-  public void setMapper(String mapper) {
-    this.mapper = mapper;
-  }
-
-  /**
-   * Set the mapper
-   * @param mapper Mapper
-   * @return A reference to this updated object so that method calls can be chained
-   *         together.
-   */
-  public StreamingStep withMapper(String mapper) {
-    this.mapper = mapper;
-    return this;
-  }
-
-
-  /**
-   * Get the reducer
-   * @return Reducer
-   */
-  public String getReducer() {
-    return reducer;
-  }
-
-  /**
-   * Set the reducer
-   * @param reducer Reducer
-   */
-  public void setReducer(String reducer) {
-    this.reducer = reducer;
-  }
-
-  /**
-   * Set the reducer
-   * @param reducer Reducer
-   * @return A reference to this updated object so that method calls can be chained
-   *         together.
-   */
-  public StreamingStep withReducer(String reducer) {
-    this.reducer = reducer;
-    return this;
-  }
-
-
-  /**
-   * Get the Hadoop config overrides (-D values).
-   * @return Hadoop config.
-   */
-  public Map<String, String> getHadoopConfig() {
-    return hadoopConfig;
-  }
-
-  /**
-   * Set the Hadoop config overrides (-D values).
-   * @param hadoopConfig Hadoop config.
-   */
-  public void setHadoopConfig(Map<String, String> hadoopConfig) {
-    this.hadoopConfig = hadoopConfig;
-  }
-
-  /**
-   * Add a Hadoop config override (-D value).
-   * @param key Hadoop configuration key.
-   * @param value Configuration value.
-   * @return A reference to this updated object so that method calls can be chained
-   *         together.
-   */
-  public StreamingStep withHadoopConfig(String key, String value) {
-    hadoopConfig.put(key, value);
-    return this;
-  }
-
-
-  /**
-   * Creates the final HadoopJarStepConfig once you are done configuring the step. You can use
-   * this as you would any other HadoopJarStepConfig.
-   * @return HadoopJarStepConfig representing this streaming step.
-   */
-  public HadoopJarStepConfig toHadoopJarStepConfig() {
-    List<String> args = new ArrayList<String>();
-
-    if (reducer == null) {
-      hadoopConfig.put("mapred.reduce.tasks", "0");
+    /**
+     * Creates a new default StreamingStep.
+     */
+    public StreamingStep() {
     }
 
-    for (Map.Entry<String, String> entry : hadoopConfig.entrySet()) {
-      args.add("-D");
-      args.add(entry.getKey() + "=" + entry.getValue());
+
+    /**
+     * Get list of step input paths.
+     * @return List of step inputs
+     */
+    public List<String> getInputs() {
+        return inputs;
     }
 
-    for (String input : inputs) {
-      args.add("-input");
-      args.add(input);
+    /**
+     * Set the list of step input paths.
+     * @param inputs List of step inputs.
+     */
+    public void setInputs(Collection<String> inputs) {
+        List<String> newInputs = new ArrayList<String>();
+        if (inputs != null) {
+            newInputs.addAll(inputs);
+        }
+        this.inputs = newInputs;
     }
 
-    if (output != null) {
-      args.add("-output");
-      args.add(output);
+    /**
+     * Add more input paths to this step.
+     * @param inputs A list of inputs to this step.
+     * @return A reference to this updated object so that method calls can be chained
+     *         together.
+     */
+    public StreamingStep withInputs(String... inputs) {
+        for (String input : inputs) {
+            this.inputs.add(input);
+        }
+        return this;
     }
 
-    if (mapper != null) {
-      args.add("-mapper");
-      args.add(mapper);
+
+    /**
+     * Get output path.
+     * @return Output path.
+     */
+    public String getOutput() {
+        return output;
     }
 
-    if (reducer != null) {
-      args.add("-reducer");
-      args.add(reducer);
+    /**
+     * Set the output path for this step.
+     * @param output Output path.
+     */
+    public void setOutput(String output) {
+        this.output = output;
     }
 
-    return new HadoopJarStepConfig()
-      .withJar("/home/hadoop/contrib/streaming/hadoop-streaming.jar")
-      .withArgs(args);
-  }
+    /**
+     * Set the output path for this step.
+     * @param output Output path
+     * @return A reference to this updated object so that method calls can be chained
+     *         together.
+     */
+    public StreamingStep withOutput(String output) {
+        this.output = output;
+        return this;
+    }
+
+
+    /**
+     * Get the mapper.
+     * @return Mapper.
+     */
+    public String getMapper() {
+        return mapper;
+    }
+
+    /**
+     * Set the mapper.
+     * @param mapper Mapper
+     */
+    public void setMapper(String mapper) {
+        this.mapper = mapper;
+    }
+
+    /**
+     * Set the mapper
+     * @param mapper Mapper
+     * @return A reference to this updated object so that method calls can be chained
+     *         together.
+     */
+    public StreamingStep withMapper(String mapper) {
+        this.mapper = mapper;
+        return this;
+    }
+
+
+    /**
+     * Get the reducer
+     * @return Reducer
+     */
+    public String getReducer() {
+        return reducer;
+    }
+
+    /**
+     * Set the reducer
+     * @param reducer Reducer
+     */
+    public void setReducer(String reducer) {
+        this.reducer = reducer;
+    }
+
+    /**
+     * Set the reducer
+     * @param reducer Reducer
+     * @return A reference to this updated object so that method calls can be chained
+     *         together.
+     */
+    public StreamingStep withReducer(String reducer) {
+        this.reducer = reducer;
+        return this;
+    }
+
+
+    /**
+     * Get the Hadoop config overrides (-D values).
+     * @return Hadoop config.
+     */
+    public Map<String, String> getHadoopConfig() {
+        return hadoopConfig;
+    }
+
+    /**
+     * Set the Hadoop config overrides (-D values).
+     * @param hadoopConfig Hadoop config.
+     */
+    public void setHadoopConfig(Map<String, String> hadoopConfig) {
+        this.hadoopConfig = hadoopConfig;
+    }
+
+    /**
+     * Add a Hadoop config override (-D value).
+     * @param key Hadoop configuration key.
+     * @param value Configuration value.
+     * @return A reference to this updated object so that method calls can be chained
+     *         together.
+     */
+    public StreamingStep withHadoopConfig(String key, String value) {
+        hadoopConfig.put(key, value);
+        return this;
+    }
+
+
+    /**
+     * Creates the final HadoopJarStepConfig once you are done configuring the step. You can use
+     * this as you would any other HadoopJarStepConfig.
+     * @return HadoopJarStepConfig representing this streaming step.
+     */
+    public HadoopJarStepConfig toHadoopJarStepConfig() {
+        List<String> args = new ArrayList<String>();
+
+        if (reducer == null) {
+            hadoopConfig.put("mapred.reduce.tasks", "0");
+        }
+
+        for (Map.Entry<String, String> entry : hadoopConfig.entrySet()) {
+            args.add("-D");
+            args.add(entry.getKey() + "=" + entry.getValue());
+        }
+
+        for (String input : inputs) {
+            args.add("-input");
+            args.add(input);
+        }
+
+        if (output != null) {
+            args.add("-output");
+            args.add(output);
+        }
+
+        if (mapper != null) {
+            args.add("-mapper");
+            args.add(mapper);
+        }
+
+        if (reducer != null) {
+            args.add("-reducer");
+            args.add(reducer);
+        }
+
+        return new HadoopJarStepConfig()
+                .withJar("/home/hadoop/contrib/streaming/hadoop-streaming.jar")
+                .withArgs(args);
+    }
 }
 

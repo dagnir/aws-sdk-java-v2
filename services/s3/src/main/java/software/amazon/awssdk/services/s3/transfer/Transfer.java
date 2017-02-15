@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import software.amazon.awssdk.AmazonClientException;
@@ -31,26 +32,6 @@ import software.amazon.awssdk.event.ProgressListener;
  * @see TransferManager#upload(software.amazon.awssdk.services.s3.model.PutObjectRequest)
  */
 public interface Transfer {
-
-    /**
-     * Enumeration of the possible transfer states.
-     */
-    public static enum TransferState {
-        /** The transfer is waiting for resources to execute and has not started yet. */
-        Waiting,
-
-        /** The transfer is actively uploading or downloading and hasn't finished yet. */
-        InProgress,
-
-        /** The transfer completed successfully. */
-        Completed,
-
-        /** The transfer was canceled and did not complete successfully. */
-        Canceled,
-
-        /** The transfer failed. */
-        Failed;
-    }
 
     /**
      * Returns whether or not the transfer is finished (i.e. completed successfully,
@@ -77,7 +58,7 @@ public interface Transfer {
      */
     public void waitForCompletion()
             throws AmazonClientException, AmazonServiceException, InterruptedException;
-    
+
     /**
      * Waits for this transfer to finish and returns any error that occurred, or
      * returns <code>null</code> if no errors occurred.
@@ -93,7 +74,7 @@ public interface Transfer {
      *             to complete.
      */
     public AmazonClientException waitForException() throws InterruptedException;
-    
+
     /**
      * Returns a human-readable description of this transfer.
      *
@@ -132,7 +113,7 @@ public interface Transfer {
      * @return The progress information about this transfer.
      */
     public TransferProgress getProgress();
-    
+
     /**
      * @deprecated Replaced by {@link #addProgressListener(ProgressListener)}
      */
@@ -144,4 +125,24 @@ public interface Transfer {
      */
     @Deprecated
     public void removeProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener listener);
+
+    /**
+     * Enumeration of the possible transfer states.
+     */
+    public static enum TransferState {
+        /** The transfer is waiting for resources to execute and has not started yet. */
+        Waiting,
+
+        /** The transfer is actively uploading or downloading and hasn't finished yet. */
+        InProgress,
+
+        /** The transfer completed successfully. */
+        Completed,
+
+        /** The transfer was canceled and did not complete successfully. */
+        Canceled,
+
+        /** The transfer failed. */
+        Failed;
+    }
 }

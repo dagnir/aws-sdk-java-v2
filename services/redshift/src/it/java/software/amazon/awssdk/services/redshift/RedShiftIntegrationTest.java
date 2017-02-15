@@ -40,16 +40,16 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
     public static void tearDown() {
         // Delete Snapshot
         redshift.deleteClusterSnapshot(new DeleteClusterSnapshotRequest()
-                .withSnapshotIdentifier(SNAPSHOT_ID));
+                                               .withSnapshotIdentifier(SNAPSHOT_ID));
         assertEquals(0, redshift.describeClusterSnapshots(new DescribeClusterSnapshotsRequest()
-                .withClusterIdentifier(SNAPSHOT_ID)).getSnapshots().size());
+                                                                  .withClusterIdentifier(SNAPSHOT_ID)).getSnapshots().size());
 
         redshift.deleteCluster(new DeleteClusterRequest()
-                .withClusterIdentifier(NEW_CLUSTER_ID)
-                .withSkipFinalClusterSnapshot(true));
+                                       .withClusterIdentifier(NEW_CLUSTER_ID)
+                                       .withSkipFinalClusterSnapshot(true));
         redshift.deleteCluster(new DeleteClusterRequest()
-                .withClusterIdentifier(SNAPSHOT_CLUSTER_ID)
-                .withSkipFinalClusterSnapshot(true));
+                                       .withClusterIdentifier(SNAPSHOT_CLUSTER_ID)
+                                       .withSkipFinalClusterSnapshot(true));
     }
 
     @Test
@@ -57,12 +57,12 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
 
         // Create Cluster
         Cluster cluster = redshift.createCluster(new CreateClusterRequest()
-                .withMasterUsername(MASTER_USER_NAME)
-                .withMasterUserPassword(PASSWORD)
-                .withClusterIdentifier(CLUSTER_ID).withNodeType(NODE_TYPE)
-                .withClusterType("Single-Node")
-                .withEncrypted(true));
-        isValidCluster(cluster,CLUSTER_ID);
+                                                         .withMasterUsername(MASTER_USER_NAME)
+                                                         .withMasterUserPassword(PASSWORD)
+                                                         .withClusterIdentifier(CLUSTER_ID).withNodeType(NODE_TYPE)
+                                                         .withClusterType("Single-Node")
+                                                         .withEncrypted(true));
+        isValidCluster(cluster, CLUSTER_ID);
 
         // Describe Clusters
         DescribeClustersResult describeClusterResult = redshift.describeClusters();
@@ -71,14 +71,14 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         describeClusterResult = redshift.describeClusters(new DescribeClustersRequest().withClusterIdentifier(CLUSTER_ID));
         assertEquals(1, describeClusterResult.getClusters().size());
         cluster = describeClusterResult.getClusters().get(0);
-        isValidCluster(cluster,CLUSTER_ID);
+        isValidCluster(cluster, CLUSTER_ID);
 
         waitForClusterToBeAvailable(CLUSTER_ID);
 
         // Create a snapshot
         Snapshot snapshot = redshift.createClusterSnapshot(new CreateClusterSnapshotRequest()
-                .withClusterIdentifier(CLUSTER_ID)
-                .withSnapshotIdentifier(SNAPSHOT_ID));
+                                                                   .withClusterIdentifier(CLUSTER_ID)
+                                                                   .withSnapshotIdentifier(SNAPSHOT_ID));
         isValidSnapshot(snapshot);
 
         // Describe snapshots
@@ -98,10 +98,10 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
 
         // restoring a new cluster from an existing snapshot.
         Cluster restoredCluster = redshift.restoreFromClusterSnapshot(new RestoreFromClusterSnapshotRequest()
-                .withSnapshotIdentifier(SNAPSHOT_ID)
-                .withAutomatedSnapshotRetentionPeriod(2)
-                .withClusterIdentifier(SNAPSHOT_CLUSTER_ID));
-        isValidCluster(restoredCluster,SNAPSHOT_CLUSTER_ID);
+                                                                              .withSnapshotIdentifier(SNAPSHOT_ID)
+                                                                              .withAutomatedSnapshotRetentionPeriod(2)
+                                                                              .withClusterIdentifier(SNAPSHOT_CLUSTER_ID));
+        isValidCluster(restoredCluster, SNAPSHOT_CLUSTER_ID);
         assertTrue(restoredCluster.getAutomatedSnapshotRetentionPeriod() == 2);
 
         waitForClusterToBeAvailable(SNAPSHOT_CLUSTER_ID);
@@ -113,15 +113,15 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
 
         // Reboot the cluster
         cluster = redshift.rebootCluster(new RebootClusterRequest().withClusterIdentifier(CLUSTER_ID));
-        isValidCluster(cluster,CLUSTER_ID);
+        isValidCluster(cluster, CLUSTER_ID);
 
         waitForClusterToBeAvailable(CLUSTER_ID);
 
         // Modify the cluster identifier and allow version upgrade.
         cluster = redshift.modifyCluster(new ModifyClusterRequest()
-                .withClusterIdentifier(CLUSTER_ID)
-                .withAllowVersionUpgrade(true)
-                .withNewClusterIdentifier(NEW_CLUSTER_ID));
+                                                 .withClusterIdentifier(CLUSTER_ID)
+                                                 .withAllowVersionUpgrade(true)
+                                                 .withNewClusterIdentifier(NEW_CLUSTER_ID));
         assertTrue(cluster.getAllowVersionUpgrade());
         assertEquals(cluster.getClusterIdentifier(), NEW_CLUSTER_ID);
 
@@ -166,7 +166,7 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
             if (status.toLowerCase().equals("available")) {
                 return;
             }
-            Thread.sleep(60*1000);
+            Thread.sleep(60 * 1000);
             count++;
             if (count >= MAX_ITERATION_TIME) {
                 throw new RuntimeException("Time out exceeds");
@@ -174,7 +174,7 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         }
     }
 
-    private void isValidCluster(Cluster cluster,String ClusterId) {
+    private void isValidCluster(Cluster cluster, String ClusterId) {
         assertEquals(ClusterId, cluster.getClusterIdentifier());
         assertEquals(MASTER_USER_NAME, cluster.getMasterUsername());
         assertEquals(NODE_TYPE.toLowerCase(), cluster.getNodeType().toLowerCase());

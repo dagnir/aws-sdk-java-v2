@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,11 +32,12 @@ import org.apache.commons.logging.LogFactory;
  */
 public enum MBeans {
     ;
+
     /**
      * Registers the given MBean under the given object name to the first
      * registered MBean server, or the platform MBean server if there is no
      * explicitly registered MBean server.
-     * 
+     *
      * @return true if the registration succeeded, or false if an MBean already
      *         exists under the given object name.
      * @throws MBeanRegistrationException
@@ -55,7 +56,7 @@ public enum MBeans {
             throw new IllegalArgumentException(e);
         } catch (InstanceAlreadyExistsException e) {
             LogFactory.getLog(MBeans.class).debug(
-                "Failed to register mbean " + objectName, e);
+                    "Failed to register mbean " + objectName, e);
             return false;
         }
         return true;
@@ -65,7 +66,7 @@ public enum MBeans {
      * Unregisters the MBean under the given object name to the first MBean
      * server, or the platform MBean server if there is no explicitly registered
      * MBean server.
-     * 
+     *
      * @return true if the unregistration succeeded, or false if the MBean
      *         doesn't exist under the given object name.
      * @throws MBeanRegistrationException
@@ -109,8 +110,8 @@ public enum MBeans {
     public static MBeanServer getMBeanServer() {
         List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
         MBeanServer server = servers.size() > 0
-            ? servers.get(0)
-            : ManagementFactory.getPlatformMBeanServer();
+                             ? servers.get(0)
+                             : ManagementFactory.getPlatformMBeanServer();
         return server;
     }
 }

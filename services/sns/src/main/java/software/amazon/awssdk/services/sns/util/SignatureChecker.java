@@ -39,12 +39,9 @@ import software.amazon.awssdk.util.Base64;
  */
 public class SignatureChecker {
 
-    private Signature sigChecker;
-
     private final String NOTIFICATION_TYPE = "Notification";
     private final String SUBSCRIBE_TYPE = "SubscriptionConfirmation";
     private final String UNSUBSCRIBE_TYPE = "UnsubscribeConfirmation";
-
     private final String TYPE = "Type";
     private final String SUBSCRIBE_URL = "SubscribeURL";
     private final String MESSAGE = "Message";
@@ -56,7 +53,8 @@ public class SignatureChecker {
     private final String TOPIC = "TopicArn";
     private final String TOKEN = "Token";
     private final Set<String> INTERESTING_FIELDS = new HashSet<String>(Arrays.asList(TYPE, SUBSCRIBE_URL, MESSAGE,
-            TIMESTAMP, SIGNATURE, SIGNATURE_VERSION, MESSAGE_ID, SUBJECT, TOPIC, TOKEN));
+                                                                                     TIMESTAMP, SIGNATURE, SIGNATURE_VERSION, MESSAGE_ID, SUBJECT, TOPIC, TOKEN));
+    private Signature sigChecker;
 
     /**
      * Validates the signature on a Simple Notification Service message. No
@@ -128,7 +126,7 @@ public class SignatureChecker {
      *            Base64-encoded signature of the message
      * @return
      */
-    public boolean verifySignature(String message, String signature, PublicKey publicKey){
+    public boolean verifySignature(String message, String signature, PublicKey publicKey) {
         boolean result = false;
         byte[] sigbytes = null;
         try {
@@ -150,7 +148,7 @@ public class SignatureChecker {
     protected String stringToSign(SortedMap<String, String> signables) {
         // each key and value is followed by a newline
         StringBuilder sb = new StringBuilder();
-        for(String k: signables.keySet()){
+        for (String k : signables.keySet()) {
             sb.append(k).append("\n");
             sb.append(signables.get(k)).append("\n");
         }
@@ -158,7 +156,7 @@ public class SignatureChecker {
         return result;
     }
 
-    private Map<String, String> parseJSON(String jsonmessage){
+    private Map<String, String> parseJSON(String jsonmessage) {
         Map<String, String> parsed = new HashMap<String, String>();
         JsonFactory jf = new JsonFactory();
         try {
@@ -172,19 +170,17 @@ public class SignatureChecker {
                 }
                 parser.nextToken(); // move to value, or START_OBJECT/START_ARRAY
                 String value;
-                if (parser.getCurrentToken() == JsonToken.START_ARRAY)
-                {
+                if (parser.getCurrentToken() == JsonToken.START_ARRAY) {
                     value = "";
                     boolean first = true;
-                    while (parser.nextToken() != JsonToken.END_ARRAY)
-                    {
-                        if (!first) value += ",";
+                    while (parser.nextToken() != JsonToken.END_ARRAY) {
+                        if (!first) {
+                            value += ",";
+                        }
                         first = false;
                         value += parser.getText();
                     }
-                }
-                else
-                {
+                } else {
                     value = parser.getText();
                 }
                 parsed.put(fieldname, value);
@@ -198,22 +194,22 @@ public class SignatureChecker {
         return parsed;
     }
 
-    private TreeMap<String, String> publishMessageValues(Map<String, String> parsedMessage){
+    private TreeMap<String, String> publishMessageValues(Map<String, String> parsedMessage) {
         TreeMap<String, String> signables = new TreeMap<String, String>();
-        String[] keys = { MESSAGE, MESSAGE_ID, SUBJECT, TYPE, TIMESTAMP, TOPIC };
-        for(String key: keys){
-            if(parsedMessage.containsKey(key)){
+        String[] keys = {MESSAGE, MESSAGE_ID, SUBJECT, TYPE, TIMESTAMP, TOPIC};
+        for (String key : keys) {
+            if (parsedMessage.containsKey(key)) {
                 signables.put(key, parsedMessage.get(key));
             }
         }
         return signables;
     }
 
-    private TreeMap<String, String> subscribeMessageValues(Map<String, String> parsedMessage){
+    private TreeMap<String, String> subscribeMessageValues(Map<String, String> parsedMessage) {
         TreeMap<String, String> signables = new TreeMap<String, String>();
-        String[] keys = { SUBSCRIBE_URL, MESSAGE, MESSAGE_ID, TYPE, TIMESTAMP, TOKEN, TOPIC };
-        for(String key: keys){
-            if(parsedMessage.containsKey(key)){
+        String[] keys = {SUBSCRIBE_URL, MESSAGE, MESSAGE_ID, TYPE, TIMESTAMP, TOKEN, TOPIC};
+        for (String key : keys) {
+            if (parsedMessage.containsKey(key)) {
                 signables.put(key, parsedMessage.get(key));
             }
         }

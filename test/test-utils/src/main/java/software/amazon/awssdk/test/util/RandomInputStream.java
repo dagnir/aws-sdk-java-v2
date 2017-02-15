@@ -27,23 +27,18 @@ import java.util.Random;
  */
 public class RandomInputStream extends InputStream {
 
-    /** The requested amount of data contained in this random stream */
-    protected final long lengthInBytes;
-
-    /** The number of bytes of data remaining in this random stream */
-    protected long remainingBytes;
-
     /** Shared Random number generator to generate data */
     private static final Random RANDOM = new Random();
-
     /** The minimum ASCII code contained in the data in this stream */
     private static final int MIN_CHAR_CODE = 32;
-
     /** The maximum ASCII code contained in the data in this stream */
     private static final int MAX_CHAR_CODE = 125;
-
+    /** The requested amount of data contained in this random stream */
+    protected final long lengthInBytes;
     /** Flag controlling whether binary or character data is used */
     private final boolean binaryData;
+    /** The number of bytes of data remaining in this random stream */
+    protected long remainingBytes;
 
 
     /**
@@ -68,18 +63,21 @@ public class RandomInputStream extends InputStream {
      *            Whether binary or character data should be generated.
      */
     public RandomInputStream(long lengthInBytes, boolean binaryData) {
-        this.lengthInBytes  = lengthInBytes;
+        this.lengthInBytes = lengthInBytes;
         this.remainingBytes = lengthInBytes;
-        this.binaryData     = binaryData;
+        this.binaryData = binaryData;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         // Signal that we're out of data if we've hit our limit
-        if (remainingBytes <= 0) return -1;
+        if (remainingBytes <= 0) {
+            return -1;
+        }
         int bytesToRead = len;
-        if (bytesToRead > remainingBytes)
+        if (bytesToRead > remainingBytes) {
             bytesToRead = (int) remainingBytes;
+        }
 
         remainingBytes -= bytesToRead;
 
@@ -89,7 +87,7 @@ public class RandomInputStream extends InputStream {
             System.arraycopy(bytes, 0, b, off, bytesToRead);
         } else {
             for (int i = 0; i < bytesToRead; i++) {
-                b[off+i] = (byte) (RANDOM.nextInt(MAX_CHAR_CODE - MIN_CHAR_CODE) + MIN_CHAR_CODE);
+                b[off + i] = (byte) (RANDOM.nextInt(MAX_CHAR_CODE - MIN_CHAR_CODE) + MIN_CHAR_CODE);
             }
         }
 
@@ -99,13 +97,15 @@ public class RandomInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         // Signal that we're out of data if we've hit our limit
-        if (remainingBytes <= 0) return -1;
+        if (remainingBytes <= 0) {
+            return -1;
+        }
 
         remainingBytes--;
         if (binaryData) {
             byte[] bytes = new byte[1];
             RANDOM.nextBytes(bytes);
-            return (int)bytes[0];
+            return (int) bytes[0];
         } else {
             return RANDOM.nextInt(MAX_CHAR_CODE - MIN_CHAR_CODE) + MIN_CHAR_CODE;
         }

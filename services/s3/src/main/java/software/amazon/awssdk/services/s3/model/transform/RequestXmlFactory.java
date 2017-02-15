@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.util.ArrayList;
@@ -43,8 +44,12 @@ public class RequestXmlFactory {
             List<PartETag> sortedPartETags = new ArrayList<PartETag>(partETags);
             Collections.sort(sortedPartETags, new Comparator<PartETag>() {
                 public int compare(PartETag tag1, PartETag tag2) {
-                    if (tag1.getPartNumber() < tag2.getPartNumber()) return -1;
-                    if (tag1.getPartNumber() > tag2.getPartNumber()) return 1;
+                    if (tag1.getPartNumber() < tag2.getPartNumber()) {
+                        return -1;
+                    }
+                    if (tag1.getPartNumber() > tag2.getPartNumber()) {
+                        return 1;
+                    }
                     return 0;
                 }
             });

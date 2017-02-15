@@ -1,17 +1,18 @@
 /*
- * Copyright 2011-2012 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
@@ -63,20 +64,17 @@ public class CopyMonitor implements Callable<CopyResult>, TransferMonitor {
     private boolean isCopyDone = false;
     private Future<CopyResult> future;
 
-    public synchronized Future<CopyResult> getFuture() {
-        return future;
-    }
+    private CopyMonitor(TransferManager manager, CopyImpl transfer,
+                        ExecutorService threadPool, CopyCallable multipartCopyCallable,
+                        CopyObjectRequest copyObjectRequest,
+                        ProgressListenerChain progressListenerChain) {
 
-    private synchronized void setFuture(Future<CopyResult> future) {
-        this.future = future;
-    }
-
-    public synchronized boolean isDone() {
-        return isCopyDone;
-    }
-
-    private synchronized void markAllDone() {
-        isCopyDone = true;
+        this.s3 = manager.getAmazonS3Client();
+        this.multipartCopyCallable = multipartCopyCallable;
+        this.origReq = copyObjectRequest;
+        this.listener = progressListenerChain;
+        this.transfer = transfer;
+        this.threadPool = threadPool;
     }
 
     /**
@@ -103,23 +101,26 @@ public class CopyMonitor implements Callable<CopyResult>, TransferMonitor {
             ProgressListenerChain progressListenerChain) {
 
         CopyMonitor copyMonitor = new CopyMonitor(manager, transfer,
-                threadPool, multipartCopyCallable, copyObjectRequest,
-                progressListenerChain);
+                                                  threadPool, multipartCopyCallable, copyObjectRequest,
+                                                  progressListenerChain);
         copyMonitor.setFuture(threadPool.submit(copyMonitor));
         return copyMonitor;
     }
 
-    private CopyMonitor(TransferManager manager, CopyImpl transfer,
-            ExecutorService threadPool, CopyCallable multipartCopyCallable,
-            CopyObjectRequest copyObjectRequest,
-            ProgressListenerChain progressListenerChain) {
+    public synchronized Future<CopyResult> getFuture() {
+        return future;
+    }
 
-        this.s3 = manager.getAmazonS3Client();
-        this.multipartCopyCallable = multipartCopyCallable;
-        this.origReq = copyObjectRequest;
-        this.listener = progressListenerChain;
-        this.transfer = transfer;
-        this.threadPool = threadPool;
+    private synchronized void setFuture(Future<CopyResult> future) {
+        this.future = future;
+    }
+
+    public synchronized boolean isDone() {
+        return isCopyDone;
+    }
+
+    private synchronized void markAllDone() {
+        isCopyDone = true;
     }
 
     @Override

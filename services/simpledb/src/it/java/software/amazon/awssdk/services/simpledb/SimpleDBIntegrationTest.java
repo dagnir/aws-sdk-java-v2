@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.simpledb;
 
 import static org.junit.Assert.assertEquals;
@@ -48,37 +63,34 @@ import software.amazon.awssdk.services.simpledb.model.UpdateCondition;
 public class SimpleDBIntegrationTest extends IntegrationTestBase {
 
     /**
-     * Name of the domain used for all the integration tests.
-     */
-    private static String domainName = "createDomainIntegrationTest-" + new Date().getTime();
-
-    /**
      * All test data used in these integration tests.
      */
     private static final List<ReplaceableItem> ALL_TEST_DATA = newReplaceableItemList(new ReplaceableItem[] {
             new ReplaceableItem("foo", newReplaceableAttributeList(new ReplaceableAttribute[] {
                     new ReplaceableAttribute("1", "2", Boolean.TRUE), new ReplaceableAttribute("3", "4", Boolean.TRUE),
-                    new ReplaceableAttribute("5", "6", Boolean.TRUE) })),
+                    new ReplaceableAttribute("5", "6", Boolean.TRUE)})),
             new ReplaceableItem("boo",
-                    newReplaceableAttributeList(new ReplaceableAttribute[] {
-                            new ReplaceableAttribute("X", "Y", Boolean.TRUE),
-                            new ReplaceableAttribute("Z", "Q", Boolean.TRUE) })),
+                                newReplaceableAttributeList(new ReplaceableAttribute[] {
+                                        new ReplaceableAttribute("X", "Y", Boolean.TRUE),
+                                        new ReplaceableAttribute("Z", "Q", Boolean.TRUE)})),
             new ReplaceableItem("baa", newReplaceableAttributeList(new ReplaceableAttribute[] {
                     new ReplaceableAttribute("A", "B", Boolean.TRUE), new ReplaceableAttribute("C", "D", Boolean.TRUE),
-                    new ReplaceableAttribute("E", "F", Boolean.TRUE) })) });
-
+                    new ReplaceableAttribute("E", "F", Boolean.TRUE)}))});
     /**
      * Sample item, named foo, with a few attributes, for all tests to use, particularly the
      * PutAttributes test code.
      */
     private static final ReplaceableItem FOO_ITEM = (ReplaceableItem) ALL_TEST_DATA.get(0);
-
     /**
      * List of two sample items with attributes for all tests to use, particularly the
      * BatchPutAttributes test code.
      */
     private static final List<ReplaceableItem> ITEM_LIST = newReplaceableItemList(new ReplaceableItem[] {
-            (ReplaceableItem) ALL_TEST_DATA.get(1), (ReplaceableItem) ALL_TEST_DATA.get(2) });
+            (ReplaceableItem) ALL_TEST_DATA.get(1), (ReplaceableItem) ALL_TEST_DATA.get(2)});
+    /**
+     * Name of the domain used for all the integration tests.
+     */
+    private static String domainName = "createDomainIntegrationTest-" + new Date().getTime();
 
     /**
      * Responsible for cleaning up after all the integration tests, including deleting any data that
@@ -167,7 +179,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
     private void gotestEmptyStringValues() throws Exception {
         ReplaceableAttribute emptyValueAttribute = new ReplaceableAttribute().withName("empty").withValue("");
         PutAttributesRequest request = new PutAttributesRequest(domainName, "emptyStringTestItem", null)
-                .withAttributes(new ReplaceableAttribute[] { emptyValueAttribute });
+                .withAttributes(new ReplaceableAttribute[] {emptyValueAttribute});
         sdb.putAttributes(request);
 
         SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
@@ -176,7 +188,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
 
         List<Attribute> attributes = sdb.getAttributes(
                 new GetAttributesRequest(domainName, "emptyStringTestItem").withConsistentRead(Boolean.TRUE))
-                .getAttributes();
+                                        .getAttributes();
 
         assertEquals(1, attributes.size());
         assertEquals("empty", ((Attribute) attributes.get(0)).getName());
@@ -193,12 +205,12 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         String value = "foo\nbar\nbaz";
         ReplaceableAttribute newlineValueAttribute = new ReplaceableAttribute().withName("newline").withValue(value);
         PutAttributesRequest request = new PutAttributesRequest(domainName, "newlineTestItem", null)
-                .withAttributes(new ReplaceableAttribute[] { newlineValueAttribute });
+                .withAttributes(new ReplaceableAttribute[] {newlineValueAttribute});
         sdb.putAttributes(request);
 
         List<Attribute> attributes = sdb.getAttributes(
                 new GetAttributesRequest(domainName, "newlineTestItem").withConsistentRead(Boolean.TRUE))
-                .getAttributes();
+                                        .getAttributes();
 
         assertEquals(1, attributes.size());
         assertEquals("newline", ((Attribute) attributes.get(0)).getName());
@@ -288,7 +300,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
 
-        assertItemsStoredInDomain(sdb, newReplaceableItemList(new ReplaceableItem[] { FOO_ITEM }), domainName);
+        assertItemsStoredInDomain(sdb, newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), domainName);
     }
 
     /**
@@ -301,7 +313,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setItemName(FOO_ITEM.getName());
         request.setAttributes(FOO_ITEM.getAttributes());
         request.setExpected(new UpdateCondition().withExists(Boolean.TRUE).withName("non-existant-attribute-name")
-                .withValue("non-existant-attribute-value"));
+                                                 .withValue("non-existant-attribute-value"));
 
         try {
             sdb.putAttributes(request);
@@ -338,7 +350,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         SelectResult selectResult = sdb.select(request);
         assertNull(selectResult.getNextToken());
         assertItemsPresent(ITEM_LIST, selectResult.getItems());
-        assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] { FOO_ITEM }), selectResult.getItems());
+        assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), selectResult.getItems());
 
         SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
@@ -349,7 +361,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         selectResult = sdb.select(request);
         assertNull(selectResult.getNextToken());
         assertItemsPresent(ITEM_LIST, selectResult.getItems());
-        assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] { FOO_ITEM }), selectResult.getItems());
+        assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), selectResult.getItems());
     }
 
     /**
@@ -368,7 +380,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         int expectedItemCount = 0;
         int expectedAttributeValueCount = 0;
         int expectedAttributeNameCount = 0;
-        for (Iterator iterator = ALL_TEST_DATA.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = ALL_TEST_DATA.iterator(); iterator.hasNext(); ) {
             ReplaceableItem item = (ReplaceableItem) iterator.next();
 
             expectedItemCount++;
@@ -391,8 +403,8 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setDomainName(domainName);
         request.setItemName(FOO_ITEM.getName());
         request.setConsistentRead(Boolean.TRUE);
-        request.withAttributeNames(new String[] { ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(0)).getName(),
-                ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName() });
+        request.withAttributeNames(new String[] {((ReplaceableAttribute) FOO_ITEM.getAttributes().get(0)).getName(),
+                                                 ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()});
 
         GetAttributesResult getAttributesResult = sdb.getAttributes(request);
         SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
@@ -406,7 +418,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
 
         ReplaceableAttribute[] replaceableAttributes = new ReplaceableAttribute[] {
                 (ReplaceableAttribute) FOO_ITEM.getAttributes().get(0),
-                (ReplaceableAttribute) FOO_ITEM.getAttributes().get(1) };
+                (ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)};
         for (int index = 0; index < replaceableAttributes.length; index++) {
             ReplaceableAttribute expectedAttribute = replaceableAttributes[index];
 
@@ -423,9 +435,9 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
     private void gotestDeleteAttributes() {
         List<String> attributeNames = Arrays.asList(new String[] {
                 ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(0)).getName(),
-                ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName() });
+                ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()});
         List<Attribute> attributeList = new ArrayList<Attribute>();
-        for (Iterator iterator = attributeNames.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {
             String attributeName = (String) iterator.next();
             attributeList.add(new Attribute().withName(attributeName));
         }
@@ -466,7 +478,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         for (int i = 0; i < ITEM_LIST.size(); i++) {
             ReplaceableItem expectedItem = (ReplaceableItem) ITEM_LIST.get(i);
             assertFalse(doAttributesExistForItem(sdb, expectedItem.getName(), domainName,
-                    newAttributeNameList(expectedItem.getAttributes())));
+                                                 newAttributeNameList(expectedItem.getAttributes())));
         }
     }
 
@@ -477,9 +489,9 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
     private void gotestDeleteAttributesWithNonMatchingUpdateCondition() {
         List<String> attributeNames = Arrays.asList(new String[] {
                 ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(0)).getName(),
-                ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName() });
+                ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()});
         List<Attribute> attributeList = new ArrayList<Attribute>();
-        for (Iterator iterator = attributeNames.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {
             String attributeName = (String) iterator.next();
             attributeList.add(new Attribute().withName(attributeName));
         }
@@ -491,7 +503,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setItemName(FOO_ITEM.getName());
         request.setAttributes(attributeList);
         request.setExpected(new UpdateCondition().withExists(Boolean.TRUE).withName("non-existant-attribute-name")
-                .withValue("non-existant-attribute-value"));
+                                                 .withValue("non-existant-attribute-value"));
 
         try {
             sdb.deleteAttributes(request);

@@ -8,5 +8,5 @@ Feature: Amazon Lambda
 
   Scenario: Handling errors
     When I attempt to call the "Invoke" API with:
-    | FunctionName | bogus-function |
+      | FunctionName | bogus-function |
     Then I expect the response error code to be "ResourceNotFoundException"

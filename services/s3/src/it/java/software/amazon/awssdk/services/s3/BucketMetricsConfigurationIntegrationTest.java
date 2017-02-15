@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -69,7 +69,7 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketMetricsConfiguration(new GetBucketMetricsConfigurationRequest(BUCKET_NAME, configId))
-                .getMetricsConfiguration();
+                   .getMetricsConfiguration();
 
         assertEquals(configId, config.getId());
 
@@ -87,7 +87,7 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
         String prefix = "prefix";
         MetricsConfiguration config1 = new MetricsConfiguration().withId(configId1);
         MetricsConfiguration config2 = new MetricsConfiguration().withId(configId2)
-                                            .withFilter(new MetricsFilter().withPredicate(new MetricsPrefixPredicate(prefix)));
+                                                                 .withFilter(new MetricsFilter().withPredicate(new MetricsPrefixPredicate(prefix)));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config1));
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config2));
@@ -114,12 +114,12 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
         String configId = "id";
         String prefix = "prefix";
         MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                                            .withFilter(new MetricsFilter(new MetricsPrefixPredicate(prefix)));
+                                                                .withFilter(new MetricsFilter(new MetricsPrefixPredicate(prefix)));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketMetricsConfiguration(new GetBucketMetricsConfigurationRequest(BUCKET_NAME, configId))
-                .getMetricsConfiguration();
+                   .getMetricsConfiguration();
 
         assertEquals(configId, config.getId());
         assertEquals(prefix, ((MetricsPrefixPredicate) config.getFilter().getPredicate()).getPrefix());
@@ -133,12 +133,12 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
         String key = "key", value = "value";
 
         MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                .withFilter(new MetricsFilter(new MetricsTagPredicate(new Tag(key, value))));
+                                                                .withFilter(new MetricsFilter(new MetricsTagPredicate(new Tag(key, value))));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketMetricsConfiguration(new GetBucketMetricsConfigurationRequest(BUCKET_NAME, configId))
-                .getMetricsConfiguration();
+                   .getMetricsConfiguration();
 
         assertEquals(configId, config.getId());
         assertEquals(key, ((MetricsTagPredicate) config.getFilter().getPredicate()).getTag().getKey());
@@ -157,12 +157,12 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
         operands.add(new MetricsTagPredicate(new Tag(key, value)));
 
         MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                .withFilter(new MetricsFilter(new MetricsAndOperator(operands)));
+                                                                .withFilter(new MetricsFilter(new MetricsAndOperator(operands)));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketMetricsConfiguration(new GetBucketMetricsConfigurationRequest(BUCKET_NAME, configId))
-                .getMetricsConfiguration();
+                   .getMetricsConfiguration();
 
         assertEquals(configId, config.getId());
         operands = ((MetricsAndOperator) config.getFilter().getPredicate()).getOperands();
@@ -173,21 +173,21 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
         s3.deleteBucketMetricsConfiguration(new DeleteBucketMetricsConfigurationRequest(BUCKET_NAME, configId));
     }
 
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testEmptyFilter() throws Exception {
         String configId = "id";
         MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                .withFilter(new MetricsFilter());
+                                                                .withFilter(new MetricsFilter());
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
     }
 
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testEmptyPrefix() throws Exception {
         String configId = "id";
         String prefix = "";
         MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                .withFilter(new MetricsFilter(new MetricsPrefixPredicate(prefix)));
+                                                                .withFilter(new MetricsFilter(new MetricsPrefixPredicate(prefix)));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
     }

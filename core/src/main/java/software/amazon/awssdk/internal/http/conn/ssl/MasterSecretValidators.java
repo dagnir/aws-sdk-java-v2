@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,22 +30,10 @@ public class MasterSecretValidators {
     private static final JavaVersion FIXED_JAVA_8 = new JavaVersion(1, 8, 0, 31);
 
     /**
-     * Interface to validate the master secret of a SSL session
-     */
-    public interface MasterSecretValidator {
-        /**
-         * @param socket
-         *            SSLSocket containing master secret
-         * @return True if master secret is considered valid, false otherwise
-         */
-        public boolean isMasterSecretValid(final Socket socket);
-    }
-
-    /**
      * The implementation of {@link MasterSecretValidator} depends on the JVM version. Certain JVMs
      * are affected by a serious bug that could allow a malicious MITM to negotiate a null master
      * secret. Non-affected JVMs return a dummy implementation that always returns true
-     * 
+     *
      * @see http://www.oracle.com/technetwork/topics/security/cpujan2015-1972971.html
      * @see https://access.redhat.com/security/cve/CVE-2014-6593
      * @return The correct implementation of {@link MasterSecretValidator}
@@ -61,27 +49,39 @@ public class MasterSecretValidators {
      */
     public static MasterSecretValidator getMasterSecretValidator(JavaVersion javaVersion) {
         switch (javaVersion.getKnownVersion()) {
-        case JAVA_6:
-            if (javaVersion.compareTo(FIXED_JAVA_6) < 0) {
-                return new PrivilegedMasterSecretValidator();
-            }
-            break;
-        case JAVA_7:
-            if (javaVersion.compareTo(FIXED_JAVA_7) < 0) {
-                return new PrivilegedMasterSecretValidator();
-            }
-            break;
-        case JAVA_8:
-            if (javaVersion.compareTo(FIXED_JAVA_8) < 0) {
-                return new PrivilegedMasterSecretValidator();
-            }
-            break;
-        default:
-            break;
+            case JAVA_6:
+                if (javaVersion.compareTo(FIXED_JAVA_6) < 0) {
+                    return new PrivilegedMasterSecretValidator();
+                }
+                break;
+            case JAVA_7:
+                if (javaVersion.compareTo(FIXED_JAVA_7) < 0) {
+                    return new PrivilegedMasterSecretValidator();
+                }
+                break;
+            case JAVA_8:
+                if (javaVersion.compareTo(FIXED_JAVA_8) < 0) {
+                    return new PrivilegedMasterSecretValidator();
+                }
+                break;
+            default:
+                break;
 
         }
         return new NoOpMasterSecretValidator();
 
+    }
+
+    /**
+     * Interface to validate the master secret of a SSL session
+     */
+    public interface MasterSecretValidator {
+        /**
+         * @param socket
+         *            SSLSocket containing master secret
+         * @return True if master secret is considered valid, false otherwise
+         */
+        public boolean isMasterSecretValid(final Socket socket);
     }
 
     /**

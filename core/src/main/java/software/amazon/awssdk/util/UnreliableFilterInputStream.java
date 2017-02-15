@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import software.amazon.awssdk.util.json.Jackson;
  * injection.
  */
 public class UnreliableFilterInputStream extends FilterInputStream {
+    // True to throw a FakeIOException; false to throw a RuntimeException
+    private final boolean isFakeIOException;
     /**
      * Max number of errors that can be triggered.
      */
@@ -33,12 +35,9 @@ public class UnreliableFilterInputStream extends FilterInputStream {
      * Current number of errors that have been triggered.
      */
     private int currNumErrors;
-    
     private int bytesReadBeforeException = 100;
     private int marked;
     private int position;
-    // True to throw a FakeIOException; false to throw a RuntimeException
-    private final boolean isFakeIOException;
     private int resetCount; // number of times the reset method has been called
     /**
      * used to control whether an exception would be thrown based on the reset
@@ -47,7 +46,7 @@ public class UnreliableFilterInputStream extends FilterInputStream {
      * before the n_th reset (or after the n_th minus 1 reset), 2n_th reset (or
      * after the 2n_th minus 1) reset), etc.
      */
-    private int resetIntervalBeforeException; 
+    private int resetIntervalBeforeException;
 
     public UnreliableFilterInputStream(InputStream in, boolean isFakeIOException) {
         super(in);
@@ -57,7 +56,9 @@ public class UnreliableFilterInputStream extends FilterInputStream {
     @Override
     public int read() throws IOException {
         int read = super.read();
-        if (read != -1) position++;
+        if (read != -1) {
+            position++;
+        }
         triggerError();
         return read;
     }
@@ -85,20 +86,23 @@ public class UnreliableFilterInputStream extends FilterInputStream {
     }
 
     private void triggerError() throws FakeIOException {
-        if (currNumErrors >= maxNumErrors)
+        if (currNumErrors >= maxNumErrors) {
             return;
+        }
 
         if (position >= bytesReadBeforeException) {
             if (resetIntervalBeforeException > 0
-            &&  resetCount % resetIntervalBeforeException != (resetIntervalBeforeException-1))
+                && resetCount % resetIntervalBeforeException != (resetIntervalBeforeException - 1)) {
                 return;
+            }
             currNumErrors++;
-            if (isFakeIOException)
+            if (isFakeIOException) {
                 throw new FakeIOException("Fake IO error " + currNumErrors
-                    + " on UnreliableFileInputStream: " + this);
-            else
+                                          + " on UnreliableFileInputStream: " + this);
+            } else {
                 throw new RuntimeException("Injected runtime error " + currNumErrors
-                        + " on UnreliableFileInputStream: " + this);
+                                           + " on UnreliableFileInputStream: " + this);
+            }
         }
     }
 
@@ -112,7 +116,7 @@ public class UnreliableFilterInputStream extends FilterInputStream {
 
     public UnreliableFilterInputStream withMaxNumErrors(int maxNumErrors) {
         this.maxNumErrors = maxNumErrors;
-        return this; 
+        return this;
     }
 
     public UnreliableFilterInputStream withBytesReadBeforeException(
@@ -143,7 +147,7 @@ public class UnreliableFilterInputStream extends FilterInputStream {
     public int getResetIntervalBeforeException() {
         return resetIntervalBeforeException;
     }
- 
+
     public int getMarked() {
         return marked;
     }
@@ -159,7 +163,7 @@ public class UnreliableFilterInputStream extends FilterInputStream {
     public int getResetCount() {
         return resetCount;
     }
-    
+
     @Override
     public String toString() {
         return Jackson.toJsonString(this);

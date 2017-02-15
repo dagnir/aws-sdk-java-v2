@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -36,6 +36,16 @@ public class JsonContent {
     private final byte[] rawContent;
     private final JsonNode jsonNode;
 
+    public JsonContent(byte[] rawJsonContent, JsonNode jsonNode) {
+        this.rawContent = rawJsonContent;
+        this.jsonNode = jsonNode;
+    }
+
+    private JsonContent(byte[] rawJsonContent, ObjectMapper mapper) {
+        this.rawContent = rawJsonContent;
+        this.jsonNode = parseJsonContent(rawJsonContent, mapper);
+    }
+
     /**
      * Static factory method to create a JsonContent object from the contents of the HttpResponse
      * provided
@@ -52,16 +62,6 @@ public class JsonContent {
         }
         return new JsonContent(rawJsonContent, new ObjectMapper(jsonFactory)
                 .configure(JsonParser.Feature.ALLOW_COMMENTS, true));
-    }
-
-    public JsonContent(byte[] rawJsonContent, JsonNode jsonNode) {
-        this.rawContent = rawJsonContent;
-        this.jsonNode = jsonNode;
-    }
-
-    private JsonContent(byte[] rawJsonContent, ObjectMapper mapper) {
-        this.rawContent = rawJsonContent;
-        this.jsonNode = parseJsonContent(rawJsonContent, mapper);
     }
 
     private static JsonNode parseJsonContent(byte[] rawJsonContent, ObjectMapper mapper) {

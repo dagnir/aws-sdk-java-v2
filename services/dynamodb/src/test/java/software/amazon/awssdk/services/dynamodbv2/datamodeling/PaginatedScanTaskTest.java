@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -53,6 +53,16 @@ public class PaginatedScanTaskTest {
 
     @Mock
     private AmazonDynamoDB dynamoDB;
+
+    /**
+     * Custom matcher to match argument based on it's segment number
+     *
+     * @param segmentNumber Segment number to match for this stub.
+     * @return Stubbed argument matcher
+     */
+    private static ScanRequest isSegmentNumber(int segmentNumber) {
+        return argThat(new SegmentArgumentMatcher(segmentNumber));
+    }
 
     @Before
     public void setup() {
@@ -120,17 +130,6 @@ public class PaginatedScanTaskTest {
                 .withSegment(segmentNumber)
                 .withTotalSegments(TOTAL_SEGMENTS);
     }
-
-    /**
-     * Custom matcher to match argument based on it's segment number
-     *
-     * @param segmentNumber Segment number to match for this stub.
-     * @return Stubbed argument matcher
-     */
-    private static ScanRequest isSegmentNumber(int segmentNumber) {
-        return argThat(new SegmentArgumentMatcher(segmentNumber));
-    }
-
 
     /**
      * Custom argument matcher to match a {@link ScanRequest} on the segment number.

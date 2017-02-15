@@ -24,7 +24,8 @@ public class HostRegexToRegionMappingJsonHelper implements Builder<HostRegexToRe
     private String hostNameRegex;
     private String regionName;
 
-    public HostRegexToRegionMappingJsonHelper() {}
+    public HostRegexToRegionMappingJsonHelper() {
+    }
 
     public String getHostNameRegex() {
         return hostNameRegex;

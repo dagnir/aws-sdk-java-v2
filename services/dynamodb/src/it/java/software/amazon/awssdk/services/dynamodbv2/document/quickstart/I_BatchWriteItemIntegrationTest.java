@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import static software.amazon.awssdk.services.dynamodbv2.document.quickstart.F_UpdateItemIntegrationTest.ADDRESS_TYPE_HOME;
@@ -28,8 +43,8 @@ public class I_BatchWriteItemIntegrationTest extends QuickStartIntegrationTestBa
         F_UpdateItemIntegrationTest.setupData(dynamo);
         new B_PutItemIntegrationTest().howToPutItems();
         ItemCollection<?> itemCol = dynamo.getTable(TABLE_NAME)
-                .query(HASH_KEY_NAME, "foo",
-                       new RangeKeyCondition(RANGE_KEY_NAME).between(1, 5));
+                                          .query(HASH_KEY_NAME, "foo",
+                                                 new RangeKeyCondition(RANGE_KEY_NAME).between(1, 5));
         int count = 0;
         for (Item item : itemCol) {
             System.out.println(item);
@@ -91,8 +106,8 @@ public class I_BatchWriteItemIntegrationTest extends QuickStartIntegrationTestBa
     private void verify_BatchWrite_ToOneTable() {
         {   // Verify the 5 items put via the batch operation
             ItemCollection<?> itemCol = dynamo.getTable(TABLE_NAME)
-                    .query(HASH_KEY_NAME, "TestingPutItemInBatch",
-                           new RangeKeyCondition(RANGE_KEY_NAME).between(111, 555));
+                                              .query(HASH_KEY_NAME, "TestingPutItemInBatch",
+                                                     new RangeKeyCondition(RANGE_KEY_NAME).between(111, 555));
             int count = 0;
             for (Item item : itemCol) {
                 System.out.println(item);
@@ -102,8 +117,8 @@ public class I_BatchWriteItemIntegrationTest extends QuickStartIntegrationTestBa
         }
         {   // Verify the 5 keys deleted via the batch operation
             ItemCollection<?> itemCol = dynamo.getTable(TABLE_NAME)
-                    .query(HASH_KEY_NAME, "foo",
-                           new RangeKeyCondition(RANGE_KEY_NAME).between(1, 5));
+                                              .query(HASH_KEY_NAME, "foo",
+                                                     new RangeKeyCondition(RANGE_KEY_NAME).between(1, 5));
             int count = 0;
             for (Item item : itemCol) {
                 System.out.println(item);
@@ -158,8 +173,8 @@ public class I_BatchWriteItemIntegrationTest extends QuickStartIntegrationTestBa
     private void verify_BatchWrite_ToMultiTables() {
         {   // Verify the 2 items put to the 1st table via the batch operation
             ItemCollection<?> itemCol = dynamo.getTable(TABLE_NAME)
-                    .query(HASH_KEY_NAME, "TestingPutItemInBatch",
-                           new RangeKeyCondition(RANGE_KEY_NAME).between(666, 777));
+                                              .query(HASH_KEY_NAME, "TestingPutItemInBatch",
+                                                     new RangeKeyCondition(RANGE_KEY_NAME).between(666, 777));
             int count = 0;
             for (Item item : itemCol) {
                 System.out.println(item);
@@ -169,8 +184,8 @@ public class I_BatchWriteItemIntegrationTest extends QuickStartIntegrationTestBa
         }
         {   // Verify the 2 keys deleted from the 1st table via the batch operation
             ItemCollection<?> itemCol = dynamo.getTable(TABLE_NAME)
-                    .query(HASH_KEY_NAME, "foo",
-                           new RangeKeyCondition(RANGE_KEY_NAME).between(1, 2));
+                                              .query(HASH_KEY_NAME, "foo",
+                                                     new RangeKeyCondition(RANGE_KEY_NAME).between(1, 2));
             int count = 0;
             for (Item item : itemCol) {
                 System.out.println(item);
@@ -180,7 +195,7 @@ public class I_BatchWriteItemIntegrationTest extends QuickStartIntegrationTestBa
         }
         {   // Verify the 2 items put to the 2nd table via the batch operation
             ItemCollection<?> itemCol = dynamo.getTable(F_UpdateItemIntegrationTest.TABLE_NAME)
-                    .query(HASH_KEY, 111);
+                                              .query(HASH_KEY, 111);
             int count = 0;
             for (Item item : itemCol) {
                 System.out.println(item);
@@ -190,7 +205,7 @@ public class I_BatchWriteItemIntegrationTest extends QuickStartIntegrationTestBa
         }
         {   // Verify the 2 keys deleted from the 1st table via the batch operation
             ItemCollection<?> itemCol = dynamo.getTable(F_UpdateItemIntegrationTest.TABLE_NAME)
-                    .query(HASH_KEY, FIRST_CUSTOMER_ID);
+                                              .query(HASH_KEY, FIRST_CUSTOMER_ID);
             int count = 0;
             for (Item item : itemCol) {
                 System.out.println(item);

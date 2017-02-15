@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.waf;
 
 import java.io.IOException;
@@ -25,15 +40,11 @@ import software.amazon.awssdk.test.AWSTestBase;
 
 public class WafIntegrationTest extends AWSTestBase {
 
-    private static AWSWAF client = null;
-
     private static final String IP_SET_NAME = "java-sdk-ipset-" + System.currentTimeMillis();
-
-    private static String ipSetId = null;
-
     private static final long SLEEP_TIME_MILLIS = 5000;
-
     private static final String IP_ADDRESS_RANGE = "192.0.2.0/24";
+    private static AWSWAF client = null;
+    private static String ipSetId = null;
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -59,6 +70,13 @@ public class WafIntegrationTest extends AWSTestBase {
                                        .withIPSetId(ipSetId)
                                        .withChangeToken(changeToken));
         }
+    }
+
+    private static String getNewChangeToken() {
+
+        GetChangeTokenResult result = client.getChangeToken(new GetChangeTokenRequest());
+        return result.getChangeToken();
+
     }
 
     @Test
@@ -139,12 +157,5 @@ public class WafIntegrationTest extends AWSTestBase {
                                    .withIPSetId(ipSetId)
                                    .withChangeToken(getNewChangeToken())
                                    .withUpdates(ipToDelete));
-    }
-
-    private static String getNewChangeToken() {
-
-        GetChangeTokenResult result = client.getChangeToken(new GetChangeTokenRequest());
-        return result.getChangeToken();
-
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -32,16 +33,18 @@ import software.amazon.awssdk.services.s3.AmazonS3;
 public class DeleteObjectsRequest extends AmazonWebServiceRequest implements Serializable {
 
     /**
+     * List of keys to delete, with optional versions.
+     */
+    private final List<KeyVersion> keys = new ArrayList<KeyVersion>();
+    /**
      * The name of the Amazon S3 bucket containing the object(s) to delete.
      */
     private String bucketName;
-
     /**
      * Whether to enable quiet mode for the response. In quiet mode, only errors
      * are reported. Defaults to false.
      */
     private boolean quiet;
-
     /**
      * The optional Multi-Factor Authentication information to include with this
      * request. Multi-Factor Authentication is required when deleting a version
@@ -51,12 +54,6 @@ public class DeleteObjectsRequest extends AmazonWebServiceRequest implements Ser
      * more information on MFA Delete.
      */
     private MultiFactorAuthentication mfa;
-
-    /**
-     * List of keys to delete, with optional versions.
-     */
-    private final List<KeyVersion> keys = new ArrayList<KeyVersion>();
-
     /**
      * If enabled, the requester is charged for conducting this operation from
      * Requester Pays Buckets.
@@ -189,19 +186,19 @@ public class DeleteObjectsRequest extends AmazonWebServiceRequest implements Ser
     }
 
     /**
-     * Sets the quiet element for this request. When true, only errors will be
-     * returned in the service response.
-     */
-    public void setQuiet(boolean quiet) {
-        this.quiet = quiet;
-    }
-
-    /**
      * Returns the quiet element for this request. When true, only errors will be
      * returned in the service response.
      */
     public boolean getQuiet() {
         return quiet;
+    }
+
+    /**
+     * Sets the quiet element for this request. When true, only errors will be
+     * returned in the service response.
+     */
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
     }
 
     /**
@@ -213,18 +210,6 @@ public class DeleteObjectsRequest extends AmazonWebServiceRequest implements Ser
     public DeleteObjectsRequest withQuiet(boolean quiet) {
         this.setQuiet(quiet);
         return this;
-    }
-
-    /**
-     * Sets the list of keys to delete from this bucket, clearing any existing
-     * list of keys.
-     *
-     * @param keys
-     *            The list of keys to delete from this bucket
-     */
-    public void setKeys(List<KeyVersion> keys) {
-        this.keys.clear();
-        this.keys.addAll(keys);
     }
 
     /**
@@ -246,6 +231,18 @@ public class DeleteObjectsRequest extends AmazonWebServiceRequest implements Ser
      */
     public List<KeyVersion> getKeys() {
         return keys;
+    }
+
+    /**
+     * Sets the list of keys to delete from this bucket, clearing any existing
+     * list of keys.
+     *
+     * @param keys
+     *            The list of keys to delete from this bucket
+     */
+    public void setKeys(List<KeyVersion> keys) {
+        this.keys.clear();
+        this.keys.addAll(keys);
     }
 
     /**

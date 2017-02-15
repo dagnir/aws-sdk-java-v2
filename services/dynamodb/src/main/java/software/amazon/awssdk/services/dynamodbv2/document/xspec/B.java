@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -42,15 +42,16 @@ public final class B extends PathOperand {
      * >InCondition</a> (that evaluates to true if the value of the current
      * attribute is equal to any of the specified values) for building condition
      * expression.
-     * 
+     *
      * @param values
      *            specified values. The number of values must be at least one
      *            and at most 100.
      */
     public InCondition in(ByteBuffer... values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (ByteBuffer v: values)
+        for (ByteBuffer v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 
@@ -60,15 +61,16 @@ public final class B extends PathOperand {
      * >InCondition</a> (that evaluates to true if the value of the current
      * attribute is equal to any of the specified values) for building condition
      * expression.
-     * 
+     *
      * @param values
      *            specified values. The number of values must be at least one
      *            and at most 100.
      */
-    public InCondition in(byte[] ... values) {
+    public InCondition in(byte[]... values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (byte[] v: values)
+        for (byte[] v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 
@@ -78,15 +80,16 @@ public final class B extends PathOperand {
      * >InCondition</a> (that evaluates to true if the value of the current
      * attribute is equal to any of the values in the specified list) for
      * building condition expression.
-     * 
+     *
      * @param values
      *            specified list of values. The number of values must be at
      *            least one and at most 100.
      */
     public InCondition inByteBufferList(List<ByteBuffer> values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (ByteBuffer v: values)
+        for (ByteBuffer v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 
@@ -96,15 +99,16 @@ public final class B extends PathOperand {
      * >InCondition</a> (that evaluates to true if the value of the current
      * attribute is equal to any of the values in the specified list) for
      * building condition expression.
-     * 
+     *
      * @param values
      *            specified list of values. The number of values must be at
      *            least one and at most 100.
      */
     public InCondition inBytesList(List<byte[]> values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (byte[] v: values)
+        for (byte[] v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 
@@ -157,14 +161,14 @@ public final class B extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value that will be used as the operand to the
      *            if_not_exists function call.
@@ -178,14 +182,14 @@ public final class B extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value (of another binary attribute) that will be
      *            used as the operand to the if_not_exists function call.
@@ -274,14 +278,14 @@ public final class B extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value that will be used as the operand to the
      *            if_not_exists function call.

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -65,7 +80,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
                         new AttributeDefinition().withAttributeName(keyName).withAttributeType(
                                 ScalarAttributeType.S));
         createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                            .withWriteCapacityUnits(5L));
+                                                                               .withWriteCapacityUnits(5L));
 
         TableUtils.createTableIfNotExists(dynamo, createTableRequest);
         TableUtils.waitUntilActive(dynamo, TABLE_NAME);
@@ -116,7 +131,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
                 .withScanFilter(ImmutableMapParameter.of(
                         "value", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL),
                         "non-existent-field", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL)
-                ))
+                                                        ))
                 .withConditionalOperator(ConditionalOperator.AND);
 
         List<SimpleClass> andConditionResult = mapper.scan(SimpleClass.class, scanExpression);

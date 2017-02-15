@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,23 +24,23 @@ import software.amazon.awssdk.services.dynamodbv2.document.Page;
  * @param <T> resource type
  * @param <R> low level outcome/result type
  */
-public abstract class PageBasedCollection<T,R> implements Iterable<T> {
+public abstract class PageBasedCollection<T, R> implements Iterable<T> {
     private volatile R lastLowLevelResult;
     private volatile LowLevelResultListener<R> listener = LowLevelResultListener.none();
 
     @Override
-    public IteratorSupport<T,R> iterator() {
-        PageIterable<T,R> pageIterable = pages();
-        final PageIterator<T,R> pageIterator = pageIterable.iterator();
-        return new IteratorSupport<T,R>(pageIterator);
+    public IteratorSupport<T, R> iterator() {
+        PageIterable<T, R> pageIterable = pages();
+        final PageIterator<T, R> pageIterator = pageIterable.iterator();
+        return new IteratorSupport<T, R>(pageIterator);
     }
 
-    public PageIterable<T,R> pages() {
-        return new PageIterable<T,R>(this);
+    public PageIterable<T, R> pages() {
+        return new PageIterable<T, R>(this);
     }
 
-    public abstract Page<T,R> firstPage();
-    
+    public abstract Page<T, R> firstPage();
+
     /**
      * Returns the maximum number of resources to be retrieved in this
      * collection; or null if there is no limit.
@@ -68,7 +68,7 @@ public abstract class PageBasedCollection<T,R> implements Iterable<T> {
     /**
      * Used to register a listener for the event of receiving a low-level result
      * from the server side.
-     * 
+     *
      * @param listener
      *            listener to be registered. If null, a "none" listener will be
      *            set.
@@ -77,10 +77,11 @@ public abstract class PageBasedCollection<T,R> implements Iterable<T> {
      */
     public LowLevelResultListener<R> registerLowLevelResultListener(LowLevelResultListener<R> listener) {
         LowLevelResultListener<R> prev = this.listener;
-        if (listener == null)
+        if (listener == null) {
             this.listener = LowLevelResultListener.none();
-        else
+        } else {
             this.listener = listener;
+        }
         return prev;
     }
 }

@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -39,42 +39,43 @@ public interface DynamoDBTypeConverter<S extends Object, T extends Object> {
      * An abstract converter with additional general purpose functions.
      */
     @SdkInternalApi
-    static abstract class AbstractConverter<S,T> implements DynamoDBTypeConverter<S,T> {
-        public static <S,U,T> ExtendedConverter<S,U,T> join(DynamoDBTypeConverter<S,U> source, DynamoDBTypeConverter<U,T> target) {
-            return new ExtendedConverter<S,U,T>(source, target);
+    static abstract class AbstractConverter<S, T> implements DynamoDBTypeConverter<S, T> {
+        public static <S, U, T> ExtendedConverter<S, U, T> join(DynamoDBTypeConverter<S, U> source,
+                                                                DynamoDBTypeConverter<U, T> target) {
+            return new ExtendedConverter<S, U, T>(source, target);
         }
 
-        public static <S,T> NullSafeConverter<S,T> nullSafe(DynamoDBTypeConverter<S,T> converter) {
-            return new NullSafeConverter<S,T>(converter);
+        public static <S, T> NullSafeConverter<S, T> nullSafe(DynamoDBTypeConverter<S, T> converter) {
+            return new NullSafeConverter<S, T>(converter);
         }
 
-        public <U> DynamoDBTypeConverter<S,U> joinAll(DynamoDBTypeConverter<T,U> ... targets) {
-            AbstractConverter<S,U> converter = (AbstractConverter<S,U>)nullSafe();
-            for (DynamoDBTypeConverter<T,U> target : targets) {
+        public <U> DynamoDBTypeConverter<S, U> joinAll(DynamoDBTypeConverter<T, U>... targets) {
+            AbstractConverter<S, U> converter = (AbstractConverter<S, U>) nullSafe();
+            for (DynamoDBTypeConverter<T, U> target : targets) {
                 if (target != null) {
-                    converter = converter.join((DynamoDBTypeConverter<U,U>)nullSafe(target));
+                    converter = converter.join((DynamoDBTypeConverter<U, U>) nullSafe(target));
                 }
             }
             return converter;
         }
 
-        public <U> ExtendedConverter<S,T,U> join(DynamoDBTypeConverter<T,U> target) {
-            return AbstractConverter.<S,T,U>join(this, target);
+        public <U> ExtendedConverter<S, T, U> join(DynamoDBTypeConverter<T, U> target) {
+            return AbstractConverter.<S, T, U>join(this, target);
         }
 
-        public NullSafeConverter<S,T> nullSafe() {
-            return AbstractConverter.<S,T>nullSafe(this);
+        public NullSafeConverter<S, T> nullSafe() {
+            return AbstractConverter.<S, T>nullSafe(this);
         }
     }
 
     /**
      * A converter which wraps a source and target converter.
      */
-    public static class ExtendedConverter<S,U,T> extends AbstractConverter<S,T> {
-        private final DynamoDBTypeConverter<S,U> source;
-        private final DynamoDBTypeConverter<U,T> target;
+    public static class ExtendedConverter<S, U, T> extends AbstractConverter<S, T> {
+        private final DynamoDBTypeConverter<S, U> source;
+        private final DynamoDBTypeConverter<U, T> target;
 
-        public ExtendedConverter(DynamoDBTypeConverter<S,U> source, DynamoDBTypeConverter<U,T> target) {
+        public ExtendedConverter(DynamoDBTypeConverter<S, U> source, DynamoDBTypeConverter<U, T> target) {
             this.source = source;
             this.target = target;
         }
@@ -93,10 +94,10 @@ public interface DynamoDBTypeConverter<S extends Object, T extends Object> {
     /**
      * A general purpose delegating converter.
      */
-    public static class DelegateConverter<S,T> extends AbstractConverter<S,T> {
-        private final DynamoDBTypeConverter<S,T> delegate;
+    public static class DelegateConverter<S, T> extends AbstractConverter<S, T> {
+        private final DynamoDBTypeConverter<S, T> delegate;
 
-        public DelegateConverter(DynamoDBTypeConverter<S,T> delegate) {
+        public DelegateConverter(DynamoDBTypeConverter<S, T> delegate) {
             this.delegate = delegate;
         }
 
@@ -114,8 +115,8 @@ public interface DynamoDBTypeConverter<S extends Object, T extends Object> {
     /**
      * A converter which evaluates nullability before convert/unconvert.
      */
-    public static class NullSafeConverter<S,T> extends DelegateConverter<S,T> {
-        public NullSafeConverter(DynamoDBTypeConverter<S,T> delegate) {
+    public static class NullSafeConverter<S, T> extends DelegateConverter<S, T> {
+        public NullSafeConverter(DynamoDBTypeConverter<S, T> delegate) {
             super(delegate);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -44,6 +44,13 @@ public class RegionMetadataParser {
     private static final String HOSTNAME_TAG = "Hostname";
 
     /**
+     * @deprecated since this object is stateless
+     */
+    @Deprecated
+    public RegionMetadataParser() {
+    }
+
+    /**
      * Parses the specified input stream and returns a {@code RegionMetadata}
      * object.
      *
@@ -57,52 +64,6 @@ public class RegionMetadataParser {
         return new RegionMetadata(internalParse(input, false));
     }
 
-    /**
-     * @deprecated since this object is stateless
-     */
-    @Deprecated
-    public RegionMetadataParser() {
-    }
-    
-    /**
-     * Parses the specified input stream and returns a list of the regions
-     * declared in it. By default, verification on the region endpoints is
-     * disabled.
-     * 
-     * @param input
-     *            The stream containing the region metadata to parse.
-     * 
-     * @return The list of parsed regions.
-     * @deprecated in favor of {@link #parse(InputStream)}
-     */
-    @Deprecated
-    public List<Region> parseRegionMetadata(InputStream input)
-            throws IOException {
-
-        return internalParse(input, false);
-    }
-
-    /**
-     * Parses the specified input stream and optionally verifies that all of
-     * the endpoints end in ".amazonaws.com". This method is deprecated, since
-     * not all valid AWS endpoints end in ".amazonaws.com" any more.
-     * 
-     * @param input
-     *            The stream containing the region metadata to parse.
-     * @param endpointVerification
-     *            Whether to verify each region endpoint
-     * 
-     * @return The list of parsed regions.
-     * @deprecated in favor of {@link #parse(InputStream)}
-     */
-    @Deprecated
-    public List<Region> parseRegionMetadata(final InputStream input,
-                                            final boolean endpointVerification)
-            throws IOException {
-
-        return internalParse(input, endpointVerification);
-    }
-
     private static List<Region> internalParse(
             final InputStream input,
             final boolean endpointVerification) throws IOException {
@@ -111,7 +72,7 @@ public class RegionMetadataParser {
         try {
 
             DocumentBuilderFactory factory =
-                DocumentBuilderFactory.newInstance();
+                    DocumentBuilderFactory.newInstance();
 
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
             document = documentBuilder.parse(input);
@@ -128,17 +89,17 @@ public class RegionMetadataParser {
             } catch (IOException exception) {
             }
         }
-        
+
         NodeList regionNodes = document.getElementsByTagName(REGION_TAG);
         List<Region> regions = new ArrayList<Region>();
         for (int i = 0; i < regionNodes.getLength(); i++) {
             Node node = regionNodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element)node;
+                Element element = (Element) node;
                 regions.add(parseRegionElement(element, endpointVerification));
             }
         }
-        
+
         return regions;
     }
 
@@ -152,7 +113,7 @@ public class RegionMetadataParser {
         InMemoryRegionImpl regionImpl = new InMemoryRegionImpl(name, domain);
 
         NodeList endpointNodes =
-            regionElement.getElementsByTagName(ENDPOINT_TAG);
+                regionElement.getElementsByTagName(ENDPOINT_TAG);
 
         for (int i = 0; i < endpointNodes.getLength(); i++) {
             addRegionEndpoint(regionImpl,
@@ -162,7 +123,7 @@ public class RegionMetadataParser {
 
         return new Region(regionImpl);
     }
-    
+
     private static void addRegionEndpoint(
             final InMemoryRegionImpl region,
             final Element endpointElement,
@@ -173,7 +134,7 @@ public class RegionMetadataParser {
         String http = getChildElementValue(HTTP_TAG, endpointElement);
         String https = getChildElementValue(HTTPS_TAG, endpointElement);
 
-        if ( endpointVerification && !verifyLegacyEndpoint(hostname) ) {
+        if (endpointVerification && !verifyLegacyEndpoint(hostname)) {
             throw new IllegalStateException("Invalid service endpoint ("
                                             + hostname + ") is detected.");
         }
@@ -192,12 +153,13 @@ public class RegionMetadataParser {
             final Element element) {
 
         Node tagNode = element.getElementsByTagName(tagName).item(0);
-        if ( tagNode == null )
+        if (tagNode == null) {
             return null;
-        NodeList nodes= tagNode.getChildNodes();
-        Node node = (Node)nodes.item(0); 
-     
-        return node.getNodeValue();    
+        }
+        NodeList nodes = tagNode.getChildNodes();
+        Node node = (Node) nodes.item(0);
+
+        return node.getNodeValue();
     }
 
     /**
@@ -206,5 +168,44 @@ public class RegionMetadataParser {
      */
     private static boolean verifyLegacyEndpoint(String endpoint) {
         return endpoint.endsWith(".amazonaws.com");
+    }
+
+    /**
+     * Parses the specified input stream and returns a list of the regions
+     * declared in it. By default, verification on the region endpoints is
+     * disabled.
+     *
+     * @param input
+     *            The stream containing the region metadata to parse.
+     *
+     * @return The list of parsed regions.
+     * @deprecated in favor of {@link #parse(InputStream)}
+     */
+    @Deprecated
+    public List<Region> parseRegionMetadata(InputStream input)
+            throws IOException {
+
+        return internalParse(input, false);
+    }
+
+    /**
+     * Parses the specified input stream and optionally verifies that all of
+     * the endpoints end in ".amazonaws.com". This method is deprecated, since
+     * not all valid AWS endpoints end in ".amazonaws.com" any more.
+     *
+     * @param input
+     *            The stream containing the region metadata to parse.
+     * @param endpointVerification
+     *            Whether to verify each region endpoint
+     *
+     * @return The list of parsed regions.
+     * @deprecated in favor of {@link #parse(InputStream)}
+     */
+    @Deprecated
+    public List<Region> parseRegionMetadata(final InputStream input,
+                                            final boolean endpointVerification)
+            throws IOException {
+
+        return internalParse(input, endpointVerification);
     }
 }

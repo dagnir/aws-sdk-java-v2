@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class IsSigV4RetryablePredicate extends SdkPredicate<AmazonServiceExcepti
     private static final List<String> AUTH_ERROR_CODES = Arrays.asList("InvalidRequest", "InvalidArgument");
 
     private static final List<String> AUTH_ERROR_MESSAGES = Arrays.asList("Please use AWS4-HMAC-SHA256.",
-            "AWS KMS managed keys require AWS Signature Version 4.");
+                                                                          "AWS KMS managed keys require AWS Signature Version 4.");
 
     /**
      * @return True to retry with SigV4, false to not retry

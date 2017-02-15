@@ -54,7 +54,7 @@ class NamespaceRemovingInputStream extends SdkFilterInputStream {
         abortIfNeeded();
         int b = in.read();
         if (b == 'x' && !hasRemovedNamespace) {
-            lookAheadData[0] = (byte)b;
+            lookAheadData[0] = (byte) b;
             in.mark(lookAheadData.length);
             int bytesRead = in.read(lookAheadData, 1, lookAheadData.length - 1);
             in.reset();
@@ -82,11 +82,13 @@ class NamespaceRemovingInputStream extends SdkFilterInputStream {
         for (int i = 0; i < len; i++) {
             int j = this.read();
             if (j == -1) {
-                if (i == 0) return -1;
+                if (i == 0) {
+                    return -1;
+                }
                 return i;
             }
 
-            b[i + off] = (byte)j;
+            b[i + off] = (byte) j;
         }
 
         return len;
@@ -115,14 +117,22 @@ class NamespaceRemovingInputStream extends SdkFilterInputStream {
          * The regex we're simulating is: "xmlns\\s*=\\s*\".+?\".*"
          */
         StringPrefixSlicer stringSlicer = new StringPrefixSlicer(s);
-        if (stringSlicer.removePrefix("xmlns") == false) return -1;
+        if (stringSlicer.removePrefix("xmlns") == false) {
+            return -1;
+        }
 
         stringSlicer.removeRepeatingPrefix(" ");
-        if (stringSlicer.removePrefix("=") == false) return -1;
+        if (stringSlicer.removePrefix("=") == false) {
+            return -1;
+        }
         stringSlicer.removeRepeatingPrefix(" ");
 
-        if (stringSlicer.removePrefix("\"") == false) return -1;
-        if (stringSlicer.removePrefixEndingWith("\"") == false) return -1;
+        if (stringSlicer.removePrefix("\"") == false) {
+            return -1;
+        }
+        if (stringSlicer.removePrefixEndingWith("\"") == false) {
+            return -1;
+        }
 
         return s.length() - stringSlicer.getString().length();
     }
@@ -146,13 +156,17 @@ class NamespaceRemovingInputStream extends SdkFilterInputStream {
         }
 
         public boolean removePrefix(String prefix) {
-            if (s.startsWith(prefix) == false) return false;
+            if (s.startsWith(prefix) == false) {
+                return false;
+            }
             s = s.substring(prefix.length());
             return true;
         }
 
         public boolean removeRepeatingPrefix(String prefix) {
-            if (s.startsWith(prefix) == false) return false;
+            if (s.startsWith(prefix) == false) {
+                return false;
+            }
 
             while (s.startsWith(prefix)) {
                 s = s.substring(prefix.length());
@@ -162,7 +176,9 @@ class NamespaceRemovingInputStream extends SdkFilterInputStream {
 
         public boolean removePrefixEndingWith(String marker) {
             int i = s.indexOf(marker);
-            if (i < 0) return false;
+            if (i < 0) {
+                return false;
+            }
             s = s.substring(i + marker.length());
             return true;
         }

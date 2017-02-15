@@ -228,7 +228,6 @@
         "input": {
           "CollectionId": "myphotos",
           "DetectionAttributes": [
-
           ],
           "ExternalImageId": "myphotoid",
           "Image": {

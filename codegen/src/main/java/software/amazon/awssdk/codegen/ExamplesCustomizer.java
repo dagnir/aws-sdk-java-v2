@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -59,14 +59,16 @@ public class ExamplesCustomizer {
      * @return The customized service examples.
      */
     public ServiceExamples applyCustomizationsToExamples(ServiceExamples serviceExamples) {
-        if (customizationConfig == null) return serviceExamples;
+        if (customizationConfig == null) {
+            return serviceExamples;
+        }
 
         serviceExamples.getOperationExamples().entrySet()
-                .forEach(e -> {
-                    String operationName = e.getKey();
-                    Operation operation = serviceModel.getOperation(operationName);
-                    e.getValue().forEach(example -> applyCustomizationsToExample(example, operation));
-                });
+                       .forEach(e -> {
+                           String operationName = e.getKey();
+                           Operation operation = serviceModel.getOperation(operationName);
+                           e.getValue().forEach(example -> applyCustomizationsToExample(example, operation));
+                       });
         return serviceExamples;
     }
 
@@ -128,13 +130,13 @@ public class ExamplesCustomizer {
                 substituteValue = valueNode.get(shapeSub.getEmitFromMember());
                 if (substituteValue == null) {
                     System.err.println(String.format("Warning: Substituting shape '%s' for its"
-                                    + " member '%s' as shape '%s' produced null value. Original"
-                                    + " value: %s", shapeName, shapeSub.getEmitFromMember(),
-                            substituteShapeName, valueNode.toString()));
+                                                     + " member '%s' as shape '%s' produced null value. Original"
+                                                     + " value: %s", shapeName, shapeSub.getEmitFromMember(),
+                                                     substituteShapeName, valueNode.toString()));
                 }
             }
             System.out.println(String.format("Substituting shape %s with %s. %s -> %s", shapeName,
-                    substituteShapeName, valueNode.toString(), Objects.toString(substituteValue)));
+                                             substituteShapeName, valueNode.toString(), Objects.toString(substituteValue)));
 
             return applyCustomizationsToShapeJson(substituteShapeName, substituteShape, substituteValue);
         } else {
@@ -160,7 +162,7 @@ public class ExamplesCustomizer {
                         // unnecessary 'withProperty(null)' calls.
                         if (memberValue != null) {
                             obj.set(memberName, applyCustomizationsToShapeJson(memberShapeName,
-                                                    memberShape, memberValue));
+                                                                               memberShape, memberValue));
                         }
                     }
 
@@ -188,7 +190,9 @@ public class ExamplesCustomizer {
     }
 
     private JsonNode applyModificationsToShapeJson(String shapeName, JsonNode valueNode) {
-        if (customizationConfig.getShapeModifiers() == null) return valueNode;
+        if (customizationConfig.getShapeModifiers() == null) {
+            return valueNode;
+        }
 
         ShapeModifier allShapeMode = customizationConfig.getShapeModifiers().get("*");
         ShapeModifier shapeMod = customizationConfig.getShapeModifiers().get(shapeName);
@@ -216,7 +220,9 @@ public class ExamplesCustomizer {
             return node;
         }
 
-        if (!node.isObject()) return node;
+        if (!node.isObject()) {
+            return node;
+        }
 
         final ObjectNode obj = (ObjectNode) node;
 
@@ -231,17 +237,17 @@ public class ExamplesCustomizer {
         // Apply property renames
         final List<Map<String, ShapeModifier_ModifyModel>> modify = modifier.getModify() != null ? modifier.getModify() : Collections.emptyList();
         modify.forEach(memberMods ->
-            memberMods.entrySet().forEach(memberMod -> {
-                String memberName = memberMod.getKey();
-                ShapeModifier_ModifyModel modelModify = memberMod.getValue();
-                if (modelModify.getEmitPropertyName() != null) {
-                    String newName = modelModify.getEmitPropertyName();
-                    modified.set(newName, modified.get(memberName));
-                    modified.remove(memberName);
-                    memberName = newName;
-                }
-            })
-        );
+                               memberMods.entrySet().forEach(memberMod -> {
+                                   String memberName = memberMod.getKey();
+                                   ShapeModifier_ModifyModel modelModify = memberMod.getValue();
+                                   if (modelModify.getEmitPropertyName() != null) {
+                                       String newName = modelModify.getEmitPropertyName();
+                                       modified.set(newName, modified.get(memberName));
+                                       modified.remove(memberName);
+                                       memberName = newName;
+                                   }
+                               })
+                      );
 
         return modified;
     }

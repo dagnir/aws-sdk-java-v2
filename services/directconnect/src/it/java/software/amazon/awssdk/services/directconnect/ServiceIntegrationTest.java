@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.directconnect;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -29,7 +44,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setup() {
         CreateConnectionResult result = dc.createConnection(new CreateConnectionRequest()
-                .withConnectionName(CONNECTION_NAME).withBandwidth("1Gbps").withLocation("EqSV5"));
+                                                                    .withConnectionName(CONNECTION_NAME).withBandwidth("1Gbps").withLocation("EqSV5"));
         connectionId = result.getConnectionId();
     }
 
@@ -62,7 +77,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void describeConnections_FilteredByCollectionId_ReturnsOnlyOneConnection() {
         DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(new DescribeConnectionsRequest()
-                .withConnectionId(connectionId));
+                                                                                             .withConnectionId(connectionId));
         assertThat(describeConnectionsResult.getConnections(), hasSize(1));
         assertEquals(connectionId, describeConnectionsResult.getConnections().get(0).getConnectionId());
         assertEquals(EXPECTED_CONNECTION_STATUS, describeConnectionsResult.getConnections().get(0).getConnectionState());

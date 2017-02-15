@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.services.s3.internal.Constants.MAXIMUM_UPLOAD_PARTS;
@@ -50,7 +51,7 @@ public class TransferManagerUtils {
                 return thread;
             }
         };
-        return (ThreadPoolExecutor)Executors.newFixedThreadPool(10, threadFactory);
+        return (ThreadPoolExecutor) Executors.newFixedThreadPool(10, threadFactory);
     }
 
     /**
@@ -68,7 +69,9 @@ public class TransferManagerUtils {
     public static boolean isUploadParallelizable(final PutObjectRequest putObjectRequest, final boolean isUsingEncryption) {
         // Each uploaded part in an encrypted upload depends on the encryption context
         // from the previous upload, so we cannot parallelize encrypted upload parts.
-        if (isUsingEncryption) return false;
+        if (isUsingEncryption) {
+            return false;
+        }
 
         // Otherwise, if there's a file, we can process the uploads concurrently.
         return (getRequestFile(putObjectRequest) != null);
@@ -86,7 +89,9 @@ public class TransferManagerUtils {
      */
     public static long getContentLength(PutObjectRequest putObjectRequest) {
         File file = getRequestFile(putObjectRequest);
-        if (file != null) return file.length();
+        if (file != null) {
+            return file.length();
+        }
 
         if (putObjectRequest.getInputStream() != null) {
             if (putObjectRequest.getMetadata().getContentLength() > 0) {
@@ -111,10 +116,10 @@ public class TransferManagerUtils {
      */
     public static long calculateOptimalPartSize(PutObjectRequest putObjectRequest, TransferManagerConfiguration configuration) {
         double contentLength = TransferManagerUtils.getContentLength(putObjectRequest);
-        double optimalPartSize = (double)contentLength / (double)MAXIMUM_UPLOAD_PARTS;
+        double optimalPartSize = (double) contentLength / (double) MAXIMUM_UPLOAD_PARTS;
         // round up so we don't push the upload over the maximum number of parts
         optimalPartSize = Math.ceil(optimalPartSize);
-        return (long)Math.max(optimalPartSize, configuration.getMinimumUploadPartSize());
+        return (long) Math.max(optimalPartSize, configuration.getMinimumUploadPartSize());
     }
 
     /**
@@ -130,17 +135,20 @@ public class TransferManagerUtils {
      * @return True if the the specified request should be processed as a
      *         multipart upload.
      */
-    public static boolean shouldUseMultipartUpload(PutObjectRequest putObjectRequest, TransferManagerConfiguration configuration) {
+    public static boolean shouldUseMultipartUpload(PutObjectRequest putObjectRequest,
+                                                   TransferManagerConfiguration configuration) {
         long contentLength = TransferManagerUtils.getContentLength(putObjectRequest);
         return (contentLength > configuration.getMultipartUploadThreshold())
-                && putObjectRequest.getTagging() == null;
+               && putObjectRequest.getTagging() == null;
     }
 
     /**
      * Convenience method for getting the file specified in a request.
      */
     public static File getRequestFile(final PutObjectRequest putObjectRequest) {
-        if (putObjectRequest.getFile() != null) return putObjectRequest.getFile();
+        if (putObjectRequest.getFile() != null) {
+            return putObjectRequest.getFile();
+        }
         return null;
     }
 
@@ -161,18 +169,18 @@ public class TransferManagerUtils {
             TransferManagerConfiguration configuration,
             long contentLengthOfSource) {
         double optimalPartSize = (double) contentLengthOfSource
-                / (double) MAXIMUM_UPLOAD_PARTS;
+                                 / (double) MAXIMUM_UPLOAD_PARTS;
         // round up so we don't push the copy over the maximum number of parts
         optimalPartSize = Math.ceil(optimalPartSize);
         return (long) Math.max(optimalPartSize,
-                configuration.getMultipartCopyPartSize());
+                               configuration.getMultipartCopyPartSize());
     }
 
     /**
      * Determines the pause status based on the current state of transfer.
      */
     public static PauseStatus determinePauseStatus(TransferState transferState,
-            boolean forceCancel) {
+                                                   boolean forceCancel) {
 
         if (forceCancel) {
             if (transferState == TransferState.Waiting) {
@@ -200,12 +208,12 @@ public class TransferManagerUtils {
      * @return True if this request can use parallel part downloads.
      */
     public static boolean isDownloadParallelizable(final AmazonS3 s3, final GetObjectRequest getObjectRequest,
-            Integer partCount) {
+                                                   Integer partCount) {
         ValidationUtils.assertNotNull(s3, "S3 client");
         ValidationUtils.assertNotNull(getObjectRequest, "GetObjectRequest");
 
         if (s3 instanceof AmazonS3Encryption || getObjectRequest.getRange() != null
-                || getObjectRequest.getPartNumber() != null || partCount == null) {
+            || getObjectRequest.getPartNumber() != null || partCount == null) {
             return false;
         }
         return true;

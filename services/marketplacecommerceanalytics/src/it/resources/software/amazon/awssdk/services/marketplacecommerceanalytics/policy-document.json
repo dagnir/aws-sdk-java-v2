@@ -14,8 +14,8 @@
     {
       "Effect": "Allow",
       "Action": [
-          "sns:Publish",
-          "sns:GetTopicAttributes"
+        "sns:Publish",
+        "sns:GetTopicAttributes"
       ],
       "Resource": "*"
     },

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -42,10 +42,11 @@ public class ItemTest {
     @Test
     public void jsonDoubleMax() {
         double[] values = {
-          Double.MAX_VALUE, Double.MIN_NORMAL, Double.MIN_VALUE, Double.MIN_NORMAL
+                Double.MAX_VALUE, Double.MIN_NORMAL, Double.MIN_VALUE, Double.MIN_NORMAL
         };
-        for (double val: values)
+        for (double val : values) {
             doJsonDoubleTest(val);
+        }
     }
 
     private void doJsonDoubleTest(double value) {
@@ -109,19 +110,19 @@ public class ItemTest {
         assertNull(item.getNumber("test"));
     }
 
-    @Test(expected=NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getInt_Null() {
         Item item = new Item();
         item.getInt("test");
     }
 
-    @Test(expected=NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getLong_Null() {
         Item item = new Item();
         item.getLong("test");
     }
 
-    @Test(expected=NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getNumber_NonNumber() {
         Item item = new Item();
         item.withString("test", "foo");
@@ -148,7 +149,7 @@ public class ItemTest {
     public void toByteArray() {
         Item item = new Item();
         assertNull(item.getBinary("test"));
-        byte[] bytes = {1,2,3};
+        byte[] bytes = {1, 2, 3};
         item.withBinary("test", bytes);
         assertTrue(Arrays.equals(bytes, item.getBinary("test")));
         ByteBuffer bb = ByteBuffer.wrap(bytes);
@@ -158,7 +159,7 @@ public class ItemTest {
         assertTrue(Arrays.equals(bytes, item.getByteBuffer("test").array()));
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void toByteArray_IncompatibleTypeException() {
         Item item = new Item();
         item.withString("test", "foo");
@@ -169,7 +170,7 @@ public class ItemTest {
     public void toByteBuffer() {
         Item item = new Item();
         assertNull(item.getByteBuffer("test"));
-        byte[] bytes = {1,2,3};
+        byte[] bytes = {1, 2, 3};
         item.withBinary("test", ByteBuffer.wrap(bytes));
         ByteBuffer toByteBuffer = item.getByteBuffer("test");
         assertTrue(Arrays.equals(bytes, toByteBuffer.array()));
@@ -179,7 +180,7 @@ public class ItemTest {
         assertTrue(Arrays.equals(bytes, item.getByteBuffer("test").array()));
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void toByteBuffer_IncompatibleTypeException() {
         Item item = new Item();
         item.withString("test", "foo");
@@ -236,10 +237,10 @@ public class ItemTest {
         assertTrue(ss.contains("true"));
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void getStringSet_fromBinary() {
         Item item = new Item();
-        item.withBinary("test", new byte[]{1,2});
+        item.withBinary("test", new byte[] {1, 2});
         item.getStringSet("test");
     }
 
@@ -251,7 +252,7 @@ public class ItemTest {
         assertTrue(ss.size() == 0);
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void getStringSet_duplicateElements() {
         Item item = new Item();
         item.withList("test", "a", "b", "a");
@@ -307,7 +308,7 @@ public class ItemTest {
         assertTrue(ss.size() == 0);
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void getNumberSet_duplicateElements() {
         Item item = new Item();
         item.withList("test", BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ZERO);
@@ -329,16 +330,17 @@ public class ItemTest {
     public void getBinarySet_bytes() {
         Item item = new Item();
         assertNull(item.getBinarySet("test"));
-        item.withList("test", new byte[]{1,2}, new byte[]{3,4});
+        item.withList("test", new byte[] {1, 2}, new byte[] {3, 4});
         Set<byte[]> bas = item.getBinarySet("test");
         assertTrue(bas.size() == 2);
         boolean a = false;
         boolean b = false;
-        for (byte[] ba: bas) {
-            if (Arrays.equals(ba, new byte[]{1,2}))
+        for (byte[] ba : bas) {
+            if (Arrays.equals(ba, new byte[] {1, 2})) {
                 a = true;
-            else if (Arrays.equals(ba, new byte[]{3,4}))
+            } else if (Arrays.equals(ba, new byte[] {3, 4})) {
                 b = true;
+            }
         }
         assertTrue(a);
         assertTrue(b);
@@ -347,22 +349,24 @@ public class ItemTest {
     @Test
     public void getBinarySet_singleByteArray() {
         Item item = new Item();
-        item.with("test", new byte[]{1,2});
+        item.with("test", new byte[] {1, 2});
         Set<byte[]> bs = item.getBinarySet("test");
         assertTrue(bs.size() == 1);
         boolean a = false;
-        for (byte[] ba: bs) {
-            if (Arrays.equals(ba, new byte[]{1,2}))
+        for (byte[] ba : bs) {
+            if (Arrays.equals(ba, new byte[] {1, 2})) {
                 a = true;
+            }
         }
         assertTrue(a);
 
         Set<ByteBuffer> bbs = item.getByteBufferSet("test");
         assertTrue(bbs.size() == 1);
         a = false;
-        for (ByteBuffer ba: bbs) {
-            if (Arrays.equals(ba.array(), new byte[]{1,2}))
+        for (ByteBuffer ba : bbs) {
+            if (Arrays.equals(ba.array(), new byte[] {1, 2})) {
                 a = true;
+            }
         }
         assertTrue(a);
     }
@@ -370,21 +374,23 @@ public class ItemTest {
     @Test
     public void getBinarySet_singleByteBuffer() {
         Item item = new Item();
-        item.with("test", ByteBuffer.wrap(new byte[] { 1, 2 }));
+        item.with("test", ByteBuffer.wrap(new byte[] {1, 2}));
         Set<ByteBuffer> bbs = item.getByteBufferSet("test");
         assertTrue(bbs.size() == 1);
         boolean a = false;
-        for (ByteBuffer ba: bbs) {
-            if (Arrays.equals(ba.array(), new byte[]{1,2}))
+        for (ByteBuffer ba : bbs) {
+            if (Arrays.equals(ba.array(), new byte[] {1, 2})) {
                 a = true;
+            }
         }
         assertTrue(a);
         Set<byte[]> bs = item.getBinarySet("test");
         assertTrue(bs.size() == 1);
         a = false;
-        for (byte[] ba: bs) {
-            if (Arrays.equals(ba, new byte[]{1,2}))
+        for (byte[] ba : bs) {
+            if (Arrays.equals(ba, new byte[] {1, 2})) {
                 a = true;
+            }
         }
         assertTrue(a);
     }
@@ -400,7 +406,7 @@ public class ItemTest {
         assertTrue(bbs.size() == 0);
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void getBinarySet_Incompatible() {
         Item item = new Item();
         item.withString("test", "foo");
@@ -419,7 +425,7 @@ public class ItemTest {
         assertTrue(bbs.size() == 0);
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void getByteBufferSet_Incompatible() {
         Item item = new Item();
         item.withString("test", "foo");
@@ -429,15 +435,16 @@ public class ItemTest {
     @Test
     public void getByteBufferSet() {
         Item item = new Item();
-        item.withList("test", new byte[]{1,2,3}, new byte[]{4,5,6});
+        item.withList("test", new byte[] {1, 2, 3}, new byte[] {4, 5, 6});
         Set<ByteBuffer> bs = item.getByteBufferSet("test");
         assertTrue(bs.size() == 2);
-        boolean a=false, b=false;
-        for (ByteBuffer bb: bs) {
-            if (Arrays.equals(bb.array(), new byte[]{1,2,3}))
+        boolean a = false, b = false;
+        for (ByteBuffer bb : bs) {
+            if (Arrays.equals(bb.array(), new byte[] {1, 2, 3})) {
                 a = true;
-            else if (Arrays.equals(bb.array(), new byte[]{4,5,6}))
+            } else if (Arrays.equals(bb.array(), new byte[] {4, 5, 6})) {
                 b = true;
+            }
         }
         assertTrue(a);
         assertTrue(b);
@@ -480,16 +487,16 @@ public class ItemTest {
     @Test
     public void fromJSON_array() {
         Item item = new Item()
-            .withJSON("arrayJson", "[\"foo\", \"bar\"]");
+                .withJSON("arrayJson", "[\"foo\", \"bar\"]");
         List<String> arrayJson = item.getList("arrayJson");
-        String[] expectedArray = new String[]{"foo", "bar"};
+        String[] expectedArray = new String[] {"foo", "bar"};
         Assert.assertArrayEquals(expectedArray, arrayJson.toArray());
     }
 
     @Test
     public void fromJSON_map() {
         Item item = new Item()
-            .withJSON("mapJson", "{\"foo\": \"bar\"}");
+                .withJSON("mapJson", "{\"foo\": \"bar\"}");
         Map<String, String> mapJson = item.getMap("mapJson");
         Assert.assertEquals("bar", mapJson.get("foo"));
     }
@@ -497,29 +504,28 @@ public class ItemTest {
     @Test
     public void toFromJSON() {
         Item item = new Item()
-            .withString("stringA", "stringV")
-            .withFloat("floatA", 123.45f)
-            // Jackson will convert byte[] into Base64-encoded binary data
-            .withBinary("binaryA", new byte[]{1,2,3})
-            .withBoolean("booleanA", true)
-            .withNull("nullA")
-            .withJSON("jsonA", "{\"myjson\": 321}")
-            .withList("listA", "a", "b", "c")
-            .withMap("mapA", new ValueMap().with("map-a", "a").with("map-b", "b"))
-            .withStringSet("strSetA", "sa", "sb", "sc")
-            .withNumberSet("numSetA", BigDecimal.ONE, BigDecimal.ZERO)
-            .withBinarySet("binarySetA", new byte[]{00,11} , new byte[]{22,33})
-            .withBinarySet("byteBufferSetA",
-                ByteBuffer.wrap(new byte[]{44,55}),
-                ByteBuffer.wrap(new byte[]{66,77}))
-            ;
+                .withString("stringA", "stringV")
+                .withFloat("floatA", 123.45f)
+                // Jackson will convert byte[] into Base64-encoded binary data
+                .withBinary("binaryA", new byte[] {1, 2, 3})
+                .withBoolean("booleanA", true)
+                .withNull("nullA")
+                .withJSON("jsonA", "{\"myjson\": 321}")
+                .withList("listA", "a", "b", "c")
+                .withMap("mapA", new ValueMap().with("map-a", "a").with("map-b", "b"))
+                .withStringSet("strSetA", "sa", "sb", "sc")
+                .withNumberSet("numSetA", BigDecimal.ONE, BigDecimal.ZERO)
+                .withBinarySet("binarySetA", new byte[] {00, 11}, new byte[] {22, 33})
+                .withBinarySet("byteBufferSetA",
+                               ByteBuffer.wrap(new byte[] {44, 55}),
+                               ByteBuffer.wrap(new byte[] {66, 77}));
         String json = item.toJSONPretty();
         System.out.println(json);
-        System.out.println("byte[]{1,2,3} => " + Base64.encodeAsString(new byte[]{1,2,3}));
-        System.out.println("byte[]{00,11} => " + Base64.encodeAsString(new byte[]{00,11}));
-        System.out.println("byte[]{22,33} => " + Base64.encodeAsString(new byte[]{22,33}));
-        System.out.println("byte[]{44,44} => " + Base64.encodeAsString(new byte[]{44,55}));
-        System.out.println("byte[]{66,77} => " + Base64.encodeAsString(new byte[]{66,77}));
+        System.out.println("byte[]{1,2,3} => " + Base64.encodeAsString(new byte[] {1, 2, 3}));
+        System.out.println("byte[]{00,11} => " + Base64.encodeAsString(new byte[] {00, 11}));
+        System.out.println("byte[]{22,33} => " + Base64.encodeAsString(new byte[] {22, 33}));
+        System.out.println("byte[]{44,44} => " + Base64.encodeAsString(new byte[] {44, 55}));
+        System.out.println("byte[]{66,77} => " + Base64.encodeAsString(new byte[] {66, 77}));
         Item itemTo = Item.fromJSON(json);
         System.out.println(itemTo);
         assertTrue(List.class.isAssignableFrom(itemTo.getTypeOf("binarySetA")));
@@ -529,11 +535,12 @@ public class ItemTest {
         assertTrue(itemTo.getBinarySet("binarySetA").size() == 2);
         {   // verity the binary content of "binarySetA"
             boolean a = false, b = false;
-            for (byte[] bytes: itemTo.getBinarySet("binarySetA")) {
-                if (Arrays.equals(bytes, new byte[]{00,11}))
+            for (byte[] bytes : itemTo.getBinarySet("binarySetA")) {
+                if (Arrays.equals(bytes, new byte[] {00, 11})) {
                     a = true;
-                else if (Arrays.equals(bytes, new byte[]{22,33}))
+                } else if (Arrays.equals(bytes, new byte[] {22, 33})) {
                     b = true;
+                }
             }
             assertTrue(a);
             assertTrue(b);
@@ -542,11 +549,12 @@ public class ItemTest {
         assertTrue(itemTo.getBinarySet("byteBufferSetA").size() == 2);
         {   // verity the binary content of "byteBufferSetA"
             boolean a = false, b = false;
-            for (byte[] bytes: itemTo.getBinarySet("byteBufferSetA")) {
-                if (Arrays.equals(bytes, new byte[]{44,55}))
+            for (byte[] bytes : itemTo.getBinarySet("byteBufferSetA")) {
+                if (Arrays.equals(bytes, new byte[] {44, 55})) {
                     a = true;
-                else if (Arrays.equals(bytes, new byte[]{66,77}))
+                } else if (Arrays.equals(bytes, new byte[] {66, 77})) {
                     b = true;
+                }
             }
             assertTrue(a);
             assertTrue(b);
@@ -570,58 +578,58 @@ public class ItemTest {
         }
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withStringSet_duplicates() {
         new Item().withStringSet("test", "a", "b", "a");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withBigDecimalSet_duplicates() {
         new Item().withBigDecimalSet("test", new BigDecimal("1"), BigDecimal.ONE);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withNumberSet_duplicates() {
         new Item().withNumberSet("test", new BigDecimal("1"), new BigInteger("1"));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withNumberSet_duplicates2() {
         new Item().withNumberSet("test", new BigDecimal("1.0"), new Float("1"));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withNumberSet_duplicates3() {
         Set<Number> set = new FluentHashSet<Number>().withAll(
-            new BigDecimal("1.0"), new Float("1"));
+                new BigDecimal("1.0"), new Float("1"));
         assertTrue(set.size() == 2);
         // Become duplicates when get converted into BigDecimal
         new Item().withNumberSet("test", set);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalidNullInput() {
         new Item().withNumber("test", null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void nullAttrName() {
         new Item().withNull(null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void blankAttrName() {
         new Item().withNull("   ");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withKeyComponents_null() {
         new Item().withKeyComponents();
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withKeyComponents_nullComponent() {
-        new Item().withKeyComponents((KeyAttribute)null);
+        new Item().withKeyComponents((KeyAttribute) null);
     }
 
     @Test
@@ -631,23 +639,23 @@ public class ItemTest {
         Assert.assertTrue(BigDecimal.class == item.getTypeOf("name"));
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void getBOOL_null() {
         Item item = new Item();
         item.getBOOL("test");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withPrimaryKey_null() {
         new Item().withPrimaryKey(null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withPrimaryKey_empty() {
         new Item().withPrimaryKey(new PrimaryKey());
     }
 
-    @Test(expected=IncompatibleTypeException.class)
+    @Test(expected = IncompatibleTypeException.class)
     public void getBOOL_invalidValue() {
         Item item = new Item().withInt("test", 123);
         item.getBOOL("test");
@@ -675,17 +683,17 @@ public class ItemTest {
 
     @Test
     public void withShort() {
-        assertTrue(1 == new Item().withShort("test", (short)1).getInt("test"));
+        assertTrue(1 == new Item().withShort("test", (short) 1).getInt("test"));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withShort_emptyName() {
-        new Item().withShort(" ", (short)1);
+        new Item().withShort(" ", (short) 1);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withShort_nullName() {
-        new Item().withShort(null, (short)1);
+        new Item().withShort(null, (short) 1);
     }
 
     @Test
@@ -693,18 +701,18 @@ public class ItemTest {
         assertTrue(1 == new Item().withDouble("test", 1.0).getInt("test"));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withDouble_emptyName() {
         new Item().withDouble(" ", 1.0);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withDouble_nullName() {
         new Item().withDouble(null, 1.0);
     }
 
     // https://github.com/aws/aws-sdk-java/issues/311#issuecomment-64474230
-    @Test(expected=ClassCastException.class)
+    @Test(expected = ClassCastException.class)
     public void issues311() {
         Map<String, BigInteger> bigIntMap_input = new HashMap<String, BigInteger>();
         bigIntMap_input.put("map_key", new BigInteger("123"));
@@ -836,7 +844,7 @@ public class ItemTest {
         assertTrue(b == 123);
     }
 
-    @Test(expected=NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getShortNotExist() {
         Item i = new Item();
         i.getShort("item_key");
@@ -849,7 +857,7 @@ public class ItemTest {
         assertTrue(b == 123.45f);
     }
 
-    @Test(expected=NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getFloatNotExist() {
         Item i = new Item();
         i.getFloat("item_key");
@@ -859,21 +867,21 @@ public class ItemTest {
     public void getDouble() {
         Item i = new Item().withDouble("item_key", 123.45);
         double b = i.getFloat("item_key");
-        assertTrue(b+"", b > 123.44 && b <= 123.45);
+        assertTrue(b + "", b > 123.44 && b <= 123.45);
     }
 
-    @Test(expected=NumberFormatException.class)
+    @Test(expected = NumberFormatException.class)
     public void getDoubleNotExist() {
         Item i = new Item();
         i.getDouble("item_key");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withNullBigInteger() {
         new Item().withBigInteger("foo", null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void withNullNumber() {
         new Item().withNumber("foo", null);
     }

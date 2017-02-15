@@ -39,20 +39,17 @@ import software.amazon.awssdk.util.ClassLoaderHelper;
 @Immutable
 public class InternalConfig {
 
+    static final String DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH = "awssdk_config_default.json";
+    //@formatter:on
+    static final String DEFAULT_CONFIG_RESOURCE_ABSOLUTE_PATH = "/software/amazon/awssdk/internal/config/"
+                                                                + DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH;
+    static final String CONFIG_OVERRIDE_RESOURCE = "awssdk_config_override.json";
     //@formatter:off
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .disable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-    //@formatter:on
-
     private static final InternalLogApi log = InternalLogFactory.getLog(InternalConfig.class);
-
-    static final String DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH = "awssdk_config_default.json";
-    static final String DEFAULT_CONFIG_RESOURCE_ABSOLUTE_PATH = "/software/amazon/awssdk/internal/config/"
-            + DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH;
-
-    static final String CONFIG_OVERRIDE_RESOURCE = "awssdk_config_override.json";
     private static final String SERVICE_REGION_DELIMITOR = "/";
 
     private final SignerConfig defaultSignerConfig;
@@ -64,6 +61,8 @@ public class InternalConfig {
     private final List<HostRegexToRegionMapping> hostRegexToRegionMappings;
 
     private final String userAgentTemplate;
+    private URL defaultConfigFileLocation;
+    private URL overrideConfigFileLocation;
 
     /**
      * @param defaults
@@ -78,17 +77,52 @@ public class InternalConfig {
         regionSigners = mergeSignerMap(defaults.getRegionSigners(), override.getRegionSigners(), "region");
         serviceSigners = mergeSignerMap(defaults.getServiceSigners(), override.getServiceSigners(), "service");
         serviceRegionSigners = mergeSignerMap(defaults.getServiceRegionSigners(), override.getServiceRegionSigners(),
-                "service" + SERVICE_REGION_DELIMITOR + "region");
+                                              "service" + SERVICE_REGION_DELIMITOR + "region");
         httpClients = merge(defaults.getHttpClients(), override.getHttpClients());
 
         hostRegexToRegionMappings = append(override.getHostRegexToRegionMappings(),
-                defaults.getHostRegexToRegionMappings());
+                                           defaults.getHostRegexToRegionMappings());
 
         if (override.getUserAgentTemplate() != null) {
             userAgentTemplate = override.getUserAgentTemplate();
         } else {
             userAgentTemplate = defaults.getUserAgentTemplate();
         }
+    }
+
+    static InternalConfigJsonHelper loadfrom(URL url) throws JsonParseException, JsonMappingException, IOException {
+        if (url == null) {
+            throw new IllegalArgumentException();
+        }
+        InternalConfigJsonHelper target = MAPPER.readValue(url, InternalConfigJsonHelper.class);
+        return target;
+    }
+
+    /**
+     * Loads and returns the AWS Java SDK internal configuration from the classpath.
+     */
+    static InternalConfig load() throws JsonParseException, JsonMappingException, IOException {
+        // First try loading via the class by using a relative path
+        URL url = ClassLoaderHelper.getResource(DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH, true, InternalConfig.class); // classesFirst=true
+        if (url == null) { // Then try with the absolute path
+            url = ClassLoaderHelper.getResource(DEFAULT_CONFIG_RESOURCE_ABSOLUTE_PATH, InternalConfig.class);
+        }
+        InternalConfigJsonHelper config = loadfrom(url);
+        InternalConfigJsonHelper configOverride;
+        URL overrideUrl = ClassLoaderHelper.getResource("/" + CONFIG_OVERRIDE_RESOURCE, InternalConfig.class);
+        if (overrideUrl == null) { // Try without a leading "/"
+            overrideUrl = ClassLoaderHelper.getResource(CONFIG_OVERRIDE_RESOURCE, InternalConfig.class);
+        }
+        if (overrideUrl == null) {
+            log.debug("Configuration override " + CONFIG_OVERRIDE_RESOURCE + " not found.");
+            configOverride = new InternalConfigJsonHelper();
+        } else {
+            configOverride = loadfrom(overrideUrl);
+        }
+        InternalConfig merged = new InternalConfig(config, configOverride);
+        merged.setDefaultConfigFileLocation(url);
+        merged.setOverrideConfigFileLocation(overrideUrl);
+        return merged;
     }
 
     /**
@@ -186,7 +220,7 @@ public class InternalConfig {
 
     /**
      * Returns the signer configuration for the specified service name and an optional region name.
-     * 
+     *
      * @param serviceName
      *            must not be null
      * @param regionName
@@ -194,8 +228,9 @@ public class InternalConfig {
      * @return the signer
      */
     public SignerConfig getSignerConfig(String serviceName, String regionName) {
-        if (serviceName == null)
+        if (serviceName == null) {
             throw new IllegalArgumentException();
+        }
         SignerConfig signerConfig = null;
         if (regionName != null) {
             // Service+Region signer config has the highest precedence
@@ -216,6 +251,10 @@ public class InternalConfig {
         return signerConfig == null ? defaultSignerConfig : signerConfig;
     }
 
+    /*
+     * For debugging purposes
+     */
+
     /**
      * @return all the host-name-regex to region-name mappings.
      */
@@ -230,57 +269,16 @@ public class InternalConfig {
         return userAgentTemplate;
     }
 
-    static InternalConfigJsonHelper loadfrom(URL url) throws JsonParseException, JsonMappingException, IOException {
-        if (url == null)
-            throw new IllegalArgumentException();
-        InternalConfigJsonHelper target = MAPPER.readValue(url, InternalConfigJsonHelper.class);
-        return target;
-    }
-
-    /**
-     * Loads and returns the AWS Java SDK internal configuration from the classpath.
-     */
-    static InternalConfig load() throws JsonParseException, JsonMappingException, IOException {
-        // First try loading via the class by using a relative path
-        URL url = ClassLoaderHelper.getResource(DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH, true, InternalConfig.class); // classesFirst=true
-        if (url == null) { // Then try with the absolute path
-            url = ClassLoaderHelper.getResource(DEFAULT_CONFIG_RESOURCE_ABSOLUTE_PATH, InternalConfig.class);
-        }
-        InternalConfigJsonHelper config = loadfrom(url);
-        InternalConfigJsonHelper configOverride;
-        URL overrideUrl = ClassLoaderHelper.getResource("/" + CONFIG_OVERRIDE_RESOURCE, InternalConfig.class);
-        if (overrideUrl == null) { // Try without a leading "/"
-            overrideUrl = ClassLoaderHelper.getResource(CONFIG_OVERRIDE_RESOURCE, InternalConfig.class);
-        }
-        if (overrideUrl == null) {
-            log.debug("Configuration override " + CONFIG_OVERRIDE_RESOURCE + " not found.");
-            configOverride = new InternalConfigJsonHelper();
-        } else {
-            configOverride = loadfrom(overrideUrl);
-        }
-        InternalConfig merged = new InternalConfig(config, configOverride);
-        merged.setDefaultConfigFileLocation(url);
-        merged.setOverrideConfigFileLocation(overrideUrl);
-        return merged;
-    }
-
-    /*
-     * For debugging purposes
-     */
-
-    private URL defaultConfigFileLocation;
-    private URL overrideConfigFileLocation;
-
     public URL getDefaultConfigFileLocation() {
         return defaultConfigFileLocation;
     }
 
-    public URL getOverrideConfigFileLocation() {
-        return overrideConfigFileLocation;
-    }
-
     void setDefaultConfigFileLocation(URL url) {
         this.defaultConfigFileLocation = url;
+    }
+
+    public URL getOverrideConfigFileLocation() {
+        return overrideConfigFileLocation;
     }
 
     void setOverrideConfigFileLocation(URL url) {
@@ -289,9 +287,9 @@ public class InternalConfig {
 
     void dump() {
         StringBuilder sb = new StringBuilder().append("defaultSignerConfig: ").append(defaultSignerConfig).append("\n")
-                .append("serviceRegionSigners: ").append(serviceRegionSigners).append("\n").append("regionSigners: ")
-                .append(regionSigners).append("\n").append("serviceSigners: ").append(serviceSigners).append("\n")
-                .append("userAgentTemplate: ").append(userAgentTemplate);
+                                              .append("serviceRegionSigners: ").append(serviceRegionSigners).append("\n").append("regionSigners: ")
+                                              .append(regionSigners).append("\n").append("serviceSigners: ").append(serviceSigners).append("\n")
+                                              .append("userAgentTemplate: ").append(userAgentTemplate);
         log.debug(sb.toString());
     }
 

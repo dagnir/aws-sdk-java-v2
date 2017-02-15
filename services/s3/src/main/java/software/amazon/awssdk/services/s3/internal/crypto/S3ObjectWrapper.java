@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import java.io.BufferedReader;
@@ -34,12 +35,31 @@ import software.amazon.awssdk.util.StringUtils;
 class S3ObjectWrapper implements Closeable {
     private final S3Object s3obj;
     private final S3ObjectId id;
-    
+
     S3ObjectWrapper(S3Object s3obj, S3ObjectId id) {
-        if (s3obj == null)
+        if (s3obj == null) {
             throw new IllegalArgumentException();
+        }
         this.s3obj = s3obj;
         this.id = id;
+    }
+
+    private static String from(InputStream is) throws IOException {
+        if (is == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is, StringUtils.UTF8));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } finally {
+            is.close();
+        }
+        return sb.toString();
     }
 
     public S3ObjectId getS3ObjectId() {
@@ -58,11 +78,11 @@ class S3ObjectWrapper implements Closeable {
         return s3obj.getObjectContent();
     }
 
-    void setObjectContent(S3ObjectInputStream objectContent) {
+    void setObjectContent(InputStream objectContent) {
         s3obj.setObjectContent(objectContent);
     }
-    
-    void setObjectContent(InputStream objectContent) {
+
+    void setObjectContent(S3ObjectInputStream objectContent) {
         s3obj.setObjectContent(objectContent);
     }
 
@@ -81,16 +101,17 @@ class S3ObjectWrapper implements Closeable {
     void setKey(String key) {
         s3obj.setKey(key);
     }
-    
+
     String getRedirectLocation() {
         return s3obj.getRedirectLocation();
     }
-    
+
     void setRedirectLocation(String redirectLocation) {
         s3obj.setRedirectLocation(redirectLocation);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return s3obj.toString();
     }
 
@@ -101,7 +122,7 @@ class S3ObjectWrapper implements Closeable {
         ObjectMetadata metadata = s3obj.getObjectMetadata();
         Map<String, String> userMeta = metadata.getUserMetadata();
         return userMeta != null
-            && userMeta.containsKey(Headers.CRYPTO_INSTRUCTION_FILE);
+               && userMeta.containsKey(Headers.CRYPTO_INSTRUCTION_FILE);
     }
 
     /**
@@ -112,14 +133,14 @@ class S3ObjectWrapper implements Closeable {
         ObjectMetadata metadata = s3obj.getObjectMetadata();
         Map<String, String> userMeta = metadata.getUserMetadata();
         return userMeta != null
-            && userMeta.containsKey(Headers.CRYPTO_IV)
-            && (userMeta.containsKey(Headers.CRYPTO_KEY_V2)
-                || userMeta.containsKey(Headers.CRYPTO_KEY));
+               && userMeta.containsKey(Headers.CRYPTO_IV)
+               && (userMeta.containsKey(Headers.CRYPTO_KEY_V2)
+                   || userMeta.containsKey(Headers.CRYPTO_KEY));
     }
 
     /**
      * Converts and return the underlying S3 object as a json string.
-     * 
+     *
      * @throws SdkClientException if failed in JSON conversion.
      */
     String toJsonString() {
@@ -130,40 +151,25 @@ class S3ObjectWrapper implements Closeable {
         }
     }
 
-    private static String from(InputStream is) throws IOException {
-        if (is == null)
-            return "";
-        StringBuilder sb = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(is, StringUtils.UTF8));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-        } finally {
-            is.close();
-        }
-        return sb.toString();
-    }
-
     @Override
     public void close() throws IOException {
         s3obj.close();
     }
 
-    S3Object getS3Object() { return s3obj; }
+    S3Object getS3Object() {
+        return s3obj;
+    }
 
     /**
      * Returns the original crypto scheme used for encryption, which may
      * differ from the crypto scheme used for decryption during, for example,
      * a range-get operation. 
-     * 
+     *
      * @param instructionFile
      *            the instruction file of the s3 object; or null if there is
      *            none.
      */
-    ContentCryptoScheme encryptionSchemeOf(Map<String,String> instructionFile) {
+    ContentCryptoScheme encryptionSchemeOf(Map<String, String> instructionFile) {
         if (instructionFile != null) {
             String cekAlgo = instructionFile.get(Headers.CRYPTO_CEK_ALGORITHM);
             return ContentCryptoScheme.fromCEKAlgo(cekAlgo);

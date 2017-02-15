@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -31,12 +46,9 @@ public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
 
     /** One hour in milliseconds for verifying that a last modified date is recent */
     private static final long ONE_HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
-
+    private static final String KEY_NAME_WITH_SPECIAL_CHARS = "special-chars-@$%";
     /** Content length for sample keys created by these tests */
     private final long CONTENT_LENGTH = 123;
-
-    private static final String KEY_NAME_WITH_SPECIAL_CHARS = "special-chars-@$%";
-
     /** The name of the bucket created, used, and deleted by these tests */
     private String bucketName = "list-objects-integ-test-" + new Date().getTime();
 
@@ -47,11 +59,17 @@ public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
     /** Releases all resources created in this test */
     @After
     public void tearDown() {
-        for ( java.util.Iterator iterator = keys.iterator(); iterator.hasNext(); ) {
-            String key = (String)iterator.next();
-            try {s3.deleteObject(bucketName, key);} catch (Exception e) {}
+        for (java.util.Iterator iterator = keys.iterator(); iterator.hasNext(); ) {
+            String key = (String) iterator.next();
+            try {
+                s3.deleteObject(bucketName, key);
+            } catch (Exception e) {
+            }
         }
-        try {s3.deleteBucket(bucketName);} catch (Exception e) {}
+        try {
+            s3.deleteBucket(bucketName);
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -188,7 +206,7 @@ public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
     private void gotestComplexMethodWithMaxKeys() {
         int maxKeys = 4;
         ObjectListing objectListing = s3.listObjects(
-                new ListObjectsRequest(bucketName, null, null, null, new Integer( maxKeys )));
+                new ListObjectsRequest(bucketName, null, null, null, new Integer(maxKeys)));
         List<S3ObjectSummary> objects = objectListing.getObjectSummaries();
 
         assertEquals(maxKeys, objects.size());
@@ -220,7 +238,7 @@ public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
         String encodingType = "url";
         ObjectListing objectListing = s3.listObjects(
                 new ListObjectsRequest(bucketName, KEY_NAME_WITH_SPECIAL_CHARS, null, null, null)
-                    .withEncodingType(encodingType));
+                        .withEncodingType(encodingType));
         List<S3ObjectSummary> objects = objectListing.getObjectSummaries();
 
         // EncodingType should be returned in the response.
@@ -240,9 +258,9 @@ public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
         int maxKeys = 4;
         String prefix = "key";
         ObjectListing previousObjectListing = s3.listObjects(
-                new ListObjectsRequest(bucketName, prefix, null, null, new Integer( maxKeys )));
+                new ListObjectsRequest(bucketName, prefix, null, null, new Integer(maxKeys)));
         ObjectListing objectListing
-            = s3.listNextBatchOfObjects(previousObjectListing);
+                = s3.listNextBatchOfObjects(previousObjectListing);
         List<S3ObjectSummary> objects = objectListing.getObjectSummaries();
 
         assertEquals(maxKeys, objects.size());
@@ -253,7 +271,7 @@ public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
         assertS3ObjectSummariesAreValid(objects);
 
         for (int i = 0; i < maxKeys; i++) {
-            assertEquals(keys.get(maxKeys + i), ((S3ObjectSummary)objects.get(i)).getKey());
+            assertEquals(keys.get(maxKeys + i), ((S3ObjectSummary) objects.get(i)).getKey());
         }
 
         // We didn't use a delimiter, so we expect these to be empty/null
@@ -302,8 +320,8 @@ public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
 
     private void assertS3ObjectSummariesAreValid(List<S3ObjectSummary> objectSummaries) {
 
-        for ( java.util.Iterator iterator = objectSummaries.iterator(); iterator.hasNext(); ) {
-            S3ObjectSummary obj = (S3ObjectSummary)iterator.next();
+        for (java.util.Iterator iterator = objectSummaries.iterator(); iterator.hasNext(); ) {
+            S3ObjectSummary obj = (S3ObjectSummary) iterator.next();
             assertEquals(bucketName, obj.getBucketName());
             assertTrue(obj.getETag().length() > 1);
             assertFalse(obj.getETag().startsWith("\""));

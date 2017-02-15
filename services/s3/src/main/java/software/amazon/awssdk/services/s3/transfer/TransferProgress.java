@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import org.apache.commons.logging.Log;
@@ -54,6 +55,10 @@ public final class TransferProgress {
         return totalBytesToTransfer;
     }
 
+    public void setTotalBytesToTransfer(long totalBytesToTransfer) {
+        this.totalBytesToTransfer = totalBytesToTransfer;
+    }
+
     /**
      * @deprecated Replaced by {@link #getPercentTransferred()}
      */
@@ -70,28 +75,26 @@ public final class TransferProgress {
      *         number of bytes to transfer; or -1.0 if the total length is not known.
      */
     public synchronized double getPercentTransferred() {
-        if (getBytesTransferred() < 0) return 0;
+        if (getBytesTransferred() < 0) {
+            return 0;
+        }
 
         return totalBytesToTransfer < 0
-             ? -1.0 
-             : ((double)bytesTransferred / (double)totalBytesToTransfer) * (double)100;
+               ? -1.0
+               : ((double) bytesTransferred / (double) totalBytesToTransfer) * (double) 100;
     }
 
     public synchronized void updateProgress(long bytes) {
         this.bytesTransferred += bytes;
         if (totalBytesToTransfer > -1
-        &&  this.bytesTransferred > this.totalBytesToTransfer) {
+            && this.bytesTransferred > this.totalBytesToTransfer) {
             this.bytesTransferred = this.totalBytesToTransfer;
             if (log.isDebugEnabled()) {
                 log.debug("Number of bytes transfered is more than the actual total bytes to transfer. Total number of bytes to Transfer : "
-                        + totalBytesToTransfer
-                        + ". Bytes Transferred : "
-                        + (bytesTransferred + bytes));
+                          + totalBytesToTransfer
+                          + ". Bytes Transferred : "
+                          + (bytesTransferred + bytes));
             }
         }
-    }
-
-    public void setTotalBytesToTransfer(long totalBytesToTransfer) {
-        this.totalBytesToTransfer = totalBytesToTransfer;
     }
 }

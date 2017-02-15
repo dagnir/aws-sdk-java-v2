@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sqs;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -79,11 +94,11 @@ public class BufferedSQSIntegrationTest extends IntegrationTestBase {
 
         final byte[] bytes = new byte[MAX_SIZE_MESSAGE];
         new Random().nextBytes(bytes);
-        final String randomString = new String(bytes,StringUtils.UTF8);
+        final String randomString = new String(bytes, StringUtils.UTF8);
 
         SendMessageRequest request = new SendMessageRequest()
-                                        .withMessageBody(randomString)
-                                        .withQueueUrl(queueUrl);
+                .withMessageBody(randomString)
+                .withQueueUrl(queueUrl);
         buffSqs.sendMessage(request);
     }
 
@@ -101,7 +116,7 @@ public class BufferedSQSIntegrationTest extends IntegrationTestBase {
         long start = System.nanoTime();
 
         ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().withMaxNumberOfMessages(1)
-                .withWaitTimeSeconds(60).withQueueUrl(queueUrl);
+                                                                     .withWaitTimeSeconds(60).withQueueUrl(queueUrl);
         List<Message> messages = buffSqs.receiveMessage(receiveRq).getMessages();
         assertThat(messages, hasSize(1));
         assertEquals(body, messages.get(0).getBody());

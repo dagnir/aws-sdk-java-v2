@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class LengthCheckInputStream extends SdkFilterInputStream {
      */
     private long dataLength;
     private long marked; // used for mark-and-reset purposes
-    
+
     /**
      * Used for diagnostic purposes. True if reset has been called since last
      * marked; False otherwise.
@@ -56,7 +56,7 @@ public class LengthCheckInputStream extends SdkFilterInputStream {
      * Constructs an input stream that performs length check to ensure the
      * number of bytes read from the underlying input stream is the same as the
      * expected total.
-     * 
+     *
      * @param in
      *            the underlying input stream
      * @param expectedLength
@@ -69,17 +69,18 @@ public class LengthCheckInputStream extends SdkFilterInputStream {
      *            receiving data from AWS.
      */
     public LengthCheckInputStream(InputStream in, long expectedLength,
-            boolean includeSkipped) {
+                                  boolean includeSkipped) {
         super(in);
-        if (expectedLength < 0)
+        if (expectedLength < 0) {
             throw new IllegalArgumentException();
+        }
         this.expectedLength = expectedLength;
         this.includeSkipped = includeSkipped;
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws SdkClientException
      *             if the data length read has exceeded the expected total, or
      *             if the total data length is not the same as the expected
@@ -88,15 +89,16 @@ public class LengthCheckInputStream extends SdkFilterInputStream {
     @Override
     public int read() throws IOException {
         final int c = super.read();
-        if (c >= 0)
+        if (c >= 0) {
             dataLength++;
+        }
         checkLength(c == -1);
         return c;
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws SdkClientException
      *             if the data length read has exceeded the expected total, or
      *             if the total data length is not the same as the expected
@@ -134,10 +136,10 @@ public class LengthCheckInputStream extends SdkFilterInputStream {
 
     /**
      * Checks the data length read so far against the expected total.
-     * 
+     *
      * @param eof
      *            true if end of stream has been encountered; false otherwise
-     * 
+     *
      * @throws SdkClientException
      *             if the data length read has exceeded the expected total, or
      *             if the total data length is not the same as the expected
@@ -148,31 +150,31 @@ public class LengthCheckInputStream extends SdkFilterInputStream {
             if (dataLength != expectedLength) {
                 throw new SdkClientException(
                         "Data read has a different length than the expected: "
-                                + diagnosticInfo());
+                        + diagnosticInfo());
             }
         } else if (dataLength > expectedLength) {
             throw new SdkClientException("More data read than expected: "
-                    + diagnosticInfo());
+                                         + diagnosticInfo());
         }
     }
 
     private String diagnosticInfo() {
         return new StringBuilder()
-            .append("dataLength=").append(dataLength)
-            .append("; expectedLength=").append(expectedLength)
-            .append("; includeSkipped=").append(includeSkipped)
-            .append("; in.getClass()=").append(in.getClass())
-            .append("; markedSupported=").append(markSupported())
-            .append("; marked=").append(marked)
-            .append("; resetSinceLastMarked=").append(resetSinceLastMarked)
-            .append("; markCount=").append(markCount)
-            .append("; resetCount=").append(resetCount)
-            .toString();
+                .append("dataLength=").append(dataLength)
+                .append("; expectedLength=").append(expectedLength)
+                .append("; includeSkipped=").append(includeSkipped)
+                .append("; in.getClass()=").append(in.getClass())
+                .append("; markedSupported=").append(markSupported())
+                .append("; marked=").append(marked)
+                .append("; resetSinceLastMarked=").append(resetSinceLastMarked)
+                .append("; markCount=").append(markCount)
+                .append("; resetCount=").append(resetCount)
+                .toString();
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws SdkClientException
      *             if {@link #includeSkipped} is true and the data length
      *             skipped has exceeded the expected total.

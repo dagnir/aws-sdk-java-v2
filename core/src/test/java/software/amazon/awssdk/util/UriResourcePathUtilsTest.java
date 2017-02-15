@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,38 +24,38 @@ import software.amazon.awssdk.Request;
 public class UriResourcePathUtilsTest {
 
     @Test
-    public void request_null_returns_null(){
-     Assert.assertNull(UriResourcePathUtils.addStaticQueryParamtersToRequest(null,
-             "foo"));
+    public void request_null_returns_null() {
+        Assert.assertNull(UriResourcePathUtils.addStaticQueryParamtersToRequest(null,
+                                                                                "foo"));
     }
 
     @Test
-    public void uri_resource_path_null_returns_null(){
+    public void uri_resource_path_null_returns_null() {
         Assert.assertNull(UriResourcePathUtils
-                .addStaticQueryParamtersToRequest(new DefaultRequest<Object>
-                                (null , null), null));
+                                  .addStaticQueryParamtersToRequest(new DefaultRequest<Object>
+                                                                            (null, null), null));
     }
 
     @Test
-    public void uri_resource_path_doesnot_have_static_query_params_returns_uri_resource_path(){
+    public void uri_resource_path_doesnot_have_static_query_params_returns_uri_resource_path() {
 
         final String uriResourcePath = "/foo/bar";
 
         Assert.assertEquals(uriResourcePath, UriResourcePathUtils
                 .addStaticQueryParamtersToRequest(new DefaultRequest<Object>
-                        (null, null), uriResourcePath));
+                                                          (null, null), uriResourcePath));
 
     }
 
     @Test
-    public void uri_resource_path_ends_with_question_mark_returns_path_removed_with_question_mark(){
+    public void uri_resource_path_ends_with_question_mark_returns_path_removed_with_question_mark() {
 
         final String expectedResourcePath = "/foo/bar";
         final String pathWithEmptyStaticQueryParams = expectedResourcePath + "?";
 
         Assert.assertEquals(expectedResourcePath, UriResourcePathUtils
                 .addStaticQueryParamtersToRequest(new DefaultRequest<Object>
-                        (null, null), pathWithEmptyStaticQueryParams));
+                                                          (null, null), pathWithEmptyStaticQueryParams));
 
     }
 
@@ -70,13 +70,13 @@ public class UriResourcePathUtilsTest {
 
         Assert.assertEquals(uriResourcePath, UriResourcePathUtils
                 .addStaticQueryParamtersToRequest(request,
-                        uriResourcePathWithParams));
+                                                  uriResourcePathWithParams));
         Assert.assertTrue(request.getParameters().containsKey("param1"));
         Assert.assertEquals(Arrays.asList(""), request.getParameters().get("param1"));
     }
 
     @Test
-    public void static_queryparams_in_path_added_to_request(){
+    public void static_queryparams_in_path_added_to_request() {
         final String uriResourcePath = "/foo/bar";
         final String uriResourcePathWithParams =
                 uriResourcePath + "?param1=value1&param2=value2";
@@ -85,7 +85,7 @@ public class UriResourcePathUtilsTest {
 
         Assert.assertEquals(uriResourcePath, UriResourcePathUtils
                 .addStaticQueryParamtersToRequest(request,
-                        uriResourcePathWithParams));
+                                                  uriResourcePathWithParams));
         Assert.assertTrue(request.getParameters().containsKey("param1"));
         Assert.assertTrue(request.getParameters().containsKey("param2"));
         Assert.assertEquals(Arrays.asList("value1"), request.getParameters().get("param1"));
@@ -103,6 +103,6 @@ public class UriResourcePathUtilsTest {
         Assert.assertEquals(uriResourcePath, UriResourcePathUtils.addStaticQueryParamtersToRequest(request, uriResourcePathWithParams));
 
         Assert.assertTrue(request.getParameters().containsKey("param"));
-        Assert.assertEquals(Arrays.asList((String)null), request.getParameters().get("param"));
+        Assert.assertEquals(Arrays.asList((String) null), request.getParameters().get("param"));
     }
 }

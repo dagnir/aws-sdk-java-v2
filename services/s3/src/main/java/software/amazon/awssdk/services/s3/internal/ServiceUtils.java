@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
@@ -58,16 +56,12 @@ import software.amazon.awssdk.util.ValidationUtils;
  * General utility methods used throughout the AWS S3 Java client.
  */
 public class ServiceUtils {
-    private static final Log LOG = LogFactory.getLog(ServiceUtils.class);
-
     public static final boolean APPEND_MODE = true;
-
     public static final boolean OVERWRITE_MODE = false;
-
-    private static final SkipMd5CheckStrategy skipMd5CheckStrategy = SkipMd5CheckStrategy.INSTANCE;
-
     @Deprecated
     protected static final DateUtils dateUtils = new DateUtils();
+    private static final Log LOG = LogFactory.getLog(ServiceUtils.class);
+    private static final SkipMd5CheckStrategy skipMd5CheckStrategy = SkipMd5CheckStrategy.INSTANCE;
 
     public static Date parseIso8601Date(String dateString) {
         return DateUtils.parseISO8601Date(dateString);
@@ -104,7 +98,6 @@ public class ServiceUtils {
     }
 
 
-
     /**
      * Removes any surrounding quotes from the specified string and returns a
      * new string.
@@ -116,11 +109,17 @@ public class ServiceUtils {
      *         surrounding quotes.
      */
     public static String removeQuotes(String s) {
-        if (s == null) return null;
+        if (s == null) {
+            return null;
+        }
 
         s = s.trim();
-        if (s.startsWith("\"")) s = s.substring(1);
-        if (s.endsWith("\"")) s = s.substring(0, s.length() - 1);
+        if (s.startsWith("\"")) {
+            s = s.substring(1);
+        }
+        if (s.endsWith("\"")) {
+            s = s.substring(0, s.length() - 1);
+        }
 
         return s;
     }
@@ -182,12 +181,12 @@ public class ServiceUtils {
     public static URL convertRequestToUrl(Request<?> request, boolean removeLeadingSlashInResourcePath,
                                           boolean urlEncode) {
         String resourcePath = urlEncode ?
-                SdkHttpUtils.urlEncode(request.getResourcePath(), true)
-                : request.getResourcePath();
+                              SdkHttpUtils.urlEncode(request.getResourcePath(), true)
+                                        : request.getResourcePath();
 
         // Removed the padding "/" that was already added into the request's resource path.
         if (removeLeadingSlashInResourcePath
-                && resourcePath.startsWith("/")) {
+            && resourcePath.startsWith("/")) {
             resourcePath = resourcePath.substring(1);
         }
 
@@ -237,7 +236,9 @@ public class ServiceUtils {
 
         boolean first = true;
         for (String s : strings) {
-            if (!first) result.append(", ");
+            if (!first) {
+                result.append(", ");
+            }
 
             result.append(s);
             first = false;
@@ -262,8 +263,8 @@ public class ServiceUtils {
      *            appends the data to end of the file.
      */
     public static void downloadObjectToFile(S3Object s3Object,
-            final File destinationFile, boolean performIntegrityCheck,
-            boolean appendData) {
+                                            final File destinationFile, boolean performIntegrityCheck,
+                                            boolean appendData) {
         downloadToFile(s3Object, destinationFile, performIntegrityCheck, appendData, -1);
     }
 
@@ -277,15 +278,14 @@ public class ServiceUtils {
      *            of the file to append to.
      */
     public static void downloadToFile(S3Object s3Object,
-        final File dstfile, boolean performIntegrityCheck,
-        final boolean appendData,
-        final long expectedFileLength)
-    {
+                                      final File dstfile, boolean performIntegrityCheck,
+                                      final boolean appendData,
+                                      final long expectedFileLength) {
         createParentDirectoryIfNecessary(dstfile);
 
         if (!FileLocks.lock(dstfile)) {
             throw new FileLockException("Fail to lock " + dstfile
-                    + " for appendData=" + appendData);
+                                        + " for appendData=" + appendData);
         }
         OutputStream outputStream = null;
         try {
@@ -294,12 +294,12 @@ public class ServiceUtils {
                 // Fail fast to prevent data corruption
                 throw new IllegalStateException(
                         "Expected file length to append is "
-                            + expectedFileLength + " but actual length is "
-                            + actualLen + " for file " + dstfile);
+                        + expectedFileLength + " but actual length is "
+                        + actualLen + " for file " + dstfile);
             }
             outputStream = new BufferedOutputStream(new FileOutputStream(
                     dstfile, appendData));
-            byte[] buffer = new byte[1024*10];
+            byte[] buffer = new byte[1024 * 10];
             int bytesRead;
             while ((bytesRead = s3Object.getObjectContent().read(buffer)) > -1) {
                 outputStream.write(buffer, 0, bytesRead);
@@ -329,8 +329,8 @@ public class ServiceUtils {
 
             if (clientSideHash != null && serverSideHash != null && !Arrays.equals(clientSideHash, serverSideHash)) {
                 throw new SdkClientException("Unable to verify integrity of data download.  " +
-                        "Client calculated content hash didn't match hash calculated by Amazon S3.  " +
-                        "The data stored in '" + dstfile.getAbsolutePath() + "' may be corrupt.");
+                                             "Client calculated content hash didn't match hash calculated by Amazon S3.  " +
+                                             "The data stored in '" + dstfile.getAbsolutePath() + "' may be corrupt.");
             }
         }
     }
@@ -344,32 +344,8 @@ public class ServiceUtils {
         final File parentDirectory = file.getParentFile();
         if (parentDirectory == null || parentDirectory.mkdirs() || parentDirectory.exists()) {
             return;
-	}
+        }
         throw new SdkClientException("Unable to create directory in the path: " + parentDirectory.getAbsolutePath());
-    }
-
-    /**
-     * Interface for the task of downloading object from S3 to a specific file,
-     * enabling one-time retry mechanism after integrity check failure
-     * on the downloaded file.
-     */
-    public interface RetryableS3DownloadTask {
-        /**
-         * User defines how to get the S3Object from S3 for this RetryableS3DownloadTask.
-         *
-         * @return
-         *         The S3Object containing a reference to an InputStream
-         *        containing the object's data.
-         */
-        public S3Object getS3ObjectStream ();
-        /**
-         * User defines whether integrity check is needed for this RetryableS3DownloadTask.
-         *
-         * @return
-         *         Boolean value indicating whether this task requires integrity check
-         *         after downloading the S3 object to file.
-         */
-        public boolean needIntegrityCheck ();
     }
 
     /**
@@ -385,20 +361,21 @@ public class ServiceUtils {
      *             get access to all the visible variables at the calling site of this method.
      */
     public static S3Object retryableDownloadS3ObjectToFile(File file,
-            RetryableS3DownloadTask retryableS3DownloadTask, boolean appendData) {
+                                                           RetryableS3DownloadTask retryableS3DownloadTask, boolean appendData) {
         boolean hasRetried = false;
         boolean needRetry;
         S3Object s3Object;
         do {
             needRetry = false;
             s3Object = retryableS3DownloadTask.getS3ObjectStream();
-            if ( s3Object == null )
+            if (s3Object == null) {
                 return null;
+            }
 
             try {
                 ServiceUtils.downloadObjectToFile(s3Object, file,
-                        retryableS3DownloadTask.needIntegrityCheck(),
-                        appendData);
+                                                  retryableS3DownloadTask.needIntegrityCheck(),
+                                                  appendData);
             } catch (SdkClientException ace) {
                 if (!ace.isRetryable()) {
                     s3Object.getObjectContent().abort();
@@ -414,7 +391,7 @@ public class ServiceUtils {
                     throw ace;
                 } else {
                     needRetry = true;
-                    if ( hasRetried ) {
+                    if (hasRetried) {
                         s3Object.getObjectContent().abort();
                         throw ace;
                     } else {
@@ -423,7 +400,7 @@ public class ServiceUtils {
                     }
                 }
             }
-        } while ( needRetry );
+        } while (needRetry);
         return s3Object;
     }
 
@@ -463,7 +440,7 @@ public class ServiceUtils {
             }
         } catch (IOException e) {
             throw new SdkClientException("Unable to append file " + sourceFile.getAbsolutePath()
-                    + "to destination file " + destinationFile.getAbsolutePath() + "\n" + e.getMessage(), e);
+                                         + "to destination file " + destinationFile.getAbsolutePath() + "\n" + e.getMessage(), e);
         } finally {
             closeQuietly(out, LOG);
             closeQuietly(in, LOG);
@@ -489,12 +466,12 @@ public class ServiceUtils {
      */
     public static boolean isS3USEastEndpiont(String endpoint) {
         return isS3USStandardEndpoint(endpoint) ||
-                endpoint.endsWith(Constants.S3_EXTERNAL_1_HOSTNAME);
+               endpoint.endsWith(Constants.S3_EXTERNAL_1_HOSTNAME);
     }
 
     public static boolean isS3AccelerateEndpoint(String endpoint) {
         return endpoint.endsWith(Constants.S3_ACCELERATE_HOSTNAME) ||
-                endpoint.endsWith(Constants.S3_ACCELERATE_DUALSTACK_HOSTNAME);
+               endpoint.endsWith(Constants.S3_ACCELERATE_DUALSTACK_HOSTNAME);
     }
 
     /**
@@ -505,15 +482,15 @@ public class ServiceUtils {
      * @param s3
      * 					The Amazon s3 client.
      *
-     * @return  The number of parts in the object if it is multipart object, otherwise returns null.
+     * @return The number of parts in the object if it is multipart object, otherwise returns null.
      */
     public static Integer getPartCount(GetObjectRequest getObjectRequest, AmazonS3 s3) {
         ValidationUtils.assertNotNull(s3, "S3 client");
         ValidationUtils.assertNotNull(getObjectRequest, "GetObjectRequest");
 
         ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(), getObjectRequest.getKey(), getObjectRequest.getVersionId())
-                .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
-                .withPartNumber(1));
+                                                               .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
+                                                               .withPartNumber(1));
         return metadata.getPartCount();
     }
 
@@ -535,8 +512,33 @@ public class ServiceUtils {
         ValidationUtils.assertNotNull(partNumber, "partNumber");
 
         ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(), getObjectRequest.getKey(), getObjectRequest.getVersionId())
-                .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
-                .withPartNumber(partNumber));
+                                                               .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
+                                                               .withPartNumber(partNumber));
         return metadata.getContentRange()[1];
+    }
+
+    /**
+     * Interface for the task of downloading object from S3 to a specific file,
+     * enabling one-time retry mechanism after integrity check failure
+     * on the downloaded file.
+     */
+    public interface RetryableS3DownloadTask {
+        /**
+         * User defines how to get the S3Object from S3 for this RetryableS3DownloadTask.
+         *
+         * @return
+         *         The S3Object containing a reference to an InputStream
+         *        containing the object's data.
+         */
+        public S3Object getS3ObjectStream();
+
+        /**
+         * User defines whether integrity check is needed for this RetryableS3DownloadTask.
+         *
+         * @return
+         *         Boolean value indicating whether this task requires integrity check
+         *         after downloading the S3 object to file.
+         */
+        public boolean needIntegrityCheck();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -28,27 +29,23 @@ import software.amazon.awssdk.AmazonServiceException;
  */
 public class AmazonS3Exception extends AmazonServiceException implements Serializable {
     private static final long serialVersionUID = 7573680383273658477L;
-
-    /**
-     * An S3 specific request ID that provides additional debugging information.
-     */
-    private String extendedRequestId;
-
-    /**
-     * An S3 specific CloudFront ID in responses from the accelerate endpoint.
-     */
-    private String cloudFrontId;
-
-    /**
-     * Additional information on the exception.
-     */
-    private Map<String,String> additionalDetails;
-
     /**
      * Returns the error XML received in the HTTP Response or null if the
      * exception is constructed from the headers.
      */
     private final String errorResponseXml;
+    /**
+     * An S3 specific request ID that provides additional debugging information.
+     */
+    private String extendedRequestId;
+    /**
+     * An S3 specific CloudFront ID in responses from the accelerate endpoint.
+     */
+    private String cloudFrontId;
+    /**
+     * Additional information on the exception.
+     */
+    private Map<String, String> additionalDetails;
 
     /**
      * Constructs a new {@link AmazonS3Exception} with the specified message.
@@ -92,7 +89,7 @@ public class AmazonS3Exception extends AmazonServiceException implements Seriali
      */
     public AmazonS3Exception(String message, String errorResponseXml) {
         super(message);
-        if(errorResponseXml == null){
+        if (errorResponseXml == null) {
             throw new IllegalArgumentException("Error Response XML cannot be null");
         }
         this.errorResponseXml = errorResponseXml;
@@ -165,7 +162,7 @@ public class AmazonS3Exception extends AmazonServiceException implements Seriali
     @Override
     public String toString() {
         return super.toString() + ", "
-            + "S3 Extended Request ID: " + getExtendedRequestId();
+               + "S3 Extended Request ID: " + getExtendedRequestId();
     }
 
     /**

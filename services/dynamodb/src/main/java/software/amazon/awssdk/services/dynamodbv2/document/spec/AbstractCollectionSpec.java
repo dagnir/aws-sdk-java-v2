@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
      */
     private Integer maxResultSize;
 
-    
+
     AbstractCollectionSpec(T req) {
         super(req);
     }
@@ -69,11 +69,11 @@ abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
         return maxResultSize;
     }
 
-    public void setMaxResultSize(Integer maxResultSize) {
+    public void setMaxResultSize(int maxResultSize) {
         this.maxResultSize = maxResultSize;
     }
 
-    public void setMaxResultSize(int maxResultSize) {
+    public void setMaxResultSize(Integer maxResultSize) {
         this.maxResultSize = maxResultSize;
     }
 

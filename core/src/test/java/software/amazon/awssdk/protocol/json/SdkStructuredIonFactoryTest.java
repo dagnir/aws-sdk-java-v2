@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -52,6 +52,24 @@ public class SdkStructuredIonFactoryTest {
     @BeforeClass
     public static void beforeClass() {
         system = IonSystemBuilder.standard().build();
+    }
+
+    private static IonStruct createPayload() {
+        IonStruct payload = system.newEmptyStruct();
+        payload.add("NotValidJson", system.newTimestamp(Timestamp.nowZ()));
+        payload.add("ErrorMessage", system.newString(ERROR_MESSAGE));
+        return payload;
+    }
+
+    private static HttpResponse createResponse(IonStruct payload) throws Exception {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        IonWriter writer = system.newBinaryWriter(bytes);
+        payload.writeTo(writer);
+        writer.close();
+
+        HttpResponse error = new HttpResponse(new DefaultRequest(NO_SERVICE_NAME), NO_HTTP_REQUEST);
+        error.setContent(new ByteArrayInputStream(bytes.toByteArray()));
+        return error;
     }
 
     @Test
@@ -113,24 +131,6 @@ public class SdkStructuredIonFactoryTest {
         AmazonServiceException exception = handleError(error);
         assertThat(exception, instanceOf(InvalidParameterException.class));
         assertEquals(ERROR_MESSAGE, exception.getErrorMessage());
-    }
-
-    private static IonStruct createPayload() {
-        IonStruct payload = system.newEmptyStruct();
-        payload.add("NotValidJson", system.newTimestamp(Timestamp.nowZ()));
-        payload.add("ErrorMessage", system.newString(ERROR_MESSAGE));
-        return payload;
-    }
-
-    private static HttpResponse createResponse(IonStruct payload) throws Exception {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        IonWriter writer = system.newBinaryWriter(bytes);
-        payload.writeTo(writer);
-        writer.close();
-
-        HttpResponse error = new HttpResponse(new DefaultRequest(NO_SERVICE_NAME), NO_HTTP_REQUEST);
-        error.setContent(new ByteArrayInputStream(bytes.toByteArray()));
-        return error;
     }
 
     private AmazonServiceException handleError(HttpResponse error) throws Exception {

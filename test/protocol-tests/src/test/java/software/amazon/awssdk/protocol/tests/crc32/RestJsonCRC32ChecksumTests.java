@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.protocol.tests.crc32;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -25,19 +40,17 @@ import software.amazon.awssdk.services.protocol.restjson.model.AllTypesResult;
 
 public class RestJsonCRC32ChecksumTests {
 
-    @Rule
-    public WireMockRule mockServer = new WireMockRule(WireMockConfiguration.wireMockConfig()
-                                                              .port(0)
-                                                              .fileSource(new SingleRootFileSource("src/test/resources")));
-
     private static final String JSON_BODY = "{\"StringMember\":\"foo\"}";
     private static final String JSON_BODY_GZIP = "compressed_json_body.gz";
     private static final String JSON_BODY_CRC32_CHECKSUM = "3049587505";
     private static final String JSON_BODY_GZIP_CRC32_CHECKSUM = "3023995622";
     private static final String RESOURCE_PATH = "/2016-03-11/allTypes";
-
     private static final AWSCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new AWSStaticCredentialsProvider(
             new BasicAWSCredentials("foo", "bar"));
+    @Rule
+    public WireMockRule mockServer = new WireMockRule(WireMockConfiguration.wireMockConfig()
+                                                                           .port(0)
+                                                                           .fileSource(new SingleRootFileSource("src/test/resources")));
 
     @BeforeClass
     public static void setup() {
@@ -70,18 +83,6 @@ public class RestJsonCRC32ChecksumTests {
                                                                                   new ClientConfiguration().withGzip(true));
         client.setEndpoint("http://localhost:" + mockServer.port());
         client.allTypes(new AllTypesRequest());
-    }
-
-    private static class AmazonProtocolRestJsonCRC32TestClient extends AmazonProtocolRestJsonClient {
-
-        public AmazonProtocolRestJsonCRC32TestClient(AWSCredentialsProvider credentialsProvider, ClientConfiguration config) {
-            super(credentialsProvider, config);
-        }
-
-        @Override
-        public final boolean calculateCRC32FromCompressedData() {
-            return true;
-        }
     }
 
     @Test
@@ -136,6 +137,18 @@ public class RestJsonCRC32ChecksumTests {
                                                                          new ClientConfiguration().withGzip(false));
         client.setEndpoint("http://localhost:" + mockServer.port());
         client.allTypes(new AllTypesRequest());
+    }
+
+    private static class AmazonProtocolRestJsonCRC32TestClient extends AmazonProtocolRestJsonClient {
+
+        public AmazonProtocolRestJsonCRC32TestClient(AWSCredentialsProvider credentialsProvider, ClientConfiguration config) {
+            super(credentialsProvider, config);
+        }
+
+        @Override
+        public final boolean calculateCRC32FromCompressedData() {
+            return true;
+        }
     }
 
 }

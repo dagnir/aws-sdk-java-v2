@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -40,9 +40,8 @@ import software.amazon.awssdk.codegen.model.service.Shape;
  */
 final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
 
-    private final Map<String, ShapeModifier> shapeModifiers;
-
     private static final String ALL = "*";
+    private final Map<String, ShapeModifier> shapeModifiers;
 
     ShapeModifiersProcessor(
             Map<String, ShapeModifier> shapeModifiers) {
@@ -52,7 +51,9 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
     @Override
     public void preprocess(ServiceModel serviceModel) {
 
-        if (shapeModifiers == null) return;
+        if (shapeModifiers == null) {
+            return;
+        }
 
         for (Entry<String, ShapeModifier> entry : shapeModifiers.entrySet()) {
             String key = entry.getKey();
@@ -80,13 +81,17 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
     @Override
     public void postprocess(IntermediateModel intermediateModel) {
 
-        if (shapeModifiers == null) return;
-        
+        if (shapeModifiers == null) {
+            return;
+        }
+
         for (Entry<String, ShapeModifier> entry : shapeModifiers.entrySet()) {
             String key = entry.getKey();
             ShapeModifier modifier = entry.getValue();
 
-            if (ALL.equals(key)) continue;
+            if (ALL.equals(key)) {
+                continue;
+            }
 
             ShapeModel shapeModel = null;
             try {
@@ -130,20 +135,20 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
             if (enumModel == null) {
                 throw new IllegalStateException(
                         String.format("Cannot find enum [%s] in the intermediate model when processing "
-                                + "customization config shapeModifiers.%s", memberName, memberName));
+                                      + "customization config shapeModifiers.%s", memberName, memberName));
             }
             enumModel.setName(modifyModel.getEmitEnumName());
         }
 
         if (modifyModel.getMarshallLocationName() != null) {
-            MemberModel memberModel =  shapeModel.findMemberModelByC2jName(memberName);
+            MemberModel memberModel = shapeModel.findMemberModelByC2jName(memberName);
             memberModel.getHttp().setMarshallLocationName(modifyModel.getMarshallLocationName());
         }
 
         if (modifyModel.getUnmarshallLocationName() != null) {
-            MemberModel memberModel =  shapeModel.findMemberModelByC2jName(memberName);
+            MemberModel memberModel = shapeModel.findMemberModelByC2jName(memberName);
             memberModel.getHttp().setUnmarshallLocationName(modifyModel
-                    .getUnmarshallLocationName());
+                                                                    .getUnmarshallLocationName());
         }
 
     }
@@ -172,8 +177,8 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
                     shape.getRequired().contains(memberToExclude)) {
                     throw new IllegalStateException(
                             "ShapeModifier.exclude customization found for "
-                                    + memberToExclude
-                                    + ", but this member is marked as required in the model!");
+                            + memberToExclude
+                            + ", but this member is marked as required in the model!");
                 }
 
                 if (shape.getMembers() != null) {
@@ -193,7 +198,7 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
     }
 
     private void doModifyShapeMembers(ServiceModel serviceModel, Shape shape, String memberToModify,
-            ShapeModifier_ModifyModel modifyModel) {
+                                      ShapeModifier_ModifyModel modifyModel) {
 
         // Currrenly only supports emitPropertyName which is to rename the member
         if (modifyModel.getEmitPropertyName() != null) {

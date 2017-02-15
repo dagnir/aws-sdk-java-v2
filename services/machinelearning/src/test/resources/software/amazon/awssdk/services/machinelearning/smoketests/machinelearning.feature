@@ -10,5 +10,5 @@ Feature: Amazon Machine Learning
 
   Scenario: Error handling
     When I attempt to call the "GetBatchPrediction" API with:
-    | BatchPredictionId | fake-id |
+      | BatchPredictionId | fake-id |
     Then I expect the response error code to be "ResourceNotFoundException"

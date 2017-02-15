@@ -43,10 +43,10 @@ public class PolicyTest {
     public void testPrincipals() {
         Policy policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(new Principal("accountId1"),
-                        new Principal("accountId2"))
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(new Principal("accountId1"),
+                                                      new Principal("accountId2"))
+                                      .withActions(new TestAction("action")));
 
         JsonNode jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         JsonNode statementArray = jsonPolicyNode.get("Statement");
@@ -67,10 +67,10 @@ public class PolicyTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(new Principal(Services.AmazonEC2),
-                        new Principal(Services.AmazonElasticTranscoder))
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(new Principal(Services.AmazonEC2),
+                                                      new Principal(Services.AmazonElasticTranscoder))
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -86,15 +86,15 @@ public class PolicyTest {
         assertTrue(services.isArray());
         assertTrue(services.size() == 2);
         assertEquals(Services.AmazonEC2.getServiceId(), services.get(0)
-                .asText());
+                                                                .asText());
         assertEquals(Services.AmazonElasticTranscoder.getServiceId(), services
                 .get(1).asText());
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(Principal.AllUsers)
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(Principal.AllUsers)
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -111,9 +111,9 @@ public class PolicyTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(Principal.AllServices, Principal.AllUsers)
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(Principal.AllServices, Principal.AllUsers)
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -132,10 +132,10 @@ public class PolicyTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(Principal.AllServices, Principal.AllUsers,
-                        Principal.AllWebProviders)
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(Principal.AllServices, Principal.AllUsers,
+                                                      Principal.AllWebProviders)
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -157,10 +157,10 @@ public class PolicyTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(Principal.AllServices, Principal.AllUsers,
-                        Principal.AllWebProviders, Principal.All)
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(Principal.AllServices, Principal.AllUsers,
+                                                      Principal.AllWebProviders, Principal.All)
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -184,9 +184,9 @@ public class PolicyTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(new Principal("accountId1"), Principal.AllUsers)
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(new Principal("accountId1"), Principal.AllUsers)
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -205,10 +205,10 @@ public class PolicyTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(new Principal(Services.AmazonEC2),
-                        Principal.AllServices, new Principal("accountId1"))
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(new Principal(Services.AmazonEC2),
+                                                      Principal.AllServices, new Principal("accountId1"))
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -225,17 +225,17 @@ public class PolicyTest {
 
         assertEquals(users.asText(), "accountId1");
         assertEquals(services.get(0).asText(),
-                Services.AmazonEC2.getServiceId());
+                     Services.AmazonEC2.getServiceId());
         assertEquals(services.get(1).asText(), "*");
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(new Resource("resource"))
-                .withPrincipals(new Principal(Services.AmazonEC2),
-                        Principal.AllServices, new Principal("accountId1"),
-                        new Principal(WebIdentityProviders.Amazon),
-                        Principal.AllWebProviders)
-                .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(new Principal(Services.AmazonEC2),
+                                                      Principal.AllServices, new Principal("accountId1"),
+                                                      new Principal(WebIdentityProviders.Amazon),
+                                                      Principal.AllWebProviders)
+                                      .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
         statementArray = jsonPolicyNode.get("Statement");
@@ -252,11 +252,11 @@ public class PolicyTest {
         webProviders = statement.get("Principal").get("Federated");
 
         assertEquals(services.get(0).asText(),
-                Services.AmazonEC2.getServiceId());
+                     Services.AmazonEC2.getServiceId());
         assertEquals(services.get(1).asText(), "*");
         assertEquals(users.asText(), "accountId1");
         assertEquals(webProviders.get(0).asText(),
-                WebIdentityProviders.Amazon.getWebIdentityProvider());
+                     WebIdentityProviders.Amazon.getWebIdentityProvider());
         assertEquals(webProviders.get(1).asText(), "*");
     }
 
@@ -269,23 +269,23 @@ public class PolicyTest {
     public void testMultipleConditionKeysForConditionType() throws Exception {
         Policy policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-                .withResources(
-                        new Resource(
-                                "arn:aws:sqs:us-east-1:987654321000:MyQueue"))
-                .withPrincipals(Principal.AllUsers)
-                .withActions(new TestAction("foo"))
-                .withConditions(
-                        new StringCondition(StringComparisonType.StringNotLike,
-                                "key1", "foo"),
-                        new StringCondition(StringComparisonType.StringNotLike,
-                                "key1", "bar")));
+                                      .withResources(
+                                              new Resource(
+                                                      "arn:aws:sqs:us-east-1:987654321000:MyQueue"))
+                                      .withPrincipals(Principal.AllUsers)
+                                      .withActions(new TestAction("foo"))
+                                      .withConditions(
+                                              new StringCondition(StringComparisonType.StringNotLike,
+                                                                  "key1", "foo"),
+                                              new StringCondition(StringComparisonType.StringNotLike,
+                                                                  "key1", "bar")));
 
         JsonNode jsonPolicy = Jackson.jsonNodeOf(policy.toJson());
 
         JsonNode statementArray = jsonPolicy.get("Statement");
-        assertEquals(statementArray.size(),1);
+        assertEquals(statementArray.size(), 1);
         JsonNode conditions = statementArray.get(0).get("Condition");
-        assertEquals(conditions.size(),1);
+        assertEquals(conditions.size(), 1);
 
         JsonNode stringLikeCondition = conditions.get(StringComparisonType.StringNotLike.toString());
         assertTrue(stringLikeCondition.has("key1"));
@@ -310,15 +310,15 @@ public class PolicyTest {
                                         IpAddressComparisonType.NotIpAddress,
                                         "192.168.143.188/32")),
                 new Statement(Effect.Deny).withPrincipals(Principal.AllUsers)
-                        .withActions(new TestAction("action2"))
-                        .withResources(new Resource("resource"))
-                        .withConditions(new IpAddressCondition("10.1.2.0/24")));
+                                          .withActions(new TestAction("action2"))
+                                          .withResources(new Resource("resource"))
+                                          .withConditions(new IpAddressCondition("10.1.2.0/24")));
 
         JsonNode jsonPolicy = Jackson.jsonNodeOf(policy.toJson());
         assertTrue(jsonPolicy.has("Id"));
 
         JsonNode statementArray = jsonPolicy.get("Statement");
-        assertEquals(statementArray.size(),2);
+        assertEquals(statementArray.size(), 2);
         assertValidStatementIds(policy);
 
         JsonNode statement;
@@ -342,27 +342,15 @@ public class PolicyTest {
         Policy policy = new Policy("S3PolicyId1");
         policy.withStatements(
                 new Statement(Effect.Allow).withId("0")
-                        .withPrincipals(Principal.AllUsers)
-                        .withActions(new TestAction("action1")),
+                                           .withPrincipals(Principal.AllUsers)
+                                           .withActions(new TestAction("action1")),
                 new Statement(Effect.Allow).withId("1")
-                        .withPrincipals(Principal.AllUsers)
-                        .withActions(new TestAction("action1")), new Statement(
+                                           .withPrincipals(Principal.AllUsers)
+                                           .withActions(new TestAction("action1")), new Statement(
                         Effect.Deny).withPrincipals(Principal.AllUsers)
-                        .withActions(new TestAction("action2")));
+                                    .withActions(new TestAction("action2")));
 
         assertValidStatementIds(policy);
-    }
-
-    private class TestAction implements Action {
-        private final String name;
-
-        public TestAction(String name) {
-            this.name = name;
-        }
-
-        public String getActionName() {
-            return name;
-        }
     }
 
     /**
@@ -386,11 +374,23 @@ public class PolicyTest {
         Assert.assertEquals(ID_WITHOUT_HYPHEN,
                             new Principal(ID_WITH_HYPHEN).getId());
         Assert.assertEquals(ID_WITHOUT_HYPHEN,
-                new Principal("AWS", ID_WITH_HYPHEN).getId());
+                            new Principal("AWS", ID_WITH_HYPHEN).getId());
 
         Assert.assertEquals(ID_WITH_HYPHEN,
-                new Principal("Federated", ID_WITH_HYPHEN).getId());
+                            new Principal("Federated", ID_WITH_HYPHEN).getId());
         Assert.assertEquals(ID_WITH_HYPHEN,
-                new Principal("AWS", ID_WITH_HYPHEN, false).getId());
+                            new Principal("AWS", ID_WITH_HYPHEN, false).getId());
+    }
+
+    private class TestAction implements Action {
+        private final String name;
+
+        public TestAction(String name) {
+            this.name = name;
+        }
+
+        public String getActionName() {
+            return name;
+        }
     }
 }

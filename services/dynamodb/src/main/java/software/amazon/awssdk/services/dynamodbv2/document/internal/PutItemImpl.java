@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -42,20 +42,20 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
     }
 
     @Override
-    public PutItemOutcome putItem(Item item, Expected ... expected) {
+    public PutItemOutcome putItem(Item item, Expected... expected) {
         return doPutItem(new PutItemSpec()
-                .withItem(item)
-                .withExpected(expected));
+                                 .withItem(item)
+                                 .withExpected(expected));
     }
 
     @Override
     public PutItemOutcome putItem(Item item, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                  Map<String, String> nameMap, Map<String, Object> valueMap) {
         return doPutItem(new PutItemSpec()
-                .withItem(item)
-                .withConditionExpression(conditionExpression)
-                .withNameMap(nameMap)
-                .withValueMap(valueMap));
+                                 .withItem(item)
+                                 .withConditionExpression(conditionExpression)
+                                 .withNameMap(nameMap)
+                                 .withValueMap(valueMap));
     }
 
     @Override
@@ -69,19 +69,19 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
         PutItemRequest req = spec.getRequest().withTableName(tableName);
         // set up the item
         Item item = spec.getItem();
-        final Map<String,AttributeValue> attributes = InternalUtils.toAttributeValues(item);
+        final Map<String, AttributeValue> attributes = InternalUtils.toAttributeValues(item);
         // set up the expected attribute map, if any
         final Map<String, ExpectedAttributeValue> expectedMap =
-            InternalUtils.toExpectedAttributeValueMap(spec.getExpected());
+                InternalUtils.toExpectedAttributeValueMap(spec.getExpected());
         // set up the value map, if any (when expression API is used)
-        final Map<String,AttributeValue> attrValMap =
-            InternalUtils.fromSimpleMap(spec.getValueMap());
+        final Map<String, AttributeValue> attrValMap =
+                InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up the request
         req.withItem(attributes)
-            .withExpected(expectedMap)
-            .withExpressionAttributeNames(spec.getNameMap())
-            .withExpressionAttributeValues(attrValMap)
-            ;
+           .withExpected(expectedMap)
+           .withExpressionAttributeNames(spec.getNameMap())
+           .withExpressionAttributeValues(attrValMap)
+        ;
         PutItemResult result = getClient().putItem(req);
         return new PutItemOutcome(result);
     }

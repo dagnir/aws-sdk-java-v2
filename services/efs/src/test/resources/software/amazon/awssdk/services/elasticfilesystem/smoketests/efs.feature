@@ -10,5 +10,5 @@ Feature: Amazon Elastic File System
 
   Scenario: Handling errors
     When I attempt to call the "DeleteFileSystem" API with:
-    | FileSystemId | fs-c5a1446c |
+      | FileSystemId | fs-c5a1446c |
     Then I expect the response error code to be "FileSystemNotFound"

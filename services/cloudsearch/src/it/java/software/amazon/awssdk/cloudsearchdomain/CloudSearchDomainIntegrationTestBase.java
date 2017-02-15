@@ -47,22 +47,18 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  */
 public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
 
-    /** Client reference to the Amazon cloud search service. */
-    protected static AmazonCloudSearch cloudSearch;
-
-    /** Client reference to the Amazon cloud search domain service. */
-    protected static AmazonCloudSearchDomain cloudSearchDomain;
-
-    /** Holds reference to the status of the newly created domain. */
-    protected static DomainStatus domainStatus = null;
-
     /** Name of the cloud search created for the test. */
     protected static final String domainName = "sdk-domain-name"
-            + System.currentTimeMillis();
-
+                                               + System.currentTimeMillis();
+    /** Client reference to the Amazon cloud search service. */
+    protected static AmazonCloudSearch cloudSearch;
+    /** Client reference to the Amazon cloud search domain service. */
+    protected static AmazonCloudSearchDomain cloudSearchDomain;
+    /** Holds reference to the status of the newly created domain. */
+    protected static DomainStatus domainStatus = null;
     /** Name of the temporary file created for the test to hold junk data. */
     protected static String fileName = "sdk-cs-file-"
-            + System.currentTimeMillis();
+                                       + System.currentTimeMillis();
 
     /** Size of the temporary file created. */
     protected static long sizeInBytes = 2 * 1024 * 1024;
@@ -80,12 +76,10 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
      * search.
      */
     protected static String searchServiceEndpoint;
-
-    /** Sleep Timeout for requests. */
-    private static long timeout = 120 * 1000;
-
     /** Suggester used for searching. */
     protected static String suggesterName = "titlesuggest";
+    /** Sleep Timeout for requests. */
+    private static long timeout = 120 * 1000;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -104,7 +98,7 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
             }
         }
         cloudSearch.deleteDomain(new DeleteDomainRequest()
-            .withDomainName(domainName));
+                                         .withDomainName(domainName));
     }
 
     /**
@@ -129,8 +123,8 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
      * schema of the document. Uploads the documents and creates suggesters.
      */
     private static void setUpDomain() throws InterruptedException,
-            AmazonServiceException, AmazonClientException,
-            FileNotFoundException {
+                                             AmazonServiceException, AmazonClientException,
+                                             FileNotFoundException {
         createDomain();
         addIndexFields();
         uploadDocuments();
@@ -143,12 +137,12 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
      */
     private static void createDomain() throws InterruptedException {
         cloudSearch.createDomain(new CreateDomainRequest()
-                .withDomainName(domainName));
+                                         .withDomainName(domainName));
         waitUntilDomainIsActive();
 
         DomainStatus status = cloudSearch.describeDomains(
                 new DescribeDomainsRequest().withDomainNames(domainName))
-                .getDomainStatusList().get(0);
+                                         .getDomainStatusList().get(0);
 
         searchServiceEndpoint = status.getSearchService().getEndpoint();
         docServiceEndpoint = status.getDocService().getEndpoint();
@@ -160,11 +154,11 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
      */
     private static void createSuggesters() throws InterruptedException {
         cloudSearch.defineSuggester(new DefineSuggesterRequest()
-                .withDomainName(domainName).withSuggester(
+                                            .withDomainName(domainName).withSuggester(
                         new Suggester().withSuggesterName(suggesterName)
-                                .withDocumentSuggesterOptions(
-                                        new DocumentSuggesterOptions()
-                                                .withSourceField("title"))));
+                                       .withDocumentSuggesterOptions(
+                                               new DocumentSuggesterOptions()
+                                                       .withSourceField("title"))));
         waitUntilIndexFieldsIsActive();
     }
 
@@ -173,15 +167,15 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
      * searching and suggesting.
      */
     private static void uploadDocuments() throws AmazonServiceException,
-            AmazonClientException, FileNotFoundException {
+                                                 AmazonClientException, FileNotFoundException {
 
         File file = loadFile("movies.json");
         cloudSearchDomain.setEndpoint(docServiceEndpoint);
         UploadDocumentsResult uploadResult = cloudSearchDomain
                 .uploadDocuments(new UploadDocumentsRequest()
-                        .withDocuments(new RepeatableFileInputStream(file))
-                        .withContentType("application/json")
-                        .withContentLength(file.length()));
+                                         .withDocuments(new RepeatableFileInputStream(file))
+                                         .withContentType("application/json")
+                                         .withContentLength(file.length()));
         assertTrue(uploadResult.getAdds() > 1L);
         assertEquals(uploadResult.getStatus(), "success");
     }
@@ -192,18 +186,18 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
     private static DefineIndexFieldResult defineTextArrayIndexField(Field field) {
         return cloudSearch
                 .defineIndexField(new DefineIndexFieldRequest()
-                        .withDomainName(domainName)
-                        .withIndexField(
-                                new IndexField()
-                                        .withIndexFieldName(field.getName())
-                                        .withIndexFieldType(
-                                                IndexFieldType.TextArray)
-                                        .withTextArrayOptions(
-                                                new TextArrayOptions()
-                                                        .withReturnEnabled(
-                                                                field.isReturnEnabled())
-                                                        .withHighlightEnabled(
-                                                                field.isHighlightEnabled()))));
+                                          .withDomainName(domainName)
+                                          .withIndexField(
+                                                  new IndexField()
+                                                          .withIndexFieldName(field.getName())
+                                                          .withIndexFieldType(
+                                                                  IndexFieldType.TextArray)
+                                                          .withTextArrayOptions(
+                                                                  new TextArrayOptions()
+                                                                          .withReturnEnabled(
+                                                                                  field.isReturnEnabled())
+                                                                          .withHighlightEnabled(
+                                                                                  field.isHighlightEnabled()))));
 
     }
 
@@ -213,20 +207,101 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
     private static DefineIndexFieldResult defineTextIndexField(Field field) {
         return cloudSearch
                 .defineIndexField(new DefineIndexFieldRequest()
-                        .withDomainName(domainName)
-                        .withIndexField(
-                                new IndexField()
-                                        .withIndexFieldName(field.getName())
-                                        .withIndexFieldType(IndexFieldType.Text)
-                                        .withTextOptions(
-                                                new TextOptions()
-                                                        .withReturnEnabled(
-                                                                field.isReturnEnabled())
-                                                        .withHighlightEnabled(
-                                                                field.isHighlightEnabled())
-                                                        .withSortEnabled(
-                                                                field.isSortEnabled()))));
+                                          .withDomainName(domainName)
+                                          .withIndexField(
+                                                  new IndexField()
+                                                          .withIndexFieldName(field.getName())
+                                                          .withIndexFieldType(IndexFieldType.Text)
+                                                          .withTextOptions(
+                                                                  new TextOptions()
+                                                                          .withReturnEnabled(
+                                                                                  field.isReturnEnabled())
+                                                                          .withHighlightEnabled(
+                                                                                  field.isHighlightEnabled())
+                                                                          .withSortEnabled(
+                                                                                  field.isSortEnabled()))));
 
+    }
+
+    /**
+     * Adds the schema of the documents to the cloud search
+     */
+    private static void addIndexFields() throws InterruptedException {
+
+        Field actor = new Field("actors", true, false, false, false, true);
+        Field directors = new Field("directors", true, false, false, false,
+                                    true);
+        Field title = new Field("title", true, false, false, true, true);
+        Field imageUrl = new Field("image_url", true, false, false, false,
+                                   false);
+        Field plot = new Field("plot", true, false, false, false, true);
+
+        defineTextArrayIndexField(actor);
+        defineTextArrayIndexField(directors);
+        defineTextIndexField(title);
+        defineTextIndexField(imageUrl);
+        defineTextIndexField(plot);
+        waitUntilIndexFieldsIsActive();
+    }
+
+    /**
+     * Waits until the domain is created and active and also the search and doc service endpoints are available.
+     */
+    private static void waitUntilDomainIsActive() throws InterruptedException {
+        DescribeDomainsResult describeDomainsResult = null;
+
+        while (true) {
+            describeDomainsResult = cloudSearch
+                    .describeDomains(new DescribeDomainsRequest()
+                                             .withDomainNames(domainName));
+            domainStatus = describeDomainsResult.getDomainStatusList().get(0);
+            docServiceEndpoint = domainStatus.getDocService().getEndpoint();
+            searchServiceEndpoint = domainStatus.getSearchService()
+                                                .getEndpoint();
+            if ((!domainStatus.getProcessing()) && docServiceEndpoint != null
+                && searchServiceEndpoint != null) {
+                return;
+            }
+            Thread.sleep(timeout);
+        }
+    }
+
+    /**
+     * Runs the index documents API to index the documents for newly added/modified fields.
+     */
+    private static IndexDocumentsResult runIndexDocuments() {
+        return cloudSearch.indexDocuments(new IndexDocumentsRequest()
+                                                  .withDomainName(domainName));
+    }
+
+    /**
+     * Waits until the all the index fields are active.
+     */
+    private static void waitUntilIndexFieldsIsActive()
+            throws InterruptedException {
+
+        boolean isFieldsActive = false;
+        IndexDocumentsResult indexResult = runIndexDocuments();
+        List<String> fieldNames = indexResult.getFieldNames();
+
+        DescribeIndexFieldsResult describeResult = null;
+        while (!isFieldsActive) {
+            isFieldsActive = true;
+            describeResult = cloudSearch
+                    .describeIndexFields(new DescribeIndexFieldsRequest()
+                                                 .withDomainName(domainName).withFieldNames(
+                                    fieldNames));
+
+            List<IndexFieldStatus> indexFieldsStatus = describeResult
+                    .getIndexFields();
+            for (IndexFieldStatus fieldStatus : indexFieldsStatus) {
+                String state = fieldStatus.getStatus().getState();
+                if (!(state.equals("Active"))) {
+                    isFieldsActive = false;
+                    Thread.sleep(timeout);
+                }
+            }
+        }
     }
 
     /**
@@ -241,8 +316,8 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
         private final boolean highlightEnabled;
 
         public Field(String name, boolean returnEnabled, boolean searchEnabled,
-                boolean facetEnabled, boolean sortEnabled,
-                boolean highlightEnabled) {
+                     boolean facetEnabled, boolean sortEnabled,
+                     boolean highlightEnabled) {
             this.name = name;
             this.returnEnabled = returnEnabled;
             this.searchEnabled = searchEnabled;
@@ -276,87 +351,6 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
         }
     }
 
-    /**
-     * Adds the schema of the documents to the cloud search
-     */
-    private static void addIndexFields() throws InterruptedException {
-
-        Field actor = new Field("actors", true, false, false, false, true);
-        Field directors = new Field("directors", true, false, false, false,
-                true);
-        Field title = new Field("title", true, false, false, true, true);
-        Field imageUrl = new Field("image_url", true, false, false, false,
-                false);
-        Field plot = new Field("plot", true, false, false, false, true);
-
-        defineTextArrayIndexField(actor);
-        defineTextArrayIndexField(directors);
-        defineTextIndexField(title);
-        defineTextIndexField(imageUrl);
-        defineTextIndexField(plot);
-        waitUntilIndexFieldsIsActive();
-    }
-
-    /**
-     * Waits until the domain is created and active and also the search and doc service endpoints are available.
-     */
-    private static void waitUntilDomainIsActive() throws InterruptedException {
-        DescribeDomainsResult describeDomainsResult = null;
-
-        while (true) {
-            describeDomainsResult = cloudSearch
-                    .describeDomains(new DescribeDomainsRequest()
-                            .withDomainNames(domainName));
-            domainStatus = describeDomainsResult.getDomainStatusList().get(0);
-            docServiceEndpoint = domainStatus.getDocService().getEndpoint();
-            searchServiceEndpoint = domainStatus.getSearchService()
-                    .getEndpoint();
-            if ((!domainStatus.getProcessing()) && docServiceEndpoint != null
-                    && searchServiceEndpoint != null)
-                return;
-            Thread.sleep(timeout);
-        }
-    }
-
-    /**
-     * Runs the index documents API to index the documents for newly added/modified fields.
-     */
-    private static IndexDocumentsResult runIndexDocuments() {
-        return cloudSearch.indexDocuments(new IndexDocumentsRequest()
-                .withDomainName(domainName));
-    }
-
-    /**
-     * Waits until the all the index fields are active.
-     */
-    private static void waitUntilIndexFieldsIsActive()
-            throws InterruptedException {
-
-        boolean isFieldsActive = false;
-        IndexDocumentsResult indexResult = runIndexDocuments();
-        List<String> fieldNames = indexResult.getFieldNames();
-
-        DescribeIndexFieldsResult describeResult = null;
-        while (!isFieldsActive) {
-            isFieldsActive = true;
-            describeResult = cloudSearch
-                    .describeIndexFields(new DescribeIndexFieldsRequest()
-                            .withDomainName(domainName).withFieldNames(
-                                    fieldNames));
-
-            List<IndexFieldStatus> indexFieldsStatus = describeResult
-                    .getIndexFields();
-            for (IndexFieldStatus fieldStatus : indexFieldsStatus) {
-                String state = fieldStatus.getStatus().getState();
-                if (!(state.equals("Active"))) {
-                    isFieldsActive = false;
-                    Thread.sleep(timeout);
-                }
-            }
-        }
-    }
-
-
     protected static class RepeatableFileInputStream extends InputStream {
 
         private final File file;
@@ -373,7 +367,9 @@ public class CloudSearchDomainIntegrationTestBase extends AWSTestBase {
         }
 
         @Override
-        public boolean markSupported() { return true; }
+        public boolean markSupported() {
+            return true;
+        }
 
         @Override
         public void mark(int readLimit) {

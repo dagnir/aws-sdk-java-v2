@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ class ScanPage extends Page<Item, ScanOutcome> {
             ScanOutcome outcome) {
         super(Collections.unmodifiableList(
                 toItemList(outcome.getScanResult().getItems())),
-            outcome);
+              outcome);
         this.client = client;
         this.spec = spec;
         this.request = request;
@@ -65,11 +65,13 @@ class ScanPage extends Page<Item, ScanOutcome> {
 
     @Override
     public boolean hasNextPage() {
-        if (lastEvaluatedKey == null)
+        if (lastEvaluatedKey == null) {
             return false;
+        }
         Integer max = spec.getMaxResultSize();
-        if (max == null)
+        if (max == null) {
             return true;
+        }
         return nextRequestLimit(max.intValue()) > 0;
     }
 
@@ -88,15 +90,16 @@ class ScanPage extends Page<Item, ScanOutcome> {
         final Integer max = spec.getMaxResultSize();
         if (max != null) {
             int nextLimit = nextRequestLimit(max.intValue());
-            if (nextLimit == 0)
+            if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
+            }
             request.setLimit(nextLimit);
         }
         request.setExclusiveStartKey(lastEvaluatedKey);
         // fire off request to the server side
         ScanResult result = client.scan(request);
         final int nextIndex = index + this.size();
-        return new ScanPage(client, spec, request, nextIndex, 
-                new ScanOutcome(result));
+        return new ScanPage(client, spec, request, nextIndex,
+                            new ScanOutcome(result));
     }
 }

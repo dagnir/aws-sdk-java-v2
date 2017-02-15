@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -32,7 +47,7 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  */
 public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
 
-//    private static final Random RANDOM = new Random();
+    //    private static final Random RANDOM = new Random();
     private static final boolean ANDROID_TESTING = false;
 
     /** The bucket created and used by these tests */
@@ -51,7 +66,7 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
     public static void tearDown() throws Exception {
         deleteBucketAndAllContents(bucketName);
 
-        if ( file != null ) {
+        if (file != null) {
             file.delete();
         }
     }
@@ -63,7 +78,7 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
     public static void setUp() throws Exception {
         S3IntegrationTestBase.setUp();
 
-        if ( !ANDROID_TESTING ) {
+        if (!ANDROID_TESTING) {
             setUpCredentials();
         }
 
@@ -72,7 +87,7 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
         s3.createBucket(bucketName);
 
         ObjectMetadata metadata = null;
-        if ( !ANDROID_TESTING ) {
+        if (!ANDROID_TESTING) {
             file = new RandomTempFile("get-object-integ-test", 1000L);
             s3.putObject(bucketName, key, file);
         } else {
@@ -92,7 +107,7 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
     public void testMultiDelete() throws Exception {
         List<String> keys = new ArrayList<String>();
         String baseKey = "" + System.currentTimeMillis();
-        for ( int i = 0; i < 10; i++ ) {
+        for (int i = 0; i < 10; i++) {
             String key = baseKey + i;
             s3.putObject(bucketName, key, file);
             keys.add(key);
@@ -101,14 +116,14 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
         // Delete the odd objects
         DeleteObjectsRequest rq = new DeleteObjectsRequest(bucketName);
         Set<String> deletedKeys = new HashSet<String>();
-        for ( int i = 1; i < keys.size(); i += 2 ) {
+        for (int i = 1; i < keys.size(); i += 2) {
             rq.getKeys().add(new KeyVersion(keys.get(i)));
             deletedKeys.add(keys.get(i));
         }
         DeleteObjectsResult response = s3.deleteObjects(rq);
 
         assertEquals(5, response.getDeletedObjects().size());
-        for ( DeletedObject obj : response.getDeletedObjects() ) {
+        for (DeletedObject obj : response.getDeletedObjects()) {
             assertTrue(deletedKeys.contains(obj.getKey()));
             deletedKeys.remove(obj.getKey());
             assertNull(obj.getVersionId());
@@ -156,13 +171,13 @@ public class MultiObjectDeleteIntegrationTest extends S3IntegrationTestBase {
 
         boolean seen1 = false;
         boolean seen3 = false;
-        for ( DeletedObject obj : response.getDeletedObjects() ) {
-            if ( obj.getKey().equals("key1") ) {
+        for (DeletedObject obj : response.getDeletedObjects()) {
+            if (obj.getKey().equals("key1")) {
                 seen1 = true;
                 assertEquals("Version1", obj.getVersionId());
                 assertNull(obj.getDeleteMarkerVersionId());
                 assertFalse(obj.isDeleteMarker());
-            } else if ( obj.getKey().equals("key3") ) {
+            } else if (obj.getKey().equals("key3")) {
                 seen3 = true;
                 assertNull(obj.getVersionId());
                 assertEquals("Version3", obj.getDeleteMarkerVersionId());

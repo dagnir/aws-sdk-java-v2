@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,24 +22,11 @@ import org.apache.commons.logging.LogFactory;
  * Service specific metric transformer factory.
  */
 public enum AWSMetricTransformerFactory {
-    DynamoDB,
-    ;
+    DynamoDB,;
+    public static final String DEFAULT_METRIC_TRANSFORM_PROVIDER_PACKAGE =
+            "software.amazon.awssdk.metrics.internal.cloudwatch.provider.transform";
     private static final String REQUEST_TRANSFORMER_CLASSNAME_SUFFIX = "RequestMetricTransformer";
-    public static final String DEFAULT_METRIC_TRANSFORM_PROVIDER_PACKAGE = 
-        "software.amazon.awssdk.metrics.internal.cloudwatch.provider.transform";
     public static volatile String transformerPackage = DEFAULT_METRIC_TRANSFORM_PROVIDER_PACKAGE;
-
-    public static String getTransformerPackage() {
-        return transformerPackage;
-    }
-
-    public static void setTransformerPackage(
-            String transformPackage) {
-        if (transformPackage == null)
-            throw new IllegalArgumentException();
-        AWSMetricTransformerFactory.transformerPackage = transformPackage;
-    }
-
     /**
      * By default, the transformer class for each AWS specific service is
      * assumed to reside in the Java package
@@ -53,46 +40,58 @@ public enum AWSMetricTransformerFactory {
      */
     private volatile RequestMetricTransformer requestMetricTransformer;
 
+    public static String getTransformerPackage() {
+        return transformerPackage;
+    }
+
+    public static void setTransformerPackage(
+            String transformPackage) {
+        if (transformPackage == null) {
+            throw new IllegalArgumentException();
+        }
+        AWSMetricTransformerFactory.transformerPackage = transformPackage;
+    }
+
     /**
      * Returns the fully qualified class name of the request metric
      * transformer, given the specific AWS prefix.
      */
     public static String buildRequestMetricTransformerFQCN(String awsPrefix, String packageName) {
-        return packageName + "." 
-             + awsPrefix + REQUEST_TRANSFORMER_CLASSNAME_SUFFIX
-             ;
+        return packageName + "."
+               + awsPrefix + REQUEST_TRANSFORMER_CLASSNAME_SUFFIX
+                ;
     }
 
     /**
      * @param fqcn fully qualified class name.
      */
     private RequestMetricTransformer loadRequestMetricTransformer(String fqcn) {
-       Log log = LogFactory.getLog(AWSMetricTransformerFactory.class);
-       if (log.isDebugEnabled()) {
-           log.debug("Loading " + fqcn);
-       }
+        Log log = LogFactory.getLog(AWSMetricTransformerFactory.class);
+        if (log.isDebugEnabled()) {
+            log.debug("Loading " + fqcn);
+        }
         try {
             Class<?> c = Class.forName(fqcn);
-            return (RequestMetricTransformer)c.newInstance();
+            return (RequestMetricTransformer) c.newInstance();
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to load " + fqcn
-                        + "; therefore ignoring " + this.name()
-                        + " specific predefined metrics", e);
+                          + "; therefore ignoring " + this.name()
+                          + " specific predefined metrics", e);
             }
         }
         return RequestMetricTransformer.NONE;
-   }
+    }
 
     public RequestMetricTransformer getRequestMetricTransformer() {
         RequestMetricTransformer transformer = requestMetricTransformer;
         String packageName = transformerPackage;
         if (transformer != null
-        &&  packageName.equals(transformer.getClass().getPackage().getName())) {
+            && packageName.equals(transformer.getClass().getPackage().getName())) {
             return transformer;
         }
         String fqcn = AWSMetricTransformerFactory
-            .buildRequestMetricTransformerFQCN(name(), packageName);
+                .buildRequestMetricTransformerFQCN(name(), packageName);
         return this.requestMetricTransformer = loadRequestMetricTransformer(fqcn);
     }
 }

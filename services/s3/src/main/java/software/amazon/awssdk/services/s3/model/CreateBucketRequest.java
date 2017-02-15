@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  * @see CopyObjectRequest
  */
 public class CreateBucketRequest extends AmazonWebServiceRequest implements
-        Serializable, S3AccelerateUnsupported {
+                                                                 Serializable, S3AccelerateUnsupported {
 
     /** The name of the Amazon S3 bucket to create. */
     private String bucketName;
@@ -102,6 +103,17 @@ public class CreateBucketRequest extends AmazonWebServiceRequest implements
     }
 
     /**
+     * Gets the name of the Amazon S3 bucket to create.
+     *
+     * @return The name of the Amazon S3 bucket to create.
+     *
+     * @see CreateBucketRequest#setBucketName(String)
+     */
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    /**
      * Sets the name of the Amazon S3 bucket to create.
      *
      * @param bucketName
@@ -114,14 +126,15 @@ public class CreateBucketRequest extends AmazonWebServiceRequest implements
     }
 
     /**
-     * Gets the name of the Amazon S3 bucket to create.
+     * Gets the name of the Amazon S3 region in which this bucket will be created.
      *
-     * @return The name of the Amazon S3 bucket to create.
+     * @return The name of the Amazon S3 region in which this bucket will be created.
      *
-     * @see CreateBucketRequest#setBucketName(String)
+     * @see CreateBucketRequest#setRegion(String)
      */
-    public String getBucketName() {
-        return bucketName;
+    @Deprecated
+    public String getRegion() {
+        return region;
     }
 
     /**
@@ -140,18 +153,6 @@ public class CreateBucketRequest extends AmazonWebServiceRequest implements
     @Deprecated
     public void setRegion(String region) {
         this.region = region;
-    }
-
-    /**
-     * Gets the name of the Amazon S3 region in which this bucket will be created.
-     *
-     * @return The name of the Amazon S3 region in which this bucket will be created.
-     *
-     * @see CreateBucketRequest#setRegion(String)
-     */
-    @Deprecated
-    public String getRegion() {
-        return region;
     }
 
     /**

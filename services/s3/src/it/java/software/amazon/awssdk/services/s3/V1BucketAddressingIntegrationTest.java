@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -78,7 +93,7 @@ public class V1BucketAddressingIntegrationTest extends S3IntegrationTestBase {
         assertFileEqualsStream(file, generatePresignedUrl.openStream());
 
         s3.listObjects(bucketName);
-        
+
         s3.listObjects(new ListObjectsRequest().withBucketName(bucketName).withPrefix(key).withDelimiter("/"));
     }
 
@@ -97,7 +112,7 @@ public class V1BucketAddressingIntegrationTest extends S3IntegrationTestBase {
      * @param bucketName The name of the bucket to create.
      */
     @SuppressWarnings("static-access")
-	private void createV1AddressedBucket(String bucketName) throws Exception {
+    private void createV1AddressedBucket(String bucketName) throws Exception {
         new AmazonS3Client(this.credentials) {
             public void createV1AddressedBucket(String bucketName) throws Exception {
                 Request<Void> request = new DefaultRequest<Void>(Constants.S3_SERVICE_DISPLAY_NAME);
@@ -108,12 +123,11 @@ public class V1BucketAddressingIntegrationTest extends S3IntegrationTestBase {
                 createSigner(request, bucketName, null).sign(request, credentials);
 
                 client.execute(request,
-                        new S3XmlResponseHandler<Void>(null),
-                        new S3ErrorResponseHandler(), new ExecutionContext());
+                               new S3XmlResponseHandler<Void>(null),
+                               new S3ErrorResponseHandler(), new ExecutionContext());
             }
         }.createV1AddressedBucket(bucketName);
     }
-
 
 
 }

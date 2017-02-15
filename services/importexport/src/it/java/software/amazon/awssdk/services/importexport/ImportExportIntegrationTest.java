@@ -33,27 +33,17 @@ import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
  */
 public class ImportExportIntegrationTest extends IntegrationTestBase {
 
+    private static final String IMPORT_EXPORT_BUCKET_PREFIX = "import-export-test-bucket";
+    private static final String IMPORT_MANIFEST_PATH =
+            "/software/amazon/awssdk/services/importexport/sampleImportManifest.yml";
+    private static final String EXPORT_MANIFEST_PATH =
+            "/software/amazon/awssdk/services/importexport/sampleExportManifest.yml";
     /** ID of the job we create, so we can cancel it later */
     private String createdJobId;
-    private static final String IMPORT_EXPORT_BUCKET_PREFIX = "import-export-test-bucket";
-
-    private static final String IMPORT_MANIFEST_PATH =
-        "/software/amazon/awssdk/services/importexport/sampleImportManifest.yml";
-    private static final String EXPORT_MANIFEST_PATH =
-        "/software/amazon/awssdk/services/importexport/sampleExportManifest.yml";
-
-
-    /** Releases resources used by tests */
-    @After
-    public void tearDown() throws Exception {
-        if (createdJobId != null)
-            try {ie.cancelJob(new CancelJobRequest().withJobId(createdJobId));}
-            catch (Exception e) {}
-    }
 
     @AfterClass
     public static void cleanup() {
-        for(Bucket b : s3.listBuckets()) {
+        for (Bucket b : s3.listBuckets()) {
             if (b.getName().startsWith(IMPORT_EXPORT_BUCKET_PREFIX)) {
                 deleteBucketContents(b.getName());
                 s3.deleteBucket(b.getName());
@@ -63,11 +53,22 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
 
     private static void deleteBucketContents(String bucket) {
         ObjectListing result = s3.listObjects(bucket);
-        for(S3ObjectSummary o : result.getObjectSummaries()) {
+        for (S3ObjectSummary o : result.getObjectSummaries()) {
             s3.deleteObject(bucket, o.getKey());
         }
         if (result.isTruncated()) {
             deleteBucketContents(bucket);
+        }
+    }
+
+    /** Releases resources used by tests */
+    @After
+    public void tearDown() throws Exception {
+        if (createdJobId != null) {
+            try {
+                ie.cancelJob(new CancelJobRequest().withJobId(createdJobId));
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -79,9 +80,9 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     public void testExceptionHandling() throws Exception {
         try {
             ie.createJob(new CreateJobRequest()
-                .withJobType("InvalidJobType")
-                .withManifest(getSampleManifestText(IMPORT_MANIFEST_PATH))
-                .withValidateOnly(true));
+                                 .withJobType("InvalidJobType")
+                                 .withManifest(getSampleManifestText(IMPORT_MANIFEST_PATH))
+                                 .withValidateOnly(true));
             fail("Expected an InvalidParameterException");
         } catch (InvalidParameterException e) {
             assertEquals("InvalidParameterException", e.getErrorCode());
@@ -101,8 +102,8 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     public void testImportExport() throws Exception {
         // CreateJob
         CreateJobRequest createJobRequest = new CreateJobRequest()
-            .withJobType(JobType.Import.toString())
-            .withManifest(getSampleManifestText(IMPORT_MANIFEST_PATH));
+                .withJobType(JobType.Import.toString())
+                .withManifest(getSampleManifestText(IMPORT_MANIFEST_PATH));
         CreateJobResult createJobResult = ie.createJob(createJobRequest);
         createdJobId = createJobResult.getJobId();
         assertNotNull(createdJobId);
@@ -114,9 +115,9 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
 
         // UpdateJob
         UpdateJobRequest updateJobRequest = new UpdateJobRequest()
-            .withJobId(createdJobId)
-            .withJobType(JobType.Export.toString())
-            .withManifest(getSampleManifestText(EXPORT_MANIFEST_PATH));
+                .withJobId(createdJobId)
+                .withJobType(JobType.Export.toString())
+                .withManifest(getSampleManifestText(EXPORT_MANIFEST_PATH));
         ie.updateJob(updateJobRequest);
 
 
@@ -162,7 +163,11 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
      */
 
     private Job findJob(String jobId, List<Job> jobs) {
-        for (Job job : jobs) if (job.getJobId().equals(jobId)) return job;
+        for (Job job : jobs) {
+            if (job.getJobId().equals(jobId)) {
+                return job;
+            }
+        }
         fail("Expected to find a job with ID '" + jobId + "', but didn't");
         return null;
     }

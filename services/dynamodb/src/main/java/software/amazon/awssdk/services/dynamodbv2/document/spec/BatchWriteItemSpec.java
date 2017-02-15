@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,16 +46,17 @@ public class BatchWriteItemSpec extends AbstractSpec<BatchWriteItemRequest> {
     }
 
     public BatchWriteItemSpec withTableWriteItems(
-            TableWriteItems ... tableWriteItems) {
-        if (tableWriteItems == null)
+            TableWriteItems... tableWriteItems) {
+        if (tableWriteItems == null) {
             this.tableWriteItems = null;
-        else {
+        } else {
             Set<String> names = new LinkedHashSet<String>();
-            for (TableWriteItems e: tableWriteItems)
+            for (TableWriteItems e : tableWriteItems) {
                 names.add(e.getTableName());
+            }
             if (names.size() != tableWriteItems.length) {
                 throw new IllegalArgumentException(
-                    "table names must not duplicate in the list of TableWriteItems");
+                        "table names must not duplicate in the list of TableWriteItems");
             }
             this.tableWriteItems = Arrays.asList(tableWriteItems);
         }

@@ -10,8 +10,8 @@ Feature: AWS Directory Service
 
   Scenario: Handling errors
     When I attempt to call the "CreateDirectory" API with:
-    | Name      |   |
-    | Password  |   |
-    | Size      |   |
+      | Name     |  |
+      | Password |  |
+      | Size     |  |
     Then I expect the response error code to be "ValidationException"
 

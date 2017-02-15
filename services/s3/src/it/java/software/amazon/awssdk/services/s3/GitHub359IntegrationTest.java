@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.ByteArrayInputStream;
@@ -23,22 +38,22 @@ public class GitHub359IntegrationTest extends S3IntegrationTestBase {
     private String bucketName = CryptoTestUtils.tempBucketName(GitHub359IntegrationTest.class);
     /** The key of the object these tests will create, test on and delete */
     private String key = "key";
-    
-    @Before 
+
+    @Before
     public void setup() {
         s3.createBucket(bucketName);
     }
 
-    @After 
+    @After
     public void tearDown() {
         try {
             CryptoTestUtils.deleteBucketAndAllContents(s3, bucketName);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             LogFactory.getLog(getClass()).warn("", ex);
         }
     }
 
-    @Test(expected=AmazonClientException.class)
+    @Test(expected = AmazonClientException.class)
     public void test() throws Exception {
         byte[] data = new byte[122880000];
         InputStream inputStream = new ByteArrayInputStream(data);
@@ -77,9 +92,9 @@ public class GitHub359IntegrationTest extends S3IntegrationTestBase {
             // Step 3: Complete.
             CompleteMultipartUploadRequest compRequest = new
                     CompleteMultipartUploadRequest(bucketName,
-                    key,
-                    initResponse.getUploadId(),
-                    partETags);
+                                                   key,
+                                                   initResponse.getUploadId(),
+                                                   partETags);
 
             s3.completeMultipartUpload(compRequest);
         } catch (Exception e) {

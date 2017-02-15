@@ -1,17 +1,18 @@
 /*
- * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -142,7 +143,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = StringCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target({ElementType.METHOD, ElementType.TYPE})
+        @Target( {ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
         }
@@ -212,7 +213,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = StringSetCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target({ElementType.METHOD, ElementType.TYPE})
+        @Target( {ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
         }
@@ -262,7 +263,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = DoubleCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target({ElementType.METHOD, ElementType.TYPE})
+        @Target( {ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
 
@@ -305,7 +306,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = DoubleSetCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target({ElementType.METHOD, ElementType.TYPE})
+        @Target( {ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
 

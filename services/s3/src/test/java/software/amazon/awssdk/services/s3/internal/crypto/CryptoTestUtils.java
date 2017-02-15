@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 
@@ -51,13 +66,17 @@ import software.amazon.awssdk.util.StringUtils;
 //import org.bouncycastle.util.encoders.Base64;
 
 public class CryptoTestUtils {
+    static final int ASCII_LOW = 33; // '!', skipping space for readability
+    static final int ASCII_HIGH = 126;
+    // include a line break character
+    static final int modulo = ASCII_HIGH - ASCII_LOW + 2;
     private static final Random rand = new Random();
     private static final SecureRandom srand = new SecureRandom();
     private static final String TEST_PRIVATE_KEY_B64 = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKo4dkqOcgSJGQdRQgGg1IeQNrEc5pXPxag3XOgz4JcSkttBTI597aPCPW51/939EDNskiFhNyP7XzUVTHr5AnZ2GBjVkUKY4eo9Hd4CWxptLKgZCIZ+MOhyreE51rGLlA/Mxp7r5/AtDZ4GqAntFW3Ask4ePByqFBWyewVYfO5dAgMBAAECgYAA3WqUdGbV6RBsfhg0w+lwiuYMPlZZmoWpliZts53HhruiS5GlA7TKaTlAr27OZPPJHxsa+lB6aVORhHswAMXnbBEbMm9pUllRc04iQrZ30dOa9Ud70p5kWuCJN3FKjrExKp/90Mbt2nJ46uCnE/QbnUhhXhtgIZVRac8eZ8gtYQJBANIQlYH3cPj792TXf6Ul85wKk3mcK4CEn2JYLmU8oyplJj1cNuwWrExAU/Z35HrcXJAhhku5Fg+iZWyNtU6StkUCQQDPcWZ3Q+dVmsN4f5de9CpvLD10zSRUYPdeEG/2zlUefjRFfg47NX0/HDExk1oGc9NjTu9sdorc+00BGPe05wU5AkAwXVMe3kqreM/H7vnbmzZQefrkZ/l4GJDdwrHD60ch7rH0NLQMfVfkIndyar43L188bAuQiaezp880RBg3Y/4FAkBuJgnBhGXet6nZXu6SddXeaEBNt+v1ffN7mADLrW3XHi5FRBTsbY+Opjqc12AzEueI0M4i6qL7idiun4JQJWdJAkBoyZJTZS5ZInxTD2jm3QAIR1yM7I3wsvEyFVqVeV5gkYXQ3GyTIKEaCuYDN8o9SWUqn0bKOt7w2z3XG9EyXbbV";
     private static final String TEST_PUBLIC_KEY_B64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqOHZKjnIEiRkHUUIBoNSHkDaxHOaVz8WoN1zoM+CXEpLbQUyOfe2jwj1udf/d/RAzbJIhYTcj+181FUx6+QJ2dhgY1ZFCmOHqPR3eAlsabSyoGQiGfjDocq3hOdaxi5QPzMae6+fwLQ2eBqgJ7RVtwLJOHjwcqhQVsnsFWHzuXQIDAQAB";
-
     private static final String TEST_PRIVATE_KEY1_B64 = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAI3HDeqfG9fQrJJemZIY5jTv+W9vgBZsOnbTUV6hy2rWAAFYedTJT1mL39payniUJxDsFsGanPjM8ijKhH7lmBxztnc6gw2rzvmFi+MjMnd+nfynurro7yjdvf9ad/OZJInXWgxdYhLsrsontWlVi2jQFsXX9kSZUFWHGCTF35JFAgMBAAECgYB+yJirTSlq7xLDuZD/UwDaKhcXDdCvPI1zoTlMtMbhfQl4KpSYMoWhADJoY3RYK7Rbr6QR8Z+Z5jxPOfsON2a0ArfcZ6oqXgZyLVyU+euAnwsYlX3Bg6AcC9KEWVqLz3xTbeN1QdPZxK30l4sJI75wnFC4s5WUb0biZUJjr/Lx6QJBANstaObcwotVCyCXRj6jhsMVa3hlG7CgPlvjaSUvGb15nYoqdQ+6qv3H00VqkacKI++cU99K2Rdb2toowX82IXcCQQClmMJJuzv38exruQwYVhu68wnCxo9/T1P9XYRcRVM/uVe7HqV1kvKD0o8/UXPxz7F9+Hq9xKi4HUU8IyD5hrkjAkBLoqgIwzX/jyF/5bQ/+X6P49xqd7nOgf4DB79JLa/cSxOqkmxDOU+4tDScR+Jrmnw8O95VuCaigPhNQLNFixCRAkBrSqRnXTanmUmTKhwaEIB7CkkCt9/1npJOkK7Xkds0aIPdKygNG56hpmVFoyK6Q9U+RyZPmgGu+NgI9MHCqnV9AkEAxX+dpBUaP4e6B+a0xZx5zXrp5fFrtyrpF6NLNy2QD3P2JzDAVbfbGYGQ+iA9cG+z1YQxUqn55uv7RLlJaXYAsg==";
     private static final String TEST_PUBLIC_KEY1_B64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNxw3qnxvX0KySXpmSGOY07/lvb4AWbDp201Feoctq1gABWHnUyU9Zi9/aWsp4lCcQ7BbBmpz4zPIoyoR+5Zgcc7Z3OoMNq875hYvjIzJ3fp38p7q66O8o3b3/WnfzmSSJ11oMXWIS7K7KJ7VpVYto0BbF1/ZEmVBVhxgkxd+SRQIDAQAB";
+
     /**
      * Used to control whether those tests that take a long time are
      * to be run or not.
@@ -71,7 +90,7 @@ public class CryptoTestUtils {
 
     // http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#KeyGenerator
     public static SecretKey generateSecretKey(String keyGenAlgorithm,
-            int keyBitLength) throws NoSuchAlgorithmException {
+                                              int keyBitLength) throws NoSuchAlgorithmException {
         KeyGenerator generator = KeyGenerator.getInstance(keyGenAlgorithm);
         generator.init(keyBitLength);
         return generator.generateKey();
@@ -79,17 +98,12 @@ public class CryptoTestUtils {
 
     // http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#KeyPairGenerator
     public static KeyPair generateKeyPair(String keyGenAlgorithm,
-            int keyBitLength) throws NoSuchAlgorithmException {
+                                          int keyBitLength) throws NoSuchAlgorithmException {
         KeyPairGenerator generator = KeyPairGenerator
                 .getInstance(keyGenAlgorithm);
         generator.initialize(keyBitLength);
         return generator.generateKeyPair();
     }
-
-    static final int ASCII_LOW = 33; // '!', skipping space for readability
-    static final int ASCII_HIGH = 126;
-    // include a line break character
-    static final int modulo = ASCII_HIGH - ASCII_LOW + 2;
 
     /**
      * Generate a random ASCII file of the specified number of bytes. The ASCII
@@ -102,12 +116,13 @@ public class CryptoTestUtils {
     }
 
     public static File generateRandomAsciiFile(long byteSize,
-            boolean deleteOnExit) throws IOException {
+                                               boolean deleteOnExit) throws IOException {
         File file = File.createTempFile("CryptoTestUtils", ".txt");
         System.out.println("Generating random ASCII file with size: "
-                + byteSize + " at " + file);
-        if (deleteOnExit)
+                           + byteSize + " at " + file);
+        if (deleteOnExit) {
             file.deleteOnExit();
+        }
         OutputStream out = new FileOutputStream(file);
         int BUFSIZE = 1024 * 8;
         byte[] buf = new byte[1024 * 8];
@@ -129,27 +144,30 @@ public class CryptoTestUtils {
 
     public static File generateRandomGCMEncryptedAsciiFile(long byteSize)
             throws IOException, InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchProviderException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException {
+                   NoSuchProviderException, NoSuchPaddingException,
+                   InvalidAlgorithmParameterException {
         return generateRandomGCMEncryptedAsciiFile(byteSize, true);
     }
 
     public static File generateRandomGCMEncryptedAsciiFile(long byteSize,
-            boolean deleteOnExit) throws IOException, InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchProviderException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException {
+                                                           boolean deleteOnExit) throws IOException, InvalidKeyException,
+                                                                                        NoSuchAlgorithmException,
+                                                                                        NoSuchProviderException,
+                                                                                        NoSuchPaddingException,
+                                                                                        InvalidAlgorithmParameterException {
         File infile = generateRandomAsciiFile(byteSize, deleteOnExit);
         File oufile = new File(infile.getAbsolutePath() + "-gcm-encrypted");
         System.out.println("Generating random ASCII file with size: "
-                + byteSize + " at " + oufile);
-        if (deleteOnExit)
+                           + byteSize + " at " + oufile);
+        if (deleteOnExit) {
             oufile.deleteOnExit();
+        }
         ContentCryptoScheme scheme = ContentCryptoScheme.AES_GCM;
         IOUtils.copy(
                 new CipherLiteInputStream(new FileInputStream(infile), scheme
                         .createCipherLite(getTestSecretKey(scheme),
-                                new byte[scheme.getIVLengthInBytes()],
-                                Cipher.ENCRYPT_MODE)), new FileOutputStream(
+                                          new byte[scheme.getIVLengthInBytes()],
+                                          Cipher.ENCRYPT_MODE)), new FileOutputStream(
                         oufile));
         return oufile;
     }
@@ -160,11 +178,13 @@ public class CryptoTestUtils {
             byte b = bytes[i];
             if (b < ASCII_LOW || b > ASCII_HIGH) {
                 byte c = (byte) (b % modulo);
-                if (c < 0)
+                if (c < 0) {
                     c = (byte) (c + modulo);
+                }
                 bytes[i] = (byte) (c + ASCII_LOW);
-                if (bytes[i] > ASCII_HIGH)
+                if (bytes[i] > ASCII_HIGH) {
                     bytes[i] = (byte) '\n';
+                }
             }
         }
         return bytes;
@@ -181,7 +201,7 @@ public class CryptoTestUtils {
 
     public static SecretKey getTestSecretKey(ContentCryptoScheme scheme) {
         return new SecretKeySpec(new byte[scheme.getKeyLengthInBits() / 8],
-                scheme.getKeyGeneratorAlgorithm());
+                                 scheme.getKeyGeneratorAlgorithm());
     }
 
     public static SecretKey getTestSecretKey() {
@@ -197,8 +217,8 @@ public class CryptoTestUtils {
     public static CipherLite createTestCipherWithStartingBytePos(
             ContentCryptoScheme scheme, int sourceIVLengthInBytes,
             int cipherMode, int startingBytePos) throws InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchProviderException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException {
+                                                        NoSuchAlgorithmException, NoSuchProviderException,
+                                                        NoSuchPaddingException, InvalidAlgorithmParameterException {
         SecretKey cek = getTestSecretKey(scheme);
         byte[] iv_gcm = new byte[sourceIVLengthInBytes];
         byte[] iv = scheme.adjustIV(iv_gcm, startingBytePos);
@@ -206,16 +226,16 @@ public class CryptoTestUtils {
     }
 
     public static CipherLite createTestCipher(ContentCryptoScheme scheme,
-            int sourceIVLengthInBytes, int cipherMode)
+                                              int sourceIVLengthInBytes, int cipherMode)
             throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchProviderException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException {
+                   NoSuchProviderException, NoSuchPaddingException,
+                   InvalidAlgorithmParameterException {
         return createTestCipherWithStartingBytePos(scheme,
-                sourceIVLengthInBytes, cipherMode, 0);
+                                                   sourceIVLengthInBytes, cipherMode, 0);
     }
 
     public static KeyPair getTestKeyPair() throws NoSuchAlgorithmException,
-            InvalidKeySpecException {
+                                                  InvalidKeySpecException {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(
                 decodeBase64(TEST_PRIVATE_KEY_B64)));
@@ -225,7 +245,7 @@ public class CryptoTestUtils {
     }
 
     public static KeyPair getTestKeyPair1() throws NoSuchAlgorithmException,
-            InvalidKeySpecException {
+                                                   InvalidKeySpecException {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(
                 decodeBase64(TEST_PRIVATE_KEY1_B64)));
@@ -261,17 +281,17 @@ public class CryptoTestUtils {
     }
 
     public static byte[] md5of(S3Object s3object) throws IOException,
-            NoSuchAlgorithmException {
+                                                         NoSuchAlgorithmException {
         return md5of(s3object.getObjectContent());
     }
 
     public static byte[] md5of(File file) throws IOException,
-            NoSuchAlgorithmException {
+                                                 NoSuchAlgorithmException {
         return md5of(new FileInputStream(file));
     }
 
     public static byte[] md5of(InputStream is) throws IOException,
-            NoSuchAlgorithmException {
+                                                      NoSuchAlgorithmException {
         byte[] buf = new byte[1024 * 2];
         MD5DigestCalculatingInputStream md5is = new MD5DigestCalculatingInputStream(
                 is);
@@ -287,9 +307,11 @@ public class CryptoTestUtils {
     }
 
     public static CipherLite createTestCipherLite(int cipherMode,
-            ContentCryptoScheme scheme) throws InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchProviderException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException {
+                                                  ContentCryptoScheme scheme) throws InvalidKeyException,
+                                                                                     NoSuchAlgorithmException,
+                                                                                     NoSuchProviderException,
+                                                                                     NoSuchPaddingException,
+                                                                                     InvalidAlgorithmParameterException {
         return createTestCipherLite(cipherMode, scheme, null);
     }
 
@@ -298,9 +320,11 @@ public class CryptoTestUtils {
      * secret key.
      */
     public static CipherLite createTestCipherLite(int cipherMode,
-            ContentCryptoScheme scheme, Provider provider) throws InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchProviderException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException {
+                                                  ContentCryptoScheme scheme, Provider provider) throws InvalidKeyException,
+                                                                                                        NoSuchAlgorithmException,
+                                                                                                        NoSuchProviderException,
+                                                                                                        NoSuchPaddingException,
+                                                                                                        InvalidAlgorithmParameterException {
         // Assuming IV is always in bytes
         SecretKey cek = new SecretKeySpec(
                 new byte[scheme.getKeyLengthInBits() / 8],
@@ -310,9 +334,11 @@ public class CryptoTestUtils {
     }
 
     public static CipherLite generateTestCipherLite(int cipherMode,
-            ContentCryptoScheme scheme) throws InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchProviderException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException {
+                                                    ContentCryptoScheme scheme) throws InvalidKeyException,
+                                                                                       NoSuchAlgorithmException,
+                                                                                       NoSuchProviderException,
+                                                                                       NoSuchPaddingException,
+                                                                                       InvalidAlgorithmParameterException {
         return generateTestCipherLite(cipherMode, scheme, null);
     }
 
@@ -320,9 +346,11 @@ public class CryptoTestUtils {
      * Generates and returns a test CipherLite using a random test secret key.
      */
     public static CipherLite generateTestCipherLite(int cipherMode,
-            ContentCryptoScheme scheme, Provider provider) throws InvalidKeyException,
-            NoSuchAlgorithmException, NoSuchProviderException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException {
+                                                    ContentCryptoScheme scheme, Provider provider) throws InvalidKeyException,
+                                                                                                          NoSuchAlgorithmException,
+                                                                                                          NoSuchProviderException,
+                                                                                                          NoSuchPaddingException,
+                                                                                                          InvalidAlgorithmParameterException {
         KeyGenerator kg = KeyGenerator.getInstance(scheme.getKeyGeneratorAlgorithm());
         kg.init(scheme.getKeyLengthInBits(), srand);
         SecretKey cek = kg.generateKey();
@@ -351,7 +379,7 @@ public class CryptoTestUtils {
     public static void tryCreateBucket(AmazonS3 s3, String bucketName) {
         try {
             s3.createBucket(bucketName);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             LogFactory.getLog(CryptoTestUtils.class).debug("", ex);
         }
         return;
@@ -362,7 +390,7 @@ public class CryptoTestUtils {
         ObjectListing objectListing = client.listObjects(bucketName);
 
         while (true) {
-            for ( Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
+            for (Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
                 S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
                 client.deleteObject(bucketName, objectSummary.getKey());
             }
@@ -372,10 +400,11 @@ public class CryptoTestUtils {
             } else {
                 break;
             }
-        };
+        }
+        ;
         VersionListing list = client.listVersions(new ListVersionsRequest().withBucketName(bucketName));
-        for ( Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
-            S3VersionSummary s = (S3VersionSummary)iterator.next();
+        for (Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+            S3VersionSummary s = (S3VersionSummary) iterator.next();
             client.deleteVersion(bucketName, s.getKey(), s.getVersionId());
         }
         client.deleteBucket(bucketName);
@@ -384,15 +413,15 @@ public class CryptoTestUtils {
     public static AWSCredentials awsTestCredentials() throws IOException {
         return new PropertiesCredentials(new File(
                 System.getProperty("user.home")
-                        + "/.aws/awsTestAccount.properties"));
+                + "/.aws/awsTestAccount.properties"));
     }
 
     public static Provider newBouncyCastleProvider()
             throws InstantiationException, IllegalAccessException,
-            ClassNotFoundException {
+                   ClassNotFoundException {
         return (Provider) Class.forName(
                 "org.bouncycastle.jce.provider.BouncyCastleProvider")
-                .newInstance();
+                               .newInstance();
     }
 
     public static String encodeHexString(byte[] b) {

@@ -30,7 +30,7 @@ public class Waiters {
         this(new HashMap<>());
     }
 
-    private Waiters(Map<String, WaiterDefinition> waiters){
+    private Waiters(Map<String, WaiterDefinition> waiters) {
         this.waiters = waiters;
     }
 
@@ -38,7 +38,7 @@ public class Waiters {
         return waiters;
     }
 
-    public WaiterDefinition getWaiterDefinition(String waiterName){
+    public WaiterDefinition getWaiterDefinition(String waiterName) {
         return waiters.get(waiterName);
     }
 

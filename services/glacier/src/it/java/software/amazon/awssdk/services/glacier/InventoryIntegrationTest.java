@@ -11,9 +11,9 @@ public class InventoryIntegrationTest extends GlacierIntegrationTestBase {
         initializeClient();
 
         glacier.initiateJob(new InitiateJobRequest()
-            .withAccountId(accountId)
-            .withVaultName(vaultName)
-            .withJobParameters(new JobParameters()
-                    .withType("inventory-retrieval")));
+                                    .withAccountId(accountId)
+                                    .withVaultName(vaultName)
+                                    .withJobParameters(new JobParameters()
+                                                               .withType("inventory-retrieval")));
     }
- }
+}

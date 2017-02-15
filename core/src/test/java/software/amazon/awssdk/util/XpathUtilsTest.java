@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -64,28 +60,28 @@ public class XpathUtilsTest {
 
     /** Test data for all tests to share */
     private static final String DOCUMENT =
-        "<Foo>" +
-        "    <Title>Boo</Title>" +
-        "    <Count Foo='Bar'>1</Count>" +
-        "    <Enabled>true</Enabled>" +
-        "    <Usage>0.0000071759</Usage>" +
-        "    <Since>2008-10-07T11:51:50.000Z</Since>" +
-        "    <Item>A</Item>" +
-        "    <Item>B</Item>" +
-        "    <Item>C</Item>" +
-        "    <Empty></Empty>" +
-        "    <Blob>aGVsbG8gd29ybGQ=</Blob>" +
-        "    <PositiveByte>123</PositiveByte>" +
-        "    <NegativeByte>-99</NegativeByte>" +
-        "</Foo>";
+            "<Foo>" +
+            "    <Title>Boo</Title>" +
+            "    <Count Foo='Bar'>1</Count>" +
+            "    <Enabled>true</Enabled>" +
+            "    <Usage>0.0000071759</Usage>" +
+            "    <Since>2008-10-07T11:51:50.000Z</Since>" +
+            "    <Item>A</Item>" +
+            "    <Item>B</Item>" +
+            "    <Item>C</Item>" +
+            "    <Empty></Empty>" +
+            "    <Blob>aGVsbG8gd29ybGQ=</Blob>" +
+            "    <PositiveByte>123</PositiveByte>" +
+            "    <NegativeByte>-99</NegativeByte>" +
+            "</Foo>";
 
     /** Test XML document with a namespace */
     private static final String DOCUMENT_WITH_NAMESPACE =
-        "<?xml version=\"1.0\"?> \n" +
-        "<AllocateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\"> \n" +
-        "    <requestId>a074658d-7624-433e-b4e9-9271f6f5264b</requestId> \n" +
-        "    <publicIp>174.129.242.223</publicIp> \n" +
-        "</AllocateAddressResponse> \n";
+            "<?xml version=\"1.0\"?> \n" +
+            "<AllocateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\"> \n" +
+            "    <requestId>a074658d-7624-433e-b4e9-9271f6f5264b</requestId> \n" +
+            "    <publicIp>174.129.242.223</publicIp> \n" +
+            "</AllocateAddressResponse> \n";
 
 
     @Test
@@ -112,7 +108,7 @@ public class XpathUtilsTest {
     public void testAsInteger() throws Exception {
         Document document = documentFrom(DOCUMENT);
         XPath xpath = xpath();
-        assertEquals((Integer)1, (Integer)asInteger("Foo/Count", document, xpath));
+        assertEquals((Integer) 1, (Integer) asInteger("Foo/Count", document, xpath));
         assertEquals(null, asInteger("Foo/Empty", document, xpath));
     }
 
@@ -128,7 +124,7 @@ public class XpathUtilsTest {
     public void testAsFloat() throws Exception {
         Document document = XpathUtils.documentFrom(DOCUMENT);
         XPath xpath = xpath();
-        assertEquals((Float)0.0000071759f, (Float)asFloat("Foo/Usage", document, xpath));
+        assertEquals((Float) 0.0000071759f, (Float) asFloat("Foo/Usage", document, xpath));
         assertEquals(null, asFloat("Foo/Empty", document, xpath));
     }
 
@@ -139,8 +135,8 @@ public class XpathUtilsTest {
     public void testAsByte() throws Exception {
         Document document = XpathUtils.documentFrom(DOCUMENT);
         XPath xpath = xpath();
-        assertEquals(new Byte((byte)123), asByte("Foo/PositiveByte", document, xpath));
-        assertEquals(new Byte((byte)-99), asByte("Foo/NegativeByte", document, xpath));
+        assertEquals(new Byte((byte) 123), asByte("Foo/PositiveByte", document, xpath));
+        assertEquals(new Byte((byte) -99), asByte("Foo/NegativeByte", document, xpath));
         assertEquals(null, XpathUtils.asByte("Foo/Empty", document));
     }
 
@@ -233,7 +229,8 @@ public class XpathUtilsTest {
     }
 
     @Test
-    public void testFromDocumentDoesNotWriteToStderrWhenXmlInvalid() throws SAXException, IOException, ParserConfigurationException {
+    public void testFromDocumentDoesNotWriteToStderrWhenXmlInvalid()
+            throws SAXException, IOException, ParserConfigurationException {
         PrintStream err = System.err;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try {

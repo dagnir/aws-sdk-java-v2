@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.smoketest;
@@ -38,6 +38,9 @@ public final class ReflectionUtils {
 
     private static final Random RANDOM = new Random();
 
+    private ReflectionUtils() {
+    }
+
     public static <T> Class<T> loadClass(Class<?> base, String name) {
         return loadClass(base.getClassLoader(), name);
     }
@@ -45,7 +48,7 @@ public final class ReflectionUtils {
     public static <T> Class<T> loadClass(ClassLoader classloader, String name) {
         try {
             @SuppressWarnings("unchecked")
-            Class<T> loaded = (Class<T>)classloader.loadClass(name);
+            Class<T> loaded = (Class<T>) classloader.loadClass(name);
             return loaded;
         } catch (ClassNotFoundException exception) {
             throw new IllegalStateException(
@@ -308,7 +311,7 @@ public final class ReflectionUtils {
         int index = field.indexOf(':');
         if (index == -1) {
             throw new IllegalStateException("Invalid path expression: cannot "
-                    + "evaluate '" + field + "' on a List");
+                                            + "evaluate '" + field + "' on a List");
         }
 
         String offset = field.substring(0, index);
@@ -348,7 +351,7 @@ public final class ReflectionUtils {
         int index = field.indexOf(':');
         if (index == -1) {
             throw new IllegalStateException("Invalid path expression: cannot "
-                    + "evaluate '" + field + "' on a List");
+                                            + "evaluate '" + field + "' on a List");
         }
 
         String member = field.substring(0, index);
@@ -369,8 +372,8 @@ public final class ReflectionUtils {
         try {
 
             return ReflectionUtils.class.getClassLoader()
-                .loadClass(type)
-                .newInstance();
+                                        .loadClass(type)
+                                        .newInstance();
 
         } catch (Exception e) {
             throw new IllegalStateException("BOOM", e);
@@ -451,7 +454,7 @@ public final class ReflectionUtils {
                         "Unable to access setter method",
                         exception);
 
-            } catch(InvocationTargetException exception) {
+            } catch (InvocationTargetException exception) {
                 if (exception.getCause() instanceof RuntimeException) {
                     throw (RuntimeException) exception.getCause();
                 }
@@ -477,7 +480,7 @@ public final class ReflectionUtils {
     public static Method findAccessor(Object target, String propertyName) {
 
         propertyName = propertyName.substring(0, 1).toUpperCase()
-                     + propertyName.substring(1);
+                       + propertyName.substring(1);
 
         try {
             return target.getClass().getMethod("get" + propertyName);
@@ -571,13 +574,13 @@ public final class ReflectionUtils {
         return newInstanceWithAllFieldsSet(clz, emptyRandomSuppliers);
     }
 
-    public static <T> T newInstanceWithAllFieldsSet(Class<T> clz, RandomSupplier<?>...suppliers) {
+    public static <T> T newInstanceWithAllFieldsSet(Class<T> clz, RandomSupplier<?>... suppliers) {
         return newInstanceWithAllFieldsSet(clz, Arrays.asList(suppliers));
     }
 
     public static <T> T newInstanceWithAllFieldsSet(Class<T> clz, List<RandomSupplier<?>> suppliers) {
         T instance = newInstance(clz);
-        for(Field field: clz.getDeclaredFields()) {
+        for (Field field : clz.getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
@@ -619,9 +622,7 @@ public final class ReflectionUtils {
 
     interface RandomSupplier<T> {
         T getNext();
-        Class<T> targetClass();
-    }
 
-    private ReflectionUtils() {
+        Class<T> targetClass();
     }
 }

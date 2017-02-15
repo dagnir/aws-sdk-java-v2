@@ -77,7 +77,7 @@ public class RandomTempFile extends File {
     public RandomTempFile(String filename, long sizeInBytes, boolean binaryData)
             throws IOException {
         super(TEMP_DIR + File.separator + System.currentTimeMillis() + "-"
-                + filename);
+              + filename);
         this.binaryData = binaryData;
         createFile(sizeInBytes);
         System.out.println("RandomTempFile " + this + " created.");
@@ -86,7 +86,7 @@ public class RandomTempFile extends File {
     public RandomTempFile(File root, String filename, long sizeInBytes) throws IOException {
         super(root, filename);
         this.binaryData = false;
-        createFile( sizeInBytes );
+        createFile(sizeInBytes);
     }
 
 

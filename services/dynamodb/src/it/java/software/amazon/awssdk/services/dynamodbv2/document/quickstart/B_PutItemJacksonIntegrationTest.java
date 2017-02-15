@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import org.junit.Test;
@@ -46,7 +61,7 @@ public class B_PutItemJacksonIntegrationTest extends QuickStartIntegrationTestBa
                                  .withPrimaryKey(HASH_KEY_NAME, "howToPutItems_withJSONDoc", RANGE_KEY_NAME, 1)
                                  .withUpdateExpression("SET document.current_city = :city")
                                  .withValueMap(new ValueMap().withString(":city", "Seattle"))
-        );
+                        );
         // Retrieve the entire item
         Item itemUpdated = table.getItem(HASH_KEY_NAME, "howToPutItems_withJSONDoc", RANGE_KEY_NAME, 1);
         System.out.println(itemUpdated);
@@ -70,8 +85,8 @@ public class B_PutItemJacksonIntegrationTest extends QuickStartIntegrationTestBa
                       + "}";
         Table table = dynamo.getTable(TABLE_NAME);
         Item item = Item.fromJSON(json)
-                // We don't even need to set the primary key if it's already included in the JSON document
-                .withPrimaryKey(HASH_KEY_NAME, "howToPut_TopLevelJSON", RANGE_KEY_NAME, 1);
+                        // We don't even need to set the primary key if it's already included in the JSON document
+                        .withPrimaryKey(HASH_KEY_NAME, "howToPut_TopLevelJSON", RANGE_KEY_NAME, 1);
         table.putItem(item);
         // Retrieve the entire document and the entire document only
         Item documentItem = table.getItem(new GetItemSpec()
@@ -105,7 +120,7 @@ public class B_PutItemJacksonIntegrationTest extends QuickStartIntegrationTestBa
                                  .withPrimaryKey(HASH_KEY_NAME, "howToPut_TopLevelJSON", RANGE_KEY_NAME, 1)
                                  .withUpdateExpression("SET current_city = :city")
                                  .withValueMap(new ValueMap().withString(":city", "Seattle"))
-        );
+                        );
         // Retrieve the entire item
         Item itemUpdated = table.getItem(HASH_KEY_NAME, "howToPut_TopLevelJSON", RANGE_KEY_NAME, 1);
         System.out.println(itemUpdated);

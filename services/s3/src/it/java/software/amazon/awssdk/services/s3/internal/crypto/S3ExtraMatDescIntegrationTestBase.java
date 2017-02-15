@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -61,27 +76,23 @@ public abstract class S3ExtraMatDescIntegrationTestBase implements Headers {
 
     private SimpleMaterialProvider createTestMaterialProvider() {
         SimpleMaterialProvider smp = new SimpleMaterialProvider()
-            .withLatest(new EncryptionMaterials(
-                new SecretKeySpec(new byte[32], "AES"))
-            .addDescription("id", "1st_kek"))
-            ;
+                .withLatest(new EncryptionMaterials(
+                        new SecretKeySpec(new byte[32], "AES"))
+                                    .addDescription("id", "1st_kek"));
         byte[] cek2 = new byte[32];
-        Arrays.fill(cek2, (byte)~0);
+        Arrays.fill(cek2, (byte) ~0);
         EncryptionMaterials kek2 =
-            new EncryptionMaterials(new SecretKeySpec(cek2, "AES"))
-            .addDescription("id", "2nd_kek")
-            ;
+                new EncryptionMaterials(new SecretKeySpec(cek2, "AES"))
+                        .addDescription("id", "2nd_kek");
         smp.addMaterial(kek2);
         byte[] cek3 = new byte[32];
-        Arrays.fill(cek3, (byte)1);
+        Arrays.fill(cek3, (byte) 1);
         EncryptionMaterials kek3 =
-                new EncryptionMaterials(new SecretKeySpec(cek3, "AES"))
-                ; // omit the id deliberately so empty description will get stored in S3
+                new EncryptionMaterials(new SecretKeySpec(cek3, "AES")); // omit the id deliberately so empty description will get stored in S3
         smp.addMaterial(kek3);
         EncryptionMaterials kek3_for_get =
                 new EncryptionMaterials(new SecretKeySpec(cek3, "AES"))
-                .addDescription("id", "3rd_kek")
-                ;
+                        .addDescription("id", "3rd_kek");
         smp.addMaterial(kek3_for_get);
         return smp;
     }
@@ -98,8 +109,8 @@ public abstract class S3ExtraMatDescIntegrationTestBase implements Headers {
                 awsTestCredentials(),
                 smp,
                 new CryptoConfiguration()
-                    .withStorageMode(CryptoStorageMode.InstructionFile)
-                    .withCryptoMode(cryptoMode())
+                        .withStorageMode(CryptoStorageMode.InstructionFile)
+                        .withCryptoMode(cryptoMode())
         );
         File file = CryptoTestUtils.generateRandomAsciiFile(100);
         final String plaintext = FileUtils.readFileToString(file);
@@ -111,21 +122,21 @@ public abstract class S3ExtraMatDescIntegrationTestBase implements Headers {
         S3ObjectId s3ObjectId = new S3ObjectId(bucketName, v2key);
         // Create the 2nd instruction file
         s3v2.putInstructionFile(new PutInstructionFileRequest(
-                s3ObjectId, 
+                s3ObjectId,
                 new ImmutableMapParameter.Builder<String, String>()
-                    .put("id", "2nd_kek")
-                    .build(),
+                        .put("id", "2nd_kek")
+                        .build(),
                 "instruction.2"));
         // Retrieve object via the 2nd instruction file
         s3object = s3v2.getObject(new EncryptedGetObjectRequest(s3ObjectId)
-                .withInstructionFileSuffix("instruction.2"));
+                                          .withInstructionFileSuffix("instruction.2"));
         assertEquals(plaintext, valueOf(s3object));
 
         s3v2.putInstructionFile(new PutInstructionFileRequest(
-                s3ObjectId, 
+                s3ObjectId,
                 new ImmutableMapParameter.Builder<String, String>()
-//                    .put("id", "3rd_kek")
-                    .build(),
+                        //                    .put("id", "3rd_kek")
+                        .build(),
                 "instruction.3"));
         // Remove the empty material description to test the per-request
         // supplemental material description
@@ -133,12 +144,12 @@ public abstract class S3ExtraMatDescIntegrationTestBase implements Headers {
         assertTrue(smp.size() == 3);
         // Retrieve object via the 3rd instruction file
         s3object = s3v2.getObject(
-            new EncryptedGetObjectRequest(s3ObjectId)
-                    .withExtraMaterialsDescription(
-                        new StringMapBuilder()
-                            .put("id", "3rd_kek")
-                            .build())
-                    .withInstructionFileSuffix("instruction.3"));
+                new EncryptedGetObjectRequest(s3ObjectId)
+                        .withExtraMaterialsDescription(
+                                new StringMapBuilder()
+                                        .put("id", "3rd_kek")
+                                        .build())
+                        .withInstructionFileSuffix("instruction.3"));
         assertEquals(plaintext, valueOf(s3object));
 
         try {
@@ -146,15 +157,17 @@ public abstract class S3ExtraMatDescIntegrationTestBase implements Headers {
                     new EncryptedGetObjectRequest(s3ObjectId)
                             .withKeyWrapExpected(true)
                             .withExtraMaterialsDescription(
-                                new StringMapBuilder()
-                                    .put("id", "3rd_kek")
-                                    .build())
+                                    new StringMapBuilder()
+                                            .put("id", "3rd_kek")
+                                            .build())
                             .withInstructionFileSuffix("instruction.3"));
-            if (cryptoMode() == EncryptionOnly)
+            if (cryptoMode() == EncryptionOnly) {
                 fail();
-        } catch(KeyWrapException ex) {
-            if (cryptoMode() != EncryptionOnly)
+            }
+        } catch (KeyWrapException ex) {
+            if (cryptoMode() != EncryptionOnly) {
                 fail();
+            }
         }
     }
 }

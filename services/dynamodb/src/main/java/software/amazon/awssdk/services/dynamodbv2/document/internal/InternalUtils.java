@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -53,11 +53,13 @@ public enum InternalUtils {
      * list of item information.
      */
     public static List<Item> toItemList(List<Map<String, AttributeValue>> items) {
-        if (items == null)
+        if (items == null) {
             return Collections.emptyList();
+        }
         List<Item> result = new ArrayList<Item>(items.size());
-        for (Map<String, AttributeValue> item : items)
+        for (Map<String, AttributeValue> item : items) {
             result.add(Item.fromMap(toSimpleMapValue(item)));
+        }
         return result;
     }
 
@@ -66,12 +68,14 @@ public enum InternalUtils {
      * or null if the input is null.
      */
     public static Map<String, AttributeValue> toAttributeValues(Item item) {
-        if (item == null)
+        if (item == null) {
             return null;
+        }
         // row with multiple attributes
         Map<String, AttributeValue> result = new LinkedHashMap<String, AttributeValue>();
-        for (Map.Entry<String, Object> entry : item.attributes())
+        for (Map.Entry<String, Object> entry : item.attributes()) {
             result.put(entry.getKey(), toAttributeValue(entry.getValue()));
+        }
         return result;
     }
 
@@ -81,12 +85,14 @@ public enum InternalUtils {
      */
     public static Map<String, AttributeValue> fromSimpleMap(
             Map<String, Object> map) {
-        if (map == null)
+        if (map == null) {
             return null;
+        }
         // row with multiple attributes
         Map<String, AttributeValue> result = new LinkedHashMap<String, AttributeValue>();
-        for (Map.Entry<String, Object> entry : map.entrySet())
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             result.put(entry.getKey(), toAttributeValue(entry.getValue()));
+        }
         return result;
     }
 
@@ -96,8 +102,9 @@ public enum InternalUtils {
      */
     public static Map<String, AttributeValueUpdate> toAttributeValueUpdate(
             List<AttributeUpdate> attributesToUpdate) {
-        if (attributesToUpdate == null)
+        if (attributesToUpdate == null) {
             return null;
+        }
 
         Map<String, AttributeValueUpdate> result = new LinkedHashMap<String, AttributeValueUpdate>();
 
@@ -106,10 +113,10 @@ public enum InternalUtils {
                     .withAction(attribute.getAction());
             if (attribute.getValue() != null) {
                 attributeToUpdate.withValue(toAttributeValue(attribute
-                        .getValue()));
+                                                                     .getValue()));
             } else if (attribute.getAttributeValues() != null) {
                 attributeToUpdate.withValue(toAttributeValue(attribute
-                        .getAttributeValues()));
+                                                                     .getAttributeValues()));
             }
             result.put(attribute.getAttributeName(), attributeToUpdate);
         }
@@ -149,7 +156,7 @@ public enum InternalUtils {
         if (value == null) {
             return result.withNULL(Boolean.TRUE);
         } else if (value instanceof Boolean) {
-            return result.withBOOL((Boolean)value);
+            return result.withBOOL((Boolean) value);
         } else if (value instanceof String) {
             return result.withS((String) value);
         } else if (value instanceof BigDecimal) {
@@ -197,7 +204,7 @@ public enum InternalUtils {
                 result.setBS(bs);
             } else {
                 throw new UnsupportedOperationException("element type: "
-                        + element.getClass());
+                                                        + element.getClass());
             }
         } else if (value instanceof List) {
             @SuppressWarnings("unchecked")
@@ -215,11 +222,11 @@ public enum InternalUtils {
                     result.addMEntry(e.getKey(), toAttributeValue(e.getValue()));
                 }
             } else {    // empty map
-                result.setM(new LinkedHashMap<String,AttributeValue>());
+                result.setM(new LinkedHashMap<String, AttributeValue>());
             }
         } else {
             throw new UnsupportedOperationException("value type: "
-                    + value.getClass());
+                                                    + value.getClass());
         }
         return result;
     }
@@ -247,8 +254,9 @@ public enum InternalUtils {
      * </ul>
      */
     public static List<Object> toSimpleList(List<AttributeValue> attrValues) {
-        if (attrValues == null)
+        if (attrValues == null) {
             return null;
+        }
         List<Object> result = new ArrayList<Object>(attrValues.size());
         for (AttributeValue attrValue : attrValues) {
             Object value = toSimpleValue(attrValue);
@@ -312,15 +320,17 @@ public enum InternalUtils {
      */
     public static String valToString(Object val) {
         if (val instanceof BigDecimal) {
-            BigDecimal bd = (BigDecimal)val;
+            BigDecimal bd = (BigDecimal) val;
             return bd.toPlainString();
         }
-        if (val == null)
+        if (val == null) {
             return null;
+        }
         if (val instanceof String
-        ||  val instanceof Boolean
-        ||  val instanceof Number)
+            || val instanceof Boolean
+            || val instanceof Number) {
             return val.toString();
+        }
         throw new IncompatibleTypeException("Cannot convert " + val.getClass() + " into a string");
     }
 
@@ -428,8 +438,9 @@ public enum InternalUtils {
      */
     public static Map<String, ExpectedAttributeValue> toExpectedAttributeValueMap(
             Collection<Expected> expectedSet) {
-        if (expectedSet == null)
+        if (expectedSet == null) {
             return null;
+        }
         Map<String, ExpectedAttributeValue> expectedMap =
                 new LinkedHashMap<String, ExpectedAttributeValue>();
         for (Expected expected : expectedSet) {
@@ -449,13 +460,14 @@ public enum InternalUtils {
             if (op == null) {
                 throw new IllegalArgumentException(
                         "Comparison operator for attribute " + expected.getAttribute()
-                                + " must be specified");
+                        + " must be specified");
             }
             eav.withComparisonOperator(op);
             expectedMap.put(attr, eav);
         }
-        if (expectedSet.size() != expectedMap.size())
+        if (expectedSet.size() != expectedMap.size()) {
             throw new IllegalArgumentException("duplicates attribute names not allowed in input");
+        }
         return Collections.unmodifiableMap(expectedMap);
     }
 
@@ -463,8 +475,9 @@ public enum InternalUtils {
      * Returns the low level representation of a collection of <code>Filter</code>.
      */
     public static Map<String, Condition> toAttributeConditionMap(Collection<? extends Filter<?>> filters) {
-        if (filters == null)
+        if (filters == null) {
             return null;
+        }
         Map<String, Condition> conditionMap = new LinkedHashMap<String, Condition>();
         for (Filter<?> filter : filters) {
             final String attr = filter.getAttribute();
@@ -483,13 +496,14 @@ public enum InternalUtils {
             if (op == null) {
                 throw new IllegalArgumentException(
                         "Comparison operator for attribute " + filter.getAttribute()
-                                + " must be specified");
+                        + " must be specified");
             }
             condition.withComparisonOperator(op);
             conditionMap.put(attr, condition);
         }
-        if (filters.size() != conditionMap.size())
+        if (filters.size() != conditionMap.size()) {
             throw new IllegalArgumentException("duplicates attribute names not allowed in input");
+        }
         return Collections.unmodifiableMap(conditionMap);
     }
 
@@ -518,8 +532,9 @@ public enum InternalUtils {
      */
     public static AttributeValue[] toAttributeValues(Object[] values) {
         AttributeValue[] attrValues = new AttributeValue[values.length];
-        for (int i=0; i < values.length; i++)
+        for (int i = 0; i < values.length; i++) {
             attrValues[i] = InternalUtils.toAttributeValue(values[i]);
+        }
         return attrValues;
     }
 
@@ -528,12 +543,14 @@ public enum InternalUtils {
      */
     public static Map<String, AttributeValue> toAttributeValueMap(
             Collection<KeyAttribute> primaryKey) {
-        if (primaryKey == null)
+        if (primaryKey == null) {
             return null;
+        }
         Map<String, AttributeValue> keys = new LinkedHashMap<String, AttributeValue>();
-        for (KeyAttribute keyAttr : primaryKey)
+        for (KeyAttribute keyAttr : primaryKey) {
             keys.put(keyAttr.getName(),
-                    InternalUtils.toAttributeValue(keyAttr.getValue()));
+                     InternalUtils.toAttributeValue(keyAttr.getValue()));
+        }
         return Collections.unmodifiableMap(keys);
     }
 
@@ -542,8 +559,9 @@ public enum InternalUtils {
      */
     public static Map<String, AttributeValue> toAttributeValueMap(
             PrimaryKey primaryKey) {
-        if (primaryKey == null)
+        if (primaryKey == null) {
             return null;
+        }
         return toAttributeValueMap(primaryKey.getComponents());
     }
 
@@ -551,9 +569,10 @@ public enum InternalUtils {
      * Converts the specified primary key into the low-level representation.
      */
     public static Map<String, AttributeValue> toAttributeValueMap(
-            KeyAttribute ... primaryKey) {
-        if (primaryKey == null)
+            KeyAttribute... primaryKey) {
+        if (primaryKey == null) {
             return null;
+        }
         return toAttributeValueMap(Arrays.asList(primaryKey));
     }
 
@@ -561,22 +580,25 @@ public enum InternalUtils {
      * Converts a number into BigDecimal representation.
      */
     public static BigDecimal toBigDecimal(Number n) {
-        if (n instanceof BigDecimal)
-            return (BigDecimal)n;
+        if (n instanceof BigDecimal) {
+            return (BigDecimal) n;
+        }
         return new BigDecimal(n.toString());
     }
 
-    public static Set<BigDecimal> toBigDecimalSet(Number ... val) {
+    public static Set<BigDecimal> toBigDecimalSet(Number... val) {
         Set<BigDecimal> set = new LinkedHashSet<BigDecimal>(val.length);
-        for (Number n: val)
+        for (Number n : val) {
             set.add(InternalUtils.toBigDecimal(n));
+        }
         return set;
     }
 
     public static Set<BigDecimal> toBigDecimalSet(Set<Number> vals) {
         Set<BigDecimal> set = new LinkedHashSet<BigDecimal>(vals.size());
-        for (Number n: vals)
+        for (Number n : vals) {
             set.add(InternalUtils.toBigDecimal(n));
+        }
         return set;
     }
 
@@ -591,18 +613,21 @@ public enum InternalUtils {
     }
 
     public static void rejectNullValue(Object val) {
-        if (val == null)
+        if (val == null) {
             throw new IllegalArgumentException("Input value must not be null");
+        }
     }
 
     public static void rejectNullInput(Object input) {
-        if (input == null)
+        if (input == null) {
             throw new IllegalArgumentException("Input must not be null");
+        }
     }
 
     public static void rejectEmptyInput(Object[] input) {
-        if (input.length == 0)
+        if (input.length == 0) {
             throw new IllegalArgumentException("At least one input must be specified");
+        }
     }
 
     public static void rejectNullOrEmptyInput(Object[] input) {
@@ -611,8 +636,9 @@ public enum InternalUtils {
     }
 
     public static void checkInvalidAttrName(String attrName) {
-        if (attrName == null || attrName.trim().length() == 0)
+        if (attrName == null || attrName.trim().length() == 0) {
             throw new IllegalArgumentException("Attribute name must not be null or empty");
+        }
     }
 
     public static void checkInvalidAttribute(String attrName, Object val) {

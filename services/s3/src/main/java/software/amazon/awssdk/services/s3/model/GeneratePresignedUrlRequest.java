@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -99,6 +100,46 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
     private String kmsCmkId;
 
     /**
+     * Creates a new request for generating a pre-signed URL that can be used as
+     * part of an HTTP GET request to access the Amazon S3 object stored under
+     * the specified key in the specified bucket.
+     *
+     * @param bucketName
+     *            The name of the bucket containing the desired Amazon S3
+     *            object.
+     * @param key
+     *            The key under which the desired Amazon S3 object is stored.
+     */
+    public GeneratePresignedUrlRequest(String bucketName, String key) {
+        this(bucketName, key, HttpMethod.GET);
+    }
+
+    /**
+     * <p>
+     * Creates a new request for generating a pre-signed URL that can be used as
+     * part of an HTTP request to access the specified Amazon S3 resource.
+     * </p>
+     * <p>
+     * When specifying an HTTP method, you <b>must</b> send the pre-signed URL
+     * with the same HTTP method in order to successfully use the pre-signed
+     * URL.
+     * </p>
+     *
+     * @param bucketName
+     *            The name of the Amazon S3 bucket involved in the operation.
+     * @param key
+     *            The key of the Amazon S3 object involved in the operation.
+     * @param method
+     *            The HTTP method (GET, PUT, DELETE, HEAD) to be used in the
+     *            request when the pre-signed URL is used.
+     */
+    public GeneratePresignedUrlRequest(String bucketName, String key, HttpMethod method) {
+        this.bucketName = bucketName;
+        this.key = key;
+        this.method = method;
+    }
+
+    /**
      * Returns the KMS customer key id used for server side encryption; or null
      * if there is none.
      */
@@ -141,6 +182,15 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *
      * @param currently supported values: "AES256" or "aws:kms".
      */
+    public void setSSEAlgorithm(SSEAlgorithm sseAlgorithm) {
+        this.sseAlgorithm = sseAlgorithm.getAlgorithm();
+    }
+
+    /**
+     * Sets the SSE algorithm for server side encryption.
+     *
+     * @param currently supported values: "AES256" or "aws:kms".
+     */
     public void setSSEAlgorithm(String sseAlgorithm) {
         this.sseAlgorithm = sseAlgorithm;
     }
@@ -155,60 +205,11 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
     }
 
     /**
-     * Sets the SSE algorithm for server side encryption.
-     *
-     * @param currently supported values: "AES256" or "aws:kms".
-     */
-    public void setSSEAlgorithm(SSEAlgorithm sseAlgorithm) {
-        this.sseAlgorithm = sseAlgorithm.getAlgorithm();
-    }
-
-    /**
      * Fluent API for {@link #setSSEAlgorithm(SSEAlgorithm)}
      */
     public GeneratePresignedUrlRequest withSSEAlgorithm(SSEAlgorithm sseAlgorithm) {
         setSSEAlgorithm(sseAlgorithm);
         return this;
-    }
-
-    /**
-     * Creates a new request for generating a pre-signed URL that can be used as
-     * part of an HTTP GET request to access the Amazon S3 object stored under
-     * the specified key in the specified bucket.
-     *
-     * @param bucketName
-     *            The name of the bucket containing the desired Amazon S3
-     *            object.
-     * @param key
-     *            The key under which the desired Amazon S3 object is stored.
-     */
-    public GeneratePresignedUrlRequest(String bucketName, String key) {
-        this(bucketName, key, HttpMethod.GET);
-    }
-
-    /**
-     * <p>
-     * Creates a new request for generating a pre-signed URL that can be used as
-     * part of an HTTP request to access the specified Amazon S3 resource.
-     * </p>
-     * <p>
-     * When specifying an HTTP method, you <b>must</b> send the pre-signed URL
-     * with the same HTTP method in order to successfully use the pre-signed
-     * URL.
-     * </p>
-     *
-     * @param bucketName
-     *            The name of the Amazon S3 bucket involved in the operation.
-     * @param key
-     *            The key of the Amazon S3 object involved in the operation.
-     * @param method
-     *            The HTTP method (GET, PUT, DELETE, HEAD) to be used in the
-     *            request when the pre-signed URL is used.
-     */
-    public GeneratePresignedUrlRequest(String bucketName, String key, HttpMethod method) {
-        this.bucketName = bucketName;
-        this.key = key;
-        this.method = method;
     }
 
     /**
@@ -546,15 +547,15 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *            supported SSE-C encryption algorithm.
      */
     public void setSSECustomerKeyAlgorithm(SSEAlgorithm sseAlgorithm) {
-        if (sseAlgorithm == null)
+        if (sseAlgorithm == null) {
             this.sseCustomerKey = null;
-        else if (sseAlgorithm.getAlgorithm().equals(SSEAlgorithm.AES256.getAlgorithm())) {
+        } else if (sseAlgorithm.getAlgorithm().equals(SSEAlgorithm.AES256.getAlgorithm())) {
             this.sseCustomerKey =
-                SSECustomerKey.generateSSECustomerKeyForPresignUrl(sseAlgorithm.getAlgorithm());
+                    SSECustomerKey.generateSSECustomerKeyForPresignUrl(sseAlgorithm.getAlgorithm());
         } else {
             throw new IllegalArgumentException(
-                "Currently the only supported Server Side Encryption algorithm is "
-                + SSEAlgorithm.AES256);
+                    "Currently the only supported Server Side Encryption algorithm is "
+                    + SSEAlgorithm.AES256);
         }
     }
 
@@ -614,7 +615,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
             if (!SSEAlgorithm.KMS.getAlgorithm().equals(sseAlgorithm)) {
                 throw new IllegalArgumentException(
                         "For KMS server side encryption, the SSE algorithm must be set to "
-                                + SSEAlgorithm.KMS);
+                        + SSEAlgorithm.KMS);
             }
         }
         /*

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -45,14 +45,14 @@ public class SDKProgressPublisher {
             final ProgressListener listener,
             final ProgressEventType type) {
         if (listener == ProgressListener.NOOP || listener == null
-        ||  type == null) {
+            || type == null) {
             return null;
         }
         return deliverEvent(listener, new ProgressEvent(type));
     }
 
     private static Future<?> deliverEvent(final ProgressListener listener,
-            final ProgressEvent event) {
+                                          final ProgressEvent event) {
 
         if (listener instanceof DeliveryMode) {
             DeliveryMode mode = (DeliveryMode) listener;
@@ -74,14 +74,14 @@ public class SDKProgressPublisher {
     }
 
     private static Future<?> quietlyCallListener(final ProgressListener listener,
-            final ProgressEvent event) {
+                                                 final ProgressEvent event) {
         try {
             listener.progressChanged(event);
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             // That's right, we need to suppress all errors so as to be on par
             // with the async mode where all failures will be ignored.
             LogFactory.getLog(SDKProgressPublisher.class)
-                .debug("Failure from the event listener", t);
+                      .debug("Failure from the event listener", t);
         }
         return null;
     }
@@ -150,8 +150,9 @@ public class SDKProgressPublisher {
             final ProgressListener listener,
             final ProgressEventType type,
             final long bytes) {
-        if (listener == ProgressListener.NOOP || listener == null || bytes <= 0)
+        if (listener == ProgressListener.NOOP || listener == null || bytes <= 0) {
             return null;
+        }
         return deliverEvent(listener, new ProgressEvent(type, bytes));
     }
 
@@ -185,7 +186,7 @@ public class SDKProgressPublisher {
             final ProgressListener listener,
             final long bytesDiscarded) {
         return publishResetEvent(listener,
-                ProgressEventType.RESPONSE_BYTE_DISCARD_EVENT, bytesDiscarded);
+                                 ProgressEventType.RESPONSE_BYTE_DISCARD_EVENT, bytesDiscarded);
     }
 
     /**
@@ -199,10 +200,12 @@ public class SDKProgressPublisher {
             final ProgressListener listener,
             final ProgressEventType resetEventType,
             final long bytesReset) {
-        if (bytesReset <= 0)
+        if (bytesReset <= 0) {
             return null;
-        if (listener == ProgressListener.NOOP || listener == null)
+        }
+        if (listener == ProgressListener.NOOP || listener == null) {
             return null;
+        }
         return deliverEvent(listener, new ProgressEvent(resetEventType, bytesReset));
     }
 
@@ -231,6 +234,25 @@ public class SDKProgressPublisher {
     }
 
     /**
+     * Can be used to shutdown the (legacy) executor.
+     * <p>
+     * However, the recommended best practice is to always make use of progress
+     * listeners that are short-lived (ie do not block) and are subclasses of
+     * either {@link SyncProgressListener} or
+     * <code>S3SyncProgressListener</code>. That way, the progress publisher
+     * (legacy) thread will never be activated in the first place.
+     *
+     * @param now true if shutdown now; false otherwise.
+     */
+    public static void shutdown(boolean now) {
+        if (now) {
+            LazyHolder.executor.shutdownNow();
+        } else {
+            LazyHolder.executor.shutdown();
+        }
+    }
+
+    /**
      * Used to avoid creating the extra thread until absolutely necessary.
      */
     private static final class LazyHolder {
@@ -251,23 +273,5 @@ public class SDKProgressPublisher {
                 }
             });
         }
-    }
-
-    /**
-     * Can be used to shutdown the (legacy) executor.
-     * <p>
-     * However, the recommended best practice is to always make use of progress
-     * listeners that are short-lived (ie do not block) and are subclasses of
-     * either {@link SyncProgressListener} or
-     * <code>S3SyncProgressListener</code>. That way, the progress publisher
-     * (legacy) thread will never be activated in the first place.
-     *
-     * @param now true if shutdown now; false otherwise.
-     */
-    public static void shutdown(boolean now) {
-        if (now)
-            LazyHolder.executor.shutdownNow();
-        else
-            LazyHolder.executor.shutdown();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,10 +29,12 @@ class ChunkContentIterator {
     }
 
     public int read(byte[] output, int offset, int length) {
-        if (length == 0)
+        if (length == 0) {
             return 0;
-        if ( !hasNext() )
+        }
+        if (!hasNext()) {
             return -1;
+        }
         int remaingBytesNum = signedChunk.length - pos;
         int bytesToRead = Math.min(remaingBytesNum, length);
         System.arraycopy(signedChunk, pos, output, offset, bytesToRead);

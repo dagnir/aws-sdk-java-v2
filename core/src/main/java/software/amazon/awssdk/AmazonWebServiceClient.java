@@ -66,25 +66,22 @@ public abstract class AmazonWebServiceClient {
     private static final String AWS = "AWS";
 
     private static final Log log =
-        LogFactory.getLog(AmazonWebServiceClient.class);
+            LogFactory.getLog(AmazonWebServiceClient.class);
 
     static {
         // Configures the internal logging of the signers and core
         // classes to use Jakarta Commons Logging to stay consistent with the
         // rest of the library.
         boolean success = InternalLogFactory.configureFactory(
-                            new CommonsLogFactory());
-        if (log.isDebugEnabled())
+                new CommonsLogFactory());
+        if (log.isDebugEnabled()) {
             log.debug("Internal logging successfully configured to commons logger: "
-                    + success);
+                      + success);
+        }
     }
 
-    /**
-     * Flag indicating whether a client is mutable or not. Legacy clients built via the constructors
-     * are mutable. Clients built with the fluent builders are immutable.
-     */
-    private volatile boolean isImmutable = false;
-
+    /** Optional request handlers for additional request processing. */
+    protected final List<RequestHandler2> requestHandler2s;
     /**
      * The service endpoint to which this client will send requests.
      * <p>
@@ -93,25 +90,22 @@ public abstract class AmazonWebServiceClient {
      * reason.
      */
     protected volatile URI endpoint;
-
+    /** The client configuration */
+    protected ClientConfiguration clientConfiguration;
+    /** Low level client for sending requests to AWS services. */
+    protected AmazonHttpClient client;
+    /** Optional offset (in seconds) to use when signing requests */
+    protected int timeOffset;
+    /**
+     * Flag indicating whether a client is mutable or not. Legacy clients built via the constructors
+     * are mutable. Clients built with the fluent builders are immutable.
+     */
+    private volatile boolean isImmutable = false;
     /**
      * Used to explicitly override the internal signer region computed by the
      * default implementation. This field is typically null.
      */
     private volatile String signerRegionOverride;
-
-    /** The client configuration */
-    protected ClientConfiguration clientConfiguration;
-
-    /** Low level client for sending requests to AWS services. */
-    protected AmazonHttpClient client;
-
-    /** Optional request handlers for additional request processing. */
-    protected final List<RequestHandler2> requestHandler2s;
-
-    /** Optional offset (in seconds) to use when signing requests */
-    protected int timeOffset;
-
     private volatile SignerProvider signerProvider;
 
     /**
@@ -148,7 +142,7 @@ public abstract class AmazonWebServiceClient {
      *            client level; can be null.
      */
     public AmazonWebServiceClient(ClientConfiguration clientConfiguration,
-            RequestMetricCollector requestMetricCollector) {
+                                  RequestMetricCollector requestMetricCollector) {
         this(clientConfiguration, requestMetricCollector, false);
     }
 
@@ -159,8 +153,8 @@ public abstract class AmazonWebServiceClient {
         this.clientConfiguration = clientConfiguration;
         requestHandler2s = new CopyOnWriteArrayList<RequestHandler2>();
         client = new AmazonHttpClient(clientConfiguration,
-                requestMetricCollector, disableStrictHostNameVerification,
-                calculateCRC32FromCompressedData());
+                                      requestMetricCollector, disableStrictHostNameVerification,
+                                      calculateCRC32FromCompressedData());
     }
 
     protected AmazonWebServiceClient(AwsSyncClientParams clientParams) {
@@ -169,6 +163,11 @@ public abstract class AmazonWebServiceClient {
         client = new AmazonHttpClient(clientConfiguration, clientParams.getRequestMetricCollector(),
                                       !useStrictHostNameVerification(),
                                       calculateCRC32FromCompressedData());
+    }
+
+    /* Check the profiling system property and return true if set */
+    protected static boolean isProfilingEnabled() {
+        return System.getProperty(SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY) != null;
     }
 
     /**
@@ -225,7 +224,7 @@ public abstract class AmazonWebServiceClient {
         checkMutability();
         URI uri = toURI(endpoint);
         Signer signer = computeSignerByURI(uri, signerRegionOverride, false);
-        synchronized(this)  {
+        synchronized (this) {
             this.endpoint = uri;
             this.signerProvider = createSignerProvider(signer);
         }
@@ -266,7 +265,7 @@ public abstract class AmazonWebServiceClient {
      *            directly for configuring the signer.
      */
     private Signer computeSignerByURI(URI uri, String signerRegionOverride,
-            boolean isRegionIdAsSignerParam) {
+                                      boolean isRegionIdAsSignerParam) {
         if (uri == null) {
             throw new IllegalArgumentException(
                     "Endpoint is not set. Use setEndpoint to set an endpoint before performing any request.");
@@ -301,21 +300,21 @@ public abstract class AmazonWebServiceClient {
             boolean isRegionIdAsSignerParam) {
         String signerType = clientConfiguration.getSignerOverride();
         Signer signer = signerType == null
-             ? SignerFactory.getSigner(serviceName, regionId)
-             : SignerFactory.getSignerByTypeAndService(signerType, serviceName)
-             ;
-         if (signer instanceof RegionAwareSigner) {
-             // Overrides the default region computed
-             RegionAwareSigner regionAwareSigner = (RegionAwareSigner)signer;
+                        ? SignerFactory.getSigner(serviceName, regionId)
+                        : SignerFactory.getSignerByTypeAndService(signerType, serviceName);
+        if (signer instanceof RegionAwareSigner) {
+            // Overrides the default region computed
+            RegionAwareSigner regionAwareSigner = (RegionAwareSigner) signer;
             // (signerRegionOverride != null) means that it is likely to be AWS
             // internal dev work, as "signerRegionOverride" is typically null
-             // when used in the external release
-             if (signerRegionOverride != null)
-                 regionAwareSigner.setRegionName(signerRegionOverride);
-             else if (regionId != null && isRegionIdAsSignerParam)
-                 regionAwareSigner.setRegionName(regionId);
-         }
-         return signer;
+            // when used in the external release
+            if (signerRegionOverride != null) {
+                regionAwareSigner.setRegionName(signerRegionOverride);
+            } else if (regionId != null && isRegionIdAsSignerParam) {
+                regionAwareSigner.setRegionName(regionId);
+            }
+        }
+        return signer;
     }
 
     /**
@@ -351,7 +350,7 @@ public abstract class AmazonWebServiceClient {
         final String serviceNameForEndpoint = getEndpointPrefix();
         final String serviceNameForSigner = getServiceNameIntern();
         URI uri = new DefaultServiceEndpointBuilder(serviceNameForEndpoint, clientConfiguration.getProtocol()
-                .toString()).withRegion(region).getServiceEndpoint();
+                                                                                               .toString()).withRegion(region).getServiceEndpoint();
         Signer signer = computeSignerByServiceRegion(serviceNameForSigner, region.getName(), signerRegionOverride, false);
         synchronized (this) {
             this.endpoint = uri;
@@ -370,8 +369,9 @@ public abstract class AmazonWebServiceClient {
     @Deprecated
     public final void configureRegion(Regions region) {
         checkMutability();
-        if (region == null)
+        if (region == null) {
             throw new IllegalArgumentException("No region provided");
+        }
         this.setRegion(Region.getRegion(region));
     }
 
@@ -467,10 +467,10 @@ public abstract class AmazonWebServiceClient {
                                                       SignerProvider signerProvider) {
         boolean isMetricsEnabled = isRequestMetricsEnabled(req) || isProfilingEnabled();
         return ExecutionContext.builder()
-                .withRequestHandler2s(requestHandler2s)
-                .withUseRequestMetrics(isMetricsEnabled)
-                .withAwsClient(this)
-                .withSignerProvider(signerProvider).build();
+                               .withRequestHandler2s(requestHandler2s)
+                               .withUseRequestMetrics(isMetricsEnabled)
+                               .withAwsClient(this)
+                               .withSignerProvider(signerProvider).build();
     }
 
     protected final ExecutionContext createExecutionContext(Request<?> req) {
@@ -479,11 +479,6 @@ public abstract class AmazonWebServiceClient {
 
     protected SignerProvider createSignerProvider(Signer signer) {
         return new DefaultSignerProvider(this, signer);
-    }
-
-    /* Check the profiling system property and return true if set */
-    protected static boolean isProfilingEnabled() {
-        return System.getProperty(SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY) != null;
     }
 
     /**
@@ -515,20 +510,6 @@ public abstract class AmazonWebServiceClient {
      *
      * @param timeOffset
      *            The optional value for time offset (in seconds) for this client.
-     */
-    public void setTimeOffset(int timeOffset) {
-        checkMutability();
-        this.timeOffset = timeOffset;
-    }
-
-    /**
-     * Sets the optional value for time offset for this client.  This
-     * value will be applied to all requests processed through this client.
-     * Value is in seconds, positive values imply the current clock is "fast",
-     * negative values imply clock is slow.
-     *
-     * @param timeOffset
-     *            The optional value for time offset (in seconds) for this client.
      *
      * @return the updated web service client
      */
@@ -548,6 +529,20 @@ public abstract class AmazonWebServiceClient {
      */
     public int getTimeOffset() {
         return timeOffset;
+    }
+
+    /**
+     * Sets the optional value for time offset for this client.  This
+     * value will be applied to all requests processed through this client.
+     * Value is in seconds, positive values imply the current clock is "fast",
+     * negative values imply clock is slow.
+     *
+     * @param timeOffset
+     *            The optional value for time offset (in seconds) for this client.
+     */
+    public void setTimeOffset(int timeOffset) {
+        checkMutability();
+        this.timeOffset = timeOffset;
     }
 
     /**
@@ -590,7 +585,7 @@ public abstract class AmazonWebServiceClient {
             AWSRequestMetrics awsRequestMetrics, Request<?> request,
             Response<?> response) {
         this.endClientExecution(awsRequestMetrics, request, response,
-                !LOGGING_AWS_REQUEST_METRIC);
+                                !LOGGING_AWS_REQUEST_METRIC);
     }
 
     /**
@@ -646,7 +641,7 @@ public abstract class AmazonWebServiceClient {
 
         String httpClientName = getHttpClientName();
         String serviceNameInRegionMetadata = ServiceNameFactory.
-                getServiceNameInRegionMetadata(httpClientName);
+                                                                       getServiceNameInRegionMetadata(httpClientName);
 
         synchronized (this) {
             if (endpointPrefix != null) {
@@ -694,9 +689,10 @@ public abstract class AmazonWebServiceClient {
      * normally called except for AWS internal development purposes.
      */
     public final void setServiceNameIntern(String serviceName) {
-        if (serviceName == null)
+        if (serviceName == null) {
             throw new IllegalArgumentException(
                     "The parameter serviceName must be specified!");
+        }
         this.serviceName = serviceName;
     }
 
@@ -763,7 +759,7 @@ public abstract class AmazonWebServiceClient {
     public final void setSignerRegionOverride(String signerRegionOverride) {
         checkMutability();
         Signer signer = computeSignerByURI(endpoint, signerRegionOverride, true);
-        synchronized(this)  {
+        synchronized (this) {
             this.signerRegionOverride = signerRegionOverride;
             this.signerProvider = createSignerProvider(signer);
         }
@@ -783,7 +779,7 @@ public abstract class AmazonWebServiceClient {
     @Deprecated
     public <T extends AmazonWebServiceClient> T withRegion(Region region) {
         setRegion(region);
-        @SuppressWarnings("unchecked") T t= (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -799,9 +795,10 @@ public abstract class AmazonWebServiceClient {
     @Deprecated
     public <T extends AmazonWebServiceClient> T withRegion(Regions region) {
         configureRegion(region);
-        @SuppressWarnings("unchecked") T t= (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
+
     /**
      * Fluent method for {@link #setEndpoint(String)}.
      *<pre>
@@ -816,7 +813,7 @@ public abstract class AmazonWebServiceClient {
     @Deprecated
     public <T extends AmazonWebServiceClient> T withEndpoint(String endpoint) {
         setEndpoint(endpoint);
-        @SuppressWarnings("unchecked") T t= (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 

@@ -1,8 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,7 +23,7 @@ import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 /**
  * @deprecated this class is no longer used and will be removed in the future
  * <p>
- * 
+ *
  * Common base class used to wrap an InputStream with a cipher input stream to
  * encrypt it, and handles resets by attempting to reset on the original,
  * unencrypted data InputStream, and recreate an identical Cipher and identical
@@ -55,7 +52,7 @@ public abstract class AbstractRepeatableCipherInputStream<T>
      * Constructs a new repeatable cipher input stream using the specified
      * InputStream as the source data, and the CipherFactory for building
      * Cipher objects.
-     * 
+     *
      * @param input
      *            The original, unencrypted data stream. This stream should be
      *            markable/resetable in order for this class to work correctly.
@@ -66,8 +63,8 @@ public abstract class AbstractRepeatableCipherInputStream<T>
      *            this stream is reset and a new CipherInputStream is needed.
      */
     protected AbstractRepeatableCipherInputStream(final InputStream input,
-            final FilterInputStream cipherInputStream,
-            final T cipherFactory) {
+                                                  final FilterInputStream cipherInputStream,
+                                                  final T cipherFactory) {
         super(cipherInputStream);
         this.unencryptedDataStream = input;
         this.cipherFactory = cipherFactory;
@@ -76,9 +73,9 @@ public abstract class AbstractRepeatableCipherInputStream<T>
     @Override
     public boolean markSupported() {
         abortIfNeeded();
-    	return unencryptedDataStream.markSupported();
+        return unencryptedDataStream.markSupported();
     }
-    
+
     @Override
     public void mark(final int readlimit) {
         abortIfNeeded();
@@ -88,7 +85,7 @@ public abstract class AbstractRepeatableCipherInputStream<T>
                     + "read or skip.");
         }
 
-    	unencryptedDataStream.mark(readlimit);
+        unencryptedDataStream.mark(readlimit);
     }
 
     @Override

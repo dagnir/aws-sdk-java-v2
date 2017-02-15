@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -26,8 +41,9 @@ public class BucketLoggingIntegrationTest extends S3IntegrationTestBase {
      */
     @After
     public void tearDown() {
-        if (CryptoTestUtils.runTimeConsumingTests())
+        if (CryptoTestUtils.runTimeConsumingTests()) {
             s3.deleteBucket(loggingBucketName);
+        }
     }
 
     /**
@@ -71,64 +87,66 @@ public class BucketLoggingIntegrationTest extends S3IntegrationTestBase {
         assertEquals(null, loggingStatus.getLogFilePrefix());
         assertEquals(null, loggingStatus.getDestinationBucketName());
     }
-    
+
     /**
      * Waits for the logging of the bucket to be enabled.  
      * A runtime exception will be thrown if this method doesn't detect logging is enabled before the ending period.
-     * 
-     * @throws InterruptedException 
-     * 
+     *
+     * @throws InterruptedException
+     *
      */
     private BucketLoggingConfiguration waitForLoggingConfigurationToBeEnabled() throws InterruptedException {
-    	 long startTime = System.currentTimeMillis();
-         long endTime = startTime + (10 * 60 * 1000);
-         int hits = 0;
-         BucketLoggingConfiguration loggingStatus = null;
-         while ( System.currentTimeMillis() < endTime  ) {
-        	    loggingStatus = s3.getBucketLoggingConfiguration(loggingBucketName);;
-                if (loggingStatus.isLoggingEnabled()) {
-                   hits++;
-                }
-                else {
-               	  Thread.sleep(1000);
-            	  hits = 0;
-                }
-                if( hits++ == 10)
-                	return loggingStatus;  
-           }     
-           maxPollTimeExceeded();
-           return null;
-       }	
-    
-    /**
-     * Waits for the logging of the bucket to be disabled.  
-     * A runtime exception will be thrown if this method doesn't detect logging is disabled before the ending period.
-     * 
-     * @throws InterruptedException 
-     * 
-     */
-    private BucketLoggingConfiguration waitForLoggingConfigurationToBeDisabled() throws InterruptedException {
-   	 long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         long endTime = startTime + (10 * 60 * 1000);
         int hits = 0;
         BucketLoggingConfiguration loggingStatus = null;
-        while ( System.currentTimeMillis() < endTime  ) {
-       	    loggingStatus = s3.getBucketLoggingConfiguration(loggingBucketName);;
-               if (!loggingStatus.isLoggingEnabled()) {
-                  hits++;
-               }
-               else {
-              	  Thread.sleep(1000);
-           	      hits = 0;
-               }
-               if (hits++ == 10)
-               	return loggingStatus;  
-           }     
-           maxPollTimeExceeded();
-           return null;
-      }	
-    
-   
+        while (System.currentTimeMillis() < endTime) {
+            loggingStatus = s3.getBucketLoggingConfiguration(loggingBucketName);
+            ;
+            if (loggingStatus.isLoggingEnabled()) {
+                hits++;
+            } else {
+                Thread.sleep(1000);
+                hits = 0;
+            }
+            if (hits++ == 10) {
+                return loggingStatus;
+            }
+        }
+        maxPollTimeExceeded();
+        return null;
+    }
+
+    /**
+     * Waits for the logging of the bucket to be disabled.  
+     * A runtime exception will be thrown if this method doesn't detect logging is disabled before the ending period.
+     *
+     * @throws InterruptedException
+     *
+     */
+    private BucketLoggingConfiguration waitForLoggingConfigurationToBeDisabled() throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + (10 * 60 * 1000);
+        int hits = 0;
+        BucketLoggingConfiguration loggingStatus = null;
+        while (System.currentTimeMillis() < endTime) {
+            loggingStatus = s3.getBucketLoggingConfiguration(loggingBucketName);
+            ;
+            if (!loggingStatus.isLoggingEnabled()) {
+                hits++;
+            } else {
+                Thread.sleep(1000);
+                hits = 0;
+            }
+            if (hits++ == 10) {
+                return loggingStatus;
+            }
+        }
+        maxPollTimeExceeded();
+        return null;
+    }
+
+
 }
 
 

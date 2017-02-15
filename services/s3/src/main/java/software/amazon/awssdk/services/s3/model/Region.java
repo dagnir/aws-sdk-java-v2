@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.util.Arrays;
@@ -53,7 +54,7 @@ public enum Region {
      * which one provides the lowest latency.
      * </p>
      */
-    US_Standard((String[])null),
+    US_Standard((String[]) null),
 
     /**
      * The US-East-2 (Ohio) Region. This region
@@ -101,7 +102,7 @@ public enum Region {
      * The EU (Ireland) Amazon S3 Region. This region uses Amazon S3 servers located
      * in Ireland.
      */
-    EU_Ireland("eu-west-1","EU"),
+    EU_Ireland("eu-west-1", "EU"),
 
     /**
      * The EU (London) Amazon S3 Region. This region uses Amazon S3 servers located
@@ -224,15 +225,15 @@ public enum Region {
      */
     CN_Beijing("cn-north-1");
 
-   /**
-    * Used to extract the S3 regional id from an S3 end point.
-    * Note this pattern will not match the S3 US standard endpoint by intent.
-    * Exampless:
-    * <pre>
-    * s3-eu-west-1.amazonaws.com
-    * s3.cn-north-1.amazonaws.com.cn
-    * </pre>
-    */
+    /**
+     * Used to extract the S3 regional id from an S3 end point.
+     * Note this pattern will not match the S3 US standard endpoint by intent.
+     * Exampless:
+     * <pre>
+     * s3-eu-west-1.amazonaws.com
+     * s3.cn-north-1.amazonaws.com.cn
+     * </pre>
+     */
     public static final Pattern S3_REGIONAL_ENDPOINT_PATTERN =
             Pattern.compile("s3[-.]([^.]+)\\.amazonaws\\.com(\\.[^.]*)?");
 
@@ -247,6 +248,36 @@ public enum Region {
      */
     private Region(String... regionIds) {
         this.regionIds = regionIds != null ? Arrays.asList(regionIds) : null;
+    }
+
+    /**
+     * Returns the Amazon S3 Region enumeration value representing the specified Amazon
+     * S3 Region ID string. If specified string doesn't map to a known Amazon S3
+     * Region, then an <code>IllegalArgumentException</code> is thrown.
+     *
+     * @param s3RegionId
+     *            The Amazon S3 region ID string.
+     *
+     * @return The Amazon S3 Region enumeration value representing the specified Amazon
+     *         S3 Region ID.
+     *
+     * @throws IllegalArgumentException
+     *             If the specified value does not map to one of the known
+     *             Amazon S3 regions.
+     */
+    public static Region fromValue(final String s3RegionId) throws IllegalArgumentException {
+        if (s3RegionId == null || s3RegionId.equals("US") || s3RegionId.equals("us-east-1")) {
+            return Region.US_Standard;
+        }
+        for (Region region : Region.values()) {
+            List<String> regionIds = region.regionIds;
+            if (regionIds != null && regionIds.contains(s3RegionId)) {
+                return region;
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Cannot create enum from " + s3RegionId + " value!");
     }
 
     /*
@@ -268,37 +299,7 @@ public enum Region {
 
     private String getFirstRegionId0() {
         return this.regionIds == null || regionIds.size() == 0
-             ? null : this.regionIds.get(0);
-    }
-
-    /**
-     * Returns the Amazon S3 Region enumeration value representing the specified Amazon
-     * S3 Region ID string. If specified string doesn't map to a known Amazon S3
-     * Region, then an <code>IllegalArgumentException</code> is thrown.
-     *
-     * @param s3RegionId
-     *            The Amazon S3 region ID string.
-     *
-     * @return The Amazon S3 Region enumeration value representing the specified Amazon
-     *         S3 Region ID.
-     *
-     * @throws IllegalArgumentException
-     *             If the specified value does not map to one of the known
-     *             Amazon S3 regions.
-     */
-    public static Region fromValue(final String s3RegionId) throws IllegalArgumentException
-    {
-        if (s3RegionId == null || s3RegionId.equals("US") || s3RegionId.equals("us-east-1")) {
-            return Region.US_Standard;
-        }
-        for (Region region : Region.values()) {
-            List<String> regionIds = region.regionIds;
-            if (regionIds != null && regionIds.contains(s3RegionId))
-                return region;
-        }
-
-        throw new IllegalArgumentException(
-                "Cannot create enum from " + s3RegionId + " value!");
+               ? null : this.regionIds.get(0);
     }
 
     /**
@@ -306,7 +307,7 @@ public enum Region {
      */
     public software.amazon.awssdk.regions.Region toAWSRegion() {
         String s3regionId = getFirstRegionId();
-        if ( s3regionId == null ) { // US Standard
+        if (s3regionId == null) { // US Standard
             // TODO This is a bit of a hack but customers are relying on this returning us-east-1 rather then
             // aws-global. For now we'll keep the legacy behavior and consider changing it in the next major version
             // bump. See TT0073140598

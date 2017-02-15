@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public final class TimestampFormatRequestHandler extends RequestHandler2 {
 
             if (startTime != null && !startTime.isEmpty()) {
                 params.put(START_TIME,
-                        Arrays.asList(sanitize(startTime.get(0))));
+                           Arrays.asList(sanitize(startTime.get(0))));
             }
 
         } else if (original instanceof RequestSpotFleetRequest) {
@@ -62,11 +62,11 @@ public final class TimestampFormatRequestHandler extends RequestHandler2 {
 
             if (validFrom != null && !validFrom.isEmpty()) {
                 params.put(VALID_FROM,
-                        Arrays.asList(sanitize(validFrom.get(0))));
+                           Arrays.asList(sanitize(validFrom.get(0))));
             }
             if (validUntil != null && !validUntil.isEmpty()) {
                 params.put(VALID_UNTIL,
-                        Arrays.asList(sanitize(validUntil.get(0))));
+                           Arrays.asList(sanitize(validUntil.get(0))));
             }
 
         }

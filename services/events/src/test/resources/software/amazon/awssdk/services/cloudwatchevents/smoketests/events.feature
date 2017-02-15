@@ -8,5 +8,5 @@ Feature: AWS CloudWatch Events
 
   Scenario: Handling errors
     When I attempt to call the "DescribeRule" API with:
-    | Name | fake-rule |
+      | Name | fake-rule |
     Then I expect the response error code to be "ResourceNotFoundException"

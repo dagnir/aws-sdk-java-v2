@@ -8,7 +8,7 @@ Feature: Amazon CloudHSM
 
   Scenario: Handling errors
     When I attempt to call the "DescribeHapg" API with:
-    | HapgArn | bogus-arn |
+      | HapgArn | bogus-arn |
     Then I expect the response error code to be "ValidationException"
     And I expect the response error message to include:
     """

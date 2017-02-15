@@ -4,17 +4,17 @@ Feature: Amazon CloudFront
 
   Scenario: Making a basic request
     When I call the "ListDistributions" API with:
-    | MaxItems | 1 |
+      | MaxItems | 1 |
     Then the value at "DistributionList.Items" should be a list
 
   Scenario: Making a basic request - 2
     When I call the "ListCloudFrontOriginAccessIdentities" API with:
-    | MaxItems | 1 |
+      | MaxItems | 1 |
     Then the value at "CloudFrontOriginAccessIdentityList.Items" should be a list
 
   Scenario: Error handling
     When I attempt to call the "GetDistribution" API with:
-    | Id | fake-id |
+      | Id | fake-id |
     Then I expect the response error code to be "NoSuchDistribution"
     And I expect the response error message to include:
     """

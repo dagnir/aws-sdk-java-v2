@@ -1,17 +1,18 @@
 /*
- * Copyright 2012 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
@@ -35,28 +36,24 @@ import software.amazon.awssdk.services.s3.transfer.TransferProgress;
  */
 public abstract class AbstractTransfer implements Transfer {
 
-    /** The current state of this transfer. */
-    protected volatile TransferState state = TransferState.Waiting;
-
-    protected TransferMonitor monitor;
-
+    /** Hook for adding/removing more progress listeners. */
+    protected final ProgressListenerChain listenerChain;
+    /** Collection of listeners to be notified for changes to the state of this transfer via setState() */
+    protected final Collection<TransferStateChangeListener> stateChangeListeners = new LinkedList<TransferStateChangeListener>();
     /** The progress of this transfer. */
     private final TransferProgress transferProgress;
 
     private final String description;
-
-    /** Hook for adding/removing more progress listeners. */
-    protected final ProgressListenerChain listenerChain;
-
-    /** Collection of listeners to be notified for changes to the state of this transfer via setState() */
-    protected final Collection<TransferStateChangeListener> stateChangeListeners = new LinkedList<TransferStateChangeListener>();
+    /** The current state of this transfer. */
+    protected volatile TransferState state = TransferState.Waiting;
+    protected TransferMonitor monitor;
 
     AbstractTransfer(String description, TransferProgress transferProgress, ProgressListenerChain progressListenerChain) {
         this(description, transferProgress, progressListenerChain, null);
     }
 
     AbstractTransfer(String description, TransferProgress transferProgress,
-            ProgressListenerChain progressListenerChain, TransferStateChangeListener stateChangeListener) {
+                     ProgressListenerChain progressListenerChain, TransferStateChangeListener stateChangeListener) {
         this.description = description;
         this.listenerChain = progressListenerChain;
         this.transferProgress = transferProgress;
@@ -160,7 +157,7 @@ public abstract class AbstractTransfer implements Transfer {
         synchronized (this) {
             this.state = state;
         }
-        for ( TransferStateChangeListener listener : stateChangeListeners ) {
+        for (TransferStateChangeListener listener : stateChangeListeners) {
             listener.transferStateChanged(this, state);
         }
     }
@@ -169,7 +166,7 @@ public abstract class AbstractTransfer implements Transfer {
      * Notifies all the registered state change listeners of the state update.
      */
     public void notifyStateChangeListeners(TransferState state) {
-        for ( TransferStateChangeListener listener : stateChangeListeners ) {
+        for (TransferStateChangeListener listener : stateChangeListeners) {
             listener.transferStateChanged(this, state);
         }
     }
@@ -216,16 +213,18 @@ public abstract class AbstractTransfer implements Transfer {
      * Adds the given state change listener to the collection of listeners.
      */
     public synchronized void addStateChangeListener(TransferStateChangeListener listener) {
-        if ( listener != null )
+        if (listener != null) {
             stateChangeListeners.add(listener);
+        }
     }
 
     /**
      * Removes the given state change listener from the collection of listeners.
      */
     public synchronized void removeStateChangeListener(TransferStateChangeListener listener) {
-        if ( listener != null )
+        if (listener != null) {
             stateChangeListeners.remove(listener);
+        }
     }
 
     /**
@@ -237,15 +236,15 @@ public abstract class AbstractTransfer implements Transfer {
         return transferProgress;
     }
 
+    public TransferMonitor getMonitor() {
+        return monitor;
+    }
+
     /**
      * Sets the monitor used to poll for transfer completion.
      */
     public void setMonitor(TransferMonitor monitor) {
         this.monitor = monitor;
-    }
-
-    public TransferMonitor getMonitor() {
-        return monitor;
     }
 
     protected void fireProgressEvent(final ProgressEventType eventType) {
@@ -276,7 +275,9 @@ public abstract class AbstractTransfer implements Transfer {
      */
     protected AmazonClientException unwrapExecutionException(ExecutionException e) {
         Throwable t = e.getCause();
-        if (t instanceof AmazonClientException) return (AmazonClientException)t;
+        if (t instanceof AmazonClientException) {
+            return (AmazonClientException) t;
+        }
         return new AmazonClientException("Unable to complete transfer: " + t.getMessage(), t);
     }
 

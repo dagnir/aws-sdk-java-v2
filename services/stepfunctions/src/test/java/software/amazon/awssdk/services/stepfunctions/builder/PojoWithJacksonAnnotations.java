@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PojoWithJacksonAnnotations {
 
+    public String baz;
     private String foo;
     @JsonProperty("BarProperty")
     private String bar;
-    public String baz;
 
     @JsonProperty("FooProperty")
     public String getFoo() {

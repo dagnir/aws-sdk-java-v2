@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,42 +43,42 @@ public class UpdateItemImpl implements UpdateItemApi {
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            AttributeUpdate... attributeUpdates) {
+                                        AttributeUpdate... attributeUpdates) {
         return updateItem(new UpdateItemSpec()
-                .withPrimaryKey(primaryKey)
-                .withAttributeUpdate(attributeUpdates));
+                                  .withPrimaryKey(primaryKey)
+                                  .withAttributeUpdate(attributeUpdates));
     }
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            Collection<Expected> expected, AttributeUpdate... attributeUpdates) {
+                                        Collection<Expected> expected, AttributeUpdate... attributeUpdates) {
         return updateItem(new UpdateItemSpec()
-                .withPrimaryKey(primaryKey)
-                .withExpected(expected)
-                .withAttributeUpdate(attributeUpdates));
+                                  .withPrimaryKey(primaryKey)
+                                  .withExpected(expected)
+                                  .withAttributeUpdate(attributeUpdates));
     }
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            String updateExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        String updateExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return updateItem(new UpdateItemSpec()
-                .withPrimaryKey(primaryKey)
-                .withUpdateExpression(updateExpression)
-                .withNameMap(nameMap)
-                .withValueMap(valueMap));
+                                  .withPrimaryKey(primaryKey)
+                                  .withUpdateExpression(updateExpression)
+                                  .withNameMap(nameMap)
+                                  .withValueMap(valueMap));
     }
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
 
         return updateItem(new UpdateItemSpec().withPrimaryKey(primaryKey)
-                .withUpdateExpression(updateExpression)
-                .withConditionExpression(conditionExpression)
-                .withNameMap(nameMap)
-                .withValueMap(valueMap));
+                                              .withUpdateExpression(updateExpression)
+                                              .withConditionExpression(conditionExpression)
+                                              .withNameMap(nameMap)
+                                              .withValueMap(valueMap));
     }
 
     @Override
@@ -92,38 +92,38 @@ public class UpdateItemImpl implements UpdateItemApi {
         request.setTableName(table.getTableName());
         final Collection<Expected> expected = spec.getExpected();
         final Map<String, ExpectedAttributeValue> expectedMap =
-            InternalUtils.toExpectedAttributeValueMap(expected);
+                InternalUtils.toExpectedAttributeValueMap(expected);
         request.setExpected(expectedMap);
         request.setAttributeUpdates(
-            InternalUtils.toAttributeValueUpdate(spec.getAttributeUpdate()));
+                InternalUtils.toAttributeValueUpdate(spec.getAttributeUpdate()));
         request.setExpressionAttributeNames(spec.getNameMap());
         request.setExpressionAttributeValues(
-            InternalUtils.fromSimpleMap(spec.getValueMap()));
+                InternalUtils.fromSimpleMap(spec.getValueMap()));
         return new UpdateItemOutcome(client.updateItem(request));
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, AttributeUpdate... attributeUpdates) {
+                                        Object hashKeyValue, AttributeUpdate... attributeUpdates) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue),
-                attributeUpdates);
+                          attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            AttributeUpdate... attributeUpdates) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        AttributeUpdate... attributeUpdates) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue), attributeUpdates);
+                                         rangeKeyName, rangeKeyValue), attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, Collection<Expected> expected,
-            AttributeUpdate... attributeUpdates) {
+                                        Object hashKeyValue, Collection<Expected> expected,
+                                        AttributeUpdate... attributeUpdates) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue),
-                expected,
-                attributeUpdates);
+                          expected,
+                          attributeUpdates);
     }
 
     @Override
@@ -133,45 +133,45 @@ public class UpdateItemImpl implements UpdateItemApi {
             Collection<Expected> expected,
             AttributeUpdate... attributeUpdates) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue),
-                expected,
-                attributeUpdates);
+                                         rangeKeyName, rangeKeyValue),
+                          expected,
+                          attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, String updateExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        Object hashKeyValue, String updateExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue),
-                updateExpression, nameMap, valueMap);
+                          updateExpression, nameMap, valueMap);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String updateExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        String updateExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue),
-                updateExpression, nameMap, valueMap);
+                                         rangeKeyName, rangeKeyValue),
+                          updateExpression, nameMap, valueMap);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, String updateExpression,
-            String conditionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        Object hashKeyValue, String updateExpression,
+                                        String conditionExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue),
-                updateExpression, conditionExpression, nameMap, valueMap);
+                          updateExpression, conditionExpression, nameMap, valueMap);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return updateItem(new PrimaryKey(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue),
-                updateExpression, conditionExpression, nameMap, valueMap);
+                                         rangeKeyName, rangeKeyValue),
+                          updateExpression, conditionExpression, nameMap, valueMap);
     }
 }

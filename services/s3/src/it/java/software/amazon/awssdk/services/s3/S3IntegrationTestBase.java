@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.fail;
@@ -47,22 +62,18 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  */
 public class S3IntegrationTestBase extends AWSTestBase {
 
-    private static final Random RANDOM = new Random();
-
-    private static final int POLL_INTERVAL = 1000;
-
     protected static final String AWS_DR_TOOLS_EMAIL_ADDRESS = "aws-dr-tools-test@amazon.com";
     protected static final String AWS_DR_TOOLS_ACCT_ID = "d25639fbe9c19cd30a4c0f43fbf00e2d3f96400a9aa8dabfbbebe19069d1a5df";
     protected static final String AWS_DR_ECLIPSE_ACCT_ID = "4088ec1197b563ffc5e4a4920c1e34bd7c91c511933b752383684cd6c9ed29ab";
-
+    private static final Random RANDOM = new Random();
+    private static final int POLL_INTERVAL = 1000;
+    /** Android Directory, once set RandomTempFile will use it to create files. */
+    public static File androidRootDir;
     /** The S3 client for all tests to use */
     protected static AmazonS3Client s3;
     protected static AmazonS3Client euS3;
     protected static AmazonS3Client cnS3;
     protected static AmazonS3Client s3gamma;
-
-    /** Android Directory, once set RandomTempFile will use it to create files. */
-    public static File androidRootDir;
 
     /**
      * Loads the AWS account info for the integration tests and creates an S3
@@ -73,8 +84,8 @@ public class S3IntegrationTestBase extends AWSTestBase {
         setUpCredentials();
 
         AWSCredentials cnCredentials = new PropertiesCredentials(
-            new File(new File(System.getProperty("user.home")),
-                     ".aws/bjsTestAccount.properties"));
+                new File(new File(System.getProperty("user.home")),
+                         ".aws/bjsTestAccount.properties"));
 
         s3 = new AmazonS3TestClient(credentials);
         euS3 = new AmazonS3TestClient(credentials);
@@ -92,11 +103,10 @@ public class S3IntegrationTestBase extends AWSTestBase {
     /*
      * Test Helper Methods
      */
-     protected static File getRandomTempFile( String filename, long contentLength ) throws Exception {
-        if ( androidRootDir == null ) {
+    protected static File getRandomTempFile(String filename, long contentLength) throws Exception {
+        if (androidRootDir == null) {
             return new RandomTempFile(filename, contentLength);
-        }
-        else {
+        } else {
             return new RandomTempFile(androidRootDir, filename, contentLength);
         }
     }
@@ -116,14 +126,14 @@ public class S3IntegrationTestBase extends AWSTestBase {
      *         group grantee and permission, otherwise false.
      */
     protected static boolean doesAclContainGroupGrant(
-        AccessControlList acl, GroupGrantee expectedGrantee, Permission expectedPermission) {
+            AccessControlList acl, GroupGrantee expectedGrantee, Permission expectedPermission) {
 
-        for (Grant grant: acl.getGrantsAsList()) {
+        for (Grant grant : acl.getGrantsAsList()) {
             Grantee grantee = grant.getGrantee();
             Permission permission = grant.getPermission();
 
             if (grantee.equals(expectedGrantee)
-                    && permission.equals(expectedPermission)) {
+                && permission.equals(expectedPermission)) {
                 return true;
             }
         }
@@ -151,6 +161,93 @@ public class S3IntegrationTestBase extends AWSTestBase {
         for (Bucket bucket : s3.listBuckets()) {
             if (bucket.getName().startsWith(bucketPrefix)) {
                 deleteBucketAndAllContents(bucket.getName());
+            }
+        }
+    }
+
+    /**
+     * Deletes the specified bucket, including deleting all object versions in
+     * the bucket.
+     *
+     * @param bucketName
+     *            The name of the bucket to delete.
+     */
+    protected static void deleteBucketAndAllVersionedContents(String bucketName) throws Exception {
+        // Delete all the versions in the bucket first
+        Thread.sleep(1000 * 3);
+        VersionListing versionListing = s3.listVersions(bucketName, null);
+        do {
+            for (java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+                S3VersionSummary version = (S3VersionSummary) iterator.next();
+
+                try {
+                    s3.deleteVersion(new DeleteVersionRequest(
+                            bucketName, version.getKey(), version.getVersionId()));
+                } catch (Exception e) {
+                }
+            }
+            versionListing = s3.listNextBatchOfVersions(versionListing);
+        } while (versionListing.isTruncated());
+
+        Thread.sleep(1000 * 3);
+        s3.deleteBucket(bucketName);
+    }
+
+    protected static byte[] tempDataBuffer(int size) {
+        byte[] temp = new byte[size];
+
+        for (int i = 0; i < size; i++) {
+            temp[i] = (byte) (RANDOM.nextInt(125 - 32) + 32);
+        }
+
+        return temp;
+    }
+
+    public static void maxPollTimeExceeded() {
+        throw new RuntimeException("Max poll time exceeded");
+    }
+
+    /**
+     * waiting a specific bucket created
+     * When exceed the poll time, will throw Max poll time exceeded exception
+     */
+    protected static void waitForBucketCreation(String bucketName) throws Exception {
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + (30 * 60 * 1000);
+        int hits = 0;
+        while (System.currentTimeMillis() < endTime) {
+            if (!s3.doesBucketExist(bucketName)) {
+                Thread.sleep(1000);
+                hits = 0;
+            }
+            if (hits++ == 10) {
+                return;
+            }
+        }
+        maxPollTimeExceeded();
+    }
+
+    protected static void emptyBucket(AmazonS3 s3client, String bucketName, EmptyBucketPredicate predicate) {
+        ObjectListing objectListing = s3client.listObjects(bucketName);
+        while (true) {
+            for (Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
+                S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
+                if (predicate.canDelete(objectSummary)) {
+                    s3client.deleteObject(bucketName, objectSummary.getKey());
+                }
+            }
+
+            if (objectListing.isTruncated()) {
+                objectListing = s3client.listNextBatchOfObjects(objectListing);
+            } else {
+                break;
+            }
+        }
+        VersionListing list = s3client.listVersions(new ListVersionsRequest().withBucketName(bucketName));
+        for (Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+            S3VersionSummary s = (S3VersionSummary) iterator.next();
+            if (predicate.canDelete(s)) {
+                s3client.deleteVersion(bucketName, s.getKey(), s.getVersionId());
             }
         }
     }
@@ -185,7 +282,9 @@ public class S3IntegrationTestBase extends AWSTestBase {
              * doesn't exist. If we get anything other than that, then we want
              * to let the exception keep going up the chain.
              */
-            if (ase.getStatusCode() != 404) throw ase;
+            if (ase.getStatusCode() != 404) {
+                throw ase;
+            }
         }
     }
 
@@ -204,33 +303,6 @@ public class S3IntegrationTestBase extends AWSTestBase {
     }
 
     /**
-     * Deletes the specified bucket, including deleting all object versions in
-     * the bucket.
-     *
-     * @param bucketName
-     *            The name of the bucket to delete.
-     */
-    protected static void deleteBucketAndAllVersionedContents(String bucketName) throws Exception {
-        // Delete all the versions in the bucket first
-        Thread.sleep(1000 * 3);
-        VersionListing versionListing = s3.listVersions(bucketName, null);
-        do {
-            for (java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext();) {
-                S3VersionSummary version = (S3VersionSummary)iterator.next();
-
-                try {
-                    s3.deleteVersion(new DeleteVersionRequest(
-                            bucketName, version.getKey(), version.getVersionId()));
-                } catch (Exception e) {}
-            }
-            versionListing = s3.listNextBatchOfVersions(versionListing);
-        } while (versionListing.isTruncated());
-
-        Thread.sleep(1000 * 3);
-        s3.deleteBucket(bucketName);
-    }
-
-    /**
      * Creates an object in the specified bucket under the specified key with
      * random data.
      *
@@ -245,7 +317,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(123);
         return s3.putObject(bucketName, key,
-                new RandomInputStream(metadata.getContentLength()), metadata);
+                            new RandomInputStream(metadata.getContentLength()), metadata);
     }
 
     /**
@@ -255,12 +327,12 @@ public class S3IntegrationTestBase extends AWSTestBase {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(123);
         PutObjectResult putObject = s3.putObject(bucketName, key, new RandomInputStream(metadata.getContentLength()),
-                metadata);
+                                                 metadata);
         int poll = 0;
-        while ( !doesObjectExist(bucketName, key) && poll++ < timeoutMillis / POLL_INTERVAL ) {
+        while (!doesObjectExist(bucketName, key) && poll++ < timeoutMillis / POLL_INTERVAL) {
             Thread.sleep(POLL_INTERVAL);
         }
-        if ( poll >= timeoutMillis / POLL_INTERVAL ) {
+        if (poll >= timeoutMillis / POLL_INTERVAL) {
             maxPollTimeExceeded();
         }
         return putObject;
@@ -275,10 +347,11 @@ public class S3IntegrationTestBase extends AWSTestBase {
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key, version);
         try {
             S3Object s3Object = s3.getObject(getObjectRequest);
-            if (s3Object == null)
+            if (s3Object == null) {
                 return false;
+            }
             s3Object.getObjectContent().close();
-        } catch ( AmazonServiceException ase ) {
+        } catch (AmazonServiceException ase) {
             return false;
         }
         return true;
@@ -290,26 +363,12 @@ public class S3IntegrationTestBase extends AWSTestBase {
     public void createBucket(String bucketName) throws InterruptedException {
         s3.createBucket(bucketName);
         int poll = 0;
-        while ( !s3.doesBucketExist(bucketName) && poll++ < 60 ) {
+        while (!s3.doesBucketExist(bucketName) && poll++ < 60) {
             Thread.sleep(1000);
         }
-        if ( poll >= 60 * 5 ) {
+        if (poll >= 60 * 5) {
             maxPollTimeExceeded();
         }
-    }
-
-    protected static byte[] tempDataBuffer(int size) {
-        byte[] temp = new byte[size];
-
-        for ( int i = 0; i < size; i++ ) {
-            temp[i] = (byte) (RANDOM.nextInt(125 - 32) + 32);
-        }
-
-        return temp;
-    }
-
-    public static void maxPollTimeExceeded() {
-        throw new RuntimeException("Max poll time exceeded");
     }
 
     /**
@@ -319,9 +378,9 @@ public class S3IntegrationTestBase extends AWSTestBase {
      */
     protected Set<Grant> translateEmailAclsIntoCanonical(AccessControlList acl) {
         Set<Grant> expectedGrants = new HashSet<Grant>();
-        for ( Grant grant : acl.getGrantsAsList() ) {
-            if ( grant.getGrantee() instanceof EmailAddressGrantee) {
-                if ( grant.getGrantee().getIdentifier().equals(AWS_DR_TOOLS_EMAIL_ADDRESS) ) {
+        for (Grant grant : acl.getGrantsAsList()) {
+            if (grant.getGrantee() instanceof EmailAddressGrantee) {
+                if (grant.getGrantee().getIdentifier().equals(AWS_DR_TOOLS_EMAIL_ADDRESS)) {
                     expectedGrants.add(new Grant(new CanonicalGrantee(AWS_DR_TOOLS_ACCT_ID), grant.getPermission()));
                 } else {
                     throw new Error("Unrecognized email address " + grant.getGrantee());
@@ -333,52 +392,9 @@ public class S3IntegrationTestBase extends AWSTestBase {
         return expectedGrants;
     }
 
-    /**
-     * waiting a specific bucket created
-     * When exceed the poll time, will throw Max poll time exceeded exception
-     */
-    protected static void waitForBucketCreation(String bucketName) throws Exception{
-         long startTime = System.currentTimeMillis();
-         long endTime = startTime + (30 * 60 * 1000);
-         int hits=0;
-        while ( System.currentTimeMillis() < endTime  ) {
-                if(!s3.doesBucketExist(bucketName)) {
-                     Thread.sleep(1000);
-                     hits=0;
-                }
-                if(hits++ == 10)
-                    return;
-            }
-            maxPollTimeExceeded();
-    }
-
     protected interface EmptyBucketPredicate {
         boolean canDelete(S3ObjectSummary objectSummary);
+
         boolean canDelete(S3VersionSummary versionSummary);
-    }
-
-    protected static void emptyBucket(AmazonS3 s3client, String bucketName, EmptyBucketPredicate predicate) {
-        ObjectListing objectListing = s3client.listObjects(bucketName);
-        while (true) {
-            for (Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
-                S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
-                if (predicate.canDelete(objectSummary)) {
-                    s3client.deleteObject(bucketName, objectSummary.getKey());
-                }
-            }
-
-            if (objectListing.isTruncated()) {
-                objectListing = s3client.listNextBatchOfObjects(objectListing);
-            } else {
-                break;
-            }
-        }
-        VersionListing list = s3client.listVersions(new ListVersionsRequest().withBucketName(bucketName));
-        for ( Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
-            S3VersionSummary s = (S3VersionSummary)iterator.next();
-            if (predicate.canDelete(s)) {
-                s3client.deleteVersion(bucketName, s.getKey(), s.getVersionId());
-            }
-        }
     }
 }

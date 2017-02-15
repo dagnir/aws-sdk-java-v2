@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static org.junit.Assert.assertTrue;
@@ -16,6 +31,9 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 /** Integration tests for progress event notifications when using TransferManager. */
 public class TransferManagerProgressListenerIntegrationTest extends TransferManagerTestBase {
 
+    protected static final boolean GET_ONLY = false;
+    private static final String TEST_BUCKET = "java-sdk-tx-man-1403759179368";
+
     /** Tests that blocking method (e.g. waitForCompletion()) won't hang infinitely if executed in ProgressListener callback. **/
     @Test(timeout = 30 * 1000)
     public void testBlockingMethodCallsInProgressListenerCallback() throws Exception {
@@ -24,7 +42,7 @@ public class TransferManagerProgressListenerIntegrationTest extends TransferMana
 
         // Single chunk upload
         String singleChunkUploadKeyName = "file4";
-        RandomTempFile singleChunkUploadFile = new RandomTempFile(singleChunkUploadKeyName,  10*MB);
+        RandomTempFile singleChunkUploadFile = new RandomTempFile(singleChunkUploadKeyName, 10 * MB);
         Upload singleChunkUpload = tm.upload(new PutObjectRequest(bucketName, singleChunkUploadKeyName, singleChunkUploadFile));
 
         ProgressTestListenerWithBlockCallback blockingListener = new ProgressTestListenerWithBlockCallback(singleChunkUpload);
@@ -38,7 +56,7 @@ public class TransferManagerProgressListenerIntegrationTest extends TransferMana
 
         // Multi-part upload
         String multiPartUploadKeyName = "file5";
-        RandomTempFile multiPartUploadFile = new RandomTempFile(singleChunkUploadKeyName,  30*MB);
+        RandomTempFile multiPartUploadFile = new RandomTempFile(singleChunkUploadKeyName, 30 * MB);
         Upload multiPartUpload = tm.upload(new PutObjectRequest(bucketName, multiPartUploadKeyName, multiPartUploadFile));
 
         ProgressTestListenerWithBlockCallback progressListenerWithBlockCallback2 = new ProgressTestListenerWithBlockCallback(multiPartUpload);
@@ -51,15 +69,13 @@ public class TransferManagerProgressListenerIntegrationTest extends TransferMana
         assertTrue(progressListenerWithBlockCallback2.completeEventCallbackReturned);
     }
 
-    private static final String TEST_BUCKET = "java-sdk-tx-man-1403759179368";
-    protected static final boolean GET_ONLY = false;
-
     /**
      * Tests that the listener is notified with COMPLETE event after the file is fully written.
      */
     @Test
     public void testCompleteEventForDownloadIntoFile() throws IOException,
-            AmazonServiceException, AmazonClientException, InterruptedException {
+                                                              AmazonServiceException, AmazonClientException,
+                                                              InterruptedException {
         initializeTransferManager();
         long contentLength = 30 * MB;
         String keyName = "file";
@@ -77,7 +93,7 @@ public class TransferManagerProgressListenerIntegrationTest extends TransferMana
         final File destFile = java.io.File.createTempFile("dowloaded", "");
         destFile.deleteOnExit();
         Download download = tm.download(bucketName, keyName, destFile);
-        CompleteEventTestListener testListener = new CompleteEventTestListener((AbstractTransfer)download);
+        CompleteEventTestListener testListener = new CompleteEventTestListener((AbstractTransfer) download);
         download.addProgressListener(testListener);
 
         download.waitForCompletion();

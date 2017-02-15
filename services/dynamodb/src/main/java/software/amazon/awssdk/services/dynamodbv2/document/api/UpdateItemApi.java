@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,14 +39,14 @@ public interface UpdateItemApi {
      *            attributes to be updated
      */
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            AttributeUpdate... attributeUpdates);
+                                        AttributeUpdate... attributeUpdates);
 
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            AttributeUpdate... attributeUpdates);
+                                        AttributeUpdate... attributeUpdates);
 
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            AttributeUpdate... attributeUpdates);
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        AttributeUpdate... attributeUpdates);
 
     /**
      * Updates an item with the attributes specified.
@@ -59,20 +59,20 @@ public interface UpdateItemApi {
      *            attributes to be updated
      */
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            Collection<Expected> expected, AttributeUpdate... attributeUpdates);
-    
+                                        Collection<Expected> expected, AttributeUpdate... attributeUpdates);
+
     /**
      * Updates an item with the specified hash-only key and attributes.
      */
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            Collection<Expected> expected, AttributeUpdate... attributeUpdates);
-    
+                                        Collection<Expected> expected, AttributeUpdate... attributeUpdates);
+
     /**
      * Updates an item with the specified hash key, range key and attributes.
      */
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            Collection<Expected> expected, AttributeUpdate... attributeUpdates);
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        Collection<Expected> expected, AttributeUpdate... attributeUpdates);
 
     /**
      * Performs an update on an item in the table using the given update
@@ -92,17 +92,17 @@ public interface UpdateItemApi {
      *            attribute
      */
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            String updateExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap);
-    
+                                        String updateExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap);
+
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String updateExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap);
-    
+                                        String updateExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap);
+
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String updateExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        String updateExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap);
 
     /**
      * Updates an item with the specified primary key using the given
@@ -126,25 +126,25 @@ public interface UpdateItemApi {
      *            of the attribute
      */
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap);
-    
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap);
+
     /**
      * Updates an item with the specified hash key using the given
      * update expression provided the condition expression evaluates to true.
      */
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap);
-    
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap);
+
     /**
      * Updates an item with the specified hash key and range key using the given
      * update expression provided the condition expression evaluates to true.
      */
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap);
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap);
 
     /**
      * Performs an update on an item in the table by specifying all the details.

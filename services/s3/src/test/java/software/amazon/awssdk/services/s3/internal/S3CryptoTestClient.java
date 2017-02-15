@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.File;
@@ -37,7 +52,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
     }
 
     public S3CryptoTestClient(EncryptionMaterials encryptionMaterials,
-            CryptoConfiguration cryptoConfig) {
+                              CryptoConfiguration cryptoConfig) {
         super(encryptionMaterials, cryptoConfig);
     }
 
@@ -48,12 +63,12 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
     }
 
     public S3CryptoTestClient(AWSCredentials credentials,
-            EncryptionMaterials encryptionMaterials) {
+                              EncryptionMaterials encryptionMaterials) {
         super(credentials, encryptionMaterials);
     }
 
     public S3CryptoTestClient(AWSCredentials credentials,
-            EncryptionMaterialsProvider encryptionMaterialsProvider) {
+                              EncryptionMaterialsProvider encryptionMaterialsProvider) {
         super(credentials, encryptionMaterialsProvider);
     }
 
@@ -64,24 +79,24 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
     }
 
     public S3CryptoTestClient(AWSCredentials credentials,
-            EncryptionMaterials encryptionMaterials,
-            CryptoConfiguration cryptoConfig) {
+                              EncryptionMaterials encryptionMaterials,
+                              CryptoConfiguration cryptoConfig) {
         super(credentials, encryptionMaterials, cryptoConfig);
     }
 
     public S3CryptoTestClient(AWSKMSClient kms, AWSCredentials credentials,
-            EncryptionMaterials encryptionMaterials,
-            CryptoConfiguration cryptoConfig) {
+                              EncryptionMaterials encryptionMaterials,
+                              CryptoConfiguration cryptoConfig) {
         super(kms, new AWSStaticCredentialsProvider(credentials),
-                new StaticEncryptionMaterialsProvider(encryptionMaterials),
-                new ClientConfiguration(),
-                cryptoConfig,
-                null);
+              new StaticEncryptionMaterialsProvider(encryptionMaterials),
+              new ClientConfiguration(),
+              cryptoConfig,
+              null);
     }
 
     public S3CryptoTestClient(AWSCredentials credentials,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            CryptoConfiguration cryptoConfig) {
+                              EncryptionMaterialsProvider encryptionMaterialsProvider,
+                              CryptoConfiguration cryptoConfig) {
         super(credentials, encryptionMaterialsProvider, cryptoConfig);
     }
 
@@ -93,26 +108,26 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
     }
 
     public S3CryptoTestClient(AWSCredentials credentials,
-            EncryptionMaterials encryptionMaterials,
-            ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+                              EncryptionMaterials encryptionMaterials,
+                              ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         super(credentials, encryptionMaterials, clientConfig, cryptoConfig);
     }
 
     public S3CryptoTestClient(AWSKMSClient kms, AWSCredentials credentials,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
-        super(kms, 
-            new AWSStaticCredentialsProvider(credentials),
-            encryptionMaterialsProvider, 
-            clientConfig, 
-            cryptoConfig, null);
+                              EncryptionMaterialsProvider encryptionMaterialsProvider,
+                              ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+        super(kms,
+              new AWSStaticCredentialsProvider(credentials),
+              encryptionMaterialsProvider,
+              clientConfig,
+              cryptoConfig, null);
     }
 
     public S3CryptoTestClient(AWSCredentials credentials,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+                              EncryptionMaterialsProvider encryptionMaterialsProvider,
+                              ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         super(credentials, encryptionMaterialsProvider, clientConfig,
-                cryptoConfig);
+              cryptoConfig);
     }
 
     public S3CryptoTestClient(
@@ -142,54 +157,60 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
         super(kms, credentialsProvider, kekMaterialsProvider, clientConfig, cryptoConfig, requestMetricCollector);
     }
 
-    
+
     @Override
     public S3Object getObject(GetObjectRequest req) {
-        for (int i = 0;;i++) {
+        for (int i = 0; ; i++) {
             try {
                 return super.getObject(req);
-            } catch(RuntimeException ex) {
-                if (i >= MAX_RETRY)
+            } catch (RuntimeException ex) {
+                if (i >= MAX_RETRY) {
                     throw ex;
+                }
                 if (ex instanceof SecurityException) {
                     final String msg = ex.getMessage();
-                    if (!msg.contains("Instruction file not found"))
+                    if (!msg.contains("Instruction file not found")) {
                         throw ex;
+                    }
                     printAndPause(i, ex);
                 } else if (ex instanceof AmazonClientException) {
                     printAndPause(i, ex);
-                } else
+                } else {
                     throw ex;
+                }
             }
         }
     }
 
     @Override
     public ObjectMetadata getObject(GetObjectRequest req, File dest) {
-        for (int i = 0;;i++) {
+        for (int i = 0; ; i++) {
             try {
                 return super.getObject(req, dest);
-            } catch(RuntimeException ex) {
-                if (i >= MAX_RETRY)
+            } catch (RuntimeException ex) {
+                if (i >= MAX_RETRY) {
                     throw ex;
+                }
                 if (ex instanceof SecurityException) {
                     final String msg = ex.getMessage();
-                    if (!msg.contains("Instruction file not found"))
+                    if (!msg.contains("Instruction file not found")) {
                         throw ex;
+                    }
                     printAndPause(i, ex);
                 } else if (ex instanceof AmazonClientException) {
                     printAndPause(i, ex);
-                } else
+                } else {
                     throw ex;
+                }
             }
         }
     }
 
     private void printAndPause(int i, RuntimeException ex) {
         ex.printStackTrace();
-        System.out.println("Retrying getObject " + (i+1));
+        System.out.println("Retrying getObject " + (i + 1));
         try {
-            Thread.sleep((1<<(i+1))*1000);
+            Thread.sleep((1 << (i + 1)) * 1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -197,23 +218,25 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
 
     @Override
     public PutObjectResult putInstructionFile(PutInstructionFileRequest req) {
-        for (int i = 0;;i++) {
+        for (int i = 0; ; i++) {
             try {
                 return super.putInstructionFile(req);
-            } catch(RuntimeException ex) {
-                if (i >= MAX_RETRY)
+            } catch (RuntimeException ex) {
+                if (i >= MAX_RETRY) {
                     throw ex;
+                }
                 if (ex instanceof IllegalArgumentException
-                ||  ex instanceof AmazonClientException) {
+                    || ex instanceof AmazonClientException) {
                     ex.printStackTrace();
-                    System.out.println("Retrying putInstructionFile " + (i+1));
+                    System.out.println("Retrying putInstructionFile " + (i + 1));
                     try {
-                        Thread.sleep((1<<(i+1))*1000);
+                        Thread.sleep((1 << (i + 1)) * 1000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                } else
+                } else {
                     throw ex;
+                }
             }
         }
     }

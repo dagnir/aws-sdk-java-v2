@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import org.junit.Assert;
@@ -16,8 +31,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "allDataTypes")
                 .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withBoolean("booleanTrue", true)
                 .withBoolean("booleanFalse", false)
                 .withInt("intAttr", 1234)
@@ -34,13 +49,13 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         System.out.println(out);
         out = table.putItem(
                 item.withNumber(RANGE_KEY_NAME, 2)
-                        .withNumber("numberAttr", -100));
+                    .withNumber("numberAttr", -100));
         System.out.println(out);
         ItemCollection<?> col = table.query(
                 HASH_KEY_NAME, "allDataTypes",
                 new RangeKeyCondition(RANGE_KEY_NAME).between(0, 10),
                 new QueryFilter("numberAttr").lt(0)
-        );
+                                           );
         for (Item it : col) {
             System.out.println(it);
         }
@@ -52,8 +67,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "allDataTypes")
                 .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withInt("intAttr", 1234)
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")
@@ -76,8 +91,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "allDataTypes")
                 .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withInt("intAttr", 1234)
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")
@@ -117,8 +132,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "allDataTypes")
                 .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withInt("intAttr", 1234)
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")
@@ -158,8 +173,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "allDataTypes")
                 .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withInt("intAttr", 1234)
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")
@@ -198,13 +213,13 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         Table table = dynamoOld.getTable(HASH_ONLY_TABLE_NAME);
         PutItemOutcome out = table.putItem(
                 new Item().with(HASH_KEY_NAME, "priorDataTypes")
-                        .withBinary("binary", new byte[]{1, 2, 3, 4})
-                        .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
-                        .withInt("intAttr", 1234)
-                        .withNumber("numberAttr", 999.1234)
-                        .withString("stringAttr", "bla")
-                        .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz")
-        );
+                          .withBinary("binary", new byte[] {1, 2, 3, 4})
+                          .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
+                          .withInt("intAttr", 1234)
+                          .withNumber("numberAttr", 999.1234)
+                          .withString("stringAttr", "bla")
+                          .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz")
+                                          );
         System.out.println(out);
     }
 
@@ -219,8 +234,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
 
         Item newItem = new Item()
                 .with(HASH_KEY_NAME, "allDataTypesViaSpec")
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withBoolean("booleanTrue", true)
                 .withBoolean("booleanFalse", false)
                 .withInt("intAttr", 1234)
@@ -241,14 +256,14 @@ public class QueryIntegrationTest extends IntegrationTestBase {
                                 new Expected(HASH_KEY_NAME).notContains("xyz"),
                                 new Expected("intAttr").between(1, 9999))
                         .withReturnValues(ReturnValue.ALL_OLD)
-        );
+                                          );
 
         Assert.assertTrue(ItemTestUtils.equalsItem(oldItem, out.getItem()));
 
         Item getNewItem = table.getItem(new GetItemSpec().withPrimaryKey(new
                                                                                  KeyAttribute(HASH_KEY_NAME,
                                                                                               "allDataTypesViaSpec"))
-                                                .withConsistentRead(true));
+                                                         .withConsistentRead(true));
         Assert.assertTrue(ItemTestUtils.equalsItem(newItem, getNewItem));
 
     }
@@ -265,8 +280,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
 
         Item newItem = new Item()
                 .with(HASH_KEY_NAME, hashKeyVal)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withBoolean("booleanTrue", true)
                 .withBoolean("booleanFalse", false)
                 .withInt("intAttr", 1234)
@@ -301,8 +316,8 @@ public class QueryIntegrationTest extends IntegrationTestBase {
         }
         Item item = new Item()
                 .withPrimaryKey(HASH_KEY_NAME, "deleteTest", RANGE_KEY_NAME, 0)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withInt("intAttr", 1234)
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")
@@ -316,7 +331,7 @@ public class QueryIntegrationTest extends IntegrationTestBase {
                             .withRangeKeyCondition(new RangeKeyCondition(RANGE_KEY_NAME).between(1, 10))
                             .withMaxPageSize(3)
                             .withMaxResultSize(i)
-            );
+                                               );
             int rangeKeyValExpected = 0;
             for (Item it : col) {
                 String hashKeyVal = it.getString(HASH_KEY_NAME);

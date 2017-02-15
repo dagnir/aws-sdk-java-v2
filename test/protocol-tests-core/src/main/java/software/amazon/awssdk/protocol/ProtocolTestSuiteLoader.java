@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@ public class ProtocolTestSuiteLoader {
 
     public List<TestCase> load(String suitePath) throws IOException {
         return loadTestSuite(suitePath).getTestCases().stream()
-                .flatMap(this::loadTestCases)
-                .collect(Collectors.toList());
+                                       .flatMap(this::loadTestCases)
+                                       .collect(Collectors.toList());
     }
 
     private TestSuite loadTestSuite(String suitePath) throws IOException {

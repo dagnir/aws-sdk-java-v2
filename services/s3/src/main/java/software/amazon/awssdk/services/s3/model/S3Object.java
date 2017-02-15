@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -11,10 +11,8 @@
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Closeable;
@@ -32,7 +30,7 @@ import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
  *
  * @see ObjectMetadata
  */
-public class S3Object implements Closeable,Serializable, S3RequesterChargedResult {
+public class S3Object implements Closeable, Serializable, S3RequesterChargedResult {
 
     private static final long serialVersionUID = 1L;
 
@@ -110,25 +108,25 @@ public class S3Object implements Closeable,Serializable, S3RequesterChargedResul
      * Sets the input stream containing this object's contents.
      *
      * @param objectContent
-     *            The input stream containing this object's contents.
-     *
-     * @see S3Object#getObjectContent()
-     */
-    public void setObjectContent(S3ObjectInputStream objectContent) {
-        this.objectContent = objectContent;
-    }
-
-    /**
-     * Sets the input stream containing this object's contents.
-     *
-     * @param objectContent
      *            The input stream containing this object's contents. Will get
      *            wrapped in an S3ObjectInputStream.
      * @see S3Object#getObjectContent()
      */
     public void setObjectContent(InputStream objectContent) {
         setObjectContent(new S3ObjectInputStream(objectContent,
-                this.objectContent != null ? this.objectContent.getHttpRequest() : null));
+                                                 this.objectContent != null ? this.objectContent.getHttpRequest() : null));
+    }
+
+    /**
+     * Sets the input stream containing this object's contents.
+     *
+     * @param objectContent
+     *            The input stream containing this object's contents.
+     *
+     * @see S3Object#getObjectContent()
+     */
+    public void setObjectContent(S3ObjectInputStream objectContent) {
+        this.objectContent = objectContent;
     }
 
     /**
@@ -208,8 +206,8 @@ public class S3Object implements Closeable,Serializable, S3RequesterChargedResul
      */
     public String toString() {
         return "S3Object [key=" + getKey()
-            + ",bucket=" + (bucketName == null ? "<Unknown>" : bucketName)
-            + "]";
+               + ",bucket=" + (bucketName == null ? "<Unknown>" : bucketName)
+               + "]";
     }
 
     /**
@@ -221,8 +219,9 @@ public class S3Object implements Closeable,Serializable, S3RequesterChargedResul
     @Override
     public void close() throws IOException {
         InputStream is = getObjectContent();
-        if (is != null)
+        if (is != null) {
             is.close();
+        }
     }
 
     @Override

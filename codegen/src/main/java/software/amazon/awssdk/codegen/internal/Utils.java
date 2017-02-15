@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -73,7 +73,7 @@ public class Utils {
         }
 
         return name.length() < 2 ? StringUtils.lowerCase(name) : StringUtils.lowerCase(name.substring(0, 1))
-                 + name.substring(1);
+                                                                 + name.substring(1);
 
     }
 
@@ -83,7 +83,7 @@ public class Utils {
         }
 
         return name.length() < 2 ? StringUtils.upperCase(name) : StringUtils.upperCase(name.substring(0, 1))
-                + name.substring(1);
+                                                                 + name.substring(1);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Utils {
         if (!(dir.exists())) {
             if (!dir.mkdirs()) {
                 throw new RuntimeException("Not able to create directory. "
-                        + dir.getAbsolutePath());
+                                           + dir.getAbsolutePath());
             }
         }
     }
@@ -152,7 +152,7 @@ public class Utils {
         if (!(file.exists())) {
             if (!(file.createNewFile())) {
                 throw new RuntimeException("Not able to create file . "
-                        + file.getAbsolutePath());
+                                           + file.getAbsolutePath());
             }
         }
 
@@ -164,8 +164,9 @@ public class Utils {
     }
 
     public static void closeQuietly(Closeable closeable) {
-        if (closeable == null)
+        if (closeable == null) {
             return;
+        }
 
         try {
             closeable.close();
@@ -227,7 +228,9 @@ public class Utils {
      * is null, otherwise return the input as is.
      */
     public static <T> T assertNotNull(T argument, String msg) {
-        if (argument == null) throw new IllegalArgumentException(msg);
+        if (argument == null) {
+            throw new IllegalArgumentException(msg);
+        }
         return argument;
     }
 
@@ -273,9 +276,10 @@ public class Utils {
      */
     public static ShapeMarshaller createInputShapeMarshaller(ServiceMetadata service, Operation operation) {
 
-        if (operation == null)
+        if (operation == null) {
             throw new IllegalArgumentException(
                     "The operation parameter must be specified!");
+        }
 
         ShapeMarshaller marshaller = new ShapeMarshaller()
                 .withAction(operation.getName())
@@ -292,7 +296,7 @@ public class Utils {
         }
         if (!StringUtils.isNullOrEmpty(service.getTargetPrefix())) {
             marshaller.setTarget(service.getTargetPrefix() + "."
-                    + operation.getName());
+                                 + operation.getName());
         }
         return marshaller;
 

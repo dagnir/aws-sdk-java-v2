@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -61,8 +62,9 @@ public class SSECustomerKey implements Serializable {
      *            The base 64 encoded encryption key material.
      */
     public SSECustomerKey(String base64EncodedKey) {
-        if (base64EncodedKey == null || base64EncodedKey.length() == 0)
+        if (base64EncodedKey == null || base64EncodedKey.length() == 0) {
             throw new IllegalArgumentException("Encryption key must be specified");
+        }
 
         // Default to AES-256 encryption
         this.algorithm = SSEAlgorithm.AES256.getAlgorithm();
@@ -82,8 +84,9 @@ public class SSECustomerKey implements Serializable {
      *            The raw bytes of the customer provided encryption key.
      */
     public SSECustomerKey(byte[] rawKeyMaterial) {
-        if (rawKeyMaterial == null || rawKeyMaterial.length == 0)
+        if (rawKeyMaterial == null || rawKeyMaterial.length == 0) {
             throw new IllegalArgumentException("Encryption key must be specified");
+        }
 
         // Default to AES-256 encryption
         this.algorithm = SSEAlgorithm.AES256.getAlgorithm();
@@ -103,8 +106,9 @@ public class SSECustomerKey implements Serializable {
      *            The customer provided server-side encryption key.
      */
     public SSECustomerKey(SecretKey key) {
-        if (key == null)
+        if (key == null) {
             throw new IllegalArgumentException("Encryption key must be specified");
+        }
 
         // Default to AES-256 encryption
         this.algorithm = SSEAlgorithm.AES256.getAlgorithm();
@@ -118,6 +122,29 @@ public class SSECustomerKey implements Serializable {
         this.base64EncodedKey = null;
     }
 
+    /**
+     * Constructs a new SSECustomerKey that can be used for generating the
+     * presigned URL's.
+     *
+     * Currently, "AES256" is the only supported algorithm.
+     *
+     * @see SSEAlgorithm#AES256
+     *
+     * @param algorithm
+     *            The server-side encryption algorithm to use with this
+     *            customer-provided server-side encryption key; must not be
+     *            null.
+     *
+     * @throws IllegalArgumentException
+     *             if the input parameter is null.
+     */
+    public static SSECustomerKey generateSSECustomerKeyForPresignUrl(
+            String algorithm) {
+        if (algorithm == null) {
+            throw new IllegalArgumentException();
+        }
+        return new SSECustomerKey().withAlgorithm(algorithm);
+    }
 
     /**
      * Returns the base64-encoded server-side encryption key that was provided
@@ -227,28 +254,5 @@ public class SSECustomerKey implements Serializable {
     public SSECustomerKey withMd5(String md5Digest) {
         setMd5(md5Digest);
         return this;
-    }
-
-    /**
-     * Constructs a new SSECustomerKey that can be used for generating the
-     * presigned URL's.
-     *
-     * Currently, "AES256" is the only supported algorithm.
-     *
-     * @see SSEAlgorithm#AES256
-     *
-     * @param algorithm
-     *            The server-side encryption algorithm to use with this
-     *            customer-provided server-side encryption key; must not be
-     *            null.
-     *
-     * @throws IllegalArgumentException
-     *             if the input parameter is null.
-     */
-    public static SSECustomerKey generateSSECustomerKeyForPresignUrl(
-            String algorithm) {
-        if (algorithm == null)
-            throw new IllegalArgumentException();
-        return new SSECustomerKey().withAlgorithm(algorithm);
     }
 }

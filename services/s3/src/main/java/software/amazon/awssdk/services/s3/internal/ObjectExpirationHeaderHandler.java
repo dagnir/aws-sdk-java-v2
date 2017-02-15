@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.Date;
@@ -33,12 +34,12 @@ public class ObjectExpirationHeaderHandler<T extends ObjectExpirationResult>
      */
 
     private static final Pattern datePattern =
-        Pattern.compile("expiry-date=\"(.*?)\"");
+            Pattern.compile("expiry-date=\"(.*?)\"");
     private static final Pattern rulePattern =
-        Pattern.compile("rule-id=\"(.*?)\"");
+            Pattern.compile("rule-id=\"(.*?)\"");
 
     private static final Log log =
-        LogFactory.getLog(ObjectExpirationHeaderHandler.class);
+            LogFactory.getLog(ObjectExpirationHeaderHandler.class);
 
     /*
      * (non-Javadoc)
@@ -50,9 +51,9 @@ public class ObjectExpirationHeaderHandler<T extends ObjectExpirationResult>
     @Override
     public void handle(T result, HttpResponse response) {
         String expirationHeader =
-            response.getHeaders().get(Headers.EXPIRATION);
+                response.getHeaders().get(Headers.EXPIRATION);
 
-        if ( expirationHeader != null ) {
+        if (expirationHeader != null) {
             result.setExpirationTime(parseDate(expirationHeader));
             result.setExpirationTimeRuleId(parseRuleId(expirationHeader));
         }
@@ -60,7 +61,7 @@ public class ObjectExpirationHeaderHandler<T extends ObjectExpirationResult>
 
     private String parseRuleId(String expirationHeader) {
         Matcher matcher = rulePattern.matcher(expirationHeader);
-        if ( matcher.find() ) {
+        if (matcher.find()) {
             return matcher.group(1);
         }
         return null;
@@ -68,7 +69,7 @@ public class ObjectExpirationHeaderHandler<T extends ObjectExpirationResult>
 
     private Date parseDate(String expirationHeader) {
         Matcher matcher = datePattern.matcher(expirationHeader);
-        if ( matcher.find() ) {
+        if (matcher.find()) {
             String date = matcher.group(1);
             try {
                 return ServiceUtils.parseRfc822Date(date);

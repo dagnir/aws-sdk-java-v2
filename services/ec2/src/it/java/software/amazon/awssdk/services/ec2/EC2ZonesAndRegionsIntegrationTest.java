@@ -16,7 +16,7 @@ import software.amazon.awssdk.services.ec2.model.Region;
 
 /**
  * Integration tests for the EC2 Availability Zones and Regions operations.
- * 
+ *
  * @author fulghum@amazon.com
  */
 public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
@@ -41,7 +41,7 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
         zones = result.getAvailabilityZones();
         assertTrue(zones.size() == 1);
         assertZonesNotEmpty(zones);
-        
+
         // filters
         request = new DescribeAvailabilityZonesRequest();
         request.withFilters(new Filter("zone-name", null).withValues(zones.get(0).getZoneName()));
@@ -70,7 +70,7 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
         regions = result.getRegions();
         assertTrue(regions.size() == 1);
         assertRegionsNotEmpty(regions);
-        
+
         // filters
         request = new DescribeRegionsRequest();
         request.withFilters(new Filter("region-name", null).withValues(regions.get(0).getRegionName()));
@@ -88,7 +88,7 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
     /**
      * Asserts that the specified list of availability zones are all populated
      * with data.
-     * 
+     *
      * @param zones
      *            The list of zones to test.
      */
@@ -102,7 +102,7 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
 
     /**
      * Asserts that the specified list of regions are all populated with data.
-     * 
+     *
      * @param regions
      *            The list of regions to test.
      */
@@ -112,5 +112,5 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
             assertThat(region.getRegionName(), Matchers.not(Matchers.isEmptyOrNullString()));
         }
     }
-    
+
 }

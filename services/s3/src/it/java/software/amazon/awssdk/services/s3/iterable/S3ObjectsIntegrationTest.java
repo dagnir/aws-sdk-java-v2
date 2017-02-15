@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.iterable;
 
 import static org.junit.Assert.assertEquals;
@@ -31,15 +46,15 @@ public class S3ObjectsIntegrationTest extends S3IntegrationTestBase {
      * Creates and initializes all the test resources needed for these tests.
      */
     @BeforeClass
-    public  static void setUp() throws Exception {
+    public static void setUp() throws Exception {
         S3IntegrationTestBase.setUp();
         s3.createBucket(bucketName);
     }
-    
+
 
     @Test
     public void testIteratingAFewObjects() throws Exception {
-    	deleteObjects(bucketName);
+        deleteObjects(bucketName);
         putObject("1-one");
         putObject("2-two");
         putObject("3-three");
@@ -51,7 +66,7 @@ public class S3ObjectsIntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testIteratingMultiplePages() throws Exception {
-    	deleteObjects(bucketName);
+        deleteObjects(bucketName);
         putObject("1-one");
         putObject("2-two");
         putObject("3-three");
@@ -63,7 +78,7 @@ public class S3ObjectsIntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testIteratingWithPrefix() throws Exception {
-    	deleteObjects(bucketName);
+        deleteObjects(bucketName);
         putObject("foobar");
         putObject("foobaz");
         putObject("somethingelse");
@@ -75,7 +90,7 @@ public class S3ObjectsIntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testIteratingWithPrefixAndMultiplePages() throws Exception {
-    	deleteObjects(bucketName);
+        deleteObjects(bucketName);
         putObject("absolutely");
         putObject("foobar");
         putObject("foobaz");
@@ -86,32 +101,35 @@ public class S3ObjectsIntegrationTest extends S3IntegrationTestBase {
     }
 
     private void checkIteration(S3Objects objects, String... expectedKeys) {
-    	Set<String> setObjects=new HashSet<String>();
-    	Set<String> setKeys= new HashSet<String>();
+        Set<String> setObjects = new HashSet<String>();
+        Set<String> setKeys = new HashSet<String>();
         Iterator<String> iter = Arrays.asList(expectedKeys).iterator();
-        for ( S3ObjectSummary object : objects ) {
+        for (S3ObjectSummary object : objects) {
             assertTrue("too many objects", iter.hasNext());
             setObjects.add(object.getKey());
-            setKeys.add(iter.next());         
+            setKeys.add(iter.next());
         }
-        assertEquals(setObjects,setKeys);
+        assertEquals(setObjects, setKeys);
         assertFalse("too few objects", iter.hasNext());
     }
-    private void deleteObjects(String bucketName){
-    	ObjectListing objectListing = s3.listObjects(bucketName);
+
+    private void deleteObjects(String bucketName) {
+        ObjectListing objectListing = s3.listObjects(bucketName);
         while (true) {
-	        for ( S3ObjectSummary objectSummary :objectListing.getObjectSummaries()) {
-	           
-	            s3.deleteObject(bucketName, objectSummary.getKey());
-	        }
-	        
-	        if (objectListing.isTruncated()) {
-	        	objectListing = s3.listNextBatchOfObjects(objectListing);
-	        } else {
-	        	break;
-	        }
-        };
+            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
+
+                s3.deleteObject(bucketName, objectSummary.getKey());
+            }
+
+            if (objectListing.isTruncated()) {
+                objectListing = s3.listNextBatchOfObjects(objectListing);
+            } else {
+                break;
+            }
+        }
+        ;
     }
+
     private void putObject(String string) {
         createObject(bucketName, string);
     }

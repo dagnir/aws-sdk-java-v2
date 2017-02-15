@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import static org.junit.Assert.assertFalse;
@@ -12,6 +27,7 @@ import software.amazon.awssdk.util.Md5Utils;
 
 public class MD5DigestCalculatingInputStreamTest {
     private static final boolean DEBUG = true;
+
     @Test
     public void test() throws Exception {
         byte[] data = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+-="
@@ -46,8 +62,9 @@ public class MD5DigestCalculatingInputStreamTest {
             is.read(new byte[10]);
             is.reset();
             byte[] ba = IOUtils.toByteArray(is);
-            if (DEBUG)
+            if (DEBUG) {
                 System.out.println("ba.length: " + ba.length);
+            }
             assertTrue(Arrays.equals(baExpected, ba));
             byte[] md5 = is.getMd5Digest();
             assertTrue(Arrays.equals(md5Expected, md5));
@@ -61,8 +78,9 @@ public class MD5DigestCalculatingInputStreamTest {
             is.read(new byte[10]);
             is.reset();
             byte[] ba = IOUtils.toByteArray(is);
-            if (DEBUG)
+            if (DEBUG) {
                 System.out.println("ba.length: " + ba.length);
+            }
             assertFalse(Arrays.equals(baExpected, ba));
             byte[] md5 = is.getMd5Digest();
             assertTrue(Arrays.equals(md5Expected, md5));
@@ -79,8 +97,9 @@ public class MD5DigestCalculatingInputStreamTest {
             is.read(new byte[10]);
             is.reset();
             byte[] ba = IOUtils.toByteArray(is);
-            if (DEBUG)
+            if (DEBUG) {
                 System.out.println("ba.length: " + ba.length);
+            }
             assertFalse(Arrays.equals(baExpected, ba));
             byte[] md5 = is.getMd5Digest();
             assertTrue(Arrays.equals(md5Expected, md5));
@@ -94,7 +113,7 @@ public class MD5DigestCalculatingInputStreamTest {
                 new ByteArrayInputStream(data));
         IOUtils.toByteArray(is);
         byte[] digestExpected = is.getMd5Digest();
-        
+
         is = new MD5DigestCalculatingInputStream(
                 new ByteArrayInputStream(data));
         byte[] buf = new byte[data.length];

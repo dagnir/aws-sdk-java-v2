@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ public class GetItemOutcome {
      * @param result the low-level result; must not be null
      */
     public GetItemOutcome(GetItemResult result) {
-        if (result == null)
+        if (result == null) {
             throw new IllegalArgumentException();
+        }
         this.result = result;
     }
 
@@ -40,7 +41,7 @@ public class GetItemOutcome {
      */
     public Item getItem() {
         Map<String, Object> attributes =
-            InternalUtils.toSimpleMapValue(result.getItem());
+                InternalUtils.toSimpleMapValue(result.getItem());
         Item item = Item.fromMap(attributes);
         return item;
     }

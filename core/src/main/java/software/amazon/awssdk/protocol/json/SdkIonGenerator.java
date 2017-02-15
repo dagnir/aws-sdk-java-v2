@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,12 +31,18 @@ import software.amazon.ion.system.IonWriterBuilder;
 
 @SdkInternalApi
 abstract class SdkIonGenerator implements StructuredJsonGenerator {
-    private final String contentType;
     protected final IonWriter writer;
+    private final String contentType;
 
     private SdkIonGenerator(IonWriter writer, String contentType) {
         this.writer = writer;
         this.contentType = contentType;
+    }
+
+    public static SdkIonGenerator create(IonWriterBuilder builder, String contentType) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        IonWriter writer = builder.build(bytes);
+        return new ByteArraySdkIonGenerator(bytes, writer, contentType);
     }
 
     @Override
@@ -211,12 +217,6 @@ abstract class SdkIonGenerator implements StructuredJsonGenerator {
     @Override
     public String getContentType() {
         return contentType;
-    }
-
-    public static SdkIonGenerator create(IonWriterBuilder builder, String contentType) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        IonWriter writer = builder.build(bytes);
-        return new ByteArraySdkIonGenerator(bytes, writer, contentType);
     }
 
     private static class ByteArraySdkIonGenerator extends SdkIonGenerator {

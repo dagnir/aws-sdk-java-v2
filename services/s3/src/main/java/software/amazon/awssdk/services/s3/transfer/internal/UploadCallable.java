@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
@@ -52,31 +53,28 @@ import software.amazon.awssdk.services.s3.transfer.TransferProgress;
 import software.amazon.awssdk.services.s3.transfer.model.UploadResult;
 
 public class UploadCallable implements Callable<UploadResult> {
+    private static final Log log = LogFactory.getLog(UploadCallable.class);
     private final AmazonS3 s3;
     private final ExecutorService threadPool;
     private final PutObjectRequest origReq;
-    private String multipartUploadId;
     private final UploadImpl upload;
-
-    private static final Log log = LogFactory.getLog(UploadCallable.class);
     private final TransferManagerConfiguration configuration;
     private final List<Future<PartETag>> futures = new ArrayList<Future<PartETag>>();
     private final ProgressListenerChain listener;
     private final TransferProgress transferProgress;
-
     /**
      * ETags retrieved from Amazon S3 for a multi-part upload id. These parts
      * will be skipped while resuming a paused upload.
      */
     private final List<PartETag> eTagsToSkip = new ArrayList<PartETag>();
-
+    private String multipartUploadId;
     private PersistableUpload persistableUpload;
 
     public UploadCallable(TransferManager transferManager,
-            ExecutorService threadPool, UploadImpl upload,
-            PutObjectRequest origReq,
-            ProgressListenerChain progressListenerChain, String uploadId,
-            TransferProgress transferProgress) {
+                          ExecutorService threadPool, UploadImpl upload,
+                          PutObjectRequest origReq,
+                          ProgressListenerChain progressListenerChain, String uploadId,
+                          TransferProgress transferProgress) {
         this.s3 = transferManager.getAmazonS3Client();
         this.configuration = transferManager.getConfiguration();
 
@@ -114,7 +112,7 @@ public class UploadCallable implements Callable<UploadResult> {
 
     public UploadResult call() throws Exception {
         upload.setState(TransferState.InProgress);
-        if ( isMultipartUpload() ) {
+        if (isMultipartUpload()) {
             publishProgress(listener, ProgressEventType.TRANSFER_STARTED_EVENT);
             return uploadInParts();
         } else {
@@ -142,10 +140,10 @@ public class UploadCallable implements Callable<UploadResult> {
     private void captureUploadStateIfPossible() {
         if (origReq.getSSECustomerKey() == null) {
             persistableUpload = new PersistableUpload(origReq.getBucketName(),
-                    origReq.getKey(), origReq.getFile()
-                            .getAbsolutePath(), multipartUploadId,
-                    configuration.getMinimumUploadPartSize(),
-                    configuration.getMultipartUploadThreshold());
+                                                      origReq.getKey(), origReq.getFile()
+                                                                               .getAbsolutePath(), multipartUploadId,
+                                                      configuration.getMinimumUploadPartSize(),
+                                                      configuration.getMultipartUploadThreshold());
             notifyPersistableTransferAvailability();
         }
     }
@@ -174,7 +172,7 @@ public class UploadCallable implements Callable<UploadResult> {
         try {
             if (multipartUploadId == null) {
                 multipartUploadId = initiateMultipartUpload(origReq,
-                        isUsingEncryption);
+                                                            isUsingEncryption);
             }
 
             UploadPartRequestFactory requestFactory = new UploadPartRequestFactory(origReq, multipartUploadId, optimalPartSize);
@@ -192,7 +190,9 @@ public class UploadCallable implements Callable<UploadResult> {
             throw e;
         } finally {
             if (origReq.getInputStream() != null) {
-                try {origReq.getInputStream().close(); } catch (Exception e) {
+                try {
+                    origReq.getInputStream().close();
+                } catch (Exception e) {
                     log.warn("Unable to cleanly close input stream: " + e.getMessage(), e);
                 }
             }
@@ -206,14 +206,15 @@ public class UploadCallable implements Callable<UploadResult> {
      */
     void performAbortMultipartUpload() {
         try {
-            if (multipartUploadId != null)
+            if (multipartUploadId != null) {
                 s3.abortMultipartUpload(new AbortMultipartUploadRequest(
                         origReq.getBucketName(), origReq
-                                .getKey(), multipartUploadId));
+                        .getKey(), multipartUploadId));
+            }
         } catch (Exception e2) {
             log.info(
                     "Unable to abort multipart upload, you may need to manually remove uploaded parts: "
-                            + e2.getMessage(), e2);
+                    + e2.getMessage(), e2);
         }
     }
 
@@ -224,7 +225,7 @@ public class UploadCallable implements Callable<UploadResult> {
         long optimalPartSize = TransferManagerUtils.calculateOptimalPartSize(origReq, configuration);
         if (isUsingEncryption && optimalPartSize % 32 > 0) {
             // When using encryption, parts must line up correctly along cipher block boundaries
-            optimalPartSize = optimalPartSize - (optimalPartSize % 32) + 32 ;
+            optimalPartSize = optimalPartSize - (optimalPartSize % 32) + 32;
         }
         log.debug("Calculated optimal part size: " + optimalPartSize);
         return optimalPartSize;
@@ -239,7 +240,9 @@ public class UploadCallable implements Callable<UploadResult> {
         final List<PartETag> partETags = new ArrayList<PartETag>();
 
         while (requestFactory.hasMoreRequests()) {
-            if (threadPool.isShutdown()) throw new CancellationException("TransferManager has been shutdown");
+            if (threadPool.isShutdown()) {
+                throw new CancellationException("TransferManager has been shutdown");
+            }
             UploadPartRequest uploadPartRequest = requestFactory.getNextUploadPartRequest();
             // Mark the stream in case we need to reset it
             InputStream inputStream = uploadPartRequest.getInputStream();
@@ -247,19 +250,18 @@ public class UploadCallable implements Callable<UploadResult> {
                 if (uploadPartRequest.getPartSize() >= Integer.MAX_VALUE) {
                     inputStream.mark(Integer.MAX_VALUE);
                 } else {
-                    inputStream.mark((int)uploadPartRequest.getPartSize());
+                    inputStream.mark((int) uploadPartRequest.getPartSize());
                 }
             }
             partETags.add(s3.uploadPart(uploadPartRequest).getPartETag());
         }
 
         CompleteMultipartUploadRequest req =
-            new CompleteMultipartUploadRequest(
-                origReq.getBucketName(), origReq.getKey(), multipartUploadId,
-                    partETags)
-            .withGeneralProgressListener(origReq.getGeneralProgressListener())
-            .withRequestMetricCollector(origReq.getRequestMetricCollector())
-            ;
+                new CompleteMultipartUploadRequest(
+                        origReq.getBucketName(), origReq.getKey(), multipartUploadId,
+                        partETags)
+                        .withGeneralProgressListener(origReq.getGeneralProgressListener())
+                        .withRequestMetricCollector(origReq.getRequestMetricCollector());
         CompleteMultipartUploadResult res = s3.completeMultipartUpload(req);
 
         UploadResult uploadResult = new UploadResult();
@@ -274,12 +276,14 @@ public class UploadCallable implements Callable<UploadResult> {
      * Submits a callable for each part to upload to our thread pool and records its corresponding Future.
      */
     private void uploadPartsInParallel(UploadPartRequestFactory requestFactory,
-            String uploadId) {
+                                       String uploadId) {
 
-        Map<Integer,PartSummary> partNumbers = identifyExistingPartsForResume(uploadId);
+        Map<Integer, PartSummary> partNumbers = identifyExistingPartsForResume(uploadId);
 
         while (requestFactory.hasMoreRequests()) {
-            if (threadPool.isShutdown()) throw new CancellationException("TransferManager has been shutdown");
+            if (threadPool.isShutdown()) {
+                throw new CancellationException("TransferManager has been shutdown");
+            }
             UploadPartRequest request = requestFactory.getNextUploadPartRequest();
             if (partNumbers.containsKey(request.getPartNumber())) {
                 PartSummary summary = partNumbers.get(request.getPartNumber());
@@ -304,7 +308,7 @@ public class UploadCallable implements Callable<UploadResult> {
             PartListing parts = s3.listParts(new ListPartsRequest(
                     origReq.getBucketName(),
                     origReq.getKey(), uploadId)
-                    .withPartNumberMarker(partNumber));
+                                                     .withPartNumberMarker(partNumber));
             for (PartSummary partSummary : parts.getParts()) {
                 partNumbers.put(partSummary.getPartNumber(), partSummary);
             }
@@ -330,8 +334,8 @@ public class UploadCallable implements Callable<UploadResult> {
                     .setMaterialsDescription(((EncryptedPutObjectRequest) origReq).getMaterialsDescription());
         } else {
             req = new InitiateMultipartUploadRequest(origReq.getBucketName(), origReq.getKey())
-                .withCannedACL(origReq.getCannedAcl())
-                .withObjectMetadata(origReq.getMetadata());
+                    .withCannedACL(origReq.getCannedAcl())
+                    .withObjectMetadata(origReq.getMetadata());
         }
 
         TransferManager.appendMultipartUserAgent(req);
@@ -343,7 +347,7 @@ public class UploadCallable implements Callable<UploadResult> {
            .withSSEAwsKeyManagementParams(origReq.getSSEAwsKeyManagementParams())
            .withGeneralProgressListener(origReq.getGeneralProgressListener())
            .withRequestMetricCollector(origReq.getRequestMetricCollector())
-           ;
+        ;
 
         String uploadId = s3.initiateMultipartUpload(req).getUploadId();
         log.debug("Initiated new multipart upload: " + uploadId);

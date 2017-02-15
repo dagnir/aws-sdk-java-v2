@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -40,70 +55,56 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
     private static final String KEY_PREFIX = "prefix";
 
     private static final String RULE_ID = "first-rule";
-
-    private static AmazonS3Client s3UsWest2 = null;
-
-    private static AmazonS3Client euS3 = null;
-
     private final static String BUCKET_NAME = "aws-java-sdk-standard-ia-test-" + System.currentTimeMillis();
-
     private final static String key = "key";
-
     private static final String DEST_BUCKET_NAME = "mvtargetbucketforreplication-" + System.currentTimeMillis();
-
     private static final String DEST_BUCKET_ARN = "arn:aws:s3:::"
-            + DEST_BUCKET_NAME;
-
+                                                  + DEST_BUCKET_NAME;
     /** The time in days from  object's creation to its expiration used in the tests */
     private static final int EXPIRATION_IN_DAYS = 100;
-
     /** The time in days from an object's creation to the transition time(change the storage class to STANDARD_IA) used in the tests */
     private static final int STANDARD_IA_TRANSITION_TIME_IN_DAYS = 31;
-
     /** The time in days from an object's creation to the transition time(change the storage class to GLACIER) used in the tests */
     private static final int GLACIER_TRANSITION_TIME_IN_DAYS = 70;
-
     private static final Transition standardIATransition = new Transition()
-                                                                .withDays(STANDARD_IA_TRANSITION_TIME_IN_DAYS)
-                                                                .withStorageClass(StorageClass.StandardInfrequentAccess);
-
+            .withDays(STANDARD_IA_TRANSITION_TIME_IN_DAYS)
+            .withStorageClass(StorageClass.StandardInfrequentAccess);
     private static final Transition glacierTransition = new Transition()
-                                                                .withDays(GLACIER_TRANSITION_TIME_IN_DAYS)
-                                                                .withStorageClass(StorageClass.Glacier);
-
+            .withDays(GLACIER_TRANSITION_TIME_IN_DAYS)
+            .withStorageClass(StorageClass.Glacier);
     private static final NoncurrentVersionTransition standardIANoncurrentTransition = new NoncurrentVersionTransition()
-                                                                .withDays(STANDARD_IA_TRANSITION_TIME_IN_DAYS)
-                                                                .withStorageClass(StorageClass.StandardInfrequentAccess);
-
+            .withDays(STANDARD_IA_TRANSITION_TIME_IN_DAYS)
+            .withStorageClass(StorageClass.StandardInfrequentAccess);
     private static final NoncurrentVersionTransition glacierNonCurrentTransition = new NoncurrentVersionTransition()
-                                                                .withDays(GLACIER_TRANSITION_TIME_IN_DAYS)
-                                                                .withStorageClass(StorageClass.Glacier);
-
+            .withDays(GLACIER_TRANSITION_TIME_IN_DAYS)
+            .withStorageClass(StorageClass.Glacier);
     /**
      * ARN of the IAM role used for replication.
      */
     private static final String ROLE = "arn:aws:iam::pikc123456:role/abcdef";
+    private static AmazonS3Client s3UsWest2 = null;
+    private static AmazonS3Client euS3 = null;
 
     @BeforeClass
     public static void setUp() throws InterruptedException, IOException {
         setUpCredentials();
         s3UsWest2 = new AmazonS3Client(credentials);
         s3UsWest2.setRegion(software.amazon.awssdk.regions.Region
-                .getRegion(Regions.US_WEST_2));
+                                    .getRegion(Regions.US_WEST_2));
 
         euS3 = new AmazonS3Client(credentials);
         euS3.setRegion(software.amazon.awssdk.regions.Region
-                .getRegion(Regions.EU_WEST_1));
+                               .getRegion(Regions.EU_WEST_1));
 
         s3UsWest2.createBucket(BUCKET_NAME, Region.US_West_2);
         euS3.createBucket(DEST_BUCKET_NAME, Region.EU_Ireland);
 
         s3UsWest2.setBucketVersioningConfiguration(new SetBucketVersioningConfigurationRequest(
                 BUCKET_NAME, new BucketVersioningConfiguration(
-                        "Enabled")));
+                "Enabled")));
         euS3.setBucketVersioningConfiguration(new SetBucketVersioningConfigurationRequest(
                 DEST_BUCKET_NAME, new BucketVersioningConfiguration(
-                        "Enabled")));
+                "Enabled")));
     }
 
     @AfterClass
@@ -118,6 +119,19 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
         }
     }
 
+    private static void assertTransition(Transition expected, Transition actual) {
+        assertEquals(expected.getDate(), actual.getDate());
+        assertEquals(expected.getDays(), actual.getDays());
+        assertEquals(expected.getStorageClass(), actual.getStorageClass());
+    }
+
+    private static void assertNoncurrentTransition(
+            NoncurrentVersionTransition expected,
+            NoncurrentVersionTransition actual) {
+        assertEquals(expected.getDays(), actual.getDays());
+        assertEquals(expected.getStorageClass(), actual.getStorageClass());
+    }
+
     @Test
     public void testStandardInFrequentlyStorageClass() {
 
@@ -127,11 +141,11 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
         metadata.setContentLength(contents.length);
 
         s3UsWest2.putObject(new PutObjectRequest(
-                                 BUCKET_NAME,
-                                 key,
-                                 new ByteArrayInputStream(contents),
-                                 metadata)
-                            .withStorageClass(StorageClass.StandardInfrequentAccess));
+                BUCKET_NAME,
+                key,
+                new ByteArrayInputStream(contents),
+                metadata)
+                                    .withStorageClass(StorageClass.StandardInfrequentAccess));
 
         ObjectListing bucketList = s3UsWest2.listObjects(BUCKET_NAME, key);
         boolean keyFound = false;
@@ -151,20 +165,20 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
     public void testReplication() {
 
         final String RULE = "replication-rule-1-"
-            + System.currentTimeMillis();
+                            + System.currentTimeMillis();
 
         final BucketReplicationConfiguration configuration = new BucketReplicationConfiguration()
-        .withRoleARN(ROLE);
+                .withRoleARN(ROLE);
 
         configuration.addRule(
                 RULE,
                 new ReplicationRule()
-                    .withPrefix("testPrefix1")
-                    .withStatus(ReplicationRuleStatus.Enabled)
-                    .withDestinationConfig(
-                        new ReplicationDestinationConfig()
-                                .withBucketARN(DEST_BUCKET_ARN)
-                                .withStorageClass(StorageClass.StandardInfrequentAccess)));
+                        .withPrefix("testPrefix1")
+                        .withStatus(ReplicationRuleStatus.Enabled)
+                        .withDestinationConfig(
+                                new ReplicationDestinationConfig()
+                                        .withBucketARN(DEST_BUCKET_ARN)
+                                        .withStorageClass(StorageClass.StandardInfrequentAccess)));
 
         s3UsWest2.setBucketReplicationConfiguration(BUCKET_NAME, configuration);
 
@@ -173,7 +187,7 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
 
         ReplicationRule replRule1 = retrievedReplicationConfig.getRule(RULE);
         assertEquals(StorageClass.StandardInfrequentAccess.toString(), replRule1.getDestinationConfig()
-                .getStorageClass());
+                                                                                .getStorageClass());
     }
 
     @Test
@@ -183,15 +197,15 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
         assertNull(bucketLifecycleConfiguration);
 
         bucketLifecycleConfiguration = new BucketLifecycleConfiguration()
-                                            .withRules(new Rule()
-                                                        .withId(RULE_ID)
-                                                        .withExpirationInDays(EXPIRATION_IN_DAYS)
-                                                        .withPrefix(KEY_PREFIX)
-                                                        .withStatus(BucketLifecycleConfiguration.ENABLED)
-                                                        .addTransition(standardIATransition)
-                                                        .addTransition(glacierTransition)
-                                                        .addNoncurrentVersionTransition(standardIANoncurrentTransition)
-                                                        .addNoncurrentVersionTransition(glacierNonCurrentTransition));
+                .withRules(new Rule()
+                                   .withId(RULE_ID)
+                                   .withExpirationInDays(EXPIRATION_IN_DAYS)
+                                   .withPrefix(KEY_PREFIX)
+                                   .withStatus(BucketLifecycleConfiguration.ENABLED)
+                                   .addTransition(standardIATransition)
+                                   .addTransition(glacierTransition)
+                                   .addNoncurrentVersionTransition(standardIANoncurrentTransition)
+                                   .addNoncurrentVersionTransition(glacierNonCurrentTransition));
 
         s3UsWest2.setBucketLifecycleConfiguration(BUCKET_NAME, bucketLifecycleConfiguration);
 
@@ -217,18 +231,5 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
         // The deprecated method should return the first transition.
         assertTransition(glacierTransition, rule.getTransition());
         assertNoncurrentTransition(glacierNonCurrentTransition, rule.getNoncurrentVersionTransition());
-    }
-
-    private static void assertTransition(Transition expected, Transition actual) {
-        assertEquals(expected.getDate(), actual.getDate());
-        assertEquals(expected.getDays(), actual.getDays());
-        assertEquals(expected.getStorageClass(), actual.getStorageClass());
-    }
-
-    private static void assertNoncurrentTransition(
-            NoncurrentVersionTransition expected,
-            NoncurrentVersionTransition actual) {
-        assertEquals(expected.getDays(), actual.getDays());
-        assertEquals(expected.getStorageClass(), actual.getStorageClass());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -35,7 +36,7 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * @see AmazonS3#getObjectAcl(String, String, String)
  * @see AmazonS3#getObjectAcl(GetObjectAclRequest)
  */
-public class GetObjectAclRequest extends AmazonWebServiceRequest implements Serializable{
+public class GetObjectAclRequest extends AmazonWebServiceRequest implements Serializable {
 
     /**
      * Builder of an S3 object identifier. This member field is never null.
@@ -81,6 +82,7 @@ public class GetObjectAclRequest extends AmazonWebServiceRequest implements Seri
     public void setBucketName(String bucketName) {
         s3ObjectIdBuilder.setBucket(bucketName);
     }
+
     /**
      * Sets the name of the bucket containing the object whose ACL is to be retrieved.
      * Returns this {@link GetObjectAclRequest}, enabling additional method
@@ -98,6 +100,7 @@ public class GetObjectAclRequest extends AmazonWebServiceRequest implements Seri
         setBucketName(bucketName);
         return this;
     }
+
     /**
      * Gets the key under which the object whose ACL to be retrieved is stored.
      *

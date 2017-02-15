@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.util;
 
 import java.io.IOException;
@@ -11,8 +26,9 @@ public class KMSCreateKeyIntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void test() throws IOException {
-        if (true)
+        if (true) {
             return;
+        }
 
         // System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "false");
         // This is necessary to make it work under JDK1.6
@@ -21,8 +37,8 @@ public class KMSCreateKeyIntegrationTest extends S3IntegrationTestBase {
         setUpCredentials();
 
         AWSKMSClient kms = new AWSKMSClient(credentials);
-//        kms.setEndpoint(KMS_END_POINT);
-//        kms.setServiceNameIntern(KMS_SERVICE_NAME);
+        //        kms.setEndpoint(KMS_END_POINT);
+        //        kms.setServiceNameIntern(KMS_SERVICE_NAME);
         CreateKeyResult result = kms.createKey();
         System.err.println(result);
         // {KeyMetadata: {AWSAccountId: 814230673633,KeyId: d3fd2273-4ca0-4da5-b1c2-c89742ec6a26,Arn: arn:aws:trent-sandbox:us-west-2:814230673633:key/d3fd2273-4ca0-4da5-b1c2-c89742ec6a26,CreationDate: Tue Oct 14 11:30:35 PDT 2014,Enabled: true,Description: ,KeyUsage: ENCRYPT_DECRYPT}}

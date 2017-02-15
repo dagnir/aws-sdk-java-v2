@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -38,22 +38,22 @@ public class GetItemImpl extends AbstractImpl implements GetItemApi {
     @Override
     public GetItemOutcome getItemOutcome(KeyAttribute... primaryKeyComponents) {
         return doLoadItem(new GetItemSpec()
-                   .withPrimaryKey(primaryKeyComponents));
+                                  .withPrimaryKey(primaryKeyComponents));
     }
 
     @Override
     public GetItemOutcome getItemOutcome(PrimaryKey primaryKey) {
         return doLoadItem(new GetItemSpec()
-        .withPrimaryKey(primaryKey));
+                                  .withPrimaryKey(primaryKey));
     }
 
     @Override
     public GetItemOutcome getItemOutcome(PrimaryKey primaryKey,
-            String projectionExpression, Map<String, String> nameMap) {
+                                         String projectionExpression, Map<String, String> nameMap) {
         return doLoadItem(new GetItemSpec()
-                .withPrimaryKey(primaryKey)
-                .withProjectionExpression(projectionExpression)
-                .withNameMap(nameMap));
+                                  .withPrimaryKey(primaryKey)
+                                  .withProjectionExpression(projectionExpression)
+                                  .withNameMap(nameMap));
     }
 
     @Override
@@ -70,9 +70,9 @@ public class GetItemImpl extends AbstractImpl implements GetItemApi {
         String tableName = getTable().getTableName();
         // Set up the key attributes
         GetItemRequest req = spec.getRequest()
-                .withTableName(tableName)
-                .withKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()))
-                .withExpressionAttributeNames(spec.getNameMap());
+                                 .withTableName(tableName)
+                                 .withKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()))
+                                 .withExpressionAttributeNames(spec.getNameMap());
 
         GetItemResult result = getClient().getItem(req);
         return new GetItemOutcome(result);
@@ -90,7 +90,7 @@ public class GetItemImpl extends AbstractImpl implements GetItemApi {
 
     @Override
     public Item getItem(PrimaryKey primaryKey, String projectionExpression,
-            Map<String, String> nameMap) {
+                        Map<String, String> nameMap) {
         return getItemOutcome(primaryKey, projectionExpression, nameMap).getItem();
     }
 
@@ -101,9 +101,9 @@ public class GetItemImpl extends AbstractImpl implements GetItemApi {
 
     @Override
     public GetItemOutcome getItemOutcome(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
+                                         String rangeKeyName, Object rangeKeyValue) {
         return getItemOutcome(new KeyAttribute(hashKeyName, hashKeyValue),
-                new KeyAttribute(rangeKeyName, rangeKeyValue));
+                              new KeyAttribute(rangeKeyName, rangeKeyValue));
     }
 
     @Override
@@ -113,39 +113,39 @@ public class GetItemImpl extends AbstractImpl implements GetItemApi {
 
     @Override
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
+                        String rangeKeyName, Object rangeKeyValue) {
         return getItemOutcome(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue).getItem();
     }
 
     @Override
     public GetItemOutcome getItemOutcome(String hashKeyName, Object hashKeyValue,
-            String projectionExpression, Map<String, String> nameMap) {
+                                         String projectionExpression, Map<String, String> nameMap) {
         return getItemOutcome(new PrimaryKey(hashKeyName, hashKeyValue),
-                projectionExpression, nameMap);
+                              projectionExpression, nameMap);
     }
 
     @Override
     public GetItemOutcome getItemOutcome(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String projectionExpression, Map<String, String> nameMap) {
+                                         String rangeKeyName, Object rangeKeyValue,
+                                         String projectionExpression, Map<String, String> nameMap) {
         return getItemOutcome(
-            new PrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue),
+                new PrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue),
                 projectionExpression, nameMap);
     }
 
     @Override
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String projectionExpression, Map<String, String> nameMap) {
+                        String projectionExpression, Map<String, String> nameMap) {
         return getItemOutcome(new PrimaryKey(hashKeyName, hashKeyValue),
-                projectionExpression, nameMap).getItem();
+                              projectionExpression, nameMap).getItem();
     }
 
     @Override
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String projectionExpression, Map<String, String> nameMap) {
+                        String rangeKeyName, Object rangeKeyValue,
+                        String projectionExpression, Map<String, String> nameMap) {
         return getItemOutcome(
-            new PrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue),
-            projectionExpression, nameMap).getItem();
+                new PrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue),
+                projectionExpression, nameMap).getItem();
     }
 }

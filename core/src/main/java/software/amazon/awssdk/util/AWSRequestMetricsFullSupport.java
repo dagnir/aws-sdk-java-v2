@@ -38,26 +38,25 @@ import software.amazon.awssdk.metrics.RequestMetricCollector;
  */
 @NotThreadSafe
 public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
-    /* Stores some key value pairs. */
-    private final Map<String, List<Object>> properties = new HashMap<String, List<Object>>();
-    
-    /* A map to store events that are being profiled. */
-    private final Map<String, TimingInfo> eventsBeingProfiled = new HashMap<String, TimingInfo>();
     /* Latency Logger */
     private static final Log latencyLogger = LogFactory.getLog("software.amazon.awssdk.latency");
     private static final Object KEY_VALUE_SEPARATOR = "=";
     private static final Object COMMA_SEPARATOR = ", ";
+    /* Stores some key value pairs. */
+    private final Map<String, List<Object>> properties = new HashMap<String, List<Object>>();
+    /* A map to store events that are being profiled. */
+    private final Map<String, TimingInfo> eventsBeingProfiled = new HashMap<String, TimingInfo>();
 
     /**
      * This constructor should be used in the case when AWS SDK metrics
      * collector is enabled.
-     * 
+     *
      * @see AWSRequestMetricsFullSupport
      */
     public AWSRequestMetricsFullSupport() {
         super(TimingInfo.startTimingFullSupport());
     }
-    
+
     /**
      * Start an event which will be timed. The startTime and endTime are added
      * to timingInfo only after endEvent is called. For every startEvent there
@@ -66,22 +65,22 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
      * for recursive events yet. Having said that, if you start and end an event
      * in that sequence multiple times, all events are logged in timingInfo in
      * that order.
-     * 
+     *
      * This feature is enabled if the system property
      * "software.amazon.awssdk.sdk.enableRuntimeProfiling" is set, or if a
      * {@link RequestMetricCollector} is in use either at the request, web service
      * client, or AWS SDK level.
-     * 
+     *
      * @param eventName
      *            - The name of the event to start
-     * 
+     *
      * @see AwsSdkMetrics
      */
     @Override
     public void startEvent(String eventName) {
         /* This will overwrite past events */
         eventsBeingProfiled.put // ignoring the wall clock time
-            (eventName, TimingInfo.startTimingFullSupport(System.nanoTime()));
+                (eventName, TimingInfo.startTimingFullSupport(System.nanoTime()));
     }
 
     @Override
@@ -93,7 +92,7 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
      * End an event which was previously started. Once ended, log how much time
      * the event took. It is illegal to end an Event that was not started. It is
      * good practice to endEvent in a finally block. See Also startEvent.
-     * 
+     *
      * @param eventName
      *            - The name of the event to start
      */
@@ -103,15 +102,15 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
         /* Somebody tried to end an event that was not started. */
         if (event == null) {
             LogFactory.getLog(getClass()).warn
-                ("Trying to end an event which was never started: " + eventName);
+                    ("Trying to end an event which was never started: " + eventName);
             return;
         }
         event.endTiming();
         this.timingInfo.addSubMeasurement(
-            eventName,
-            TimingInfo.unmodifiableTimingInfo(
-                event.getStartTimeNano(),
-                event.getEndTimeNano()));
+                eventName,
+                TimingInfo.unmodifiableTimingInfo(
+                        event.getStartTimeNano(),
+                        event.getEndTimeNano()));
     }
 
     @Override
@@ -122,12 +121,12 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
     /**
      * Add 1 to an existing count for a given event. If the count for that event
      * does not exist, then it creates one and initializes it to 1.
-     * 
+     *
      * This feature is enabled if the system property
      * "software.amazon.awssdk.sdk.enableRuntimeProfiling" is set, or if a
      * {@link RequestMetricCollector} is in use either at the request, web service
      * client, or AWS SDK level.
-     * 
+     *
      * @param event
      *            - The name of the event to count
      */
@@ -140,7 +139,7 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
     public void incrementCounter(MetricType f) {
         incrementCounter(f.name());
     }
-    
+
     @Override
     public void setCounter(String counterName, long count) {
         timingInfo.setCounter(counterName, count);
@@ -150,16 +149,16 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
     public void setCounter(MetricType f, long count) {
         setCounter(f.name(), count);
     }
-    
+
     /**
      * Add a property. If you add the same property more than once, it stores
      * all values a list.
-     * 
+     *
      * This feature is enabled if the system property
      * "software.amazon.awssdk.sdk.enableRuntimeProfiling" is set, or if a
      * {@link RequestMetricCollector} is in use either at the request, web service
      * client, or AWS SDK level.
-     * 
+     *
      * @param propertyName
      *            The name of the property
      * @param value
@@ -172,7 +171,7 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
             propertyList = new ArrayList<Object>();
             properties.put(propertyName, propertyList);
         }
-        
+
         propertyList.add(value);
     }
 
@@ -191,7 +190,7 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
             }
 
             for (Entry<String, Number> entry : timingInfo.getAllCounters()
-                    .entrySet()) {
+                                                         .entrySet()) {
                 keyValueFormat(entry.getKey(), entry.getValue(), builder);
             }
             for (Entry<String, List<TimingInfo>> entry : timingInfo
@@ -207,12 +206,12 @@ public class AWSRequestMetricsFullSupport extends AWSRequestMetrics {
     }
 
     @Override
-    public List<Object> getProperty(String propertyName){
-    	return properties.get(propertyName);
+    public List<Object> getProperty(String propertyName) {
+        return properties.get(propertyName);
     }
 
     @Override
-    public List<Object> getProperty(MetricType f){
+    public List<Object> getProperty(MetricType f) {
         return getProperty(f.name());
     }
 

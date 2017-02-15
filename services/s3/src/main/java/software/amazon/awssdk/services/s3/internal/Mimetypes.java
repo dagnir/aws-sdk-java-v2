@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.BufferedReader;
@@ -45,20 +43,15 @@ import software.amazon.awssdk.util.StringUtils;
  * no associated extensions are also ignored.
  */
 public class Mimetypes {
-    private static final Log log = LogFactory.getLog(Mimetypes.class);
-
     /** The default XML mimetype: application/xml */
     public static final String MIMETYPE_XML = "application/xml";
-
     /** The default HTML mimetype: text/html */
     public static final String MIMETYPE_HTML = "text/html";
-
     /** The default binary mimetype: application/octet-stream */
     public static final String MIMETYPE_OCTET_STREAM = "application/octet-stream";
-
     /** The default gzip mimetype: application/x-gzip */
     public static final String MIMETYPE_GZIP = "application/x-gzip";
-
+    private static final Log log = LogFactory.getLog(Mimetypes.class);
     private static Mimetypes mimetypes = null;
 
     /**
@@ -66,13 +59,16 @@ public class Mimetypes {
      */
     private HashMap<String, String> extensionToMimetypeMap = new HashMap<String, String>();
 
-    private Mimetypes() {}
+    private Mimetypes() {
+    }
 
     /**
      * Loads MIME type info from the file 'mime.types' in the classpath, if it's available.
      */
     public synchronized static Mimetypes getInstance() {
-        if (mimetypes != null) return mimetypes;
+        if (mimetypes != null) {
+            return mimetypes;
+        }
 
         mimetypes = new Mimetypes();
         InputStream is = mimetypes.getClass().getResourceAsStream("/mime.types");
@@ -87,7 +83,11 @@ public class Mimetypes {
                     log.error("Failed to load mime types from file in the classpath: mime.types", e);
                 }
             } finally {
-                try { is.close(); } catch (IOException ex) { log.debug("", ex); }
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    log.debug("", ex);
+                }
             }
         } else {
             if (log.isWarnEnabled()) {
@@ -108,8 +108,8 @@ public class Mimetypes {
      */
     public void loadAndReplaceMimetypes(InputStream is) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is,
-                StringUtils.UTF8));
-        String line =  null;
+                                                                     StringUtils.UTF8));
+        String line = null;
 
         while ((line = br.readLine()) != null) {
             line = line.trim();
@@ -168,7 +168,7 @@ public class Mimetypes {
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Extension '" + ext + "' is unrecognized in mime type listing"
-                    + ", using default mime type: '" + MIMETYPE_OCTET_STREAM + "'");
+                              + ", using default mime type: '" + MIMETYPE_OCTET_STREAM + "'");
                 }
             }
         } else {
@@ -197,7 +197,7 @@ public class Mimetypes {
      * <code>application/octet-stream</code> if a mime type value cannot be found.
      */
     public String getMimetype(File file) {
-       return getMimetype(file.getName());
+        return getMimetype(file.getName());
     }
 
 }

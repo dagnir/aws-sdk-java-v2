@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -28,8 +43,8 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.RangeKeyClass;
 public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
     private static final long HASH_KEY = System.currentTimeMillis();
-    private static RangeKeyClass hashKeyObject;
     private static final int TEST_ITEM_NUMBER = 500;
+    private static RangeKeyClass hashKeyObject;
     private static DynamoDBMapper mapper;
 
     @BeforeClass
@@ -43,6 +58,22 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         hashKeyObject = new RangeKeyClass();
         hashKeyObject.setKey(HASH_KEY);
+    }
+
+    /**
+     * Use BatchSave to put some test data into the tested table. Each item is
+     * hash-keyed by the same value, and range-keyed by numbers starting from 0.
+     */
+    private static void putTestData(DynamoDBMapper mapper, int itemNumber) {
+        List<RangeKeyClass> objs = new ArrayList<RangeKeyClass>();
+        for (int i = 0; i < itemNumber; i++) {
+            RangeKeyClass obj = new RangeKeyClass();
+            obj.setKey(HASH_KEY);
+            obj.setRangeKey(i);
+            obj.setBigDecimalAttribute(new BigDecimal(i));
+            objs.add(obj);
+        }
+        mapper.batchSave(objs);
     }
 
     @Test
@@ -138,9 +169,9 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
                     .withHashKeyValues(keyObject);
             queryExpression.withRangeKeyCondition("rangeKey",
                                                   new Condition().withComparisonOperator(ComparisonOperator.GT.toString())
-                                                          .withAttributeValueList(
-                                                                  new AttributeValue().withN("1.0"))).withLimit(11)
-                    .withIndexName("some_index");
+                                                                 .withAttributeValueList(
+                                                                         new AttributeValue().withN("1.0"))).withLimit(11)
+                           .withIndexName("some_index");
             mapper.query(RangeKeyClass.class, queryExpression);
             fail("User should not provide index name when making query with the primary range key");
         } catch (IllegalArgumentException expected) {
@@ -149,21 +180,5 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             fail("Should trigger AmazonClientException.");
         }
 
-    }
-
-    /**
-     * Use BatchSave to put some test data into the tested table. Each item is
-     * hash-keyed by the same value, and range-keyed by numbers starting from 0.
-     */
-    private static void putTestData(DynamoDBMapper mapper, int itemNumber) {
-        List<RangeKeyClass> objs = new ArrayList<RangeKeyClass>();
-        for (int i = 0; i < itemNumber; i++) {
-            RangeKeyClass obj = new RangeKeyClass();
-            obj.setKey(HASH_KEY);
-            obj.setRangeKey(i);
-            obj.setBigDecimalAttribute(new BigDecimal(i));
-            objs.add(obj);
-        }
-        mapper.batchSave(objs);
     }
 }

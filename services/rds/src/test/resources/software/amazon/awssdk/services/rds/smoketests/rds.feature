@@ -8,7 +8,7 @@ Feature: Amazon RDS
 
   Scenario: Handling errors
     When I attempt to call the "DescribeDBInstances" API with:
-    | DBInstanceIdentifier | fake-id |
+      | DBInstanceIdentifier | fake-id |
     Then I expect the response error code to be "DBInstanceNotFound"
     And I expect the response error message to include:
     """

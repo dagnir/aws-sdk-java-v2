@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.pojos;
@@ -72,7 +72,7 @@ public class PhoneNumber {
 
     @Override
     public final boolean equals(final Object o) {
-        return (o == this || (o instanceof PhoneNumber && areaCodeEquals(((PhoneNumber)o).areaCode) && exchangeEquals(((PhoneNumber)o).exchange) && subscriberEquals(((PhoneNumber)o).subscriber)));
+        return (o == this || (o instanceof PhoneNumber && areaCodeEquals(((PhoneNumber) o).areaCode) && exchangeEquals(((PhoneNumber) o).exchange) && subscriberEquals(((PhoneNumber) o).subscriber)));
     }
 
     @Override

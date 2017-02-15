@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.simpledb;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +31,7 @@ import software.amazon.awssdk.services.simpledb.model.ListDomainsResult;
  * two domains to exist in the current users account, otherwise they won't be able to run correctly
  * and will exit early instead of failing. TODO: Eventually we should update this integration test
  * so that it creates any data that it needs.
- * 
+ *
  * @author fulghum@amazon.com
  */
 public class ListDomainsIntegrationTest extends IntegrationTestBase {
@@ -35,8 +50,8 @@ public class ListDomainsIntegrationTest extends IntegrationTestBase {
 
         if (listDomains.getDomainNames().size() < 2) {
             System.err.println("Unable to run " + this.getClass().getName()
-                    + " integration test with the current AWS account"
-                    + " because not enough domains are present to test list pagination");
+                               + " integration test with the current AWS account"
+                               + " because not enough domains are present to test list pagination");
             return;
         }
 
@@ -60,8 +75,8 @@ public class ListDomainsIntegrationTest extends IntegrationTestBase {
 
         if (listDomainsResult.getDomainNames().size() < 2) {
             System.err.println("Unable to run " + this.getClass().getName()
-                    + " integration test with the current AWS account"
-                    + " because not enough domains are present to test list pagination");
+                               + " integration test with the current AWS account"
+                               + " because not enough domains are present to test list pagination");
             return;
         }
 

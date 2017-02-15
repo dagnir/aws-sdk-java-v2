@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.kms.utils;
 
 import java.util.HashMap;
@@ -17,9 +32,16 @@ public class KmsTestKeyCache {
     private final String nonDefaultKeyId;
     private final String s3DefaultKeyId;
 
+    public KmsTestKeyCache(Regions region, AWSCredentials awsCredentials) {
+        KmsClientTestExtensions kmsClient = new KmsClientTestExtensions(awsCredentials);
+        kmsClient.configureRegion(region);
+        this.nonDefaultKeyId = kmsClient.getNonDefaultKeyId();
+        this.s3DefaultKeyId = kmsClient.getDefaultS3KeyId();
+    }
+
     /**
      * Retrieve the instance of KmsKeyCache for the given region
-     * 
+     *
      * @param region
      *            AWS region to retrieve cache for
      * @param awsCredentials
@@ -31,13 +53,6 @@ public class KmsTestKeyCache {
             instances.put(region, new KmsTestKeyCache(region, awsCredentials));
         }
         return instances.get(region);
-    }
-
-    public KmsTestKeyCache(Regions region, AWSCredentials awsCredentials) {
-        KmsClientTestExtensions kmsClient = new KmsClientTestExtensions(awsCredentials);
-        kmsClient.configureRegion(region);
-        this.nonDefaultKeyId = kmsClient.getNonDefaultKeyId();
-        this.s3DefaultKeyId = kmsClient.getDefaultS3KeyId();
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import static org.junit.Assert.assertNotEquals;
@@ -41,22 +42,22 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
     @Before
     public void setup() {
         ddb = AmazonDynamoDBClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_WEST_2)
-                .build();
+                                         .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                                         .withRegion(Regions.US_WEST_2)
+                                         .build();
         mapper = new DynamoDBMapper(ddb, DynamoDBMapperConfig.builder()
-                .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(TABLE_NAME))
-                .build()).newTableMapper(GsiWithAlwaysUpdateTimestamp.class);
+                                                             .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(TABLE_NAME))
+                                                             .build()).newTableMapper(GsiWithAlwaysUpdateTimestamp.class);
         mapper.createTable(new ProvisionedThroughput(5L, 5L));
         ddb.waiters().tableExists()
-                .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
+           .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
     }
 
     @After
     public void tearDown() {
         mapper.deleteTableIfExists();
         ddb.waiters().tableNotExists()
-                .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
+           .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
     }
 
     @Test

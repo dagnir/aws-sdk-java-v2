@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -98,13 +98,13 @@ public class DelegateSocket extends Socket {
     }
 
     @Override
-    public void setTcpNoDelay(boolean on) throws SocketException {
-        sock.setTcpNoDelay(on);
+    public boolean getTcpNoDelay() throws SocketException {
+        return sock.getTcpNoDelay();
     }
 
     @Override
-    public boolean getTcpNoDelay() throws SocketException {
-        return sock.getTcpNoDelay();
+    public void setTcpNoDelay(boolean on) throws SocketException {
+        sock.setTcpNoDelay(on);
     }
 
     @Override
@@ -123,18 +123,13 @@ public class DelegateSocket extends Socket {
     }
 
     @Override
-    public void setOOBInline(boolean on) throws SocketException {
-        sock.setOOBInline(on);
-    }
-
-    @Override
     public boolean getOOBInline() throws SocketException {
         return sock.getOOBInline();
     }
 
     @Override
-    public void setSoTimeout(int timeout) throws SocketException {
-        sock.setSoTimeout(timeout);
+    public void setOOBInline(boolean on) throws SocketException {
+        sock.setOOBInline(on);
     }
 
     @Override
@@ -143,8 +138,8 @@ public class DelegateSocket extends Socket {
     }
 
     @Override
-    public void setSendBufferSize(int size) throws SocketException {
-        sock.setSendBufferSize(size);
+    public void setSoTimeout(int timeout) throws SocketException {
+        sock.setSoTimeout(timeout);
     }
 
     @Override
@@ -153,8 +148,8 @@ public class DelegateSocket extends Socket {
     }
 
     @Override
-    public void setReceiveBufferSize(int size) throws SocketException {
-        sock.setReceiveBufferSize(size);
+    public void setSendBufferSize(int size) throws SocketException {
+        sock.setSendBufferSize(size);
     }
 
     @Override
@@ -163,8 +158,8 @@ public class DelegateSocket extends Socket {
     }
 
     @Override
-    public void setKeepAlive(boolean on) throws SocketException {
-        sock.setKeepAlive(on);
+    public void setReceiveBufferSize(int size) throws SocketException {
+        sock.setReceiveBufferSize(size);
     }
 
     @Override
@@ -173,8 +168,8 @@ public class DelegateSocket extends Socket {
     }
 
     @Override
-    public void setTrafficClass(int tc) throws SocketException {
-        sock.setTrafficClass(tc);
+    public void setKeepAlive(boolean on) throws SocketException {
+        sock.setKeepAlive(on);
     }
 
     @Override
@@ -183,13 +178,18 @@ public class DelegateSocket extends Socket {
     }
 
     @Override
-    public void setReuseAddress(boolean on) throws SocketException {
-        sock.setReuseAddress(on);
+    public void setTrafficClass(int tc) throws SocketException {
+        sock.setTrafficClass(tc);
     }
 
     @Override
     public boolean getReuseAddress() throws SocketException {
         return sock.getReuseAddress();
+    }
+
+    @Override
+    public void setReuseAddress(boolean on) throws SocketException {
+        sock.setReuseAddress(on);
     }
 
     @Override
@@ -239,7 +239,7 @@ public class DelegateSocket extends Socket {
 
     @Override
     public void setPerformancePreferences(int connectionTime, int latency,
-            int bandwidth) {
+                                          int bandwidth) {
         sock.setPerformancePreferences(connectionTime, latency, bandwidth);
     }
 }

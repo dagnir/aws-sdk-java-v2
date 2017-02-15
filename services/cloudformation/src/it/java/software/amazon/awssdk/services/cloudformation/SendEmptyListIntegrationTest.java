@@ -66,25 +66,25 @@ public class SendEmptyListIntegrationTest extends AWSIntegrationTestBase {
     public void setup() {
         stackName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
         cf = AmazonCloudFormationAsyncClientBuilder.standard()
-                .withCredentials(new StaticCredentialsProvider(getCredentials()))
-                .withRegion(Regions.US_WEST_2)
-                .build();
+                                                   .withCredentials(new StaticCredentialsProvider(getCredentials()))
+                                                   .withRegion(Regions.US_WEST_2)
+                                                   .build();
 
         cf.createStack(new CreateStackRequest()
                                .withStackName(stackName)
                                .withTemplateBody(STARTING_TEMPLATE)
                                .withTags(new Tag().withKey("FooKey").withValue("FooValue")));
         cf.waiters()
-                .stackCreateComplete()
-                .run(getWaiterParameters(stackName));
+          .stackCreateComplete()
+          .run(getWaiterParameters(stackName));
     }
 
     @After
     public void tearDown() {
         cf.deleteStack(new DeleteStackRequest().withStackName(stackName));
         cf.waiters()
-                .stackDeleteComplete()
-                .run(getWaiterParameters(stackName));
+          .stackDeleteComplete()
+          .run(getWaiterParameters(stackName));
     }
 
     @Test
@@ -95,8 +95,8 @@ public class SendEmptyListIntegrationTest extends AWSIntegrationTestBase {
                                .withTemplateBody(STARTING_TEMPLATE)
                                .withTags(Collections.<Tag>emptyList()));
         cf.waiters()
-                .stackUpdateComplete()
-                .run(getWaiterParameters(stackName));
+          .stackUpdateComplete()
+          .run(getWaiterParameters(stackName));
         assertThat(getTagsForStack(stackName), empty());
     }
 
@@ -107,16 +107,16 @@ public class SendEmptyListIntegrationTest extends AWSIntegrationTestBase {
                                .withStackName(stackName)
                                .withTemplateBody(UPDATED_TEMPLATE));
         cf.waiters()
-                .stackUpdateComplete()
-                .run(getWaiterParameters(stackName));
+          .stackUpdateComplete()
+          .run(getWaiterParameters(stackName));
         assertThat(getTagsForStack(stackName), not(empty()));
     }
 
     private List<Tag> getTagsForStack(String stackName) {
         return cf.describeStacks(
                 new DescribeStacksRequest().withStackName(stackName))
-                .getStacks().get(0)
-                .getTags();
+                 .getStacks().get(0)
+                 .getTags();
     }
 
     private WaiterParameters<DescribeStacksRequest> getWaiterParameters(String stackName) {

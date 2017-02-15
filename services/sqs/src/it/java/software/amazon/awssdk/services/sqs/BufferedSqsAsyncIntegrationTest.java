@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sqs;
 
 import static org.hamcrest.Matchers.empty;
@@ -51,7 +66,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
     @Before
     public void setup() {
         buffSqs = new AmazonSQSBufferedAsyncClient(createSqsAyncClient(),
-                new QueueBufferConfig().withLongPollWaitTimeoutSeconds(60));
+                                                   new QueueBufferConfig().withLongPollWaitTimeoutSeconds(60));
         queueUrl = createQueue(buffSqs);
     }
 
@@ -102,7 +117,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         for (int i = 0; i < NUM_MESSAGES; i++) {
             String body = "test message " + i + "_" + System.currentTimeMillis();
             SendMessageRequest request = new SendMessageRequest().withMessageBody(body).withQueueUrl(queueUrl)
-                    .withMessageAttributes(ATTRIBUTES);
+                                                                 .withMessageAttributes(ATTRIBUTES);
 
             sendResults.add(buffSqs.sendMessageAsync(request));
             messages.add(body);
@@ -119,7 +134,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         private Map<String, MessageAttributeValue> expectedAttributes;
 
         public MessageConsumer(AmazonSQSAsync paramSQS, Set<String> set, String paramUrl,
-                Map<String, MessageAttributeValue> expectedAttributes) {
+                               Map<String, MessageAttributeValue> expectedAttributes) {
             this.buffSqs = paramSQS;
             this.resultSet = set;
             this.url = paramUrl;
@@ -158,7 +173,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
 
         private List<Message> recieveMessage() throws InterruptedException, ExecutionException {
             ReceiveMessageRequest recRequest = new ReceiveMessageRequest().withMaxNumberOfMessages(1).withQueueUrl(url)
-                    .withMessageAttributeNames("All");
+                                                                          .withMessageAttributeNames("All");
             Future<ReceiveMessageResult> future = buffSqs.receiveMessageAsync(recRequest);
             List<Message> messages = future.get().getMessages();
             return messages;

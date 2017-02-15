@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import java.nio.ByteBuffer;
@@ -28,7 +29,7 @@ import software.amazon.awssdk.SdkClientException;
 
 /**
  * Cryptographic scheme for content encrypt/decryption.
- * 
+ *
  * @author Hanson Char
  */
 abstract class ContentCryptoScheme {
@@ -73,69 +74,45 @@ abstract class ContentCryptoScheme {
     // made package private only for unit testing purposes
     static final ContentCryptoScheme AES_CTR = new AesCtr();
 
-    abstract String getKeyGeneratorAlgorithm();
-    abstract String getCipherAlgorithm();
-
-    /**
-     * Returns the only security provider that is known to work with the
-     * cipher algorithm in the current implementation; or null if there is
-     * no specific limitation.
-     */
-    String getSpecificCipherProvider() { return null; }
-    abstract int getKeyLengthInBits();
-    abstract int getBlockSizeInBytes();
-    abstract int getIVLengthInBytes();
-
-    int getTagLengthInBits() { return 0; } // default to zero ie no tag
-    
-    byte[] adjustIV(byte[] iv, long startingBytePos) {
-        return iv;
-    }
-    
-    @Override
-    public String toString() {
-        return "cipherAlgo=" + getCipherAlgorithm() + ", blockSizeInBytes="
-                + getBlockSizeInBytes() + ", ivLengthInBytes="
-                + getIVLengthInBytes() + ", keyGenAlgo="
-                + getKeyGeneratorAlgorithm() + ", keyLengthInBits="
-                + getKeyLengthInBits() + ", specificProvider="
-                + getSpecificCipherProvider() + ", tagLengthInBits="
-                + getTagLengthInBits();
-    }
-
     /**
      * Increment the rightmost 32 bits of a 16-byte counter by the specified
      * delta. Both the specified delta and the resultant value must stay within
      * the capacity of 32 bits.
      * (Package private for testing purposes.)
-     * 
+     *
      * @param counter
      *            a 16-byte counter used in AES/CTR
      * @param blockDelta
      *            the number of blocks (16-byte) to increment
      */
     static byte[] incrementBlocks(byte[] counter, long blockDelta) {
-        if (blockDelta == 0)
+        if (blockDelta == 0) {
             return counter;
-        if (counter == null || counter.length != 16)
+        }
+        if (counter == null || counter.length != 16) {
             throw new IllegalArgumentException();
+        }
         // Can optimize this later.  KISS for now.
-        if (blockDelta > MAX_GCM_BLOCKS)
+        if (blockDelta > MAX_GCM_BLOCKS) {
             throw new IllegalStateException();
+        }
         // Allocate 8 bytes for a long
         ByteBuffer bb = ByteBuffer.allocate(8);
         // Copy the right-most 32 bits from the counter
-        for (int i=12; i <= 15; i++)
-            bb.put(i-8, counter[i]);
+        for (int i = 12; i <= 15; i++) {
+            bb.put(i - 8, counter[i]);
+        }
         long val = bb.getLong() + blockDelta;    // increment by delta
-        if (val > MAX_GCM_BLOCKS)
+        if (val > MAX_GCM_BLOCKS) {
             throw new IllegalStateException(); // overflow 2^32-2
+        }
         bb.rewind();
         // Get the incremented value (result) as an 8-byte array
         byte[] result = bb.putLong(val).array();
         // Copy the rightmost 32 bits from the resultant array to the input counter;
-        for (int i=12; i <= 15; i++)
-            counter[i] = result[i-8];
+        for (int i = 12; i <= 15; i++) {
+            counter[i] = result[i - 8];
+        }
         return counter;
     }
 
@@ -150,15 +127,54 @@ abstract class ContentCryptoScheme {
         if (AES_GCM.getCipherAlgorithm().equals(cekAlgo)) {
             return isRangeGet ? AES_CTR : AES_GCM;
         }
-        if (cekAlgo == null || AES_CBC.getCipherAlgorithm().equals(cekAlgo))
+        if (cekAlgo == null || AES_CBC.getCipherAlgorithm().equals(cekAlgo)) {
             return AES_CBC;
+        }
         throw new UnsupportedOperationException("Unsupported content encryption scheme: " + cekAlgo);
     }
-    
+
+    abstract String getKeyGeneratorAlgorithm();
+
+    abstract String getCipherAlgorithm();
+
+    /**
+     * Returns the only security provider that is known to work with the
+     * cipher algorithm in the current implementation; or null if there is
+     * no specific limitation.
+     */
+    String getSpecificCipherProvider() {
+        return null;
+    }
+
+    abstract int getKeyLengthInBits();
+
+    abstract int getBlockSizeInBytes();
+
+    abstract int getIVLengthInBytes();
+
+    int getTagLengthInBits() {
+        return 0;
+    } // default to zero ie no tag
+
+    byte[] adjustIV(byte[] iv, long startingBytePos) {
+        return iv;
+    }
+
+    @Override
+    public String toString() {
+        return "cipherAlgo=" + getCipherAlgorithm() + ", blockSizeInBytes="
+               + getBlockSizeInBytes() + ", ivLengthInBytes="
+               + getIVLengthInBytes() + ", keyGenAlgo="
+               + getKeyGeneratorAlgorithm() + ", keyLengthInBits="
+               + getKeyLengthInBits() + ", specificProvider="
+               + getSpecificCipherProvider() + ", tagLengthInBits="
+               + getTagLengthInBits();
+    }
+
     /**
      * Creates and initializes a {@link CipherLite} for content
      * encrypt/decryption.
-     * 
+     *
      * @param cek
      *            content encrypting key
      * @param iv
@@ -171,12 +187,12 @@ abstract class ContentCryptoScheme {
      * @return the cipher lite created and initialized.
      */
     CipherLite createCipherLite(SecretKey cek, byte[] iv, int cipherMode,
-            Provider securityProvider) {
+                                Provider securityProvider) {
         String specificProvider = getSpecificCipherProvider();
         Cipher cipher;
         try {
             if (specificProvider != null) { // use the specific provider if defined
-                    cipher = Cipher.getInstance(getCipherAlgorithm(), specificProvider);
+                cipher = Cipher.getInstance(getCipherAlgorithm(), specificProvider);
             } else if (securityProvider != null) { // use the one optionally specified in the input
                 cipher = Cipher.getInstance(getCipherAlgorithm(), securityProvider);
             } else { // use the default provider
@@ -186,13 +202,13 @@ abstract class ContentCryptoScheme {
             return newCipherLite(cipher, cek, cipherMode);
         } catch (Exception e) {
             throw e instanceof RuntimeException
-                ? (RuntimeException) e
-                : new SdkClientException(
-                    "Unable to build cipher: "
-                        + e.getMessage()
-                        + "\nMake sure you have the JCE unlimited strength policy files installed and "
-                        + "configured for your JVM",
-                    e);
+                  ? (RuntimeException) e
+                  : new SdkClientException(
+                          "Unable to build cipher: "
+                          + e.getMessage()
+                          + "\nMake sure you have the JCE unlimited strength policy files installed and "
+                          + "configured for your JVM",
+                          e);
         }
     }
 
@@ -200,19 +216,22 @@ abstract class ContentCryptoScheme {
      * This is a factory method intended to be overridden by sublcasses to
      * return the appropriate instance of cipher lite.
      */
-    protected CipherLite newCipherLite(Cipher cipher,  SecretKey cek, int cipherMode) {
+    protected CipherLite newCipherLite(Cipher cipher, SecretKey cek, int cipherMode) {
         return new CipherLite(cipher, this, cek, cipherMode);
     }
 
     CipherLite createAuxillaryCipher(SecretKey cek, byte[] iv, int cipherMode,
-            Provider securityProvider, long startingBytePos) throws NoSuchAlgorithmException,
-            NoSuchProviderException, NoSuchPaddingException,
-            InvalidKeyException, InvalidAlgorithmParameterException {
+                                     Provider securityProvider, long startingBytePos) throws NoSuchAlgorithmException,
+                                                                                             NoSuchProviderException,
+                                                                                             NoSuchPaddingException,
+                                                                                             InvalidKeyException,
+                                                                                             InvalidAlgorithmParameterException {
         return null;
     }
+
     /**
      * Creates and initializes a cipher lite for content encrypt/decryption.
-     * 
+     *
      * @param cek
      *            content encrypting key
      * @param iv
@@ -223,8 +242,8 @@ abstract class ContentCryptoScheme {
      */
     CipherLite createCipherLite(SecretKey cek, byte[] iv, int cipherMode)
             throws InvalidKeyException, NoSuchAlgorithmException,
-            NoSuchProviderException, NoSuchPaddingException,
-            InvalidAlgorithmParameterException {
+                   NoSuchProviderException, NoSuchPaddingException,
+                   InvalidAlgorithmParameterException {
         return createCipherLite(cek, iv, cipherMode, null);
     }
 

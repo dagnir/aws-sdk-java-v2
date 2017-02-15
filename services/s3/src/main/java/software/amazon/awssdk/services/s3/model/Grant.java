@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,12 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
 
 /**
  * Specifies a grant, consisting of one grantee and one permission.
- * 
+ *
  * @see Grant#Grant(Grantee, Permission)
  */
 public class Grant implements Serializable {
@@ -45,7 +44,7 @@ public class Grant implements Serializable {
      * Gets the grantee being granted a permission by this grant.
      *
      * @return The grantee being granted a permission by this grant.
-     * 
+     *
      * @see Grant#getPermission()
      */
     public Grantee getGrantee() {
@@ -56,7 +55,7 @@ public class Grant implements Serializable {
      * Gets the permission being granted to the grantee by this grant.
      *
      * @return The permission being granted to the grantee by this grant.
-     * 
+     *
      * @see Grant#getGrantee()
      */
     public Permission getPermission() {
@@ -80,20 +79,26 @@ public class Grant implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        if ( this == obj )
+        if (this == obj) {
             return true;
-        if ( obj == null )
+        }
+        if (obj == null) {
             return false;
-        if ( getClass() != obj.getClass() )
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Grant other = (Grant) obj;
-        if ( grantee == null ) {
-            if ( other.grantee != null )
+        if (grantee == null) {
+            if (other.grantee != null) {
                 return false;
-        } else if ( !grantee.equals(other.grantee) )
+            }
+        } else if (!grantee.equals(other.grantee)) {
             return false;
-        if ( permission != other.permission )
+        }
+        if (permission != other.permission) {
             return false;
+        }
         return true;
     }
 

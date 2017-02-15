@@ -1,18 +1,19 @@
 /*
- * Copyright 2015 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.annotation.Immutable;
 @Immutable
 final class Path extends UnitOfExpression {
     private final List<PathElement> elements;
-    
+
     Path(String path) {
         this.elements = parse(path);
     }
@@ -65,8 +66,9 @@ final class Path extends UnitOfExpression {
                 element = element.substring(index + 1);
                 index = element.indexOf('[');
 
-                if (index > 0)
+                if (index > 0) {
                     throw new IllegalArgumentException("Bogus path: " + path);
+                }
             } while (index != -1);
 
             if (!element.isEmpty()) {
@@ -80,10 +82,10 @@ final class Path extends UnitOfExpression {
     @Override
     String asSubstituted(SubstitutionContext context) {
         StringBuffer sb = new StringBuffer();
-        for (PathElement e: elements) {
-            if (sb.length() == 0)
+        for (PathElement e : elements) {
+            if (sb.length() == 0) {
                 sb.append(e.asToken(context));
-            else {
+            } else {
                 sb.append(e.asNestedToken(context));
             }
         }
@@ -94,10 +96,10 @@ final class Path extends UnitOfExpression {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        for (PathElement e: elements) {
-            if (sb.length() == 0)
+        for (PathElement e : elements) {
+            if (sb.length() == 0) {
                 sb.append(e.toString());
-            else {
+            } else {
                 sb.append(e.asNestedPath());
             }
         }

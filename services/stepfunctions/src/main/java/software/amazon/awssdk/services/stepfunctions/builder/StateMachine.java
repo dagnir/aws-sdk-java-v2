@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -61,6 +61,28 @@ public final class StateMachine {
     }
 
     /**
+     * Deserializes a JSON representation of a state machine into a {@link StateMachine.Builder} .
+     *
+     * @param json JSON representing State machine.
+     * @return Mutable {@link StateMachine.Builder} deserialized from JSON representation.
+     */
+    public static StateMachine.Builder fromJson(String json) {
+        try {
+            return MAPPER.readValue(json, StateMachine.Builder.class);
+        } catch (IOException e) {
+            throw new SdkClientException(
+                    String.format("Could not deserialize state machine.\n%s", json), e);
+        }
+    }
+
+    /**
+     * @return Builder instance to construct a {@link StateMachine}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Human readable description for the state machine.
      */
     public String getComment() {
@@ -114,43 +136,18 @@ public final class StateMachine {
     }
 
     /**
-     * Deserializes a JSON representation of a state machine into a {@link StateMachine.Builder} .
-     *
-     * @param json JSON representing State machine.
-     * @return Mutable {@link StateMachine.Builder} deserialized from JSON representation.
-     */
-    public static StateMachine.Builder fromJson(String json) {
-        try {
-            return MAPPER.readValue(json, StateMachine.Builder.class);
-        } catch (IOException e) {
-            throw new SdkClientException(
-                    String.format("Could not deserialize state machine.\n%s", json), e);
-        }
-    }
-
-    /**
-     * @return Builder instance to construct a {@link StateMachine}.
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder for a {@link StateMachine}.
      */
     public static final class Builder {
 
-        @JsonProperty(PropertyNames.COMMENT)
-        private String comment;
-
-        @JsonProperty(PropertyNames.START_AT)
-        private String startAt;
-
-        @JsonProperty(PropertyNames.TIMEOUT_SECONDS)
-        private Integer timeoutSeconds;
-
         @JsonProperty(PropertyNames.STATES)
         private final Map<String, State.Builder> states = new LinkedHashMap<String, State.Builder>();
+        @JsonProperty(PropertyNames.COMMENT)
+        private String comment;
+        @JsonProperty(PropertyNames.START_AT)
+        private String startAt;
+        @JsonProperty(PropertyNames.TIMEOUT_SECONDS)
+        private Integer timeoutSeconds;
 
         private Builder() {
         }

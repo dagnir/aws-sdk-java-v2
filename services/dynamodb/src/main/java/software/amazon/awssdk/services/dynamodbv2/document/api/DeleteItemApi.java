@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodbv2.document.spec.DeleteItemSpec;
 @ThreadSafe
 public interface DeleteItemApi {
     /** Deletes an item by primary key. */
-    public DeleteItemOutcome deleteItem(KeyAttribute ... primaryKeyComponents);
+    public DeleteItemOutcome deleteItem(KeyAttribute... primaryKeyComponents);
 
     /** Deletes an item by primary key. */
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKey);
@@ -39,57 +39,57 @@ public interface DeleteItemApi {
 
     /** Deletes an item by hash key-and-range primary key. */
     public DeleteItemOutcome deleteItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue);
+                                        String rangeKeyName, Object rangeKeyValue);
 
     /**
      * Conditional delete with the specified primary key and expected
      * conditions.
      */
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKey,
-            Expected... expected);
+                                        Expected... expected);
 
     /**
      * Conditional delete with the specified hash-only primary key and expected
      * conditions.
      */
     public DeleteItemOutcome deleteItem(String hashKeyName, Object hashKeyValue,
-            Expected... expected);
+                                        Expected... expected);
 
     /**
      * Conditional delete with the specified hash-and-range primary key and
      * expected conditions.
      */
     public DeleteItemOutcome deleteItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            Expected... expected);
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        Expected... expected);
 
     /**
      * Conditional delete with the specified primary key and condition
      * expression.
      */
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKey,
-            String conditionExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                        String conditionExpression,
+                                        Map<String, String> nameMap,
+                                        Map<String, Object> valueMap);
 
     /**
      * Conditional delete with the specified hash-only primary key and condition
      * expression.
      */
     public DeleteItemOutcome deleteItem(String hashKeyName, Object hashKeyValue,
-            String conditionExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                        String conditionExpression,
+                                        Map<String, String> nameMap,
+                                        Map<String, Object> valueMap);
 
     /**
      * Conditional delete with the specified hash-and-range primary key and
      * condition expression.
      */
     public DeleteItemOutcome deleteItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String conditionExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        String conditionExpression,
+                                        Map<String, String> nameMap,
+                                        Map<String, Object> valueMap);
 
     /** Deletes an item by specifying all the details. */
     public DeleteItemOutcome deleteItem(DeleteItemSpec spec);

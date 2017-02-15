@@ -28,18 +28,6 @@ import software.amazon.awssdk.util.DateUtils;
 public class DateCondition extends Condition {
 
     /**
-     * Enumeration of the supported ways a date comparison can be evaluated.
-     */
-    public static enum DateComparisonType {
-        DateEquals,
-        DateGreaterThan,
-        DateGreaterThanEquals,
-        DateLessThan,
-        DateLessThanEquals,
-        DateNotEquals;
-    };
-
-    /**
      * Constructs a new access policy condition that compares the current time
      * (on the AWS servers) to the specified date.
      *
@@ -55,6 +43,20 @@ public class DateCondition extends Condition {
         super.type = type.toString();
         super.conditionKey = ConditionFactory.CURRENT_TIME_CONDITION_KEY;
         super.values = Arrays.asList(new String[] {DateUtils.formatISO8601Date(date)});
+    }
+
+    ;
+
+    /**
+     * Enumeration of the supported ways a date comparison can be evaluated.
+     */
+    public static enum DateComparisonType {
+        DateEquals,
+        DateGreaterThan,
+        DateGreaterThanEquals,
+        DateLessThan,
+        DateLessThanEquals,
+        DateNotEquals;
     }
 
 }

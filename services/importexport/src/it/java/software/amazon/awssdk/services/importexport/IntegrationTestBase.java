@@ -13,7 +13,7 @@ import software.amazon.awssdk.test.AWSTestBase;
  *
  * @author fulghum@amazon.com
  */
-public abstract class IntegrationTestBase extends AWSTestBase  {
+public abstract class IntegrationTestBase extends AWSTestBase {
 
     protected static AmazonImportExport ie;
     protected static AmazonS3 s3;
@@ -24,7 +24,7 @@ public abstract class IntegrationTestBase extends AWSTestBase  {
      */
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
-        setUpCredentials();        
+        setUpCredentials();
         ie = new AmazonImportExportClient(credentials);
         s3 = new AmazonS3Client(credentials);
     }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import java.util.Collections;
@@ -36,13 +51,37 @@ import utils.resources.tables.BasicTempTable;
 import utils.test.util.DynamoDBTestBase;
 
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources({
-        @RequiredResource(resource = BasicTempTable.class,
-                creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
-                retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
-})
+@RequiredResources( {
+                            @RequiredResource(resource = BasicTempTable.class,
+                                              creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
+                                              retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
+                    })
 public class RequestProgressIntegrationTest extends DynamoDBTestBase {
     private static final long KB = 1024;
+
+    private static BatchWriteItemRequest generateLargeBatchWriteItemRequest() {
+        List<WriteRequest> writes = new LinkedList<WriteRequest>();
+        for (int i = 0; i < 25; i++) {
+            writes.add(new WriteRequest(new PutRequest(
+                    ImmutableMapParameter.of(
+                            BasicTempTable.HASH_KEY_NAME, new AttributeValue(Integer.toString(i)),
+                            "large-random-string", new AttributeValue(RandomStringGenerator.nextRandomString(40 * KB))))));
+        }
+        return new BatchWriteItemRequest(
+                Collections.singletonMap(BasicTempTable.TEMP_TABLE_NAME, writes));
+    }
+
+    private static void waitTillListenerCallbacksComplete() {
+        try {
+            SDKProgressPublisher.waitTillCompletion();
+        } catch (InterruptedException e) {
+            Assert.fail("Interrupted when waiting for the progress listener callbacks to return. "
+                        + e.getMessage());
+        } catch (ExecutionException e) {
+            Assert.fail("Error when executing the progress listner callbacks. "
+                        + e.getCause().getMessage());
+        }
+    }
 
     /**
      * Tests that the user-specified progress listener is properly notified with
@@ -167,18 +206,6 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
                             (Long) progress.getResponseBytesTransferred());
     }
 
-    private static BatchWriteItemRequest generateLargeBatchWriteItemRequest() {
-        List<WriteRequest> writes = new LinkedList<WriteRequest>();
-        for (int i = 0; i < 25; i++) {
-            writes.add(new WriteRequest(new PutRequest(
-                    ImmutableMapParameter.of(
-                            BasicTempTable.HASH_KEY_NAME, new AttributeValue(Integer.toString(i)),
-                            "large-random-string", new AttributeValue(RandomStringGenerator.nextRandomString(40 * KB))))));
-        }
-        return new BatchWriteItemRequest(
-                Collections.singletonMap(BasicTempTable.TEMP_TABLE_NAME, writes));
-    }
-
     private static class RandomStringGenerator {
 
         private static final String characters = "abcdefghijklmnopqrstuvwxyz";
@@ -190,18 +217,6 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
                 sb.append(characters.charAt(random.nextInt(characters.length())));
             }
             return sb.toString();
-        }
-    }
-
-    private static void waitTillListenerCallbacksComplete() {
-        try {
-            SDKProgressPublisher.waitTillCompletion();
-        } catch (InterruptedException e) {
-            Assert.fail("Interrupted when waiting for the progress listener callbacks to return. "
-                        + e.getMessage());
-        } catch (ExecutionException e) {
-            Assert.fail("Error when executing the progress listner callbacks. "
-                        + e.getCause().getMessage());
         }
     }
 }

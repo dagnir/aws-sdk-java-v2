@@ -40,18 +40,16 @@ import software.amazon.awssdk.services.simpleemail.AWSJavaMailTransport;
 @Ignore("Requires manual verification of email and not suitable for pipeline")
 public class JavaMailIntegrationTest extends IntegrationTestBase {
 
+    private static final String ADDITIONAL_DESTINATION = DESTINATION; //HUDSON_EMAIL_LIST;
+    private static final String CC = ADDITIONAL_DESTINATION;
+    private static final String TEXT_EMAIL_BODY = "This is a test sending a text e-mail.";
+    private static final String[] MULTI_DESTINATION = {DESTINATION,
+                                                       DESTINATION, DESTINATION};
     protected static Session session;
-
-	private static final String ADDITIONAL_DESTINATION = DESTINATION; //HUDSON_EMAIL_LIST;
-	private static final String CC = ADDITIONAL_DESTINATION;
-
-	private static final String TEXT_EMAIL_BODY = "This is a test sending a text e-mail.";
-	private static final String[] MULTI_DESTINATION = { DESTINATION,
-			DESTINATION, DESTINATION };
 
     @BeforeClass
     public static void createSession() throws FileNotFoundException, IOException,
-            NoSuchProviderException {
+                                              NoSuchProviderException {
         sendVerificationEmail();
 
         // Get JavaMail Properties and Setup Session
@@ -63,76 +61,76 @@ public class JavaMailIntegrationTest extends IntegrationTestBase {
         session = Session.getInstance(props);
     }
 
-	/**
-	 * Tests creating a new Transport object and sending two messages with given
-	 * credentials before closing
-	 */
-	@Test
-	public void testMultipleMessagesWithOneConnect() throws Exception {
-		Transport t = new AWSJavaMailTransport(session, null);
-		t.connect(credentials.getAWSAccessKeyId(), credentials
-				.getAWSSecretKey());
-		Address[] a = { new InternetAddress(ADDITIONAL_DESTINATION) };
-		t.sendMessage(getTestTextEmail(true), null);
-		t.sendMessage(getTestMimeEmail(true), a);
-		t.close();
-	}
+    /**
+     * Tests creating a new Transport object and sending two messages with given
+     * credentials before closing
+     */
+    @Test
+    public void testMultipleMessagesWithOneConnect() throws Exception {
+        Transport t = new AWSJavaMailTransport(session, null);
+        t.connect(credentials.getAWSAccessKeyId(), credentials
+                .getAWSSecretKey());
+        Address[] a = {new InternetAddress(ADDITIONAL_DESTINATION)};
+        t.sendMessage(getTestTextEmail(true), null);
+        t.sendMessage(getTestMimeEmail(true), a);
+        t.close();
+    }
 
-	/**
-	 * Tests sending a plain text e-mail with the defined SOURCE and DESTINATION
-	 * above.
-	 */
-	public Message getTestTextEmail(boolean includeCC) throws Exception {
-		Message msg = new MimeMessage(session);
-		msg.setFrom(new InternetAddress(SOURCE));
-		msg.setRecipient(Message.RecipientType.TO, new InternetAddress(DESTINATION));
+    /**
+     * Tests sending a plain text e-mail with the defined SOURCE and DESTINATION
+     * above.
+     */
+    public Message getTestTextEmail(boolean includeCC) throws Exception {
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress(SOURCE));
+        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(DESTINATION));
 
-		if (includeCC) {
-			msg.addRecipient(Message.RecipientType.CC, new InternetAddress(CC));
-		}
-		msg.setSubject("JavaMail Test");
-		msg.setText(TEXT_EMAIL_BODY);
-		msg.saveChanges();
-		return msg;
-	}
+        if (includeCC) {
+            msg.addRecipient(Message.RecipientType.CC, new InternetAddress(CC));
+        }
+        msg.setSubject("JavaMail Test");
+        msg.setText(TEXT_EMAIL_BODY);
+        msg.saveChanges();
+        return msg;
+    }
 
-	/**
-	 * Tests sending a multi-part MIME message with the SOURCE and DESTINATION
-	 * fields being those set above.
-	 */
-	public Message getTestMimeEmail(boolean includeCC) throws Exception {
+    /**
+     * Tests sending a multi-part MIME message with the SOURCE and DESTINATION
+     * fields being those set above.
+     */
+    public Message getTestMimeEmail(boolean includeCC) throws Exception {
         Message msg = new MimeMessage(session, loadRawMessageAsStream(
                 RAW_MESSAGE_FILE_PATH));
-		msg.setFrom(new InternetAddress(SOURCE));
+        msg.setFrom(new InternetAddress(SOURCE));
 
-		msg.setRecipient(RecipientType.TO, new InternetAddress(DESTINATION));
-		if (includeCC) {
-			msg.addRecipient(Message.RecipientType.CC, new InternetAddress(CC));
-		}
-		msg.saveChanges();
-		return msg;
-	}
+        msg.setRecipient(RecipientType.TO, new InternetAddress(DESTINATION));
+        if (includeCC) {
+            msg.addRecipient(Message.RecipientType.CC, new InternetAddress(CC));
+        }
+        msg.saveChanges();
+        return msg;
+    }
 
-	/**
-	 * Tests sending a multi-part MIME to multiple recipients with the SOURCE
-	 * and MULTI_DESTINATION fields specified above.
-	 */
-	public Message testMimeMultiRecipientEmail(boolean includeCC)
-			throws Exception {
-		Message msg = new MimeMessage(session, loadRawMessageAsStream(
-				RAW_MESSAGE_FILE_PATH));
-		msg.setFrom(new InternetAddress(SOURCE));
+    /**
+     * Tests sending a multi-part MIME to multiple recipients with the SOURCE
+     * and MULTI_DESTINATION fields specified above.
+     */
+    public Message testMimeMultiRecipientEmail(boolean includeCC)
+            throws Exception {
+        Message msg = new MimeMessage(session, loadRawMessageAsStream(
+                RAW_MESSAGE_FILE_PATH));
+        msg.setFrom(new InternetAddress(SOURCE));
 
-		Address[] multiAddress = new Address[MULTI_DESTINATION.length];
-		for (int i = 0; i < MULTI_DESTINATION.length; i++) {
-			multiAddress[i] = new InternetAddress(MULTI_DESTINATION[i]);
-		}
-		msg.setRecipients(RecipientType.TO, multiAddress);
-		if (includeCC) {
-			msg.addRecipient(Message.RecipientType.CC, new InternetAddress(CC));
-		}
-		msg.saveChanges();
-		return msg;
-	}
+        Address[] multiAddress = new Address[MULTI_DESTINATION.length];
+        for (int i = 0; i < MULTI_DESTINATION.length; i++) {
+            multiAddress[i] = new InternetAddress(MULTI_DESTINATION[i]);
+        }
+        msg.setRecipients(RecipientType.TO, multiAddress);
+        if (includeCC) {
+            msg.addRecipient(Message.RecipientType.CC, new InternetAddress(CC));
+        }
+        msg.saveChanges();
+        return msg;
+    }
 
 }

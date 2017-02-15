@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sqs;
 
 import static org.hamcrest.Matchers.empty;
@@ -82,7 +97,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 
         Thread.sleep(1000 * 10);
         GetQueueAttributesResult queueAttributesResult = sqsClient.getQueueAttributes(queueUrl,
-                Arrays.asList(ATTRIBUTE_NAME));
+                                                                                      Arrays.asList(ATTRIBUTE_NAME));
         assertEquals(1, queueAttributesResult.getAttributes().size());
         Map<String, String> attributes2 = queueAttributesResult.getAttributes();
         assertEquals(1, attributes2.size());
@@ -91,7 +106,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 
     private void runAddPermissionTest() {
         sqsClient.addPermission(queueUrl, "foo-label", Arrays.asList(getAccountId()),
-                Arrays.asList("SendMessage", "DeleteMessage"));
+                                Arrays.asList("SendMessage", "DeleteMessage"));
     }
 
     private void runRemovePermissionTest() throws InterruptedException {
@@ -117,7 +132,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
         assertNotEmpty(message.getReceiptHandle());
 
         for (Iterator<Entry<String, String>> iterator = message.getAttributes().entrySet().iterator(); iterator
-                .hasNext();) {
+                .hasNext(); ) {
             Entry<String, String> entry = iterator.next();
             assertNotEmpty((entry.getKey()));
             assertNotEmpty((entry.getValue()));
@@ -129,7 +144,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
         SendMessageBatchResult sendMessageBatchResult = sqsClient.sendMessageBatch(queueUrl, Arrays.asList(
                 new SendMessageBatchRequestEntry().withId("1").withMessageBody("1"), new SendMessageBatchRequestEntry()
                         .withId("2").withMessageBody("2"), new SendMessageBatchRequestEntry().withId("3")
-                        .withMessageBody("3"), new SendMessageBatchRequestEntry().withId("4").withMessageBody("4"),
+                                                                                             .withMessageBody("3"), new SendMessageBatchRequestEntry().withId("4").withMessageBody("4"),
                 new SendMessageBatchRequestEntry().withId("5").withMessageBody("5")));
 
         assertNotNull(sendMessageBatchResult.getFailed());

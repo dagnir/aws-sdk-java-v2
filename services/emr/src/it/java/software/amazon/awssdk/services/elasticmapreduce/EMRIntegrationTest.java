@@ -46,8 +46,8 @@ public class EMRIntegrationTest extends IntegrationTestBase {
     public void testListCluster() {
         emr.listClusters(
                 new ListClustersRequest()
-                .withCreatedAfter(
-                        new Date(System.currentTimeMillis()-24*60*60*1000)));
+                        .withCreatedAfter(
+                                new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000)));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class EMRIntegrationTest extends IntegrationTestBase {
 
         for (Tag tag : cluster.getTags()) {
             if (tag.getKey().equals(tagKey) &&
-                    tag.getValue().equals(tagValue)) {
+                tag.getValue().equals(tagValue)) {
                 return true;
             }
         }
@@ -84,27 +84,27 @@ public class EMRIntegrationTest extends IntegrationTestBase {
         StepFactory stepFactory = new StepFactory();
 
         StepConfig enabledebugging = new StepConfig()
-            .withName("Enable debugging")
-            .withActionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
-            .withHadoopJarStep(stepFactory.newEnableDebuggingStep());
+                .withName("Enable debugging")
+                .withActionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
+                .withHadoopJarStep(stepFactory.newEnableDebuggingStep());
 
         StepConfig installHive = new StepConfig()
-            .withName("Install Hive")
-            .withActionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
-            .withHadoopJarStep(stepFactory.newInstallHiveStep());
+                .withName("Install Hive")
+                .withActionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
+                .withHadoopJarStep(stepFactory.newInstallHiveStep());
 
         RunJobFlowRequest request = new RunJobFlowRequest()
-            .withName("Hive Interactive")
-            .withAmiVersion("3.8.0")
-            .withSteps(enabledebugging, installHive)
-            .withServiceRole("EMR_DefaultRole")
-            .withJobFlowRole("EMR_EC2_DefaultRole")
-            .withInstances(new JobFlowInstancesConfig()
-                .withHadoopVersion("2.4.0")
-                .withInstanceCount(2)
-                .withKeepJobFlowAliveWhenNoSteps(false)
-                .withMasterInstanceType("m1.medium")
-                .withSlaveInstanceType("m1.medium"));
+                .withName("Hive Interactive")
+                .withAmiVersion("3.8.0")
+                .withSteps(enabledebugging, installHive)
+                .withServiceRole("EMR_DefaultRole")
+                .withJobFlowRole("EMR_EC2_DefaultRole")
+                .withInstances(new JobFlowInstancesConfig()
+                                       .withHadoopVersion("2.4.0")
+                                       .withInstanceCount(2)
+                                       .withKeepJobFlowAliveWhenNoSteps(false)
+                                       .withMasterInstanceType("m1.medium")
+                                       .withSlaveInstanceType("m1.medium"));
 
         return emr.runJobFlow(request).getJobFlowId();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import software.amazon.awssdk.annotation.SdkPublicApi;
 @SdkPublicApi
 public class ClientExecutionTimeoutException extends SdkClientException {
 
+    private static final long serialVersionUID = 4861767589924758934L;
+
     public ClientExecutionTimeoutException() {
         this("Client execution did not complete before the specified timeout configuration.");
     }
@@ -28,7 +30,5 @@ public class ClientExecutionTimeoutException extends SdkClientException {
     public ClientExecutionTimeoutException(String message) {
         super(message);
     }
-
-    private static final long serialVersionUID = 4861767589924758934L;
 
 }

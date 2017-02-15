@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -20,13 +20,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class Example {
 
-	private final String description;
-	private final String title;
-	private final String id;
-
-	private JsonNode input;
-	private JsonNode output;
-	private final ExampleComments comments;
+    private final String description;
+    private final String title;
+    private final String id;
+    private final ExampleComments comments;
+    private JsonNode input;
+    private JsonNode output;
 
     public Example(
             @JsonProperty(value = "description", required = true) String description,
@@ -45,19 +44,19 @@ public class Example {
     }
 
     public String getDescription() {
-    	return description;
+        return description;
     }
 
     public String getId() {
-    	return id;
+        return id;
     }
 
     public String getTitle() {
-    	return title;
+        return title;
     }
 
     public JsonNode getInput() {
-    	return input;
+        return input;
     }
 
     public void setInput(JsonNode input) {
@@ -65,7 +64,7 @@ public class Example {
     }
 
     public JsonNode getOutput() {
-    	return output;
+        return output;
     }
 
     public void setOutput(JsonNode output) {
@@ -73,7 +72,7 @@ public class Example {
     }
 
     public ExampleComments getComments() {
-    	return comments;
+        return comments;
     }
 
 }

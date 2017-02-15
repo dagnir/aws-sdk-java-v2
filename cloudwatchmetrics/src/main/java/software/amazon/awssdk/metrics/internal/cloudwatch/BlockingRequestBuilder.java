@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -60,10 +60,10 @@ class BlockingRequestBuilder {
      * milliseconds.
      */
     Iterable<PutMetricDataRequest> nextUploadUnits() throws InterruptedException {
-        final Map<String,MetricDatum> uniqueMetrics = new HashMap<String,MetricDatum>();
+        final Map<String, MetricDatum> uniqueMetrics = new HashMap<String, MetricDatum>();
         long startNano = System.nanoTime();
-        
-        while(true) {
+
+        while (true) {
             final long elapsedNano = System.nanoTime() - startNano;
             if (elapsedNano >= timeoutNano) {
                 return toPutMetricDataRequests(uniqueMetrics);
@@ -89,14 +89,15 @@ class BlockingRequestBuilder {
                     // I (hchar@) think we should optimize for the most typical
                     // cases instead of the edge cases. Going into long wait has
                     // the benefit of relatively less runtime footprint.)
-                    datum = queue.take();   
+                    datum = queue.take();
                     startNano = System.nanoTime();
                 }
             }
             // Note at this point datum is null if and only if there is no
             // pending AWS related metrics but machine metrics is enabled
-            if (datum != null)
+            if (datum != null) {
                 summarize(datum, uniqueMetrics);
+            }
         }
     }
 
@@ -115,15 +116,15 @@ class BlockingRequestBuilder {
         MetricDatum statDatum = uniqueMetrics.get(key);
         if (statDatum == null) {
             statDatum = new MetricDatum()
-                .withDimensions(datum.getDimensions())
-                .withMetricName(metricName)
-                .withUnit(datum.getUnit())
-                .withStatisticValues(new StatisticSet()
-                    .withMaximum(value)
-                    .withMinimum(value)
-                    .withSampleCount(0.0)
-                    .withSum(0.0))
-                ;
+                    .withDimensions(datum.getDimensions())
+                    .withMetricName(metricName)
+                    .withUnit(datum.getUnit())
+                    .withStatisticValues(new StatisticSet()
+                                                 .withMaximum(value)
+                                                 .withMinimum(value)
+                                                 .withSampleCount(0.0)
+                                                 .withSum(0.0))
+            ;
             uniqueMetrics.put(key, statDatum);
         }
         StatisticSet stat = statDatum.getStatisticValues();
@@ -135,6 +136,7 @@ class BlockingRequestBuilder {
             stat.setMinimum(value);
         }
     }
+
     /**
      * Consolidates the input metrics into a list of PutMetricDataRequest, each
      * within the maximum size limit imposed by CloudWatch.
@@ -142,12 +144,12 @@ class BlockingRequestBuilder {
     private Iterable<PutMetricDataRequest> toPutMetricDataRequests(Map<String, MetricDatum> uniqueMetrics) {
         // Opportunistically generates some machine metrics whenever there
         // is metrics consolidation
-        for (MetricDatum datum: machineMetricFactory.generateMetrics()) {
+        for (MetricDatum datum : machineMetricFactory.generateMetrics()) {
             summarize(datum, uniqueMetrics);
         }
         List<PutMetricDataRequest> list = new ArrayList<PutMetricDataRequest>();
         List<MetricDatum> data = new ArrayList<MetricDatum>();
-        for (MetricDatum m: uniqueMetrics.values()) {
+        for (MetricDatum m : uniqueMetrics.values()) {
             data.add(m);
             if (data.size() == CloudWatchMetricConfig.MAX_METRICS_DATUM_SIZE) {
                 list.addAll(newPutMetricDataRequests(data));
@@ -174,8 +176,9 @@ class BlockingRequestBuilder {
         if (perHost) {
             hostName = AwsSdkMetrics.getHostMetricName();
             hostName = hostName == null ? "" : hostName.trim();
-            if (hostName.length() == 0)
+            if (hostName.length() == 0) {
                 hostName = AwsHostNameUtils.localHostName();
+            }
             hostDim = dimension(Dimensions.Host, hostName);
             if (singleNamespace) {
                 req = newPutMetricDataRequest(data, ns, hostDim);
@@ -200,17 +203,16 @@ class BlockingRequestBuilder {
                     } else {
                         req = newPutMetricDataRequest(data, ns, jvmDim);
                     }
-                    
+
                 } else {
                     String perJvmNameSpace = perHostNameSpace == null
-                        ? ns + NAMESPACE_DELIMITER + jvmMetricName
-                        : perHostNameSpace + NAMESPACE_DELIMITER + jvmMetricName
-                        ;
+                                             ? ns + NAMESPACE_DELIMITER + jvmMetricName
+                                             : perHostNameSpace + NAMESPACE_DELIMITER + jvmMetricName;
                     // If OS metrics are already included at the per host level,
                     // there is little reason, if any, to include them at the
                     // JVM level.  Hence the filtering.
                     req = newPutMetricDataRequest
-                        (perHost ? filterOSMetrics(data) : data, perJvmNameSpace);
+                            (perHost ? filterOSMetrics(data) : data, perJvmNameSpace);
                 }
                 list.add(req);
             }
@@ -224,9 +226,10 @@ class BlockingRequestBuilder {
      */
     private Collection<MetricDatum> filterOSMetrics(Collection<MetricDatum> data) {
         Collection<MetricDatum> output = new ArrayList<MetricDatum>(data.size());
-        for (MetricDatum datum: data) {
-            if (!OS_METRIC_NAME.equals(datum.getMetricName()))
+        for (MetricDatum datum : data) {
+            if (!OS_METRIC_NAME.equals(datum.getMetricName())) {
                 output.add(datum);
+            }
         }
         return output;
     }
@@ -238,19 +241,20 @@ class BlockingRequestBuilder {
             // Need to add some extra dimensions.
             // To do so, we copy the metric data to avoid mutability problems.
             Collection<MetricDatum> newData = new ArrayList<MetricDatum>(data.size());
-            for (MetricDatum md: data) {
+            for (MetricDatum md : data) {
                 MetricDatum newMD = cloneMetricDatum(md);
-                for (Dimension dim: extraDims)
+                for (Dimension dim : extraDims) {
                     newMD.withDimensions(dim);  // add the extra dimensions to the new metric datum
+                }
                 newData.add(newMD);
             }
             data = newData;
         }
         return new PutMetricDataRequest()
-            .withNamespace(namespace)
-            .withMetricData(data)
-            .withRequestMetricCollector(RequestMetricCollector.NONE)
-            ;
+                .withNamespace(namespace)
+                .withMetricData(data)
+                .withRequestMetricCollector(RequestMetricCollector.NONE)
+                ;
     }
 
     /**
@@ -259,12 +263,12 @@ class BlockingRequestBuilder {
      */
     final MetricDatum cloneMetricDatum(MetricDatum md) {
         return new MetricDatum()
-            .withDimensions(md.getDimensions()) // a new collection is created
-            .withMetricName(md.getMetricName())
-            .withStatisticValues(md.getStatisticValues())
-            .withTimestamp(md.getTimestamp())
-            .withUnit(md.getUnit())
-            .withValue(md.getValue());
+                .withDimensions(md.getDimensions()) // a new collection is created
+                .withMetricName(md.getMetricName())
+                .withStatisticValues(md.getStatisticValues())
+                .withTimestamp(md.getTimestamp())
+                .withUnit(md.getUnit())
+                .withValue(md.getValue());
     }
 
     private Dimension dimension(Dimensions name, String value) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodbv2.document.spec.ScanSpec;
 public class IndexScanImpl extends ScanImpl implements ScanApi {
     private final Index index;
 
-    public IndexScanImpl(AmazonDynamoDB client, Index index) { 
+    public IndexScanImpl(AmazonDynamoDB client, Index index) {
         super(client, index.getTable());
         this.index = index;
     }

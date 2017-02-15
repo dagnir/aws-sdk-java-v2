@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -39,12 +39,15 @@ final class SimpleMethodsProcessor implements CodegenCustomizationProcessor {
     }
 
     @Override
-    public void preprocess(ServiceModel serviceModel) { }
+    public void preprocess(ServiceModel serviceModel) {
+    }
 
     @Override
     public void postprocess(IntermediateModel intermediateModel) {
 
-        if (simpleMethods == null) return;
+        if (simpleMethods == null) {
+            return;
+        }
 
         Map<String, OperationModel> operationModels = intermediateModel
                 .getOperations();
@@ -59,7 +62,7 @@ final class SimpleMethodsProcessor implements CodegenCustomizationProcessor {
             if (opModel == null) {
                 throw new RuntimeException(
                         "Simple Method forms customization present for an unknown operation "
-                                + operationName);
+                        + operationName);
             } else {
                 String inputShapeName = opModel.getInput().getSimpleType();
                 ShapeModel shape = shapeModels.get(inputShapeName);
@@ -72,7 +75,7 @@ final class SimpleMethodsProcessor implements CodegenCustomizationProcessor {
                     for (String argument : argumentList) {
                         ArgumentModel argModel = new ArgumentModel();
                         MemberModel memberModel =
-                            shape.findMemberModelByC2jName(argument);
+                                shape.findMemberModelByC2jName(argument);
                         argModel.setDocumentation(memberModel.getDocumentation());
                         argModel.setName(memberModel.getVariable().getVariableName());
                         argModel.setType(memberModel.getVariable().getVariableType());

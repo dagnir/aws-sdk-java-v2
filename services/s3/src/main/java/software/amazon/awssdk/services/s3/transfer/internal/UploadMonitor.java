@@ -1,17 +1,18 @@
 /*
- * Copyright 2011-2012 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
@@ -65,24 +66,16 @@ public class UploadMonitor implements Callable<UploadResult>, TransferMonitor {
     private boolean isUploadDone = false;
     private Future<UploadResult> future;
 
-    public synchronized Future<UploadResult> getFuture() {
-        return future;
-    }
+    private UploadMonitor(TransferManager manager, UploadImpl transfer, ExecutorService threadPool,
+                          UploadCallable multipartUploadCallable, PutObjectRequest putObjectRequest,
+                          ProgressListenerChain progressListenerChain) {
 
-    private synchronized void setFuture(Future<UploadResult> future) {
-        this.future = future;
-    }
-
-    private synchronized void cancelFuture() {
-        future.cancel(true);
-    }
-
-    public synchronized boolean isDone() {
-        return isUploadDone;
-    }
-
-    private synchronized void markAllDone() {
-        isUploadDone = true;
+        this.s3 = manager.getAmazonS3Client();
+        this.multipartUploadCallable = multipartUploadCallable;
+        this.origReq = putObjectRequest;
+        this.listener = progressListenerChain;
+        this.transfer = transfer;
+        this.threadPool = threadPool;
     }
 
     /**
@@ -114,22 +107,30 @@ public class UploadMonitor implements Callable<UploadResult>, TransferMonitor {
             ProgressListenerChain progressListenerChain) {
 
         UploadMonitor uploadMonitor = new UploadMonitor(manager, transfer,
-                threadPool, multipartUploadCallable, putObjectRequest,
-                progressListenerChain);
+                                                        threadPool, multipartUploadCallable, putObjectRequest,
+                                                        progressListenerChain);
         uploadMonitor.setFuture(threadPool.submit(uploadMonitor));
         return uploadMonitor;
     }
 
-    private UploadMonitor(TransferManager manager, UploadImpl transfer, ExecutorService threadPool,
-            UploadCallable multipartUploadCallable, PutObjectRequest putObjectRequest,
-            ProgressListenerChain progressListenerChain) {
+    public synchronized Future<UploadResult> getFuture() {
+        return future;
+    }
 
-        this.s3 = manager.getAmazonS3Client();
-        this.multipartUploadCallable = multipartUploadCallable;
-        this.origReq = putObjectRequest;
-        this.listener = progressListenerChain;
-        this.transfer = transfer;
-        this.threadPool = threadPool;
+    private synchronized void setFuture(Future<UploadResult> future) {
+        this.future = future;
+    }
+
+    private synchronized void cancelFuture() {
+        future.cancel(true);
+    }
+
+    public synchronized boolean isDone() {
+        return isUploadDone;
+    }
+
+    private synchronized void markAllDone() {
+        isUploadDone = true;
     }
 
     @Override
@@ -196,7 +197,7 @@ public class UploadMonitor implements Callable<UploadResult>, TransferMonitor {
         }
         cancelFutures();
         return new PauseResult<PersistableUpload>(PauseStatus.SUCCESS,
-                persistableUpload);
+                                                  persistableUpload);
     }
 
     /**

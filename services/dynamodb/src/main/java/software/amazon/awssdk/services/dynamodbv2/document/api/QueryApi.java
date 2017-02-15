@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,20 +43,20 @@ public interface QueryApi {
      * Retrieves items by the specified hash key and a range key condition.
      */
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition);
-    
+                                              RangeKeyCondition rangeKeyCondition);
+
     public ItemCollection<QueryOutcome> query(String hashKeyName, Object hashKeyValue,
-            RangeKeyCondition rangeKeyCondition);
+                                              RangeKeyCondition rangeKeyCondition);
 
     /**
      * Retrieves items by the specified hash key, a range key condition
      * and a list of query filters.
      */
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, QueryFilter ... queryFilters);
+                                              RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters);
 
     public ItemCollection<QueryOutcome> query(String hashKeyName, Object hashKeyValue,
-            RangeKeyCondition rangeKeyCondition, QueryFilter ... queryFilters);
+                                              RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters);
 
     /**
      * Retrieves items by the specified hash key, a range key condition, and
@@ -71,16 +71,16 @@ public interface QueryApi {
      *                can be null if there is no attribute-value placeholder.
      */
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition,
-            String filterExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                              RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression,
+                                              Map<String, String> nameMap,
+                                              Map<String, Object> valueMap);
 
     public ItemCollection<QueryOutcome> query(String hashKeyName, Object hashKeyValue,
-            RangeKeyCondition rangeKeyCondition,
-            String filterExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                              RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression,
+                                              Map<String, String> nameMap,
+                                              Map<String, Object> valueMap);
 
     /**
      * Retrieves items by the specified hash key, a range key condition,
@@ -98,11 +98,11 @@ public interface QueryApi {
      *                can be null if there is no attribute-value placeholder.
      */
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition,
-            String filterExpression,
-            String projectionExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                              RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression,
+                                              String projectionExpression,
+                                              Map<String, String> nameMap,
+                                              Map<String, Object> valueMap);
 
     /**
      * Retrieves items by the specified hash key, a range key condition,
@@ -120,11 +120,11 @@ public interface QueryApi {
      *                can be null if there is no attribute-value placeholder.
      */
     public ItemCollection<QueryOutcome> query(String hashKeyName, Object hashKeyValue,
-            RangeKeyCondition rangeKeyCondition,
-            String filterExpression,
-            String projectionExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                              RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression,
+                                              String projectionExpression,
+                                              Map<String, String> nameMap,
+                                              Map<String, Object> valueMap);
 
     /**
      * Queries table by specifying all the details.

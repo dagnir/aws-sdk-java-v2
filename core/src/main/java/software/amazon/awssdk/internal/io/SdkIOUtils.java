@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ public enum SdkIOUtils {
     public static void closeQuietly(Closeable is) {
         closeQuietly(is, null);
     }
+
     /**
      * Closes the given Closeable quietly.
      * @param is the given closeable
@@ -41,8 +42,9 @@ public enum SdkIOUtils {
                 is.close();
             } catch (IOException ex) {
                 InternalLogApi logger = log == null ? defaultLog : log;
-                if (logger.isDebugEnabled())
+                if (logger.isDebugEnabled()) {
                     logger.debug("Ignore failure in closing the Closeable", ex);
+                }
             }
         }
     }

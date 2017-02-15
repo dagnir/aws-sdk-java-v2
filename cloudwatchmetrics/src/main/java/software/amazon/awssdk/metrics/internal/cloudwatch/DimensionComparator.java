@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ import software.amazon.awssdk.util.StringUtils;
  *
  */
 enum DimensionComparator implements Comparator<Dimension> {
-    INSTANCE
-    ;
+    INSTANCE;
     /** Used to indicate the two objects being compared are both non-nulls. */
     private static final int NON_NULLS = 2;
 

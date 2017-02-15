@@ -35,13 +35,13 @@ public class UnorderedCollectionComparator {
             @Override
             public boolean equals(T a, T b) {
                 return (a == null && b == null)
-                        || a.equals(b);
+                       || a.equals(b);
             }
 
         });
     }
 
-     /**
+    /**
      * Compares two unordered lists of different types, using the specified
      * cross-type comparator. Null collections are treated as empty ones.
      * Naively implemented using N(n^2) algorithm.
@@ -49,9 +49,9 @@ public class UnorderedCollectionComparator {
     public static <A, B> boolean equalUnorderedCollections(
             Collection<A> colA, Collection<B> colB,
             final CrossTypeComparator<A, B> comparator) {
-        if (colA == null || colB == null){
-            if ( (colA == null || colA.isEmpty())
-              && (colB == null || colB.isEmpty()) ) {
+        if (colA == null || colB == null) {
+            if ((colA == null || colA.isEmpty())
+                && (colB == null || colB.isEmpty())) {
                 return true;
             } else {
                 return false;
@@ -64,7 +64,7 @@ public class UnorderedCollectionComparator {
         Set<B> setB = new HashSet<B>();
         setB.addAll(colB);
 
-        if ( setA.size() != setB.size() ){
+        if (setA.size() != setB.size()) {
             return false;
         }
 
@@ -76,7 +76,7 @@ public class UnorderedCollectionComparator {
                     break;
                 }
             }
-            if ( !foundA ) {
+            if (!foundA) {
                 return false;
             }
         }

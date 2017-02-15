@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -30,23 +26,24 @@ import software.amazon.awssdk.util.TimingInfo;
 
 public class RequestHandler2AdaptorTest {
     final boolean[] bs = new boolean[3];
+
     @Test
     public void testDelegation() {
-        for (int i=0; i < bs.length; i++) {
+        for (int i = 0; i < bs.length; i++) {
             assertFalse(bs[i]);
         }
         RequestHandler old = createRequestHandler();
         RequestHandler2 v2 = new RequestHandler2Adaptor(old);
         v2.beforeRequest(null);
-        int i=0;
+        int i = 0;
         assertTrue("beforeRequest is expected to have been invoked", bs[i++]);
-        bs[i-1] = false;    // reset the flag
+        bs[i - 1] = false;    // reset the flag
         v2.afterResponse(null, null);
         assertTrue("beforeRequest is expected to have been invoked", bs[i++]);
-        bs[i-1] = false;    // reset the flag
+        bs[i - 1] = false;    // reset the flag
         v2.afterError(null, null, null);
         assertTrue("beforeRequest is expected to have been invoked", bs[i++]);
-        bs[i-1] = false;    // reset the flag
+        bs[i - 1] = false;    // reset the flag
     }
 
     @Test
@@ -76,13 +73,13 @@ public class RequestHandler2AdaptorTest {
             public void beforeRequest(Request<?> request) {
                 bs[0] = true;
             }
-            
+
             @Override
             public void afterResponse(Request<?> request, Object response,
-                    TimingInfo timingInfo) {
+                                      TimingInfo timingInfo) {
                 bs[1] = true;
             }
-            
+
             @Override
             public void afterError(Request<?> request, Exception e) {
                 bs[2] = true;

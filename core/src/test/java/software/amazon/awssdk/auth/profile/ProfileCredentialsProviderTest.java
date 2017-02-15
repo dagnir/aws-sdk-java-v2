@@ -170,7 +170,7 @@ public class ProfileCredentialsProviderTest {
                 ProfileResourceLoader.basicProfile().asFile());
         File modifiable = File.createTempFile("UpdatableProfile", ".tst");
         ProfilesConfigFileWriter.dumpToFile(modifiable, true, fixture.getAllProfiles().values()
-                .toArray(new Profile[1]));
+                                                                     .toArray(new Profile[1]));
 
         ProfileCredentialsProvider test = new ProfileCredentialsProvider(modifiable.getPath(),
                                                                          null);
@@ -200,7 +200,7 @@ public class ProfileCredentialsProviderTest {
         File profilesFile = File.createTempFile("UpdatableProfile", ".tst");
         ProfilesConfigFileWriter.dumpToFile(profilesFile, true,
                                             profilesConfigFileBeforeRefresh.getAllProfiles()
-                                                    .values().toArray(new Profile[1]));
+                                                                           .values().toArray(new Profile[1]));
 
         ProfileCredentialsProvider profileCredentialsProvider = new ProfileCredentialsProvider(
                 profilesFile.getPath(), null);
@@ -217,7 +217,7 @@ public class ProfileCredentialsProviderTest {
                 ProfileResourceLoader.basicProfile2().asFile());
         ProfilesConfigFileWriter.dumpToFile(profilesFile, true,
                                             profilesConfigFileAfterRefresh.getAllProfiles().values()
-                                                    .toArray(new Profile[1]));
+                                                                          .toArray(new Profile[1]));
 
         profileCredentialsProvider.setRefreshForceIntervalNanos(1l);
 
@@ -236,7 +236,7 @@ public class ProfileCredentialsProviderTest {
         File profilesFile = File.createTempFile("UpdatableProfile", ".tst");
         ProfilesConfigFileWriter.dumpToFile(profilesFile, true,
                                             profilesConfigFileBeforeRefresh.getAllProfiles()
-                                                    .values().toArray(new Profile[1]));
+                                                                           .values().toArray(new Profile[1]));
 
         ProfileCredentialsProvider profileCredentialsProvider = new ProfileCredentialsProvider(
                 profilesFile.getPath(), null);
@@ -246,7 +246,7 @@ public class ProfileCredentialsProviderTest {
                 ProfileResourceLoader.basicProfile2().asFile());
         ProfilesConfigFileWriter.dumpToFile(profilesFile, true,
                                             profilesConfigFileAfterRefresh.getAllProfiles().values()
-                                                    .toArray(new Profile[1]));
+                                                                          .toArray(new Profile[1]));
 
         profileCredentialsProvider.setRefreshIntervalNanos(1l);
 
@@ -266,7 +266,7 @@ public class ProfileCredentialsProviderTest {
             public AWSCredentialsProvider getAssumeRoleCredentialsProvider(
                     RoleInfo targetRoleInfo) {
                 AWSCredentials credentials = targetRoleInfo.getLongLivedCredentialsProvider()
-                        .getCredentials();
+                                                           .getCredentials();
                 Assert.assertEquals("sourceProfile AWSAccessKeyId", "defaultAccessKey",
                                     credentials.getAWSAccessKeyId());
                 Assert.assertEquals("sourceProfile AWSSecretKey", "defaultSecretAccessKey",
@@ -297,7 +297,7 @@ public class ProfileCredentialsProviderTest {
             public AWSCredentialsProvider getAssumeRoleCredentialsProvider(
                     RoleInfo targetRoleInfo) {
                 AWSCredentials credentials = targetRoleInfo.getLongLivedCredentialsProvider()
-                        .getCredentials();
+                                                           .getCredentials();
                 Assert.assertEquals("sourceProfile AWSAccessKeyId", "defaultAccessKey",
                                     credentials.getAWSAccessKeyId());
                 Assert.assertEquals("sourceProfile AWSSecretKey", "defaultSecretAccessKey",
@@ -339,7 +339,7 @@ public class ProfileCredentialsProviderTest {
                                             targetRoleInfo.getRoleArn());
                         Assert.assertNull("external_id", targetRoleInfo.getExternalId());
                         Assert.assertTrue("role_session_name", targetRoleInfo.getRoleSessionName()
-                                .startsWith("aws-sdk-java-"));
+                                                                             .startsWith("aws-sdk-java-"));
                         return new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials("sessionAccessKey", "sessionSecretKey"));
                     }

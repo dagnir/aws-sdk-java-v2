@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,25 +30,25 @@ import software.amazon.awssdk.util.ValidationUtils;
  * Composite {@link RequestHandler2} to execute a chain of {@link RequestHandler2} implementations
  * in stack order. That is if you have request handlers R1, R2, R3 the order of execution is as
  * follows
- * 
+ *
  * <pre>
- *    
- * {@code   
- * R1.beforeMarshalling   
- * R2.beforeMarshalling   
- * R3.beforeMarshalling   
- *    
- * R1.beforeRequest   
- * R2.beforeRequest   
- * R3.beforeRequest   
- *    
+ *
+ * {@code
+ * R1.beforeMarshalling
+ * R2.beforeMarshalling
+ * R3.beforeMarshalling
+ *
+ * R1.beforeRequest
+ * R2.beforeRequest
+ * R3.beforeRequest
+ *
  * R3.beforeUnmarshalling
  * R2.beforeUnmarshalling
  * R1.beforeUnmarshalling
- * 
- * R3.after(Response|Error)   
- * R2.after(Response|Error)   
- * R1.after(Response|Error)   
+ *
+ * R3.after(Response|Error)
+ * R2.after(Response|Error)
+ * R1.after(Response|Error)
  * }
  * </pre>
  */
@@ -58,8 +58,8 @@ public class StackedRequestHandler implements IRequestHandler2 {
     private final List<RequestHandler2> inOrderRequestHandlers;
     private final List<RequestHandler2> reverseOrderRequestHandlers;
 
-    public StackedRequestHandler(RequestHandler2...requestHandlers) {
-       this(Arrays.asList(ValidationUtils.assertNotNull(requestHandlers, "requestHandlers")));
+    public StackedRequestHandler(RequestHandler2... requestHandlers) {
+        this(Arrays.asList(ValidationUtils.assertNotNull(requestHandlers, "requestHandlers")));
     }
 
     public StackedRequestHandler(List<RequestHandler2> requestHandlers) {
@@ -87,7 +87,7 @@ public class StackedRequestHandler implements IRequestHandler2 {
     @Override
     public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
         HttpResponse toReturn = origHttpResponse;
-        for(RequestHandler2 handler : reverseOrderRequestHandlers) {
+        for (RequestHandler2 handler : reverseOrderRequestHandlers) {
             toReturn = handler.beforeUnmarshalling(request, toReturn);
         }
         return toReturn;
@@ -95,14 +95,14 @@ public class StackedRequestHandler implements IRequestHandler2 {
 
     @Override
     public void afterResponse(Request<?> request, Response<?> response) {
-        for(RequestHandler2 handler : reverseOrderRequestHandlers) {
+        for (RequestHandler2 handler : reverseOrderRequestHandlers) {
             handler.afterResponse(request, response);
         }
     }
 
     @Override
     public void afterError(Request<?> request, Response<?> response, Exception e) {
-        for(RequestHandler2 handler : reverseOrderRequestHandlers) {
+        for (RequestHandler2 handler : reverseOrderRequestHandlers) {
             handler.afterError(request, response, e);
         }
     }

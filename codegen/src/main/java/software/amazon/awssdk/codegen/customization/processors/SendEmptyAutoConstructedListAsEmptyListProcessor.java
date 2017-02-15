@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -25,7 +25,7 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 
 final public class SendEmptyAutoConstructedListAsEmptyListProcessor implements
-        CodegenCustomizationProcessor {
+                                                                    CodegenCustomizationProcessor {
 
     private Map<String, List<String>> sendEmptyQueryString;
 
@@ -71,14 +71,14 @@ final public class SendEmptyAutoConstructedListAsEmptyListProcessor implements
             if (shapeModel == null) {
                 throw new IllegalStateException(
                         String.format("Cannot find shape [%s] in the model when processing "
-                                + "customization config sendEmptyQueryStringParam.%s", shapeName, shapeName));
+                                      + "customization config sendEmptyQueryStringParam.%s", shapeName, shapeName));
             }
             for (String memberName : members) {
                 MemberModel memberModel = shapeModel.getMemberByName(memberName);
                 if (memberModel == null) {
                     throw new IllegalStateException(
                             String.format("Cannot find member [%s] in the model when processing "
-                                    + "customization config sendEmptyQueryStringParam.%s", memberName, shapeName));
+                                          + "customization config sendEmptyQueryStringParam.%s", memberName, shapeName));
                 }
                 if (!memberModel.isList()) {
                     throw new IllegalStateException(

@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -92,6 +93,25 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
         return obj;
     }
 
+    /**
+     * Tests using a complex type for a (string) key
+     */
+    @Test
+    public void testComplexKey() throws Exception {
+        ComplexKey obj = new ComplexKey();
+        ComplexNestedType key = new ComplexNestedType();
+        key.setIntValue(start++);
+        key.setStringValue("" + start++);
+        obj.setKey(key);
+        obj.setOtherAttribute("" + start++);
+
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+
+        mapper.save(obj);
+        ComplexKey loaded = mapper.load(ComplexKey.class, obj.getKey());
+        assertEquals(obj, loaded);
+    }
+
     public static final class ComplexNestedListTypeMarshaller implements DynamoDBTypeConverter<String, List<ComplexNestedType>> {
         @Override
         public String convert(final List<ComplexNestedType> object) {
@@ -154,7 +174,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         @Override
@@ -169,7 +189,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -359,25 +379,6 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
             }
             return true;
         }
-    }
-
-    /**
-     * Tests using a complex type for a (string) key
-     */
-    @Test
-    public void testComplexKey() throws Exception {
-        ComplexKey obj = new ComplexKey();
-        ComplexNestedType key = new ComplexNestedType();
-        key.setIntValue(start++);
-        key.setStringValue("" + start++);
-        obj.setKey(key);
-        obj.setOtherAttribute("" + start++);
-
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
-
-        mapper.save(obj);
-        ComplexKey loaded = mapper.load(ComplexKey.class, obj.getKey());
-        assertEquals(obj, loaded);
     }
 
 }

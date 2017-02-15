@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -321,7 +322,9 @@ public class ListObjectsV2Request extends AmazonWebServiceRequest implements Ser
      *
      * @return The optional continuation token associated with this request.
      */
-    public String getContinuationToken() { return continuationToken; }
+    public String getContinuationToken() {
+        return continuationToken;
+    }
 
     /**
      * Sets the optional continuation token.  Continuation token allows a list to be
@@ -330,7 +333,9 @@ public class ListObjectsV2Request extends AmazonWebServiceRequest implements Ser
      * @param continuationToken
      *                     The optional continuation token to associate with this request.
      */
-    public void setContinuationToken(String continuationToken) { this.continuationToken = continuationToken; }
+    public void setContinuationToken(String continuationToken) {
+        this.continuationToken = continuationToken;
+    }
 
     /**
      * Sets the optional continuation token.  Continuation token allows a list to be
@@ -353,7 +358,9 @@ public class ListObjectsV2Request extends AmazonWebServiceRequest implements Ser
 
      * @return whether fetchOwner is set
      */
-    public boolean isFetchOwner() { return fetchOwner; }
+    public boolean isFetchOwner() {
+        return fetchOwner;
+    }
 
     /**
      * Sets the optional fetch owner flag.  The owner field is not present in ListObjectsV2
@@ -362,7 +369,9 @@ public class ListObjectsV2Request extends AmazonWebServiceRequest implements Ser
      * @param fetchOwner
      *               Set to true if the owner field should be included in results
      */
-    public void setFetchOwner(boolean fetchOwner) { this.fetchOwner = fetchOwner; }
+    public void setFetchOwner(boolean fetchOwner) {
+        this.fetchOwner = fetchOwner;
+    }
 
     /**
      * Sets the optional fetch owner flag.  The owner field is not present in ListObjectsV2
@@ -385,7 +394,9 @@ public class ListObjectsV2Request extends AmazonWebServiceRequest implements Ser
      *
      * @return the optional startAfter parameter
      */
-    public String getStartAfter() { return startAfter; }
+    public String getStartAfter() {
+        return startAfter;
+    }
 
     /**
      * Sets the optional parameter indicating where you want Amazon S3 to start the object
@@ -394,7 +405,9 @@ public class ListObjectsV2Request extends AmazonWebServiceRequest implements Ser
      * @param startAfter
      *                The optional startAfter parameter.  This can be any key in the bucket.
      */
-    public void setStartAfter(String startAfter) { this.startAfter = startAfter; }
+    public void setStartAfter(String startAfter) {
+        this.startAfter = startAfter;
+    }
 
     /**
      * Sets the optional parameter indicating where you want Amazon S3 to start the object

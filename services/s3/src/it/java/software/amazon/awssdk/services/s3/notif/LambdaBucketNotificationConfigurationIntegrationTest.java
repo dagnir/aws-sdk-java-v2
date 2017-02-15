@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.notif;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -63,17 +78,18 @@ public class LambdaBucketNotificationConfigurationIntegrationTest extends S3Inte
      * Simple hello world Lambda function to upload
      */
     private static final String FUNCTION_CONTENTS = "console.log(\'Loading http\')" + "\n"
-            + "exports.handler = function (request, response) {" + "\n" + "response.write(\"Hello, world!\");" + "\n"
-            + "response.end();" + "\n" + "console.log(\"Request completed\");" + "\n" + "}";
+                                                    + "exports.handler = function (request, response) {" + "\n" + "response.write(\"Hello, world!\");" + "\n"
+                                                    + "response.end();" + "\n" + "console.log(\"Request completed\");" + "\n" + "}";
 
     /**
      * Assume role policy for the lambda function. Used by lambda when talking to other AWS services
      */
     private static final String LAMBDA_ASSUME_ROLE_POLICY = "{" + "\"Version\": \"2012-10-17\"," + "\"Statement\": ["
-            + "{" + "\"Sid\": \"\"," + "\"Effect\": \"Allow\"," + "\"Principal\": {"
-            + "\"Service\": [\"lambda.amazonaws.com\"]" + "}," + "\"Action\": \"sts:AssumeRole\"" + "}" + "]" + "}";
+                                                            + "{" + "\"Sid\": \"\"," + "\"Effect\": \"Allow\"," + "\"Principal\": {"
+                                                            + "\"Service\": [\"lambda.amazonaws.com\"]" + "}," + "\"Action\": \"sts:AssumeRole\"" + "}" + "]" + "}";
 
-    private static final String LAMBDA_EXECUTION_ROLE_NAME = "lambda-java-sdk-test-role-" + System.currentTimeMillis();;
+    private static final String LAMBDA_EXECUTION_ROLE_NAME = "lambda-java-sdk-test-role-" + System.currentTimeMillis();
+    ;
 
     private static String lambdaExecutionRoleArn;
 
@@ -135,17 +151,6 @@ public class LambdaBucketNotificationConfigurationIntegrationTest extends S3Inte
     }
 
     /**
-     * Sets a lambda configuration to an Amazon S3 bucket. Retrieves it and check if they are same.
-     */
-    @Test
-    public void putLambdaBucketConfiguration_ReturnsSameConfigurationOnGet() throws Exception {
-        setBucketNotificationConfiguration();
-        BucketNotificationConfiguration notificationConfig = s3.getBucketNotificationConfiguration(BUCKET_NAME);
-        assertEquals(1, notificationConfig.getConfigurations().size());
-        assertContainsCorrectLambdaConfiguration(notificationConfig.getConfigurations());
-    }
-
-    /**
      * Generates a zip file in the temporary folder for the cloud function.
      */
     private static File createLambdaFunctionZip() throws IOException {
@@ -161,8 +166,8 @@ public class LambdaBucketNotificationConfigurationIntegrationTest extends S3Inte
         InputStream functionZip = new FileInputStream(lambdaFunctionZipFile);
         byte[] codeZip = IOUtils.toByteArray(functionZip);
         CreateFunctionRequest request = new CreateFunctionRequest().withFunctionName(CLOUD_FUNCTION_NAME)
-                .withHandler("helloworld.handler").withMemorySize(128).withRuntime("nodejs")
-                .withRole(lambdaExecutionRoleArn).withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(codeZip)));
+                                                                   .withHandler("helloworld.handler").withMemorySize(128).withRuntime("nodejs")
+                                                                   .withRole(lambdaExecutionRoleArn).withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(codeZip)));
         return lambda.createFunction(request).getFunctionArn();
     }
 
@@ -171,13 +176,24 @@ public class LambdaBucketNotificationConfigurationIntegrationTest extends S3Inte
      */
     private static String createLambdaExecutionRole() {
         CreateRoleResult result = iam.createRole(new CreateRoleRequest().withRoleName(LAMBDA_EXECUTION_ROLE_NAME)
-                .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
+                                                                        .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
         return result.getRole().getArn();
     }
 
     private static void authorizeS3ToInvokeLambdaFunction() {
         lambda.addPermission(new AddPermissionRequest().withAction("lambda:InvokeFunction")
-                .withFunctionName(CLOUD_FUNCTION_NAME).withPrincipal("s3.amazonaws.com").withStatementId("1"));
+                                                       .withFunctionName(CLOUD_FUNCTION_NAME).withPrincipal("s3.amazonaws.com").withStatementId("1"));
+    }
+
+    /**
+     * Sets a lambda configuration to an Amazon S3 bucket. Retrieves it and check if they are same.
+     */
+    @Test
+    public void putLambdaBucketConfiguration_ReturnsSameConfigurationOnGet() throws Exception {
+        setBucketNotificationConfiguration();
+        BucketNotificationConfiguration notificationConfig = s3.getBucketNotificationConfiguration(BUCKET_NAME);
+        assertEquals(1, notificationConfig.getConfigurations().size());
+        assertContainsCorrectLambdaConfiguration(notificationConfig.getConfigurations());
     }
 
     private void setBucketNotificationConfiguration() {
@@ -185,7 +201,7 @@ public class LambdaBucketNotificationConfigurationIntegrationTest extends S3Inte
         bucketNotificationConfiguration.addConfiguration(
                 NOTIFICATION_NAME,
                 new LambdaConfiguration(lambdaFunctionArn, EnumSet.of(S3Event.ObjectCreatedByPut,
-                        S3Event.ObjectCreatedByCompleteMultipartUpload, S3Event.ObjectCreatedByCopy)));
+                                                                      S3Event.ObjectCreatedByCompleteMultipartUpload, S3Event.ObjectCreatedByCopy)));
         s3.setBucketNotificationConfiguration(BUCKET_NAME, bucketNotificationConfiguration);
     }
 

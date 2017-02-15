@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ public class WafRegionalIntegrationTest extends AWSIntegrationTestBase {
     @Test(expected = WAFNonexistentItemException.class)
     public void smokeTest() {
         final AWSWAFRegional client = AWSWAFRegionalClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
-                .withRegion(Regions.US_WEST_2)
-                .build();
+                                                                 .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                                                                 .withRegion(Regions.US_WEST_2)
+                                                                 .build();
         client.listResourcesForWebACL(new ListResourcesForWebACLRequest().withWebACLId("foo"));
     }
 }

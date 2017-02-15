@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
         this.client = client;
         this.spec = spec;
         Map<String, AttributeValue> startKey = spec.getRequest()
-                .getExclusiveStartKey();
+                                                   .getExclusiveStartKey();
         this.startKey = startKey == null ? null : new LinkedHashMap<String, AttributeValue>(startKey);
     }
 
@@ -65,6 +65,6 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
         super.setLastLowLevelResult(lowLevelResult);
         ScanResult result = lowLevelResult.getScanResult();
         accumulateStats(result.getConsumedCapacity(), result.getCount(),
-                result.getScannedCount());
+                        result.getScannedCount());
     }
 }

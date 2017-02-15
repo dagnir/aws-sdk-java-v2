@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -56,7 +71,7 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
     private static final boolean cleanup = true;
 
     /** Length of the random temp file to upload */
-    private static final int RANDOM_OBJECT_DATA_LENGTH = 32*1024;
+    private static final int RANDOM_OBJECT_DATA_LENGTH = 32 * 1024;
 
     /** Suffix appended to the end of instruction files */
     private static final String INSTRUCTION_SUFFIX = ".instruction";
@@ -85,7 +100,7 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
     private AmazonS3 defaultSymmetricEncryption;
     private AmazonS3 bouncyCastleSymmetricEncryption;
     private AmazonS3 instructionFileSymmetricEncryption;
-    
+
     protected abstract CryptoMode cryptoMode();
 
     private CryptoConfiguration newCryptoConfiguration() {
@@ -133,8 +148,9 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
             temporaryFile.delete();
             retrievedTemporaryFile.delete();
         }
-        if (cleanup)
+        if (cleanup) {
             CryptoTestUtils.deleteBucketAndAllContents(s3, expectedBucketName);
+        }
     }
 
     /**
@@ -152,13 +168,13 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
         } catch (AmazonClientException ace) {
             CryptoMode cryptoMode = cryptoMode();
             if (cryptoMode == CryptoMode.AuthenticatedEncryption
-            ||  cryptoMode == CryptoMode.StrictAuthenticatedEncryption) {
+                || cryptoMode == CryptoMode.StrictAuthenticatedEncryption) {
                 System.out.println(ace.getMessage());
                 assertEquals("InvalidKeyException", ace.getCause().getClass()
-                        .getSimpleName());
+                                                       .getSimpleName());
             } else {
                 assertEquals("BadPaddingException", ace.getCause().getClass()
-                        .getSimpleName());
+                                                       .getSimpleName());
             }
         }
     }
@@ -168,15 +184,15 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
      */
     @Test
     public void testRecoverableErrorHandling() throws Exception {
-        int tempFileSize = 1024*1024*8+2345;
+        int tempFileSize = 1024 * 1024 * 8 + 2345;
         RandomTempFile randomTempFile = new RandomTempFile("s3-encryption-error-recovery", tempFileSize);
 
-        PutObjectRequest putObjectRequest = new PutObjectRequest(expectedBucketName, expectedObjectName, (File)null);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(expectedBucketName, expectedObjectName, (File) null);
         putObjectRequest.setMetadata(new ObjectMetadata());
         putObjectRequest.getMetadata().setContentLength(tempFileSize);
         putObjectRequest.setInputStream(
-            new UnreliableRepeatableFileInputStream(randomTempFile)
-                .disableClose());   // requires explicit release
+                new UnreliableRepeatableFileInputStream(randomTempFile)
+                        .disableClose());   // requires explicit release
 
         defaultAsymmetricEncryption.putObject(putObjectRequest);
         IOUtils.release(putObjectRequest.getInputStream(), null);
@@ -224,8 +240,9 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
         try {
             S3Object cryptoObject = defaultAsymmetricEncryption
                     .getObject(retrieveRequest);
-            if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode()))
+            if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode())) {
                 fail();
+            }
             GetObjectRequest plainRetrieveRequest = new GetObjectRequest(
                     expectedBucketName, plainClientPrefix + expectedObjectName);
             plainRetrieveRequest.setRange(rangeBegin, rangeEnd);
@@ -233,10 +250,11 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
 
             // Check that the contents are equal
             assertTrue(doesStreamEqualStream(plainObject.getObjectContent(),
-                    cryptoObject.getObjectContent()));
+                                             cryptoObject.getObjectContent()));
         } catch (SecurityException ex) {
-            if (!CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode()))
+            if (!CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode())) {
                 throw ex;
+            }
         }
     }
 
@@ -449,11 +467,11 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
             }
             if (summary.getKey().equals(expectedObjectName + deleteFileSuffix + INSTRUCTION_SUFFIX)) {
                 fail(String.format("Instruction file '%s' was not deleted from bucket '%s'",
-                        summary.getKey(), summary.getBucketName()));
+                                   summary.getKey(), summary.getBucketName()));
             }
         }
     }
-    
+
     /**
      * Tests the default symmetric encryption by setting the MD5 instead of SDK calculating the MD5.
      */
@@ -461,27 +479,28 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
     public void testDefaultSymmetricEncryptionMD5PreCalculated() throws Exception {
         String cryptoClientPrefix = "crypto-MD5";
         ObjectMetadata metadata = new ObjectMetadata();
-        
+
         byte[] md5Hash = Md5Utils.computeMD5Hash(new FileInputStream(temporaryFile));
-        metadata.setContentMD5(BinaryUtils.toBase64(md5Hash));        
-        
+        metadata.setContentMD5(BinaryUtils.toBase64(md5Hash));
+
         // PUT the same object with both the encryption client and the standard client
-        defaultSymmetricEncryption.putObject(expectedBucketName, cryptoClientPrefix + expectedObjectName, new FileInputStream(temporaryFile),metadata);
-        
+        defaultSymmetricEncryption.putObject(expectedBucketName, cryptoClientPrefix + expectedObjectName, new FileInputStream(temporaryFile), metadata);
+
         // GET the object with both the encryption client and the standard client
         GetObjectRequest retrieveRequest = new GetObjectRequest(expectedBucketName, cryptoClientPrefix + expectedObjectName);
         int retry = 0;
-        for (;;) {
+        for (; ; ) {
             try {
                 S3Object cryptoObject = defaultSymmetricEncryption
                         .getObject(retrieveRequest);
                 // Check that the contents are equal
                 assertFileEqualsStream(temporaryFile,
-                        cryptoObject.getObjectContent());
+                                       cryptoObject.getObjectContent());
                 return;
             } catch (AmazonS3Exception ex) {
-                if (retry++ >= 3)
+                if (retry++ >= 3) {
                     throw ex;
+                }
             }
         }
     }
@@ -537,16 +556,17 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
         metadata.addUserMetadata("foo", "bar");
         metadata.addUserMetadata("baz", "bash");
         InputStream uploadInputStream = new FileInputStream(temporaryFile);
-        int retry=0;
-        for (;;) {
+        int retry = 0;
+        for (; ; ) {
             try {
-                s3Client.putObject(expectedBucketName, 
-                    namePrefix + expectedObjectName,
-                    uploadInputStream, metadata);
+                s3Client.putObject(expectedBucketName,
+                                   namePrefix + expectedObjectName,
+                                   uploadInputStream, metadata);
                 return;
-            } catch(AmazonS3Exception ex) {
-                if (retry++ >=3)
+            } catch (AmazonS3Exception ex) {
+                if (retry++ >= 3) {
                     throw ex;
+                }
                 ex.printStackTrace(System.err);
                 Thread.sleep(3000);
                 // retry
@@ -594,7 +614,7 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
         assertNotNull(metadata.get(Headers.CRYPTO_IV));
         CryptoMode cryptoMode = cryptoMode();
         if (cryptoMode == CryptoMode.AuthenticatedEncryption
-                || cryptoMode == CryptoMode.StrictAuthenticatedEncryption) {
+            || cryptoMode == CryptoMode.StrictAuthenticatedEncryption) {
             assertNull(metadata.get(Headers.CRYPTO_KEY));
             assertNotNull(metadata.get(Headers.CRYPTO_KEY_V2));
             assertNotNull(metadata.get(Headers.CRYPTO_CEK_ALGORITHM));
@@ -629,5 +649,5 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
         assertNull(metadata.get(Headers.CRYPTO_CEK_ALGORITHM));
         assertNull(metadata.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
         assertNull(metadata.get(Headers.CRYPTO_TAG_LENGTH));
-   }
+    }
 }

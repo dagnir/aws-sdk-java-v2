@@ -35,10 +35,10 @@ public class EC2DryrunOperationsIntegrationTest extends EC2IntegrationTestBase {
 
     private static final String DENY_ALL_POLICY =
             "{\"Statement\":[{" +
-                    "\"Effect\":\"Deny\"," +
-                    "\"Action\":\"*\"," +
-                    "\"Resource\":\"*\"" +
-                    "}]" +
+            "\"Effect\":\"Deny\"," +
+            "\"Action\":\"*\"," +
+            "\"Resource\":\"*\"" +
+            "}]" +
             "}";
     private static final String FAKE_INSTANCE_ID = "i-2b12f844";
 
@@ -47,6 +47,23 @@ public class EC2DryrunOperationsIntegrationTest extends EC2IntegrationTestBase {
     @BeforeClass
     public static void setup() {
         ec2WithNoPermission = setupEc2ClientWithNoPermission();
+    }
+
+    private static AmazonEC2Client setupEc2ClientWithNoPermission() {
+
+        AWSSecurityTokenServiceClient sts = new AWSSecurityTokenServiceClient();
+        Credentials temporaryCredentials =
+                sts.getFederationToken(new GetFederationTokenRequest()
+                                               .withName("java-sdk-ec2-dryrun")
+                                               .withPolicy(DENY_ALL_POLICY)
+                                      ).getCredentials();
+
+        String accessKey = temporaryCredentials.getAccessKeyId();
+        String secretKey = temporaryCredentials.getSecretAccessKey();
+        String sessionToken = temporaryCredentials.getSessionToken();
+
+        return new AmazonEC2Client(new BasicSessionCredentials(
+                accessKey, secretKey, sessionToken));
     }
 
     /**
@@ -60,7 +77,7 @@ public class EC2DryrunOperationsIntegrationTest extends EC2IntegrationTestBase {
         DryRunResult<?> result = ec2WithNoPermission.dryRun(
                 new DescribeInstancesRequest()
                         .withInstanceIds(FAKE_INSTANCE_ID)
-                );
+                                                           );
         assertFalse(result.isSuccessful());
         assertThat(result.getOriginalRequest(), instanceOf((DescribeInstancesRequest.class)));
         assertNotNull(result.getMessage());
@@ -69,29 +86,12 @@ public class EC2DryrunOperationsIntegrationTest extends EC2IntegrationTestBase {
 
         /* but this guy does. */
         result = ec2.dryRun(new DescribeInstancesRequest()
-                .withInstanceIds(FAKE_INSTANCE_ID));
+                                    .withInstanceIds(FAKE_INSTANCE_ID));
         assertTrue(result.isSuccessful());
         assertThat(result.getOriginalRequest(), instanceOf((DescribeInstancesRequest.class)));
 
         assertNotNull(result.getMessage());
         assertNotNull(result.getDryRunResponse());
         assertEquals(412, result.getDryRunResponse().getStatusCode());
-    }
-
-    private static AmazonEC2Client setupEc2ClientWithNoPermission() {
-
-        AWSSecurityTokenServiceClient sts = new AWSSecurityTokenServiceClient();
-        Credentials temporaryCredentials =
-                sts.getFederationToken(new GetFederationTokenRequest()
-                    .withName("java-sdk-ec2-dryrun")
-                    .withPolicy(DENY_ALL_POLICY)
-                ).getCredentials();
-
-        String accessKey = temporaryCredentials.getAccessKeyId();
-        String secretKey = temporaryCredentials.getSecretAccessKey();
-        String sessionToken = temporaryCredentials.getSessionToken();
-
-        return new AmazonEC2Client(new BasicSessionCredentials(
-                accessKey, secretKey, sessionToken));
     }
 }

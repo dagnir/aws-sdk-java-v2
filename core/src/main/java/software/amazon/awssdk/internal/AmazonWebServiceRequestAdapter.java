@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -56,13 +56,13 @@ public final class AmazonWebServiceRequestAdapter extends RequestConfig {
     @Override
     public Map<String, String> getCustomRequestHeaders() {
         return (request.getCustomRequestHeaders() == null) ? Collections.<String, String>emptyMap() :
-                request.getCustomRequestHeaders();
+               request.getCustomRequestHeaders();
     }
 
     @Override
     public Map<String, List<String>> getCustomQueryParameters() {
         return (request.getCustomQueryParameters() == null) ? Collections.<String, List<String>>emptyMap() :
-                request.getCustomQueryParameters();
+               request.getCustomQueryParameters();
     }
 
     @Override

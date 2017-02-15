@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.File;
@@ -24,9 +25,10 @@ public class PartCreationEvent {
     private final OnFileDelete fileDeleteObserver;
 
     PartCreationEvent(File part, int partNumber, boolean isLastPart,
-            OnFileDelete fileDeleteObserver) {
-        if (part == null)
+                      OnFileDelete fileDeleteObserver) {
+        if (part == null) {
             throw new IllegalArgumentException("part must not be specified");
+        }
         this.part = part;
         this.partNumber = partNumber;
         this.isLastPart = isLastPart;

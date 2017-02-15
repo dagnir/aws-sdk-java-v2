@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,19 +27,19 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
  * Java SDK.
  */
 @SdkProtectedApi
-public class SdkInternalMap<K,V> implements Map<K,V>, Serializable {
+public class SdkInternalMap<K, V> implements Map<K, V>, Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Map<K, V> map;
 
     /**
-    * Auto construct flag to indicate whether the map is auto constructed by
-    * Java SDK.
-    */
+     * Auto construct flag to indicate whether the map is auto constructed by
+     * Java SDK.
+     */
     private final boolean autoConstruct;
 
     public SdkInternalMap() {
-        this.map = new HashMap<K,V>();
+        this.map = new HashMap<K, V>();
         autoConstruct = true;
     }
 
@@ -49,8 +49,8 @@ public class SdkInternalMap<K,V> implements Map<K,V>, Serializable {
     }
 
     /**
-    * Return true if the map is auto constructed by Java SDK; false otherwise.
-    */
+     * Return true if the map is auto constructed by Java SDK; false otherwise.
+     */
     public boolean isAutoConstruct() {
         return autoConstruct;
     }
@@ -117,10 +117,16 @@ public class SdkInternalMap<K,V> implements Map<K,V>, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (map == null ) return o == null;
-        if (!(o instanceof Map<?,?>)) return false;
-        
+        if (this == o) {
+            return true;
+        }
+        if (map == null) {
+            return o == null;
+        }
+        if (!(o instanceof Map<?, ?>)) {
+            return false;
+        }
+
         Map<?, ?> that = (Map<?, ?>) o;
 
         return map.equals(that);

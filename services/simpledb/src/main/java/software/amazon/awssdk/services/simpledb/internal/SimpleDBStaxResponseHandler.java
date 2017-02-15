@@ -31,7 +31,7 @@ public class SimpleDBStaxResponseHandler<T> extends StaxResponseHandler<T> {
     @Override
     protected void registerAdditionalMetadataExpressions(StaxUnmarshallerContext unmarshallerContext) {
         unmarshallerContext.registerMetadataExpression("ResponseMetadata/BoxUsage", 2,
-                SimpleDBResponseMetadata.BOX_USAGE);
+                                                       SimpleDBResponseMetadata.BOX_USAGE);
     }
 
     @Override

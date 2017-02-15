@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 import software.amazon.awssdk.util.AWSRequestMetrics.Field;
 import software.amazon.awssdk.util.TimingInfo;
+
 /**
  * Used to transform the predefined metrics of the AWS SDK into instances of
  * {@link MetricDatum}.
@@ -51,9 +52,9 @@ import software.amazon.awssdk.util.TimingInfo;
  */
 @ThreadSafe
 public class PredefinedMetricTransformer {
-    private static final Log log = LogFactory.getLog(PredefinedMetricTransformer.class);
     static final boolean INCLUDE_REQUEST_TYPE = true;
     static final boolean EXCLUDE_REQUEST_TYPE = !INCLUDE_REQUEST_TYPE;
+    private static final Log log = LogFactory.getLog(PredefinedMetricTransformer.class);
 
     /**
      * Returns a non-null list of metric datum for the metrics collected for the
@@ -65,7 +66,7 @@ public class PredefinedMetricTransformer {
         if (metricType instanceof Field) {
             // Predefined metrics across all AWS http clients
             Field predefined = (Field) metricType;
-            switch(predefined) {
+            switch (predefined) {
                 case HttpClientRetryCount:
                 case HttpClientPoolAvailableCount:
                 case HttpClientPoolLeasedCount:
@@ -95,12 +96,13 @@ public class PredefinedMetricTransformer {
             }
         }
         // Predefined metrics for specific service clients
-        for (AWSMetricTransformerFactory aws: AWSMetricTransformerFactory.values()) {
+        for (AWSMetricTransformerFactory aws : AWSMetricTransformerFactory.values()) {
             if (metricType.name().startsWith(aws.name())) {
                 List<MetricDatum> metricData = aws.getRequestMetricTransformer()
-                        .toMetricData(metricType, request, response);
-                if (metricData != null)
+                                                  .toMetricData(metricType, request, response);
+                if (metricData != null) {
                     return metricData;
+                }
                 break;
             }
         }
@@ -109,7 +111,7 @@ public class PredefinedMetricTransformer {
                     .getOriginalRequest();
             String reqClassName = origReq == null ? null : origReq.getClass().getName();
             log.debug("No request metric transformer can be found for metric type "
-                    + metricType.name() + " for " + reqClassName);
+                      + metricType.name() + " for " + reqClassName);
         }
         return Collections.emptyList();
     }
@@ -136,25 +138,25 @@ public class PredefinedMetricTransformer {
         int requestCount = counter.intValue();
         if (requestCount < 1) {
             LogFactory.getLog(getClass()).debug(
-                "request count must be at least one");
+                    "request count must be at least one");
             return Collections.emptyList();
         }
         final double count = metricType == Field.RequestCount
-                           ? requestCount
-                           : requestCount-1 // retryCount = requestCount - 1
-                           ;
+                             ? requestCount
+                             : requestCount - 1 // retryCount = requestCount - 1
+                ;
         if (count < 1) {
             return Collections.emptyList();
         } else {
             return Collections.singletonList(new MetricDatum()
-                .withMetricName(req.getServiceName())
-                .withDimensions(new Dimension()
-                    .withName(Dimensions.MetricType.name())
-                    .withValue(metricType.name()))
-                .withUnit(StandardUnit.Count)
-                .withValue(Double.valueOf(count))
-                .withTimestamp(endTimestamp(ti)))
-                ;
+                                                     .withMetricName(req.getServiceName())
+                                                     .withDimensions(new Dimension()
+                                                                             .withName(Dimensions.MetricType.name())
+                                                                             .withValue(metricType.name()))
+                                                     .withUnit(StandardUnit.Count)
+                                                     .withValue(Double.valueOf(count))
+                                                     .withTimestamp(endTimestamp(ti)))
+                    ;
         }
     }
 
@@ -171,14 +173,14 @@ public class PredefinedMetricTransformer {
             return Collections.emptyList();
         } else {
             return Collections.singletonList(new MetricDatum()
-                .withMetricName(req.getServiceName())
-                .withDimensions(new Dimension()
-                    .withName(Dimensions.MetricType.name())
-                    .withValue(metricType.name()))
-                .withUnit(StandardUnit.Count)
-                .withValue(Double.valueOf(count))
-                .withTimestamp(endTimestamp(ti)))
-                ;
+                                                     .withMetricName(req.getServiceName())
+                                                     .withDimensions(new Dimension()
+                                                                             .withName(Dimensions.MetricType.name())
+                                                                             .withValue(metricType.name()))
+                                                     .withUnit(StandardUnit.Count)
+                                                     .withValue(Double.valueOf(count))
+                                                     .withTimestamp(endTimestamp(ti)))
+                    ;
         }
     }
 
@@ -192,34 +194,34 @@ public class PredefinedMetricTransformer {
      *            true iff the "request" dimension is to be included;
      */
     protected List<MetricDatum> latencyMetricOf(MetricType metricType,
-            Request<?> req, Object response, boolean includesRequestType) {
+                                                Request<?> req, Object response, boolean includesRequestType) {
         AWSRequestMetrics m = req.getAWSRequestMetrics();
         TimingInfo root = m.getTimingInfo();
         final String metricName = metricType.name();
         List<TimingInfo> subMeasures =
-            root.getAllSubMeasurements(metricName);
+                root.getAllSubMeasurements(metricName);
         if (subMeasures != null) {
             List<MetricDatum> result =
-                new ArrayList<MetricDatum>(subMeasures.size());
+                    new ArrayList<MetricDatum>(subMeasures.size());
             for (TimingInfo sub : subMeasures) {
                 if (sub.isEndTimeKnown()) { // being defensive
                     List<Dimension> dims = new ArrayList<Dimension>();
                     dims.add(new Dimension()
-                            .withName(Dimensions.MetricType.name())
-                            .withValue(metricName));
+                                     .withName(Dimensions.MetricType.name())
+                                     .withValue(metricName));
                     // Either a non request type specific datum is created per
                     // sub-measurement, or a request type specific one is
                     // created but not both
                     if (includesRequestType) {
                         dims.add(new Dimension()
-                                .withName(Dimensions.RequestType.name())
-                                .withValue(requestType(req)));
+                                         .withName(Dimensions.RequestType.name())
+                                         .withValue(requestType(req)));
                     }
                     MetricDatum datum = new MetricDatum()
-                        .withMetricName(req.getServiceName())
-                        .withDimensions(dims)
-                        .withUnit(StandardUnit.Milliseconds)
-                        .withValue(sub.getTimeTakenMillisIfKnown());
+                            .withMetricName(req.getServiceName())
+                            .withDimensions(dims)
+                            .withUnit(StandardUnit.Milliseconds)
+                            .withValue(sub.getTimeTakenMillisIfKnown());
                     result.add(datum);
                 }
             }
@@ -241,17 +243,17 @@ public class PredefinedMetricTransformer {
         if (root.isEndTimeKnown()) { // being defensive
             List<Dimension> dims = new ArrayList<Dimension>();
             dims.add(new Dimension()
-                    .withName(Dimensions.MetricType.name())
-                    .withValue(metricName));
+                             .withName(Dimensions.MetricType.name())
+                             .withValue(metricName));
             // request type specific
             dims.add(new Dimension()
-                    .withName(Dimensions.RequestType.name())
-                    .withValue(requestType(req)));
+                             .withName(Dimensions.RequestType.name())
+                             .withValue(requestType(req)));
             MetricDatum datum = new MetricDatum()
-                .withMetricName(req.getServiceName())
-                .withDimensions(dims)
-                .withUnit(StandardUnit.Milliseconds)
-                .withValue(root.getTimeTakenMillisIfKnown());
+                    .withMetricName(req.getServiceName())
+                    .withDimensions(dims)
+                    .withUnit(StandardUnit.Milliseconds)
+                    .withValue(root.getTimeTakenMillisIfKnown());
             return Collections.singletonList(datum);
         }
         return Collections.emptyList();
@@ -273,7 +275,7 @@ public class PredefinedMetricTransformer {
      *            includes the "request" dimension
      */
     protected List<MetricDatum> counterMetricOf(MetricType type,
-            Request<?> req, Object resp, boolean includesRequestType) {
+                                                Request<?> req, Object resp, boolean includesRequestType) {
         AWSRequestMetrics m = req.getAWSRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         final String metricName = type.name();
@@ -288,23 +290,23 @@ public class PredefinedMetricTransformer {
         }
         final List<MetricDatum> result = new ArrayList<MetricDatum>();
         final Dimension metricDimension = new Dimension()
-            .withName(Dimensions.MetricType.name())
-            .withValue(metricName);
+                .withName(Dimensions.MetricType.name())
+                .withValue(metricName);
         // non-request type specific metric datum
         final MetricDatum first = new MetricDatum()
-            .withMetricName(req.getServiceName())
-            .withDimensions(metricDimension)
-            .withUnit(StandardUnit.Count)
-            .withValue(Double.valueOf(count))
-            .withTimestamp(endTimestamp(ti));
+                .withMetricName(req.getServiceName())
+                .withDimensions(metricDimension)
+                .withUnit(StandardUnit.Count)
+                .withValue(Double.valueOf(count))
+                .withTimestamp(endTimestamp(ti));
         result.add(first);
         if (includesRequestType) {
             // additional request type specific metric datum
             Dimension requestDimension = new Dimension()
-                .withName(Dimensions.RequestType.name())
-                .withValue(requestType(req));
+                    .withName(Dimensions.RequestType.name())
+                    .withValue(requestType(req));
             final MetricDatum second =
-                newMetricDatum(first, metricDimension, requestDimension);
+                    newMetricDatum(first, metricDimension, requestDimension);
             result.add(second);
         }
         return result;

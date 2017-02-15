@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.machinelearning;
 
 import java.io.ByteArrayInputStream;
@@ -47,28 +62,28 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
     private static final String DATA = "0, 42, foo, bar\n1, 38, alice, bob";
 
     private static final String DATA_SCHEMA = "{"
-            + "\"version\":\"1.0\","
-            + "\"recordAnnotationFieldName\":null,"
-            + "\"recordWeightFieldName\":null,"
-            + "\"targetFieldName\":\"a\","
-            + "\"dataFormat\":\"CSV\","
-            + "\"dataFileContainsHeader\":false,"
-            + "\"variables\": ["
-              + "{"
-                + "\"fieldName\":\"a\","
-                + "\"fieldType\":\"BINARY\""
-              + "},{"
-                + "\"fieldName\":\"b\","
-                + "\"fieldType\":\"NUMERIC\""
-              + "},{"
-                + "\"fieldName\":\"c\","
-                + "\"fieldType\":\"CATEGORICAL\""
-              + "},{"
-                + "\"fieldName\":\"d\","
-                + "\"fieldType\":\"TEXT\""
-              + "}"
-            + "]"
-          + "}";
+                                              + "\"version\":\"1.0\","
+                                              + "\"recordAnnotationFieldName\":null,"
+                                              + "\"recordWeightFieldName\":null,"
+                                              + "\"targetFieldName\":\"a\","
+                                              + "\"dataFormat\":\"CSV\","
+                                              + "\"dataFileContainsHeader\":false,"
+                                              + "\"variables\": ["
+                                              + "{"
+                                              + "\"fieldName\":\"a\","
+                                              + "\"fieldType\":\"BINARY\""
+                                              + "},{"
+                                              + "\"fieldName\":\"b\","
+                                              + "\"fieldType\":\"NUMERIC\""
+                                              + "},{"
+                                              + "\"fieldName\":\"c\","
+                                              + "\"fieldType\":\"CATEGORICAL\""
+                                              + "},{"
+                                              + "\"fieldName\":\"d\","
+                                              + "\"fieldType\":\"TEXT\""
+                                              + "}"
+                                              + "]"
+                                              + "}";
 
     private static AmazonS3Client s3;
     private static AmazonMachineLearningClient client;
@@ -98,149 +113,7 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
                 KEY,
                 new ByteArrayInputStream(DATA.getBytes()),
                 new ObjectMetadata())
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-    }
-
-    @Test
-    public void testBinary() throws Exception {
-        CreateDataSourceFromS3Result result =
-            client.createDataSourceFromS3(new CreateDataSourceFromS3Request()
-                .withDataSpec(new S3DataSpec()
-                        .withDataLocationS3(DATA_LOCATION_S3)
-                        .withDataSchema(DATA_SCHEMA))
-                .withComputeStatistics(true)
-                .withDataSourceId("data_" + System.currentTimeMillis()));
-
-        dataSourceId = result.getDataSourceId();
-
-        Assert.assertEquals("COMPLETED", waitForDataSource());
-
-        CreateMLModelResult result2 =
-            client.createMLModel(new CreateMLModelRequest()
-                .withTrainingDataSourceId(dataSourceId)
-                .withMLModelType(MLModelType.BINARY)
-                .withMLModelId("mlid_" + System.currentTimeMillis()));
-
-        mlModelId = result2.getMLModelId();
-
-        Assert.assertEquals("COMPLETED", waitForMLModel());
-
-
-        client.createRealtimeEndpoint(new CreateRealtimeEndpointRequest()
-                .withMLModelId(mlModelId));
-
-        String uri = waitUntilMounted();
-
-        // Apparently just because the endpoint is ready doesn't mean
-        // it's necessarily ready. :(
-        Thread.sleep(60000);
-
-        Prediction prediction = client.predict(new PredictRequest()
-                .withPredictEndpoint(uri)
-                .withMLModelId(mlModelId)
-                .withRecord(new HashMap<String, String>() {{
-                    put("b", "123");
-                    put("c", "oop");
-                    put("d", "goop");
-                }})).getPrediction();
-
-        System.out.println(prediction.getPredictedLabel());
-        System.out.println(prediction.getPredictedValue());
-        System.out.println(prediction.getPredictedScores());
-        System.out.println(prediction.getDetails());
-    }
-
-    private String waitForDataSource() throws InterruptedException {
-        for (int i = 0; i < 100; ++i) {
-            GetDataSourceResult result =
-                    client.getDataSource(new GetDataSourceRequest()
-                            .withDataSourceId(dataSourceId));
-
-            System.out.println(result);
-
-            String status = result.getStatus();
-            switch (EntityStatus.valueOf(status)) {
-            case PENDING:
-            case INPROGRESS:
-                Thread.sleep(10000);
-                break;
-
-            case FAILED:
-            case COMPLETED:
-            case DELETED:
-                return status;
-
-            default:
-                Assert.fail("Unrecognized data source validation status: "
-                        + status);
-            }
-        }
-
-        Assert.fail("Timed out waiting for data source validation");
-        return null;
-    }
-
-    private String waitForMLModel() throws InterruptedException {
-        for (int i = 0; i < 100; ++i) {
-            GetMLModelResult result =
-                    client.getMLModel(new GetMLModelRequest()
-                            .withMLModelId(mlModelId));
-
-            System.out.println(result);
-
-            String status = result.getStatus();
-            switch(EntityStatus.valueOf(status)) {
-            case PENDING:
-            case INPROGRESS:
-                Thread.sleep(10000);
-                continue;
-
-            case FAILED:
-            case COMPLETED:
-            case DELETED:
-                return status;
-
-            default:
-                throw new IllegalStateException("Unrecognized status: "
-                        + status);
-            }
-        }
-
-        Assert.fail("Timed out waiting for ML Model to be ready");
-        return null;
-    }
-
-    private String waitUntilMounted() throws InterruptedException {
-        for (int i = 0; i < 100; ++i) {
-            GetMLModelResult result =
-                    client.getMLModel(new GetMLModelRequest()
-                            .withMLModelId(mlModelId));
-
-            System.out.println(result);
-
-            RealtimeEndpointInfo info = result.getEndpointInfo();
-            if (info == null) {
-                Thread.sleep(1000);
-                continue;
-            }
-
-            String status = info.getEndpointStatus();
-            switch (RealtimeEndpointStatus.valueOf(status)) {
-            case READY:
-                return info.getEndpointUrl();
-
-            case UPDATING:
-                Thread.sleep(1000);
-                continue;
-
-            case NONE:
-            default:
-                Assert.fail("Not mounted!");
-            }
-        }
-
-        Assert.fail("Timed out waiting for ML model to get mounted");
-        return null;
+                             .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
     @AfterClass
@@ -249,14 +122,14 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
             if (mlModelId != null) {
                 try {
                     client.deleteRealtimeEndpoint(new DeleteRealtimeEndpointRequest()
-                            .withMLModelId(mlModelId));
+                                                          .withMLModelId(mlModelId));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 try {
                     client.deleteMLModel(new DeleteMLModelRequest()
-                            .withMLModelId(mlModelId));
+                                                 .withMLModelId(mlModelId));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -265,7 +138,7 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
             if (dataSourceId != null) {
                 try {
                     client.deleteDataSource(new DeleteDataSourceRequest()
-                            .withDataSourceId(dataSourceId));
+                                                    .withDataSourceId(dataSourceId));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -289,5 +162,147 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
 
             s3.shutdown();
         }
+    }
+
+    @Test
+    public void testBinary() throws Exception {
+        CreateDataSourceFromS3Result result =
+                client.createDataSourceFromS3(new CreateDataSourceFromS3Request()
+                                                      .withDataSpec(new S3DataSpec()
+                                                                            .withDataLocationS3(DATA_LOCATION_S3)
+                                                                            .withDataSchema(DATA_SCHEMA))
+                                                      .withComputeStatistics(true)
+                                                      .withDataSourceId("data_" + System.currentTimeMillis()));
+
+        dataSourceId = result.getDataSourceId();
+
+        Assert.assertEquals("COMPLETED", waitForDataSource());
+
+        CreateMLModelResult result2 =
+                client.createMLModel(new CreateMLModelRequest()
+                                             .withTrainingDataSourceId(dataSourceId)
+                                             .withMLModelType(MLModelType.BINARY)
+                                             .withMLModelId("mlid_" + System.currentTimeMillis()));
+
+        mlModelId = result2.getMLModelId();
+
+        Assert.assertEquals("COMPLETED", waitForMLModel());
+
+
+        client.createRealtimeEndpoint(new CreateRealtimeEndpointRequest()
+                                              .withMLModelId(mlModelId));
+
+        String uri = waitUntilMounted();
+
+        // Apparently just because the endpoint is ready doesn't mean
+        // it's necessarily ready. :(
+        Thread.sleep(60000);
+
+        Prediction prediction = client.predict(new PredictRequest()
+                                                       .withPredictEndpoint(uri)
+                                                       .withMLModelId(mlModelId)
+                                                       .withRecord(new HashMap<String, String>() {{
+                                                           put("b", "123");
+                                                           put("c", "oop");
+                                                           put("d", "goop");
+                                                       }})).getPrediction();
+
+        System.out.println(prediction.getPredictedLabel());
+        System.out.println(prediction.getPredictedValue());
+        System.out.println(prediction.getPredictedScores());
+        System.out.println(prediction.getDetails());
+    }
+
+    private String waitForDataSource() throws InterruptedException {
+        for (int i = 0; i < 100; ++i) {
+            GetDataSourceResult result =
+                    client.getDataSource(new GetDataSourceRequest()
+                                                 .withDataSourceId(dataSourceId));
+
+            System.out.println(result);
+
+            String status = result.getStatus();
+            switch (EntityStatus.valueOf(status)) {
+                case PENDING:
+                case INPROGRESS:
+                    Thread.sleep(10000);
+                    break;
+
+                case FAILED:
+                case COMPLETED:
+                case DELETED:
+                    return status;
+
+                default:
+                    Assert.fail("Unrecognized data source validation status: "
+                                + status);
+            }
+        }
+
+        Assert.fail("Timed out waiting for data source validation");
+        return null;
+    }
+
+    private String waitForMLModel() throws InterruptedException {
+        for (int i = 0; i < 100; ++i) {
+            GetMLModelResult result =
+                    client.getMLModel(new GetMLModelRequest()
+                                              .withMLModelId(mlModelId));
+
+            System.out.println(result);
+
+            String status = result.getStatus();
+            switch (EntityStatus.valueOf(status)) {
+                case PENDING:
+                case INPROGRESS:
+                    Thread.sleep(10000);
+                    continue;
+
+                case FAILED:
+                case COMPLETED:
+                case DELETED:
+                    return status;
+
+                default:
+                    throw new IllegalStateException("Unrecognized status: "
+                                                    + status);
+            }
+        }
+
+        Assert.fail("Timed out waiting for ML Model to be ready");
+        return null;
+    }
+
+    private String waitUntilMounted() throws InterruptedException {
+        for (int i = 0; i < 100; ++i) {
+            GetMLModelResult result =
+                    client.getMLModel(new GetMLModelRequest()
+                                              .withMLModelId(mlModelId));
+
+            System.out.println(result);
+
+            RealtimeEndpointInfo info = result.getEndpointInfo();
+            if (info == null) {
+                Thread.sleep(1000);
+                continue;
+            }
+
+            String status = info.getEndpointStatus();
+            switch (RealtimeEndpointStatus.valueOf(status)) {
+                case READY:
+                    return info.getEndpointUrl();
+
+                case UPDATING:
+                    Thread.sleep(1000);
+                    continue;
+
+                case NONE:
+                default:
+                    Assert.fail("Not mounted!");
+            }
+        }
+
+        Assert.fail("Timed out waiting for ML model to get mounted");
+        return null;
     }
 }

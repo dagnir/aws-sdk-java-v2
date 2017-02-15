@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -28,12 +29,12 @@ import software.amazon.awssdk.services.s3.model.TopicConfiguration;
 /**
  * Base class for unmarshalling into subclasses of {@link NotificationConfiguration}. Current only
  * {@link QueueConfiguration} and {@link TopicConfiguration} extend this class.
- * 
+ *
  * @param <T>
  *            Concrete type of {@link NotificationConfiguration}
  */
 abstract class NotificationConfigurationStaxUnmarshaller<T extends NotificationConfiguration> implements
-        Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
+                                                                                              Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
 
     /**
      * Id (aka configuration name) isn't modeled on the actual {@link NotificationConfiguration}
@@ -84,7 +85,7 @@ abstract class NotificationConfigurationStaxUnmarshaller<T extends NotificationC
     /**
      * Callback to allow subclass first shot at handling an XML event. Only attribute and start
      * element events are forwarded to subclasses
-     * 
+     *
      * @param config
      *            {@link NotificationConfiguration} object we are unmarshalling into
      * @param context

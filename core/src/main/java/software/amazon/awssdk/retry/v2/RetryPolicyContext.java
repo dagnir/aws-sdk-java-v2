@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,6 +46,11 @@ public class RetryPolicyContext {
         this.httpStatusCode = httpStatusCode;
     }
 
+    @SdkInternalApi
+    public static Builder builder() {
+        return new Builder();
+    }
+
     /**
      * @return The original request passed to the client method for an operation.
      */
@@ -87,11 +92,6 @@ public class RetryPolicyContext {
      */
     public Integer httpStatusCode() {
         return this.httpStatusCode;
-    }
-
-    @SdkInternalApi
-    public static Builder builder() {
-        return new Builder();
     }
 
     @SdkInternalApi

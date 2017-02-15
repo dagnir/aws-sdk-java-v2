@@ -35,18 +35,15 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
 
     public static final AmazonWebServiceRequest NOOP = new AmazonWebServiceRequest() {
     };
-
-    /**
-     * The optional progress listener for receiving updates about the progress of the request.
-     */
-    private ProgressListener progressListener = ProgressListener.NOOP;
-
     /**
      * Arbitrary options storage for individual {@link AmazonWebServiceRequest}s. This field is not
      * intended to be used by clients.
      */
     private final RequestClientOptions requestClientOptions = new RequestClientOptions();
-
+    /**
+     * The optional progress listener for receiving updates about the progress of the request.
+     */
+    private ProgressListener progressListener = ProgressListener.NOOP;
     /**
      * A request metric collector used for this specific service request; or null if there is none.
      * This collector always takes precedence over the ones specified at the http client level and
@@ -80,19 +77,6 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
     private Integer sdkClientExecutionTimeout = null;
 
     /**
-     * Sets the optional credentials to use for this request, overriding the default credentials set at the client level.
-     *
-     * @param credentials The optional AWS security credentials to use for this request, overriding the default credentials set at
-     *                    the client level.
-     * @deprecated by {@link #setRequestCredentialsProvider(AWSCredentialsProvider)}. If you must use {@link AWSCredentials} you
-     * can wrap it with a {@link AWSStaticCredentialsProvider}.
-     */
-    @Deprecated
-    public void setRequestCredentials(AWSCredentials credentials) {
-        this.credentialsProvider = credentials == null ? null : new AWSStaticCredentialsProvider(credentials);
-    }
-
-    /**
      * Returns the optional credentials to use to sign this request, overriding the default
      * credentials set at the client level.
      *
@@ -107,15 +91,16 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
     }
 
     /**
-     * Sets the optional credentials provider to use for this request, overriding the default credentials
-     * provider at the client level.
+     * Sets the optional credentials to use for this request, overriding the default credentials set at the client level.
      *
-     * @param credentialsProvider
-     *            The optional AWS security credentials provider to use for this request, overriding the
-     *            default credentials provider at the client level.
+     * @param credentials The optional AWS security credentials to use for this request, overriding the default credentials set at
+     *                    the client level.
+     * @deprecated by {@link #setRequestCredentialsProvider(AWSCredentialsProvider)}. If you must use {@link AWSCredentials} you
+     * can wrap it with a {@link AWSStaticCredentialsProvider}.
      */
-    public void setRequestCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
-        this.credentialsProvider = credentialsProvider;
+    @Deprecated
+    public void setRequestCredentials(AWSCredentials credentials) {
+        this.credentialsProvider = credentials == null ? null : new AWSStaticCredentialsProvider(credentials);
     }
 
     /**
@@ -127,6 +112,18 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      */
     public AWSCredentialsProvider getRequestCredentialsProvider() {
         return credentialsProvider;
+    }
+
+    /**
+     * Sets the optional credentials provider to use for this request, overriding the default credentials
+     * provider at the client level.
+     *
+     * @param credentialsProvider
+     *            The optional AWS security credentials provider to use for this request, overriding the
+     *            default credentials provider at the client level.
+     */
+    public void setRequestCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
+        this.credentialsProvider = credentialsProvider;
     }
 
     /**
@@ -163,16 +160,6 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
     }
 
     /**
-     * Sets the optional progress listener for receiving updates about the progress of the request.
-     *
-     * @param progressListener
-     *            The new progress listener.
-     */
-    public void setGeneralProgressListener(ProgressListener progressListener) {
-        this.progressListener = progressListener == null ? ProgressListener.NOOP : progressListener;
-    }
-
-    /**
      * Returns the optional progress listener for receiving updates about the progress of the
      * request.
      *
@@ -181,6 +168,16 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      */
     public ProgressListener getGeneralProgressListener() {
         return progressListener;
+    }
+
+    /**
+     * Sets the optional progress listener for receiving updates about the progress of the request.
+     *
+     * @param progressListener
+     *            The new progress listener.
+     */
+    public void setGeneralProgressListener(ProgressListener progressListener) {
+        this.progressListener = progressListener == null ? ProgressListener.NOOP : progressListener;
     }
 
     /**
@@ -282,8 +279,9 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      */
     protected final <T extends AmazonWebServiceRequest> T copyBaseTo(T target) {
         if (customRequestHeaders != null) {
-            for (Map.Entry<String, String> e : customRequestHeaders.entrySet())
+            for (Map.Entry<String, String> e : customRequestHeaders.entrySet()) {
                 target.putCustomRequestHeader(e.getKey(), e.getValue());
+            }
         }
         if (customQueryParameters != null) {
             for (Map.Entry<String, List<String>> e : customQueryParameters.entrySet()) {
@@ -310,6 +308,10 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
         return cloneSource;
     }
 
+    private void setCloneSource(AmazonWebServiceRequest cloneSource) {
+        this.cloneSource = cloneSource;
+    }
+
     /**
      * Returns the root object from which the current object was cloned; or null if there isn't one.
      */
@@ -321,10 +323,6 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
             }
         }
         return cloneRoot;
-    }
-
-    private void setCloneSource(AmazonWebServiceRequest cloneSource) {
-        this.cloneSource = cloneSource;
     }
 
     /**

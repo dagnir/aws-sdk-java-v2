@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import software.amazon.awssdk.event.ProgressListener;
@@ -21,12 +22,11 @@ import software.amazon.awssdk.services.s3.transfer.PersistableTransfer;
  * S3 specific progress listener chain.
  */
 public class S3ProgressListenerChain extends
-        software.amazon.awssdk.event.ProgressListenerChain implements S3ProgressListener
-{
+                                     software.amazon.awssdk.event.ProgressListenerChain implements S3ProgressListener {
     /**
      * Create a listener chain that directly passes all the progress events to
      * the specified listeners.
-     * 
+     *
      * @param listeners only listeners of type {@link S3ProgressListener}
      * will be notified with the S3 transfer events. 
      */
@@ -38,7 +38,7 @@ public class S3ProgressListenerChain extends
     public void onPersistableTransfer(PersistableTransfer persistableTransfer) {
         for (ProgressListener listener : getListeners()) {
             if (listener instanceof S3ProgressListener) {
-                S3ProgressListener s3listener = (S3ProgressListener)listener;
+                S3ProgressListener s3listener = (S3ProgressListener) listener;
                 s3listener.onPersistableTransfer(persistableTransfer);
             }
         }

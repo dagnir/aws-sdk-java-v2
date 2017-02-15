@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,29 +37,29 @@ public class RetryPolicyContexts {
 
     public static RetryPolicyContext withException(SdkBaseException e) {
         return RetryPolicyContext.builder()
-                .exception(e)
-                .build();
+                                 .exception(e)
+                                 .build();
     }
 
     public static RetryPolicyContext withStatusCode(Integer httpStatusCode) {
         return RetryPolicyContext.builder()
-                .httpStatusCode(httpStatusCode)
-                .build();
+                                 .httpStatusCode(httpStatusCode)
+                                 .build();
     }
 
     public static RetryPolicyContext withRetriesAttempted(int retriesAttempted) {
         return RetryPolicyContext.builder()
-                .retriesAttempted(retriesAttempted)
-                .build();
+                                 .retriesAttempted(retriesAttempted)
+                                 .build();
     }
 
     public static RetryPolicyContext fromLegacy(AmazonClientException exception,
                                                 AmazonWebServiceRequest origRequest,
                                                 int retriesAttempted) {
         return RetryPolicyContext.builder()
-                .exception(exception)
-                .originalRequest(origRequest)
-                .retriesAttempted(retriesAttempted)
-                .build();
+                                 .exception(exception)
+                                 .originalRequest(origRequest)
+                                 .retriesAttempted(retriesAttempted)
+                                 .build();
     }
 }

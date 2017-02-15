@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -122,11 +122,11 @@ public enum CloudFrontCookieSigner {
      * @return The signed cookies.
      */
     public static CookiesForCannedPolicy getCookiesForCannedPolicy(Protocol protocol,
-                                                         String distributionDomain,
-                                                         PrivateKey privateKey,
-                                                         String resourcePath,
-                                                         String keyPairId,
-                                                         Date expiresOn) {
+                                                                   String distributionDomain,
+                                                                   PrivateKey privateKey,
+                                                                   String resourcePath,
+                                                                   String keyPairId,
+                                                                   Date expiresOn) {
         String url = generateResourcePath(protocol, distributionDomain, resourcePath);
         return getCookiesForCannedPolicy(url, keyPairId, privateKey, expiresOn);
     }
@@ -176,9 +176,9 @@ public enum CloudFrontCookieSigner {
      * @return The signed cookies.
      */
     public static CookiesForCannedPolicy getCookiesForCannedPolicy(String resourceUrlOrPath,
-                                                         String keyPairId,
-                                                         PrivateKey privateKey,
-                                                         Date expiresOn) {
+                                                                   String keyPairId,
+                                                                   PrivateKey privateKey,
+                                                                   Date expiresOn) {
         try {
             final String cannedPolicy = buildCannedPolicy(resourceUrlOrPath, expiresOn);
             byte[] signatureBytes = signWithSha1RSA(cannedPolicy.getBytes(UTF8), privateKey);
@@ -242,7 +242,7 @@ public enum CloudFrontCookieSigner {
                                                                    String ipRange) {
         final String url = generateResourcePath(protocol, distributionDomain, resourcePath);
         return getCookiesForCustomPolicy(url, privateKey, keyPairId, expiresOn,
-                activeFrom, ipRange);
+                                         activeFrom, ipRange);
     }
 
     /**
@@ -298,7 +298,7 @@ public enum CloudFrontCookieSigner {
                                                                    Date expiresOn,
                                                                    String ipRange) {
         return getCookiesForCustomPolicy(protocol, distributionDomain, privateKey, resourcePath, keyPairId,
-                expiresOn, null, ipRange);
+                                         expiresOn, null, ipRange);
     }
 
     /**
@@ -312,6 +312,26 @@ public enum CloudFrontCookieSigner {
          * in the <i>Amazon CloudFront User Guide</i>.
          */
         protected Map.Entry<String, String> keyPairId;
+        /**
+         * The hashed and signed version of the policy.
+         */
+        protected Map.Entry<String, String> signature;
+
+        public Map.Entry<String, String> getKeyPairId() {
+            return keyPairId;
+        }
+
+        public void setKeyPairId(String keyPairId) {
+            this.keyPairId = new CookieKeyValuePair(KEY_PAIR_ID_KEY, keyPairId);
+        }
+
+        public Map.Entry<String, String> getSignature() {
+            return signature;
+        }
+
+        public void setSignature(String signature) {
+            this.signature = new CookieKeyValuePair(SIGNATURE_KEY, signature);
+        }
 
         protected static class CookieKeyValuePair implements Map.Entry<String, String> {
             private String key;
@@ -338,27 +358,6 @@ public enum CloudFrontCookieSigner {
                 this.value = value;
                 return originalValue;
             }
-        }
-
-        /**
-         * The hashed and signed version of the policy.
-         */
-        protected Map.Entry<String, String> signature;
-
-        public Map.Entry<String, String> getKeyPairId() {
-            return keyPairId;
-        }
-
-        public void setKeyPairId(String keyPairId) {
-            this.keyPairId = new CookieKeyValuePair(KEY_PAIR_ID_KEY, keyPairId);
-        }
-
-        public Map.Entry<String, String> getSignature() {
-            return signature;
-        }
-
-        public void setSignature(String signature) {
-            this.signature = new CookieKeyValuePair(SIGNATURE_KEY, signature);
         }
     }
 

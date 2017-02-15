@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertTrue;
@@ -62,9 +77,9 @@ public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationT
         keyPair = generateKeyPair("RSA", 1024);
         temporaryFile = generateRandomAsciiFile(RANDOM_OBJECT_DATA_LENGTH);
         s3 = new AmazonS3EncryptionClient(credentials,
-                new EncryptionMaterials(keyPair),
-                // subclass specifies the crypto mode to use
-                newCryptoConfiguration());
+                                          new EncryptionMaterials(keyPair),
+                                          // subclass specifies the crypto mode to use
+                                          newCryptoConfiguration());
         s3.createBucket(bucket);
 
         CryptoConfiguration cryptoConfig = newCryptoConfiguration();
@@ -76,8 +91,9 @@ public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationT
         if (temporaryFile != null) {
             temporaryFile.delete();
         }
-        if (cleanup)
+        if (cleanup) {
             deleteBucketAndAllContents(bucket);
+        }
     }
 
     /**
@@ -89,26 +105,25 @@ public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationT
         long lastPartLength = 1024;
         final String key = "testMultipartLastPart_1_Retry";
         InitiateMultipartUploadResult initiateMultipartUpload =
-            s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
+                s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
         String uploadId = initiateMultipartUpload.getUploadId();
         UnreliableRepeatableFileInputStream is =
-            new UnreliableRepeatableFileInputStream(temporaryFile)
-            .withNumberOfErrors(1)  // 1 failure
-            .disableClose() // requires explicit release
-            ;
+                new UnreliableRepeatableFileInputStream(temporaryFile)
+                        .withNumberOfErrors(1)  // 1 failure
+                        .disableClose() // requires explicit release
+                ;
 
         UploadPartResult result = s3.uploadPart(new UploadPartRequest()
-            .withBucketName(bucket)
-            .withKey(key)
-            .withLastPart(true)
-            .withInputStream(is)
-            .withPartNumber(1)
-            .withPartSize(lastPartLength)
-            .withUploadId(uploadId))
-            ;
+                                                        .withBucketName(bucket)
+                                                        .withKey(key)
+                                                        .withLastPart(true)
+                                                        .withInputStream(is)
+                                                        .withPartNumber(1)
+                                                        .withPartSize(lastPartLength)
+                                                        .withUploadId(uploadId));
         is.release();
         s3.completeMultipartUpload(new CompleteMultipartUploadRequest(
-                bucket, key, uploadId, Arrays .asList(result.getPartETag())));
+                bucket, key, uploadId, Arrays.asList(result.getPartETag())));
         S3Object s3Object = s3.getObject(bucket, key);
         byte[] md5file = CryptoTestUtils.md5of(temporaryFile);
         byte[] md5s3object = CryptoTestUtils.md5of(s3Object);
@@ -119,13 +134,13 @@ public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationT
      * Tests the intrinsic retry fails on uploading the last part of a
      * multi-part upload when the number of failure exceeded the maximum.
      */
-    @Test(expected=AmazonClientException.class)
+    @Test(expected = AmazonClientException.class)
     public void testMultipartLastPart_ExceedIntrinsicRetries() throws Exception {
         long lastPartLength = 1024;
         final String key = "testMultipartLastPart_ExceedIntrinsicRetries";
 
         InitiateMultipartUploadResult initiateMultipartUpload =
-            s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
+                s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
         String uploadId = initiateMultipartUpload.getUploadId();
         UnreliableRepeatableFileInputStream is = new UnreliableRepeatableFileInputStream(temporaryFile)
                 .withNumberOfErrors(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY + 1)
@@ -133,14 +148,13 @@ public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationT
                 ;
         try {
             UploadPartResult result = s3.uploadPart(new UploadPartRequest()
-                .withBucketName(bucket)
-                .withKey(key)
-                .withLastPart(true)
-                .withInputStream(is)
-                .withPartNumber(1)
-                .withPartSize(lastPartLength)
-                .withUploadId(uploadId))
-                ;
+                                                            .withBucketName(bucket)
+                                                            .withKey(key)
+                                                            .withLastPart(true)
+                                                            .withInputStream(is)
+                                                            .withPartNumber(1)
+                                                            .withPartSize(lastPartLength)
+                                                            .withUploadId(uploadId));
         } finally {
             is.release();
         }
@@ -156,44 +170,42 @@ public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationT
         final String key = "testMultipartLastPart_ExtrinsicRetry";
 
         InitiateMultipartUploadResult initiateMultipartUpload =
-            s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
+                s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucket, key));
         String uploadId = initiateMultipartUpload.getUploadId();
         {   // Number of failures exceed the default number of retries
             UnreliableRepeatableFileInputStream is =
-                new UnreliableRepeatableFileInputStream(temporaryFile)
-                .withNumberOfErrors(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY + 1)
-                .disableClose() // requires explicit release
-                ;
+                    new UnreliableRepeatableFileInputStream(temporaryFile)
+                            .withNumberOfErrors(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY + 1)
+                            .disableClose() // requires explicit release
+                    ;
             try {
                 UploadPartResult result = s3.uploadPart(new UploadPartRequest()
-                    .withBucketName(bucket)
-                    .withKey(key)
-                    .withLastPart(true)
-                    .withInputStream(is)
-                    .withPartNumber(1)
-                    .withPartSize(lastPartLength)
-                    .withUploadId(uploadId))
-                    ;
+                                                                .withBucketName(bucket)
+                                                                .withKey(key)
+                                                                .withLastPart(true)
+                                                                .withInputStream(is)
+                                                                .withPartNumber(1)
+                                                                .withPartSize(lastPartLength)
+                                                                .withUploadId(uploadId));
                 fail();
-            } catch(AmazonClientException expected) {
+            } catch (AmazonClientException expected) {
             } finally {
                 is.release();
             }
         }
         {   // Extrinsic retry
             UnreliableRepeatableFileInputStream is =
-                new UnreliableRepeatableFileInputStream(temporaryFile)
-                .disableClose();    // requires explicit release
+                    new UnreliableRepeatableFileInputStream(temporaryFile)
+                            .disableClose();    // requires explicit release
             try {
                 UploadPartResult result = s3.uploadPart(new UploadPartRequest()
-                    .withBucketName(bucket)
-                    .withKey(key)
-                    .withLastPart(true)
-                    .withInputStream(is)
-                    .withPartNumber(1)
-                    .withPartSize(lastPartLength)
-                    .withUploadId(uploadId))
-                    ;
+                                                                .withBucketName(bucket)
+                                                                .withKey(key)
+                                                                .withLastPart(true)
+                                                                .withInputStream(is)
+                                                                .withPartNumber(1)
+                                                                .withPartSize(lastPartLength)
+                                                                .withUploadId(uploadId));
             } finally {
                 is.release();
             }

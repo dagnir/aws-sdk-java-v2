@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ public interface PutItemApi {
     /**
      * Conditional put.
      */
-    public PutItemOutcome putItem(Item item, Expected ... expected);
+    public PutItemOutcome putItem(Item item, Expected... expected);
 
     /**
      * Conditional put via condition expression.
      */
     public PutItemOutcome putItem(Item item, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap);
+                                  Map<String, String> nameMap, Map<String, Object> valueMap);
 
     /** Puts an item by specifying all the details. */
     public PutItemOutcome putItem(PutItemSpec spec);

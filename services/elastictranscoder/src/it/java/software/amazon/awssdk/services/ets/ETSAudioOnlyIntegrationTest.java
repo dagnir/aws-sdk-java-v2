@@ -38,16 +38,6 @@ import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 
 public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
     private final static String PIPE_NAME = "java-sdk-pipeline" + System.currentTimeMillis();
-    private String pipelineId;
-    private static String jobId;
-    private PipelineOutputConfig contentConfig;
-    private PipelineOutputConfig thumbnailConfig;
-    private static String presetId;
-    private AudioParameters audio;
-    private String presetName;
-    private String presetDescription;
-    private static String topicArn;
-
     private final static String INPUT_BUCKET_NAME = "java-integration-test-input-bucket" + System.currentTimeMillis();
     private final static String OUTPUT_BUCKET_NAME = "java-integration-test-output-bucket";
     private final static String INPUT_KEY = "123";
@@ -58,10 +48,17 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
     private final static String INTERLACED = "auto";
     private final static String ROTATION = "270";
     private final static String OUTPUT_KEY = "321";
-
-
+    private static String jobId;
+    private static String presetId;
+    private static String topicArn;
     private final String STORAGE_CLASS = "ReducedRedundancy";
     private final String ROLE = "arn:aws:iam::599169622985:role/role-java-data-pipeline-test";
+    private String pipelineId;
+    private PipelineOutputConfig contentConfig;
+    private PipelineOutputConfig thumbnailConfig;
+    private AudioParameters audio;
+    private String presetName;
+    private String presetDescription;
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
@@ -92,14 +89,14 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
     public static void teardown() {
 
         try {
-          ets.cancelJob(new CancelJobRequest().withId(jobId));
-        } catch(Exception e) {
+            ets.cancelJob(new CancelJobRequest().withId(jobId));
+        } catch (Exception e) {
 
         }
 
         try {
-        ets.deletePreset(new DeletePresetRequest().withId(presetId));
-        } catch(Exception e) {
+            ets.deletePreset(new DeletePresetRequest().withId(presetId));
+        } catch (Exception e) {
 
         }
 
@@ -114,9 +111,15 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
             }
         }
 
-        try {s3.deleteBucket(INPUT_BUCKET_NAME);} catch (Exception e) {}
+        try {
+            s3.deleteBucket(INPUT_BUCKET_NAME);
+        } catch (Exception e) {
+        }
 
-        try {s3.deleteBucket(OUTPUT_BUCKET_NAME);} catch (Exception e) {}
+        try {
+            s3.deleteBucket(OUTPUT_BUCKET_NAME);
+        } catch (Exception e) {
+        }
 
         try {
             sns.deleteTopic(new DeleteTopicRequest().withTopicArn(topicArn));
@@ -125,8 +128,8 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         }
     }
 
-   @Test
-   public void testAudioOnlyOperation() throws InterruptedException {
+    @Test
+    public void testAudioOnlyOperation() throws InterruptedException {
         // Create Pipeline
         Notifications notifications = new Notifications();
         notifications.setCompleted("");
@@ -134,55 +137,54 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         notifications.setProgressing("");
         notifications.setWarning("");
 
-       Permission permission = new Permission()
-                                    .withGrantee("AllUsers")
-                                    .withGranteeType("Group")
-                                    .withAccess("Read");
+        Permission permission = new Permission()
+                .withGrantee("AllUsers")
+                .withGranteeType("Group")
+                .withAccess("Read");
 
-       contentConfig = new PipelineOutputConfig()
-                              .withBucket(OUTPUT_BUCKET_NAME)
-                              .withStorageClass(STORAGE_CLASS)
-                              .withPermissions(permission);
+        contentConfig = new PipelineOutputConfig()
+                .withBucket(OUTPUT_BUCKET_NAME)
+                .withStorageClass(STORAGE_CLASS)
+                .withPermissions(permission);
 
-       thumbnailConfig = new PipelineOutputConfig()
-                              .withBucket(OUTPUT_BUCKET_NAME)
-                              .withStorageClass(STORAGE_CLASS)
-                              .withPermissions(permission);
+        thumbnailConfig = new PipelineOutputConfig()
+                .withBucket(OUTPUT_BUCKET_NAME)
+                .withStorageClass(STORAGE_CLASS)
+                .withPermissions(permission);
 
-       CreatePipelineResult createPipelienResult = ets.createPipeline(
-                                               new CreatePipelineRequest()
-                                                    .withName(PIPE_NAME)
-                                                    .withInputBucket(INPUT_BUCKET_NAME)
-                                                    .withNotifications(notifications)
-                                                    .withRole(ROLE)
-                                                    .withThumbnailConfig(thumbnailConfig)
-                                                    .withContentConfig(contentConfig));
+        CreatePipelineResult createPipelienResult = ets.createPipeline(
+                new CreatePipelineRequest()
+                        .withName(PIPE_NAME)
+                        .withInputBucket(INPUT_BUCKET_NAME)
+                        .withNotifications(notifications)
+                        .withRole(ROLE)
+                        .withThumbnailConfig(thumbnailConfig)
+                        .withContentConfig(contentConfig));
 
-       Pipeline pipeline = createPipelienResult.getPipeline();
-       pipelineId = pipeline.getId();
+        Pipeline pipeline = createPipelienResult.getPipeline();
+        pipelineId = pipeline.getId();
 
-       Thread.sleep(1000 * 5);
+        Thread.sleep(1000 * 5);
 
         JobInput input = new JobInput()
-                              .withKey(INPUT_KEY)
-                              .withAspectRatio(RATIO)
-                              .withContainer(CONTAINER)
-                              .withFrameRate(RATE)
-                              .withResolution(RESOLUTION)
-                              .withInterlaced(INTERLACED);
+                .withKey(INPUT_KEY)
+                .withAspectRatio(RATIO)
+                .withContainer(CONTAINER)
+                .withFrameRate(RATE)
+                .withResolution(RESOLUTION)
+                .withInterlaced(INTERLACED);
 
 
         initializePresetParameters();
 
 
-
         // Create preset
         CreatePresetResult createPresetResult = ets.createPreset(new CreatePresetRequest()
-                                        .withContainer("mp3")
-                                        .withDescription(presetDescription)
-                                        .withName(presetName)
-                                        .withAudio(audio)
-                                       );
+                                                                         .withContainer("mp3")
+                                                                         .withDescription(presetDescription)
+                                                                         .withName(presetName)
+                                                                         .withAudio(audio)
+                                                                );
 
         presetId = createPresetResult.getPreset().getId();
 
@@ -209,12 +211,12 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         clip.setTimeSpan(timeSpan);
 
         CreateJobOutput output = new CreateJobOutput()
-                                       .withKey(OUTPUT_KEY)
-                                       .withAlbumArt(albumArt)
-                                       .withThumbnailPattern("")
-                                       .withPresetId(presetId)
-                                       .withRotate(ROTATION)
-                                       .withComposition(clip);
+                .withKey(OUTPUT_KEY)
+                .withAlbumArt(albumArt)
+                .withThumbnailPattern("")
+                .withPresetId(presetId)
+                .withRotate(ROTATION)
+                .withComposition(clip);
 
         List<CreateJobOutput> outputs = new LinkedList<CreateJobOutput>();
         outputs.add(output);
@@ -222,9 +224,9 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
 
         // Create job
         CreateJobResult createJobResult = ets.createJob(new CreateJobRequest()
-                                             .withPipelineId(pipelineId)
-                                             .withInput(input)
-                                             .withOutputs(outputs));
+                                                                .withPipelineId(pipelineId)
+                                                                .withInput(input)
+                                                                .withOutputs(outputs));
 
         jobId = createJobResult.getJob().getId();
         assertNotNull(jobId);
@@ -251,10 +253,10 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         presetDescription = "my-preset";
 
         audio = new AudioParameters()
-                     .withCodec("mp3")
-                     .withSampleRate("auto")
-                     .withBitRate("70")
-                     .withChannels("auto");
+                .withCodec("mp3")
+                .withSampleRate("auto")
+                .withBitRate("70")
+                .withChannels("auto");
     }
 }
 

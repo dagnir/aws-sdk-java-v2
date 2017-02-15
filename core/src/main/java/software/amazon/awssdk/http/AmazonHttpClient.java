@@ -129,26 +129,19 @@ public class AmazonHttpClient {
     public static final String HEADER_SDK_TRANSACTION_ID = "amz-sdk-invocation-id";
     public static final String HEADER_SDK_RETRY_INFO = "amz-sdk-retry";
     /**
-     * Logger for more detailed debugging information, that might not be as useful for end users
-     * (ex: HTTP client configuration, etc).
-     */
-    static final Log log = LogFactory.getLog(AmazonHttpClient.class);
-
-    /**
      * Logger providing detailed information on requests/responses. Users can enable this logger to
      * get access to AWS request IDs for responses, individual requests and parameters sent to AWS,
      * etc.
      */
     @SdkInternalApi
     public static final Log requestLog = LogFactory.getLog("software.amazon.awssdk.request");
-
+    /**
+     * Logger for more detailed debugging information, that might not be as useful for end users
+     * (ex: HTTP client configuration, etc).
+     */
+    static final Log log = LogFactory.getLog(AmazonHttpClient.class);
     private static final HttpClientFactory<ConnectionManagerAwareHttpClient> httpClientFactory = new
             ApacheHttpClientFactory();
-    /**
-     * Used for testing via failure injection.
-     */
-    private static UnreliableTestConfig unreliableTestConfig;
-
     /**
      * When throttled retries are enabled, each retry attempt will consume this much capacity.
      * Successful retry attempts will release this capacity back to the pool while failed retries
@@ -156,12 +149,15 @@ public class AmazonHttpClient {
      * pool.
      */
     private static final int THROTTLED_RETRY_COST = 5;
-
     /**
      * When throttled retries are enabled, this is the total number of subsequent failed retries
      * that may be attempted before retry capacity is fully drained.
      */
     private static final int THROTTLED_RETRIES = 100;
+    /**
+     * Used for testing via failure injection.
+     */
+    private static UnreliableTestConfig unreliableTestConfig;
 
     static {
         // Customers have reported XML parsing issues with the following
@@ -181,16 +177,10 @@ public class AmazonHttpClient {
     private final HttpRequestFactory<HttpRequestBase> httpRequestFactory =
             new ApacheHttpRequestFactory();
     /**
-     * Internal client for sending HTTP requests
-     */
-    private ConnectionManagerAwareHttpClient httpClient;
-    /**
      * Client configuration options, such as proxy httpClientSettings, max retries, etc.
      */
     private final ClientConfiguration config;
-
     private final RetryPolicy retryPolicy;
-
     /**
      * Client configuration options, such as proxy httpClientSettings, max retries, etc.
      */
@@ -203,12 +193,10 @@ public class AmazonHttpClient {
      * Timer to enforce HTTP request timeouts.
      */
     private final HttpRequestTimer httpRequestTimer;
-
     /**
      * Retry capacity manager, used to manage throttled retry resource
      */
     private final CapacityManager retryCapacity;
-
     /**
      * Timer to enforce timeouts on the whole execution of the request (request handlers, retries,
      * backoff strategy, unmarshalling, etc)
@@ -222,14 +210,16 @@ public class AmazonHttpClient {
      * @see AwsSdkMetrics
      */
     private final RequestMetricCollector requestMetricCollector;
-
     /**
      * Used to generate UUID's for client transaction id. This gives a higher probability of id
      * clashes but is more performant then using {@link UUID#randomUUID()} which uses SecureRandom
      * internally.
      **/
     private final Random random = new Random();
-
+    /**
+     * Internal client for sending HTTP requests
+     */
+    private ConnectionManagerAwareHttpClient httpClient;
     /**
      * The time difference in seconds between this client and AWS.
      */
@@ -342,15 +332,15 @@ public class AmazonHttpClient {
         this.requestMetricCollector = requestMetricCollector;
         this.responseMetadataCache =
                 clientConfig.getCacheResponseMetadata() ?
-                        new ResponseMetadataCache(clientConfig.getResponseMetadataCacheSize()) :
-                        new NullResponseMetadataCache();
+                new ResponseMetadataCache(clientConfig.getResponseMetadataCacheSize()) :
+                new NullResponseMetadataCache();
         this.httpRequestTimer = new HttpRequestTimer();
         this.clientExecutionTimer = new ClientExecutionTimer();
 
         // When enabled, total retry capacity is computed based on retry cost
         // and desired number of retries.
         int throttledRetryMaxCapacity = clientConfig.useThrottledRetries()
-                ? THROTTLED_RETRY_COST * THROTTLED_RETRIES : -1;
+                                        ? THROTTLED_RETRY_COST * THROTTLED_RETRIES : -1;
         this.retryCapacity = new CapacityManager(throttledRetryMaxCapacity);
     }
 
@@ -358,55 +348,21 @@ public class AmazonHttpClient {
         return new Builder();
     }
 
-    public static class Builder {
-
-        private ClientConfiguration clientConfig;
-        private RetryPolicy retryPolicy;
-        private RequestMetricCollector requestMetricCollector;
-        private boolean useBrowserCompatibleHostNameVerifier;
-        private boolean calculateCRC32FromCompressedData;
-
-        private Builder() {
-        }
-
-        public Builder clientConfiguration(ClientConfiguration clientConfig) {
-            this.clientConfig = clientConfig;
-            return this;
-        }
-
-        public Builder retryPolicy(RetryPolicy retryPolicy) {
-            this.retryPolicy = retryPolicy;
-            return this;
-        }
-
-        public Builder requestMetricCollector(RequestMetricCollector requestMetricCollector) {
-            this.requestMetricCollector = requestMetricCollector;
-            return this;
-        }
-
-        public Builder useBrowserCompatibleHostNameVerifier(boolean useBrowserCompatibleHostNameVerifier) {
-            this.useBrowserCompatibleHostNameVerifier = useBrowserCompatibleHostNameVerifier;
-            return this;
-        }
-
-        public Builder calculateCRC32FromCompressedData(boolean calculateCRC32FromCompressedData) {
-            this.calculateCRC32FromCompressedData = calculateCRC32FromCompressedData;
-            return this;
-        }
-
-        public AmazonHttpClient build() {
-            return new AmazonHttpClient(clientConfig,
-                                        retryPolicy,
-                                        requestMetricCollector,
-                                        useBrowserCompatibleHostNameVerifier,
-                                        calculateCRC32FromCompressedData);
-        }
-    }
-
     private static boolean isTemporaryRedirect(org.apache.http.HttpResponse response) {
         int status = response.getStatusLine().getStatusCode();
         return status == HttpStatus.SC_TEMPORARY_REDIRECT && response.getHeaders("Location") != null
                && response.getHeaders("Location").length > 0;
+    }
+
+    /**
+     * Used to configure the test conditions for injecting intermittent failures to the content
+     * input stream.
+     *
+     * @param config unreliable test configuration for failure injection; or null to disable such
+     *               test.
+     */
+    static void configUnreliableTestConditions(UnreliableTestConfig config) {
+        unreliableTestConfig = config;
     }
 
     @Override
@@ -427,17 +383,6 @@ public class AmazonHttpClient {
         IdleConnectionReaper.removeConnectionManager(httpClient
                                                              .getHttpClientConnectionManager());
         httpClient.getHttpClientConnectionManager().shutdown();
-    }
-
-    /**
-     * Used to configure the test conditions for injecting intermittent failures to the content
-     * input stream.
-     *
-     * @param config unreliable test configuration for failure injection; or null to disable such
-     *               test.
-     */
-    static void configUnreliableTestConditions(UnreliableTestConfig config) {
-        unreliableTestConfig = config;
     }
 
     /**
@@ -607,6 +552,51 @@ public class AmazonHttpClient {
 
     }
 
+    public static class Builder {
+
+        private ClientConfiguration clientConfig;
+        private RetryPolicy retryPolicy;
+        private RequestMetricCollector requestMetricCollector;
+        private boolean useBrowserCompatibleHostNameVerifier;
+        private boolean calculateCRC32FromCompressedData;
+
+        private Builder() {
+        }
+
+        public Builder clientConfiguration(ClientConfiguration clientConfig) {
+            this.clientConfig = clientConfig;
+            return this;
+        }
+
+        public Builder retryPolicy(RetryPolicy retryPolicy) {
+            this.retryPolicy = retryPolicy;
+            return this;
+        }
+
+        public Builder requestMetricCollector(RequestMetricCollector requestMetricCollector) {
+            this.requestMetricCollector = requestMetricCollector;
+            return this;
+        }
+
+        public Builder useBrowserCompatibleHostNameVerifier(boolean useBrowserCompatibleHostNameVerifier) {
+            this.useBrowserCompatibleHostNameVerifier = useBrowserCompatibleHostNameVerifier;
+            return this;
+        }
+
+        public Builder calculateCRC32FromCompressedData(boolean calculateCRC32FromCompressedData) {
+            this.calculateCRC32FromCompressedData = calculateCRC32FromCompressedData;
+            return this;
+        }
+
+        public AmazonHttpClient build() {
+            return new AmazonHttpClient(clientConfig,
+                                        retryPolicy,
+                                        requestMetricCollector,
+                                        useBrowserCompatibleHostNameVerifier,
+                                        calculateCRC32FromCompressedData);
+        }
+    }
+
     private class RequestExecutionBuilderImpl implements RequestExecutionBuilder {
 
         private Request<?> request;
@@ -738,7 +728,7 @@ public class AmazonHttpClient {
             final InputStream toBeClosed = beforeRequest(); // for progress tracking
             // make "notCloseable", so reset would work with retries
             final InputStream notCloseable = (toBeClosed == null) ? null
-                    : ReleasableInputStream.wrap(toBeClosed).disableClose();
+                                                                  : ReleasableInputStream.wrap(toBeClosed).disableClose();
             request.setContent(notCloseable);
             try {
                 publishProgress(listener, ProgressEventType.CLIENT_REQUEST_STARTED_EVENT);
@@ -1244,14 +1234,14 @@ public class AmazonHttpClient {
                 }
                 execOneParams.redirectedURI = URI.create(redirectedLocation);
                 awsRequestMetrics.addPropertyWith(AWSRequestMetrics.Field.StatusCode, statusCode)
-                        .addPropertyWith(AWSRequestMetrics.Field.RedirectLocation, redirectedLocation)
-                        .addPropertyWith(AWSRequestMetrics.Field.AWSRequestID, null);
+                                 .addPropertyWith(AWSRequestMetrics.Field.RedirectLocation, redirectedLocation)
+                                 .addPropertyWith(AWSRequestMetrics.Field.AWSRequestID, null);
                 return null; // => retry
             }
             execOneParams.leaveHttpConnectionOpen = errorResponseHandler.needsConnectionLeftOpen();
             final SdkBaseException exception = handleErrorResponse(execOneParams.apacheRequest,
-                                                             execOneParams.apacheResponse,
-                                                             localRequestContext);
+                                                                   execOneParams.apacheResponse,
+                                                                   localRequestContext);
             // Check whether we should internally retry the auth error
             execOneParams.authRetryParam = null;
             AuthErrorRetryStrategy authRetry = executionContext.getAuthErrorRetryStrategy();
@@ -1270,7 +1260,7 @@ public class AmazonHttpClient {
             // awsRequestMetrics.addProperty(RetryCause, ase);
             if (RetryUtils.isThrottlingException(exception)) {
                 awsRequestMetrics.incrementCounterWith(AWSRequestMetrics.Field.ThrottleException)
-                        .addProperty(AWSRequestMetrics.Field.ThrottleException, exception);
+                                 .addProperty(AWSRequestMetrics.Field.ThrottleException, exception);
             }
             // Cache the retryable exception
             execOneParams.retriedException = exception;
@@ -1344,12 +1334,12 @@ public class AmazonHttpClient {
          */
         private <T extends Throwable> T captureExceptionMetrics(T t) {
             awsRequestMetrics.incrementCounterWith(AWSRequestMetrics.Field.Exception)
-                    .addProperty(AWSRequestMetrics.Field.Exception, t);
+                             .addProperty(AWSRequestMetrics.Field.Exception, t);
             if (t instanceof AmazonServiceException) {
                 AmazonServiceException ase = (AmazonServiceException) t;
                 if (RetryUtils.isThrottlingException(ase)) {
                     awsRequestMetrics.incrementCounterWith(AWSRequestMetrics.Field.ThrottleException)
-                            .addProperty(AWSRequestMetrics.Field.ThrottleException, ase);
+                                     .addProperty(AWSRequestMetrics.Field.ThrottleException, ase);
                 }
             }
             return t;
@@ -1392,7 +1382,7 @@ public class AmazonHttpClient {
                                                execOneRequestParams.requestCount - 1,
                                                execOneRequestParams.lastBackoffDelay,
                                                availableRetryCapacity >= 0 ?
-                                                       availableRetryCapacity : "");
+                                               availableRetryCapacity : "");
 
             request.addHeader(HEADER_SDK_RETRY_INFO, headerValue);
         }
@@ -1431,12 +1421,12 @@ public class AmazonHttpClient {
             }
 
             RetryPolicyContext context = RetryPolicyContext.builder()
-                    .request(request)
-                    .originalRequest(requestConfig.getOriginalRequest())
-                    .exception(exception)
-                    .retriesAttempted(retriesAttempted)
-                    .httpStatusCode(params.getStatusCode())
-                    .build();
+                                                           .request(request)
+                                                           .originalRequest(requestConfig.getOriginalRequest())
+                                                           .exception(exception)
+                                                           .retriesAttempted(retriesAttempted)
+                                                           .httpStatusCode(params.getStatusCode())
+                                                           .build();
             // Finally, pass all the context information to the RetryCondition and let it
             // decide whether it should be retried.
             if (!retryPolicy.shouldRetry(context)) {
@@ -1547,8 +1537,8 @@ public class AmazonHttpClient {
          * @throws IOException If any problems are encountering reading the error response.
          */
         private SdkBaseException handleErrorResponse(HttpRequestBase method,
-                                                           final org.apache.http.HttpResponse apacheHttpResponse,
-                                                           final HttpContext context)
+                                                     final org.apache.http.HttpResponse apacheHttpResponse,
+                                                     final HttpContext context)
                 throws IOException, InterruptedException {
             final StatusLine statusLine = apacheHttpResponse.getStatusLine();
             final int statusCode;
@@ -1635,11 +1625,11 @@ public class AmazonHttpClient {
         private void doPauseBeforeRetry(ExecOneRequestParams execOneParams) throws InterruptedException {
             final int retriesAttempted = execOneParams.requestCount - 2;
             RetryPolicyContext context = RetryPolicyContext.builder()
-                    .request(request)
-                    .originalRequest(requestConfig.getOriginalRequest())
-                    .retriesAttempted(retriesAttempted)
-                    .exception(execOneParams.retriedException)
-                    .build();
+                                                           .request(request)
+                                                           .originalRequest(requestConfig.getOriginalRequest())
+                                                           .retriesAttempted(retriesAttempted)
+                                                           .exception(execOneParams.retriedException)
+                                                           .build();
             // don't pause if the retry was not due to a redirection (I.E. when retried exception is null)
             if (context.exception() != null) {
                 long delay = retryPolicy.computeDelayBeforeNextRetry(context);

@@ -74,10 +74,9 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     /** The initial stack policy which allows access to all resources */
     private static final Policy INIT_STACK_POLICY;
     private static final Logger log = Logger.getLogger(StackIntegrationTests.class);
-
+    private final static int PAGINATION_THRESHOLD = 120;
     private static String testStackName;
     private static String testStackId;
-    private final static int PAGINATION_THRESHOLD = 120;
 
     static {
         INIT_STACK_POLICY = new Policy().withStatements(new Statement(Effect.Allow).withActions(
@@ -91,8 +90,8 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     public static void createTestStacks() throws Exception {
         testStackName = uniqueName();
         CreateStackResult response = cf.createStack(new CreateStackRequest()
-                .withTemplateURL(templateUrlForStackIntegrationTests).withStackName(testStackName)
-                .withStackPolicyBody(INIT_STACK_POLICY.toJson()));
+                                                            .withTemplateURL(templateUrlForStackIntegrationTests).withStackName(testStackName)
+                                                            .withStackPolicyBody(INIT_STACK_POLICY.toJson()));
         testStackId = response.getStackId();
     }
 
@@ -104,6 +103,38 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         } catch (Exception e) {
             // do not do any thing here.
         }
+    }
+
+    /** assertEquals between two policy objects (assuming the Statements are in the same order) */
+    private static void assertPolicyEquals(Policy expected, Policy actual) {
+        assertEquals(expected.getStatements().size(), actual.getStatements().size());
+
+        Iterator<Statement> iter1 = expected.getStatements().iterator();
+        Iterator<Statement> iter2 = actual.getStatements().iterator();
+
+        while (iter1.hasNext() && iter2.hasNext()) {
+            Statement s1 = iter1.next();
+            Statement s2 = iter2.next();
+            assertEquals(s1.getEffect(), s2.getEffect());
+            assertEquals(s1.getActions().size(), s2.getActions().size());
+            for (int i = 0; i < s1.getActions().size(); i++) {
+                assertTrue(s1.getActions().get(i).getActionName()
+                             .equalsIgnoreCase(s2.getActions().get(i).getActionName()));
+            }
+            assertEquals(s1.getResources().size(), s2.getResources().size());
+            for (int i = 0; i < s1.getResources().size(); i++) {
+                assertTrue(s1.getResources().get(i).getId().equalsIgnoreCase(s2.getResources().get(i).getId()));
+            }
+
+        }
+        // Unnecessary... but just to be safe
+        if (iter1.hasNext() || iter2.hasNext()) {
+            fail("The two policy have difference number of Statments.");
+        }
+    }
+
+    private static String uniqueName() {
+        return STACK_NAME_PREFIX + "-" + System.currentTimeMillis();
     }
 
     @Test
@@ -156,7 +187,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
             DescribeStackResourceResult describeStackResource = cf
                     .describeStackResource(new DescribeStackResourceRequest().withStackName(testStackName)
-                            .withLogicalResourceId(sr.getLogicalResourceId()));
+                                                                             .withLogicalResourceId(sr.getLogicalResourceId()));
             StackResourceDetail detail = describeStackResource.getStackResourceDetail();
             assertNotNull(detail.getLastUpdatedTimestamp());
             assertEquals(sr.getLogicalResourceId(), detail.getLogicalResourceId());
@@ -185,7 +216,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     @Test
     public void testGetStackPolicy() {
         GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(new GetStackPolicyRequest()
-                .withStackName(testStackName));
+                                                                              .withStackName(testStackName));
         Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.getStackPolicyBody());
         assertPolicyEquals(INIT_STACK_POLICY, returnedPolicy);
     }
@@ -201,7 +232,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
         // Compares the policy from GetStackPolicy operation
         GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(new GetStackPolicyRequest()
-                .withStackName(testStackName));
+                                                                              .withStackName(testStackName));
         Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.getStackPolicyBody());
         assertPolicyEquals(DENY_ALL_POLICY, returnedPolicy);
     }
@@ -284,7 +315,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
             assertNotNull(summary);
             assertNotNull(summary.getStackStatus());
             assertTrue(summary.getStackStatus().equals("CREATE_COMPLETE")
-                    || summary.getStackStatus().equals("DELETE_COMPLETE"));
+                       || summary.getStackStatus().equals("DELETE_COMPLETE"));
             assertNotNull(summary.getCreationTime());
             if (summary.getStackStatus().contains("DELETE")) {
                 assertNotNull(summary.getDeletionTime());
@@ -311,7 +342,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         assertEquals(1, stacks.size());
 
         UpdateStackResult updateStack = cf.updateStack(new UpdateStackRequest().withStackName(testStackName)
-                .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
+                                                                               .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
         assertEquals(testStackId, updateStack.getStackId());
 
         cf.cancelUpdateStack(new CancelUpdateStackRequest().withStackName(testStackName));
@@ -324,8 +355,8 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         assertEquals(1, stacks.size());
 
         UpdateStackResult updateStack = cf.updateStack(new UpdateStackRequest().withStackName(testStackName)
-                .withTemplateURL(templateUrlForCloudFormationIntegrationTests)
-                .withStackPolicyBody(INIT_STACK_POLICY.toJson()));
+                                                                               .withTemplateURL(templateUrlForCloudFormationIntegrationTests)
+                                                                               .withStackPolicyBody(INIT_STACK_POLICY.toJson()));
         assertEquals(testStackId, updateStack.getStackId());
         waitForStackToChangeStatus(StackStatus.UPDATE_IN_PROGRESS);
     }
@@ -344,38 +375,6 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         }
     }
 
-    /** assertEquals between two policy objects (assuming the Statements are in the same order) */
-    private static void assertPolicyEquals(Policy expected, Policy actual) {
-        assertEquals(expected.getStatements().size(), actual.getStatements().size());
-
-        Iterator<Statement> iter1 = expected.getStatements().iterator();
-        Iterator<Statement> iter2 = actual.getStatements().iterator();
-
-        while (iter1.hasNext() && iter2.hasNext()) {
-            Statement s1 = iter1.next();
-            Statement s2 = iter2.next();
-            assertEquals(s1.getEffect(), s2.getEffect());
-            assertEquals(s1.getActions().size(), s2.getActions().size());
-            for (int i = 0; i < s1.getActions().size(); i++) {
-                assertTrue(s1.getActions().get(i).getActionName()
-                        .equalsIgnoreCase(s2.getActions().get(i).getActionName()));
-            }
-            assertEquals(s1.getResources().size(), s2.getResources().size());
-            for (int i = 0; i < s1.getResources().size(); i++) {
-                assertTrue(s1.getResources().get(i).getId().equalsIgnoreCase(s2.getResources().get(i).getId()));
-            }
-
-        }
-        // Unnecessary... but just to be safe
-        if (iter1.hasNext() || iter2.hasNext()) {
-            fail("The two policy have difference number of Statments.");
-        }
-    }
-
-    private static String uniqueName() {
-        return STACK_NAME_PREFIX + "-" + System.currentTimeMillis();
-    }
-
     /**
      * Waits up to 15 minutes for the test stack to transition out of the specified status.
      *
@@ -388,18 +387,20 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         long timeoutInMinutes = 35;
         while (true) {
             List<Stack> stacks = cf.describeStacks(new DescribeStacksRequest().withStackName(testStackName))
-                    .getStacks();
+                                   .getStacks();
             assertEquals(1, stacks.size());
 
-            if (!stacks.get(0).getStackStatus().equalsIgnoreCase(oldStatus.toString()))
+            if (!stacks.get(0).getStackStatus().equalsIgnoreCase(oldStatus.toString())) {
                 return;
+            }
 
             System.out.println("Waiting for stack to change out of status " + oldStatus.toString()
-                    + " (current status: " + stacks.get(0).getStackStatus() + ")");
+                               + " (current status: " + stacks.get(0).getStackStatus() + ")");
 
-            if ((System.currentTimeMillis() - startTime) > (timeoutInMinutes * 1000 * 60))
+            if ((System.currentTimeMillis() - startTime) > (timeoutInMinutes * 1000 * 60)) {
                 throw new RuntimeException("Waited " + timeoutInMinutes
-                        + " minutes, but stack never changed status from " + oldStatus.toString());
+                                           + " minutes, but stack never changed status from " + oldStatus.toString());
+            }
 
             Thread.sleep(1000 * 120);
         }

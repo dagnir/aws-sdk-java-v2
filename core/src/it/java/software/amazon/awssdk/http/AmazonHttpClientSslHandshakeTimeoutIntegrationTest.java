@@ -1,12 +1,11 @@
-
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -44,14 +43,14 @@ public class AmazonHttpClientSslHandshakeTimeoutIntegrationTest extends Unrespon
     @Test(timeout = 60 * 1000)
     public void testSslHandshakeTimeout() {
         AmazonHttpClient httpClient = new AmazonHttpClient(new ClientConfiguration()
-                .withSocketTimeout(CLIENT_SOCKET_TO).withMaxErrorRetry(0));
+                                                                   .withSocketTimeout(CLIENT_SOCKET_TO).withMaxErrorRetry(0));
 
         System.out.println("Sending request to localhost...");
 
         try {
             httpClient.requestExecutionBuilder()
-                    .request(new EmptyHttpRequest(server.getHttpsEndpoint(), HttpMethodName.GET))
-                    .execute();
+                      .request(new EmptyHttpRequest(server.getHttpsEndpoint(), HttpMethodName.GET))
+                      .execute();
             fail("Client-side socket read timeout is expected!");
 
         } catch (AmazonClientException e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadResult;
@@ -25,18 +26,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectResult;
 public interface S3VersionResult {
 
     /**
-     * Sets the version ID of the newly copied object.
-     *
-     * @param versionId
-     *            The version ID of the newly copied object.
-     *
-     * @see CopyObjectResult#getVersionId()
-     * @see CompleteMultipartUploadResult#getVersionId()
-     * @see PutObjectResult#getVersionId()
-     */
-    public void setVersionId(String versionId);
-
-    /**
      * Gets the version ID of the newly copied object. This field is only
      * present if object versioning has been enabled for the bucket the
      * object was copied to.
@@ -48,5 +37,17 @@ public interface S3VersionResult {
      * @see PutObjectResult#getVersionId()
      */
     public String getVersionId();
+
+    /**
+     * Sets the version ID of the newly copied object.
+     *
+     * @param versionId
+     *            The version ID of the newly copied object.
+     *
+     * @see CopyObjectResult#getVersionId()
+     * @see CompleteMultipartUploadResult#getVersionId()
+     * @see PutObjectResult#getVersionId()
+     */
+    public void setVersionId(String versionId);
 
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -54,7 +50,7 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
     public void testDefaultMaxErrorRetry() {
         /* SDK default */
         Assert.assertTrue(clientConfiguration.getRetryPolicy() == PredefinedRetryPolicies.DEFAULT);
-        
+
         // Don't change any of the default settings in ClientConfiguration
         testActualRetries(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY);
     
@@ -63,7 +59,7 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
         clientConfiguration.setRetryPolicy(PredefinedRetryPolicies.DYNAMODB_DEFAULT);
         testActualRetries(PredefinedRetryPolicies.DYNAMODB_DEFAULT_MAX_ERROR_RETRY);
     }
-    
+
     /**
      * -- Explicitly set maxErrorRetry in ClientConfiguration level;
      * -- Default/custom RetryPolicy's that don't override such setting.
@@ -90,11 +86,11 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
         final int CLIENT_CONFIG_LEVEL_MAX_RETRY = 3;
         clientConfiguration.setRetryPolicy(PredefinedRetryPolicies.NO_RETRY_POLICY);
         clientConfiguration.setMaxErrorRetry(CLIENT_CONFIG_LEVEL_MAX_RETRY);
-        
+
         // Ignore the ClientConfig level maxErrorRetry
         testActualRetries(0);
     }
-    
+
     /**
      * -- Explicitly set maxErrorRetry in ClientConfiguration level;
      * -- Custom RetryPolicy's that want to override such setting.
@@ -103,30 +99,30 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
     public void testRetryPolicyLevelMaxErrorRetry() {
         // This should be ignored
         clientConfiguration.setMaxErrorRetry(random.nextInt(3));
-        
+
         // A custom policy that doesn't honor the ClientConfig level maxErrorRetry
         int RETRY_POLICY_LEVEL_MAX_ERROR_RETRY = 5;
         clientConfiguration.setRetryPolicy(new RetryPolicy(null, null, RETRY_POLICY_LEVEL_MAX_ERROR_RETRY, false));
         testActualRetries(RETRY_POLICY_LEVEL_MAX_ERROR_RETRY);
-        
+
         // A custom policy that "honors" the ClientConfig level maxErrorRetry,
         // but actually denies any retry in its condition.
         clientConfiguration.setRetryPolicy(new RetryPolicy(
-                new RetryPolicy.RetryCondition() {
+                                                   new RetryPolicy.RetryCondition() {
 
-                    @Override
-                    public boolean shouldRetry(
-                            AmazonWebServiceRequest originalRequest,
-                            AmazonClientException exception,
-                            int retriesAttempted) {
-                        return false;
-                    }
-                }, null, RETRY_POLICY_LEVEL_MAX_ERROR_RETRY, true)
-        );
+                                                       @Override
+                                                       public boolean shouldRetry(
+                                                               AmazonWebServiceRequest originalRequest,
+                                                               AmazonClientException exception,
+                                                               int retriesAttempted) {
+                                                           return false;
+                                                       }
+                                                   }, null, RETRY_POLICY_LEVEL_MAX_ERROR_RETRY, true)
+                                          );
         // No retry is expected
         testActualRetries(0);
     }
-    
+
     /**
      * Verifies the request is actually retried for the expected times.
      */
@@ -138,12 +134,13 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
 
         try {
             testedClient.requestExecutionBuilder()
-                    .request(getSampleRequestWithRepeatableContent(originalRequest))
-                    .errorResponseHandler(errorResponseHandler)
-                    .executionContext(context)
-                    .execute();
+                        .request(getSampleRequestWithRepeatableContent(originalRequest))
+                        .errorResponseHandler(errorResponseHandler)
+                        .executionContext(context)
+                        .execute();
             Assert.fail("AmazonServiceException is expected.");
-        } catch (AmazonServiceException ase) {}
+        } catch (AmazonServiceException ase) {
+        }
 
         RetryTestUtils.assertExpectedRetryCount(expectedRetryAttempts, context);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,6 +31,20 @@ public class RetryableAction<T> {
     private RetryableAction(Callable<T> delegate, RetryableParams params) {
         this.delegate = delegate;
         this.params = params;
+    }
+
+    /**
+     * Static method to repeatedly call action until it succeeds or the max allowed attempts is
+     * reached.
+     *
+     * @param callable Callable implementing assertion logic
+     * @param params   Retry related parameters
+     * @return Successful result
+     */
+    public static <T> T doRetryableAction(Callable<T> callable, RetryableParams params) throws
+                                                                                        Exception {
+        ValidationUtils.assertIsPositive(params.getMaxAttempts(), "maxAttempts");
+        return new RetryableAction<T>(callable, params).call();
     }
 
     private T call() throws Exception {
@@ -67,19 +81,5 @@ public class RetryableAction<T> {
         if (params.getDelayInMs() > 0) {
             Thread.sleep(params.getDelayInMs());
         }
-    }
-
-    /**
-     * Static method to repeatedly call action until it succeeds or the max allowed attempts is
-     * reached.
-     *
-     * @param callable Callable implementing assertion logic
-     * @param params   Retry related parameters
-     * @return Successful result
-     */
-    public static <T> T doRetryableAction(Callable<T> callable, RetryableParams params) throws
-                                                                                        Exception {
-        ValidationUtils.assertIsPositive(params.getMaxAttempts(), "maxAttempts");
-        return new RetryableAction<T>(callable, params).call();
     }
 }

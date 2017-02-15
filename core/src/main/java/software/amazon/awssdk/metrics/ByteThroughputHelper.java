@@ -37,7 +37,7 @@ class ByteThroughputHelper extends ByteThroughputProvider {
         }
         return System.nanoTime();
     }
-    
+
 
     void reportMetrics() {
         if (getByteCount() > 0) {

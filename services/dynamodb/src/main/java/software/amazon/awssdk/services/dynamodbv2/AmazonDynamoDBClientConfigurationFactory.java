@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class AmazonDynamoDBClientConfigurationFactory extends ClientConfigurationFactor
     @Override
     protected ClientConfiguration getInRegionOptimizedConfig() {
         return super.getInRegionOptimizedConfig().withSocketTimeout(6000)
-                .withRetryPolicy(PredefinedRetryPolicies.DYNAMODB_DEFAULT);
+                    .withRetryPolicy(PredefinedRetryPolicies.DYNAMODB_DEFAULT);
     }
 
 

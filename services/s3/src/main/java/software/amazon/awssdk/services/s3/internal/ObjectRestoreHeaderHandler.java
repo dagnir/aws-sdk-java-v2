@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.Date;
@@ -33,12 +34,12 @@ public class ObjectRestoreHeaderHandler<T extends ObjectRestoreResult>
      */
 
     private static final Pattern datePattern =
-        Pattern.compile("expiry-date=\"(.*?)\"");
+            Pattern.compile("expiry-date=\"(.*?)\"");
     private static final Pattern ongoingPattern =
-        Pattern.compile("ongoing-request=\"(.*?)\"");
+            Pattern.compile("ongoing-request=\"(.*?)\"");
 
     private static final Log log =
-        LogFactory.getLog(ObjectRestoreHeaderHandler.class);
+            LogFactory.getLog(ObjectRestoreHeaderHandler.class);
 
     /*
      * (non-Javadoc)
@@ -61,7 +62,7 @@ public class ObjectRestoreHeaderHandler<T extends ObjectRestoreResult>
 
     private Date parseDate(String restoreHeader) {
         Matcher matcher = datePattern.matcher(restoreHeader);
-        if ( matcher.find() ) {
+        if (matcher.find()) {
             String date = matcher.group(1);
             try {
                 return ServiceUtils.parseRfc822Date(date);

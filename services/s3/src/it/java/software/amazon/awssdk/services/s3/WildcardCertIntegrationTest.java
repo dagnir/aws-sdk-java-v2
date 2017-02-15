@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ public class WildcardCertIntegrationTest extends AWSIntegrationTestBase {
     @BeforeClass
     public static void setup() {
         S3 = AmazonS3ClientBuilder.standard()
-                .withRegion(Regions.US_WEST_2)
-                .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
-                .build();
+                                  .withRegion(Regions.US_WEST_2)
+                                  .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                                  .build();
         S3.createBucket(BUCKET_NAME);
     }
 

@@ -38,10 +38,12 @@ public class SdkTLSSocketFactoryTest {
             public String[] getSupportedProtocols() {
                 return null;
             }
+
             @Override
             public String[] getEnabledProtocols() {
                 return null;
             }
+
             @Override
             public void setEnabledProtocols(String[] protocols) {
                 fail();
@@ -55,15 +57,17 @@ public class SdkTLSSocketFactoryTest {
         f.prepareSocket(new TestSSLSocket() {
             @Override
             public String[] getSupportedProtocols() {
-                return shuffle(new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"});
+                return shuffle(new String[] {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"});
             }
+
             @Override
             public String[] getEnabledProtocols() {
-                return shuffle(new String[]{"SSLv3", "TLSv1"});
+                return shuffle(new String[] {"SSLv3", "TLSv1"});
             }
+
             @Override
             public void setEnabledProtocols(String[] protocols) {
-                assertTrue(Arrays.equals(protocols, new String[] {"TLSv1.2", "TLSv1.1", "TLSv1", "SSLv3" }));
+                assertTrue(Arrays.equals(protocols, new String[] {"TLSv1.2", "TLSv1.1", "TLSv1", "SSLv3"}));
             }
         });
     }
@@ -74,16 +78,18 @@ public class SdkTLSSocketFactoryTest {
         f.prepareSocket(new TestSSLSocket() {
             @Override
             public String[] getSupportedProtocols() {
-                return shuffle(new String[]{"SSLv2Hello", "SSLv3" });
+                return shuffle(new String[] {"SSLv2Hello", "SSLv3"});
             }
+
             @Override
             public String[] getEnabledProtocols() {
-                return new String[]{"SSLv3"};
+                return new String[] {"SSLv3"};
             }
+
             @Override
             public void setEnabledProtocols(String[] protocols) {
                 // For backward compatibility
-                assertTrue(Arrays.equals(protocols, new String[] { "SSLv3" }));
+                assertTrue(Arrays.equals(protocols, new String[] {"SSLv3"}));
             }
         });
     }
@@ -94,15 +100,17 @@ public class SdkTLSSocketFactoryTest {
         f.prepareSocket(new TestSSLSocket() {
             @Override
             public String[] getSupportedProtocols() {
-                return shuffle(new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1"});
+                return shuffle(new String[] {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1"});
             }
+
             @Override
             public String[] getEnabledProtocols() {
-                return shuffle(new String[]{"SSLv3", "TLSv1"});
+                return shuffle(new String[] {"SSLv3", "TLSv1"});
             }
+
             @Override
             public void setEnabledProtocols(String[] protocols) {
-                assertTrue(Arrays.equals(protocols, new String[] {"TLSv1.1", "TLSv1", "SSLv3" }));
+                assertTrue(Arrays.equals(protocols, new String[] {"TLSv1.1", "TLSv1", "SSLv3"}));
             }
         });
     }

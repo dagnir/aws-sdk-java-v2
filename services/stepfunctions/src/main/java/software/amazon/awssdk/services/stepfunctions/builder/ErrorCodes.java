@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,42 +24,36 @@ package software.amazon.awssdk.services.stepfunctions.builder;
  */
 public final class ErrorCodes {
 
-    private ErrorCodes() {
-    }
-
     /**
      * A wild-card which matches any Error Name.
      */
     public static final String ALL = "States.ALL";
-
     /**
      * A Task State either ran longer than the “TimeoutSeconds” value, or failed to heartbeat for a time longer than the
      * “HeartbeatSeconds” value.
      */
     public static final String TIMEOUT = "States.Timeout";
-
     /**
      * A Task State failed during the execution.
      */
     public static final String TASK_FAILED = "States.TaskFailed";
-
     /**
      * A Task State failed because it had insufficient privileges to execute the specified code.
      */
     public static final String PERMISSIONS = "States.Permissions";
-
     /**
      * A Task State’s “ResultPath” field cannot be applied to the input the state received.
      */
     public static final String RESULT_PATH_MATCH_FAILURE = "States.ResultPathMatchFailure";
-
     /**
      * A branch of a Parallel state failed.
      */
     public static final String BRANCH_FAILED = "States.BranchFailed";
-
     /**
      * A Choice state failed to find a match for the condition field extracted from its input.
      */
     public static final String NO_CHOICE_MATCHED = "States.NoChoiceMatched";
+
+    private ErrorCodes() {
+    }
 }

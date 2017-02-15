@@ -31,15 +31,16 @@ public class EC2VpnGatewaysIntegrationTest extends EC2IntegrationTestBase {
         // Create VpnGateway
         try {
             CreateVpnGatewayResult createResult =
-                EC2TestHelper.createVpnGateway("ipsec.1");
+                    EC2TestHelper.createVpnGateway("ipsec.1");
             vpnGateway = createResult.getVpnGateway();
             tagResource(vpnGateway.getVpnGatewayId(), TAGS);
         } catch (AmazonServiceException ase) {
-            if (!ase.getErrorCode().equals("VpnGatewayLimitExceeded"))
+            if (!ase.getErrorCode().equals("VpnGatewayLimitExceeded")) {
                 throw ase;
+            }
 
             System.err.println("Unable to run " + getClass().getName() + ": "
-                    + ase.getMessage());
+                               + ase.getMessage());
             return;
         }
 
@@ -48,11 +49,11 @@ public class EC2VpnGatewaysIntegrationTest extends EC2IntegrationTestBase {
 
         // Describe VpnGateway
         DescribeVpnGatewaysResult describeResult =
-            EC2TestHelper.describeVpnGateway(vpnGateway.getVpnGatewayId());
+                EC2TestHelper.describeVpnGateway(vpnGateway.getVpnGatewayId());
 
         assertEquals(1, describeResult.getVpnGateways().size());
         assertEquals(vpnGateway.getVpnGatewayId(),
-                describeResult.getVpnGateways().get(0).getVpnGatewayId());
+                     describeResult.getVpnGateways().get(0).getVpnGatewayId());
         assertEqualUnorderedTagLists(TAGS, describeResult.getVpnGateways().get(0).getTags());
 
         // Delete VpnGateway

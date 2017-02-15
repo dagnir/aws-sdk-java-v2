@@ -1,6 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -30,7 +26,7 @@ public class PredefinedBackoffStrategiesTest {
     private static final int BOUNDED_MAX_DELAY = 20000;
     private static final int UNBOUNDED_MAX_DELAY = Integer.MAX_VALUE;
 
-    private static final int[] EXPONENTIAL_BACKOFF_VALUES = new int[]{100, 200, 400, 800, 1600, 3200, 6400, 12800, 20000, 20000};
+    private static final int[] EXPONENTIAL_BACKOFF_VALUES = new int[] {100, 200, 400, 800, 1600, 3200, 6400, 12800, 20000, 20000};
 
     @Test
     public void testFullJitterStrategy() {
@@ -42,7 +38,7 @@ public class PredefinedBackoffStrategiesTest {
 
     @Test
     public void testEqualJitterStrategy() {
-        int[] expectedLowerBound = new int[]{50, 100, 200, 400, 800, 1600, 3200, 6400, 10000, 10000};
+        int[] expectedLowerBound = new int[] {50, 100, 200, 400, 800, 1600, 3200, 6400, 10000, 10000};
         expectInRange(new PredefinedBackoffStrategies.EqualJitterBackoffStrategy(BASE_DELAY, BOUNDED_MAX_DELAY), expectedLowerBound, EXPONENTIAL_BACKOFF_VALUES);
         expectMeanIncreasing(new PredefinedBackoffStrategies.EqualJitterBackoffStrategy(BASE_DELAY, UNBOUNDED_MAX_DELAY));
         expectNonZeroStandardDeviation(new PredefinedBackoffStrategies.EqualJitterBackoffStrategy(BASE_DELAY, UNBOUNDED_MAX_DELAY));
@@ -137,7 +133,7 @@ public class PredefinedBackoffStrategiesTest {
 
         for (int attempt = 1; attempt < 10; attempt++) {
             Assert.assertTrue("Average delay from this attempt should be greater than that of the previous attempt",
-                    mean[attempt] > mean[attempt - 1]);
+                              mean[attempt] > mean[attempt - 1]);
         }
     }
 

@@ -45,36 +45,30 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
     private static final String CHUNK_SIGNATURE_HEADER = ";chunk-signature=";
     private static final int SIGNATURE_LENGTH = 64;
     private static final byte[] FINAL_CHUNK = new byte[0];
-
-    private InputStream is = null;
+    private static final Log log = LogFactory.getLog(AwsChunkedEncodingInputStream.class);
     private final int maxBufferSize;
     private final String dateTime;
     private final String keyPath;
     private final String headerSignature;
-    private String priorChunkSignature;
     private final AWS4Signer aws4Signer;
-
     private final MessageDigest sha256;
     private final Mac hmacSha256;
-
+    private InputStream is = null;
+    private String priorChunkSignature;
     /** Iterator on the current chunk that has been signed */
     private ChunkContentIterator currentChunkIterator;
-
     /**
      * Iterator on the buffer of the decoded stream,
      * Null if the wrapped stream is marksupported,
      * otherwise it will be initialized when this wrapper is marked.
      */
     private DecodedStreamBuffer decodedStreamBuffer;
-
     private boolean isAtStart = true;
     private boolean isTerminating = false;
 
-    private static final Log log = LogFactory.getLog(AwsChunkedEncodingInputStream.class);
-
     public AwsChunkedEncodingInputStream(InputStream in, byte[] kSigning,
-            String datetime, String keyPath, String headerSignature,
-            AWS4Signer aws4Signer) {
+                                         String datetime, String keyPath, String headerSignature,
+                                         AWS4Signer aws4Signer) {
         this(in, DEFAULT_BUFFER_SIZE, kSigning, datetime, keyPath, headerSignature, aws4Signer);
     }
 
@@ -104,22 +98,22 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
      *             The AWS4Signer used for hashing and signing.
      */
     public AwsChunkedEncodingInputStream(InputStream in, int maxBufferSize,
-            byte[] kSigning, String datetime, String keyPath,
-            String headerSignature, AWS4Signer aws4Signer) {
+                                         byte[] kSigning, String datetime, String keyPath,
+                                         String headerSignature, AWS4Signer aws4Signer) {
         if (in instanceof AwsChunkedEncodingInputStream) {
             // This could happen when the request is retried, and we need to re-calculate the signatures.
-            AwsChunkedEncodingInputStream originalChunkedStream = (AwsChunkedEncodingInputStream)in;
+            AwsChunkedEncodingInputStream originalChunkedStream = (AwsChunkedEncodingInputStream) in;
             maxBufferSize = Math.max(originalChunkedStream.maxBufferSize, maxBufferSize);
             is = originalChunkedStream.is;
             decodedStreamBuffer = originalChunkedStream.decodedStreamBuffer;
-        }
-        else {
+        } else {
             is = in;
             decodedStreamBuffer = null;
         }
 
-        if (maxBufferSize < DEFAULT_CHUNK_SIZE)
+        if (maxBufferSize < DEFAULT_CHUNK_SIZE) {
             throw new IllegalArgumentException("Max buffer size should not be less than chunk size");
+        }
         try {
             this.sha256 = MessageDigest.getInstance("SHA-256");
             final String signingAlgo = SigningAlgorithm.HmacSHA256.toString();
@@ -138,13 +132,35 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         this.aws4Signer = aws4Signer;
     }
 
+    public static long calculateStreamContentLength(long originalLength) {
+        if (originalLength < 0) {
+            throw new IllegalArgumentException("Nonnegative content length expected.");
+        }
+
+        long maxSizeChunks = originalLength / DEFAULT_CHUNK_SIZE;
+        long remainingBytes = originalLength % DEFAULT_CHUNK_SIZE;
+        return maxSizeChunks * calculateSignedChunkLength(DEFAULT_CHUNK_SIZE)
+               + (remainingBytes > 0 ? calculateSignedChunkLength(remainingBytes) : 0)
+               + calculateSignedChunkLength(0);
+    }
+
+    private static long calculateSignedChunkLength(long chunkDataSize) {
+        return Long.toHexString(chunkDataSize).length()
+               + CHUNK_SIGNATURE_HEADER.length()
+               + SIGNATURE_LENGTH
+               + CRLF.length()
+               + chunkDataSize
+               + CRLF.length();
+    }
+
     @Override
     public int read() throws IOException {
         byte[] tmp = new byte[1];
         int count = read(tmp, 0, 1);
         if (count != -1) {
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("One byte read from the stream.");
+            }
             int unsignedByte = (int) tmp[0] & 0xFF;
             return unsignedByte;
         } else {
@@ -164,10 +180,10 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         }
 
         if (null == currentChunkIterator
-                || !currentChunkIterator.hasNext()) {
-            if (isTerminating)
+            || !currentChunkIterator.hasNext()) {
+            if (isTerminating) {
                 return -1;
-            else {
+            } else {
                 isTerminating = setUpNextChunk();
             }
         }
@@ -175,8 +191,9 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         int count = currentChunkIterator.read(b, off, len);
         if (count > 0) {
             isAtStart = false;
-            if (log.isTraceEnabled())
+            if (log.isTraceEnabled()) {
                 log.trace(count + " byte read from the stream.");
+            }
         }
         return count;
     }
@@ -191,7 +208,7 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         byte[] temp = new byte[toskip];
         while (remaining > 0) {
             int count;
-            if ( (count = read(temp, 0, toskip)) < 0) {
+            if ((count = read(temp, 0, toskip)) < 0) {
                 break;
             }
             remaining -= count;
@@ -213,19 +230,19 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
     @Override
     public void mark(int readlimit) {
         abortIfNeeded();
-        if ( !isAtStart )
+        if (!isAtStart) {
             throw new UnsupportedOperationException("Chunk-encoded stream only supports mark() at the start of the stream.");
+        }
         if (is.markSupported()) {
             if (log.isDebugEnabled()) {
                 log.debug("AwsChunkedEncodingInputStream marked at the start of the stream "
-                        + "(will directly mark the wrapped stream since it's mark-supported).");
+                          + "(will directly mark the wrapped stream since it's mark-supported).");
             }
             is.mark(readlimit);
-        }
-        else {
+        } else {
             if (log.isDebugEnabled()) {
                 log.debug("AwsChunkedEncodingInputStream marked at the start of the stream "
-                        + "(initializing the buffer since the wrapped stream is not mark-supported).");
+                          + "(initializing the buffer since the wrapped stream is not mark-supported).");
             }
             decodedStreamBuffer = new DecodedStreamBuffer(maxBufferSize);
         }
@@ -244,15 +261,16 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         // Reset the wrapped stream if it is mark-supported,
         // otherwise use our buffered data.
         if (is.markSupported()) {
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("AwsChunkedEncodingInputStream reset "
-                        + "(will reset the wrapped stream because it is mark-supported).");
+                          + "(will reset the wrapped stream because it is mark-supported).");
+            }
             is.reset();
-        }
-        else {
-            if (log.isDebugEnabled())
+        } else {
+            if (log.isDebugEnabled()) {
                 log.debug("AwsChunkedEncodingInputStream reset "
-                        + "(will use the buffer of the decoded stream).");
+                          + "(will use the buffer of the decoded stream).");
+            }
             if (null == decodedStreamBuffer) {
                 throw new IOException("Cannot reset the stream because the mark is not set.");
             }
@@ -262,27 +280,6 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         currentChunkIterator = null;
         isAtStart = true;
         isTerminating = false;
-    }
-
-    public static long calculateStreamContentLength(long originalLength) {
-        if (originalLength < 0) {
-            throw new IllegalArgumentException("Nonnegative content length expected.");
-        }
-
-        long maxSizeChunks = originalLength / DEFAULT_CHUNK_SIZE;
-        long remainingBytes =  originalLength % DEFAULT_CHUNK_SIZE;
-        return maxSizeChunks * calculateSignedChunkLength(DEFAULT_CHUNK_SIZE)
-                + (remainingBytes > 0? calculateSignedChunkLength(remainingBytes) : 0)
-                + calculateSignedChunkLength(0);
-    }
-
-    private static long calculateSignedChunkLength(long chunkDataSize) {
-        return Long.toHexString(chunkDataSize).length()
-                + CHUNK_SIGNATURE_HEADER.length()
-                + SIGNATURE_LENGTH
-                + CRLF.length()
-                + chunkDataSize
-                + CRLF.length();
     }
 
     /**
@@ -296,7 +293,7 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         while (chunkSizeInBytes < DEFAULT_CHUNK_SIZE) {
             /** Read from the buffer of the decoded stream */
             if (null != decodedStreamBuffer
-                    && decodedStreamBuffer.hasNext()) {
+                && decodedStreamBuffer.hasNext()) {
                 chunkData[chunkSizeInBytes++] = decodedStreamBuffer.next();
             }
             /** Read from the wrapped stream */
@@ -304,20 +301,20 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
                 int bytesToRead = DEFAULT_CHUNK_SIZE - chunkSizeInBytes;
                 int count = is.read(chunkData, chunkSizeInBytes, bytesToRead);
                 if (count != -1) {
-                    if (null != decodedStreamBuffer)
+                    if (null != decodedStreamBuffer) {
                         decodedStreamBuffer.buffer(chunkData, chunkSizeInBytes, count);
+                    }
                     chunkSizeInBytes += count;
-                }
-                else
+                } else {
                     break;
+                }
             }
         }
-        if (chunkSizeInBytes == 0){
+        if (chunkSizeInBytes == 0) {
             byte[] signedFinalChunk = createSignedChunk(FINAL_CHUNK);
             currentChunkIterator = new ChunkContentIterator(signedFinalChunk);
             return true;
-        }
-        else {
+        } else {
             if (chunkSizeInBytes < chunkData.length) {
                 chunkData = Arrays.copyOf(chunkData, chunkSizeInBytes);
             }
@@ -340,12 +337,12 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
                 AbstractAWSSigner.EMPTY_STRING_SHA256_HEX + "\n" +
                 BinaryUtils.toHex(sha256.digest(chunkData));
         final String chunkSignature =
-            BinaryUtils.toHex(aws4Signer.signWithMac(chunkStringToSign, hmacSha256));
+                BinaryUtils.toHex(aws4Signer.signWithMac(chunkStringToSign, hmacSha256));
         priorChunkSignature = chunkSignature;
         chunkHeader.append(CHUNK_SIGNATURE_HEADER)
                    .append(chunkSignature)
                    .append(CRLF)
-                   ;
+        ;
         try {
             byte[] header = chunkHeader.toString().getBytes(UTF8);
             byte[] trailer = CRLF.getBytes(UTF8);
@@ -353,8 +350,8 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
             System.arraycopy(header, 0, signedChunk, 0, header.length);
             System.arraycopy(chunkData, 0, signedChunk, header.length, chunkData.length);
             System.arraycopy(trailer, 0,
-                    signedChunk, header.length + chunkData.length,
-                    trailer.length);
+                             signedChunk, header.length + chunkData.length,
+                             trailer.length);
             return signedChunk;
         } catch (Exception e) {
             throw new SdkClientException("Unable to sign the chunked data. " + e.getMessage(), e);

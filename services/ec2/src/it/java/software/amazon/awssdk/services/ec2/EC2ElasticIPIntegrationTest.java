@@ -41,6 +41,39 @@ public class EC2ElasticIPIntegrationTest extends EC2IntegrationTestBase {
     }
 
     /**
+     * Tests if the specified expected IP address is contained in the list of
+     * address objects. If the expected IP address is not found in any of the
+     * address objects, this method will return false.
+     *
+     * @param addresses
+     *            The list of Address objects to check.
+     * @param expectedIp
+     *            The IP expected to be in the list of addresses.
+     *
+     * @return True if the list of addresses contains an address with the
+     *         specified Elastic IP, otherwise false.
+     */
+    private static boolean doAddressesContainIp(List<Address> addresses, String expectedIp) {
+        assertNotNull(addresses);
+
+        for (Address address : addresses) {
+            String ip = address.getPublicIp();
+
+            // Bail out early if we see the IP we're expecting.
+            if (ip.equals(expectedIp)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /*
+     * Test Helper Methods
+     */
+
+    /**
      * Tests that the various EC2 Elastic IP operations work correctly by going
      * through a series of calls that hit all of the Elastic IP operations.
      */
@@ -64,43 +97,12 @@ public class EC2ElasticIPIntegrationTest extends EC2IntegrationTestBase {
 
         // Describe with a filter
         addresses = ec2.describeAddresses(new DescribeAddressesRequest()
-                        .withFilters(new Filter()
-                                .withName("public-ip")
-                                .withValues(elasticIp))
-                ).getAddresses();
+                                                  .withFilters(new Filter()
+                                                                       .withName("public-ip")
+                                                                       .withValues(elasticIp))
+                                         ).getAddresses();
         assertEquals(1, addresses.size());
         assertTrue(doAddressesContainIp(addresses, elasticIp));
-    }
-
-
-    /*
-     * Test Helper Methods
-     */
-
-    /**
-     * Tests if the specified expected IP address is contained in the list of
-     * address objects. If the expected IP address is not found in any of the
-     * address objects, this method will return false.
-     *
-     * @param addresses
-     *            The list of Address objects to check.
-     * @param expectedIp
-     *            The IP expected to be in the list of addresses.
-     *
-     * @return True if the list of addresses contains an address with the
-     *         specified Elastic IP, otherwise false.
-     */
-    private static boolean doAddressesContainIp(List<Address> addresses, String expectedIp) {
-        assertNotNull(addresses);
-
-        for (Address address : addresses) {
-            String ip = address.getPublicIp();
-
-            // Bail out early if we see the IP we're expecting.
-            if (ip.equals(expectedIp)) return true;
-        }
-
-        return false;
     }
 
 }

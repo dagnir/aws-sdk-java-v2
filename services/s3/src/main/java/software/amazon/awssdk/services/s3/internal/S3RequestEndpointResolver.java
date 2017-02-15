@@ -104,8 +104,8 @@ public class S3RequestEndpointResolver {
 
             if (r == null) {
                 throw new SdkClientException("Not able to determine region" +
-                        " for " + regionString + ".Please upgrade to a newer " +
-                        "version of the SDK");
+                                             " for " + regionString + ".Please upgrade to a newer " +
+                                             "version of the SDK");
             }
 
             endpointBuilder.withRegion(r);
@@ -124,7 +124,7 @@ public class S3RequestEndpointResolver {
 
     private boolean shouldUseVirtualAddressing(final URI endpoint) {
         return !isPathStyleAccess && BucketNameUtils.isDNSBucketName(bucketName)
-                && !isValidIpV4Address(endpoint.getHost());
+               && !isValidIpV4Address(endpoint.getHost());
     }
 
     private String getHostStyleResourcePath() {

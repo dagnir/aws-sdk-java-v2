@@ -24,7 +24,9 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 @SdkInternalApi
 public class VoidStaxUnmarshaller<T> implements Unmarshaller<T, StaxUnmarshallerContext> {
     public T unmarshall(StaxUnmarshallerContext context) throws Exception {
-        while (context.nextEvent().isEndDocument() == false);
+        while (context.nextEvent().isEndDocument() == false) {
+            ;
+        }
         return null;
     }
 }

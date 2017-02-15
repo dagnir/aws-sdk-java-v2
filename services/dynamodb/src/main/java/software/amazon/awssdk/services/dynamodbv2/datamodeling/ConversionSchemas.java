@@ -1,16 +1,16 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -112,9 +112,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  */
 public final class ConversionSchemas {
 
-    private static final Log LOGGER =
-            LogFactory.getLog(ConversionSchemas.class);
-
     /**
      * The V1 schema mapping, which retains strict backwards compatibility with
      * the original DynamoDB data model. In particular, it marshals Java
@@ -127,7 +124,6 @@ public final class ConversionSchemas {
      * you don't accidentally start writing values using these types.
      */
     public static final ConversionSchema V1 = v1Builder("V1ConversionSchema").build();
-
     /**
      * A V2 conversion schema which retains backwards compatibility with the
      * V1 conversion schema for existing DynamoDB types, but adds the ability
@@ -136,7 +132,6 @@ public final class ConversionSchemas {
      */
     public static final ConversionSchema V2_COMPATIBLE = v2CompatibleBuilder(
             "V2CompatibleConversionSchema").build();
-
     /**
      * The native V2 conversion schema. This schema breaks compatibility with
      * older versions of the mapper that only support the V1 schema by
@@ -146,8 +141,13 @@ public final class ConversionSchemas {
      * booleans.
      */
     public static final ConversionSchema V2 = v2Builder("V2ConversionSchema").build();
-
     static final ConversionSchema DEFAULT = V2_COMPATIBLE;
+    private static final Log LOGGER =
+            LogFactory.getLog(ConversionSchemas.class);
+
+    ConversionSchemas() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * A ConversionSchema builder that defaults to building {@link #V1}.
@@ -175,6 +175,192 @@ public final class ConversionSchemas {
         return new Builder(name, V2MarshallerSet.marshallers(), V2MarshallerSet.setMarshallers(),
                            StandardUnmarshallerSet.unmarshallers(),
                            StandardUnmarshallerSet.setUnmarshallers());
+    }
+
+    private static void addStandardDateMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(Date.class,
+                         DateToStringMarshaller.instance()));
+        list.add(Pair.of(Calendar.class,
+                         CalendarToStringMarshaller.instance()));
+    }
+
+    private static void addV1BooleanMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(Boolean.class,
+                         BooleanToNumberMarshaller.instance()));
+        list.add(Pair.of(boolean.class,
+                         BooleanToNumberMarshaller.instance()));
+    }
+
+    private static void addV2BooleanMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(Boolean.class,
+                         BooleanToBooleanMarshaller.instance()));
+        list.add(Pair.of(boolean.class,
+                         BooleanToBooleanMarshaller.instance()));
+    }
+
+    private static void addStandardNumberMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(Number.class,
+                         NumberToNumberMarshaller.instance()));
+        list.add(Pair.of(byte.class,
+                         NumberToNumberMarshaller.instance()));
+        list.add(Pair.of(short.class,
+                         NumberToNumberMarshaller.instance()));
+        list.add(Pair.of(int.class,
+                         NumberToNumberMarshaller.instance()));
+        list.add(Pair.of(long.class,
+                         NumberToNumberMarshaller.instance()));
+        list.add(Pair.of(float.class,
+                         NumberToNumberMarshaller.instance()));
+        list.add(Pair.of(double.class,
+                         NumberToNumberMarshaller.instance()));
+    }
+
+    private static void addStandardStringMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(String.class,
+                         StringToStringMarshaller.instance()));
+
+        list.add(Pair.of(UUID.class,
+                         ObjectToStringMarshaller.instance()));
+    }
+
+    private static void addStandardBinaryMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(ByteBuffer.class,
+                         ByteBufferToBinaryMarshaller.instance()));
+        list.add(Pair.of(byte[].class,
+                         ByteArrayToBinaryMarshaller.instance()));
+    }
+
+    private static void addStandardS3LinkMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(S3Link.class,
+                         S3LinkToStringMarshaller.instance()));
+    }
+
+    private static void addStandardDateSetMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(Date.class,
+                         DateSetToStringSetMarshaller.instance()));
+        list.add(Pair.of(Calendar.class,
+                         CalendarSetToStringSetMarshaller.instance()));
+    }
+
+    private static void addStandardNumberSetMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(Number.class,
+                         NumberSetToNumberSetMarshaller.instance()));
+        list.add(Pair.of(byte.class,
+                         NumberSetToNumberSetMarshaller.instance()));
+        list.add(Pair.of(short.class,
+                         NumberSetToNumberSetMarshaller.instance()));
+        list.add(Pair.of(int.class,
+                         NumberSetToNumberSetMarshaller.instance()));
+        list.add(Pair.of(long.class,
+                         NumberSetToNumberSetMarshaller.instance()));
+        list.add(Pair.of(float.class,
+                         NumberSetToNumberSetMarshaller.instance()));
+        list.add(Pair.of(double.class,
+                         NumberSetToNumberSetMarshaller.instance()));
+    }
+
+    private static void addStandardStringSetMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(String.class,
+                         StringSetToStringSetMarshaller.instance()));
+
+        list.add(Pair.of(UUID.class,
+                         UUIDSetToStringSetMarshaller.instance()));
+    }
+
+    private static void addStandardBinarySetMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(ByteBuffer.class,
+                         ByteBufferSetToBinarySetMarshaller.instance()));
+        list.add(Pair.of(byte[].class,
+                         ByteArraySetToBinarySetMarshaller.instance()));
+    }
+
+    private static void addV1BooleanSetMarshallers(
+            List<Pair<ArgumentMarshaller>> list) {
+
+        list.add(Pair.of(Boolean.class,
+                         BooleanSetToNumberSetMarshaller.instance()));
+        list.add(Pair.of(boolean.class,
+                         BooleanSetToNumberSetMarshaller.instance()));
+    }
+
+    private static Class<?> unwrapGenericSetParam(Type setType) {
+        if (!(setType instanceof ParameterizedType)) {
+            LOGGER.warn("Set type " + setType + " is not a "
+                        + "ParameterizedType, using default marshaler and "
+                        + "unmarshaler!");
+            return Object.class;
+        }
+
+        ParameterizedType ptype = (ParameterizedType) setType;
+        Type[] arguments = ptype.getActualTypeArguments();
+
+        if (arguments.length != 1) {
+            LOGGER.warn("Set type " + setType + " does not have exactly one "
+                        + "type argument, using default marshaler and "
+                        + "unmarshaler!");
+            return Object.class;
+        }
+
+        if (arguments[0].toString().equals("byte[]")) {
+            return byte[].class;
+        } else {
+            return (Class<?>) arguments[0];
+        }
+    }
+
+    private static Class<?> resolveClass(Type type) {
+        Type localType = type;
+        if (localType instanceof ParameterizedType) {
+            localType = ((ParameterizedType) type).getRawType();
+        }
+        if (!(localType instanceof Class)) {
+            throw new DynamoDBMappingException("Cannot resolve class for type "
+                                               + type);
+        }
+        return (Class<?>) localType;
+    }
+
+    private static <T> T find(Class<?> needle, List<Pair<T>> haystack) {
+        for (Pair<? extends T> pair : haystack) {
+            if (pair.key.isAssignableFrom(needle)) {
+                return pair.value;
+            }
+        }
+        return null;
+    }
+
+    static interface MarshallerSet {
+        ArgumentMarshaller getMarshaller(Method getter);
+
+        ArgumentMarshaller getMemberMarshaller(Type memberType);
+    }
+
+    static interface UnmarshallerSet {
+        ArgumentUnmarshaller getUnmarshaller(Method getter, Method setter);
+
+        ArgumentUnmarshaller getMemberUnmarshaller(Type memberType);
     }
 
     public static class Builder {
@@ -262,7 +448,6 @@ public final class ConversionSchemas {
         }
     }
 
-
     static class StandardItemConverter implements ItemConverter {
 
         private final MarshallerSet marshallerSet;
@@ -277,6 +462,45 @@ public final class ConversionSchemas {
             this.marshallerSet = marshallerSet;
             this.unmarshallerSet = unmarshallerSet;
             this.s3cc = s3cc;
+        }
+
+        private static Object unmarshall(
+                ArgumentUnmarshaller unmarshaller,
+                Method setter,
+                AttributeValue value) {
+
+            unmarshaller.typeCheck(value, setter);
+
+            try {
+
+                return unmarshaller.unmarshall(value);
+
+            } catch (IllegalArgumentException e) {
+                throw new DynamoDBMappingException(
+                        "Couldn't unmarshall value " + value + " for " + setter,
+                        e);
+
+            } catch (ParseException e) {
+                throw new DynamoDBMappingException(
+                        "Error attempting to parse date string " + value + " for "
+                        + setter,
+                        e);
+            }
+        }
+
+        private static <T> T createObject(Class<T> clazz) {
+            try {
+
+                return clazz.newInstance();
+
+            } catch (InstantiationException e) {
+                throw new DynamoDBMappingException(
+                        "Failed to instantiate new instance of class", e);
+
+            } catch (IllegalAccessException e) {
+                throw new DynamoDBMappingException(
+                        "Failed to instantiate new instance of class", e);
+            }
         }
 
         @Override
@@ -305,7 +529,7 @@ public final class ConversionSchemas {
             } else {
                 throw new DynamoDBMappingException(
                         "Unrecognized marshaller type for " + getter + ": "
-                                + marshaller);
+                        + marshaller);
             }
 
             // Note, generating the attribute name using this method is not
@@ -334,11 +558,11 @@ public final class ConversionSchemas {
                 return null;
             }
 
-            Class<Object> clazz = (Class<Object>)object.getClass();
+            Class<Object> clazz = (Class<Object>) object.getClass();
             Map<String, AttributeValue> result =
                     new HashMap<String, AttributeValue>();
 
-            for (final Bean<Object,Object> bean : StandardBeanProperties.of(clazz).map().values()) {
+            for (final Bean<Object, Object> bean : StandardBeanProperties.of(clazz).map().values()) {
                 Object getterResult = bean.reflect().get(object);
                 if (getterResult != null) {
                     AttributeValue value = convert(bean.type().getter(), getterResult);
@@ -481,7 +705,7 @@ public final class ConversionSchemas {
                 return result;
             }
 
-            for (final Bean<T,Object> bean : StandardBeanProperties.of(clazz).map().values()) {
+            for (final Bean<T, Object> bean : StandardBeanProperties.of(clazz).map().values()) {
                 AttributeValue av = value.get(bean.properties().attributeName());
                 if (av != null) {
                     ArgumentUnmarshaller unmarshaller = getUnmarshaller(bean.type().getter(), bean.type().setter());
@@ -643,55 +867,6 @@ public final class ConversionSchemas {
             return new ObjectUnmarshaller(this, clazz);
         }
 
-        private static Object unmarshall(
-                ArgumentUnmarshaller unmarshaller,
-                Method setter,
-                AttributeValue value) {
-
-            unmarshaller.typeCheck(value, setter);
-
-            try {
-
-                return unmarshaller.unmarshall(value);
-
-            } catch (IllegalArgumentException e) {
-                throw new DynamoDBMappingException(
-                        "Couldn't unmarshall value " + value + " for " + setter,
-                        e);
-
-            } catch (ParseException e) {
-                throw new DynamoDBMappingException(
-                        "Error attempting to parse date string " + value + " for "
-                        + setter,
-                        e);
-            }
-        }
-
-        private static <T> T createObject(Class<T> clazz) {
-            try {
-
-                return clazz.newInstance();
-
-            } catch (InstantiationException e) {
-                throw new DynamoDBMappingException(
-                        "Failed to instantiate new instance of class", e);
-
-            } catch (IllegalAccessException e) {
-                throw new DynamoDBMappingException(
-                        "Failed to instantiate new instance of class", e);
-            }
-        }
-
-    }
-
-    static interface MarshallerSet {
-        ArgumentMarshaller getMarshaller(Method getter);
-        ArgumentMarshaller getMemberMarshaller(Type memberType);
-    }
-
-    static interface UnmarshallerSet {
-        ArgumentUnmarshaller getUnmarshaller(Method getter, Method setter);
-        ArgumentUnmarshaller getMemberUnmarshaller(Type memberType);
     }
 
     static final class V2MarshallerSet {
@@ -808,138 +983,10 @@ public final class ConversionSchemas {
             // If all else fails, fall back to this default marshaler to
             // retain backwards-compatible behavior.
             list.add(Pair.of(Object.class,
-                    ObjectSetToStringSetMarshaller.instance()));
+                             ObjectSetToStringSetMarshaller.instance()));
 
             return list;
         }
-    }
-
-    private static void addStandardDateMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(Date.class,
-                DateToStringMarshaller.instance()));
-        list.add(Pair.of(Calendar.class,
-                CalendarToStringMarshaller.instance()));
-    }
-
-    private static void addV1BooleanMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(Boolean.class,
-                BooleanToNumberMarshaller.instance()));
-        list.add(Pair.of(boolean.class,
-                BooleanToNumberMarshaller.instance()));
-    }
-
-    private static void addV2BooleanMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(Boolean.class,
-                BooleanToBooleanMarshaller.instance()));
-        list.add(Pair.of(boolean.class,
-                BooleanToBooleanMarshaller.instance()));
-    }
-
-    private static void addStandardNumberMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(Number.class,
-                NumberToNumberMarshaller.instance()));
-        list.add(Pair.of(byte.class,
-                NumberToNumberMarshaller.instance()));
-        list.add(Pair.of(short.class,
-                NumberToNumberMarshaller.instance()));
-        list.add(Pair.of(int.class,
-                NumberToNumberMarshaller.instance()));
-        list.add(Pair.of(long.class,
-                NumberToNumberMarshaller.instance()));
-        list.add(Pair.of(float.class,
-                NumberToNumberMarshaller.instance()));
-        list.add(Pair.of(double.class,
-                NumberToNumberMarshaller.instance()));
-    }
-
-    private static void addStandardStringMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(String.class,
-                StringToStringMarshaller.instance()));
-
-        list.add(Pair.of(UUID.class,
-                ObjectToStringMarshaller.instance()));
-    }
-
-    private static void addStandardBinaryMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(ByteBuffer.class,
-                ByteBufferToBinaryMarshaller.instance()));
-        list.add(Pair.of(byte[].class,
-                ByteArrayToBinaryMarshaller.instance()));
-    }
-
-    private static void addStandardS3LinkMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(S3Link.class,
-                S3LinkToStringMarshaller.instance()));
-    }
-
-    private static void addStandardDateSetMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(Date.class,
-                DateSetToStringSetMarshaller.instance()));
-        list.add(Pair.of(Calendar.class,
-                CalendarSetToStringSetMarshaller.instance()));
-    }
-
-    private static void addStandardNumberSetMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(Number.class,
-                NumberSetToNumberSetMarshaller.instance()));
-        list.add(Pair.of(byte.class,
-                NumberSetToNumberSetMarshaller.instance()));
-        list.add(Pair.of(short.class,
-                NumberSetToNumberSetMarshaller.instance()));
-        list.add(Pair.of(int.class,
-                NumberSetToNumberSetMarshaller.instance()));
-        list.add(Pair.of(long.class,
-                NumberSetToNumberSetMarshaller.instance()));
-        list.add(Pair.of(float.class,
-                NumberSetToNumberSetMarshaller.instance()));
-        list.add(Pair.of(double.class,
-                NumberSetToNumberSetMarshaller.instance()));
-    }
-
-    private static void addStandardStringSetMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(String.class,
-                StringSetToStringSetMarshaller.instance()));
-
-        list.add(Pair.of(UUID.class,
-                UUIDSetToStringSetMarshaller.instance()));
-    }
-
-    private static void addStandardBinarySetMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(ByteBuffer.class,
-                ByteBufferSetToBinarySetMarshaller.instance()));
-        list.add(Pair.of(byte[].class,
-                ByteArraySetToBinarySetMarshaller.instance()));
-    }
-
-    private static void addV1BooleanSetMarshallers(
-            List<Pair<ArgumentMarshaller>> list) {
-
-        list.add(Pair.of(Boolean.class,
-                BooleanSetToNumberSetMarshaller.instance()));
-        list.add(Pair.of(boolean.class,
-                BooleanSetToNumberSetMarshaller.instance()));
     }
 
     private static class AbstractMarshallerSet implements MarshallerSet {
@@ -1046,9 +1093,9 @@ public final class ConversionSchemas {
             list.add(Pair.of(Double.class, DoubleUnmarshaller.instance()));
 
             list.add(Pair.of(BigDecimal.class,
-                    BigDecimalUnmarshaller.instance()));
+                             BigDecimalUnmarshaller.instance()));
             list.add(Pair.of(BigInteger.class,
-                    BigIntegerUnmarshaller.instance()));
+                             BigIntegerUnmarshaller.instance()));
 
             list.add(Pair.of(int.class, IntegerUnmarshaller.instance()));
             list.add(Pair.of(Integer.class, IntegerUnmarshaller.instance()));
@@ -1072,9 +1119,9 @@ public final class ConversionSchemas {
             list.add(Pair.of(Calendar.class, CalendarUnmarshaller.instance()));
 
             list.add(Pair.of(ByteBuffer.class,
-                    ByteBufferUnmarshaller.instance()));
+                             ByteBufferUnmarshaller.instance()));
             list.add(Pair.of(byte[].class,
-                    ByteArrayUnmarshaller.instance()));
+                             ByteArrayUnmarshaller.instance()));
 
             list.add(Pair.of(S3Link.class, S3LinkUnmarshaller.instance()));
             list.add(Pair.of(UUID.class, UUIDUnmarshaller.instance()));
@@ -1097,9 +1144,9 @@ public final class ConversionSchemas {
             list.add(Pair.of(Double.class, DoubleSetUnmarshaller.instance()));
 
             list.add(Pair.of(BigDecimal.class,
-                    BigDecimalSetUnmarshaller.instance()));
+                             BigDecimalSetUnmarshaller.instance()));
             list.add(Pair.of(BigInteger.class,
-                    BigIntegerSetUnmarshaller.instance()));
+                             BigIntegerSetUnmarshaller.instance()));
 
             list.add(Pair.of(int.class, IntegerSetUnmarshaller.instance()));
             list.add(Pair.of(Integer.class, IntegerSetUnmarshaller.instance()));
@@ -1121,12 +1168,12 @@ public final class ConversionSchemas {
 
             list.add(Pair.of(Date.class, DateSetUnmarshaller.instance()));
             list.add(Pair.of(Calendar.class,
-                    CalendarSetUnmarshaller.instance()));
+                             CalendarSetUnmarshaller.instance()));
 
             list.add(Pair.of(ByteBuffer.class,
-                    ByteBufferSetUnmarshaller.instance()));
+                             ByteBufferSetUnmarshaller.instance()));
             list.add(Pair.of(byte[].class,
-                    ByteArraySetUnmarshaller.instance()));
+                             ByteArraySetUnmarshaller.instance()));
 
             list.add(Pair.of(UUID.class, UUIDSetUnmarshaller.instance()));
             list.add(Pair.of(String.class, StringSetUnmarshaller.instance()));
@@ -1214,67 +1261,7 @@ public final class ConversionSchemas {
         }
     }
 
-    private static Class<?> unwrapGenericSetParam(Type setType) {
-        if (!(setType instanceof ParameterizedType)) {
-            LOGGER.warn("Set type " + setType + " is not a "
-                    + "ParameterizedType, using default marshaler and "
-                    + "unmarshaler!");
-            return Object.class;
-        }
-
-        ParameterizedType ptype = (ParameterizedType) setType;
-        Type[] arguments = ptype.getActualTypeArguments();
-
-        if (arguments.length != 1) {
-            LOGGER.warn("Set type " + setType + " does not have exactly one "
-                    + "type argument, using default marshaler and "
-                    + "unmarshaler!");
-            return Object.class;
-        }
-
-        if (arguments[0].toString().equals("byte[]")) {
-            return byte[].class;
-        } else {
-            return (Class<?>) arguments[0];
-        }
-    }
-
-    private static Class<?> resolveClass(Type type) {
-        Type localType = type;
-        if (localType instanceof ParameterizedType) {
-            localType = ((ParameterizedType) type).getRawType();
-        }
-        if (!(localType instanceof Class)) {
-            throw new DynamoDBMappingException("Cannot resolve class for type "
-                    + type);
-        }
-        return (Class<?>) localType;
-    }
-
-    private static <T> T find(Class<?> needle, List<Pair<T>> haystack) {
-        for (Pair<? extends T> pair : haystack) {
-            if (pair.key.isAssignableFrom(needle)) {
-                return pair.value;
-            }
-        }
-        return null;
-    }
-
     private static class Pair<T> {
-
-        public static Pair<ArgumentMarshaller> of (
-                Class<?> key,
-                ArgumentMarshaller value) {
-
-            return new Pair<ArgumentMarshaller>(key, value);
-        }
-
-        public static Pair<ArgumentUnmarshaller> of (
-                Class<?> key,
-                ArgumentUnmarshaller value) {
-
-            return new Pair<ArgumentUnmarshaller>(key, value);
-        }
 
         public final Class<?> key;
         public final T value;
@@ -1282,6 +1269,20 @@ public final class ConversionSchemas {
         private Pair(Class<?> key, T value) {
             this.key = key;
             this.value = value;
+        }
+
+        public static Pair<ArgumentMarshaller> of(
+                Class<?> key,
+                ArgumentMarshaller value) {
+
+            return new Pair<ArgumentMarshaller>(key, value);
+        }
+
+        public static Pair<ArgumentUnmarshaller> of(
+                Class<?> key,
+                ArgumentUnmarshaller value) {
+
+            return new Pair<ArgumentUnmarshaller>(key, value);
         }
     }
 
@@ -1454,38 +1455,41 @@ public final class ConversionSchemas {
             }
         }
 
-        private final class ItemConverterRule<V> implements Rule<V>, DynamoDBTypeConverter<AttributeValue,V> {
+        private final class ItemConverterRule<V> implements Rule<V>, DynamoDBTypeConverter<AttributeValue, V> {
             private final ConvertibleType<V> type;
+
             private ItemConverterRule(final ConvertibleType<V> type) {
                 this.type = type;
             }
+
             @Override
             public boolean isAssignableFrom(ConvertibleType<?> type) {
                 return true;
             }
+
             @Override
-            public DynamoDBTypeConverter<AttributeValue,V> newConverter(ConvertibleType<V> type) {
+            public DynamoDBTypeConverter<AttributeValue, V> newConverter(ConvertibleType<V> type) {
                 return this;
             }
+
             @Override
             public DynamoDBAttributeType getAttributeType() {
                 try {
                     return converter.getFieldModel(type.getter()).attributeType();
-                } catch (final DynamoDBMappingException no) {}
+                } catch (final DynamoDBMappingException no) {
+                }
                 return DynamoDBAttributeType.NULL;
             }
+
             @Override
             public AttributeValue convert(final V object) {
                 return converter.convert(type.getter(), object);
             }
+
             @Override
             public V unconvert(final AttributeValue object) {
-                return (V)converter.unconvert(type.getter(), type.setter(), object);
+                return (V) converter.unconvert(type.getter(), type.setter(), object);
             }
         }
-    }
-
-    ConversionSchemas() {
-        throw new UnsupportedOperationException();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -232,7 +233,9 @@ public class ListObjectsV2Result implements Serializable {
      *
      * @return The optional continuation token associated with this request.
      */
-    public String getContinuationToken() { return continuationToken; }
+    public String getContinuationToken() {
+        return continuationToken;
+    }
 
     /**
      * Sets the optional continuation token.  Continuation token allows a list to be
@@ -241,7 +244,9 @@ public class ListObjectsV2Result implements Serializable {
      * @param continuationToken
      *                     The optional continuation token to associate with this request.
      */
-    public void setContinuationToken(String continuationToken) { this.continuationToken = continuationToken; }
+    public void setContinuationToken(String continuationToken) {
+        this.continuationToken = continuationToken;
+    }
 
     /**
      * Gets the optional NextContinuationToken.
@@ -249,9 +254,11 @@ public class ListObjectsV2Result implements Serializable {
      * more keys in the bucket that can be listed. The next list requests to Amazon
      * S3 can be continued by providing this NextContinuationToken.
      *
-    * @return The optional NextContinuationToken parameter.
+     * @return The optional NextContinuationToken parameter.
      */
-    public String getNextContinuationToken() { return nextContinuationToken; }
+    public String getNextContinuationToken() {
+        return nextContinuationToken;
+    }
 
     /**
      * Sets the optional NextContinuationToken.
@@ -264,14 +271,18 @@ public class ListObjectsV2Result implements Serializable {
      *
      * @return The optional NextContinuationToken parameter.
      */
-    public void setNextContinuationToken(String nextContinuationToken) { this.nextContinuationToken = nextContinuationToken; }
+    public void setNextContinuationToken(String nextContinuationToken) {
+        this.nextContinuationToken = nextContinuationToken;
+    }
 
     /**
      * Gets the number of keys returned with this response.
      *
      * @return number of keys returned with this response.
      */
-    public int getKeyCount() { return keyCount; }
+    public int getKeyCount() {
+        return keyCount;
+    }
 
     /**
      * Sets the number of keys returned with this response.
@@ -279,7 +290,9 @@ public class ListObjectsV2Result implements Serializable {
      * @param keyCount
      *           The number of keys that were returned with this response.
      */
-    public void setKeyCount(int keyCount) { this.keyCount = keyCount; }
+    public void setKeyCount(int keyCount) {
+        this.keyCount = keyCount;
+    }
 
     /**
      * Gets the optional <code>maxKeys</code> parameter indicating the maximum number of keys to
@@ -290,7 +303,9 @@ public class ListObjectsV2Result implements Serializable {
      * @return The optional parameter indicating the maximum number of keys to
      *         include in the response.
      */
-    public int getMaxKeys() { return maxKeys; }
+    public int getMaxKeys() {
+        return maxKeys;
+    }
 
     /**
      * Sets the optional <code>maxKeys</code> parameter indicating the maximum number of keys to
@@ -300,7 +315,9 @@ public class ListObjectsV2Result implements Serializable {
      *            The optional parameter indicating the maximum number of keys
      *            to include in the response.
      */
-    public void setMaxKeys(int maxKeys) { this.maxKeys = maxKeys; }
+    public void setMaxKeys(int maxKeys) {
+        this.maxKeys = maxKeys;
+    }
 
     /**
      * Returns optional parameter indicating where you want Amazon S3 to start the object
@@ -308,7 +325,9 @@ public class ListObjectsV2Result implements Serializable {
      *
      * @return the optional startAfter parameter
      */
-    public String getStartAfter() { return startAfter; }
+    public String getStartAfter() {
+        return startAfter;
+    }
 
     /**
      * Sets the optional parameter indicating where you want Amazon S3 to start the object
@@ -317,7 +336,9 @@ public class ListObjectsV2Result implements Serializable {
      * @param startAfter
      *                The optional startAfter parameter.  This can be any key in the bucket.
      */
-    public void setStartAfter(String startAfter) { this.startAfter = startAfter; }
+    public void setStartAfter(String startAfter) {
+        this.startAfter = startAfter;
+    }
 
     /**
      * Gets the list of object summaries describing the objects stored in the

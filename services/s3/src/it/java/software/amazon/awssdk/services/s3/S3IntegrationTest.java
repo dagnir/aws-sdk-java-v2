@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -59,17 +74,13 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
 
     /** Name of the test CN bucket these tests will create, test, delete, etc */
     private static final String expectedCnBucketName = "integ.test.cn.bucket-foobar-" + new Date().getTime();
-
-    /** Name of the test S3 account running these tests */
-    private final String expectedS3AccountOwnerName = "aws-dr-tools-test";
-
     /** Name of the test key these tests will create, test, delete, etc */
     private static final String expectedKey = "integ-test-key-" + new Date().getTime();
-
     /** Redirect location for a specific object */
     private static final String REDIRECT_LOCATION = "/redirecting...";
-
     private static final String CREATE_BUCKET_TEST_BUCKET_PREFIX = "test-create-bucket-";
+    /** Name of the test S3 account running these tests */
+    private final String expectedS3AccountOwnerName = "aws-dr-tools-test";
 
     /**
      * Ensures that any created test resources are correctly released.
@@ -82,7 +93,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
 
         if (expectedCnBucketName != null) {
             CryptoTestUtils.deleteBucketAndAllContents(cnS3,
-                    expectedCnBucketName);
+                                                       expectedCnBucketName);
         }
 
         deleteBucketAndAllContentsWithPrefix(CREATE_BUCKET_TEST_BUCKET_PREFIX);
@@ -151,9 +162,11 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
      *         name, otherwise null if no bucket was found with a matching name.
      */
     private Bucket findBucketInList(List<Bucket> buckets, String bucketName) {
-        for (Iterator<Bucket> iterator = buckets.iterator(); iterator.hasNext();) {
-            Bucket bucket = (Bucket)iterator.next();
-            if (bucket.getName().equals(bucketName)) return bucket;
+        for (Iterator<Bucket> iterator = buckets.iterator(); iterator.hasNext(); ) {
+            Bucket bucket = (Bucket) iterator.next();
+            if (bucket.getName().equals(bucketName)) {
+                return bucket;
+            }
         }
 
         return null;
@@ -173,7 +186,9 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
     private boolean objectListContainsKey(List<S3ObjectSummary> objects, String expectedKey) {
         for (Iterator<S3ObjectSummary> iterator = objects.iterator(); iterator.hasNext(); ) {
             S3ObjectSummary obj = iterator.next();
-            if (obj.getKey().equals(expectedKey)) return true;
+            if (obj.getKey().equals(expectedKey)) {
+                return true;
+            }
         }
 
         return false;
@@ -187,7 +202,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testRepeatableRequestEntityPreservesOrignalError() throws Exception {
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(1024*1024);
+        metadata.setContentLength(1024 * 1024);
         // Default stream buffer is up to 128K so the reset would fail
         UnreliableRandomInputStream inputStream = new UnreliableRandomInputStream(metadata.getContentLength());
         try {
@@ -211,14 +226,14 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testRepeatableRequestEntity_InsufficientBufferSize() throws Exception {
         ObjectMetadata metadata = new ObjectMetadata();
-        final int len = 1024*1024;
+        final int len = 1024 * 1024;
         metadata.setContentLength(len);
         // Default stream buffer is up to 128K so the reset would fail
         UnreliableRandomInputStream inputStream = new UnreliableRandomInputStream(metadata.getContentLength());
         // Configure stream buffer to the exact size required minus 1, which just
         // happens to be len/2 due to the way UnreliableRandomInputStream is
         // implemented
-        System.setProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE, String.valueOf(len/2));
+        System.setProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE, String.valueOf(len / 2));
         try {
             s3.putObject(expectedBucketName, "key", inputStream, metadata);
             fail("Expected an exception to be thrown");
@@ -232,12 +247,12 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testRepeatableRequestEntity_ExactBufferSize() throws Exception {
         ObjectMetadata metadata = new ObjectMetadata();
-        final int len = 1024*1024;
+        final int len = 1024 * 1024;
         metadata.setContentLength(len);
         // Configure stream buffer to the exact size required, which just
         // happens to be len/2 + 1 due to the way UnreliableRandomInputStream is
         // implemented
-        System.setProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE, String.valueOf(len/2+1));
+        System.setProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE, String.valueOf(len / 2 + 1));
         UnreliableRandomInputStream inputStream = new UnreliableRandomInputStream(metadata.getContentLength());
         s3.putObject(expectedBucketName, "key", inputStream, metadata);
         inputStream.close();
@@ -246,7 +261,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testRepeatableRequestEntity_MaxBufferSize() throws Exception {
         ObjectMetadata metadata = new ObjectMetadata();
-        final int len = 1024*1024;
+        final int len = 1024 * 1024;
         metadata.setContentLength(len);
         // Configure max stream buffer to the max possible value
         System.setProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE, String.valueOf(Integer.MAX_VALUE));
@@ -264,7 +279,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
 
         ListBucketsRequest listBucketsRequest = new ListBucketsRequest();
         listBucketsRequest.setRequestCredentials(new BasicAWSCredentials("foo",
-                "bar"));
+                                                                         "bar"));
         try {
             s3.listBuckets(listBucketsRequest);
             fail("Expected an authentication exception from bogus request credentials.");
@@ -280,7 +295,8 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
         try {
             s3.listObjects("aws:s3:::bucket.s3.amazonaws.com");
             fail("Expected an exception, but wasn't thrown");
-        } catch (AmazonClientException ace) {}
+        } catch (AmazonClientException ace) {
+        }
     }
 
     /**
@@ -292,7 +308,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
         assertTrue(cnS3.doesBucketExist(expectedCnBucketName)); // a bucket we own in another region
         assertTrue(s3.doesBucketExist("s3-bucket"));          // a bucket we don't own
         assertFalse(s3.doesBucketExist(                       // a non-existent bucket
-                "qweoiuasnxcvmnsfkljawasmnxasqwoiasdlfjamnxjkaoia-" + System.currentTimeMillis()));
+                                                              "qweoiuasnxcvmnsfkljawasmnxasqwoiasdlfjamnxjkaoia-" + System.currentTimeMillis()));
 
         /*
          * The new implementation of @see
@@ -476,7 +492,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
     /**
      * Tests that we can get an account owner for this account
      */
-//    @Test
+    //    @Test
     public void testGetS3AccountOwner() {
         Owner owner = s3.getS3AccountOwner();
         assertNotNull(owner);
@@ -515,7 +531,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
 
         objects = s3.listObjects(new ListObjectsRequest(
                 expectedBucketName, "NonExistantKeyPrefix", null, null, null)).getObjectSummaries();
-        assertTrue(0==objects.size());
+        assertTrue(0 == objects.size());
     }
 
     /**

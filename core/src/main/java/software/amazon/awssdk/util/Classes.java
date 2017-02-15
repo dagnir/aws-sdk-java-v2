@@ -1,9 +1,6 @@
 /*
  * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
- *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
@@ -28,11 +25,12 @@ import java.util.jar.JarFile;
  */
 public enum Classes {
     ;
+
     /**
      * Returns the class of the immediate subclass of the given parent class for
      * the given object instance; or null if such immediate subclass cannot be
      * uniquely identified for the given object instance.
-     * 
+     *
      * @param parentClass
      *            the parent class. The child class is {@link Object} if and
      *            only if the parent class is null.
@@ -40,9 +38,10 @@ public enum Classes {
      *            the given object instance
      */
     public static Class<?> childClassOf(Class<?> parentClass,
-            Object instance) {
-        if (instance == null || instance == Object.class)
+                                        Object instance) {
+        if (instance == null || instance == Object.class) {
             return null;
+        }
         if (parentClass != null) {
             if (parentClass.isInterface()) {
                 // child of an interface class is not injective (ie one-to-one)
@@ -52,10 +51,12 @@ public enum Classes {
         Class<?> childClass = instance.getClass();
         while (true) {
             Class<?> parent = childClass.getSuperclass();
-            if (parent == parentClass)
+            if (parent == parentClass) {
                 return childClass;
-            if (parent == null)
+            }
+            if (parent == null) {
                 return null;
+            }
             childClass = parent;
         }
     }
@@ -66,14 +67,16 @@ public enum Classes {
      */
     public static JarFile jarFileOf(Class<?> klass) {
         URL url = klass.getResource(
-            "/" + klass.getName().replace('.', '/') + ".class");
-        if (url == null)
+                "/" + klass.getName().replace('.', '/') + ".class");
+        if (url == null) {
             return null;
+        }
         String s = url.getFile();
         int beginIndex = s.indexOf("file:") + "file:".length();
         int endIndex = s.indexOf(".jar!");
-        if (endIndex == -1)
+        if (endIndex == -1) {
             return null;
+        }
         endIndex += ".jar".length();
         String f = s.substring(beginIndex, endIndex);
         File file = new File(f);

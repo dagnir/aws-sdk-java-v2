@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -70,8 +70,8 @@ public final class AWS4SignerRequestParams {
      * parameters used for computing a AWS 4 signature for a request
      */
     public AWS4SignerRequestParams(SignableRequest<?> request,
-            Date signingDateOverride, String regionNameOverride,
-            String serviceName, String signingAlgorithm) {
+                                   Date signingDateOverride, String regionNameOverride,
+                                   String serviceName, String signingAlgorithm) {
         if (request == null) {
             throw new IllegalArgumentException("Request cannot be null");
         }
@@ -86,10 +86,10 @@ public final class AWS4SignerRequestParams {
                 .formatDateStamp(signingDateTimeMilli);
         this.serviceName = serviceName;
         this.regionName = regionNameOverride != null ? regionNameOverride
-                : AwsHostNameUtils.parseRegionName(request.getEndpoint()
-                        .getHost(), this.serviceName);
+                                                     : AwsHostNameUtils.parseRegionName(request.getEndpoint()
+                                                                                               .getHost(), this.serviceName);
         this.scope = generateScope(request, formattedSigningDate, this.serviceName,
-                regionName);
+                                   regionName);
         this.formattedSigningDateTime = AWS4SignerUtils
                 .formatTimestamp(signingDateTimeMilli);
         this.signingAlgorithm = signingAlgorithm;
@@ -106,11 +106,11 @@ public final class AWS4SignerRequestParams {
      * Returns the scope to be used for the signing.
      */
     private String generateScope(SignableRequest<?> request, String dateStamp,
-            String serviceName, String regionName) {
+                                 String serviceName, String regionName) {
         final StringBuilder scopeBuilder = new StringBuilder();
         return scopeBuilder.append(dateStamp).append("/").append(regionName)
-                .append("/").append(serviceName).append("/")
-                .append(SignerConstants.AWS4_TERMINATOR).toString();
+                           .append("/").append(serviceName).append("/")
+                           .append(SignerConstants.AWS4_TERMINATOR).toString();
     }
 
     /**

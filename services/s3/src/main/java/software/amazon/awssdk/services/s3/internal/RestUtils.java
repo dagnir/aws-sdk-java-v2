@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.Arrays;
@@ -50,7 +48,7 @@ public class RestUtils {
             ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_LANGUAGE,
             ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_TYPE,
             ResponseHeaderOverrides.RESPONSE_HEADER_EXPIRES,
-    });
+            });
 
     /**
      * Calculate the canonical string for a REST/HTTP request to S3 by only
@@ -59,7 +57,7 @@ public class RestUtils {
      * @see RestUtils#makeS3CanonicalString(String, String, Request, String, boolean)
      */
     public static <T> String makeS3CanonicalString(String method,
-            String resource, SignableRequest<T> request, String expires) {
+                                                   String resource, SignableRequest<T> request, String expires) {
         return makeS3CanonicalString(method, resource, request, expires, null);
     }
 
@@ -82,8 +80,8 @@ public class RestUtils {
      * @return The canonical string representation for the given S3 request.
      */
     public static <T> String makeS3CanonicalString(String method,
-            String resource, SignableRequest<T> request, String expires,
-            Collection<String> additionalQueryParamsToSign) {
+                                                   String resource, SignableRequest<T> request, String expires,
+                                                   Collection<String> additionalQueryParamsToSign) {
 
         StringBuilder buf = new StringBuilder();
         buf.append(method + "\n");
@@ -99,13 +97,14 @@ public class RestUtils {
                 String key = entry.getKey();
                 String value = entry.getValue();
 
-                if (key == null) continue;
+                if (key == null) {
+                    continue;
+                }
                 String lk = StringUtils.lowerCase(key);
 
                 // Ignore any headers that are not particularly interesting.
                 if (lk.equals("content-type") || lk.equals("content-md5") || lk.equals("date") ||
-                    lk.startsWith(Headers.AMAZON_PREFIX))
-                {
+                    lk.startsWith(Headers.AMAZON_PREFIX)) {
                     interestingHeaders.put(lk, value);
                 }
             }
@@ -124,10 +123,10 @@ public class RestUtils {
 
         // These headers require that we still put a new line in after them,
         // even if they don't exist.
-        if (! interestingHeaders.containsKey("content-type")) {
+        if (!interestingHeaders.containsKey("content-type")) {
             interestingHeaders.put("content-type", "");
         }
-        if (! interestingHeaders.containsKey("content-md5")) {
+        if (!interestingHeaders.containsKey("content-md5")) {
             interestingHeaders.put("content-md5", "");
         }
 
@@ -156,7 +155,7 @@ public class RestUtils {
                     parameterValueBuilder.append(value);
                 }
                 interestingHeaders.put(parameter.getKey(),
-                        parameterValueBuilder.toString());
+                                       parameterValueBuilder.toString());
             }
         }
 
@@ -180,16 +179,16 @@ public class RestUtils {
         // Add all the interesting parameters
         buf.append(resource);
         String[] parameterNames = requestParameters.keySet().toArray(
-                                new String[request.getParameters().size()]);
+                new String[request.getParameters().size()]);
         Arrays.sort(parameterNames);
 
         StringBuilder queryParams = new StringBuilder();
         for (String parameterName : parameterNames) {
-            if ( !SIGNED_PARAMETERS.contains(parameterName)
-                 &&
-                 (additionalQueryParamsToSign == null ||
+            if (!SIGNED_PARAMETERS.contains(parameterName)
+                &&
+                (additionalQueryParamsToSign == null ||
                  !additionalQueryParamsToSign.contains(parameterName))
-               ) {
+                    ) {
                 continue;
             }
 

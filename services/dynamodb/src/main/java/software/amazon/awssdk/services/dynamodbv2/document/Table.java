@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -74,30 +74,30 @@ import software.amazon.awssdk.waiters.WaiterParameters;
  */
 @ThreadSafe
 public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
-        UpdateItemApi, DeleteItemApi {
+                              UpdateItemApi, DeleteItemApi {
     private static final long SLEEP_TIME_MILLIS = 5000;
     private final String tableName;
     private final AmazonDynamoDB client;
-    private volatile TableDescription tableDescription;
-
     private final PutItemImpl putItemDelegate;
     private final GetItemImpl getItemDelegate;
     private final UpdateItemImpl updateItemDelegate;
     private final DeleteItemImpl deleteItemDelegate;
-
     private final QueryImpl queryDelegate;
     private final ScanImpl scanDelegate;
+    private volatile TableDescription tableDescription;
 
     public Table(AmazonDynamoDB client, String tableName) {
         this(client, tableName, null);
     }
 
     public Table(AmazonDynamoDB client, String tableName,
-            TableDescription tableDescription) {
-        if (client == null)
+                 TableDescription tableDescription) {
+        if (client == null) {
             throw new IllegalArgumentException("client must be specified");
-        if (tableName == null || tableName.trim().length() == 0)
+        }
+        if (tableName == null || tableName.trim().length() == 0) {
             throw new IllegalArgumentException("table name must not be null or empty");
+        }
         this.client = client;
         this.tableName = tableName;
         this.tableDescription = tableDescription;
@@ -108,7 +108,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         this.deleteItemDelegate = new DeleteItemImpl(client, this);
 
         this.queryDelegate = new QueryImpl(client, this);
-        this.scanDelegate  = new ScanImpl(client, this);
+        this.scanDelegate = new ScanImpl(client, this);
     }
 
     public String getTableName() {
@@ -127,7 +127,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * Retrieves the table description from DynamoDB. Involves network calls.
      * Meant to be called as infrequently as possible to avoid throttling
      * exception from the server side.
-     * 
+     *
      * @return a non-null table description
      *
      * @throws ResourceNotFoundException if the table doesn't exist
@@ -157,9 +157,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public PutItemOutcome putItem(Item item, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                  Map<String, String> nameMap, Map<String, Object> valueMap) {
         return putItemDelegate.putItem(item, conditionExpression, nameMap,
-                valueMap);
+                                       valueMap);
     }
 
     @Override
@@ -179,9 +179,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public GetItemOutcome getItemOutcome(PrimaryKey primaryKey,
-            String projectionExpression, Map<String, String> nameMap) {
+                                         String projectionExpression, Map<String, String> nameMap) {
         return getItemDelegate.getItemOutcome(primaryKey, projectionExpression,
-                nameMap);
+                                              nameMap);
     }
 
     @Override
@@ -191,32 +191,32 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            AttributeUpdate... attributeUpdates) {
+                                        AttributeUpdate... attributeUpdates) {
         return updateItemDelegate.updateItem(primaryKey, attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            Collection<Expected> expected, AttributeUpdate... attributeUpdates) {
+                                        Collection<Expected> expected, AttributeUpdate... attributeUpdates) {
         return updateItemDelegate.updateItem(primaryKey, expected,
-                attributeUpdates);
+                                             attributeUpdates);
 
     }
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            String updateExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        String updateExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return updateItemDelegate.updateItem(primaryKey, updateExpression,
-                nameMap, valueMap);
+                                             nameMap, valueMap);
     }
 
     @Override
     public UpdateItemOutcome updateItem(PrimaryKey primaryKey,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return updateItemDelegate.updateItem(primaryKey, updateExpression,
-                conditionExpression, nameMap, valueMap);
+                                             conditionExpression, nameMap, valueMap);
     }
 
     @Override
@@ -236,31 +236,31 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition) {
+                                              RangeKeyCondition rangeKeyCondition) {
         return queryDelegate.query(hashKey, rangeKeyCondition);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, String filterExpression,
-            String projectionExpression,Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                              RangeKeyCondition rangeKeyCondition, String filterExpression,
+                                              String projectionExpression, Map<String, String> nameMap,
+                                              Map<String, Object> valueMap) {
         return queryDelegate.query(hashKey, rangeKeyCondition,
-                filterExpression, projectionExpression, nameMap, valueMap);
+                                   filterExpression, projectionExpression, nameMap, valueMap);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters) {
+                                              RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters) {
         return queryDelegate.query(hashKey, rangeKeyCondition, queryFilters);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, String filterExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                              RangeKeyCondition rangeKeyCondition, String filterExpression,
+                                              Map<String, String> nameMap, Map<String, Object> valueMap) {
         return queryDelegate.query(hashKey, rangeKeyCondition,
-                filterExpression, nameMap, valueMap);
+                                   filterExpression, nameMap, valueMap);
     }
 
     @Override
@@ -275,14 +275,14 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public ItemCollection<ScanOutcome> scan(String filterExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                            Map<String, String> nameMap, Map<String, Object> valueMap) {
         return scanDelegate.scan(filterExpression, nameMap, valueMap);
     }
 
     @Override
     public ItemCollection<ScanOutcome> scan(String filterExpression,
-            String projectionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                            String projectionExpression, Map<String, String> nameMap,
+                                            Map<String, Object> valueMap) {
         return scanDelegate.scan(filterExpression, projectionExpression, nameMap, valueMap);
     }
 
@@ -294,10 +294,10 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     @Beta
     public ItemCollection<ScanOutcome> scan(ScanExpressionSpec scanExpressions) {
         return scanDelegate.scan(new ScanSpec()
-            .withProjectionExpression(scanExpressions.getProjectionExpression())
-            .withFilterExpression(scanExpressions.getFilterExpression())
-            .withNameMap(scanExpressions.getNameMap())
-            .withValueMap(scanExpressions.getValueMap()));
+                                         .withProjectionExpression(scanExpressions.getProjectionExpression())
+                                         .withFilterExpression(scanExpressions.getFilterExpression())
+                                         .withNameMap(scanExpressions.getNameMap())
+                                         .withValueMap(scanExpressions.getValueMap()));
     }
 
     @Override
@@ -312,25 +312,25 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKey,
-            Expected... expected) {
+                                        Expected... expected) {
         return deleteItemDelegate.deleteItem(primaryKey, expected);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKey,
-            String conditionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        String conditionExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return deleteItemDelegate.deleteItem(primaryKey,
-                conditionExpression, nameMap, valueMap);
+                                             conditionExpression, nameMap, valueMap);
     }
 
     @Beta
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKey,
-            DeleteItemExpressionSpec conditionExpressions) {
+                                        DeleteItemExpressionSpec conditionExpressions) {
         return deleteItemDelegate.deleteItem(primaryKey,
-                conditionExpressions.getConditionExpression(),
-                conditionExpressions.getNameMap(),
-                conditionExpressions.getValueMap());
+                                             conditionExpressions.getConditionExpression(),
+                                             conditionExpressions.getNameMap(),
+                                             conditionExpressions.getValueMap());
     }
 
     @Override
@@ -378,13 +378,13 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * global secondary index is an asynchronous operation; while executing the
      * operation, the index is in the <code>CREATING</code> state. Once created,
      * the index will be in <code>ACTIVE</code> state.
-     * 
+     *
      * @param create
      *            used to specify the details of the index creation
      * @param hashKeyDefinition
      *            used to specify the attribute for describing the key schema
      *            for the hash key of the GSI to be created for this table.
-     * 
+     *
      * @return the index being created
      */
     public Index createGSI(
@@ -400,7 +400,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * global secondary index is an asynchronous operation; while executing the
      * operation, the index is in the <code>CREATING</code> state. Once created,
      * the index will be in <code>ACTIVE</code> state.
-     * 
+     *
      * @param create
      *            used to specify the details of the index creation
      * @param hashKeyDefinition
@@ -409,7 +409,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * @param rangeKeyDefinition
      *            used to specify the attribute for describing the key schema
      *            for the range key of the GSI to be created for this table.
-     * 
+     *
      * @return the index being created
      */
     public Index createGSI(
@@ -421,12 +421,11 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     private Index doCreateGSI(
             CreateGlobalSecondaryIndexAction create,
-            AttributeDefinition ... keyDefinitions) {
+            AttributeDefinition... keyDefinitions) {
         UpdateTableSpec spec = new UpdateTableSpec()
-            .withAttributeDefinitions(keyDefinitions)
-            .withGlobalSecondaryIndexUpdates(
-                new GlobalSecondaryIndexUpdate().withCreate(create))
-            ;
+                .withAttributeDefinitions(keyDefinitions)
+                .withGlobalSecondaryIndexUpdates(
+                        new GlobalSecondaryIndexUpdate().withCreate(create));
         updateTable(spec);
         return this.getIndex(create.getIndexName());
     }
@@ -460,7 +459,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     public TableDescription updateTable(
             ProvisionedThroughput provisionedThroughput) {
         return updateTable(new UpdateTableSpec()
-            .withProvisionedThroughput(provisionedThroughput));
+                                   .withProvisionedThroughput(provisionedThroughput));
     }
 
     /**
@@ -468,9 +467,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * creation, to wait for the table to become active. This method uses
      * {@link software.amazon.awssdk.services.dynamodbv2.waiters.AmazonDynamoDBWaiters}
      * to poll the status of the table every 5 seconds.
-     * 
+     *
      * @return the table description when the table has become active
-     * 
+     *
      * @throws IllegalArgumentException if the table is being deleted
      * @throws ResourceNotFoundException if the table doesn't exist
      */
@@ -479,7 +478,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
         try {
             waiter.run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(tableName))
-                    .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25), new FixedDelayStrategy(5))));
+                               .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25), new FixedDelayStrategy(5))));
             return describe();
         } catch (Exception exception) {
             // The additional describe call is to return ResourceNotFoundException if the table doesn't exist.
@@ -499,7 +498,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         Waiter waiter = client.waiters().tableNotExists();
         try {
             waiter.run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(tableName))
-                    .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25), new FixedDelayStrategy(5))));
+                               .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25), new FixedDelayStrategy(5))));
         } catch (Exception exception) {
             throw new IllegalArgumentException("Table " + tableName + " is not deleted.", exception);
         }
@@ -522,15 +521,16 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     @Deprecated
     public TableDescription waitForActiveOrDelete() throws InterruptedException {
         try {
-            for (;;) {
+            for (; ; ) {
                 TableDescription desc = describe();
                 final String status = desc.getTableStatus();
-                if (TableStatus.fromValue(status) == TableStatus.ACTIVE)
+                if (TableStatus.fromValue(status) == TableStatus.ACTIVE) {
                     return desc;
-                else
+                } else {
                     Thread.sleep(SLEEP_TIME_MILLIS);
+                }
             }
-        } catch(ResourceNotFoundException deleted) {
+        } catch (ResourceNotFoundException deleted) {
         }
         return null;
     }
@@ -540,7 +540,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * it's indexes until both the table and it's indexes have either become
      * active or deleted (ie no longer exists) by polling the table every 5
      * seconds.
-     * 
+     *
      * @return the table description if the table and all it's indexes have
      *         become active; or null if the table has been deleted.
      *
@@ -553,28 +553,29 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     @Deprecated
     public TableDescription waitForAllActiveOrDelete() throws InterruptedException {
         try {
-            retry: for (;;) {
+            retry:
+            for (; ; ) {
                 TableDescription desc = describe();
                 String status = desc.getTableStatus();
                 if (TableStatus.fromValue(status) == TableStatus.ACTIVE) {
                     List<GlobalSecondaryIndexDescription> descriptions =
                             desc.getGlobalSecondaryIndexes();
-                        if (descriptions != null) {
-                            for (GlobalSecondaryIndexDescription d: descriptions) {
-                                status = d.getIndexStatus();
-                                if (IndexStatus.fromValue(status) != IndexStatus.ACTIVE) {
-                                    // Some index is not active.  Keep waiting.
-                                    Thread.sleep(SLEEP_TIME_MILLIS);
-                                    continue retry;
-                                }
+                    if (descriptions != null) {
+                        for (GlobalSecondaryIndexDescription d : descriptions) {
+                            status = d.getIndexStatus();
+                            if (IndexStatus.fromValue(status) != IndexStatus.ACTIVE) {
+                                // Some index is not active.  Keep waiting.
+                                Thread.sleep(SLEEP_TIME_MILLIS);
+                                continue retry;
                             }
                         }
-                        return desc;
+                    }
+                    return desc;
                 }
                 Thread.sleep(SLEEP_TIME_MILLIS);
                 continue;
             }
-        } catch(ResourceNotFoundException deleted) {
+        } catch (ResourceNotFoundException deleted) {
         }
         return null;
     }
@@ -598,7 +599,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public Item getItem(PrimaryKey primaryKey, String projectionExpression,
-            Map<String, String> nameMap) {
+                        Map<String, String> nameMap) {
         return getItemDelegate.getItem(primaryKey, projectionExpression, nameMap);
     }
 
@@ -614,7 +615,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public GetItemOutcome getItemOutcome(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
+                                         String rangeKeyName, Object rangeKeyValue) {
         return getItemDelegate.getItemOutcome(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue);
     }
 
@@ -625,195 +626,195 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
+                        String rangeKeyName, Object rangeKeyValue) {
         return getItemDelegate.getItem(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition) {
         return queryDelegate.query(hashKeyName, hashKeyValue, rangeKeyCondition);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            QueryFilter... queryFilters) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              QueryFilter... queryFilters) {
         return queryDelegate.query(hashKeyName, hashKeyValue,
-                rangeKeyCondition, queryFilters);
+                                   rangeKeyCondition, queryFilters);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            String filterExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression, Map<String, String> nameMap,
+                                              Map<String, Object> valueMap) {
         return queryDelegate.query(hashKeyName, hashKeyValue,
-                rangeKeyCondition, filterExpression, nameMap, valueMap);
+                                   rangeKeyCondition, filterExpression, nameMap, valueMap);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            String filterExpression, String projectionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression, String projectionExpression,
+                                              Map<String, String> nameMap, Map<String, Object> valueMap) {
         return queryDelegate.query(hashKeyName, hashKeyValue,
-                rangeKeyCondition, filterExpression, projectionExpression,
-                nameMap, valueMap);
+                                   rangeKeyCondition, filterExpression, projectionExpression,
+                                   nameMap, valueMap);
     }
 
     @Beta
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            QueryExpressionSpec queryExpressions) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              QueryExpressionSpec queryExpressions) {
         return queryDelegate.query(hashKeyName, hashKeyValue, rangeKeyCondition,
-                queryExpressions.getFilterExpression(),
-                queryExpressions.getProjectionExpression(),
-                queryExpressions.getNameMap(), queryExpressions.getValueMap());
+                                   queryExpressions.getFilterExpression(),
+                                   queryExpressions.getProjectionExpression(),
+                                   queryExpressions.getNameMap(), queryExpressions.getValueMap());
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, AttributeUpdate... attributeUpdates) {
+                                        Object hashKeyValue, AttributeUpdate... attributeUpdates) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                attributeUpdates);
+                                             attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            AttributeUpdate... attributeUpdates) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        AttributeUpdate... attributeUpdates) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue, attributeUpdates);
+                                             rangeKeyName, rangeKeyValue, attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, Collection<Expected> expected,
-            AttributeUpdate... attributeUpdates) {
+                                        Object hashKeyValue, Collection<Expected> expected,
+                                        AttributeUpdate... attributeUpdates) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                expected, attributeUpdates);
+                                             expected, attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            Collection<Expected> expected, AttributeUpdate... attributeUpdates) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        Collection<Expected> expected, AttributeUpdate... attributeUpdates) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue,
-                expected, attributeUpdates);
+                                             rangeKeyName, rangeKeyValue,
+                                             expected, attributeUpdates);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
-            Object hashKeyValue, String updateExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        Object hashKeyValue, String updateExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                updateExpression, nameMap, valueMap);
+                                             updateExpression, nameMap, valueMap);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String updateExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        String updateExpression,
+                                        Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue,
-                updateExpression, nameMap, valueMap);
+                                             rangeKeyName, rangeKeyValue,
+                                             updateExpression, nameMap, valueMap);
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                updateExpression, conditionExpression,
-                nameMap, valueMap);
+                                             updateExpression, conditionExpression,
+                                             nameMap, valueMap);
     }
 
     @Beta
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            UpdateItemExpressionSpec updateExpressions) {
+                                        UpdateItemExpressionSpec updateExpressions) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                    updateExpressions.getUpdateExpression(),
-                    updateExpressions.getConditionExpression(),
-                    updateExpressions.getNameMap(),
-                    updateExpressions.getValueMap());
+                                             updateExpressions.getUpdateExpression(),
+                                             updateExpressions.getConditionExpression(),
+                                             updateExpressions.getNameMap(),
+                                             updateExpressions.getValueMap());
     }
 
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String updateExpression, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        String updateExpression, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue,
-                updateExpression, conditionExpression,
-                nameMap, valueMap);
+                                             rangeKeyName, rangeKeyValue,
+                                             updateExpression, conditionExpression,
+                                             nameMap, valueMap);
     }
 
-   @Beta
-   public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            UpdateItemExpressionSpec updateExpressions) {
+    @Beta
+    public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
+                                        String rangeKeyName, Object rangeKeyValue,
+                                        UpdateItemExpressionSpec updateExpressions) {
         return updateItemDelegate.updateItem(
-            hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue,
-            updateExpressions.getUpdateExpression(),
-            updateExpressions.getConditionExpression(),
-            updateExpressions.getNameMap(),
-            updateExpressions.getValueMap());
+                hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue,
+                updateExpressions.getUpdateExpression(),
+                updateExpressions.getConditionExpression(),
+                updateExpressions.getNameMap(),
+                updateExpressions.getValueMap());
     }
 
     @Override
     public GetItemOutcome getItemOutcome(String hashKeyName,
-            Object hashKeyValue, String projectionExpression,
-            Map<String, String> nameMap) {
+                                         Object hashKeyValue, String projectionExpression,
+                                         Map<String, String> nameMap) {
         return getItemDelegate.getItemOutcome(hashKeyName, hashKeyValue,
-                projectionExpression, nameMap);
+                                              projectionExpression, nameMap);
     }
 
     @Override
     public GetItemOutcome getItemOutcome(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            String projectionExpression, Map<String, String> nameMap) {
+                                         Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                         String projectionExpression, Map<String, String> nameMap) {
         return getItemDelegate.getItemOutcome(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue, projectionExpression, nameMap);
+                                              rangeKeyName, rangeKeyValue, projectionExpression, nameMap);
     }
 
     @Beta
     public GetItemOutcome getItemOutcome(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            GetItemExpressionSpec projectionExpressions) {
+                                         Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                         GetItemExpressionSpec projectionExpressions) {
         return getItemDelegate.getItemOutcome(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue,
-                projectionExpressions.getProjectionExpression(),
-                projectionExpressions.getNameMap());
+                                              rangeKeyName, rangeKeyValue,
+                                              projectionExpressions.getProjectionExpression(),
+                                              projectionExpressions.getNameMap());
     }
 
     @Override
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String projectionExpression, Map<String, String> nameMap) {
+                        String projectionExpression, Map<String, String> nameMap) {
         return getItemDelegate.getItem(hashKeyName, hashKeyValue,
-                projectionExpression, nameMap);
+                                       projectionExpression, nameMap);
     }
 
     @Override
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String projectionExpression, Map<String, String> nameMap) {
+                        String rangeKeyName, Object rangeKeyValue,
+                        String projectionExpression, Map<String, String> nameMap) {
         return getItemDelegate.getItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue, projectionExpression, nameMap);
+                                       rangeKeyName, rangeKeyValue, projectionExpression, nameMap);
     }
 
     @Beta
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            GetItemExpressionSpec projectionExpressions) {
+                        String rangeKeyName, Object rangeKeyValue,
+                        GetItemExpressionSpec projectionExpressions) {
         return getItemDelegate.getItem(hashKeyName, hashKeyValue, rangeKeyName,
-                rangeKeyValue, projectionExpressions.getProjectionExpression(),
-                projectionExpressions.getNameMap());
-        
+                                       rangeKeyValue, projectionExpressions.getProjectionExpression(),
+                                       projectionExpressions.getNameMap());
+
     }
 
     @Override
@@ -823,53 +824,53 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue) {
         return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue);
+                                             rangeKeyName, rangeKeyValue);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, Expected... expected) {
+                                        Object hashKeyValue, Expected... expected) {
         return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
-                expected);
+                                             expected);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            Expected... expected) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        Expected... expected) {
         return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue, expected);
+                                             rangeKeyName, rangeKeyValue, expected);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        Object hashKeyValue, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
-                conditionExpression,  nameMap, valueMap);
+                                             conditionExpression, nameMap, valueMap);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            String conditionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        String conditionExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue,
-                conditionExpression,  nameMap, valueMap);
+                                             rangeKeyName, rangeKeyValue,
+                                             conditionExpression, nameMap, valueMap);
     }
 
     @Beta
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            DeleteItemExpressionSpec conditionExpressions) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        DeleteItemExpressionSpec conditionExpressions) {
         return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
-                rangeKeyName, rangeKeyValue,
-                conditionExpressions.getConditionExpression(),
-                conditionExpressions.getNameMap(),
-                conditionExpressions.getValueMap());
+                                             rangeKeyName, rangeKeyValue,
+                                             conditionExpressions.getConditionExpression(),
+                                             conditionExpressions.getNameMap(),
+                                             conditionExpressions.getValueMap());
     }
 
     @Override

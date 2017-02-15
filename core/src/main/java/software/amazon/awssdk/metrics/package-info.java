@@ -15,7 +15,7 @@
 
 /**
  * Classes used to support the AWS SDK metrics API.
- * 
+ *
  * When the default metric collection system is enabled, 
  * the default AWS SDK implementation
  * captures a set of predefined core metrics that are grouped under three major 
@@ -28,7 +28,7 @@
  * <li>Request type - the specific subtype of AmazonWebServiceRequest, such as PutItemRequest, PutObjectRequest, etc.</li>
  * <li>Http Client Library - the <a href="http://hc.apache.org/httpcomponents-client-4.2.x/index.html">Apache HttpComponents client</a> library</li>
  * </ul>
- * 
+ *
  * <h3>AWS Request Metrics</h3>
  * <ol>
  * <li>ClientExecuteTime - Total number of milliseconds taken for a 

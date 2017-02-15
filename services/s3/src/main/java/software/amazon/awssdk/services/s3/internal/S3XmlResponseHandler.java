@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.InputStream;
@@ -28,12 +29,10 @@ import software.amazon.awssdk.runtime.transform.Unmarshaller;
  */
 public class S3XmlResponseHandler<T> extends AbstractS3ResponseHandler<T> {
 
-    /** The SAX unmarshaller to use when handling the response from S3 */
-    private Unmarshaller<T, InputStream> responseUnmarshaller;
-
     /** Shared logger for profiling information */
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.request");
-
+    /** The SAX unmarshaller to use when handling the response from S3 */
+    private Unmarshaller<T, InputStream> responseUnmarshaller;
     /** Response headers from the processed response */
     private Map<String, String> responseHeaders;
 

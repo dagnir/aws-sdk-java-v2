@@ -1,16 +1,16 @@
 /*
- * Copyright 2012-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.glacier;
@@ -55,7 +55,7 @@ public class TreeHashInputStreamTest extends AWSTestBase {
     @Test
     public void testOneMegabyteFile() throws Exception {
         File f = new RandomTempFile("tree-hash-input-stream-test", MB);
-        assertEquals(MB, (int)f.length());
+        assertEquals(MB, (int) f.length());
 
         String checksum = computeSHA256Hash(f);
         String treeHash = TreeHashGenerator.calculateTreeHash(f);
@@ -63,7 +63,9 @@ public class TreeHashInputStreamTest extends AWSTestBase {
         assertEquals(checksum, treeHash);
 
         TreeHashInputStream treeHashInputStream = new TreeHashInputStream(new FileInputStream(f));
-        while (treeHashInputStream.read() > -1);
+        while (treeHashInputStream.read() > -1) {
+            ;
+        }
         treeHashInputStream.close();
 
         assertEquals(1, treeHashInputStream.getChecksums().size());
@@ -74,7 +76,7 @@ public class TreeHashInputStreamTest extends AWSTestBase {
     public void testOneAndAHalfMegabyteFile() throws Exception {
         int fileLength = MB + MB / 2;
         File f = new RandomTempFile("tree-hash-input-stream-test", fileLength);
-        assertEquals(fileLength, (int)f.length());
+        assertEquals(fileLength, (int) f.length());
 
         byte[] fileBytes = IOUtils.toByteArray(new FileInputStream(f));
         byte[] firstMeg = new byte[MB];
@@ -87,7 +89,9 @@ public class TreeHashInputStreamTest extends AWSTestBase {
 
 
         TreeHashInputStream treeHashInputStream = new TreeHashInputStream(new FileInputStream(f));
-        while (treeHashInputStream.read() > -1);
+        while (treeHashInputStream.read() > -1) {
+            ;
+        }
         treeHashInputStream.close();
 
         assertEquals(2, treeHashInputStream.getChecksums().size());
@@ -117,7 +121,7 @@ public class TreeHashInputStreamTest extends AWSTestBase {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             byte[] buffer = new byte[16384];
             int bytesRead = -1;
-            while ( (bytesRead = input.read(buffer, 0, buffer.length)) != -1 ) {
+            while ((bytesRead = input.read(buffer, 0, buffer.length)) != -1) {
                 messageDigest.update(buffer, 0, bytesRead);
             }
             return messageDigest.digest();

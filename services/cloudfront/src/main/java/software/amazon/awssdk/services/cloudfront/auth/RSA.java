@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,9 +37,8 @@ public enum RSA {
     /**
      * Returns a private key constructed from the given DER bytes in PKCS#8 format.
      */
-    public static PrivateKey privateKeyFromPKCS8(byte[] pkcs8) 
-            throws InvalidKeySpecException 
-    {
+    public static PrivateKey privateKeyFromPKCS8(byte[] pkcs8)
+            throws InvalidKeySpecException {
         try {
             EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(pkcs8);
             KeyFactory keyFactory = KeyFactory.getInstance(RSA);
@@ -54,10 +53,9 @@ public enum RSA {
      * Returns a private key constructed from the given DER bytes in PKCS#1 format.
      */
     public static PrivateKey privateKeyFromPKCS1(byte[] pkcs1)
-            throws InvalidKeySpecException
-    {
+            throws InvalidKeySpecException {
         try {
-            RSAPrivateCrtKeySpec privateKeySpec= newRSAPrivateCrtKeySpec(pkcs1);
+            RSAPrivateCrtKeySpec privateKeySpec = newRSAPrivateCrtKeySpec(pkcs1);
             KeyFactory keyFactory = KeyFactory.getInstance(RSA);
             PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
             return privateKey;
@@ -72,8 +70,7 @@ public enum RSA {
      * Returns a public key constructed from the given DER bytes.
      */
     public static PublicKey publicKeyFrom(byte[] derBytes)
-            throws InvalidKeySpecException 
-    {
+            throws InvalidKeySpecException {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance(RSA);
             EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(derBytes);
@@ -87,12 +84,13 @@ public enum RSA {
     // Extracted from:
     // http://oauth.googlecode.com/svn/code/branches/jmeter/jmeter/src/main/java/org/apache/jmeter/protocol/oauth/sampler/PrivateKeyReader.java
     // See p.41 of http://www.emc.com/emc-plus/rsa-labs/pkcs/files/h11300-wp-pkcs-1v2-2-rsa-cryptography-standard.pdf
+
     /****************************************************************************
      * Amazon Modifications: Copyright 2014 Amazon.com, Inc. or its affiliates. 
      * All Rights Reserved.
      *****************************************************************************
      * Copyright (c) 1998-2010 AOL Inc. 
-     * 
+     *
      * Licensed under the Apache License, Version 2.0 (the "License");
      * you may not use this file except in compliance with the License.
      * You may obtain a copy of the License at
@@ -107,9 +105,9 @@ public enum RSA {
      *
      ****************************************************************************
      * Convert PKCS#1 encoded private key into RSAPrivateCrtKeySpec.
-     * 
+     *
      * <p/>The ASN.1 syntax for the private key with CRT is
-     * 
+     *
      * <pre>
      * -- 
      * -- Representation of RSA private key with information for the CRT algorithm.
@@ -127,20 +125,21 @@ public enum RSA {
      *   otherPrimeInfos   OtherPrimeInfos OPTIONAL 
      * }
      * </pre>
-     * 
+     *
      * @param keyInPkcs1 PKCS#1 encoded key
-     * @throws IOException 
+     * @throws IOException
      */
     private static RSAPrivateCrtKeySpec newRSAPrivateCrtKeySpec(byte[] keyInPkcs1) throws IOException {
         DerParser parser = new DerParser(keyInPkcs1);
-        
+
         Asn1Object sequence = parser.read();
-        if (sequence.getType() != DerParser.SEQUENCE)
+        if (sequence.getType() != DerParser.SEQUENCE) {
             throw new IllegalArgumentException("Invalid DER: not a sequence"); //$NON-NLS-1$
-        
+        }
+
         // Parse inside the sequence
         parser = sequence.getParser();
-        
+
         parser.read(); // Skip version
         BigInteger modulus = parser.read().getInteger();
         BigInteger publicExp = parser.read().getInteger();
@@ -150,11 +149,11 @@ public enum RSA {
         BigInteger exp1 = parser.read().getInteger();
         BigInteger exp2 = parser.read().getInteger();
         BigInteger crtCoef = parser.read().getInteger();
-            
+
         RSAPrivateCrtKeySpec keySpec = new RSAPrivateCrtKeySpec(
                 modulus, publicExp, privateExp, prime1, prime2,
                 exp1, exp2, crtCoef);
-        
+
         return keySpec;
-    }    
+    }
 }

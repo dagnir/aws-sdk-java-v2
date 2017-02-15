@@ -19,7 +19,7 @@ public class IntegrationTestBase extends AWSTestBase {
         setUpCredentials();
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
         ets = new AmazonElasticTranscoderClient(credentials);
-      //  ets.setEndpoint("https://ets-beta.us-east-1.amazon.com", "elastictranscoder", "us-west-2");
+        //  ets.setEndpoint("https://ets-beta.us-east-1.amazon.com", "elastictranscoder", "us-west-2");
         s3 = new AmazonS3Client(credentials);
         sns = new AmazonSNSClient(credentials);
     }

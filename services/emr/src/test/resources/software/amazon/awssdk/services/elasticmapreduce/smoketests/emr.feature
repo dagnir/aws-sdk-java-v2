@@ -8,7 +8,7 @@ Feature: Amazon EMR
 
   Scenario: Handling errors
     When I attempt to call the "DescribeCluster" API with:
-    | ClusterId | fake_cluster |
+      | ClusterId | fake_cluster |
     Then I expect the response error code to be "InvalidRequestException"
     And I expect the response error message to include:
     """

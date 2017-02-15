@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -32,6 +28,12 @@ public class NullResponseHandler implements HttpResponseHandler<AmazonWebService
 
     private boolean needsConnectionLeftOpen;
 
+    public static void assertIsUnmarshallingException(AmazonClientException e) {
+        assertThat(e.getCause(), instanceOf(RuntimeException.class));
+        RuntimeException re = (RuntimeException) e.getCause();
+        assertThat(re.getMessage(), containsString("Unable to unmarshall response"));
+    }
+
     @Override
     public AmazonWebServiceResponse<Object> handle(HttpResponse response) throws Exception {
         return null;
@@ -40,12 +42,6 @@ public class NullResponseHandler implements HttpResponseHandler<AmazonWebService
     @Override
     public boolean needsConnectionLeftOpen() {
         return needsConnectionLeftOpen;
-    }
-
-    public static void assertIsUnmarshallingException(AmazonClientException e) {
-        assertThat(e.getCause(), instanceOf(RuntimeException.class));
-        RuntimeException re = (RuntimeException) e.getCause();
-        assertThat(re.getMessage(), containsString("Unable to unmarshall response"));
     }
 
     /**

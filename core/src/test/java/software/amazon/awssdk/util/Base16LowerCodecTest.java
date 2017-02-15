@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -30,12 +26,10 @@ import org.junit.Test;
 /**
  * @author hchar
  */
-public class Base16LowerCodecTest
-{
+public class Base16LowerCodecTest {
     @Test
     public void testVectorsPerRfc4648()
-        throws NoSuchAlgorithmException, UnsupportedEncodingException
-    {
+            throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String[] testVectors = {
                 "",
                 "f",
@@ -44,7 +38,7 @@ public class Base16LowerCodecTest
                 "foob",
                 "fooba",
                 "foobar",
-        };
+                };
         String[] expected = {
                 "",
                 "66",
@@ -53,8 +47,8 @@ public class Base16LowerCodecTest
                 "666f6f62",
                 "666f6f6261",
                 "666f6f626172",
-        };
-        for (int i=0; i < testVectors.length; i++) {
+                };
+        for (int i = 0; i < testVectors.length; i++) {
             String data = testVectors[i];
             byte[] source = data.getBytes("UTF-8");
             String b16encoded = Base16Lower.encodeAsString(data.getBytes("UTF-8"));
@@ -70,14 +64,13 @@ public class Base16LowerCodecTest
 
     @Test
     public void testCodecConsistency()
-        throws NoSuchAlgorithmException, UnsupportedEncodingException
-    {
+            throws NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] decoded = null;
 
-        for (int h=0; h < 1000; h++) {
+        for (int h = 0; h < 1000; h++) {
             byte[] digest = MessageDigest.getInstance("SHA-1").digest(
-                UUID.randomUUID().toString().getBytes("UTF-8")
-            );
+                    UUID.randomUUID().toString().getBytes("UTF-8")
+                                                                     );
             String b16Encoded = Base16Lower.encodeAsString(digest);
             {
                 decoded = Base16.decode(b16Encoded);

@@ -1,12 +1,12 @@
 /*
  * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
@@ -25,7 +25,7 @@ import java.util.Set;
  * An immutable map that could be built by convenient constructors.
  * <p>
  * Example of using map Builder:
- * 
+ *
  * <pre>
  * {
  *     &#064;code
@@ -35,20 +35,20 @@ import java.util.Set;
  *             .put(&quot;three&quot;, new AttibuteValue(&quot;3&quot;)).build();
  * }
  * </pre>
- * 
+ *
  * For <i>small</i> immutable maps (up to five entries), the
  * {@code ImmutableMapParamter.of()} methods are preferred:
- * 
+ *
  * <pre>
  * {@code
  *   Map<String, AttibuteValue> item =
  *       ImmutableMapParameter
- *           .of("one", new AttributeValue("1"), 
+ *           .of("one", new AttributeValue("1"),
  *               "two", new AttributeValue("2"),
  *               "three", new AttributeValue("3"), 
  * }
  * </pre>
- * 
+ *
  * @param <K>
  *            Class of the key for the map.
  * @param <V>
@@ -74,7 +74,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
 
     /**
      * Returns an ImmutableMapParameter instance containing a single entry.
-     * 
+     *
      * @param k0
      *            Key of the single entry.
      * @param v0
@@ -87,7 +87,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
 
     /**
      * Returns an ImmutableMapParameter instance containing two entries.
-     * 
+     *
      * @param k0
      *            Key of the first entry.
      * @param v0
@@ -106,7 +106,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
 
     /**
      * Returns an ImmutableMapParameter instance containing three entries.
-     * 
+     *
      * @param k0
      *            Key of the first entry.
      * @param v0
@@ -121,7 +121,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
      *            Value of the third entry.
      */
     public static <K, V> ImmutableMapParameter<K, V> of(K k0, V v0, K k1, V v1,
-            K k2, V v2) {
+                                                        K k2, V v2) {
         Map<K, V> map = new HashMap<K, V>();
         putAndWarnDuplicateKeys(map, k0, v0);
         putAndWarnDuplicateKeys(map, k1, v1);
@@ -131,7 +131,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
 
     /**
      * Returns an ImmutableMapParameter instance containing four entries.
-     * 
+     *
      * @param k0
      *            Key of the first entry.
      * @param v0
@@ -150,7 +150,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
      *            Value of the fourth entry.
      */
     public static <K, V> ImmutableMapParameter<K, V> of(K k0, V v0, K k1, V v1,
-            K k2, V v2, K k3, V v3) {
+                                                        K k2, V v2, K k3, V v3) {
         Map<K, V> map = new HashMap<K, V>();
         putAndWarnDuplicateKeys(map, k0, v0);
         putAndWarnDuplicateKeys(map, k1, v1);
@@ -161,7 +161,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
 
     /**
      * Returns an ImmutableMapParameter instance containing five entries.
-     * 
+     *
      * @param k0
      *            Key of the first entry.
      * @param v0
@@ -184,7 +184,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
      *            Value of the fifth entry.
      */
     public static <K, V> ImmutableMapParameter<K, V> of(K k0, V v0, K k1, V v1,
-            K k2, V v2, K k3, V v3, K k4, V v4) {
+                                                        K k2, V v2, K k3, V v3, K k4, V v4) {
         Map<K, V> map = new HashMap<K, V>();
         putAndWarnDuplicateKeys(map, k0, v0);
         putAndWarnDuplicateKeys(map, k1, v1);
@@ -192,6 +192,14 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
         putAndWarnDuplicateKeys(map, k3, v3);
         putAndWarnDuplicateKeys(map, k4, v4);
         return new ImmutableMapParameter<K, V>(map);
+    }
+
+    private static <K, V> void putAndWarnDuplicateKeys(Map<K, V> map, K key,
+                                                       V value) {
+        if (map.containsKey(key)) {
+            throw new IllegalArgumentException(DUPLICATED_KEY_MESSAGE);
+        }
+        map.put(key, value);
     }
 
     /** Inherited methods **/
@@ -246,13 +254,6 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
         throw new UnsupportedOperationException(UNMODIFIABLE_MESSAGE);
     }
 
-    private static <K, V> void putAndWarnDuplicateKeys(Map<K, V> map, K key,
-            V value) {
-        if (map.containsKey(key))
-            throw new IllegalArgumentException(DUPLICATED_KEY_MESSAGE);
-        map.put(key, value);
-    }
-
     @Override
     public boolean equals(Object o) {
         return map.equals(o);
@@ -283,7 +284,7 @@ public class ImmutableMapParameter<K, V> implements Map<K, V> {
          * Add a key-value pair into the built map. The method will throw
          * IllegalArgumentException immediately when duplicate keys are
          * provided.
-         * 
+         *
          * @return Returns a reference to this object so that method calls can
          *         be chained together.
          */

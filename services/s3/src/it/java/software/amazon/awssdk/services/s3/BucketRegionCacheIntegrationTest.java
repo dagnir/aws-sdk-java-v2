@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -49,6 +49,18 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
         s3.createBucket(US_EAST_BUCKET);
         s3.createBucket(AP_NORTHEAST_1_BUCKET, "ap-northeast-1");
         euS3.createBucket(EU_WEST_1_BUCKET);
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        s3.deleteBucket(US_EAST_BUCKET);
+        assertNull(cache.get(US_EAST_BUCKET));
+
+        euS3.deleteBucket(EU_WEST_1_BUCKET);
+        assertNull(cache.get(EU_WEST_1_BUCKET));
+
+        s3.deleteBucket(AP_NORTHEAST_1_BUCKET);
+        assertNull(cache.get(AP_NORTHEAST_1_BUCKET));
     }
 
     /**
@@ -113,7 +125,7 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
         assertEquals("ap-northeast-1", cache.get(AP_NORTHEAST_1_BUCKET));
     }
 
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testNonExistentBucketWithEntryInCache() {
         String bucketName = "random-java-bucket" + new Date().getTime();
         cache.put(bucketName, "eu-west-1");
@@ -121,7 +133,7 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
         s3.headBucket(new HeadBucketRequest(bucketName));
     }
 
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testNonExistentBucketWithoutEntryInCache() {
         String bucketName = "random-java-bucket" + new Date().getTime();
 
@@ -188,18 +200,6 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
             assertEquals("us-west-1", cache.get(EU_WEST_1_BUCKET));
             return;
         }
-    }
-
-    @AfterClass
-    public static void tearDown() {
-        s3.deleteBucket(US_EAST_BUCKET);
-        assertNull(cache.get(US_EAST_BUCKET));
-
-        euS3.deleteBucket(EU_WEST_1_BUCKET);
-        assertNull(cache.get(EU_WEST_1_BUCKET));
-
-        s3.deleteBucket(AP_NORTHEAST_1_BUCKET);
-        assertNull(cache.get(AP_NORTHEAST_1_BUCKET));
     }
 
 }

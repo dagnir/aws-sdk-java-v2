@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class LegacyRegionXmlMetadataBuilder implements Builder<RegionMetadata> {
         if (overrideFilePath != null) {
             try {
                 return LegacyRegionXmlLoadUtils.load(new File
-                        (overrideFilePath));
+                                                             (overrideFilePath));
             } catch (IOException exception) {
                 throw new SdkClientException(
                         "Error parsing region metadata from " + overrideFilePath,

@@ -8,7 +8,7 @@ Feature: Amazon Redshift
 
   Scenario: Handling errors
     When I attempt to call the "DescribeClusters" API with:
-    | ClusterIdentifier | fake-cluster |
+      | ClusterIdentifier | fake-cluster |
     Then I expect the response error code to be "ClusterNotFound"
     And I expect the response error message to include:
     """

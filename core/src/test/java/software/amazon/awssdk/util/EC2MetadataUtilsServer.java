@@ -1,6 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -52,7 +48,7 @@ public class EC2MetadataUtilsServer {
                     startServer();
                 } catch (IOException exception) {
                     if ((exception instanceof SocketException)
-                            && (exception.getMessage().equals("Socket closed"))) {
+                        && (exception.getMessage().equals("Socket closed"))) {
                         return;
                     }
                     throw new RuntimeException("BOOM", exception);
@@ -89,7 +85,7 @@ public class EC2MetadataUtilsServer {
     }
 
     private void handleConnection(BufferedReader input,
-            PrintWriter output) throws IOException {
+                                  PrintWriter output) throws IOException {
 
         String line = input.readLine();
         if (line == null) {
@@ -210,21 +206,21 @@ public class EC2MetadataUtilsServer {
 
     protected String constructInstanceInfo() {
         return "{"
-                + "\"pendingTime\":\"2014-08-07T22:07:46Z\","
-                + "\"instanceType\":\"m1.small\","
-                + "\"imageId\":\"ami-a49665cc\","
-                + "\"instanceId\":\"i-6b2de041\","
-                + "\"billingProducts\":[\"foo\"],"
-                + "\"architecture\":\"x86_64\","
-                + "\"accountId\":\"599169622985\","
-                + "\"kernelId\":\"aki-919dcaf8\","
-                + "\"ramdiskId\":\"baz\","
-                + "\"region\":\"us-east-1\","
-                + "\"version\":\"2010-08-31\","
-                + "\"availabilityZone\":\"us-east-1b\","
-                + "\"privateIp\":\"10.201.215.38\","
-                + "\"devpayProductCodes\":[\"bar\"]"
-                + "}";
+               + "\"pendingTime\":\"2014-08-07T22:07:46Z\","
+               + "\"instanceType\":\"m1.small\","
+               + "\"imageId\":\"ami-a49665cc\","
+               + "\"instanceId\":\"i-6b2de041\","
+               + "\"billingProducts\":[\"foo\"],"
+               + "\"architecture\":\"x86_64\","
+               + "\"accountId\":\"599169622985\","
+               + "\"kernelId\":\"aki-919dcaf8\","
+               + "\"ramdiskId\":\"baz\","
+               + "\"region\":\"us-east-1\","
+               + "\"version\":\"2010-08-31\","
+               + "\"availabilityZone\":\"us-east-1b\","
+               + "\"privateIp\":\"10.201.215.38\","
+               + "\"devpayProductCodes\":[\"bar\"]"
+               + "}";
     }
 
 }

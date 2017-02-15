@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -71,27 +86,26 @@ public class S3KeyRotationIntegrationTest implements Headers {
             public EncryptionMaterials getEncryptionMaterials() {
                 return getEncryptionMaterials(
                         new StringMapBuilder("id",
-                        kekAes ? "from_kek_aes" : "from_kek_pub")
-                        .build());
+                                             kekAes ? "from_kek_aes" : "from_kek_pub")
+                                .build());
             }
         }.addMaterial(
                 new EncryptionMaterials(CryptoTestUtils.getTestSecretKey())
-                .addDescription("id", "from_kek_aes"))
-                ;
+                        .addDescription("id", "from_kek_aes"));
         smp.addMaterial(
                 new EncryptionMaterials(CryptoTestUtils.getTestKeyPair())
-                .addDescription("id", "from_kek_pub"))
-                ;
+                        .addDescription("id", "from_kek_pub"))
+        ;
         smp.addMaterial(
                 new EncryptionMaterials(CryptoTestUtils.generateSecretKey(
-                    AES_CTR.getKeyGeneratorAlgorithm(),
-                    AES_CTR.getKeyLengthInBits()))
-                .addDescription("id", "to_kek_aes"))
-                ;
+                        AES_CTR.getKeyGeneratorAlgorithm(),
+                        AES_CTR.getKeyLengthInBits()))
+                        .addDescription("id", "to_kek_aes"))
+        ;
         smp.addMaterial(
                 new EncryptionMaterials(CryptoTestUtils.generateKeyPair("RSA", 1024))
-                .addDescription("id", "to_kek_pub"))
-                ;
+                        .addDescription("id", "to_kek_pub"))
+        ;
         return smp;
     }
 
@@ -106,44 +120,44 @@ public class S3KeyRotationIntegrationTest implements Headers {
         boolean[] kekAes = {true, false};
 
         IndexValues iv = new IndexValues(cryptoModeFroms.length,
-                cryptoModeTos.length, storageModeFroms.length,
-                storageModeTos.length, materialIdFroms.length,
-                materialIdTos.length,
-                kekAes.length);
-        int testCaseIdx=0;
+                                         cryptoModeTos.length, storageModeFroms.length,
+                                         storageModeTos.length, materialIdFroms.length,
+                                         materialIdTos.length,
+                                         kekAes.length);
+        int testCaseIdx = 0;
         for (int[] testcase : iv) {
-            int i=0;
+            int i = 0;
             System.err.println(Arrays.toString(testcase));
-//            if (testCaseIdx >= 142) {
+            //            if (testCaseIdx >= 142) {
             doTestKekRotation(testCaseIdx, cryptoModeFroms[testcase[i++]],
-                    cryptoModeTos[testcase[i++]],
-                    storageModeFroms[testcase[i++]],
-                    storageModeTos[testcase[i++]],
-                    materialIdFroms[testcase[i++]],
-                    materialIdTos[testcase[i++]],
-                    kekAes[testcase[i++]]);
-//            }
+                              cryptoModeTos[testcase[i++]],
+                              storageModeFroms[testcase[i++]],
+                              storageModeTos[testcase[i++]],
+                              materialIdFroms[testcase[i++]],
+                              materialIdTos[testcase[i++]],
+                              kekAes[testcase[i++]]);
+            //            }
             testCaseIdx++;
         }
     }
 
     public void doTestKekRotation(int testCaseIdx,
-            CryptoMode cryptoModeFrom,
-            CryptoMode cryptoModeTo,
-            CryptoStorageMode storageModeFrom,
-            CryptoStorageMode storageModeTo,
-            String materialIdFrom,
-            String materialIdTo,
-            boolean kekAes
-    ) throws Exception {
+                                  CryptoMode cryptoModeFrom,
+                                  CryptoMode cryptoModeTo,
+                                  CryptoStorageMode storageModeFrom,
+                                  CryptoStorageMode storageModeTo,
+                                  String materialIdFrom,
+                                  String materialIdTo,
+                                  boolean kekAes
+                                 ) throws Exception {
         System.err.println("doTestWithInstFile cryptoModeFrom="
-                + cryptoModeFrom + ", cryptoModeTo=" + cryptoModeTo
-                + ", storageModeFrom=" + storageModeFrom + ", storageModeTo="
-                + storageModeTo
-                + ", materialIdFrom=" + materialIdFrom
-                + ", materialIdTo=" + materialIdTo
-                + ", kekAes=" + kekAes
-                );
+                           + cryptoModeFrom + ", cryptoModeTo=" + cryptoModeTo
+                           + ", storageModeFrom=" + storageModeFrom + ", storageModeTo="
+                           + storageModeTo
+                           + ", materialIdFrom=" + materialIdFrom
+                           + ", materialIdTo=" + materialIdTo
+                           + ", kekAes=" + kekAes
+                          );
         final String bucketName = TEST_BUCKET;
         final String key = "encrypted-" + testCaseIdx;
         System.err.println(bucketName + "/" + key);
@@ -154,17 +168,17 @@ public class S3KeyRotationIntegrationTest implements Headers {
                 awsTestCredentials(),
                 materialProvider,
                 new CryptoConfiguration()
-                    .withStorageMode(storageModeFrom)
-                    .withCryptoMode(cryptoModeFrom)
-                    .withIgnoreMissingInstructionFile(false)
+                        .withStorageMode(storageModeFrom)
+                        .withCryptoMode(cryptoModeFrom)
+                        .withIgnoreMissingInstructionFile(false)
         );
         S3CryptoTestClient s3to = new S3CryptoTestClient(
                 awsTestCredentials(),
                 materialProvider,
                 new CryptoConfiguration()
-                    .withStorageMode(storageModeTo)
-                    .withCryptoMode(cryptoModeTo)
-                    .withIgnoreMissingInstructionFile(false)
+                        .withStorageMode(storageModeTo)
+                        .withCryptoMode(cryptoModeTo)
+                        .withIgnoreMissingInstructionFile(false)
         );
         File file = CryptoTestUtils.generateRandomAsciiFile(100);
         final String plaintext = FileUtils.readFileToString(file);
@@ -174,28 +188,32 @@ public class S3KeyRotationIntegrationTest implements Headers {
         assertEquals(plaintext, valueOf(s3object));
         S3ObjectId s3ObjectId = new S3ObjectId(bucketName, key);
         // Create a new instruction file
-        Map<String,String> toMatDesc = new StringMapBuilder()
-            .put("id", kekAes ? "to_kek_aes" : "to_kek_pub")
-            .build();
+        Map<String, String> toMatDesc = new StringMapBuilder()
+                .put("id", kekAes ? "to_kek_aes" : "to_kek_pub")
+                .build();
         try {
             s3to.putInstructionFile(new PutInstructionFileRequest(
                     s3ObjectId,
                     toMatDesc,
                     InstructionFileId.DEFAULT_INSTRUCTION_FILE_SUFFIX));
             if (cryptoModeFrom == EncryptionOnly) {
-                if (cryptoModeTo == StrictAuthenticatedEncryption)
+                if (cryptoModeTo == StrictAuthenticatedEncryption) {
                     fail();
+                }
             } else {    // AE lowed to EO is not allowed
-                if (cryptoModeTo == EncryptionOnly)
+                if (cryptoModeTo == EncryptionOnly) {
                     fail();
+                }
             }
-        } catch(SecurityException ex) {
+        } catch (SecurityException ex) {
             if (cryptoModeFrom == EncryptionOnly) {
-                if (cryptoModeTo != StrictAuthenticatedEncryption)
+                if (cryptoModeTo != StrictAuthenticatedEncryption) {
                     throw ex;
+                }
             } else {
-                if (cryptoModeTo != EncryptionOnly)
+                if (cryptoModeTo != EncryptionOnly) {
                     throw ex;
+                }
             }
             return; // skip the rest of this test
         }
@@ -205,8 +223,8 @@ public class S3KeyRotationIntegrationTest implements Headers {
 
         // Retrieve the object via instruction file
         s3object = s3to.getObject(new EncryptedGetObjectRequest(s3ObjectId)
-                .withInstructionFileSuffix(DEFAULT_INSTRUCTION_FILE_SUFFIX))
-                ;
+                                          .withInstructionFileSuffix(DEFAULT_INSTRUCTION_FILE_SUFFIX))
+        ;
         assertEquals(plaintext, valueOf(s3object));
 
         if (cleanup) {

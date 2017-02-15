@@ -8,5 +8,5 @@ Feature: AWS Kinesis Firehose
 
   Scenario: Handling errors
     When I attempt to call the "DescribeDeliveryStream" API with:
-    | DeliveryStreamName | bogus-stream-name |
+      | DeliveryStreamName | bogus-stream-name |
     Then I expect the response error code to be "ResourceNotFoundException"

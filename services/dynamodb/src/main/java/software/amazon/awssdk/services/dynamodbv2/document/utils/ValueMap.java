@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key in the current ValueMap to the
      * given value.
      */
-    public ValueMap withStringSet(String key, String ...val) {
+    public ValueMap withStringSet(String key, String... val) {
         super.put(key, new LinkedHashSet<String>(Arrays.asList(val)));
         return this;
     }
@@ -119,7 +119,7 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key in the current ValueMap to the
      * given value.
      */
-    public ValueMap withNumberSet(String key, BigDecimal ... val) {
+    public ValueMap withNumberSet(String key, BigDecimal... val) {
         super.put(key, new LinkedHashSet<BigDecimal>(Arrays.asList(val)));
         return this;
     }
@@ -128,7 +128,7 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key in the current ValueMap to the
      * given value.
      */
-    public ValueMap withNumberSet(String key, Number ... val) {
+    public ValueMap withNumberSet(String key, Number... val) {
         super.put(key, InternalUtils.toBigDecimalSet(val));
         return this;
     }
@@ -146,7 +146,7 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key in the current ValueMap to the
      * given value.
      */
-    public ValueMap withBinarySet(String key, byte[] ... val) {
+    public ValueMap withBinarySet(String key, byte[]... val) {
         super.put(key, new LinkedHashSet<byte[]>(Arrays.asList(val)));
         return this;
     }
@@ -164,9 +164,9 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key in the current ValueMap to the
      * given values as a list.
      */
-    public ValueMap withList(String key, Object ... vals) {
-        super.put(key, 
-            vals == null ? null : new ArrayList<Object>(Arrays.asList(vals)));
+    public ValueMap withList(String key, Object... vals) {
+        super.put(key,
+                  vals == null ? null : new ArrayList<Object>(Arrays.asList(vals)));
         return this;
     }
 
@@ -220,8 +220,9 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * </ul>
      */
     public ValueMap with(String key, Object val) {
-        if (val == this)
+        if (val == this) {
             throw new IllegalArgumentException("Self reference is not allowed");
+        }
         // TODO: fail fast if val is not a supported type
         super.put(key, val);
         return this;

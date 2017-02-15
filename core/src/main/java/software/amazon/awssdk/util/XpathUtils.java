@@ -83,6 +83,21 @@ public class XpathUtils {
         }
     };
 
+    // static initialization block to conservatively speed things up whenever we
+    // can
+    static {
+        try {
+            speedUpDcoumentBuilderFactory();
+        } catch (Throwable t) {
+            log.debug("Ingore failure in speeding up DocumentBuilderFactory", t);
+        }
+        try {
+            speedUpDTMManager();
+        } catch (Throwable t) {
+            log.debug("Ingore failure in speeding up DTMManager", t);
+        }
+    }
+
     /**
      * Used to optimize performance by avoiding expensive file access every time
      * a DTMManager is constructed as a result of constructing a Xalan xpath
@@ -101,7 +116,7 @@ public class XpathUtils {
                 // This would avoid the file system to be accessed every time
                 // the internal XPathContext is instantiated.
                 System.setProperty(DTM_MANAGER_DEFAULT_PROP_NAME,
-                        DTM_MANAGER_IMPL_CLASS_NAME);
+                                   DTM_MANAGER_IMPL_CLASS_NAME);
             }
         }
     }
@@ -118,27 +133,13 @@ public class XpathUtils {
                 // This would avoid the file system to be accessed every time
                 // the internal DocumentBuilderFactory is instantiated.
                 System.setProperty(DOCUMENT_BUILDER_FACTORY_PROP_NAME,
-                        DOCUMENT_BUILDER_FACTORY_IMPL_CLASS_NAME);
+                                   DOCUMENT_BUILDER_FACTORY_IMPL_CLASS_NAME);
             }
         }
     }
 
-    // static initialization block to conservatively speed things up whenever we
-    // can
-    static {
-        try {
-            speedUpDcoumentBuilderFactory();
-        } catch(Throwable t) {
-            log.debug("Ingore failure in speeding up DocumentBuilderFactory", t);
-        }
-        try {
-            speedUpDTMManager();
-        } catch(Throwable t) {
-            log.debug("Ingore failure in speeding up DTMManager", t);
-        }
-    }
-
     // XPath is not thread safe and not reentrant.
+
     /**
      * Returns a new instance of XPath, which is not thread safe and not
      * reentrant.
@@ -165,12 +166,12 @@ public class XpathUtils {
     }
 
     public static Document documentFrom(String xml) throws SAXException,
-            IOException, ParserConfigurationException {
+                                                           IOException, ParserConfigurationException {
         return documentFrom(new ByteArrayInputStream(xml.getBytes(StringUtils.UTF8)));
     }
 
     public static Document documentFrom(URL url) throws SAXException,
-            IOException, ParserConfigurationException {
+                                                        IOException, ParserConfigurationException {
         return documentFrom(url.openStream());
     }
 
@@ -451,7 +452,9 @@ public class XpathUtils {
     public static Date asDate(String expression, Node node, XPath xpath)
             throws XPathExpressionException {
         String dateString = evaluateAsString(expression, node, xpath);
-        if (isEmptyString(dateString)) return null;
+        if (isEmptyString(dateString)) {
+            return null;
+        }
 
         try {
             return DateUtils.parseISO8601Date(dateString);
@@ -493,7 +496,9 @@ public class XpathUtils {
     public static ByteBuffer asByteBuffer(String expression, Node node, XPath xpath)
             throws XPathExpressionException {
         String base64EncodedString = evaluateAsString(expression, node, xpath);
-        if (isEmptyString(base64EncodedString)) return null;
+        if (isEmptyString(base64EncodedString)) {
+            return null;
+        }
 
         if (!isEmpty(node)) {
             byte[] decodedBytes = Base64.decode(base64EncodedString);
@@ -540,7 +545,9 @@ public class XpathUtils {
      */
     public static Node asNode(String nodeName, Node node, XPath xpath)
             throws XPathExpressionException {
-        if (node == null) return null;
+        if (node == null) {
+            return null;
+        }
         return (Node) xpath.evaluate(nodeName, node, XPathConstants.NODE);
     }
 
@@ -572,8 +579,10 @@ public class XpathUtils {
      *             If there are any problems evaluating the Xpath expression.
      */
     private static String evaluateAsString(String expression, Node node,
-            XPath xpath) throws XPathExpressionException {
-        if (isEmpty(node)) return null;
+                                           XPath xpath) throws XPathExpressionException {
+        if (isEmpty(node)) {
+            return null;
+        }
 
         if (!expression.equals(".")) {
             /*
@@ -586,7 +595,9 @@ public class XpathUtils {
              * We skip this test if the expression is "." since we've already
              * checked that the node exists.
              */
-            if (asNode(expression, node, xpath) == null) return null;
+            if (asNode(expression, node, xpath) == null) {
+                return null;
+            }
         }
 
         String s = xpath.evaluate(expression, node);

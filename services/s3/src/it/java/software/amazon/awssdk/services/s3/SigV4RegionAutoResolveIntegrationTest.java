@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static software.amazon.awssdk.test.util.SdkAsserts.assertFileEqualsFile;
@@ -37,17 +52,16 @@ import software.amazon.awssdk.util.StringInputStream;
 
 public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBase {
 
+    private static final String FRA_BUCKET = CryptoTestUtils.tempBucketName(SigV4RegionAutoResolveIntegrationTest.class);
     private static AmazonS3Client s3_classic;
     private static AmazonS3Client s3_classicWithSigV2;
     private static AmazonS3Client s3_fra;
     private static AmazonS3Client s3_external_1;
 
-    private static final String FRA_BUCKET = CryptoTestUtils.tempBucketName(SigV4RegionAutoResolveIntegrationTest.class);
-
     @BeforeClass
     public static void setup() throws IOException {
         s3_classic = new AmazonS3Client(getCredentials(),
-                new ClientConfiguration().withMaxErrorRetry(0));
+                                        new ClientConfiguration().withMaxErrorRetry(0));
 
         s3_classicWithSigV2 = new AmazonS3Client(getCredentials(), new ClientConfiguration()
                 .withMaxErrorRetry(0)
@@ -64,7 +78,7 @@ public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBas
 
         s3_external_1.setEndpoint("s3-external-1.amazonaws.com");
 
-        if ( !s3_fra.doesBucketExist(FRA_BUCKET) ) {
+        if (!s3_fra.doesBucketExist(FRA_BUCKET)) {
             s3_fra.createBucket(FRA_BUCKET, Region.EU_Frankfurt);
         }
     }
@@ -88,7 +102,7 @@ public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBas
                 s3_classic.getEndpoint().getHost());
         Assert.assertTrue(
                 s3_classic.getSignerByURI(s3_classic.getEndpoint())
-                instanceof AWSS3V4Signer);
+                        instanceof AWSS3V4Signer);
     }
 
     /**
@@ -171,15 +185,15 @@ public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBas
 
         String uploadId = s3_classic.initiateMultipartUpload(
                 new InitiateMultipartUploadRequest(FRA_BUCKET, key))
-                .getUploadId();
+                                    .getUploadId();
 
         PartETag partETag = s3_classic.uploadPart(new UploadPartRequest()
-                .withBucketName(FRA_BUCKET)
-                .withKey(key)
-                .withFile(sourcefile)
-                .withUploadId(uploadId)
-                .withPartNumber(1))
-                    .getPartETag();
+                                                          .withBucketName(FRA_BUCKET)
+                                                          .withKey(key)
+                                                          .withFile(sourcefile)
+                                                          .withUploadId(uploadId)
+                                                          .withPartNumber(1))
+                                      .getPartETag();
 
         s3_classic.completeMultipartUpload(new CompleteMultipartUploadRequest(
                 FRA_BUCKET, key, uploadId, Arrays.asList(partETag)));
@@ -194,23 +208,23 @@ public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBas
                 new ObjectMetadata());
 
         Assert.assertEquals(0L,
-                s3_fra.getObjectMetadata(FRA_BUCKET, "empty")
-                    .getContentLength());
+                            s3_fra.getObjectMetadata(FRA_BUCKET, "empty")
+                                  .getContentLength());
     }
 
     @Test
     public void testNonRetryableAuthError() throws IOException {
         AmazonS3Client fra = new AmazonS3Client(getCredentials(),
-                new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
+                                                new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
         fra.setEndpoint("s3.eu-central-1.amazonaws.com");
         fra.setSignerRegionOverride("us-east-1");
         try {
             fra.listObjects(FRA_BUCKET);
             Assert.fail("Expected a AuthorizationHeaderMalformed error " +
-                    "since the request to eu-central-1 was signed with us-east-1 region string.");
+                        "since the request to eu-central-1 was signed with us-east-1 region string.");
         } catch (AmazonServiceException expected) {
             Assert.assertEquals("AuthorizationHeaderMalformed",
-                    expected.getErrorCode());
+                                expected.getErrorCode());
         }
     }
 

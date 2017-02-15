@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -51,7 +51,9 @@ final class OperationModifiersProcessor implements CodegenCustomizationProcessor
     @Override
     public void preprocess(ServiceModel serviceModel) {
 
-        if (operationModifiers == null) return;
+        if (operationModifiers == null) {
+            return;
+        }
 
         for (Entry<String, OperationModifier> entry : operationModifiers.entrySet()) {
             String operationName = entry.getKey();
@@ -76,20 +78,22 @@ final class OperationModifiersProcessor implements CodegenCustomizationProcessor
     @Override
     public void postprocess(IntermediateModel intermediateModel) {
 
-        if (operationModifiers == null) return;
+        if (operationModifiers == null) {
+            return;
+        }
 
         // Find all the wrapper shapes in the intermediate model (by its
         // "original" c2j name), and add the customization metadata
 
         for (ShapeModel shape : intermediateModel.getShapes().values()) {
 
-            if ( !createdWrapperShapes.contains(shape.getC2jName()) ) {
+            if (!createdWrapperShapes.contains(shape.getC2jName())) {
                 continue;
             }
 
             if (shape.getMembers().size() != 1) {
                 throw new IllegalStateException("Result wrapper "
-                        + shape.getShapeName() + " has not just one member!");
+                                                + shape.getShapeName() + " has not just one member!");
             }
 
             MemberModel wrappedMember = shape.getMembers().get(0);
@@ -115,7 +119,7 @@ final class OperationModifiersProcessor implements CodegenCustomizationProcessor
     }
 
     private String preprocess_CreateResultWrapperShape(ServiceModel serviceModel,
-            String operationName, OperationModifier modifier) {
+                                                       String operationName, OperationModifier modifier) {
 
         String wrappedShapeName = modifier.getWrappedResultShape();
         Shape wrappedShape = serviceModel.getShapes().get(wrappedShapeName);
@@ -125,11 +129,11 @@ final class OperationModifiersProcessor implements CodegenCustomizationProcessor
 
         if (serviceModel.getShapes().containsKey(wrapperShapeName)) {
             throw new IllegalStateException(wrapperShapeName
-                    + " shape already exists in the service model.");
+                                            + " shape already exists in the service model.");
         }
 
         Shape wrapperShape = createWrapperShape(wrapperShapeName,
-                wrappedShapeName, wrappedShape, wrappedAsMember);
+                                                wrappedShapeName, wrappedShape, wrappedAsMember);
 
         // Add the new shape to the model
         serviceModel.getShapes().put(wrapperShapeName, wrapperShape);
@@ -146,7 +150,7 @@ final class OperationModifiersProcessor implements CodegenCustomizationProcessor
         Shape wrapper = new Shape();
         wrapper.setType(ShapeTypes.Structure.getName());
         wrapper.setDocumentation("A simple result wrapper around the "
-                + wrappedShapeName + " object that was sent over the wire.");
+                                 + wrappedShapeName + " object that was sent over the wire.");
 
         Member member = new Member();
         member.setShape(wrappedShapeName);

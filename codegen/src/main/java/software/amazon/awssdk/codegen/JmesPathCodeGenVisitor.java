@@ -49,8 +49,8 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
             throws InvalidTypeException {
         final String prefix = "new JmesPathSubExpression( ";
         return subExpression.getExpressions().stream()
-                .map(a -> a.accept(this, aVoid))
-                .collect(Collectors.joining(",", prefix, ")"));
+                            .map(a -> a.accept(this, aVoid))
+                            .collect(Collectors.joining(",", prefix, ")"));
     }
 
     /**
@@ -79,8 +79,8 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     public String visit(final JmesPathProjection jmesPathProjection,
                         final Void aVoid) throws InvalidTypeException {
         return "new JmesPathProjection( " + jmesPathProjection.getLhsExpr()
-                .accept(this, aVoid) + ", " + jmesPathProjection.getProjectionExpr()
-                .accept(this, aVoid) + ")";
+                                                              .accept(this, aVoid) + ", " + jmesPathProjection.getProjectionExpr()
+                                                                                                              .accept(this, aVoid) + ")";
     }
 
     /**
@@ -96,7 +96,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     public String visit(final JmesPathFlatten flatten, final Void aVoid)
             throws InvalidTypeException {
         return "new JmesPathFlatten( " + flatten.getFlattenExpr()
-                .accept(this, aVoid) + ")";
+                                                .accept(this, aVoid) + ")";
     }
 
     /**
@@ -126,8 +126,8 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     public String visit(final JmesPathValueProjection valueProjection,
                         final Void aVoid) throws InvalidTypeException {
         return "new JmesPathValueProjection( " + valueProjection.getLhsExpr()
-                .accept(this, aVoid) + ", " + valueProjection.getRhsExpr()
-                .accept(this, aVoid) + ")";
+                                                                .accept(this, aVoid) + ", " + valueProjection.getRhsExpr()
+                                                                                                             .accept(this, aVoid) + ")";
     }
 
     /**
@@ -158,8 +158,8 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     public String visit(final JmesPathFilter filter,
                         final Void aVoid) throws InvalidTypeException {
         return "new JmesPathFilter( " + filter.getLhsExpr().accept(this, aVoid)
-                + ", " + filter.getRhsExpr().accept(this, aVoid) + ", "
-                + filter.getComparator().accept(this, aVoid) + ")";
+               + ", " + filter.getRhsExpr().accept(this, aVoid) + ", "
+               + filter.getComparator().accept(this, aVoid) + ")";
     }
 
     /**
@@ -175,10 +175,10 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     public String visit(final JmesPathFunction function,
                         final Void aVoid) throws InvalidTypeException {
         final String prefix = "new " + function.getClass()
-                .getSimpleName() + "( ";
+                                               .getSimpleName() + "( ";
         return function.getExpressions().stream()
-                .map(a -> a.accept(this, aVoid))
-                .collect(Collectors.joining(",", prefix, ")"));
+                       .map(a -> a.accept(this, aVoid))
+                       .collect(Collectors.joining(",", prefix, ")"));
     }
 
     /**
@@ -197,7 +197,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
         String rhs = op.getRhsExpr().accept(this, aVoid);
 
         return String.format("new %s(%s, %s)", op.getClass()
-                .getSimpleName(), lhs, rhs);
+                                                 .getSimpleName(), lhs, rhs);
     }
 
     /**
@@ -213,7 +213,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     public String visit(final JmesPathNotExpression notExpression,
                         final Void aVoid) throws InvalidTypeException {
         return "new JmesPathNotExpression( " + notExpression.getExpr()
-                .accept(this, aVoid) + " )";
+                                                            .accept(this, aVoid) + " )";
     }
 
     /**
@@ -229,8 +229,8 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     public String visit(final JmesPathAndExpression andExpression,
                         final Void aVoid) throws InvalidTypeException {
         return "new JmesPathAndExpression( " + andExpression.getLhsExpr()
-                .accept(this, aVoid) + ", " + andExpression.getRhsExpr()
-                .accept(this, aVoid) + " )";
+                                                            .accept(this, aVoid) + ", " + andExpression.getRhsExpr()
+                                                                                                       .accept(this, aVoid) + " )";
     }
 
     /**
@@ -247,7 +247,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
                         final Void aVoid) throws InvalidTypeException {
         final String prefix = "new JmesPathMultiSelectList( ";
         return multiSelectList.getExpressions().stream()
-                .map(a -> a.accept(this, aVoid))
-                .collect(Collectors.joining(",", prefix, ")"));
+                              .map(a -> a.accept(this, aVoid))
+                              .collect(Collectors.joining(",", prefix, ")"));
     }
 }

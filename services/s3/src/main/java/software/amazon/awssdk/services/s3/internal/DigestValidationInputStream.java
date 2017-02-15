@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.IOException;
@@ -72,12 +73,12 @@ public class DigestValidationInputStream extends SdkDigestInputStream {
          * once at the end of the stream. This class validates the digest once
          * -1 has been read so we must not validate twice.
          */
-        if (expectedHash != null && !digestValidated ) {
+        if (expectedHash != null && !digestValidated) {
             digestValidated = true;
             if (!Arrays.equals(digest.digest(), expectedHash)) {
                 throw new SdkClientException("Unable to verify integrity of data download.  "
-                        + "Client calculated content hash didn't match hash calculated by Amazon S3.  "
-                        + "The data may be corrupt.");
+                                             + "Client calculated content hash didn't match hash calculated by Amazon S3.  "
+                                             + "The data may be corrupt.");
             }
         }
     }

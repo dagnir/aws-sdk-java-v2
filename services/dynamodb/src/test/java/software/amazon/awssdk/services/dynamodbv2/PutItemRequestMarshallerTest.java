@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class PutItemRequestMarshallerTest {
      */
     @Test
     public void onlyRemainingByteBufferDataIsMarshalled() throws IOException {
-        final ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[]{0, 0, 0, 1, 1, 1});
+        final ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[] {0, 0, 0, 1, 1, 1});
         // Consume some of the byte buffer
         byteBuffer.position(3);
         Request<PutItemRequest> marshalled = marshaller.marshall(new PutItemRequest().withItem(
@@ -50,6 +50,6 @@ public class PutItemRequestMarshallerTest {
         JsonNode marshalledContent = MAPPER.readTree(marshalled.getContent());
         String base64Binary = marshalledContent.get("Item").get("binaryProp").get("B").asText();
         // Only the remaining data in the byte buffer should have been read and marshalled.
-        assertEquals(BinaryUtils.toBase64(new byte[]{1, 1, 1}), base64Binary);
+        assertEquals(BinaryUtils.toBase64(new byte[] {1, 1, 1}), base64Binary);
     }
 }

@@ -38,18 +38,15 @@ import software.amazon.awssdk.util.StringUtils;
  * Signer implementation that signs requests with the AWS3 signing protocol.
  */
 public class AWS3Signer extends AbstractAWSSigner {
+    @Deprecated
+    protected static final DateUtils dateUtils = new DateUtils();
     private static final String AUTHORIZATION_HEADER = "X-Amzn-Authorization";
     private static final String NONCE_HEADER = "x-amz-nonce";
     private static final String HTTP_SCHEME = "AWS3";
     private static final String HTTPS_SCHEME = "AWS3-HTTPS";
-
+    private static final InternalLogApi log = InternalLogFactory.getLog(AWS3Signer.class);
     /** For internal testing only - allows the request's date to be overridden for testing. */
     private String overriddenDate;
-
-    @Deprecated
-    protected static final DateUtils dateUtils = new DateUtils();
-    private static final InternalLogApi log = InternalLogFactory.getLog(AWS3Signer.class);
-
 
     /**
      * Signs the specified request with the AWS3 signing protocol by using the
@@ -62,7 +59,7 @@ public class AWS3Signer extends AbstractAWSSigner {
     @Override
     public void sign(SignableRequest<?> request, AWSCredentials credentials) throws SdkClientException {
         // annonymous credentials, don't sign
-        if ( credentials instanceof AnonymousAWSCredentials ) {
+        if (credentials instanceof AnonymousAWSCredentials) {
             return;
         }
 
@@ -76,7 +73,9 @@ public class AWS3Signer extends AbstractAWSSigner {
         String date = DateUtils.formatRFC822Date(dateValue);
         boolean isHttps = false;
 
-        if (overriddenDate != null) date = overriddenDate;
+        if (overriddenDate != null) {
+            date = overriddenDate;
+        }
         request.addHeader("Date", date);
         request.addHeader("X-Amz-Date", date);
 
@@ -88,7 +87,7 @@ public class AWS3Signer extends AbstractAWSSigner {
         }
         request.addHeader("Host", hostHeader);
 
-        if ( sanitizedCredentials instanceof AWSSessionCredentials ) {
+        if (sanitizedCredentials instanceof AWSSessionCredentials) {
             addSessionCredentials(request, (AWSSessionCredentials) sanitizedCredentials);
         }
         byte[] bytesToSign;
@@ -107,17 +106,18 @@ public class AWS3Signer extends AbstractAWSSigner {
              * params should *NOT* be included in the request payload.
              */
             stringToSign = request.getHttpMethod().toString() + "\n"
-                    + getCanonicalizedResourcePath(path) + "\n"
-                    + getCanonicalizedQueryString(request.getParameters()) + "\n"
-                    + getCanonicalizedHeadersForStringToSign(request) + "\n"
-                    + getRequestPayloadWithoutQueryParams(request);
+                           + getCanonicalizedResourcePath(path) + "\n"
+                           + getCanonicalizedQueryString(request.getParameters()) + "\n"
+                           + getCanonicalizedHeadersForStringToSign(request) + "\n"
+                           + getRequestPayloadWithoutQueryParams(request);
             bytesToSign = hash(stringToSign);
         }
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("Calculated StringToSign: " + stringToSign);
+        }
 
         String signature = signAndBase64Encode(bytesToSign,
-                sanitizedCredentials.getAWSSecretKey(), algorithm);
+                                               sanitizedCredentials.getAWSSecretKey(), algorithm);
 
         StringBuilder builder = new StringBuilder();
         builder.append(isHttps ? HTTPS_SCHEME : HTTP_SCHEME).append(" ");
@@ -137,7 +137,9 @@ public class AWS3Signer extends AbstractAWSSigner {
         builder.append("SignedHeaders=");
         boolean first = true;
         for (String header : getHeadersForStringToSign(request)) {
-            if (!first) builder.append(";");
+            if (!first) {
+                builder.append(";");
+            }
             builder.append(header);
             first = false;
         }
@@ -150,7 +152,7 @@ public class AWS3Signer extends AbstractAWSSigner {
             String key = entry.getKey();
             String lowerCaseKey = StringUtils.lowerCase(key);
             if (lowerCaseKey.startsWith("x-amz")
-                    || lowerCaseKey.equals("host")) {
+                || lowerCaseKey.equals("host")) {
                 headersToSign.add(key);
             }
         }
@@ -187,7 +189,7 @@ public class AWS3Signer extends AbstractAWSSigner {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : sortedHeaderMap.entrySet()) {
             builder.append(StringUtils.lowerCase(entry.getKey())).append(":")
-            .append(entry.getValue()).append("\n");
+                   .append(entry.getValue()).append("\n");
         }
 
         return builder.toString();
@@ -202,7 +204,7 @@ public class AWS3Signer extends AbstractAWSSigner {
                 return true;
             } else {
                 throw new SdkClientException("Unknown request endpoint protocol " +
-                        "encountered while signing request: " + protocol);
+                                             "encountered while signing request: " + protocol);
             }
         } catch (MalformedURLException e) {
             throw new SdkClientException("Unable to parse request endpoint during signing", e);

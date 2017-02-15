@@ -47,9 +47,10 @@ public class HttpClientConfig {
         this.regionMetadataServiceName = regionMetadataServiceName;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "serviceName: " + serviceName + ", regionMetadataServiceName: "
-                + regionMetadataServiceName;
+               + regionMetadataServiceName;
     }
 
     public String getServiceName() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,19 +31,19 @@ import software.amazon.awssdk.services.dynamodbv2.document.Page;
  * @param <R>
  *            low level result type
  */
-public class IteratorSupport<T,R> implements Iterator<T> {
+public class IteratorSupport<T, R> implements Iterator<T> {
     /**
      * Used to iterate through the resource pages, dynamically making network
      * calls as needed.
      */
-    final PageIterator<T,R> resourcePageIterator;
+    final PageIterator<T, R> resourcePageIterator;
     /**
      * Used to iterate through a list of resources already retrieved.
      */
     private Iterator<T> localResourceIterator;
     private T resource;
 
-    IteratorSupport(PageIterator<T,R> resourcePageIterator) {
+    IteratorSupport(PageIterator<T, R> resourcePageIterator) {
         this.resourcePageIterator = resourcePageIterator;
     }
 
@@ -84,7 +84,7 @@ public class IteratorSupport<T,R> implements Iterator<T> {
             if (!resourcePageIterator.hasNext()) {
                 return null;
             }
-            Page<T,R> resourcePage = resourcePageIterator.next();
+            Page<T, R> resourcePage = resourcePageIterator.next();
             localResourceIterator = resourcePage.iterator();
         }
     }

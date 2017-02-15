@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.notif;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -62,17 +77,9 @@ public class SqsBucketNotificationConfigurationIntegrationTest extends S3Integra
         }
     }
 
-    @Test
-    public void putSqsBucketNotification_ReturnsSameConfigurationOnGet() throws Exception {
-        setBucketNotification();
-        BucketNotificationConfiguration notificationConfig = s3.getBucketNotificationConfiguration(BUCKET_NAME);
-        assertEquals(1, notificationConfig.getConfigurations().size());
-        assertContainsCorrectQueueConfiguration(notificationConfig.getConfigurations());
-    }
-
     public static Policy getSqsPolicy() {
         GetQueueAttributesResult getQueueAtrtibutesResult = sqs.getQueueAttributes(queueUrl,
-                Arrays.asList("QueueArn", "Policy"));
+                                                                                   Arrays.asList("QueueArn", "Policy"));
         queueArn = getQueueAtrtibutesResult.getAttributes().get("QueueArn");
         String policyString = getQueueAtrtibutesResult.getAttributes().get("Policy");
         return policyString == null ? new Policy() : Policy.fromJson(policyString);
@@ -86,15 +93,23 @@ public class SqsBucketNotificationConfigurationIntegrationTest extends S3Integra
 
         policy.getStatements().add(
                 BucketNotificationTestUtils.createAllowS3AccessToResourcePolicyStatement(BUCKET_NAME, queueArn,
-                        SQSActions.SendMessage));
+                                                                                         SQSActions.SendMessage));
 
         sqs.setQueueAttributes(queueUrl, ImmutableMapParameter.of("Policy", policy.toJson()));
+    }
+
+    @Test
+    public void putSqsBucketNotification_ReturnsSameConfigurationOnGet() throws Exception {
+        setBucketNotification();
+        BucketNotificationConfiguration notificationConfig = s3.getBucketNotificationConfiguration(BUCKET_NAME);
+        assertEquals(1, notificationConfig.getConfigurations().size());
+        assertContainsCorrectQueueConfiguration(notificationConfig.getConfigurations());
     }
 
     public void setBucketNotification() {
         BucketNotificationConfiguration bucketNotificationConfiguration = new BucketNotificationConfiguration();
         bucketNotificationConfiguration.addConfiguration(NOTIFICATION_NAME,
-                new QueueConfiguration(queueArn, EnumSet.of(S3Event.ObjectCreatedByPut)));
+                                                         new QueueConfiguration(queueArn, EnumSet.of(S3Event.ObjectCreatedByPut)));
         s3.setBucketNotificationConfiguration(BUCKET_NAME, bucketNotificationConfiguration);
     }
 

@@ -1,18 +1,19 @@
 /*
- * Copyright 2015 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,9 +36,9 @@ import java.util.Map;
  */
 final class SubstitutionContext {
     private final Map<String, Integer> nameToToken =
-        new LinkedHashMap<String, Integer>();
+            new LinkedHashMap<String, Integer>();
     private final Map<Object, Integer> valueToToken =
-        new LinkedHashMap<Object, Integer>();
+            new LinkedHashMap<Object, Integer>();
 
     /**
      * Returns the name token for the given name, creating a new token as
@@ -66,20 +67,22 @@ final class SubstitutionContext {
     }
 
     Map<String, String> getNameMap() {
-        if (nameToToken.size() == 0)
+        if (nameToToken.size() == 0) {
             return null;
+        }
         Map<String, String> out = new LinkedHashMap<String, String>();
-        for (Map.Entry<String,Integer> e: nameToToken.entrySet()) {
+        for (Map.Entry<String, Integer> e : nameToToken.entrySet()) {
             out.put("#" + e.getValue(), e.getKey());
         }
         return out;
     }
 
     Map<String, Object> getValueMap() {
-        if (valueToToken.size() == 0)
+        if (valueToToken.size() == 0) {
             return null;
+        }
         Map<String, Object> out = new LinkedHashMap<String, Object>();
-        for (Map.Entry<Object,Integer> e: valueToToken.entrySet()) {
+        for (Map.Entry<Object, Integer> e : valueToToken.entrySet()) {
             out.put(":" + e.getValue(), e.getKey());
         }
         return out;
@@ -94,21 +97,23 @@ final class SubstitutionContext {
     int numValueTokens() {
         return valueToToken.size();
     }
-    
+
     // For testing
     String getNameByToken(int token) {
-        for (Map.Entry<String, Integer> e: nameToToken.entrySet()) {
-            if (e.getValue().intValue() == token)
+        for (Map.Entry<String, Integer> e : nameToToken.entrySet()) {
+            if (e.getValue().intValue() == token) {
                 return e.getKey();
+            }
         }
         return null;
     }
 
     // For testing
     Object getValueByToken(int token) {
-        for (Map.Entry<Object, Integer> e: valueToToken.entrySet()) {
-            if (e.getValue().intValue() == token)
+        for (Map.Entry<Object, Integer> e : valueToToken.entrySet()) {
+            if (e.getValue().intValue() == token) {
                 return e.getKey();
+            }
         }
         return null;
     }
@@ -116,6 +121,6 @@ final class SubstitutionContext {
     @Override
     public String toString() {
         return "name-tokens: " + nameToToken.toString() + "\n"
-                + "value-tokens: " + valueToToken.toString();
+               + "value-tokens: " + valueToToken.toString();
     }
 }

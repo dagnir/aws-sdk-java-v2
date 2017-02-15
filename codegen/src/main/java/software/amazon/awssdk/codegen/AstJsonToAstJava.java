@@ -46,7 +46,7 @@ public class AstJsonToAstJava {
 
     public static JmesPathExpression fromAstJsonToAstJava(JsonNode jsonNode) throws InvalidTypeException {
 
-        switch(jsonNode.get("type").asText()) {
+        switch (jsonNode.get("type").asText()) {
             case "subexpression":
                 return jsonToSubExpression(jsonNode);
             case "field":
@@ -96,7 +96,7 @@ public class AstJsonToAstJava {
 
     private static JmesPathExpression jsonToFunctionExpression(JsonNode jsonNode) {
         List<JmesPathExpression> args = getChildren(jsonNode);
-        switch (jsonNode.get("value").asText()){
+        switch (jsonNode.get("value").asText()) {
             case "length":
                 return new JmesPathLengthFunction(args);
             case "contains":
@@ -127,7 +127,7 @@ public class AstJsonToAstJava {
 
     private static JmesPathExpression jsonToComparator(JsonNode jsonNode) {
         List<JmesPathExpression> args = getChildren(jsonNode);
-        switch(jsonNode.get("value").asText()) {
+        switch (jsonNode.get("value").asText()) {
             case "eq":
                 return new OpEquals(args.get(0), args.get(1));
             case "ne":
@@ -140,27 +140,28 @@ public class AstJsonToAstJava {
                 return new OpGreaterThanOrEqualTo(args.get(0), args.get(1));
             case "lte":
                 return new OpLessThanOrEqualTo(args.get(0), args.get(1));
-            default: throw new InvalidTypeException("Didn't match any of the expected comparator type");
+            default:
+                throw new InvalidTypeException("Didn't match any of the expected comparator type");
         }
     }
 
-    private static JmesPathExpression jsonToAndExpression(JsonNode jsonNode){
+    private static JmesPathExpression jsonToAndExpression(JsonNode jsonNode) {
         List<JmesPathExpression> args = getChildren(jsonNode);
         return new JmesPathAndExpression(args.get(0), args.get(1));
     }
 
-    private static JmesPathExpression jsonToNotExpression(JsonNode jsonNode){
+    private static JmesPathExpression jsonToNotExpression(JsonNode jsonNode) {
         List<JmesPathExpression> args = getChildren(jsonNode);
         return new JmesPathNotExpression(args.get(0));
     }
 
-    private static JmesPathExpression jsonToMultiSelectList(JsonNode jsonNode){
+    private static JmesPathExpression jsonToMultiSelectList(JsonNode jsonNode) {
         List<JmesPathExpression> args = getChildren(jsonNode);
         return new JmesPathMultiSelectList(args);
     }
 
-    private static List<JmesPathExpression> getChildren(JsonNode jsonNode){
-        if(jsonNode.get("children").size() < 1) {
+    private static List<JmesPathExpression> getChildren(JsonNode jsonNode) {
+        if (jsonNode.get("children").size() < 1) {
             throw new RuntimeException("Expected one or more arguments");
         }
         Iterator<JsonNode> children = jsonNode.get("children").elements();

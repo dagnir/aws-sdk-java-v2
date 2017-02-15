@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -15,6 +30,7 @@ import org.junit.experimental.categories.Category;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.internal.MD5DigestCalculatingInputStream;
+
 /*
     Sample Run:
 
@@ -31,7 +47,7 @@ import software.amazon.awssdk.services.s3.internal.MD5DigestCalculatingInputStre
  */
 @Category(S3Categories.ReallySlow.class)
 public class BigFileGCMIntegrationTest {
-    private static final int BUFSIZE = 1024*8;
+    private static final int BUFSIZE = 1024 * 8;
     private static final boolean GENERATE_ENCRYPTED_FILE = false;
 
     @BeforeClass
@@ -41,10 +57,10 @@ public class BigFileGCMIntegrationTest {
 
     @Test
     public void test() throws Exception {
-//        if (!CryptoTestUtils.runTimeConsumingTests()) {
-//            System.out.println("Please set the environment variable, export RUN_TIME_CONSUMING_TESTS=true, to run the test");
-//            return;
-//        }
+        //        if (!CryptoTestUtils.runTimeConsumingTests()) {
+        //            System.out.println("Please set the environment variable, export RUN_TIME_CONSUMING_TESTS=true, to run the test");
+        //            return;
+        //        }
         long start = System.nanoTime();
         File file = generateHugeFile();
         start = took(start);
@@ -52,7 +68,7 @@ public class BigFileGCMIntegrationTest {
         start = took(start);
         String md5b = encryptWithMarkAndReset(file);
         start = took(start);
-        assertEquals("md5a="+md5a+", md5b="+md5b, md5a, md5b);
+        assertEquals("md5a=" + md5a + ", md5b=" + md5b, md5a, md5b);
     }
 
     private File generateHugeFile() throws Exception {
@@ -66,10 +82,10 @@ public class BigFileGCMIntegrationTest {
         MD5DigestCalculatingInputStream md5in = new MD5DigestCalculatingInputStream(
                 new CipherLiteInputStream(new ResettableInputStream(
                         infile), scheme.createCipherLite(
-                CryptoTestUtils.getTestSecretKey(scheme),
-                new byte[scheme.getIVLengthInBytes()],
-                Cipher.ENCRYPT_MODE),
-            BUFSIZE));
+                        CryptoTestUtils.getTestSecretKey(scheme),
+                        new byte[scheme.getIVLengthInBytes()],
+                        Cipher.ENCRYPT_MODE),
+                                          BUFSIZE));
         File outfile = null;
         FileOutputStream out = null;
         if (GENERATE_ENCRYPTED_FILE) {
@@ -79,17 +95,20 @@ public class BigFileGCMIntegrationTest {
         byte[] buf = new byte[BUFSIZE];
         int len = md5in.read(buf);
         while (len > -1) {
-            if (out != null)
+            if (out != null) {
                 out.write(buf, 0, len);
+            }
             len = md5in.read(buf);
         }
-        if (out != null)
+        if (out != null) {
             out.close();
+        }
         md5in.close();
         String md5sum = encodeHexString(md5in.getMd5Digest());
         System.out.println("MD5: " + md5sum);
-        if (outfile != null)
+        if (outfile != null) {
             System.out.println("outfile size: " + outfile.length());
+        }
         return md5sum;
     }
 
@@ -98,19 +117,19 @@ public class BigFileGCMIntegrationTest {
         assertTrue(infile.length() == 4296015870L);
         ContentCryptoScheme scheme = ContentCryptoScheme.AES_GCM;
         CipherLiteInputStream in = new CipherLiteInputStream(new ResettableInputStream(infile),
-            scheme.createCipherLite(
-                CryptoTestUtils.getTestSecretKey(scheme),
-                new byte[scheme.getIVLengthInBytes()],
-                Cipher.ENCRYPT_MODE),
-            BUFSIZE);
+                                                             scheme.createCipherLite(
+                                                                     CryptoTestUtils.getTestSecretKey(scheme),
+                                                                     new byte[scheme.getIVLengthInBytes()],
+                                                                     Cipher.ENCRYPT_MODE),
+                                                             BUFSIZE);
         boolean marked = false;
         long markedAt = -1;
         boolean reset = false;
         byte[] buf = new byte[BUFSIZE];
         long total = 0;
         int len = in.read(buf);
-        final long markPoint = (((long)Integer.MAX_VALUE)*2+512L);
-        final long resetPoint = (((long)Integer.MAX_VALUE)*2 + 100*512L);
+        final long markPoint = (((long) Integer.MAX_VALUE) * 2 + 512L);
+        final long resetPoint = (((long) Integer.MAX_VALUE) * 2 + 100 * 512L);
         System.out.println("markPoint=" + markPoint + ", resetPoint=" + resetPoint);
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         while (len > -1) {
@@ -137,7 +156,7 @@ public class BigFileGCMIntegrationTest {
         }
         in.close();
         String md5sum = encodeHexString(md5.digest());
-        System.out.println("total: " + total + ", marked: " + marked + ", reset: " + reset +", marked at: " + markedAt);
+        System.out.println("total: " + total + ", marked: " + marked + ", reset: " + reset + ", marked at: " + markedAt);
         System.out.println("MD5: " + md5sum);
         return md5sum;
         /*
@@ -153,7 +172,7 @@ public class BigFileGCMIntegrationTest {
 
     private long took(long start) {
         long end = System.nanoTime();
-        System.out.println("took: " + TimeUnit.NANOSECONDS.toSeconds(end-start) + " secs");
+        System.out.println("took: " + TimeUnit.NANOSECONDS.toSeconds(end - start) + " secs");
         return end;
     }
 }

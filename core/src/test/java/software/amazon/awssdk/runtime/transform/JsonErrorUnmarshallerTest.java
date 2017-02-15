@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ public class JsonErrorUnmarshallerTest {
     private static final String ERROR_TYPE = "CustomException";
 
     private static final JsonNode JSON = new ObjectMapper().createObjectNode().put("message", "Some error message")
-            .put("__type", "apiVersion#" + ERROR_TYPE).put("CustomField", "This is a customField").put("CustomInt", 42);
+                                                           .put("__type", "apiVersion#" + ERROR_TYPE).put("CustomField", "This is a customField").put("CustomInt", 42);
 
     private static final JsonNode INVALID_CASE_JSON = new ObjectMapper().createObjectNode()
-            .put("message", "Some error message").put("__type", "apiVersion#" + ERROR_TYPE)
-            .put("customField", "This is a customField").put("customInt", 42);
+                                                                        .put("message", "Some error message").put("__type", "apiVersion#" + ERROR_TYPE)
+                                                                        .put("customField", "This is a customField").put("customInt", 42);
 
     private JsonErrorUnmarshaller unmarshaller;
 

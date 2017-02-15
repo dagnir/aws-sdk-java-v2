@@ -50,18 +50,15 @@ import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
  */
 public class CloudcastIntegrationTest extends IntegrationTestBase {
 
-    /** The ARN of the topic created by these tests */
-    private String topicArn;
-
-    /** The URL of the SQS queue created to receive notifications */
-    private String queueUrl;
-
-    private String subscriptionArn;
-
     private final SignatureChecker signatureChecker = new SignatureChecker();
     private final String DELIVERY_POLICY = "{ " + "  \"healthyRetryPolicy\":" + "    {"
-            + "       \"minDelayTarget\": 1," + "       \"maxDelayTarget\": 1," + "       \"numRetries\": 1, "
-            + "       \"numMaxDelayRetries\": 0, " + "       \"backoffFunction\": \"linear\"" + "     }" + "}";
+                                           + "       \"minDelayTarget\": 1," + "       \"maxDelayTarget\": 1," + "       \"numRetries\": 1, "
+                                           + "       \"numMaxDelayRetries\": 0, " + "       \"backoffFunction\": \"linear\"" + "     }" + "}";
+    /** The ARN of the topic created by these tests */
+    private String topicArn;
+    /** The URL of the SQS queue created to receive notifications */
+    private String queueUrl;
+    private String subscriptionArn;
 
     @Before
     public void setup() {
@@ -105,9 +102,9 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
     @Test
     public void testTopics_subscribeQueue() throws Exception {
         topicArn = sns.createTopic(new CreateTopicRequest("subscribeTopicTest-" + System.currentTimeMillis()))
-                .getTopicArn();
+                      .getTopicArn();
         queueUrl = sqs.createQueue(new CreateQueueRequest("subscribeTopicTest-" + System.currentTimeMillis()))
-                .getQueueUrl();
+                      .getQueueUrl();
 
         subscriptionArn = Topics.subscribeQueue(sns, sqs, topicArn, queueUrl);
         assertNotNull(subscriptionArn);
@@ -127,9 +124,9 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
         String unicodeMessage = "你好";
         String unicodeSubject = "主题";
         topicArn = sns.createTopic(new CreateTopicRequest("unicodeMessageTest-" + System.currentTimeMillis()))
-                .getTopicArn();
+                      .getTopicArn();
         queueUrl = sqs.createQueue(new CreateQueueRequest("unicodeMessageTest-" + System.currentTimeMillis()))
-                .getQueueUrl();
+                      .getQueueUrl();
 
         subscriptionArn = Topics.subscribeQueue(sns, sqs, topicArn, queueUrl);
         assertNotNull(subscriptionArn);
@@ -169,7 +166,7 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
 
         // Set Topic Attributes
         sns.setTopicAttributes(new SetTopicAttributesRequest().withTopicArn(topicArn).withAttributeName("DisplayName")
-                .withAttributeValue("MyTopicName"));
+                                                              .withAttributeValue("MyTopicName"));
 
         // Get Topic Attributes
         GetTopicAttributesResult getTopicAttributesResult = sns
@@ -218,12 +215,12 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
 
         // Verify Message Signature
         Certificate certificate = CertificateFactory.getInstance("X509")
-                .generateCertificate(getClass().getResourceAsStream(SnsTestResources.PUBLIC_CERT));
+                                                    .generateCertificate(getClass().getResourceAsStream(SnsTestResources.PUBLIC_CERT));
         assertTrue(signatureChecker.verifyMessageSignature(message, certificate.getPublicKey()));
 
         // Add/Remove Permissions
         sns.addPermission(new AddPermissionRequest(topicArn, "foo", null, null)
-                .withActionNames(new String[] { "Publish" }).withAWSAccountIds(new String[] { "750203240092" }));
+                                  .withActionNames(new String[] {"Publish"}).withAWSAccountIds(new String[] {"750203240092"}));
         Thread.sleep(1000 * 5);
         sns.removePermission(new RemovePermissionRequest(topicArn, "foo"));
     }
@@ -238,7 +235,7 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
     private List<Subscription> getAllSubscriptions(AmazonSNS sns) {
         ListSubscriptionsResult result = sns.listSubscriptions();
         List<Subscription> subscriptions = new ArrayList<Subscription>(result
-                .getSubscriptions());
+                                                                               .getSubscriptions());
         while (result.getNextToken() != null) {
             result = sns.listSubscriptions(result.getNextToken());
             subscriptions.addAll(result.getSubscriptions());
@@ -268,7 +265,7 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
 
         // Subscribe an SQS queue for notifications
         queueUrl = sqs.createQueue(new CreateQueueRequest("subscribeTopicTest-" + System.currentTimeMillis()))
-                .getQueueUrl();
+                      .getQueueUrl();
         String queueArn = initializeReceivingQueue();
         SubscribeResult subscribeResult = sns.subscribe(topicArn, "sqs", queueArn);
         String subscriptionArn = subscribeResult.getSubscriptionArn();
@@ -326,6 +323,7 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
     /*
      * Private Interface
      */
+
     /**
      * Polls the SQS queue created earlier in the test until we find our SNS notification message
      * and returns the base64 decoded message body.
@@ -356,7 +354,7 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
         Thread.sleep(1000 * 4);
         String queueArn = sqs
                 .getQueueAttributes(
-                        new GetQueueAttributesRequest(queueUrl).withAttributeNames(new String[] { "QueueArn" }))
+                        new GetQueueAttributesRequest(queueUrl).withAttributeNames(new String[] {"QueueArn"}))
                 .getAttributes().get("QueueArn");
         HashMap<String, String> attributes = new HashMap<String, String>();
         attributes.put("Policy", generateSqsPolicyForTopic(queueArn, topicArn));
@@ -373,11 +371,11 @@ public class CloudcastIntegrationTest extends IntegrationTestBase {
      */
     private String generateSqsPolicyForTopic(String queueArn, String topicArn) {
         String policy = "{ " + "  \"Version\":\"2008-10-17\"," + "  \"Id\":\"" + queueArn + "/policyId\","
-                + "  \"Statement\": [" + "    {" + "        \"Sid\":\"" + queueArn + "/statementId\","
-                + "        \"Effect\":\"Allow\"," + "        \"Principal\":{\"AWS\":\"*\"},"
-                + "        \"Action\":\"SQS:SendMessage\"," + "        \"Resource\": \"" + queueArn + "\","
-                + "        \"Condition\":{" + "            \"StringEquals\":{\"aws:SourceArn\":\"" + topicArn + "\"}"
-                + "        }" + "    }" + "  ]" + "}";
+                        + "  \"Statement\": [" + "    {" + "        \"Sid\":\"" + queueArn + "/statementId\","
+                        + "        \"Effect\":\"Allow\"," + "        \"Principal\":{\"AWS\":\"*\"},"
+                        + "        \"Action\":\"SQS:SendMessage\"," + "        \"Resource\": \"" + queueArn + "\","
+                        + "        \"Condition\":{" + "            \"StringEquals\":{\"aws:SourceArn\":\"" + topicArn + "\"}"
+                        + "        }" + "    }" + "  ]" + "}";
 
         return policy;
     }

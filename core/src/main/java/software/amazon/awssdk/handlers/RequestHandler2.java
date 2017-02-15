@@ -33,6 +33,14 @@ import software.amazon.awssdk.util.TimingInfo;
  */
 public abstract class RequestHandler2 implements IRequestHandler2 {
 
+    /**
+     * Returns an instance of request handler adapted to the {@link RequestHandler2} interface from
+     * the given request handler implementing the deprecated {@link RequestHandler} interface.
+     */
+    public static RequestHandler2 adapt(@SuppressWarnings("deprecation") RequestHandler old) {
+        return new RequestHandler2Adaptor(old);
+    }
+
     @Override
     public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {
         return request;
@@ -53,13 +61,5 @@ public abstract class RequestHandler2 implements IRequestHandler2 {
 
     @Override
     public void afterError(Request<?> request, Response<?> response, Exception e) {
-    }
-
-    /**
-     * Returns an instance of request handler adapted to the {@link RequestHandler2} interface from
-     * the given request handler implementing the deprecated {@link RequestHandler} interface.
-     */
-    public static RequestHandler2 adapt(@SuppressWarnings("deprecation") RequestHandler old) {
-        return new RequestHandler2Adaptor(old);
     }
 }

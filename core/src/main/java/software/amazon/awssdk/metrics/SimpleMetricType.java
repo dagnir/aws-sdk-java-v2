@@ -16,14 +16,25 @@
 package software.amazon.awssdk.metrics;
 
 public abstract class SimpleMetricType implements MetricType {
-    @Override public abstract String name();
+    @Override
+    public abstract String name();
 
-    @Override public final int hashCode() { return name().hashCode(); }
-    @Override public final boolean equals(Object o) {
-        if (!(o instanceof MetricType))
+    @Override
+    public final int hashCode() {
+        return name().hashCode();
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof MetricType)) {
             return false;
-        MetricType that = (MetricType)o;
+        }
+        MetricType that = (MetricType) o;
         return this.name().equals(that.name());
     }
-    @Override public final String toString() { return name(); }
+
+    @Override
+    public final String toString() {
+        return name();
+    }
 }

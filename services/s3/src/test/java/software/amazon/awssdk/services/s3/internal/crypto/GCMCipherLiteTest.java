@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertFalse;
@@ -19,6 +34,7 @@ import software.amazon.awssdk.runtime.io.ResettableInputStream;
 
 public class GCMCipherLiteTest {
     private static final boolean debug = false;
+    private static Random rand = new Random();
 
     @BeforeClass
     public static void setup() {
@@ -47,7 +63,7 @@ public class GCMCipherLiteTest {
         assertTrue(0 == e.getMarkedCount());
         assertTrue(0 == e.getCurrentCount());
         assertTrue("encrypted outputByteCount=" + e.getOutputByteCount(),
-                100 == e.getOutputByteCount());
+                   100 == e.getOutputByteCount());
         e.reset();
         byte[] ct2 = e.doFinal(pt);
         assertNotSame(ct, ct2);
@@ -63,7 +79,7 @@ public class GCMCipherLiteTest {
         assertTrue(0 == d.getMarkedCount());
         assertTrue(0 == d.getCurrentCount());
         assertTrue("decrypted outputByteCount=" + e.getOutputByteCount(),
-                100 == e.getOutputByteCount());
+                   100 == e.getOutputByteCount());
         e.reset();
         byte[] dpt2 = d.doFinal(ct);
         assertNotSame(dpt2, dpt);
@@ -87,7 +103,7 @@ public class GCMCipherLiteTest {
         byte[] pt = ptstr.getBytes(UTF8);
         byte[] ct = e.update(pt, 0, pt.length);
         assertTrue("encrypted outputByteCount=" + e.getOutputByteCount(),
-                96 == e.getOutputByteCount());
+                   96 == e.getOutputByteCount());
         byte[] final0 = e.doFinal();
         byte[] final1 = e.getFinalBytes();
         assertTrue(Arrays.equals(final0, final1));
@@ -110,7 +126,7 @@ public class GCMCipherLiteTest {
         System.arraycopy(final0, 0, ct_all, ct.length, final0.length);
         byte[] dpt = d.update(ct_all, 0, ct_all.length);
         assertTrue("decrypted outputByteCount=" + d.getOutputByteCount(),
-                96 == d.getOutputByteCount());
+                   96 == d.getOutputByteCount());
         byte[] dfinal0 = d.doFinal();
         byte[] dfinal1 = d.getFinalBytes();
         assertTrue(Arrays.equals(dfinal0, dfinal1));
@@ -144,10 +160,10 @@ public class GCMCipherLiteTest {
         byte[] pt = ptstr.getBytes(UTF8);
         byte[] ct1 = e.update(pt, 0, pt.length / 2);
         assertTrue("encrypted outputByteCount=" + e.getOutputByteCount(),
-                48 == e.getOutputByteCount());
+                   48 == e.getOutputByteCount());
         byte[] ct2 = e.update(pt, pt.length / 2, pt.length - pt.length / 2);
         assertTrue("encrypted outputByteCount=" + e.getOutputByteCount(),
-                96 == e.getOutputByteCount());
+                   96 == e.getOutputByteCount());
         byte[] final0 = e.doFinal();
         byte[] final1 = e.getFinalBytes();
         assertTrue(Arrays.equals(final0, final1));
@@ -173,16 +189,16 @@ public class GCMCipherLiteTest {
         byte[] ct = decrypter.createInverse().doFinal(pt);
         byte[] dpt1 = d.update(ct, 0, ct.length / 2);
         assertTrue("decrypted outputByteCount=" + d.getOutputByteCount(),
-                d.getOutputByteCount() <= ct.length / 2);
+                   d.getOutputByteCount() <= ct.length / 2);
         byte[] dpt2 = d.update(ct, ct.length / 2, ct.length - ct.length / 2);
         assertTrue("encrypted outputByteCount=" + d.getOutputByteCount(),
-                d.getOutputByteCount() <= 100);
+                   d.getOutputByteCount() <= 100);
         byte[] dfinal0 = d.doFinal();
         byte[] dfinal1 = d.getFinalBytes();
         byte[] dpt_all = Arrays.copyOf(dpt1, 100);
         System.arraycopy(dpt2, 0, dpt_all, dpt1.length, dpt2.length);
         System.arraycopy(dfinal0, 0, dpt_all, dpt1.length + dpt2.length,
-                dfinal0.length);
+                         dfinal0.length);
         assertTrue(Arrays.equals(dfinal0, dfinal1));
         assertTrue(0 == d.getMarkedCount());
         assertTrue(0 == d.getCurrentCount());
@@ -195,7 +211,7 @@ public class GCMCipherLiteTest {
         byte[] dpt_all2 = Arrays.copyOf(dpt3, 100);
         System.arraycopy(dpt4, 0, dpt_all2, dpt3.length, dpt4.length);
         System.arraycopy(dfinal2, 0, dpt_all2, dpt3.length + dpt4.length,
-                dfinal2.length);
+                         dfinal2.length);
         assertTrue(Arrays.equals(dpt_all, dpt_all2));
     }
 
@@ -219,7 +235,7 @@ public class GCMCipherLiteTest {
         // encrypt the 2nd half
         byte[] ct2 = e.update(pt, 64, pt.length - 64);
         assertTrue("encrypted OutputByteCount=" + e.getOutputByteCount(),
-                96 == e.getOutputByteCount());
+                   96 == e.getOutputByteCount());
         byte[] final0 = e.doFinal();
         byte[] final1 = e.getFinalBytes();
         assertTrue(Arrays.equals(final0, final1));
@@ -227,7 +243,7 @@ public class GCMCipherLiteTest {
         assertTrue(64 == e.getMarkedCount());
         assertTrue(0 == e.getCurrentCount());
         assertTrue("encrypted OutputByteCount=" + e.getOutputByteCount(),
-                100 == e.getOutputByteCount());
+                   100 == e.getOutputByteCount());
         e.reset();
         assertTrue(64 == e.getMarkedCount());
         assertTrue(e.getMarkedCount() == e.getCurrentCount());
@@ -253,14 +269,14 @@ public class GCMCipherLiteTest {
         // decrypt the 2nd half
         byte[] dpt2 = d.update(ct, 64, ct.length - 64);
         assertTrue("decrypted OutputByteCount=" + d.getOutputByteCount(),
-                d.getOutputByteCount() <= 100);
+                   d.getOutputByteCount() <= 100);
         byte[] dfinal0 = d.doFinal();
         byte[] dfinal1 = d.getFinalBytes();
         assertTrue(Arrays.equals(dfinal0, dfinal1));
         assertTrue(d.getMarkedCount() <= 64);
         assertTrue(0 == d.getCurrentCount());
         assertTrue("decrypted OutputByteCount=" + d.getOutputByteCount(),
-                100 == d.getOutputByteCount());
+                   100 == d.getOutputByteCount());
         d.reset();
         assertTrue(d.getMarkedCount() <= 64);
         assertTrue(d.getMarkedCount() == d.getCurrentCount());
@@ -278,8 +294,6 @@ public class GCMCipherLiteTest {
         assertTrue(Arrays.equals(dfinal0, dfinal3));
 
     }
-
-    private static Random rand = new Random();
 
     @Test
     public void testGCMEncryption() throws Exception {
@@ -318,14 +332,15 @@ public class GCMCipherLiteTest {
         GCMCipherLite e2 = (GCMCipherLite) w2;
         byte[] input = IOUtils.toByteArray(new FileInputStream(file));
         System.err.println("Testing encrypt and re-encryption with input size "
-                + input.length);
+                           + input.length);
         int remaining = input.length;
         int inputOffset = 0;
         while (remaining >= 512) {
             int inputLen = 512;
-            if (debug)
+            if (debug) {
                 System.err.println("remaining: " + remaining + ", inputLen="
-                        + inputLen);
+                                   + inputLen);
+            }
             long marked = e1.mark();
             assertTrue(marked == inputOffset);
             byte[] ct1 = e1.update(input, inputOffset, inputLen);
@@ -340,8 +355,9 @@ public class GCMCipherLiteTest {
             remaining -= 512;
         }
         if (remaining > 0) {
-            if (debug)
+            if (debug) {
                 System.err.println("remaining: " + remaining);
+            }
             long marked = e1.mark();
             assertTrue(marked == inputOffset);
             byte[] ct1 = e1.update(input, inputOffset, remaining);
@@ -353,9 +369,10 @@ public class GCMCipherLiteTest {
             assertTrue(Arrays.equals(ct1, ct3));
         }
         long marked = e1.mark();
-        if (debug)
+        if (debug) {
             System.err.println("input.length - marked="
-                    + (input.length - marked));
+                               + (input.length - marked));
+        }
         assertTrue(input.length - marked <= 512);
         byte[] final1 = e1.doFinal();
         byte[] final2 = e2.doFinal();
@@ -396,15 +413,16 @@ public class GCMCipherLiteTest {
         GCMCipherLite d2 = (GCMCipherLite) w2;
         byte[] input = IOUtils.toByteArray(new FileInputStream(file));
         System.err.println("Testing decrypt and re-decryption with input size "
-                + input.length);
+                           + input.length);
         int remaining = input.length;
         int inputOffset = 0;
         int chunk = 512;
         while (remaining >= chunk) {
             int inputLen = chunk;
-            if (debug)
+            if (debug) {
                 System.err.println("remaining: " + remaining + ", inputLen="
-                        + inputLen);
+                                   + inputLen);
+            }
             int marked = (int) d1.mark();
             assertTrue(marked <= inputOffset);
             byte[] ct1 = d1.update(input, inputOffset, inputLen);
@@ -419,8 +437,9 @@ public class GCMCipherLiteTest {
             remaining -= chunk;
         }
         if (remaining > 0) {
-            if (debug)
+            if (debug) {
                 System.err.println("remaining: " + remaining);
+            }
             int marked = (int) d1.mark();
             assertTrue(marked <= inputOffset);
             byte[] pt1 = d1.update(input, inputOffset, remaining);
@@ -434,9 +453,10 @@ public class GCMCipherLiteTest {
             assertTrue(Arrays.equals(lhs, rhs));
         }
         long marked = d1.mark();
-        if (debug)
+        if (debug) {
             System.err.println("input.length - marked="
-                    + (input.length - marked));
+                               + (input.length - marked));
+        }
         assertTrue(input.length - marked <= 512);
         byte[] final1 = d1.doFinal();
         byte[] final2 = d2.doFinal();
@@ -447,7 +467,7 @@ public class GCMCipherLiteTest {
         byte[] final3 = d1.doFinal();
         assertTrue(Arrays.equals(final1, final3));
     }
-    
+
     @Test
     public void markAndReset() throws Exception {
         File f = CryptoTestUtils.generateRandomAsciiFile(100);
@@ -472,10 +492,10 @@ public class GCMCipherLiteTest {
         int b = clis.read();
         assertFalse(b == -1);
         assertTrue(9 == clis.skip(9));
-        int n = (int)clis.skip(90);
+        int n = (int) clis.skip(90);
         System.out.println("n=" + n);
         assertTrue(n <= 90);
-        for (int i=0; i < 116-(n+10); i++) {
+        for (int i = 0; i < 116 - (n + 10); i++) {
             System.out.println("i=" + i);
             assertFalse(clis.read() == -1);
         }

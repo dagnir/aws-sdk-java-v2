@@ -40,6 +40,7 @@ public class JsonPolicyReader {
     private static final String PRINCIPAL_SCHEMA_SERVICE = "Service";
 
     private static final String PRINICIPAL_SCHEMA_FEDERATED = "Federated";
+
     /**
      * Converts the specified JSON string to an AWS policy object.
      *
@@ -86,7 +87,7 @@ public class JsonPolicyReader {
 
         } catch (Exception e) {
             String message = "Unable to generate policy object fron JSON string "
-                    + e.getMessage();
+                             + e.getMessage();
             throw new IllegalArgumentException(message, e);
         }
         policy.setStatements(statements);
@@ -116,8 +117,8 @@ public class JsonPolicyReader {
         JsonNode effectNode = jStatement.get(JsonDocumentFields.STATEMENT_EFFECT);
 
         final Statement.Effect effect = isNotNull(effectNode)
-                                   ? Statement.Effect.valueOf(effectNode.asText())
-                                   : Statement.Effect.Deny ;
+                                        ? Statement.Effect.valueOf(effectNode.asText())
+                                        : Statement.Effect.Deny;
 
         Statement statement = new Statement(effect);
 
@@ -127,20 +128,24 @@ public class JsonPolicyReader {
         }
 
         JsonNode actionNodes = jStatement.get(JsonDocumentFields.ACTION);
-        if (isNotNull(actionNodes))
+        if (isNotNull(actionNodes)) {
             statement.setActions(actionsOf(actionNodes));
+        }
 
         JsonNode resourceNodes = jStatement.get(JsonDocumentFields.RESOURCE);
-        if (isNotNull(resourceNodes))
+        if (isNotNull(resourceNodes)) {
             statement.setResources(resourcesOf(resourceNodes));
+        }
 
         JsonNode conditionNodes = jStatement.get(JsonDocumentFields.CONDITION);
-        if (isNotNull(conditionNodes))
+        if (isNotNull(conditionNodes)) {
             statement.setConditions(conditionsOf(conditionNodes));
+        }
 
         JsonNode principalNodes = jStatement.get(JsonDocumentFields.PRINCIPAL);
-        if (isNotNull(principalNodes))
+        if (isNotNull(principalNodes)) {
             statement.setPrincipals(principalOf(principalNodes));
+        }
 
         return statement;
     }
@@ -239,7 +244,7 @@ public class JsonPolicyReader {
         if (schema.equalsIgnoreCase(PRINCIPAL_SCHEMA_USER)) {
             return new Principal(principalNode.asText());
         } else if (schema.equalsIgnoreCase(PRINCIPAL_SCHEMA_SERVICE)) {
-            return new Principal(schema,principalNode.asText());
+            return new Principal(schema, principalNode.asText());
         } else if (schema.equalsIgnoreCase(PRINICIPAL_SCHEMA_FEDERATED)) {
             if (Principal.WebIdentityProviders.fromString(principalNode.asText()) != null) {
                 return new Principal(
@@ -268,7 +273,7 @@ public class JsonPolicyReader {
         while (mapOfConditions.hasNext()) {
             condition = mapOfConditions.next();
             convertConditionRecord(conditionList, condition.getKey(),
-                    condition.getValue());
+                                   condition.getValue());
         }
 
         return conditionList;
@@ -286,7 +291,7 @@ public class JsonPolicyReader {
      *            each condition node to be parsed.
      */
     private void convertConditionRecord(List<Condition> conditions,
-            String conditionType, JsonNode conditionNode) {
+                                        String conditionType, JsonNode conditionNode) {
 
         Iterator<Map.Entry<String, JsonNode>> mapOfFields = conditionNode
                 .fields();
@@ -309,8 +314,19 @@ public class JsonPolicyReader {
                 values.add(fieldValue.asText());
             }
             conditions.add(new Condition().withType(conditionType)
-                    .withConditionKey(field.getKey()).withValues(values));
+                                          .withConditionKey(field.getKey()).withValues(values));
         }
+    }
+
+    /**
+     * Checks if the given object is not null.
+     *
+     * @param object
+     *            the object compared to null.
+     * @return true if the object is not null else false
+     */
+    private boolean isNotNull(Object object) {
+        return null != object;
     }
 
     /**
@@ -328,17 +344,6 @@ public class JsonPolicyReader {
             return actionName;
         }
 
-    }
-
-    /**
-     * Checks if the given object is not null.
-     *
-     * @param object
-     *            the object compared to null.
-     * @return true if the object is not null else false
-     */
-    private boolean isNotNull(Object object) {
-        return null != object;
     }
 
 }

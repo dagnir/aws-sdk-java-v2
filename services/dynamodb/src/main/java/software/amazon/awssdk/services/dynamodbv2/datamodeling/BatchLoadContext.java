@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,13 +27,13 @@ import software.amazon.awssdk.util.ValidationUtils;
  */
 public class BatchLoadContext {
     /**
-     * The BatchGetItemResult returned by the DynamoDB client.
-     */
-    private BatchGetItemResult batchGetItemResult;
-    /**
      * The BatchGetItemRequest.
      */
     private final BatchGetItemRequest batchGetItemRequest;
+    /**
+     * The BatchGetItemResult returned by the DynamoDB client.
+     */
+    private BatchGetItemResult batchGetItemResult;
     /**
      * The number of times the request has been retried.
      */

@@ -1,18 +1,19 @@
 /*
- * Copyright 2015 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,9 @@ import software.amazon.awssdk.annotation.Immutable;
 @Beta
 @Immutable
 public final class S extends PathOperand {
-    S(String path) { super(path); }
+    S(String path) {
+        super(path);
+    }
 
     /**
      * Returns a <a href=
@@ -173,8 +176,8 @@ public final class S extends PathOperand {
      */
     public BetweenCondition between(String low, String high) {
         return new BetweenCondition(this,
-                new LiteralOperand(low),
-                new LiteralOperand(high));
+                                    new LiteralOperand(low),
+                                    new LiteralOperand(high));
     }
 
     /**
@@ -211,8 +214,9 @@ public final class S extends PathOperand {
      */
     public final InCondition in(String... values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (String v: values)
+        for (String v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 
@@ -229,8 +233,9 @@ public final class S extends PathOperand {
      */
     public final InCondition in(List<String> values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (String v: values)
+        for (String v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 

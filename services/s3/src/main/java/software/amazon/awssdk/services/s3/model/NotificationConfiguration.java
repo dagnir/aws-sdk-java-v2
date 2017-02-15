@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.util.ArrayList;
@@ -129,8 +130,9 @@ public abstract class NotificationConfiguration {
     @Deprecated
     public NotificationConfiguration withObjectPrefixes(String... objectPrefixes) {
         this.objectPrefixes.clear();
-        if (objectPrefixes != null && objectPrefixes.length > 0)
+        if (objectPrefixes != null && objectPrefixes.length > 0) {
             this.objectPrefixes.addAll(Arrays.asList(objectPrefixes));
+        }
         return this;
     }
 

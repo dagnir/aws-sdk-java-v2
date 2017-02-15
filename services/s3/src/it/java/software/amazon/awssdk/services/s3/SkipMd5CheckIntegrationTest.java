@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.hamcrest.Matchers.containsString;
@@ -68,6 +83,10 @@ public class SkipMd5CheckIntegrationTest extends AWSIntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         CryptoTestUtils.deleteBucketAndAllContents(normalS3, BUCKET);
+    }
+
+    private static StringInputStream getContent() throws UnsupportedEncodingException {
+        return new StringInputStream("content");
     }
 
     @Before
@@ -159,10 +178,6 @@ public class SkipMd5CheckIntegrationTest extends AWSIntegrationTestBase {
         assertThat(expected.getMessage(), containsString("Unable to verify integrity of data"));
     }
 
-    private static StringInputStream getContent() throws UnsupportedEncodingException {
-        return new StringInputStream("content");
-    }
-
     /**
      * Fetch the object from S3 using the MD5 tampering client and read to the end of the stream to
      * trigger (or not trigger) the MD5 validation
@@ -180,13 +195,13 @@ public class SkipMd5CheckIntegrationTest extends AWSIntegrationTestBase {
         String uploadId = startMultipartUpload();
         InputStream content = getContent();
         UploadPartRequest uploadPartRequest = new UploadPartRequest().withBucketName(BUCKET).withKey(PUT_KEY)
-                .withUploadId(uploadId).withPartNumber(1).withInputStream(content).withLastPart(true);
+                                                                     .withUploadId(uploadId).withPartNumber(1).withInputStream(content).withLastPart(true);
         return uploadPartRequest;
     }
 
     /**
      * Start a multipart upload
-     * 
+     *
      * @return The UploadId
      */
     private String startMultipartUpload() {

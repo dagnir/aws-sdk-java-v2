@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -60,15 +60,16 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withScanFilter(Map)
      */
     public ScanSpec withScanFilters(ScanFilter... scanFilters) {
-        if (scanFilters == null)
+        if (scanFilters == null) {
             this.scanFilters = null;
-        else {
+        } else {
             Set<String> names = new LinkedHashSet<String>();
-            for (ScanFilter e: scanFilters)
+            for (ScanFilter e : scanFilters) {
                 names.add(e.getAttribute());
+            }
             if (names.size() != scanFilters.length) {
                 throw new IllegalArgumentException(
-                    "attribute names must not duplicate in the list of scan filters");
+                        "attribute names must not duplicate in the list of scan filters");
             }
             this.scanFilters = Arrays.asList(scanFilters);
         }
@@ -102,11 +103,12 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
     /**
      * @see ScanRequest#withAttributesToGet(String...)
      */
-    public ScanSpec withAttributesToGet(String ... attributes) {
-        if (attributes == null)
+    public ScanSpec withAttributesToGet(String... attributes) {
+        if (attributes == null) {
             getRequest().setAttributesToGet(null);
-        else
+        } else {
             getRequest().setAttributesToGet(Arrays.asList(attributes));
+        }
         return this;
     }
 
@@ -148,7 +150,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
     /**
      * @see ScanRequest#getExpressionAttributeNames()
      */
-    public Map<String,String> getNameMap() {
+    public Map<String, String> getNameMap() {
         return nameMap;
     }
 
@@ -161,17 +163,18 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withExpressionAttributeNames(Map)
      */
     public ScanSpec withNameMap(Map<String, String> nameMap) {
-        if (nameMap == null)
+        if (nameMap == null) {
             this.nameMap = null;
-        else
+        } else {
             this.nameMap = Collections.unmodifiableMap(new LinkedHashMap<String, String>(nameMap));
+        }
         return this;
     }
 
     /**
      * @see ScanRequest#getExpressionAttributeValues()
      */
-    public Map<String,Object> getValueMap() {
+    public Map<String, Object> getValueMap() {
         return valueMap;
     }
 
@@ -182,10 +185,11 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withExpressionAttributeValues(Map)
      */
     public ScanSpec withValueMap(Map<String, Object> valueMap) {
-        if (valueMap == null)
+        if (valueMap == null) {
             this.valueMap = null;
-        else
+        } else {
             this.valueMap = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(valueMap));
+        }
         return this;
     }
 
@@ -280,10 +284,11 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withExclusiveStartKey(Map)
      */
     public ScanSpec withExclusiveStartKey(KeyAttribute... exclusiveStartKey) {
-        if (exclusiveStartKey == null)
+        if (exclusiveStartKey == null) {
             this.exclusiveStartKey = null;
-        else
+        } else {
             this.exclusiveStartKey = Arrays.asList(exclusiveStartKey);
+        }
         return this;
     }
 
@@ -291,9 +296,9 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withExclusiveStartKey(Map)
      */
     public ScanSpec withExclusiveStartKey(PrimaryKey exclusiveStartKey) {
-        if (exclusiveStartKey == null)
+        if (exclusiveStartKey == null) {
             this.exclusiveStartKey = null;
-        else {
+        } else {
             this.exclusiveStartKey = exclusiveStartKey.getComponents();
         }
         return this;
@@ -364,9 +369,9 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
     @Beta
     public ScanSpec withExpressionSpec(ScanExpressionSpec xspec) {
         return withFilterExpression(xspec.getFilterExpression())
-              .withProjectionExpression(xspec.getProjectionExpression())
-              .withNameMap(xspec.getNameMap())
-              .withValueMap(xspec.getValueMap())
-              ;
+                .withProjectionExpression(xspec.getProjectionExpression())
+                .withNameMap(xspec.getNameMap())
+                .withValueMap(xspec.getValueMap())
+                ;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.UnsupportedEncodingException;
@@ -86,7 +87,7 @@ public class AmazonS3URI {
 
             if (bucket == null) {
                 throw new IllegalArgumentException("Invalid S3 URI: no bucket: "
-                        + uri);
+                                                   + uri);
             }
 
             String path = uri.getPath();
@@ -104,14 +105,14 @@ public class AmazonS3URI {
         String host = uri.getHost();
         if (host == null) {
             throw new IllegalArgumentException("Invalid S3 URI: no hostname: "
-                    + uri);
+                                               + uri);
         }
 
         Matcher matcher = ENDPOINT_PATTERN.matcher(host);
         if (!matcher.find()) {
             throw new IllegalArgumentException(
                     "Invalid S3 URI: hostname does not appear to be a valid S3 "
-                            + "endpoint: " + uri);
+                    + "endpoint: " + uri);
         }
 
         String prefix = matcher.group(1);
@@ -198,55 +199,6 @@ public class AmazonS3URI {
     }
 
     /**
-     * @return the S3 URI being parsed
-     */
-    public URI getURI() {
-        return uri;
-    }
-
-    /**
-     * @return true if the URI contains the bucket in the path, false if it
-     *         contains the bucket in the authority
-     */
-    public boolean isPathStyle() {
-        return isPathStyle;
-    }
-
-    /**
-     * @return the bucket name parsed from the URI (or null if no bucket
-     *         specified)
-     */
-    public String getBucket() {
-        return bucket;
-    }
-
-    /**
-     * @return the key parsed from the URI (or null if no key specified)
-     */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * @return the version id parsed from the URI (or null if no version specified)
-     */
-    public String getVersionId() {
-        return versionId;
-    }
-
-    /**
-     * @return the region parsed from the URI (or null if no region specified)
-     */
-    public String getRegion() {
-        return region;
-    }
-
-    @Override
-    public String toString() {
-        return uri.toString();
-    }
-
-    /**
      * URL encodes the given string.  This allows us to pass special characters
      * that would otherwise be rejected when building a URI instance.  Because we
      * need to retain the URI's path structure we subsequently need to replace
@@ -259,9 +211,9 @@ public class AmazonS3URI {
         if (encode) {
             try {
                 return (URLEncoder.encode(str, "UTF-8")
-                        .replace("%3A", ":")
-                        .replace("%2F", "/")
-                        .replace("+", "%20"));
+                                  .replace("%3A", ":")
+                                  .replace("%2F", "/")
+                                  .replace("+", "%20"));
             } catch (UnsupportedEncodingException e) {
                 // This should never happen unless there is something
                 // fundamentally broken with the running JVM.
@@ -331,7 +283,7 @@ public class AmazonS3URI {
 
         if (index > str.length() - 3) {
             throw new IllegalStateException("Invalid percent-encoded string:"
-                    + "\"" + str + "\".");
+                                            + "\"" + str + "\".");
         }
 
         char first = str.charAt(index + 1);
@@ -351,7 +303,7 @@ public class AmazonS3URI {
         if (c < '0') {
             throw new IllegalStateException(
                     "Invalid percent-encoded string: bad character '" + c + "' in "
-                            + "escape sequence.");
+                    + "escape sequence.");
         }
         if (c <= '9') {
             return (c - '0');
@@ -360,7 +312,7 @@ public class AmazonS3URI {
         if (c < 'A') {
             throw new IllegalStateException(
                     "Invalid percent-encoded string: bad character '" + c + "' in "
-                            + "escape sequence.");
+                    + "escape sequence.");
         }
         if (c <= 'F') {
             return (c - 'A') + 10;
@@ -369,7 +321,7 @@ public class AmazonS3URI {
         if (c < 'a') {
             throw new IllegalStateException(
                     "Invalid percent-encoded string: bad character '" + c + "' in "
-                            + "escape sequence.");
+                    + "escape sequence.");
         }
         if (c <= 'f') {
             return (c - 'a') + 10;
@@ -377,21 +329,84 @@ public class AmazonS3URI {
 
         throw new IllegalStateException(
                 "Invalid percent-encoded string: bad character '" + c + "' in "
-                        + "escape sequence.");
+                + "escape sequence.");
+    }
+
+    /**
+     * @return the S3 URI being parsed
+     */
+    public URI getURI() {
+        return uri;
+    }
+
+    /**
+     * @return true if the URI contains the bucket in the path, false if it
+     *         contains the bucket in the authority
+     */
+    public boolean isPathStyle() {
+        return isPathStyle;
+    }
+
+    /**
+     * @return the bucket name parsed from the URI (or null if no bucket
+     *         specified)
+     */
+    public String getBucket() {
+        return bucket;
+    }
+
+    /**
+     * @return the key parsed from the URI (or null if no key specified)
+     */
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * @return the version id parsed from the URI (or null if no version specified)
+     */
+    public String getVersionId() {
+        return versionId;
+    }
+
+    /**
+     * @return the region parsed from the URI (or null if no region specified)
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    @Override
+    public String toString() {
+        return uri.toString();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         AmazonS3URI that = (AmazonS3URI) o;
 
-        if (isPathStyle != that.isPathStyle) return false;
-        if (!uri.equals(that.uri)) return false;
-        if (bucket != null ? !bucket.equals(that.bucket) : that.bucket != null) return false;
-        if (key != null ? !key.equals(that.key) : that.key != null) return false;
-        if (versionId != null ? !versionId.equals(that.versionId) : that.versionId != null) return false;
+        if (isPathStyle != that.isPathStyle) {
+            return false;
+        }
+        if (!uri.equals(that.uri)) {
+            return false;
+        }
+        if (bucket != null ? !bucket.equals(that.bucket) : that.bucket != null) {
+            return false;
+        }
+        if (key != null ? !key.equals(that.key) : that.key != null) {
+            return false;
+        }
+        if (versionId != null ? !versionId.equals(that.versionId) : that.versionId != null) {
+            return false;
+        }
         return region != null ? region.equals(that.region) : that.region == null;
     }
 

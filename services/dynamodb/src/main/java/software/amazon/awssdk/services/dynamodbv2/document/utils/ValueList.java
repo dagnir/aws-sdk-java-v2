@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class ValueList extends FluentArrayList<Object> {
         super(initialCapacity);
     }
 
-    public ValueList(Object ... elements) {
+    public ValueList(Object... elements) {
         super(elements);
     }
 
@@ -47,12 +47,12 @@ public class ValueList extends FluentArrayList<Object> {
         super(c);
     }
 
-    public ValueList appendAll(Object ... elements) {
+    public ValueList appendAll(Object... elements) {
         super.appendAll(elements);
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendString(String val) {
@@ -60,7 +60,7 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendNumber(BigDecimal val) {
@@ -68,7 +68,7 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendNumber(Number val) {
@@ -76,21 +76,21 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendInt(int val) {
         return appendNumber(Integer.valueOf(val));
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendLong(long val) {
         return appendNumber(Long.valueOf(val));
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendBinary(byte[] val) {
@@ -98,7 +98,7 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendStringSet(Set<String> val) {
@@ -106,15 +106,15 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given values to this list as a string set.
      */
-    public ValueList appendStringSet(String ...val) {
+    public ValueList appendStringSet(String... val) {
         super.append(new LinkedHashSet<String>(Arrays.asList(val)));
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendNumberSet(Set<BigDecimal> val) {
@@ -122,23 +122,23 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list as a set of BigDecimals.
      */
-    public ValueList appendNumberSet(BigDecimal ... val) {
+    public ValueList appendNumberSet(BigDecimal... val) {
         super.append(new LinkedHashSet<BigDecimal>(Arrays.asList(val)));
         return this;
     }
 
-    /** 
+    /**
      * Appends the given values to this list as a number set.
      */
-    public ValueList appendNumberSet(Number ... val) {
+    public ValueList appendNumberSet(Number... val) {
         super.append(InternalUtils.toBigDecimalSet(val));
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendBinarySet(Set<byte[]> val) {
@@ -146,15 +146,15 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given values to this list as a set of byte arrays.
      */
-    public ValueList appendBinarySet(byte[] ... val) {
+    public ValueList appendBinarySet(byte[]... val) {
         super.append(new LinkedHashSet<byte[]>(Arrays.asList(val)));
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendList(List<?> val) {
@@ -162,15 +162,15 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given values to this list as a list.
      */
-    public ValueList appendList(Object ... vals) {
+    public ValueList appendList(Object... vals) {
         super.append(new ArrayList<Object>(Arrays.asList(vals)));
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendMap(Map<String, ?> val) {
@@ -178,7 +178,7 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends the given value to this list.
      */
     public ValueList appendBoolean(boolean val) {
@@ -186,7 +186,7 @@ public class ValueList extends FluentArrayList<Object> {
         return this;
     }
 
-    /** 
+    /**
      * Appends a null value to this list.
      */
     public ValueList appendNull() {
@@ -208,8 +208,9 @@ public class ValueList extends FluentArrayList<Object> {
      * </ul>
      */
     public ValueList append(Object val) {
-        if (val == this)
+        if (val == this) {
             throw new IllegalArgumentException("Self reference is not allowed");
+        }
         // TODO: fail fast if val is not a supported type
         super.append(val);
         return this;

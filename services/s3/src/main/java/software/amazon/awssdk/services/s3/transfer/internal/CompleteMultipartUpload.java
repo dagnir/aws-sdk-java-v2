@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
@@ -64,9 +65,9 @@ public class CompleteMultipartUpload implements Callable<UploadResult> {
     private final ProgressListenerChain listener;
 
     public CompleteMultipartUpload(String uploadId, AmazonS3 s3,
-            PutObjectRequest putObjectRequest, List<Future<PartETag>> futures,
-            List<PartETag> eTagsBeforeResume, ProgressListenerChain progressListenerChain,
-            UploadMonitor monitor) {
+                                   PutObjectRequest putObjectRequest, List<Future<PartETag>> futures,
+                                   List<PartETag> eTagsBeforeResume, ProgressListenerChain progressListenerChain,
+                                   UploadMonitor monitor) {
         this.uploadId = uploadId;
         this.s3 = s3;
         this.origReq = putObjectRequest;
@@ -84,9 +85,8 @@ public class CompleteMultipartUpload implements Callable<UploadResult> {
             CompleteMultipartUploadRequest req = new CompleteMultipartUploadRequest(
                     origReq.getBucketName(), origReq.getKey(), uploadId,
                     collectPartETags())
-                .withGeneralProgressListener(origReq.getGeneralProgressListener())
-                .withRequestMetricCollector(origReq.getRequestMetricCollector())
-                ;
+                    .withGeneralProgressListener(origReq.getGeneralProgressListener())
+                    .withRequestMetricCollector(origReq.getRequestMetricCollector());
             res = s3.completeMultipartUpload(req);
         } catch (Exception e) {
             publishProgress(listener, ProgressEventType.TRANSFER_FAILED_EVENT);
@@ -95,7 +95,7 @@ public class CompleteMultipartUpload implements Callable<UploadResult> {
 
         UploadResult uploadResult = new UploadResult();
         uploadResult.setBucketName(origReq
-                .getBucketName());
+                                           .getBucketName());
         uploadResult.setKey(origReq.getKey());
         uploadResult.setETag(res.getETag());
         uploadResult.setVersionId(res.getVersionId());
@@ -120,7 +120,7 @@ public class CompleteMultipartUpload implements Callable<UploadResult> {
             } catch (Exception e) {
                 throw new SdkClientException(
                         "Unable to complete multi-part upload. Individual part upload failed : "
-                                + e.getCause().getMessage(), e.getCause());
+                        + e.getCause().getMessage(), e.getCause());
             }
         }
         return partETags;

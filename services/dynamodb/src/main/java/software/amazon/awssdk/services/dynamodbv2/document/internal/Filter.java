@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
 /**
  * Abstract base class for both query filters and scan filters.
  */
-public abstract class Filter <T extends Filter<T>> {
+public abstract class Filter<T extends Filter<T>> {
     private final String attribute;
     private ComparisonOperator op;
     private Object[] values;
@@ -50,7 +50,7 @@ public abstract class Filter <T extends Filter<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    protected T _withValues(Object ... values) {
+    protected T _withValues(Object... values) {
         this.values = values.clone();
         return (T) this;
     }
@@ -94,6 +94,7 @@ public abstract class Filter <T extends Filter<T>> {
     public T notContains(Object val) {
         return _withComparisonOperator(ComparisonOperator.NOT_CONTAINS)._withValues(val);
     }
+
     /**
      * Creates and returns a condition of the range key with a value that begins
      * with the given value.
@@ -102,7 +103,7 @@ public abstract class Filter <T extends Filter<T>> {
         return _withComparisonOperator(ComparisonOperator.BEGINS_WITH)._withValues(val);
     }
 
-    public T in(Object ...values) {
+    public T in(Object... values) {
         if (values == null || values.length == 0) {
             throw new IllegalArgumentException("values must not be null or empty.");
         }

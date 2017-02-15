@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,34 +22,44 @@ import software.amazon.awssdk.annotation.ThreadSafe;
  * which may correspond to either be a physical http request/response, or
  * multiple requests/responses as in a composite operation such as
  * multi-part uploads.
- * 
+ *
  * @see ProgressSupport
  */
 @ThreadSafe
 public class Progress {
     public static final Progress NOOP = new Progress();
     private static final String MSG = "No progress tracking configured";
-    protected Progress() {}
+
+    protected Progress() {
+    }
 
     /**
      * Returns true if progress tracking is enabled; false otherwise.
      */
-    public boolean isEnabled() { return false; }
-    /**
-     * @param bytes can be negative if it was a reset event.
-     */
-    public void addRequestBytesTransferred(long bytes) {}
-    /**
-     * @param bytes can be negative if it was a reset event.
-     */
-    public void addResponseBytesTransferred(long bytes) {}
+    public boolean isEnabled() {
+        return false;
+    }
 
-    public long getRequestContentLength() { 
+    /**
+     * @param bytes can be negative if it was a reset event.
+     */
+    public void addRequestBytesTransferred(long bytes) {
+    }
+
+    /**
+     * @param bytes can be negative if it was a reset event.
+     */
+    public void addResponseBytesTransferred(long bytes) {
+    }
+
+    public long getRequestContentLength() {
         throw new UnsupportedOperationException(MSG);
     }
 
-    public void addRequestContentLength(long contentLength) {}
-    public long getRequestBytesTransferred() { 
+    public void addRequestContentLength(long contentLength) {
+    }
+
+    public long getRequestBytesTransferred() {
         throw new UnsupportedOperationException(MSG);
     }
 
@@ -57,7 +67,8 @@ public class Progress {
         throw new UnsupportedOperationException(MSG);
     }
 
-    public void addResponseContentLength(long contentLength) {}
+    public void addResponseContentLength(long contentLength) {
+    }
 
     public long getResponseBytesTransferred() {
         throw new UnsupportedOperationException(MSG);

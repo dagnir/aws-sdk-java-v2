@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class BatchWriteItemImpl implements BatchWriteItemApi {
     public BatchWriteItemOutcome batchWriteItem(
             TableWriteItems... tableWriteItems) {
         return doBatchWriteItem(new BatchWriteItemSpec()
-                .withTableWriteItems(tableWriteItems));
+                                        .withTableWriteItems(tableWriteItems));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BatchWriteItemImpl implements BatchWriteItemApi {
     public BatchWriteItemOutcome batchWriteItemUnprocessed(
             Map<String, List<WriteRequest>> unprocessedItems) {
         return doBatchWriteItem(new BatchWriteItemSpec()
-                .withUnprocessedItems(unprocessedItems));
+                                        .withUnprocessedItems(unprocessedItems));
     }
 
     private BatchWriteItemOutcome doBatchWriteItem(BatchWriteItemSpec spec) {
@@ -76,7 +76,7 @@ public class BatchWriteItemImpl implements BatchWriteItemApi {
             requestItems = new LinkedHashMap<String, List<WriteRequest>>();
         }
         if (tableWriteItemsCol != null) {
-            for (TableWriteItems tableWriteItems: tableWriteItemsCol) {
+            for (TableWriteItems tableWriteItems : tableWriteItemsCol) {
                 // items to be put to a single table
                 Collection<Item> itemsToPut = tableWriteItems.getItemsToPut();
                 // primary keys to deleted in a single table
@@ -86,28 +86,28 @@ public class BatchWriteItemImpl implements BatchWriteItemApi {
                 final int numPut = itemsToPut == null ? 0 : itemsToPut.size();
                 final int numDel = pksToDelete == null ? 0 : pksToDelete.size();
                 final List<WriteRequest> writeRequests =
-                    new ArrayList<WriteRequest>(numPut + numDel);
+                        new ArrayList<WriteRequest>(numPut + numDel);
                 // Put requests for a single table
                 if (itemsToPut != null) {
-                    for (Item item: itemsToPut) {
+                    for (Item item : itemsToPut) {
                         writeRequests.add(new WriteRequest()
-                            .withPutRequest(new PutRequest()
-                                .withItem(toAttributeValues(item))));
+                                                  .withPutRequest(new PutRequest()
+                                                                          .withItem(toAttributeValues(item))));
                     }
                 }
                 // Delete requests for a single table
                 if (pksToDelete != null) {
-                    for (PrimaryKey pkToDelete: pksToDelete) {
+                    for (PrimaryKey pkToDelete : pksToDelete) {
                         writeRequests.add(new WriteRequest()
-                            .withDeleteRequest(new DeleteRequest()
-                                .withKey(toAttributeValueMap(pkToDelete))));
+                                                  .withDeleteRequest(new DeleteRequest()
+                                                                             .withKey(toAttributeValueMap(pkToDelete))));
                     }
                 }
                 requestItems.put(tableWriteItems.getTableName(), writeRequests);
             }
         }
         BatchWriteItemRequest req = spec.getRequest()
-                .withRequestItems(requestItems);
+                                        .withRequestItems(requestItems);
         BatchWriteItemResult result = client.batchWriteItem(req);
         return new BatchWriteItemOutcome(result);
     }

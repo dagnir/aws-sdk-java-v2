@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.securitytoken.auth;
@@ -35,22 +35,19 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
 
     /** Default duration for started sessions */
     public static final int DEFAULT_DURATION_SECONDS = 3600;
-    
+
     /** Default threshold for refreshing session credentials */
     public static final int DEFAULT_THRESHOLD_SECONDS = 500;
 
     /** The client for starting STS sessions */
     private final AWSSecurityTokenService securityTokenService;
-
-    /** The current session credentials */
-    private AWSSessionCredentials sessionCredentials;
-
-    /** The expiration time for the current session credentials */
-    private Date sessionCredentialsExpiration;
-
     private final String wifToken;
     private final String wifProvider;
     private final String roleArn;
+    /** The current session credentials */
+    private AWSSessionCredentials sessionCredentials;
+    /** The expiration time for the current session credentials */
+    private Date sessionCredentialsExpiration;
     private int sessionDuration;
     private int refreshThreshold;
     private String subjectFromWIF;
@@ -62,11 +59,11 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
      * which will then be returned by this class's {@link #getCredentials()}
      * method.
      *
-     * @param wifToken 
+     * @param wifToken
      *            The OAuth/OpenID token from the the Identity Provider
      * @param wifProvider
      *            The name of the Identity Provider (null for OpenID providers)
-     * @param roleArn 
+     * @param roleArn
      *            The ARN of the IAM Role that will be assumed 
      */
     public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn) {
@@ -80,16 +77,17 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
      * which will then be returned by this class's {@link #getCredentials()}
      * method.
      *
-     * @param wifToken 
+     * @param wifToken
      *            The OAuth/OpenID token from the the Identity Provider
      * @param wifProvider
      *            The name of the Identity Provider (null for OpenID providers)
-     * @param roleArn 
+     * @param roleArn
      *            The ARN of the IAM Role that will be assumed
      * @param clientConfiguation
      *            Configuration to apply to STS client created
      */
-    public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn, ClientConfiguration clientConfiguration) {
+    public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn,
+                                                           ClientConfiguration clientConfiguration) {
         this(wifToken, wifProvider, roleArn, new AWSSecurityTokenServiceClient(new AnonymousAWSCredentials(), clientConfiguration));
     }
 
@@ -100,17 +98,18 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
      * lived session credentials, which will then be returned by this class's 
      * {@link #getCredentials()} method.
      *
-     * @param wifToken 
+     * @param wifToken
      *            The OAuth/OpenID token from the the Identity Provider
      * @param wifProvider
      *            The name of the Identity Provider (null for OpenID providers)
-     * @param roleArn 
+     * @param roleArn
      *            The ARN of the IAM Role that will be assumed
      * @param stsClient
      *            Preconfigured STS client to make requests with
      */
-    public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn, AWSSecurityTokenService stsClient) {
-        this.securityTokenService = stsClient; 
+    public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn,
+                                                           AWSSecurityTokenService stsClient) {
+        this.securityTokenService = stsClient;
         this.wifProvider = wifProvider;
         this.wifToken = wifToken;
         this.roleArn = roleArn;
@@ -120,7 +119,9 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
 
     @Override
     public AWSSessionCredentials getCredentials() {
-        if (needsNewSession()) startSession();
+        if (needsNewSession()) {
+            startSession();
+        }
 
         return sessionCredentials;
     }
@@ -130,33 +131,19 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
         startSession();
     }
 
-   /**
+    /**
      * Set the duration of the session credentials created by this client in
      * seconds. Values must be supported by AssumeRoleWithWebIdentityRequest.
+     * Returns refreence to object so methods can be chained together.
      *
      * @see software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest
-     * 
-     * @param sessionDuration
-     *              The new duration for session credentials created by this
-     *              provider
-     */
-    public void setSessionDuration(int sessionDuration) {
-        this.sessionDuration = sessionDuration;
-    }
-
-   /**
-     * Set the duration of the session credentials created by this client in
-     * seconds. Values must be supported by AssumeRoleWithWebIdentityRequest.
-     * Returns refreence to object so methods can be chained together. 
      *
-     * @see software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest
-     * 
      * @param sessionDuration
      *              The new duration for session credentials created by this
      *              provider
      *
      * @return A reference to this updated object so that method calls
-     *          can be chained together. 
+     *          can be chained together.
      *
      */
     public WebIdentityFederationSessionCredentialsProvider withSessionDuration(int sessionDuration) {
@@ -169,43 +156,41 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
      * seconds. Values must be supported by AssumeRoleWithWebIdentityRequest.
      *
      * @see software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest
-     * 
+     *
      * @return The duration for session credentials created by this provider
      */
     public int getSessionDuration() {
         return this.sessionDuration;
     }
 
-
-   /**
-     * Set the refresh threshold for the session credentials created by this client in
-     * seconds. This value will be used internally to determine if new
-     * credentials should be fetched from STS.
+    /**
+     * Set the duration of the session credentials created by this client in
+     * seconds. Values must be supported by AssumeRoleWithWebIdentityRequest.
      *
      * @see software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest
-     * 
-     * @param refreshThreshold 
-     *              The new refresh threshold for session credentials created by this
+     *
+     * @param sessionDuration
+     *              The new duration for session credentials created by this
      *              provider
      */
-    public void setRefreshThreshold(int refreshThreshold) {
-        this.refreshThreshold = refreshThreshold;
+    public void setSessionDuration(int sessionDuration) {
+        this.sessionDuration = sessionDuration;
     }
 
-   /**
+    /**
      * Set the refresh threshold for the session credentials created by this client in
      * seconds. This value will be used internally to determine if new
      * credentials should be fetched from STS. Returns a refrence to the object
      * so methods can be chained.
      *
      * @see software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest
-     * 
-     * @param refreshThreshold 
+     *
+     * @param refreshThreshold
      *              The new refresh threshold for session credentials created by this
      *              provider
      *
      * @return A reference to this updated object so that method calls
-     *          can be chained together. 
+     *          can be chained together.
      *
      */
     public WebIdentityFederationSessionCredentialsProvider withRefreshThreshold(int refreshThreshold) {
@@ -216,14 +201,29 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
     /**
      * Get the refresh threshold for the session credentials created by this client in
      * seconds. This value will be used internally to determine if new
-     * credentials should be fetched from STS. 
+     * credentials should be fetched from STS.
      *
      * @see software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest
-     * 
+     *
      * @return The refresh threshold for session credentials created by this provider
      */
     public int getRefreshThreshold() {
         return this.refreshThreshold;
+    }
+
+    /**
+     * Set the refresh threshold for the session credentials created by this client in
+     * seconds. This value will be used internally to determine if new
+     * credentials should be fetched from STS.
+     *
+     * @see software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest
+     *
+     * @param refreshThreshold
+     *              The new refresh threshold for session credentials created by this
+     *              provider
+     */
+    public void setRefreshThreshold(int refreshThreshold) {
+        this.refreshThreshold = refreshThreshold;
     }
 
     /**
@@ -247,10 +247,10 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
     private void startSession() {
         AssumeRoleWithWebIdentityResult sessionTokenResult = securityTokenService
                 .assumeRoleWithWebIdentity(new AssumeRoleWithWebIdentityRequest().withWebIdentityToken(wifToken)
-                        .withProviderId(wifProvider)
-                        .withRoleArn(roleArn)
-                        .withRoleSessionName("ProviderSession")
-                        .withDurationSeconds(this.sessionDuration));
+                                                                                 .withProviderId(wifProvider)
+                                                                                 .withRoleArn(roleArn)
+                                                                                 .withRoleSessionName("ProviderSession")
+                                                                                 .withDurationSeconds(this.sessionDuration));
         Credentials stsCredentials = sessionTokenResult.getCredentials();
 
         subjectFromWIF = sessionTokenResult.getSubjectFromWebIdentityToken();
@@ -270,7 +270,9 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
      * @return True if a new STS session needs to be started.
      */
     private boolean needsNewSession() {
-        if (sessionCredentials == null) return true;
+        if (sessionCredentials == null) {
+            return true;
+        }
 
         long timeRemaining = sessionCredentialsExpiration.getTime() - System.currentTimeMillis();
         return timeRemaining < (this.refreshThreshold * 1000);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -21,8 +22,8 @@ import java.util.Map;
  * Simple implementation of EncryptionMaterialsProvider that just wraps static
  * EncryptionMaterials.
  */
-public class StaticEncryptionMaterialsProvider implements EncryptionMaterialsProvider,Serializable {
-    
+public class StaticEncryptionMaterialsProvider implements EncryptionMaterialsProvider, Serializable {
+
     private final EncryptionMaterials materials;
 
     public StaticEncryptionMaterialsProvider(EncryptionMaterials materials) {
@@ -33,22 +34,24 @@ public class StaticEncryptionMaterialsProvider implements EncryptionMaterialsPro
         return materials;
     }
 
-    public void refresh() {}
+    public void refresh() {
+    }
 
     public EncryptionMaterials getEncryptionMaterials(
             final Map<String, String> materialDescIn) {
-        final Map<String,String> materialDesc =
-            materials.getMaterialsDescription();
-        if (materialDescIn != null 
-        &&  materialDescIn.equals(materialDesc)) {
+        final Map<String, String> materialDesc =
+                materials.getMaterialsDescription();
+        if (materialDescIn != null
+            && materialDescIn.equals(materialDesc)) {
             return materials;   // matching description
         }
         EncryptionMaterialsAccessor accessor = materials.getAccessor();
         if (accessor != null) {
             EncryptionMaterials accessorMaterials =
-                accessor.getEncryptionMaterials(materialDescIn);
-            if (accessorMaterials != null)
+                    accessor.getEncryptionMaterials(materialDescIn);
+            if (accessorMaterials != null) {
                 return accessorMaterials;   // accessor decided materials
+            }
         }
         // The condition that there are
         // 1) no input materials description (typically from S3); and

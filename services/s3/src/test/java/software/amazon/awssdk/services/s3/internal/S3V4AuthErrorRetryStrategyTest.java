@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import static org.junit.Assert.assertEquals;
@@ -50,6 +51,15 @@ public class S3V4AuthErrorRetryStrategyTest {
     @Mock
     private S3RequestEndpointResolver endpointResolver;
 
+    private static <T> SdkPredicate<T> getPredicate(final boolean toReturn) {
+        return new SdkPredicate<T>() {
+            @Override
+            public boolean test(T t) {
+                return toReturn;
+            }
+        };
+    }
+
     @Before
     public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -85,7 +95,7 @@ public class S3V4AuthErrorRetryStrategyTest {
         assertEquals(Regions.US_EAST_1.getName(), ((AWSS3V4Signer) authParams
                 .getSignerForRetry()).getRegionName());
         assertEquals("https://" + BUCKET_NAME + ".s3-external-1.amazonaws.com", authParams.getEndpointForRetry()
-                .toString());
+                                                                                          .toString());
     }
 
     @Test(expected = AmazonClientException.class)
@@ -93,15 +103,6 @@ public class S3V4AuthErrorRetryStrategyTest {
         // Bucket name with upper case letters is not virtually addressable so this should fail
         Mockito.when(endpointResolver.getBucketName()).thenReturn("invalidBucketName");
         retryStrategy.shouldRetryWithAuthParam(request, httpResponse, null);
-    }
-
-    private static <T> SdkPredicate<T> getPredicate(final boolean toReturn) {
-        return new SdkPredicate<T>() {
-            @Override
-            public boolean test(T t) {
-                return toReturn;
-            }
-        };
     }
 
 }

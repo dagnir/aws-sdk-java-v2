@@ -31,6 +31,44 @@ import software.amazon.awssdk.annotation.Immutable;
  */
 @Immutable
 public class ProgressEvent {
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PREPARING_EVENT} */
+    @Deprecated public static final int PREPARING_EVENT_CODE = 1;
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_STARTED_EVENT} */
+    @Deprecated public static final int STARTED_EVENT_CODE = 2;
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_COMPLETED_EVENT} */
+    @Deprecated public static final int COMPLETED_EVENT_CODE = 4;
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_FAILED_EVENT} */
+    @Deprecated public static final int FAILED_EVENT_CODE = 8;
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_CANCELED_EVENT} */
+    @Deprecated public static final int CANCELED_EVENT_CODE = 16;
+    /** @deprecated Replaced by {@link ProgressEventType#HTTP_REQUEST_CONTENT_RESET_EVENT} */
+    @Deprecated public static final int RESET_EVENT_CODE = 32;
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_STARTED_EVENT} */
+    @Deprecated public static final int PART_STARTED_EVENT_CODE = 1024;
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_COMPLETED_EVENT} */
+    @Deprecated public static final int PART_COMPLETED_EVENT_CODE = 2048;
+    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_FAILED_EVENT} */
+    @Deprecated public static final int PART_FAILED_EVENT_CODE = 4096;
+
+    // Deprecated integer event codes
+    // Mapping from event types to the legacy event codes
+    private static final Map<ProgressEventType, Integer> legacyEventCodes =
+            new EnumMap<ProgressEventType, Integer>(ProgressEventType.class);
+
+    static {
+        legacyEventCodes.put(ProgressEventType.BYTE_TRANSFER_EVENT, 0);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_PREPARING_EVENT, PREPARING_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_STARTED_EVENT, STARTED_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_COMPLETED_EVENT, COMPLETED_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_FAILED_EVENT, FAILED_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_CANCELED_EVENT, CANCELED_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.HTTP_REQUEST_CONTENT_RESET_EVENT, RESET_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.HTTP_RESPONSE_CONTENT_RESET_EVENT, RESET_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_STARTED_EVENT, PART_STARTED_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_COMPLETED_EVENT, PART_COMPLETED_EVENT_CODE);
+        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_FAILED_EVENT, PART_FAILED_EVENT_CODE);
+    }
+
     /** The number of bytes associated with the progress event. */
     private final long bytes;
     private final ProgressEventType eventType;
@@ -62,10 +100,12 @@ public class ProgressEvent {
      *            Number of bytes involved.
      */
     public ProgressEvent(ProgressEventType eventType, long bytes) {
-        if (eventType == null)
+        if (eventType == null) {
             throw new IllegalArgumentException("eventType must not be null.");
-        if (bytes < 0)
+        }
+        if (bytes < 0) {
             throw new IllegalArgumentException("bytes reported must be non-negative");
+        }
         this.eventType = eventType;
         this.bytes = bytes;
     }
@@ -88,7 +128,7 @@ public class ProgressEvent {
      * particular, bytes of a content-length event is excluded.
      */
     public long getBytesTransferred() {
-        switch(eventType) {
+        switch (eventType) {
             case REQUEST_BYTE_TRANSFER_EVENT:
             case RESPONSE_BYTE_TRANSFER_EVENT:
                 return bytes;
@@ -96,8 +136,8 @@ public class ProgressEvent {
             case HTTP_REQUEST_CONTENT_RESET_EVENT:
             case RESPONSE_BYTE_DISCARD_EVENT:
                 return 0 - bytes;
-        default:
-            return 0;
+            default:
+                return 0;
         }
     }
 
@@ -112,7 +152,7 @@ public class ProgressEvent {
      */
     @Deprecated
     public int getEventCode() {
-        Integer legacyCode =  legacyEventCodes.get(eventType);
+        Integer legacyCode = legacyEventCodes.get(eventType);
         // Returns -1 if the event type does not have a legacy event code
         return legacyCode == null ? -1 : legacyCode;
     }
@@ -127,52 +167,6 @@ public class ProgressEvent {
         return eventType;
     }
 
-    // Deprecated integer event codes
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PREPARING_EVENT} */
-    @Deprecated public static final int PREPARING_EVENT_CODE = 1;
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_STARTED_EVENT} */
-    @Deprecated public static final int STARTED_EVENT_CODE = 2;
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_COMPLETED_EVENT} */
-    @Deprecated public static final int COMPLETED_EVENT_CODE = 4;
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_FAILED_EVENT} */
-    @Deprecated public static final int FAILED_EVENT_CODE = 8;
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_CANCELED_EVENT} */
-    @Deprecated public static final int CANCELED_EVENT_CODE = 16;
-
-    /** @deprecated Replaced by {@link ProgressEventType#HTTP_REQUEST_CONTENT_RESET_EVENT} */
-    @Deprecated public static final int RESET_EVENT_CODE = 32;
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_STARTED_EVENT} */
-    @Deprecated public static final int PART_STARTED_EVENT_CODE = 1024;
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_COMPLETED_EVENT} */
-    @Deprecated public static final int PART_COMPLETED_EVENT_CODE = 2048;
-
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_FAILED_EVENT} */
-    @Deprecated public static final int PART_FAILED_EVENT_CODE = 4096;
-
-    // Mapping from event types to the legacy event codes
-    private static final Map<ProgressEventType, Integer> legacyEventCodes =
-        new EnumMap<ProgressEventType, Integer>(ProgressEventType.class);
-    static {
-        legacyEventCodes.put(ProgressEventType.BYTE_TRANSFER_EVENT,              0);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PREPARING_EVENT,         PREPARING_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_STARTED_EVENT,           STARTED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_COMPLETED_EVENT,         COMPLETED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_FAILED_EVENT,            FAILED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_CANCELED_EVENT,          CANCELED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.HTTP_REQUEST_CONTENT_RESET_EVENT, RESET_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.HTTP_RESPONSE_CONTENT_RESET_EVENT,RESET_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_STARTED_EVENT,      PART_STARTED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_COMPLETED_EVENT,    PART_COMPLETED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_FAILED_EVENT,       PART_FAILED_EVENT_CODE);
-    }
-    
     @Override
     public String toString() {
         return eventType + ", bytes: " + bytes;

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.waiters;
 
-public class PollingStrategy{
+public class PollingStrategy {
 
     /**
      * Condition on whether polling should be retried.

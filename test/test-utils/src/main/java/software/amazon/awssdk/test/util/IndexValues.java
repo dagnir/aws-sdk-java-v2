@@ -32,14 +32,21 @@ public class IndexValues implements Iterable<int[]> {
      * @param lengths
      *            array lengths
      */
-    public IndexValues(int ... lengths) {
-        if (lengths == null || lengths.length == 0)
+    public IndexValues(int... lengths) {
+        if (lengths == null || lengths.length == 0) {
             throw new IllegalArgumentException();
-        for (int len: lengths) {
-            if (len < 1)
+        }
+        for (int len : lengths) {
+            if (len < 1) {
                 throw new IllegalArgumentException();
+            }
         }
         this.lengths = lengths.clone();
+    }
+
+    @Override
+    public Iterator<int[]> iterator() {
+        return new Iter(lengths);
     }
 
     private static class Iter implements Iterator<int[]> {
@@ -55,7 +62,10 @@ public class IndexValues implements Iterable<int[]> {
             this.curr = new int[lengths.length];
         }
 
-        @Override public boolean hasNext() { return curr != null; }
+        @Override
+        public boolean hasNext() {
+            return curr != null;
+        }
 
         /**
          * Returns the next combination of array index values, or null if
@@ -63,21 +73,22 @@ public class IndexValues implements Iterable<int[]> {
          */
         @Override
         public int[] next() {
-            if (curr == null)
+            if (curr == null) {
                 return null;
-            final int last=lengths.length-1;
-            if (curr[last] < lengths[last]-1) {
+            }
+            final int last = lengths.length - 1;
+            if (curr[last] < lengths[last] - 1) {
                 int[] ret = curr.clone();
                 curr[last]++;
                 return ret;
             }
-            if (curr[last] == lengths[last]-1) {
+            if (curr[last] == lengths[last] - 1) {
                 // go left to search for more capacity
-                for (int j=last-1; j >= 0; j--) {
-                    if (curr[j] < lengths[j]-1) {
+                for (int j = last - 1; j >= 0; j--) {
+                    if (curr[j] < lengths[j] - 1) {
                         int[] ret = curr.clone();
                         curr[j]++;
-                        for (int k=j+1; k < lengths.length; k++) {
+                        for (int k = j + 1; k < lengths.length; k++) {
                             curr[k] = 0;
                         }
                         return ret;
@@ -90,8 +101,8 @@ public class IndexValues implements Iterable<int[]> {
             throw new IllegalStateException("Bug ?");
         }
 
-        @Override public void remove() {}
+        @Override
+        public void remove() {
+        }
     }
-
-    @Override public Iterator<int[]> iterator() { return new Iter(lengths); }
 }

@@ -38,17 +38,18 @@ public class ClientConnectionManagerFactory {
      */
     public static HttpClientConnectionManager wrap
     (HttpClientConnectionManager orig) {
-        if (orig instanceof Wrapped)
+        if (orig instanceof Wrapped) {
             throw new IllegalArgumentException();
+        }
         final Class<?>[] interfaces;
         if (orig instanceof ConnPoolControl) {
-            interfaces = new Class<?>[]{
+            interfaces = new Class<?>[] {
                     HttpClientConnectionManager.class,
                     ConnPoolControl.class,
                     Wrapped.class
             };
         } else {
-            interfaces = new Class<?>[]{
+            interfaces = new Class<?>[] {
                     HttpClientConnectionManager.class,
                     Wrapped.class
             };
@@ -77,8 +78,8 @@ public class ClientConnectionManagerFactory {
             try {
                 Object ret = method.invoke(orig, args);
                 return ret instanceof ConnectionRequest
-                        ? ClientConnectionRequestFactory.wrap((ConnectionRequest) ret)
-                        : ret
+                       ? ClientConnectionRequestFactory.wrap((ConnectionRequest) ret)
+                       : ret
                         ;
             } catch (InvocationTargetException e) {
                 log.debug("", e);

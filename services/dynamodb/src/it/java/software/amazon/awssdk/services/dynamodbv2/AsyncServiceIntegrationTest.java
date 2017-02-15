@@ -1,16 +1,16 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2;
@@ -50,21 +50,18 @@ import utils.test.util.DynamoDBTestBase;
 public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
 
     /**
-     * The DynamoDB asynchronous client to be used in this test.
-     */
-    private static AmazonDynamoDBAsyncClient dynamoAsync;
-
-    /**
      * Hashset to record all of the tables created in this test.
      */
     private static final HashSet<String> createdTableNames = new HashSet<String>();
-
     /**
      * Name prefix of all the tables to be created in this test.
      */
     private static final String ASYNC_TEST_TABLE_NAME_PREFIX = "async-java-sdk-" + System.currentTimeMillis() + "-";
-
     private static final String HASH_KEY_NAME = "hash";
+    /**
+     * The DynamoDB asynchronous client to be used in this test.
+     */
+    private static AmazonDynamoDBAsyncClient dynamoAsync;
 
     /**
      * Overrding setUp() and tearDown in DynamoDBIntegrationTestBase.
@@ -98,6 +95,14 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                 System.out.println("Error detail: " + e.toString());
             }
         }
+    }
+
+    /**
+     * Record the created test table, so that tearDown() will clean up all
+     * these temporary tables.
+     */
+    private static void recordCreatedTestTable(String tableName) {
+        createdTableNames.add(tableName);
     }
 
     /**
@@ -157,10 +162,10 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
         // Create a table
         recordCreatedTestTable(TABLE_CALlBACK_SINGLETEST);
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(TABLE_CALlBACK_SINGLETEST)
-                .withKeySchema(new KeySchemaElement().withAttributeName(HASH_KEY_NAME).withKeyType(KeyType.HASH))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(HASH_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.S));
+                                                                        .withKeySchema(new KeySchemaElement().withAttributeName(HASH_KEY_NAME).withKeyType(KeyType.HASH))
+                                                                        .withAttributeDefinitions(
+                                                                                new AttributeDefinition().withAttributeName(HASH_KEY_NAME).withAttributeType(
+                                                                                        ScalarAttributeType.S));
         createTableRequest
                 .setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(20L).withWriteCapacityUnits(20L));
 
@@ -192,10 +197,10 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                                              assertEquals(KeyType.HASH.toString(),
                                                           createdTableDescription.getKeySchema().get(0).getKeyType());
                                              assertEquals(HASH_KEY_NAME, createdTableDescription.getAttributeDefinitions().get(0)
-                                                     .getAttributeName());
+                                                                                                .getAttributeName());
                                              assertEquals(ScalarAttributeType.S.toString(),
                                                           createdTableDescription.getAttributeDefinitions().get(0)
-                                                                  .getAttributeType());
+                                                                                 .getAttributeType());
                                          }
                                      });
 
@@ -218,8 +223,8 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
 
                                                                                                      AmazonServiceException ase = (AmazonServiceException) exception;
                                                                                                      assertTrue(ase.getErrorCode()
-                                                                                                                        .equalsIgnoreCase(
-                                                                                                                                "ResourceNotFoundException"));
+                                                                                                                   .equalsIgnoreCase(
+                                                                                                                           "ResourceNotFoundException"));
                                                                                                  }
 
                                                                                                  public void onSuccess(
@@ -300,7 +305,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                                 ScalarAttributeType.S));
 
         createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(20L)
-                                                            .withWriteCapacityUnits((long) STRESS_TEST_REQUEST_NUM));
+                                                                               .withWriteCapacityUnits((long) STRESS_TEST_REQUEST_NUM));
 
         TableDescription createdTableDescription = dynamoAsync.createTable(createTableRequest).getTableDescription();
         System.out.println("Created Table: " + createdTableDescription);
@@ -402,13 +407,5 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
         } catch (Exception e) {
             fail("Error during waiting for the asynchronized responses!");
         }
-    }
-
-    /**
-     * Record the created test table, so that tearDown() will clean up all
-     * these temporary tables.
-     */
-    private static void recordCreatedTestTable(String tableName) {
-        createdTableNames.add(tableName);
     }
 }

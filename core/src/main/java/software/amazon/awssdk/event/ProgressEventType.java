@@ -133,7 +133,7 @@ public enum ProgressEventType {
     /**
      * Returns true if this event type is a transfer event, which may involve
      * multiple request cycle events.
-     * 
+     *
      * @see #isRequestCycleEvent()
      */
     public boolean isTransferEvent() {

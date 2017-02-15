@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -30,7 +30,7 @@ import java.util.Set;
  * the specific property. If the annotation is applied directly to the class
  * field, the corresponding getter and setter must be declared in the same
  * class.
- * 
+ *
  * @see DynamoDBMarshaller
  * @see JsonMarshaller
  *
@@ -60,10 +60,10 @@ import java.util.Set;
  */
 @Deprecated
 @DynamoDB
-@DynamoDBTypeConverted(converter=DynamoDBMarshalling.Converter.class)
+@DynamoDBTypeConverted(converter = DynamoDBMarshalling.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target( {ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBMarshalling {
 
     /**
@@ -75,12 +75,12 @@ public @interface DynamoDBMarshalling {
     /**
      * Marshalling type converter.
      */
-    static final class Converter<T> implements DynamoDBTypeConverter<String,T> {
+    static final class Converter<T> implements DynamoDBTypeConverter<String, T> {
         private final Class<DynamoDBMarshaller<T>> marshallerClass;
         private final Class<T> targetType;
 
         public Converter(final Class<T> targetType, final DynamoDBMarshalling annotation) {
-            this.marshallerClass = (Class<DynamoDBMarshaller<T>>)annotation.marshallerClass();
+            this.marshallerClass = (Class<DynamoDBMarshaller<T>>) annotation.marshallerClass();
             this.targetType = targetType;
         }
 

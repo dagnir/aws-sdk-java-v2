@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -113,16 +113,8 @@ public class ProfilesConfigFile {
      * parameter to the constructor.
      */
     public ProfilesConfigFile(String filePath, ProfileCredentialsService credentialsService) throws
-            SdkClientException {
+                                                                                             SdkClientException {
         this(new File(validateFilePath(filePath)), credentialsService);
-    }
-
-    private static String validateFilePath(String filePath) {
-        if (filePath == null) {
-            throw new IllegalArgumentException(
-                    "Unable to load AWS profiles: specified file path is null.");
-        }
-        return filePath;
     }
 
     /**
@@ -138,11 +130,27 @@ public class ProfilesConfigFile {
      * parameter to the constructor.
      */
     public ProfilesConfigFile(File file, ProfileCredentialsService credentialsService) throws
-            SdkClientException {
+                                                                                       SdkClientException {
         profileFile = ValidationUtils.assertNotNull(file, "profile file");
         profileCredentialsService = credentialsService;
         profileFileLastModified = file.lastModified();
         allProfiles = loadProfiles(profileFile);
+    }
+
+    private static String validateFilePath(String filePath) {
+        if (filePath == null) {
+            throw new IllegalArgumentException(
+                    "Unable to load AWS profiles: specified file path is null.");
+        }
+        return filePath;
+    }
+
+    private static File getCredentialProfilesFile() {
+        return AwsProfileFileLocationProvider.DEFAULT_CREDENTIALS_LOCATION_PROVIDER.getLocation();
+    }
+
+    private static AllProfiles loadProfiles(File file) {
+        return BasicProfileConfigLoader.INSTANCE.loadProfiles(file);
     }
 
     /**
@@ -189,14 +197,6 @@ public class ProfilesConfigFile {
                                                    getCredentials(profileName))));
         }
         return legacyProfiles;
-    }
-
-    private static File getCredentialProfilesFile() {
-        return AwsProfileFileLocationProvider.DEFAULT_CREDENTIALS_LOCATION_PROVIDER.getLocation();
-    }
-
-    private static AllProfiles loadProfiles(File file) {
-        return BasicProfileConfigLoader.INSTANCE.loadProfiles(file);
     }
 
     private AWSCredentialsProvider fromProfile(BasicProfile profile) {

@@ -42,14 +42,12 @@ import software.amazon.awssdk.util.json.Jackson;
  */
 public class JsonPolicyWriter {
 
-    /** The JSON Generator to generator a JSON string.*/
-    private JsonGenerator generator = null;
-
-    /** The output writer to which the JSON String is written.*/
-    private Writer writer;
-
     /** Logger used to log exceptions that occurs while writing the Json policy.*/
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.auth.policy");
+    /** The JSON Generator to generator a JSON string.*/
+    private JsonGenerator generator = null;
+    /** The output writer to which the JSON String is written.*/
+    private Writer writer;
 
     /**
      * Constructs a new instance of JSONPolicyWriter.
@@ -80,17 +78,21 @@ public class JsonPolicyWriter {
      */
     public String writePolicyToString(Policy policy) {
 
-        if(!isNotNull(policy))
+        if (!isNotNull(policy)) {
             throw new IllegalArgumentException("Policy cannot be null");
+        }
 
         try {
             return jsonStringOf(policy);
         } catch (Exception e) {
             String message = "Unable to serialize policy to JSON string: "
-                    + e.getMessage();
+                             + e.getMessage();
             throw new IllegalArgumentException(message, e);
         } finally {
-            try { writer.close(); } catch (Exception e) { }
+            try {
+                writer.close();
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -102,13 +104,14 @@ public class JsonPolicyWriter {
      * @return a JSON String of the specified policy object.
      */
     private String jsonStringOf(Policy policy) throws JsonGenerationException,
-            IOException {
+                                                      IOException {
         generator.writeStartObject();
 
         writeJsonKeyValue(JsonDocumentFields.VERSION, policy.getVersion());
 
-        if (isNotNull(policy.getId()))
+        if (isNotNull(policy.getId())) {
             writeJsonKeyValue(JsonDocumentFields.POLICY_ID, policy.getId());
+        }
 
         writeJsonArrayStart(JsonDocumentFields.STATEMENT);
 
@@ -122,20 +125,24 @@ public class JsonPolicyWriter {
                     .getEffect().toString());
 
             List<Principal> principals = statement.getPrincipals();
-            if (isNotNull(principals) && !principals.isEmpty())
+            if (isNotNull(principals) && !principals.isEmpty()) {
                 writePrincipals(principals);
+            }
 
             List<Action> actions = statement.getActions();
-            if (isNotNull(actions) && !actions.isEmpty())
+            if (isNotNull(actions) && !actions.isEmpty()) {
                 writeActions(actions);
+            }
 
             List<Resource> resources = statement.getResources();
-            if (isNotNull(resources) && !resources.isEmpty())
+            if (isNotNull(resources) && !resources.isEmpty()) {
                 writeResources(resources);
+            }
 
             List<Condition> conditions = statement.getConditions();
-            if (isNotNull(conditions) && !conditions.isEmpty())
+            if (isNotNull(conditions) && !conditions.isEmpty()) {
                 writeConditions(conditions);
+            }
 
             generator.writeEndObject();
         }
@@ -265,46 +272,6 @@ public class JsonPolicyWriter {
     }
 
     /**
-     * Inner class to hold condition values for each key under a condition type.
-     */
-    static class ConditionsByKey {
-        private Map<String,List<String>> conditionsByKey;
-
-        public ConditionsByKey(){
-            conditionsByKey = new LinkedHashMap<String,List<String>>();
-        }
-
-        public Map<String,List<String>> getConditionsByKey() {
-            return conditionsByKey;
-        }
-
-        public void setConditionsByKey(Map<String,List<String>> conditionsByKey) {
-            this.conditionsByKey = conditionsByKey;
-        }
-
-        public boolean containsKey(String key){
-            return conditionsByKey.containsKey(key);
-        }
-
-        public List<String> getConditionsByKey(String key){
-            return conditionsByKey.get(key);
-        }
-
-        public Set<String> keySet(){
-            return conditionsByKey.keySet();
-        }
-
-        public void addValuesToKey(String key, List<String> values) {
-
-            List<String> conditionValues = getConditionsByKey(key);
-            if (conditionValues == null)
-                conditionsByKey.put(key, new ArrayList<String>(values));
-            else
-                conditionValues.addAll(values);
-        }
-    }
-
-    /**
      * Groups the list of <code>Condition</code>s by the condition type and
      * condition key.
      *
@@ -344,8 +311,9 @@ public class JsonPolicyWriter {
     private void writeJsonArray(String arrayName, List<String> values)
             throws JsonGenerationException, IOException {
         writeJsonArrayStart(arrayName);
-        for (String value : values)
+        for (String value : values) {
             generator.writeString(value);
+        }
         writeJsonArrayEnd();
     }
 
@@ -409,5 +377,46 @@ public class JsonPolicyWriter {
      */
     private boolean isNotNull(Object object) {
         return null != object;
+    }
+
+    /**
+     * Inner class to hold condition values for each key under a condition type.
+     */
+    static class ConditionsByKey {
+        private Map<String, List<String>> conditionsByKey;
+
+        public ConditionsByKey() {
+            conditionsByKey = new LinkedHashMap<String, List<String>>();
+        }
+
+        public Map<String, List<String>> getConditionsByKey() {
+            return conditionsByKey;
+        }
+
+        public void setConditionsByKey(Map<String, List<String>> conditionsByKey) {
+            this.conditionsByKey = conditionsByKey;
+        }
+
+        public boolean containsKey(String key) {
+            return conditionsByKey.containsKey(key);
+        }
+
+        public List<String> getConditionsByKey(String key) {
+            return conditionsByKey.get(key);
+        }
+
+        public Set<String> keySet() {
+            return conditionsByKey.keySet();
+        }
+
+        public void addValuesToKey(String key, List<String> values) {
+
+            List<String> conditionValues = getConditionsByKey(key);
+            if (conditionValues == null) {
+                conditionsByKey.put(key, new ArrayList<String>(values));
+            } else {
+                conditionValues.addAll(values);
+            }
+        }
     }
 }

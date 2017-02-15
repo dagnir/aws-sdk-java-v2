@@ -30,10 +30,8 @@ import java.util.Locale;
  */
 public class StringUtils {
 
-    private static final String DEFAULT_ENCODING = "UTF-8";
-
     public static final String COMMA_SEPARATOR = ",";
-
+    private static final String DEFAULT_ENCODING = "UTF-8";
     public static final Charset UTF8 = Charset.forName(DEFAULT_ENCODING);
 
     private static final Locale LOCALE_ENGLISH = Locale.ENGLISH;
@@ -147,11 +145,11 @@ public class StringUtils {
         return Base64.encodeAsString(copyBytesFrom(byteBuffer));
     }
 
-    public static String replace( String originalString, String partToMatch, String replacement ) {
-        StringBuilder buffer = new StringBuilder( originalString.length() );
-        buffer.append( originalString );
+    public static String replace(String originalString, String partToMatch, String replacement) {
+        StringBuilder buffer = new StringBuilder(originalString.length());
+        buffer.append(originalString);
 
-        int indexOf = buffer.indexOf( partToMatch );
+        int indexOf = buffer.indexOf(partToMatch);
         while (indexOf != -1) {
             buffer = buffer.replace(indexOf, indexOf + partToMatch.length(), replacement);
             indexOf = buffer.indexOf(partToMatch, indexOf + replacement.length());
@@ -208,7 +206,7 @@ public class StringUtils {
      * @return the lower case of string, or itself if string is null/empty
      */
     public static String lowerCase(String str) {
-        if(isNullOrEmpty(str)) {
+        if (isNullOrEmpty(str)) {
             return str;
         }
         return str.toLowerCase(LOCALE_ENGLISH);
@@ -221,7 +219,7 @@ public class StringUtils {
      * @return the upper case of string, or itself if string is null/empty
      */
     public static String upperCase(String str) {
-        if(isNullOrEmpty(str)) {
+        if (isNullOrEmpty(str)) {
             return str;
         }
         return str.toUpperCase(LOCALE_ENGLISH);
@@ -238,7 +236,7 @@ public class StringUtils {
      * @throws IllegalArgumentException throws exception if both or either of the strings is null
      */
     public static int compare(String str1, String str2) {
-        if( str1 == null || str2 == null) {
+        if (str1 == null || str2 == null) {
             throw new IllegalArgumentException("Arguments cannot be null");
         }
 
@@ -255,12 +253,24 @@ public class StringUtils {
      * @return true if the character is white  space, false otherwise.
      */
     private static boolean isWhiteSpace(final char ch) {
-        if (ch == CHAR_SPACE) return true;
-        if (ch == CHAR_TAB) return true;
-        if (ch == CHAR_NEW_LINE) return true;
-        if (ch == CHAR_VERTICAL_TAB) return true;
-        if (ch == CHAR_CARRIAGE_RETURN) return true;
-        if (ch == CHAR_FORM_FEED) return true;
+        if (ch == CHAR_SPACE) {
+            return true;
+        }
+        if (ch == CHAR_TAB) {
+            return true;
+        }
+        if (ch == CHAR_NEW_LINE) {
+            return true;
+        }
+        if (ch == CHAR_VERTICAL_TAB) {
+            return true;
+        }
+        if (ch == CHAR_CARRIAGE_RETURN) {
+            return true;
+        }
+        if (ch == CHAR_FORM_FEED) {
+            return true;
+        }
         return false;
     }
 
@@ -298,6 +308,6 @@ public class StringUtils {
      * begins with the given sequence. 
      */
     public static boolean beginsWithIgnoreCase(final String data, final String seq) {
-      return data.regionMatches(true, 0, seq, 0, seq.length());
+        return data.regionMatches(true, 0, seq, 0, seq.length());
     }
 }

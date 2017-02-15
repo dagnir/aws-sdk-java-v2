@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -27,12 +42,12 @@ public class PutFileInputStreamIntegrationTest extends S3IntegrationTestBase {
 
     @BeforeClass
     public static void setup() throws Exception {
-    	setUpCredentials();
+        setUpCredentials();
         s3 = new AmazonS3TestClient(credentials,
-            new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
+                                    new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
         CryptoTestUtils.tryCreateBucket(s3, bucketName);
         // make the content length 100 byte larger than the default mark-and-reset limit
-        contentLength = new PutObjectRequest(bucketName, key, file).getReadLimit()+100;
+        contentLength = new PutObjectRequest(bucketName, key, file).getReadLimit() + 100;
         file = CryptoTestUtils.generateRandomAsciiFile(contentLength);
         Assert.assertTrue(contentLength > 0);
     }

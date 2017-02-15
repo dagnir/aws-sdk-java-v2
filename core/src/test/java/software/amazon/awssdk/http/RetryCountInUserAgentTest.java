@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import utils.retry.SimpleArrayBackoffStrategy;
 
 public class RetryCountInUserAgentTest extends WireMockTestBase {
 
-    private static final int[] BACKOFF_VALUES = new int[] { 0, 10, 20 };
+    private static final int[] BACKOFF_VALUES = new int[] {0, 10, 20};
 
     private static final String RESOURCE_PATH = "/user-agent/";
 
@@ -69,7 +69,7 @@ public class RetryCountInUserAgentTest extends WireMockTestBase {
     private void executeRequest() throws Exception {
         AmazonHttpClient httpClient = new AmazonHttpClient(
                 new ClientConfiguration().withRetryPolicy(buildRetryPolicy())
-                .withThrottledRetries(true));
+                                         .withThrottledRetries(true));
         try {
             httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler()).execute();
             fail("Expected exception");
@@ -79,7 +79,7 @@ public class RetryCountInUserAgentTest extends WireMockTestBase {
 
     public RetryPolicy buildRetryPolicy() {
         RetryPolicy policy = new RetryPolicy(new AlwaysRetryCondition(), new SimpleArrayBackoffStrategy(BACKOFF_VALUES),
-                3, false);
+                                             3, false);
         return policy;
     }
 

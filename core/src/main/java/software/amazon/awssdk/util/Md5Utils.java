@@ -1,19 +1,16 @@
 /*
- * Copyright 2012-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ *  http://aws.amazon.com/apache2.0
  *
- *    http://aws.amazon.com/apache2.0
- *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.util;
@@ -33,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Md5Utils {
     private static final int SIXTEEN_K = 1 << 14;
+
     /**
      * Computes the MD5 hash of the data in the given input stream and returns
      * it as an array of bytes.
@@ -44,7 +42,7 @@ public class Md5Utils {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             byte[] buffer = new byte[SIXTEEN_K];
             int bytesRead;
-            while ( (bytesRead = bis.read(buffer, 0, buffer.length)) != -1 ) {
+            while ((bytesRead = bis.read(buffer, 0, buffer.length)) != -1) {
                 messageDigest.update(buffer, 0, bytesRead);
             }
             return messageDigest.digest();

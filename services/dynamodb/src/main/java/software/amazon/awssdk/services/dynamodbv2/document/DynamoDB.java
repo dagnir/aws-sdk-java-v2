@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
  */
 @ThreadSafe
 public class DynamoDB implements ListTablesApi, BatchGetItemApi,
-        BatchWriteItemApi {
+                                 BatchWriteItemApi {
     private final AmazonDynamoDB client;
 
     private final ListTablesImpl listTablesDelegate;
@@ -78,7 +78,7 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
      */
     public DynamoDB(Regions regionEnum) {
         this(new AmazonDynamoDBClient()
-                .<AmazonDynamoDBClient>withRegion(regionEnum));
+                     .<AmazonDynamoDBClient>withRegion(regionEnum));
     }
 
     /**
@@ -94,21 +94,21 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
     public Table createTable(CreateTableRequest req) {
         CreateTableResult result = client.createTable(req);
         return new Table(client, req.getTableName(),
-            result.getTableDescription());
+                         result.getTableDescription());
     }
 
     /**
      * Creates the specified table in DynamoDB.
      */
     public Table createTable(String tableName,
-            List<KeySchemaElement> keySchema,
-            List<AttributeDefinition> attributeDefinitions,
-            ProvisionedThroughput provisionedThroughput) {
+                             List<KeySchemaElement> keySchema,
+                             List<AttributeDefinition> attributeDefinitions,
+                             ProvisionedThroughput provisionedThroughput) {
         return createTable(new CreateTableRequest()
-            .withTableName(tableName)
-            .withKeySchema(keySchema)
-            .withAttributeDefinitions(attributeDefinitions)
-            .withProvisionedThroughput(provisionedThroughput));
+                                   .withTableName(tableName)
+                                   .withKeySchema(keySchema)
+                                   .withAttributeDefinitions(attributeDefinitions)
+                                   .withProvisionedThroughput(provisionedThroughput));
     }
 
     @Override
@@ -123,9 +123,9 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
 
     @Override
     public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName,
-            int maxResultSize) {
+                                                        int maxResultSize) {
         return listTablesDelegate.listTables(exclusiveStartTableName,
-                maxResultSize);
+                                             maxResultSize);
     }
 
     @Override
@@ -141,14 +141,14 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
     @Override
     public BatchGetItemOutcome batchGetItem(
             ReturnConsumedCapacity returnConsumedCapacity,
-            TableKeysAndAttributes ... tableKeysAndAttributes) {
+            TableKeysAndAttributes... tableKeysAndAttributes) {
         return batchGetItemDelegate.batchGetItem(returnConsumedCapacity,
-                tableKeysAndAttributes);
+                                                 tableKeysAndAttributes);
     }
 
     @Override
     public BatchGetItemOutcome batchGetItem(
-            TableKeysAndAttributes ... tableKeysAndAttributes) {
+            TableKeysAndAttributes... tableKeysAndAttributes) {
         return batchGetItemDelegate.batchGetItem(tableKeysAndAttributes);
     }
 

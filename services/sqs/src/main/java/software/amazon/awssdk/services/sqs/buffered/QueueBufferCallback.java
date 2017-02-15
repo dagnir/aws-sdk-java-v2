@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -36,13 +36,15 @@ class QueueBufferCallback<RequestType extends AmazonWebServiceRequest, ResultTyp
     }
 
     public void onError(Exception e) {
-        if (null != handler)
+        if (null != handler) {
             handler.onError(e);
+        }
     }
 
     public void onSuccess(ResultType result) {
-        if (null != handler)
+        if (null != handler) {
             handler.onSuccess(request, result);
+        }
     }
 
 }

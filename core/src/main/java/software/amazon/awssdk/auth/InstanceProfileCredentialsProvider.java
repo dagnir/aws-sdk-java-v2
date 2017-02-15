@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class InstanceProfileCredentialsProvider implements AWSCredentialsProvide
      * requests to EC2 metadata service.
      */
     private static final InstanceProfileCredentialsProvider INSTANCE
-        = new InstanceProfileCredentialsProvider();
+            = new InstanceProfileCredentialsProvider();
 
     private final EC2CredentialsFetcher credentialsFetcher;
 
@@ -78,19 +78,9 @@ public class InstanceProfileCredentialsProvider implements AWSCredentialsProvide
      *            true if credentials needs to be refreshed asynchronously else
      *            false.
      */
-    public InstanceProfileCredentialsProvider(boolean refreshCredentialsAsync) { this(refreshCredentialsAsync, true); }
-
-    /**
-     * Spins up a new thread to refresh the credentials asynchronously.
-     * @param eagerlyRefreshCredentialsAsync
-     *            when set to false will not attempt to refresh credentials asynchronously
-     *            until after a call has been made to {@link #getCredentials()} - ensures that
-     *            {@link EC2CredentialsFetcher#getCredentials()} is only hit when this CredentialProvider is actually required
-     */
-    public static InstanceProfileCredentialsProvider createAsyncRefreshingProvider(final boolean eagerlyRefreshCredentialsAsync) {
-        return new InstanceProfileCredentialsProvider(true, eagerlyRefreshCredentialsAsync);
+    public InstanceProfileCredentialsProvider(boolean refreshCredentialsAsync) {
+        this(refreshCredentialsAsync, true);
     }
-
 
     private InstanceProfileCredentialsProvider(boolean refreshCredentialsAsync, final boolean eagerlyRefreshCredentialsAsync) {
         credentialsFetcher = new EC2CredentialsFetcher(new InstanceMetadataCredentialsEndpointProvider());
@@ -101,7 +91,9 @@ public class InstanceProfileCredentialsProvider implements AWSCredentialsProvide
                 @Override
                 public void run() {
                     try {
-                        if (shouldRefresh) credentialsFetcher.getCredentials();
+                        if (shouldRefresh) {
+                            credentialsFetcher.getCredentials();
+                        }
                     } catch (AmazonClientException ace) {
                         handleError(ace);
                     } catch (RuntimeException re) {
@@ -112,6 +104,17 @@ public class InstanceProfileCredentialsProvider implements AWSCredentialsProvide
                 }
             }, 0, ASYNC_REFRESH_INTERVAL_TIME_MINUTES, TimeUnit.MINUTES);
         }
+    }
+
+    /**
+     * Spins up a new thread to refresh the credentials asynchronously.
+     * @param eagerlyRefreshCredentialsAsync
+     *            when set to false will not attempt to refresh credentials asynchronously
+     *            until after a call has been made to {@link #getCredentials()} - ensures that
+     *            {@link EC2CredentialsFetcher#getCredentials()} is only hit when this CredentialProvider is actually required
+     */
+    public static InstanceProfileCredentialsProvider createAsyncRefreshingProvider(final boolean eagerlyRefreshCredentialsAsync) {
+        return new InstanceProfileCredentialsProvider(true, eagerlyRefreshCredentialsAsync);
     }
 
     /**

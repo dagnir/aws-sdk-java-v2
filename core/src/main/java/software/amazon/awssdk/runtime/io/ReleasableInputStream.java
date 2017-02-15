@@ -1,8 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -36,7 +33,7 @@ import software.amazon.awssdk.internal.io.Releasable;
  * The creator of this input stream should therefore always call
  * {@link #release()} in a finally block to truly release the underlying
  * resources.
- * 
+ *
  * @see Releasable
  * @see ResettableInputStream
  */
@@ -61,14 +58,31 @@ public class ReleasableInputStream extends SdkFilterInputStream implements Relea
     }
 
     /**
+     * Wraps the given input stream into a {@link ReleasableInputStream} if
+     * necessary. Note if the given input stream is a {@link FileInputStream}, a
+     * {@link ResettableInputStream} which is a specific subclass of
+     * {@link ReleasableInputStream} will be returned.
+     */
+    public static ReleasableInputStream wrap(InputStream is) {
+        if (is instanceof ReleasableInputStream) {
+            return (ReleasableInputStream) is;   // already wrapped
+        }
+        if (is instanceof FileInputStream) {
+            return ResettableInputStream.newResettableInputStream((FileInputStream) is);
+        }
+        return new ReleasableInputStream(is);
+    }
+
+    /**
      * If {@link #closeDisabled} is false, closes this input stream and releases
      * any system resources associated with the stream. Otherwise, this method
      * does nothing.
      */
     @Override
     public final void close() {
-        if (!closeDisabled)
+        if (!closeDisabled) {
             doRelease();
+        }
     }
 
     /**
@@ -86,13 +100,14 @@ public class ReleasableInputStream extends SdkFilterInputStream implements Relea
         try {
             in.close();
         } catch (Exception ex) {
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("FYI", ex);
+            }
         }
         if (in instanceof Releasable) {
             // This allows any underlying stream that has the close operation
             // disabled to be truly released
-            Releasable r = (Releasable)in;
+            Releasable r = (Releasable) in;
             r.release();
         }
         abortIfNeeded();
@@ -114,21 +129,7 @@ public class ReleasableInputStream extends SdkFilterInputStream implements Relea
     public final <T extends ReleasableInputStream> T disableClose() {
         this.closeDisabled = true;
         @SuppressWarnings("unchecked")
-        T t = (T)this;
+        T t = (T) this;
         return t;
-    }
-
-    /**
-     * Wraps the given input stream into a {@link ReleasableInputStream} if
-     * necessary. Note if the given input stream is a {@link FileInputStream}, a
-     * {@link ResettableInputStream} which is a specific subclass of
-     * {@link ReleasableInputStream} will be returned.
-     */
-    public static ReleasableInputStream wrap(InputStream is) {
-        if (is instanceof ReleasableInputStream)
-            return (ReleasableInputStream)is;   // already wrapped
-        if (is instanceof FileInputStream)
-            return ResettableInputStream.newResettableInputStream((FileInputStream)is);
-        return new ReleasableInputStream(is);
     }
 }

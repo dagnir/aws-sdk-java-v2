@@ -39,9 +39,19 @@ import software.amazon.awssdk.util.json.Jackson;
 @NotThreadSafe
 public class DefaultRequest<T> implements Request<T> {
 
+    /**
+     * The original, user facing request object which this internal request
+     * object is representing
+     */
+    private final AmazonWebServiceRequest originalRequest;
+    /**
+     * Context associated with a request. Mainly used to transfer
+     * information between different {@link RequestHandler2}
+     */
+    private final Map<HandlerContextKey<?>, Object> handlerContext = new
+            HashMap<HandlerContextKey<?>, Object>();
     /** The resource path being requested */
     private String resourcePath;
-
     /**
      * Map of the parameters being sent as part of this request.
      * <p>
@@ -53,40 +63,20 @@ public class DefaultRequest<T> implements Request<T> {
      * null values to be present.
      */
     private Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
-
     /** Map of the headers included in this request */
     private Map<String, String> headers = new HashMap<String, String>();
-
     /** The service endpoint to which this request should be sent */
     private URI endpoint;
-
     /** The name of the service to which this request is being sent */
     private String serviceName;
-
-    /**
-     * The original, user facing request object which this internal request
-     * object is representing
-     */
-    private final AmazonWebServiceRequest originalRequest;
-
     /** The HTTP method to use when sending this request. */
     private HttpMethodName httpMethod = HttpMethodName.POST;
-
     /** An optional stream from which to read the request payload. */
     private InputStream content;
-
     /** An optional time offset to account for clock skew */
     private int timeOffset;
-
     /** All AWS Request metrics are collected into this object. */
     private AWSRequestMetrics metrics;
-
-    /**
-     * Context associated with a request. Mainly used to transfer
-     * information between different {@link RequestHandler2}
-     */
-    private final Map<HandlerContextKey<?>, Object> handlerContext = new
-            HashMap<HandlerContextKey<?>, Object>();
 
     /**
      * Constructs a new DefaultRequest with the specified service name and the
@@ -101,8 +91,8 @@ public class DefaultRequest<T> implements Request<T> {
     public DefaultRequest(AmazonWebServiceRequest originalRequest, String serviceName) {
         this.serviceName = serviceName;
         this.originalRequest = originalRequest == null
-                ? AmazonWebServiceRequest.NOOP
-                : originalRequest;
+                               ? AmazonWebServiceRequest.NOOP
+                               : originalRequest;
     }
 
     /**
@@ -143,10 +133,11 @@ public class DefaultRequest<T> implements Request<T> {
     }
 
     /**
-     * @see Request#setResourcePath(java.lang.String)
+     * @see Request#setHeaders(java.util.Map)
      */
-    public void setResourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
+    public void setHeaders(Map<String, String> headers) {
+        this.headers.clear();
+        this.headers.putAll(headers);
     }
 
     /**
@@ -154,6 +145,13 @@ public class DefaultRequest<T> implements Request<T> {
      */
     public String getResourcePath() {
         return resourcePath;
+    }
+
+    /**
+     * @see Request#setResourcePath(java.lang.String)
+     */
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
     }
 
     /**
@@ -173,7 +171,9 @@ public class DefaultRequest<T> implements Request<T> {
      * @see Request#addParameters(java.lang.String, java.util.List)
      */
     public void addParameters(String name, List<String> values) {
-        if (values == null) return;
+        if (values == null) {
+            return;
+        }
         for (String value : values) {
             addParameter(name, value);
         }
@@ -184,6 +184,14 @@ public class DefaultRequest<T> implements Request<T> {
      */
     public Map<String, List<String>> getParameters() {
         return parameters;
+    }
+
+    /**
+     * @see Request#setParameters(java.util.Map)
+     */
+    public void setParameters(Map<String, List<String>> parameters) {
+        this.parameters.clear();
+        this.parameters.putAll(parameters);
     }
 
     /**
@@ -209,17 +217,17 @@ public class DefaultRequest<T> implements Request<T> {
     }
 
     /**
-     * @see Request#setEndpoint(java.net.URI)
-     */
-    public void setEndpoint(URI endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    /**
      * @see Request#getEndpoint()
      */
     public URI getEndpoint() {
         return endpoint;
+    }
+
+    /**
+     * @see Request#setEndpoint(java.net.URI)
+     */
+    public void setEndpoint(URI endpoint) {
+        this.endpoint = endpoint;
     }
 
     /**
@@ -241,22 +249,6 @@ public class DefaultRequest<T> implements Request<T> {
      */
     public void setContent(InputStream content) {
         this.content = content;
-    }
-
-    /**
-     * @see Request#setHeaders(java.util.Map)
-     */
-    public void setHeaders(Map<String, String> headers) {
-        this.headers.clear();
-        this.headers.putAll(headers);
-    }
-
-    /**
-     * @see Request#setParameters(java.util.Map)
-     */
-    public void setParameters(Map<String, List<String>> parameters) {
-        this.parameters.clear();
-        this.parameters.putAll(parameters);
     }
 
     /**
@@ -290,8 +282,7 @@ public class DefaultRequest<T> implements Request<T> {
 
         if (resourcePath == null) {
             builder.append("/");
-        }
-        else {
+        } else {
             if (!resourcePath.startsWith("/")) {
                 builder.append("/");
             }
@@ -343,12 +334,13 @@ public class DefaultRequest<T> implements Request<T> {
     @Override
     public InputStream getContentUnwrapped() {
         InputStream is = getContent();
-        if (is == null)
+        if (is == null) {
             return null;
+        }
         // We want to disable the progress reporting when the stream is
         // consumed for signing purpose.
         while (is instanceof ProgressInputStream) {
-            ProgressInputStream pris = (ProgressInputStream)is;
+            ProgressInputStream pris = (ProgressInputStream) is;
             is = pris.getWrappedInputStream();
         }
         return is;

@@ -35,14 +35,14 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 @RunWith(MockitoJUnitRunner.class)
 public class WaiterTest {
 
+    WaiterExecutionBuilder waiterExecutionBuilder;
+    MockDescribeRequest request = new MockDescribeRequest();
     @Mock
     private PollingStrategy.RetryStrategy mockRetryStrategy = mock(PollingStrategy.RetryStrategy.class);
     private PollingStrategy.DelayStrategy mockDelayStrategy = mock(PollingStrategy.DelayStrategy.class);
 
-    WaiterExecutionBuilder waiterExecutionBuilder;
-    MockDescribeRequest request = new MockDescribeRequest();
     @Before
-    public void setup(){
+    public void setup() {
         waiterExecutionBuilder = new WaiterExecutionBuilder<MockDescribeRequest, MockDescribeResult>()
                 .withRequest(request)
                 .withPollingStrategy(new PollingStrategy(mockRetryStrategy, mockDelayStrategy))
@@ -86,6 +86,7 @@ public class WaiterTest {
         acceptors.add(new ExceptionAcceptor());
         PollingStrategy pollingStrategy = new PollingStrategy(new PollingStrategy.RetryStrategy() {
             int retryCount = 0;
+
             @Override
             public boolean shouldRetry(PollingStrategyContext retryStrategyParameters) {
                 if (retryStrategyParameters.getRetriesAttempted() < 4) {
@@ -96,28 +97,32 @@ public class WaiterTest {
                 return false;
             }
         }, new PollingStrategy.DelayStrategy() {
-                    int retries = 0;
-                    @Override
-                    public void delayBeforeNextRetry(PollingStrategyContext pollingStrategyContext) throws InterruptedException {
-                        Assert.assertEquals("Request object is different from the expected request", request, pollingStrategyContext.getOriginalRequest());
-                        Assert.assertEquals("Number of retries is different from the expected retries", retries, pollingStrategyContext.getRetriesAttempted());
-                        retries++;
-                        if (pollingStrategyContext.getRetriesAttempted() < 4) {
-                            Thread.sleep(2000);
-                            return;
-                        }
-                        Assert.assertEquals("It didn't back off the expected number of times", 4, retries);
+            int retries = 0;
 
-                    }
+            @Override
+            public void delayBeforeNextRetry(PollingStrategyContext pollingStrategyContext) throws InterruptedException {
+                Assert.assertEquals("Request object is different from the expected request", request, pollingStrategyContext.getOriginalRequest());
+                Assert.assertEquals("Number of retries is different from the expected retries", retries, pollingStrategyContext.getRetriesAttempted());
+                retries++;
+                if (pollingStrategyContext.getRetriesAttempted() < 4) {
+                    Thread.sleep(2000);
+                    return;
+                }
+                Assert.assertEquals("It didn't back off the expected number of times", 4, retries);
 
-                });
+            }
+
+        });
 
         waiterExecutionBuilder.withAcceptors(acceptors)
-                     .withPollingStrategy(pollingStrategy);
+                              .withPollingStrategy(pollingStrategy);
         WaiterExecution waiter = new WaiterExecution(waiterExecutionBuilder);
         waiter.pollResource();
     }
 
+    public MockDescribeResult mockDescribeTable(MockDescribeRequest describeTableRequest) {
+        return new MockDescribeResult();
+    }
 
     class MockDescribeRequest extends AmazonWebServiceRequest {
         private String tableName;
@@ -126,11 +131,6 @@ public class WaiterTest {
     class MockDescribeResult {
         private String tableName;
     }
-
-    public MockDescribeResult mockDescribeTable(MockDescribeRequest describeTableRequest) {
-        return new MockDescribeResult();
-    }
-
 
     class MockDescribeFunction implements SdkFunction<MockDescribeRequest, MockDescribeResult> {
 
@@ -160,11 +160,13 @@ public class WaiterTest {
     class SuccessStateResultAcceptor extends WaiterAcceptor<MockDescribeResult> {
 
         int retryCount = 0;
+
         public boolean matches(MockDescribeResult result) {
             return true;
         }
+
         public WaiterState getState() {
-            if(retryCount <= 1) {
+            if (retryCount <= 1) {
                 retryCount++;
                 return WaiterState.RETRY;
             }

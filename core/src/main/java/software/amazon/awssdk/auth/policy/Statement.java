@@ -59,22 +59,12 @@ import java.util.List;
  */
 public class Statement {
 
-    /**
-     * The effect is the result that you want a policy statement to return at
-     * evaluation time. A policy statement can either allow access or explicitly
-     * deny access.
-     */
-    public static enum Effect {
-        Allow(), Deny();
-    }
-
     private String id;
     private Effect effect;
     private List<Principal> principals = new ArrayList<Principal>();
     private List<Action> actions = new ArrayList<Action>();
     private List<Resource> resources;
     private List<Condition> conditions = new ArrayList<Condition>();
-
     /**
      * Constructs a new access control policy statement with the specified
      * effect.
@@ -371,8 +361,8 @@ public class Statement {
      * @param principals
      *            The list of principals associated with this policy statement.
      */
-    public void setPrincipals(Collection<Principal> principals) {
-        this.principals = new ArrayList<Principal>(principals);
+    public void setPrincipals(Principal... principals) {
+        setPrincipals(new ArrayList<Principal>(Arrays.asList(principals)));
     }
 
     /**
@@ -386,8 +376,8 @@ public class Statement {
      * @param principals
      *            The list of principals associated with this policy statement.
      */
-    public void setPrincipals(Principal... principals) {
-        setPrincipals(new ArrayList<Principal>(Arrays.asList(principals)));
+    public void setPrincipals(Collection<Principal> principals) {
+        this.principals = new ArrayList<Principal>(principals);
     }
 
     /**
@@ -408,6 +398,15 @@ public class Statement {
     public Statement withPrincipals(Principal... principals) {
         setPrincipals(principals);
         return this;
+    }
+
+    /**
+     * The effect is the result that you want a policy statement to return at
+     * evaluation time. A policy statement can either allow access or explicitly
+     * deny access.
+     */
+    public static enum Effect {
+        Allow(), Deny();
     }
 
 }

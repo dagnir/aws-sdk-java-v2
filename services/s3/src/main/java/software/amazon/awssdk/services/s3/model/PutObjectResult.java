@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -157,6 +158,16 @@ public class PutObjectResult extends SSEResultBase
     }
 
     /**
+     * Returns the Base64-encoded MD5 hash of the object content that was
+     * calculated on the client-side. This method returns null if the MD5
+     * validation is disabled and the caller didn't provide the MD5 hash in the
+     * ObjectMetadata when sending the PutObjectRequest.
+     */
+    public String getContentMd5() {
+        return contentMd5;
+    }
+
+    /**
      * Sets the Base64-encoded MD5 hash of the object content that was
      * calculated on the client-side.
      *
@@ -165,16 +176,6 @@ public class PutObjectResult extends SSEResultBase
      */
     public void setContentMd5(String contentMd5) {
         this.contentMd5 = contentMd5;
-    }
-
-    /**
-     * Returns the Base64-encoded MD5 hash of the object content that was
-     * calculated on the client-side. This method returns null if the MD5
-     * validation is disabled and the caller didn't provide the MD5 hash in the
-     * ObjectMetadata when sending the PutObjectRequest.
-     */
-    public String getContentMd5() {
-        return contentMd5;
     }
 
     /**

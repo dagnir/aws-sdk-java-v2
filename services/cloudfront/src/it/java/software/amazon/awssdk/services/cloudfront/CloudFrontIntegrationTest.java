@@ -71,7 +71,7 @@ public class CloudFrontIntegrationTest extends IntegrationTestBase {
     private static final String CUSTOMIZED_RESPONSE_CODE = "200";
 
     private static final String bucketName = StringUtils.lowerCase(CloudFrontIntegrationTest.class.getSimpleName()) + "."
-            + System.currentTimeMillis();
+                                             + System.currentTimeMillis();
 
     private static String distributionId;
     private static String distributionETag;
@@ -81,11 +81,11 @@ public class CloudFrontIntegrationTest extends IntegrationTestBase {
     /** Release any created test resources */
     @AfterClass
     public static void tearDown() throws Exception {
-        if ( distributionId != null ) {
+        if (distributionId != null) {
             try {
                 cloudfront.deleteDistribution(new DeleteDistributionRequest().withId(distributionId).withIfMatch(
                         distributionETag));
-            } catch ( Exception e ) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -104,7 +104,6 @@ public class CloudFrontIntegrationTest extends IntegrationTestBase {
     }
 
 
-
     /**
      * Tests that we can work with distributions (create, edit, list, delete,
      * invalidate, etc).
@@ -115,57 +114,57 @@ public class CloudFrontIntegrationTest extends IntegrationTestBase {
         // Create Distribution
         CreateDistributionResult createDistributionResult = cloudfront
                 .createDistribution(new CreateDistributionRequest().withDistributionConfig(new DistributionConfig()
-                        .withDefaultCacheBehavior(
-                                new DefaultCacheBehavior()
-                                        .withMinTTL(100L)
-                                        .withTargetOriginId("1")
-                                        .withViewerProtocolPolicy("allow-all")
-                                        .withSmoothStreaming(false)
-                                        .withTrustedSigners(
-                                                new TrustedSigners().withEnabled(true).withQuantity(1)
-                                                        .withItems("self"))
-                                        .withForwardedValues(new ForwardedValues().withQueryString(true).
-                                                                 withCookies(new CookiePreference().withForward(FORWARD)))
-                                        .withAllowedMethods(new AllowedMethods()
-                                                                .withQuantity(2)
-                                                                .withItems(Method.HEAD, Method.GET)))
-                        .withAliases(new Aliases().withItems(CNAME1, CNAME2).withQuantity(2))
-                        .withLogging(new LoggingConfig().withEnabled(false).withBucket(bucketName).withPrefix("").withIncludeCookies(false))
-                        .withCallerReference(callerReference)
-                        .withRestrictions(new Restrictions(new GeoRestriction(GeoRestrictionType.Blacklist).withItems("DE").withQuantity(1)))
+                                                                                                   .withDefaultCacheBehavior(
+                                                                                                           new DefaultCacheBehavior()
+                                                                                                                   .withMinTTL(100L)
+                                                                                                                   .withTargetOriginId("1")
+                                                                                                                   .withViewerProtocolPolicy("allow-all")
+                                                                                                                   .withSmoothStreaming(false)
+                                                                                                                   .withTrustedSigners(
+                                                                                                                           new TrustedSigners().withEnabled(true).withQuantity(1)
+                                                                                                                                               .withItems("self"))
+                                                                                                                   .withForwardedValues(new ForwardedValues().withQueryString(true).
+                                                                                                                           withCookies(new CookiePreference().withForward(FORWARD)))
+                                                                                                                   .withAllowedMethods(new AllowedMethods()
+                                                                                                                                               .withQuantity(2)
+                                                                                                                                               .withItems(Method.HEAD, Method.GET)))
+                                                                                                   .withAliases(new Aliases().withItems(CNAME1, CNAME2).withQuantity(2))
+                                                                                                   .withLogging(new LoggingConfig().withEnabled(false).withBucket(bucketName).withPrefix("").withIncludeCookies(false))
+                                                                                                   .withCallerReference(callerReference)
+                                                                                                   .withRestrictions(new Restrictions(new GeoRestriction(GeoRestrictionType.Blacklist).withItems("DE").withQuantity(1)))
 
-                        .withCacheBehaviors(
-                                new CacheBehaviors().withQuantity(1).withItems(
-                                        new CacheBehavior()
-                                                .withMinTTL(100L)
-                                                .withTargetOriginId("1")
-                                                .withViewerProtocolPolicy("allow-all")
-                                                .withTrustedSigners(
-                                                        new TrustedSigners().withEnabled(true).withQuantity(1)
-                                                                .withItems("self"))
-                                                .withForwardedValues(new ForwardedValues().withQueryString(true).
-                                                                         withCookies(new CookiePreference().withForward(FORWARD)))
-                                                .withPathPattern("*")
-                                                .withAllowedMethods(new AllowedMethods()
-                                                                        .withQuantity(7)
-                                                                        .withItems(Method.DELETE, Method.GET, Method.HEAD,
-                                                                                Method.OPTIONS, Method.PATCH, Method.POST, Method.PUT))))
-                        .withComment(DISTRIBUTION_COMMENT)
-                        .withDefaultRootObject(DEFAULT_ROOT_OBJECT)
-                        .withEnabled(true)
-                        .withPriceClass(PRICE_CLASS)
-                        .withOrigins(
-                                new Origins().withItems(
-                                        new Origin().withDomainName(dnsName).withId("1")
-                                                .withS3OriginConfig(new S3OriginConfig().withOriginAccessIdentity("")))
-                                        .withQuantity(1))
-                        .withViewerCertificate(new ViewerCertificate().withCloudFrontDefaultCertificate(true))
-                        .withCustomErrorResponses(new CustomErrorResponses()
-                                                        .withQuantity(1)
-                                                        .withItems(new CustomErrorResponse()
-                                                                        .withErrorCode(CUSTOMIZED_ERROR_CODE)
-                                                                        .withResponsePagePath(CUSTOMIZED_RESPONSE_PAGE_PATH)
-                                                                        .withResponseCode(CUSTOMIZED_RESPONSE_CODE)))));
+                                                                                                   .withCacheBehaviors(
+                                                                                                           new CacheBehaviors().withQuantity(1).withItems(
+                                                                                                                   new CacheBehavior()
+                                                                                                                           .withMinTTL(100L)
+                                                                                                                           .withTargetOriginId("1")
+                                                                                                                           .withViewerProtocolPolicy("allow-all")
+                                                                                                                           .withTrustedSigners(
+                                                                                                                                   new TrustedSigners().withEnabled(true).withQuantity(1)
+                                                                                                                                                       .withItems("self"))
+                                                                                                                           .withForwardedValues(new ForwardedValues().withQueryString(true).
+                                                                                                                                   withCookies(new CookiePreference().withForward(FORWARD)))
+                                                                                                                           .withPathPattern("*")
+                                                                                                                           .withAllowedMethods(new AllowedMethods()
+                                                                                                                                                       .withQuantity(7)
+                                                                                                                                                       .withItems(Method.DELETE, Method.GET, Method.HEAD,
+                                                                                                                                                                  Method.OPTIONS, Method.PATCH, Method.POST, Method.PUT))))
+                                                                                                   .withComment(DISTRIBUTION_COMMENT)
+                                                                                                   .withDefaultRootObject(DEFAULT_ROOT_OBJECT)
+                                                                                                   .withEnabled(true)
+                                                                                                   .withPriceClass(PRICE_CLASS)
+                                                                                                   .withOrigins(
+                                                                                                           new Origins().withItems(
+                                                                                                                   new Origin().withDomainName(dnsName).withId("1")
+                                                                                                                               .withS3OriginConfig(new S3OriginConfig().withOriginAccessIdentity("")))
+                                                                                                                        .withQuantity(1))
+                                                                                                   .withViewerCertificate(new ViewerCertificate().withCloudFrontDefaultCertificate(true))
+                                                                                                   .withCustomErrorResponses(new CustomErrorResponses()
+                                                                                                                                     .withQuantity(1)
+                                                                                                                                     .withItems(new CustomErrorResponse()
+                                                                                                                                                        .withErrorCode(CUSTOMIZED_ERROR_CODE)
+                                                                                                                                                        .withResponsePagePath(CUSTOMIZED_RESPONSE_PAGE_PATH)
+                                                                                                                                                        .withResponseCode(CUSTOMIZED_RESPONSE_CODE)))));
         distributionETag = createDistributionResult.getETag();
         assertNotNull(createDistributionResult.getETag());
         assertNotNull(createDistributionResult.getLocation());
@@ -181,7 +180,7 @@ public class CloudFrontIntegrationTest extends IntegrationTestBase {
 
         // Get Distribution
         GetDistributionResult getDistributionResult = cloudfront.getDistribution(new GetDistributionRequest()
-                .withId(distributionId));
+                                                                                         .withId(distributionId));
         assertNotNull(getDistributionResult.getETag());
         assertValidDistribution(getDistributionResult.getDistribution());
 
@@ -194,28 +193,28 @@ public class CloudFrontIntegrationTest extends IntegrationTestBase {
         // Create Invalidation
         CreateInvalidationResult createInvalidationResult = cloudfront
                 .createInvalidation(new CreateInvalidationRequest().withDistributionId(distributionId)
-                        .withInvalidationBatch(
-                                new InvalidationBatch().withCallerReference(callerReference).withPaths(
-                                        new Paths().withItems("/index.html").withQuantity(1))));
+                                                                   .withInvalidationBatch(
+                                                                           new InvalidationBatch().withCallerReference(callerReference).withPaths(
+                                                                                   new Paths().withItems("/index.html").withQuantity(1))));
         assertNotNull(createInvalidationResult.getLocation());
         assertValidInvalidation(createInvalidationResult.getInvalidation());
 
         // List Invalidations
         ListInvalidationsResult listInvalidationsResult = cloudfront.listInvalidations(new ListInvalidationsRequest()
-                .withDistributionId(distributionId));
+                                                                                               .withDistributionId(distributionId));
         assertTrue(listInvalidationsResult.getInvalidationList().getItems().size() > 0);
         assertNotNull(listInvalidationsResult.getInvalidationList().getItems().get(0).getId());
 
         // Get Invalidation
         GetInvalidationResult getInvalidationResult = cloudfront.getInvalidation(new GetInvalidationRequest()
-                .withDistributionId(distributionId).withId(createInvalidationResult.getInvalidation().getId()));
+                                                                                         .withDistributionId(distributionId).withId(createInvalidationResult.getInvalidation().getId()));
         assertValidInvalidation(getInvalidationResult.getInvalidation());
 
         // Update Distribution (disable the distribution)
         distributionConfig.setEnabled(false);
         UpdateDistributionResult updateDistributionResult = cloudfront
                 .updateDistribution(new UpdateDistributionRequest().withId(distributionId)
-                        .withIfMatch(distributionETag).withDistributionConfig(distributionConfig));
+                                                                   .withIfMatch(distributionETag).withDistributionConfig(distributionConfig));
         distributionETag = updateDistributionResult.getETag();
         assertNotNull(updateDistributionResult.getETag());
         assertValidDistribution(updateDistributionResult.getDistribution());

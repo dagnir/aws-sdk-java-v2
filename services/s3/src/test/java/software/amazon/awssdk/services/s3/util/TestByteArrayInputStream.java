@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.util;
 
 import java.io.IOException;
@@ -40,7 +55,7 @@ public class TestByteArrayInputStream extends InputStream {
      * If no mark has been set, then the value of mark is the offset
      * passed to the constructor (or 0 if the offset was not supplied).
      *
-     * @since   JDK1.1
+     * @since JDK1.1
      */
     protected int mark = 0;
 
@@ -104,7 +119,7 @@ public class TestByteArrayInputStream extends InputStream {
      * This <code>read</code> method
      * cannot block.
      *
-     * @return  the next byte of data, or <code>-1</code> if the end of the
+     * @return the next byte of data, or <code>-1</code> if the end of the
      *          stream has been reached.
      */
     public synchronized int read() throws FakeIOException {
@@ -132,11 +147,11 @@ public class TestByteArrayInputStream extends InputStream {
      * @param   b     the buffer into which the data is read.
      * @param   off   the start offset in the destination array <code>b</code>
      * @param   len   the maximum number of bytes read.
-     * @return  the total number of bytes read into the buffer, or
+     * @return the total number of bytes read into the buffer, or
      *          <code>-1</code> if there is no more data because the end of
      *          the stream has been reached.
-     * @exception  NullPointerException If <code>b</code> is <code>null</code>.
-     * @exception  IndexOutOfBoundsException If <code>off</code> is negative,
+     * @exception NullPointerException If <code>b</code> is <code>null</code>.
+     * @exception IndexOutOfBoundsException If <code>off</code> is negative,
      * <code>len</code> is negative, or <code>len</code> is greater than
      * <code>b.length - off</code>
      */
@@ -173,7 +188,7 @@ public class TestByteArrayInputStream extends InputStream {
      * and <code>k</code> is returned.
      *
      * @param   n   the number of bytes to be skipped.
-     * @return  the actual number of bytes skipped.
+     * @return the actual number of bytes skipped.
      */
     public synchronized long skip(long n) {
         long k = count - pos;
@@ -192,7 +207,7 @@ public class TestByteArrayInputStream extends InputStream {
      * The value returned is <code>count&nbsp;- pos</code>,
      * which is the number of bytes remaining to be read from the input buffer.
      *
-     * @return  the number of remaining bytes that can be read (or skipped
+     * @return the number of remaining bytes that can be read (or skipped
      *          over) from this input stream without blocking.
      */
     public synchronized int available() {
@@ -204,7 +219,7 @@ public class TestByteArrayInputStream extends InputStream {
      * <code>markSupported</code> method of <code>ByteArrayInputStream</code>
      * always returns <code>true</code>.
      *
-     * @since   JDK1.1
+     * @since JDK1.1
      */
     public boolean markSupported() {
         return true;
@@ -223,7 +238,7 @@ public class TestByteArrayInputStream extends InputStream {
      * <p> Note: The <code>readAheadLimit</code> for this class
      *  has no meaning.
      *
-     * @since   JDK1.1
+     * @since JDK1.1
      */
     public void mark(int readAheadLimit) {
         mark = pos;

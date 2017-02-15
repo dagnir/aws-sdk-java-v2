@@ -22,6 +22,10 @@ import software.amazon.awssdk.util.json.Jackson;
 
 public class SignerConfigTest {
 
+    private static void p(Object o) {
+        System.out.println(String.valueOf(o));
+    }
+
     @Test
     public void test() throws Exception {
         p(Jackson.toJsonPrettyString(new SignerConfig("AWS3SignerType")));
@@ -29,9 +33,5 @@ public class SignerConfigTest {
         SignerConfig copy = Jackson.getObjectMapper().readValue(json, SignerConfigJsonHelper.class).build();
         String json2 = Jackson.toJsonPrettyString(copy);
         assertEquals(json, json2);
-    }
-
-    private static void p(Object o) {
-        System.out.println(String.valueOf(o));
     }
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertNotNull;
@@ -15,11 +30,10 @@ import software.amazon.awssdk.AmazonServiceException;
  */
 public class BucketPolicyIntegrationTest extends S3IntegrationTestBase {
 
-    /** Name of the bucket created by this test */
-    private final String bucketName = "java-bucket-policy-integ-test-" + System.currentTimeMillis();
-
     /** Path to the sample policy for this test */
     private static final String POLICY_FILE = "/software/amazon/awssdk/services/s3/samplePolicy.json";
+    /** Name of the bucket created by this test */
+    private final String bucketName = "java-bucket-policy-integ-test-" + System.currentTimeMillis();
 
     /** Release all allocated resources */
     @After
@@ -60,11 +74,11 @@ public class BucketPolicyIntegrationTest extends S3IntegrationTestBase {
             assertNotNull(ase.getMessage());
         }
     }
-	
-	protected String replace( String source, String token, String value ) {
-		int startIndexOfToken = source.indexOf( token );
-		int endIndexOfToken = startIndexOfToken + token.length();
-		
-		return source.substring( 0, startIndexOfToken ) + value + source.substring( endIndexOfToken );
-	}
+
+    protected String replace(String source, String token, String value) {
+        int startIndexOfToken = source.indexOf(token);
+        int endIndexOfToken = startIndexOfToken + token.length();
+
+        return source.substring(0, startIndexOfToken) + value + source.substring(endIndexOfToken);
+    }
 }

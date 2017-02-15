@@ -8,5 +8,5 @@ Feature: Amazon CodeCommit
 
   Scenario: Handling errors
     When I attempt to call the "ListBranches" API with:
-    | repositoryName | fake-repo |
+      | repositoryName | fake-repo |
     Then I expect the response error code to be "RepositoryDoesNotExistException"

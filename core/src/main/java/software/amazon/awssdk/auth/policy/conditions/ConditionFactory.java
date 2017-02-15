@@ -84,7 +84,8 @@ public class ConditionFactory {
      */
     public static final String SOURCE_ARN_CONDITION_KEY = "aws:SourceArn";
 
-    private ConditionFactory() {}
+    private ConditionFactory() {
+    }
 
     /**
      * Constructs a new access policy condition that compares the Amazon

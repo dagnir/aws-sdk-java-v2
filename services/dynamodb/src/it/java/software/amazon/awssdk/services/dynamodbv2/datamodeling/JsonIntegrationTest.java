@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.Arrays;
@@ -65,8 +66,8 @@ public class JsonIntegrationTest extends AWSTestBase {
 
         while (true) {
             String status = client.describeTable(TABLE_NAME)
-                    .getTable()
-                    .getTableStatus();
+                                  .getTable()
+                                  .getTableStatus();
 
             if (status.equals(TableStatus.ACTIVE.toString())) {
                 break;
@@ -87,6 +88,14 @@ public class JsonIntegrationTest extends AWSTestBase {
         try {
             client.deleteTable(TABLE_NAME);
         } catch (ResourceNotFoundException e) {
+        }
+    }
+
+    private static <T> boolean eq(T one, T two) {
+        if (one == null) {
+            return (two == null);
+        } else {
+            return one.equals(two);
         }
     }
 
@@ -116,7 +125,7 @@ public class JsonIntegrationTest extends AWSTestBase {
                     put("parent", parent);
                 }},
                 null
-        ));
+                                                                 ));
         test.setMapOfLists(new HashMap<String, List<ChildClass>>() {{
             put("parent", Arrays.asList(child1, child2));
             put("child2", Collections.<ChildClass>emptyList());
@@ -234,14 +243,6 @@ public class JsonIntegrationTest extends AWSTestBase {
             return "{bool=" + bool + ", firstChild=" + firstChild
                    + ", otherChildren=" + otherChildren + ", namedChildren="
                    + namedChildren + "}";
-        }
-    }
-
-    private static <T> boolean eq(T one, T two) {
-        if (one == null) {
-            return (two == null);
-        } else {
-            return one.equals(two);
         }
     }
 }

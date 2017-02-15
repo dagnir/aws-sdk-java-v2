@@ -11,20 +11,20 @@ import software.amazon.awssdk.services.identitymanagement.model.DeleteAccountAli
 
 public class AccountAliasesIntegrationTest extends IntegrationTestBase {
 
-	private static final String ACCOUNT_ALIAS = "java-sdk-alias-" + System.currentTimeMillis();
+    private static final String ACCOUNT_ALIAS = "java-sdk-alias-" + System.currentTimeMillis();
 
 
-	/** Tests that we can create, list and delete account aliases. */
-	@Test
-	public void testAccountAliases() throws Exception {
-		iam.createAccountAlias(new CreateAccountAliasRequest(ACCOUNT_ALIAS));
+    /** Tests that we can create, list and delete account aliases. */
+    @Test
+    public void testAccountAliases() throws Exception {
+        iam.createAccountAlias(new CreateAccountAliasRequest(ACCOUNT_ALIAS));
 
-		List<String> accountAliases = iam.listAccountAliases().getAccountAliases();
-		assertNotNull(accountAliases);
-		assertEquals(1, accountAliases.size());
-		assertEquals(ACCOUNT_ALIAS, accountAliases.get(0));
+        List<String> accountAliases = iam.listAccountAliases().getAccountAliases();
+        assertNotNull(accountAliases);
+        assertEquals(1, accountAliases.size());
+        assertEquals(ACCOUNT_ALIAS, accountAliases.get(0));
 
-		iam.deleteAccountAlias(new DeleteAccountAliasRequest(ACCOUNT_ALIAS));
-		assertTrue(iam.listAccountAliases().getAccountAliases().isEmpty());
-	}
+        iam.deleteAccountAlias(new DeleteAccountAliasRequest(ACCOUNT_ALIAS));
+        assertTrue(iam.listAccountAliases().getAccountAliases().isEmpty());
+    }
 }

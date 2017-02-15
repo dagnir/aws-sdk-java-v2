@@ -87,7 +87,8 @@ public class S3ConditionFactory {
      */
     public static final String VERSION_ID_CONDITION_KEY = "s3:VersionId";
 
-    private S3ConditionFactory() {}
+    private S3ConditionFactory() {
+    }
 
     /**
      * Constructs a new access policy condition that compares an Amazon S3
@@ -105,7 +106,7 @@ public class S3ConditionFactory {
      */
     public static Condition newCannedACLCondition(CannedAccessControlList cannedAcl) {
         return new StringCondition(StringComparisonType.StringEquals,
-                CANNED_ACL_CONDITION_KEY, cannedAcl.toString());
+                                   CANNED_ACL_CONDITION_KEY, cannedAcl.toString());
     }
 
 }

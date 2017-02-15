@@ -12,19 +12,15 @@ import software.amazon.awssdk.test.AWSIntegrationTestBase;
 
 public class IntegrationTestBase extends AWSIntegrationTestBase {
 
-    /** Shared Charlie client for all tests to use */
-    protected static AWSOpsWorksClient opsWorks;
-
-    /** The ELB client used in these tests */
-    protected static AmazonElasticLoadBalancing elb;
-
-    protected static String  loadBalancerName;
-
     /** Protocol value used in LB requests */
     private static final String PROTOCOL = "HTTP";
-
     /** AZs used for LB */
     private static final String AVAILABILITY_ZONE = "us-east-1c";
+    /** Shared Charlie client for all tests to use */
+    protected static AWSOpsWorksClient opsWorks;
+    /** The ELB client used in these tests */
+    protected static AmazonElasticLoadBalancing elb;
+    protected static String loadBalancerName;
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
@@ -38,9 +34,9 @@ public class IntegrationTestBase extends AWSIntegrationTestBase {
 
         // Create a load balancer
         elb.createLoadBalancer(
-              new CreateLoadBalancerRequest()
-                .withLoadBalancerName(loadBalancerName)
-                .withAvailabilityZones(AVAILABILITY_ZONE)
-                .withListeners(expectedListener));
+                new CreateLoadBalancerRequest()
+                        .withLoadBalancerName(loadBalancerName)
+                        .withAvailabilityZones(AVAILABILITY_ZONE)
+                        .withListeners(expectedListener));
     }
 }

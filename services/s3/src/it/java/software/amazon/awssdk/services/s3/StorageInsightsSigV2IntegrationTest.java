@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -99,7 +99,7 @@ public class StorageInsightsSigV2IntegrationTest {
         s3SigV2.setBucketInventoryConfiguration(new SetBucketInventoryConfigurationRequest(BUCKET_NAME, config));
 
         config = s3SigV2.getBucketInventoryConfiguration(new GetBucketInventoryConfigurationRequest(BUCKET_NAME, id))
-                .getInventoryConfiguration();
+                        .getInventoryConfiguration();
 
         assertEquals(id, config.getId());
         assertTrue(config.isEnabled());
@@ -115,7 +115,7 @@ public class StorageInsightsSigV2IntegrationTest {
         s3SigV2.deleteBucketInventoryConfiguration(new DeleteBucketInventoryConfigurationRequest(BUCKET_NAME, id));
         List<InventoryConfiguration> configurations = s3SigV2.listBucketInventoryConfigurations(
                 new ListBucketInventoryConfigurationsRequest().withBucketName(BUCKET_NAME))
-                .getInventoryConfigurationList();
+                                                             .getInventoryConfigurationList();
         assertNull(configurations);
     }
 
@@ -129,7 +129,7 @@ public class StorageInsightsSigV2IntegrationTest {
         s3SigV2.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3SigV2.getBucketAnalyticsConfiguration(new GetBucketAnalyticsConfigurationRequest(BUCKET_NAME, id))
-                .getAnalyticsConfiguration();
+                        .getAnalyticsConfiguration();
 
 
         assertEquals(id, config.getId());
@@ -151,7 +151,7 @@ public class StorageInsightsSigV2IntegrationTest {
         s3SigV2.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3SigV2.getBucketMetricsConfiguration(new GetBucketMetricsConfigurationRequest(BUCKET_NAME, id))
-                .getMetricsConfiguration();
+                        .getMetricsConfiguration();
 
         assertEquals(id, config.getId());
 

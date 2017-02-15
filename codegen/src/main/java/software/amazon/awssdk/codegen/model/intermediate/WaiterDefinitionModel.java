@@ -54,7 +54,7 @@ public class WaiterDefinitionModel {
         this.maxAttempts = maxAttempts;
     }
 
-    public String getWaiterMethodName(){
+    public String getWaiterMethodName() {
         return Utils.unCapitialize(this.waiterName);
     }
 
@@ -66,7 +66,7 @@ public class WaiterDefinitionModel {
         this.acceptors = acceptors;
     }
 
-    public String getOperationName(){
+    public String getOperationName() {
         return this.operationModel.getOperationName();
     }
 
@@ -78,7 +78,7 @@ public class WaiterDefinitionModel {
         this.operationModel = operationModel;
     }
 
-    public String getOperationMethodName(){
+    public String getOperationMethodName() {
         return Utils.unCapitialize(this.operationModel.getOperationName());
     }
 }

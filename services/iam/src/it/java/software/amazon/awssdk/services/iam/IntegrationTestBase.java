@@ -14,19 +14,19 @@ import software.amazon.awssdk.test.AWSTestBase;
  *
  * @author Jason Fulghum <fulghum@amazon.com>
  */
-public class IntegrationTestBase extends AWSTestBase  {
+public class IntegrationTestBase extends AWSTestBase {
 
-	/** The IAM client for all tests to use */
-	protected AmazonIdentityManagement iam;
+    /** The IAM client for all tests to use */
+    protected AmazonIdentityManagement iam;
 
-	/**
-	 * Loads the AWS account info for the integration tests and creates an
-	 * IAM client for tests to use.
-	 */
-	@Before
-	public void setUp() throws FileNotFoundException, IOException {
+    /**
+     * Loads the AWS account info for the integration tests and creates an
+     * IAM client for tests to use.
+     */
+    @Before
+    public void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-		iam = new AmazonIdentityManagementClient(credentials);
-	}
+        iam = new AmazonIdentityManagementClient(credentials);
+    }
 
 }

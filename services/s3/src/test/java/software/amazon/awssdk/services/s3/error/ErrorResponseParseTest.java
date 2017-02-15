@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.error;
 
 import static org.junit.Assert.assertEquals;
@@ -25,6 +40,16 @@ import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 public class ErrorResponseParseTest {
 
     private static final S3ErrorResponseHandler errorHandler = new S3ErrorResponseHandler();
+
+    /**
+     * Loads the error xmls from the resources directory and returns it as a
+     * stream.
+     */
+    private static InputStream loadFileAsStream(String fileName)
+            throws FileNotFoundException {
+        File errorResponseFile = new File(ErrorResponseParseTest.class.getResource("/resources/errorResponse/" + fileName).getFile());
+        return new FileInputStream(errorResponseFile);
+    }
 
     /**
      * Tests by setting only the headers and no response stream. Asserts that
@@ -121,7 +146,7 @@ public class ErrorResponseParseTest {
         assertEquals(ErrorType.Service, s3Exception.getErrorType());
         assertEquals("TestRequestId", s3Exception.getRequestId());
         assertEquals("TestExtendedRequestId",
-                s3Exception.getExtendedRequestId());
+                     s3Exception.getExtendedRequestId());
     }
 
     /**
@@ -150,7 +175,7 @@ public class ErrorResponseParseTest {
         assertEquals(ErrorType.Service, s3Exception.getErrorType());
         assertEquals("TestRequestId", s3Exception.getRequestId());
         assertEquals("TestExtendedRequestId",
-                s3Exception.getExtendedRequestId());
+                     s3Exception.getExtendedRequestId());
         Map<String, String> additionalDetails = s3Exception
                 .getAdditionalDetails();
         assertNotNull(additionalDetails);
@@ -322,19 +347,9 @@ public class ErrorResponseParseTest {
         assertEquals(ErrorType.Service, s3Exception.getErrorType());
         assertEquals("TestRequestId", s3Exception.getRequestId());
         assertEquals("TestExtendedRequestId",
-                s3Exception.getExtendedRequestId());
+                     s3Exception.getExtendedRequestId());
         assertNotNull(s3Exception.getAdditionalDetails());
-        assertEquals("TestErrorResponse",s3Exception.getAdditionalDetails().get("Error"));
-    }
-
-    /**
-     * Loads the error xmls from the resources directory and returns it as a
-     * stream.
-     */
-    private static InputStream loadFileAsStream(String fileName)
-            throws FileNotFoundException {
-        File errorResponseFile = new File(ErrorResponseParseTest.class.getResource("/resources/errorResponse/" + fileName).getFile());
-        return new FileInputStream(errorResponseFile);
+        assertEquals("TestErrorResponse", s3Exception.getAdditionalDetails().get("Error"));
     }
 
 }

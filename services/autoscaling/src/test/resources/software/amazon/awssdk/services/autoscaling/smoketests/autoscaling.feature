@@ -8,9 +8,9 @@ Feature: Auto Scaling
 
   Scenario: Handing errors
     When I attempt to call the "CreateLaunchConfiguration" API with:
-    | LaunchConfigurationName |              |
-    | ImageId                 | ami-12345678 |
-    | InstanceType            | m1.small     |
+      | LaunchConfigurationName |              |
+      | ImageId                 | ami-12345678 |
+      | InstanceType            | m1.small     |
     Then I expect the response error code to be "ValidationError"
     And I expect the response error message to include:
     """

@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.rds.model.DescribeDBInstancesRequest;
 
 /**
  * Integration test for the typed exception handling in RDS.
- * 
+ *
  * @author Jason Fulghum <fulghum@amazon.com>
  */
 public class RdsExceptionHandlingIntegrationTest extends IntegrationTestBase {

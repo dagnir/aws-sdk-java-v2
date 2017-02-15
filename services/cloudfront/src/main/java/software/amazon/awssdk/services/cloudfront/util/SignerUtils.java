@@ -1,6 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,52 +42,46 @@ public class SignerUtils {
     private static final SecureRandom srand = new SecureRandom();
 
     /**
-     * Enumeration of protocols for presigned URLs
-     */
-    public static enum Protocol {
-        http, https, rtmp
-    }
-
-    /**
      * Returns a "canned" policy for the given parameters.
      * For more information, see <a href=
      * "http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-signed-urls-overview.html"
      * >Overview of Signed URLs</a>.
      */
     public static String buildCannedPolicy(String resourceUrlOrPath,
-            Date dateLessThan) {
+                                           Date dateLessThan) {
         return "{\"Statement\":[{\"Resource\":\""
-                + resourceUrlOrPath
-                + "\",\"Condition\":{\"DateLessThan\":{\"AWS:EpochTime\":"
-                + MILLISECONDS.toSeconds(dateLessThan.getTime())
-                + "}}}]}";
+               + resourceUrlOrPath
+               + "\",\"Condition\":{\"DateLessThan\":{\"AWS:EpochTime\":"
+               + MILLISECONDS.toSeconds(dateLessThan.getTime())
+               + "}}}]}";
     }
 
     /**
      * Returns a custom policy for the given parameters.
      */
     public static String buildCustomPolicy(String resourcePath,
-            Date expiresOn, Date activeFrom, String ipAddress) {
+                                           Date expiresOn, Date activeFrom, String ipAddress) {
         return "{\"Statement\": [{"
-                + "\"Resource\":\""
-                + resourcePath
-                + "\""
-                + ",\"Condition\":{"
-                + "\"DateLessThan\":{\"AWS:EpochTime\":"
-                + MILLISECONDS.toSeconds(expiresOn.getTime())
-                + "}"
-                + (ipAddress == null
+               + "\"Resource\":\""
+               + resourcePath
+               + "\""
+               + ",\"Condition\":{"
+               + "\"DateLessThan\":{\"AWS:EpochTime\":"
+               + MILLISECONDS.toSeconds(expiresOn.getTime())
+               + "}"
+               + (ipAddress == null
                   ? ""
                   : ",\"IpAddress\":{\"AWS:SourceIp\":\""
                     + ipAddress + "\"}"
-                  )
-                + (activeFrom == null
-                   ? ""
-                   : ",\"DateGreaterThan\":{\"AWS:EpochTime\":"
-                     + MILLISECONDS.toSeconds(activeFrom.getTime()) + "}"
-                  )
-                + "}}]}";
+               )
+               + (activeFrom == null
+                  ? ""
+                  : ",\"DateGreaterThan\":{\"AWS:EpochTime\":"
+                    + MILLISECONDS.toSeconds(activeFrom.getTime()) + "}"
+               )
+               + "}}]}";
     }
+
     /**
      * Converts the given data to be safe for use in signed URLs for a private
      * distribution by using specialized Base64 encoding.
@@ -96,14 +89,17 @@ public class SignerUtils {
     public static String makeBytesUrlSafe(byte[] bytes) {
         byte[] encoded = Base64.encode(bytes);
 
-        for (int i=0; i < encoded.length; i++) {
-            switch(encoded[i]) {
+        for (int i = 0; i < encoded.length; i++) {
+            switch (encoded[i]) {
                 case '+':
-                    encoded[i] = '-'; continue;
+                    encoded[i] = '-';
+                    continue;
                 case '=':
-                    encoded[i] = '_'; continue;
+                    encoded[i] = '_';
+                    continue;
                 case '/':
-                    encoded[i] = '~'; continue;
+                    encoded[i] = '~';
+                    continue;
                 default:
                     continue;
             }
@@ -124,11 +120,11 @@ public class SignerUtils {
      * protocol.
      */
     public static String generateResourcePath(final Protocol protocol,
-            final String distributionDomain, final String resourcePath) {
+                                              final String distributionDomain, final String resourcePath) {
         return protocol == Protocol.http || protocol == Protocol.https
-             ? protocol + "://" + distributionDomain + "/" + resourcePath
-             : resourcePath
-             ;
+               ? protocol + "://" + distributionDomain + "/" + resourcePath
+               : resourcePath
+                ;
     }
 
     /**
@@ -136,7 +132,7 @@ public class SignerUtils {
      * algorithm provided by bouncy castle.
      */
     public static byte[] signWithSha1RSA(byte[] dataToSign,
-            PrivateKey privateKey) throws InvalidKeyException {
+                                         PrivateKey privateKey) throws InvalidKeyException {
         Signature signature;
         try {
             signature = Signature.getInstance("SHA1withRSA");
@@ -156,19 +152,25 @@ public class SignerUtils {
      * be thrown.
      */
     public static PrivateKey loadPrivateKey(File privateKeyFile) throws InvalidKeySpecException, IOException {
-        if ( StringUtils.lowerCase(privateKeyFile.getAbsolutePath()).endsWith(".pem") ) {
+        if (StringUtils.lowerCase(privateKeyFile.getAbsolutePath()).endsWith(".pem")) {
             InputStream is = new FileInputStream(privateKeyFile);
             try {
                 return PEM.readPrivateKey(is);
             } finally {
-                try {is.close();} catch(IOException ignore) {}
+                try {
+                    is.close();
+                } catch (IOException ignore) {
+                }
             }
-        } else if ( StringUtils.lowerCase(privateKeyFile.getAbsolutePath()).endsWith(".der") ) {
+        } else if (StringUtils.lowerCase(privateKeyFile.getAbsolutePath()).endsWith(".der")) {
             InputStream is = new FileInputStream(privateKeyFile);
             try {
                 return RSA.privateKeyFromPKCS8(IOUtils.toByteArray(is));
             } finally {
-                try {is.close();} catch(IOException ignore) {}
+                try {
+                    is.close();
+                } catch (IOException ignore) {
+                }
             }
         } else {
             throw new AmazonClientException("Unsupported file type for private key");
@@ -178,5 +180,12 @@ public class SignerUtils {
     public static PrivateKey loadPrivateKey(String privateKeyFilePath) throws InvalidKeySpecException, IOException {
         File privateKeyFile = new File(privateKeyFilePath);
         return loadPrivateKey(privateKeyFile);
+    }
+
+    /**
+     * Enumeration of protocols for presigned URLs
+     */
+    public static enum Protocol {
+        http, https, rtmp
     }
 }

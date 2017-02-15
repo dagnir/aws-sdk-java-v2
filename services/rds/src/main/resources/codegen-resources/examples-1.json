@@ -1660,7 +1660,6 @@
             }
           ],
           "DBSecurityGroups": [
-
           ],
           "DBSubnetGroup": {
             "DBSubnetGroupDescription": "default",
@@ -1694,7 +1693,6 @@
           "DbInstancePort": 0,
           "DbiResourceId": "db-VNZUCCBTEDC4WR7THXNJO72HVQ",
           "DomainMemberships": [
-
           ],
           "Engine": "mysql",
           "EngineVersion": "5.6.27",
@@ -1714,7 +1712,6 @@
           "PreferredMaintenanceWindow": "tue:10:16-tue:10:46",
           "PubliclyAccessible": true,
           "ReadReplicaDBInstanceIdentifiers": [
-
           ],
           "StorageEncrypted": false,
           "StorageType": "gp2",
@@ -1762,7 +1759,6 @@
             }
           ],
           "DBSecurityGroups": [
-
           ],
           "DBSubnetGroup": {
             "DBSubnetGroupDescription": "default",
@@ -1796,7 +1792,6 @@
           "DbInstancePort": 0,
           "DbiResourceId": "db-VNZUCCBTEDC4WR7THXNJO72HVQ",
           "DomainMemberships": [
-
           ],
           "Engine": "mysql",
           "EngineVersion": "5.6.27",
@@ -1816,7 +1811,6 @@
           "PreferredMaintenanceWindow": "tue:10:16-tue:10:46",
           "PubliclyAccessible": true,
           "ReadReplicaDBInstanceIdentifiers": [
-
           ],
           "StorageEncrypted": false,
           "StorageType": "gp2",

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -35,6 +50,52 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
      **          UPDATE (default)               **
      *********************************************/
 
+    private static TestItem putRandomUniqueItem(String nonKeyAttributeValue, Set<String> stringSetAttributeValue) {
+        String hashKeyValue = UUID.randomUUID().toString();
+        Long rangeKeyValue = System.currentTimeMillis();
+        Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
+        item.put(hashKeyName, new AttributeValue().withS(hashKeyValue));
+        item.put(rangeKeyName, new AttributeValue().withN(rangeKeyValue.toString()));
+        if (null != nonKeyAttributeValue) {
+            item.put(nonKeyAttributeName, new AttributeValue().withS(nonKeyAttributeValue));
+        }
+        if (null != stringSetAttributeValue) {
+            item.put(stringSetAttributeName, new AttributeValue().withSS(stringSetAttributeValue));
+        }
+        dynamo.putItem(new PutItemRequest().withTableName(tableName).withItem(item));
+
+        /* Returns the item as a modeled object. */
+        TestItem testItem = new TestItem();
+        testItem.setHashKey(hashKeyValue);
+        testItem.setRangeKey(rangeKeyValue);
+        testItem.setNonKeyAttribute(nonKeyAttributeValue);
+        testItem.setStringSetAttribute(stringSetAttributeValue);
+        return testItem;
+    }
+
+    private static Set<String> generateRandomStringSet(int size) {
+        Set<String> result = new HashSet<String>();
+        for (int i = 0; i < size; i++) {
+            result.add(UUID.randomUUID().toString());
+        }
+        return result;
+    }
+
+    private static boolean assertSetEquals(Set<?> expected, Set<?> actual) {
+        if (expected == null || actual == null) {
+            return (expected == null && actual == null);
+        }
+        if (expected.size() != actual.size()) {
+            return false;
+        }
+        for (Object item : expected) {
+            if (!actual.contains(item)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Tests that a key-only object could be saved with
      * UPDATE configuration, even when the key has already existed in the table.
@@ -45,12 +106,12 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
 
         /* First put a new item (with non-key attribute)*/
         TestItem testItem = putRandomUniqueItem("foo", null);
-        
+
         /* Put an key-only object with the same key */
         testItem.setNonKeyAttribute(null);
 
         dynamoMapper.save(testItem, defaultConfig);
-        
+
         /* The non-key attribute should be nulled out. */
         TestItem returnedObject = (TestItem) dynamoMapper.load(testItem);
         assertNotNull(returnedObject);
@@ -58,6 +119,10 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
         assertNull(returnedObject.getNonKeyAttribute());
     }
+
+    /*********************************************
+     **      UPDATE_SKIP_NULL_ATTRIBUTES        **
+     *********************************************/
 
     /**
      * Tests an edge case that we have fixed according a forum bug report. If
@@ -100,7 +165,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(hashKeyValue, returnedObject.getHashKey());
         assertEquals(rangeKeyValue, returnedObject.getRangeKey());
         assertNull(returnedObject.getNonKeyAttribute());
-        
+
         /* Put an updated object with the same key and an additional non-key attribute. */
         testItem.setHashKey(hashKeyValue);
         testItem.setRangeKey(rangeKeyValue);
@@ -136,10 +201,6 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
     }
 
-    /*********************************************
-     **      UPDATE_SKIP_NULL_ATTRIBUTES        **
-     *********************************************/
-
     /**
      * When using UPDATE_SKIP_NULL_ATTRIBUTES, key-only update on existing item
      * should not affect the item at all, since all the null-valued non-key
@@ -151,7 +212,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
 
         /* First put a new item (with non-key attribute)*/
         TestItem testItem = putRandomUniqueItem("foo", null);
-        
+
         /* Put an key-only object with the same key */
         testItem.setNonKeyAttribute(null);
 
@@ -165,6 +226,10 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
         assertEquals("foo", returnedObject.getNonKeyAttribute());
     }
+
+    /*********************************************
+     **               APPEND_SET                **
+     *********************************************/
 
     /**
      * The behavior should be the same as UPDATE.
@@ -204,7 +269,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(hashKeyValue, returnedObject.getHashKey());
         assertEquals(rangeKeyValue, returnedObject.getRangeKey());
         assertNull(returnedObject.getNonKeyAttribute());
-        
+
         /* Put an updated object with the same key and an additional non-key attribute. */
         String nonKeyAttributeValue = "update";
         testItem.setHashKey(hashKeyValue);
@@ -218,7 +283,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
         assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
-        
+
         /* At last, save the object again, but with non-key attribute set as null.
          * This should not change the existing item.
          */
@@ -253,10 +318,6 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
     }
 
-    /*********************************************
-     **               APPEND_SET                **
-     *********************************************/
-
     /**
      * The behavior should be the same as UPDATE_SKIP_NULL_ATTRIBUTES.
      */
@@ -267,7 +328,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         /* First put a new item (with non-key attributes)*/
         Set<String> randomSet = generateRandomStringSet(3);
         TestItem testItem = putRandomUniqueItem("foo", randomSet);
-        
+
         /* Put an key-only object with the same key */
         testItem.setNonKeyAttribute(null);
         testItem.setStringSetAttribute(null);
@@ -283,6 +344,10 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals("foo", returnedObject.getNonKeyAttribute());
         assertTrue(assertSetEquals(randomSet, returnedObject.getStringSetAttribute()));
     }
+
+    /*********************************************
+     **                 CLOBBER                 **
+     *********************************************/
 
     /**
      * The behavior should be the same as UPDATE and UPDATE_SKIP_NULL_ATTRIBUTES.
@@ -324,7 +389,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(rangeKeyValue, returnedObject.getRangeKey());
         assertNull(returnedObject.getNonKeyAttribute());
         assertNull(returnedObject.getStringSetAttribute());
-        
+
         /* Put an updated object with the same key and an additional non-key attribute. */
         String nonKeyAttributeValue = "update";
         Set<String> stringSetAttributeValue = generateRandomStringSet(3);
@@ -341,7 +406,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
         assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
         assertTrue(assertSetEquals(testItem.getStringSetAttribute(), returnedObject.getStringSetAttribute()));
-        
+
         /* Override nonKeyAttribute and append stringSetAttribute */
         testItem.setNonKeyAttribute("blabla");
         Set<String> appendSetAttribute = generateRandomStringSet(3);
@@ -356,7 +421,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         // expected set after the append
         stringSetAttributeValue.addAll(appendSetAttribute);
         assertTrue(assertSetEquals(stringSetAttributeValue, returnedObject.getStringSetAttribute()));
-        
+
         /* Append on an existing scalar attribute would result in an exception */
         TestAppendToScalarItem testAppendToScalarItem = new TestAppendToScalarItem();
         testAppendToScalarItem.setHashKey(testItem.getHashKey());
@@ -394,10 +459,6 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getStringSetAttribute(), returnedObject.getStringSetAttribute());
 
     }
-
-    /*********************************************
-     **                 CLOBBER                 **
-     *********************************************/
 
     /**
      * Use CLOBBER to override the existing item by saving a key-only object.
@@ -480,51 +541,5 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
         assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
-    }
-
-    private static TestItem putRandomUniqueItem(String nonKeyAttributeValue, Set<String> stringSetAttributeValue) {
-        String hashKeyValue = UUID.randomUUID().toString();
-        Long rangeKeyValue = System.currentTimeMillis();
-        Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(hashKeyName, new AttributeValue().withS(hashKeyValue));
-        item.put(rangeKeyName, new AttributeValue().withN(rangeKeyValue.toString()));
-        if (null != nonKeyAttributeValue) {
-            item.put(nonKeyAttributeName, new AttributeValue().withS(nonKeyAttributeValue));
-        }
-        if (null != stringSetAttributeValue) {
-            item.put(stringSetAttributeName, new AttributeValue().withSS(stringSetAttributeValue));
-        }
-        dynamo.putItem(new PutItemRequest().withTableName(tableName).withItem(item));
-        
-        /* Returns the item as a modeled object. */
-        TestItem testItem = new TestItem();
-        testItem.setHashKey(hashKeyValue);
-        testItem.setRangeKey(rangeKeyValue);
-        testItem.setNonKeyAttribute(nonKeyAttributeValue);
-        testItem.setStringSetAttribute(stringSetAttributeValue);
-        return testItem;
-    }
-
-    private static Set<String> generateRandomStringSet(int size) {
-        Set<String> result = new HashSet<String>();
-        for (int i = 0; i < size; i++) {
-            result.add(UUID.randomUUID().toString());
-        }
-        return result;
-    }
-
-    private static boolean assertSetEquals(Set<?> expected, Set<?> actual) {
-        if (expected == null || actual == null) {
-            return (expected == null && actual == null);
-        }
-        if (expected.size() != actual.size()) {
-            return false;
-        }
-        for (Object item : expected) {
-            if (!actual.contains(item)) {
-                return false;
-            }
-        }
-        return true;
     }
 } 

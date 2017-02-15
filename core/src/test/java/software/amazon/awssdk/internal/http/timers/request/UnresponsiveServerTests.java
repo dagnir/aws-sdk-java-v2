@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public class UnresponsiveServerTests extends UnresponsiveMockServerTestBase {
         // Client configuration is set arbitrarily high so that the test will timeout if the
         // client configuration is incorrectly honored over the request config
         httpClient = new AmazonHttpClient(new ClientConfiguration().withSocketTimeout(LONGER_SOCKET_TIMEOUT)
-                .withRequestTimeout(REQUEST_TIMEOUT * 1000).withMaxErrorRetry(0));
+                                                                   .withRequestTimeout(REQUEST_TIMEOUT * 1000).withMaxErrorRetry(0));
 
         try {
             EmptyHttpRequest request = newGetRequest();

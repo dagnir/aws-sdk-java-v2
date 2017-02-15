@@ -18,7 +18,7 @@ package software.amazon.awssdk.jmespath;
 /**
  * Implements logical AND on the given expressions
  */
-public class JmesPathAndExpression implements JmesPathExpression{
+public class JmesPathAndExpression implements JmesPathExpression {
 
     /**
      * Represents the left expression

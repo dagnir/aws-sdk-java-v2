@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import software.amazon.awssdk.event.request.ProgressSupport;
  */
 public class ProgressTracker extends SyncProgressListener {
     public static final ProgressTracker NOOP = new ProgressTracker() {
-        @Override public void progressChanged(ProgressEvent progressEvent) {}
+        @Override
+        public void progressChanged(ProgressEvent progressEvent) {
+        }
     };
 
     private final Progress progress = new ProgressSupport();
@@ -31,8 +33,9 @@ public class ProgressTracker extends SyncProgressListener {
     @Override
     public void progressChanged(ProgressEvent progressEvent) {
         long bytes = progressEvent.getBytes();
-        if (bytes <= 0)
+        if (bytes <= 0) {
             return;
+        }
         switch (progressEvent.getEventType()) {
             case REQUEST_CONTENT_LENGTH_EVENT:
                 progress.addRequestContentLength(bytes);
@@ -47,16 +50,18 @@ public class ProgressTracker extends SyncProgressListener {
                 progress.addResponseBytesTransferred(bytes);
                 break;
             case HTTP_REQUEST_CONTENT_RESET_EVENT:
-                progress.addRequestBytesTransferred(0-bytes);
+                progress.addRequestBytesTransferred(0 - bytes);
                 break;
-            case HTTP_RESPONSE_CONTENT_RESET_EVENT: 
-            case RESPONSE_BYTE_DISCARD_EVENT: 
-                progress.addResponseBytesTransferred(0-bytes);
+            case HTTP_RESPONSE_CONTENT_RESET_EVENT:
+            case RESPONSE_BYTE_DISCARD_EVENT:
+                progress.addResponseBytesTransferred(0 - bytes);
                 break;
             default:
                 break;
         }
     }
-    
-    public Progress getProgress() { return progress; }
+
+    public Progress getProgress() {
+        return progress;
+    }
 }

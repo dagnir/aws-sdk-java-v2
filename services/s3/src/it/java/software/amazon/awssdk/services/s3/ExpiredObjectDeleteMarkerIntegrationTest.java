@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +51,7 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
     @Test
     public void setBucketLifecycle_WithExpiredObjectDeleteMarkersTrue_ExpiredObjectDeleteMarkerIsTrueOnGet() {
         setBucketLifecycleConfiguration(new BucketLifecycleConfiguration()
-                .withRules(newRuleWithExpiredObjectDeleteMarkerStatus(true)));
+                                                .withRules(newRuleWithExpiredObjectDeleteMarkerStatus(true)));
         BucketLifecycleConfiguration config = getBucketLifecycleConfiguration();
         assertTrue(getFirstRule(config).isExpiredObjectDeleteMarker());
     }
@@ -44,8 +59,8 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
     @Test
     public void setBucketLifecycle_WithExpiredObjectDeleteMarkersFalse_ExpiredObjectDeleteMarkerIsFalseOnGet() {
         setBucketLifecycleConfiguration(new BucketLifecycleConfiguration()
-                .withRules(newRuleWithExpiredObjectDeleteMarkerStatus(false)
-                        .withNoncurrentVersionExpirationInDays(3)));
+                                                .withRules(newRuleWithExpiredObjectDeleteMarkerStatus(false)
+                                                                   .withNoncurrentVersionExpirationInDays(3)));
         BucketLifecycleConfiguration config = getBucketLifecycleConfiguration();
         assertFalse(getFirstRule(config).isExpiredObjectDeleteMarker());
         assertEquals(3, getFirstRule(config).getNoncurrentVersionExpirationInDays());
@@ -55,15 +70,15 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
     @Test(expected = AmazonS3Exception.class)
     public void setBucketLifecycle_WithExpiredObjectDeleteMarkersTrue_CurrentVersionExpirationSet() {
         setBucketLifecycleConfiguration(new BucketLifecycleConfiguration()
-                .withRules(newRuleWithExpiredObjectDeleteMarkerStatus(true)
-                        .withExpirationInDays(3)));
+                                                .withRules(newRuleWithExpiredObjectDeleteMarkerStatus(true)
+                                                                   .withExpirationInDays(3)));
     }
 
     @Test
     public void setBucketLifecycle_WithExpiredObjectDeleteMarkersNotSet_ExpiredObjectDeleteMarkerIsFalseOnGet() {
         setBucketLifecycleConfiguration(new BucketLifecycleConfiguration().withRules(new Rule().withId("id")
-                .withFilter(new LifecycleFilter(new LifecyclePrefixPredicate(UUID.randomUUID().toString())))
-                .withStatus(BucketLifecycleConfiguration.ENABLED).withNoncurrentVersionExpirationInDays(3)));
+                                                                                               .withFilter(new LifecycleFilter(new LifecyclePrefixPredicate(UUID.randomUUID().toString())))
+                                                                                               .withStatus(BucketLifecycleConfiguration.ENABLED).withNoncurrentVersionExpirationInDays(3)));
         BucketLifecycleConfiguration config = getBucketLifecycleConfiguration();
         assertFalse(getFirstRule(config).isExpiredObjectDeleteMarker());
     }
@@ -120,12 +135,12 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
                 newRuleWithPrefix(prefix2).withExpirationInDays(3)));
     }
 
-    private void setBucketLifecycleConfiguration(BucketLifecycleConfiguration lifecycleConfig) {
-        s3.setBucketLifecycleConfiguration(new SetBucketLifecycleConfigurationRequest(BUCKET_NAME, lifecycleConfig));
-    }
-
     private BucketLifecycleConfiguration getBucketLifecycleConfiguration() {
         return s3.getBucketLifecycleConfiguration(BUCKET_NAME);
+    }
+
+    private void setBucketLifecycleConfiguration(BucketLifecycleConfiguration lifecycleConfig) {
+        s3.setBucketLifecycleConfiguration(new SetBucketLifecycleConfigurationRequest(BUCKET_NAME, lifecycleConfig));
     }
 
     /**
@@ -143,7 +158,7 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
      */
     private Rule newRuleWithExpiredObjectDeleteMarkerStatus(boolean status) {
         return new Rule().withId(UUID.randomUUID().toString()).withPrefix(UUID.randomUUID().toString())
-                .withExpiredObjectDeleteMarker(status).withStatus(BucketLifecycleConfiguration.ENABLED);
+                         .withExpiredObjectDeleteMarker(status).withStatus(BucketLifecycleConfiguration.ENABLED);
     }
 
     /**
@@ -156,7 +171,7 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
      */
     private Rule newRuleWithExpiredObjectDeleteMarkerStatus(String ruleId, boolean status) {
         return new Rule().withId(ruleId).withPrefix(UUID.randomUUID().toString()).withExpiredObjectDeleteMarker(status)
-                .withStatus(BucketLifecycleConfiguration.ENABLED);
+                         .withStatus(BucketLifecycleConfiguration.ENABLED);
     }
 
     /**
@@ -170,8 +185,8 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
      */
     private Rule newRuleWithPrefixAndExpiredObjectDeleteMarker(String prefix, boolean expiredObjectDeleteMarker) {
         return new Rule().withId(UUID.randomUUID().toString()).withPrefix(prefix)
-                .withExpiredObjectDeleteMarker(expiredObjectDeleteMarker)
-                .withStatus(BucketLifecycleConfiguration.ENABLED);
+                         .withExpiredObjectDeleteMarker(expiredObjectDeleteMarker)
+                         .withStatus(BucketLifecycleConfiguration.ENABLED);
     }
 
     /**
@@ -182,7 +197,7 @@ public class ExpiredObjectDeleteMarkerIntegrationTest extends S3IntegrationTestB
      */
     private Rule newRuleWithPrefix(String prefix) {
         return new Rule().withId(UUID.randomUUID().toString()).withPrefix(prefix)
-                .withStatus(BucketLifecycleConfiguration.ENABLED);
+                         .withStatus(BucketLifecycleConfiguration.ENABLED);
     }
 
     /**

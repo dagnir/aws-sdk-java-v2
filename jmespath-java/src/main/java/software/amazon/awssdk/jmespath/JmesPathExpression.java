@@ -19,7 +19,7 @@ package software.amazon.awssdk.jmespath;
  * Interface for accessing JmesPath expression. Different
  * types of JmesPath expressions are supported.
  */
-public interface JmesPathExpression{
+public interface JmesPathExpression {
 
     /**
      * Abstract method definition to delegate to either

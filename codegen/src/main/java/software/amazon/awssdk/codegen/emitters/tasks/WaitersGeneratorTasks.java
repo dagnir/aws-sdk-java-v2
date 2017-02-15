@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,6 +39,11 @@ public class WaitersGeneratorTasks extends BaseGeneratorTasks {
         this.waiterClassDir = dependencies.getPathProvider().getWaitersDirectory();
     }
 
+    private static boolean containsAllStatusMatchers(Map.Entry<String, WaiterDefinitionModel> entry) {
+        return entry.getValue().getAcceptors().stream()
+                    .allMatch(a -> a.getMatcher().equals("status"));
+    }
+
     @Override
     protected boolean hasTasks() {
         return model.getHasWaiters();
@@ -48,8 +53,8 @@ public class WaitersGeneratorTasks extends BaseGeneratorTasks {
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting waiter classes");
         return Stream.of(createWaiterOpFunctionClassTasks(), createWaiterAcceptorClassTasks(), createWaiterClassTasks())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                     .flatMap(Collection::stream)
+                     .collect(Collectors.toList());
     }
 
     /**
@@ -109,11 +114,6 @@ public class WaitersGeneratorTasks extends BaseGeneratorTasks {
 
         }
         return generatorTasks;
-    }
-
-    private static boolean containsAllStatusMatchers(Map.Entry<String, WaiterDefinitionModel> entry) {
-        return entry.getValue().getAcceptors().stream()
-                .allMatch(a -> a.getMatcher().equals("status"));
     }
 
     /**

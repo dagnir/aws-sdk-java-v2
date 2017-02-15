@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,15 +35,11 @@ public class ListWithAutoConstructFlag<T> extends ArrayList<T> {
     }
 
     public ListWithAutoConstructFlag(Collection<? extends T> c) {
-          super(c);
+        super(c);
     }
 
-    public  ListWithAutoConstructFlag(int initialCapacity) {
+    public ListWithAutoConstructFlag(int initialCapacity) {
         super(initialCapacity);
-    }
-
-    public void setAutoConstruct(boolean autoConstruct) {
-        this.autoConstruct = autoConstruct;
     }
 
     /**
@@ -51,6 +47,10 @@ public class ListWithAutoConstructFlag<T> extends ArrayList<T> {
      */
     public boolean isAutoConstruct() {
         return autoConstruct;
+    }
+
+    public void setAutoConstruct(boolean autoConstruct) {
+        this.autoConstruct = autoConstruct;
     }
 
 }

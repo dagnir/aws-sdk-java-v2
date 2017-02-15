@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -30,6 +30,15 @@ import software.amazon.awssdk.services.dynamodbv2.model.Condition;
  * Covers ScanFilter, which shares the same underlying implementation as QueryFilter.
  */
 public class FilterConditionTest {
+
+    private static Entry<String, Condition> toAttributeCondition(ScanFilter ScanFilter) {
+        Map<String, Condition> map = InternalUtils
+                .toAttributeConditionMap(Arrays.asList(ScanFilter));
+        Assert.assertEquals(1, map.size());
+
+        Iterator<Entry<String, Condition>> iter = map.entrySet().iterator();
+        return iter.next();
+    }
 
     @Test
     public void testScanFilter_EQ() {
@@ -158,15 +167,17 @@ public class FilterConditionTest {
 
         // Null values
         try {
-            ScanFilter = new ScanFilter("foo").in((Object[])null);
+            ScanFilter = new ScanFilter("foo").in((Object[]) null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+        }
 
         // Empty values
         try {
             ScanFilter = new ScanFilter("foo").in();
             Assert.fail();
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     @Test
@@ -240,12 +251,14 @@ public class FilterConditionTest {
         try {
             new ScanFilter(null);
             Assert.fail();
-        } catch (IllegalArgumentException ScanFilter) {}
+        } catch (IllegalArgumentException ScanFilter) {
+        }
 
         try {
             new ScanFilter("");
             Assert.fail();
-        } catch (IllegalArgumentException ScanFilter) {}
+        } catch (IllegalArgumentException ScanFilter) {
+        }
     }
 
     @Test
@@ -256,15 +269,7 @@ public class FilterConditionTest {
                     new ScanFilter("foo").eq("bar"),
                     new ScanFilter("foo").eq("charlie"));
             Assert.fail();
-        } catch (IllegalArgumentException ScanFilter) {}
-    }
-
-    private static Entry<String, Condition> toAttributeCondition(ScanFilter ScanFilter) {
-        Map<String, Condition> map = InternalUtils
-                .toAttributeConditionMap(Arrays.asList(ScanFilter));
-        Assert.assertEquals(1, map.size());
-
-        Iterator<Entry<String, Condition>> iter = map.entrySet().iterator();
-        return iter.next();
+        } catch (IllegalArgumentException ScanFilter) {
+        }
     }
 }

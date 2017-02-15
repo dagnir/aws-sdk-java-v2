@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package utils.test.util;
 
 import org.junit.BeforeClass;
@@ -33,11 +34,9 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
 
     protected static final String KEY_NAME = "key";
     protected static final String TABLE_NAME = "aws-java-sdk-util";
-
-    protected static long startKey = System.currentTimeMillis();
-
     protected static final String TABLE_WITH_RANGE_ATTRIBUTE = "aws-java-sdk-range-test";
     protected static final String TABLE_WITH_INDEX_RANGE_ATTRIBUTE = "aws-java-sdk-index-range-test";
+    protected static long startKey = System.currentTimeMillis();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -54,7 +53,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
                         new AttributeDefinition().withAttributeName(keyName).withAttributeType(
                                 ScalarAttributeType.S));
         createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                            .withWriteCapacityUnits(5L));
+                                                                               .withWriteCapacityUnits(5L));
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_NAME);
@@ -87,7 +86,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
                         new AttributeDefinition().withAttributeName(rangeKeyAttributeName).withAttributeType(
                                 ScalarAttributeType.N));
         createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                            .withWriteCapacityUnits(5L));
+                                                                               .withWriteCapacityUnits(5L));
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_WITH_RANGE_ATTRIBUTE);
@@ -124,7 +123,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
                                 .withKeySchema(
                                         new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
                                         new KeySchemaElement().withAttributeName(indexFooRangeKeyAttributeName)
-                                                .withKeyType(KeyType.RANGE))
+                                                              .withKeyType(KeyType.RANGE))
                                 .withProjection(new Projection()
                                                         .withProjectionType(ProjectionType.INCLUDE)
                                                         .withNonKeyAttributes(fooAttributeName)),
@@ -133,7 +132,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
                                 .withKeySchema(
                                         new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
                                         new KeySchemaElement().withAttributeName(indexBarRangeKeyAttributeName)
-                                                .withKeyType(KeyType.RANGE))
+                                                              .withKeyType(KeyType.RANGE))
                                 .withProjection(new Projection()
                                                         .withProjectionType(ProjectionType.INCLUDE)
                                                         .withNonKeyAttributes(barAttributeName)),
@@ -142,7 +141,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
                                 .withKeySchema(
                                         new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
                                         new KeySchemaElement().withAttributeName(multipleIndexRangeKeyAttributeName)
-                                                .withKeyType(KeyType.RANGE))
+                                                              .withKeyType(KeyType.RANGE))
                                 .withProjection(new Projection()
                                                         .withProjectionType(ProjectionType.INCLUDE)
                                                         .withNonKeyAttributes(fooAttributeName)),
@@ -151,22 +150,22 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
                                 .withKeySchema(
                                         new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
                                         new KeySchemaElement().withAttributeName(multipleIndexRangeKeyAttributeName)
-                                                .withKeyType(KeyType.RANGE))
+                                                              .withKeyType(KeyType.RANGE))
                                 .withProjection(new Projection()
                                                         .withProjectionType(ProjectionType.INCLUDE)
                                                         .withNonKeyAttributes(barAttributeName)))
                 .withAttributeDefinitions(
                         new AttributeDefinition().withAttributeName(keyName).withAttributeType(ScalarAttributeType.N),
                         new AttributeDefinition().withAttributeName(rangeKeyAttributeName)
-                                .withAttributeType(ScalarAttributeType.N),
+                                                 .withAttributeType(ScalarAttributeType.N),
                         new AttributeDefinition().withAttributeName(indexFooRangeKeyAttributeName)
-                                .withAttributeType(ScalarAttributeType.N),
+                                                 .withAttributeType(ScalarAttributeType.N),
                         new AttributeDefinition().withAttributeName(indexBarRangeKeyAttributeName)
-                                .withAttributeType(ScalarAttributeType.N),
+                                                 .withAttributeType(ScalarAttributeType.N),
                         new AttributeDefinition().withAttributeName(multipleIndexRangeKeyAttributeName)
-                                .withAttributeType(ScalarAttributeType.N));
+                                                 .withAttributeType(ScalarAttributeType.N));
         createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                            .withWriteCapacityUnits(5L));
+                                                                               .withWriteCapacityUnits(5L));
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_WITH_INDEX_RANGE_ATTRIBUTE);

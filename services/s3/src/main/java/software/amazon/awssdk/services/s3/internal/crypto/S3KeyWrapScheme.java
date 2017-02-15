@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,11 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import java.security.Key;
 
 class S3KeyWrapScheme {
+    public static final String AESWrap = "AESWrap";
+    public static final String RSA_ECB_OAEPWithSHA256AndMGF1Padding = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
     /**
      * Used for backward compatibility where the encryption only mode has no
      * explicit key wrapping scheme.
@@ -25,10 +28,12 @@ class S3KeyWrapScheme {
         String getKeyWrapAlgorithm(Key key) {
             return null;
         }
-        @Override public String toString() { return "NONE"; }
+
+        @Override
+        public String toString() {
+            return "NONE";
+        }
     };
-    public static final String AESWrap = "AESWrap"; 
-    public static final String RSA_ECB_OAEPWithSHA256AndMGF1Padding = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
 
     /**
      * @param kek
@@ -41,11 +46,15 @@ class S3KeyWrapScheme {
             return AESWrap;
         }
         if (S3CryptoScheme.RSA.equals(algorithm)) {
-            if (CryptoRuntime.isRsaKeyWrapAvailable())
+            if (CryptoRuntime.isRsaKeyWrapAvailable()) {
                 return RSA_ECB_OAEPWithSHA256AndMGF1Padding;
+            }
         }
         return null;
     }
 
-    @Override public String toString() { return "S3KeyWrapScheme"; }
+    @Override
+    public String toString() {
+        return "S3KeyWrapScheme";
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package utils.http;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -34,6 +35,17 @@ public abstract class S3WireMockTestBase {
     @Rule
     public WireMockRule mockServer = new WireMockRule(0);
 
+    public static String getExpectedMarshalledXml(String resourceName) {
+        final InputStream stream = S3WireMockTestBase.class.getResourceAsStream("/resources/marshalling/" + resourceName);
+        try {
+            return IOUtils.toString(stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(stream, null);
+        }
+    }
+
     protected String getEndpoint() {
         return "http://localhost:" + mockServer.port();
     }
@@ -51,20 +63,9 @@ public abstract class S3WireMockTestBase {
     protected ResponseDefinitionBuilder stubS3ResponseCommon(
             ResponseDefinitionBuilder responseBuilder) {
         return responseBuilder.withHeader(Headers.REQUEST_ID, "36E5C81B8463E101")
-                .withHeader(Headers.EXTENDED_REQUEST_ID,
-                            "FJKdbo9Vbfb+MGbciAgKQ+Dy8mQ70rKNaz7PHvoCNKiZuh0OcKJd9Y9a6g8v1Oec")
-                .withHeader(Headers.CONTENT_TYPE, "application/xml");
+                              .withHeader(Headers.EXTENDED_REQUEST_ID,
+                                          "FJKdbo9Vbfb+MGbciAgKQ+Dy8mQ70rKNaz7PHvoCNKiZuh0OcKJd9Y9a6g8v1Oec")
+                              .withHeader(Headers.CONTENT_TYPE, "application/xml");
 
-    }
-
-    public static String getExpectedMarshalledXml(String resourceName) {
-        final InputStream stream = S3WireMockTestBase.class.getResourceAsStream("/resources/marshalling/" + resourceName);
-        try {
-            return IOUtils.toString(stream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(stream, null);
-        }
     }
 }

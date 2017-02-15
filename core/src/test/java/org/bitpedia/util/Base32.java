@@ -1,8 +1,16 @@
 /*
- * Copyright (PD) 2006 The Bitzi Corporation
- * Please see http://bitzi.com/publicdomain for more info.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * $Id: //brazil/src/appgroup/globalPaymentServices/tools/YaUtils/mainline/tst/org/bitpedia/util/Base32.java#1 $
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package org.bitpedia.util;
@@ -16,19 +24,19 @@ package org.bitpedia.util;
  */
 public class Base32 {
     private static final String base32Chars =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
     private static final int[] base32Lookup =
-    { 0xFF,0xFF,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F, // '0', '1', '2', '3', '4', '5', '6', '7'
-      0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, // '8', '9', ':', ';', '<', '=', '>', '?'
-      0xFF,0x00,0x01,0x02,0x03,0x04,0x05,0x06, // '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G'
-      0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E, // 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'
-      0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16, // 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'
-      0x17,0x18,0x19,0xFF,0xFF,0xFF,0xFF,0xFF, // 'X', 'Y', 'Z', '[', '\', ']', '^', '_'
-      0xFF,0x00,0x01,0x02,0x03,0x04,0x05,0x06, // '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g'
-      0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E, // 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'
-      0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16, // 'p', 'q', 'r', 's', 't', 'u', 'v', 'w'
-      0x17,0x18,0x19,0xFF,0xFF,0xFF,0xFF,0xFF  // 'x', 'y', 'z', '{', '|', '}', '~', 'DEL'
-    };
+            {0xFF, 0xFF, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, // '0', '1', '2', '3', '4', '5', '6', '7'
+             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // '8', '9', ':', ';', '<', '=', '>', '?'
+             0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, // '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G'
+             0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, // 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'
+             0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, // 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'
+             0x17, 0x18, 0x19, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 'X', 'Y', 'Z', '[', '\', ']', '^', '_'
+             0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, // '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g'
+             0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, // 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'
+             0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, // 'p', 'q', 'r', 's', 't', 'u', 'v', 'w'
+             0x17, 0x18, 0x19, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF  // 'x', 'y', 'z', '{', '|', '}', '~', 'DEL'
+            };
 
     /**
      * Encodes byte array to Base32 String.
@@ -49,7 +57,7 @@ public class Base32 {
             if (index > 3) {
                 if ((i + 1) < bytes.length) {
                     nextByte =
-                        (bytes[i + 1] >= 0) ? bytes[i + 1] : (bytes[i + 1] + 256);
+                            (bytes[i + 1] >= 0) ? bytes[i + 1] : (bytes[i + 1] + 256);
                 } else {
                     nextByte = 0;
                 }
@@ -62,8 +70,9 @@ public class Base32 {
             } else {
                 digit = (currByte >> (8 - (index + 5))) & 0x1F;
                 index = (index + 5) % 8;
-                if (index == 0)
+                if (index == 0) {
                     i++;
+                }
             }
             base32.append(base32Chars.charAt(digit));
         }
@@ -101,8 +110,9 @@ public class Base32 {
                 if (index == 0) {
                     bytes[offset] |= digit;
                     offset++;
-                    if (offset >= bytes.length)
+                    if (offset >= bytes.length) {
                         break;
+                    }
                 } else {
                     bytes[offset] |= digit << (8 - index);
                 }

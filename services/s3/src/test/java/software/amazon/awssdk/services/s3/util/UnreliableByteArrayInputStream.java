@@ -1,8 +1,25 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.util;
 
 import software.amazon.awssdk.util.FakeIOException;
 
 public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
+    // True to throw a FakeIOException; false to throw a RuntimeException
+    private final boolean isFakeIOException;
     /**
      * Max number of errors that can be triggered.
      */
@@ -12,8 +29,6 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
      */
     private int currNumberOfErrors;
     private int position;
-    // True to throw a FakeIOException; false to throw a RuntimeException
-    private final boolean isFakeIOException;
 
     public UnreliableByteArrayInputStream(byte buf[]) {
         super(buf);
@@ -28,7 +43,9 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
     @Override
     public int read() throws FakeIOException {
         int read = super.read();
-        if (read != -1) position++;
+        if (read != -1) {
+            position++;
+        }
         triggerError();
         return read;
     }
@@ -43,16 +60,19 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
     }
 
     private void triggerError() throws FakeIOException {
-        if (currNumberOfErrors >= maxNumberOfErrors) return;
+        if (currNumberOfErrors >= maxNumberOfErrors) {
+            return;
+        }
 
         if (position >= 100) {
             currNumberOfErrors++;
-            if (isFakeIOException)
+            if (isFakeIOException) {
                 throw new FakeIOException("Fake IO error " + currNumberOfErrors
-                    + " on UnreliableFileInputStream");
-            else
+                                          + " on UnreliableFileInputStream");
+            } else {
                 throw new RuntimeException("Injected runtime error " + currNumberOfErrors
-                        + " on UnreliableFileInputStream");
+                                           + " on UnreliableFileInputStream");
+            }
         }
     }
 
@@ -66,7 +86,7 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
 
     public UnreliableByteArrayInputStream withNumberOfErrors(int numberOfErrors) {
         this.maxNumberOfErrors = numberOfErrors;
-        return this; 
+        return this;
     }
 
     public int getCurrNumberOfErrors() {

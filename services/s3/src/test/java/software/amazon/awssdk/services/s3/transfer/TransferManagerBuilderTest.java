@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static org.hamcrest.Matchers.instanceOf;
@@ -39,31 +40,8 @@ public class TransferManagerBuilderTest {
      * Dummy threshold for various threshold related configuration in TransferManager.
      */
     private static final long DUMMY_THRESHOLD = 9001L;
-
-    /**
-     * Mock factory that captures the params supplied to TransferManager creation for verification
-     * in tests.
-     */
-    private static class MockTransferManagerFactory implements
-                                                    SdkFunction<TransferManagerParams, TransferManager> {
-
-        private TransferManagerParams capturedParams;
-
-        @Override
-        public TransferManager apply(TransferManagerParams params) {
-            this.capturedParams = params;
-            return new TransferManager(params);
-        }
-
-        public TransferManagerParams getCapturedParams() {
-            return capturedParams;
-        }
-    }
-
     private MockTransferManagerFactory mockTransferManagerFactory;
-
     private TransferManagerBuilder builder;
-
     @Mock
     private AmazonS3 s3Client;
 
@@ -170,6 +148,26 @@ public class TransferManagerBuilderTest {
     private TransferManagerConfiguration buildAndCaptureConfiguration() {
         builder.build();
         return mockTransferManagerFactory.getCapturedParams().getConfiguration();
+    }
+
+    /**
+     * Mock factory that captures the params supplied to TransferManager creation for verification
+     * in tests.
+     */
+    private static class MockTransferManagerFactory implements
+                                                    SdkFunction<TransferManagerParams, TransferManager> {
+
+        private TransferManagerParams capturedParams;
+
+        @Override
+        public TransferManager apply(TransferManagerParams params) {
+            this.capturedParams = params;
+            return new TransferManager(params);
+        }
+
+        public TransferManagerParams getCapturedParams() {
+            return capturedParams;
+        }
     }
 
 }

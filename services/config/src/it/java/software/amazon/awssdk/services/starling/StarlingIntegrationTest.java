@@ -20,31 +20,26 @@ import software.amazon.awssdk.test.AWSTestBase;
 
 public class StarlingIntegrationTest extends AWSTestBase {
 
+    /** Policy to describe the AWS resources */
+    private static final String POLICY_DESCRIBE_RESOURCES = "{"
+                                                            + "\"Version\": \"2012-10-17\"," + "\"Statement\":" + "[" + "{"
+                                                            + "\"Action\":" + "[" + "\"cloudtrail:DescribeTrails\","
+                                                            + "\"ec2:Describe*\"" + "]," + "\"Effect\": \"Allow\","
+                                                            + "\"Resource\": \"*\"" + "}" + "]" + "}";
+    /** Name of the role being created. */
+    private static final String DESCRIBE_ROLE_NAME = "java-sdk-config-describe-role-"
+                                                     + System.currentTimeMillis();
+    /** Reference to the config service client */
+    protected static AmazonConfigClient configServiceClient;
     /** Name of the configuration recorded */
     private static String recorderName = null;
-
     /**
      * ARN of the IAM role associated with the recorder to describe the AWS
      * resources
      */
     private static String configRecorderRoleArn = null;
-
     /** Reference to the IAM client */
     private static AmazonIdentityManagementClient iam = null;
-
-    /** Policy to describe the AWS resources */
-    private static final String POLICY_DESCRIBE_RESOURCES = "{"
-            + "\"Version\": \"2012-10-17\"," + "\"Statement\":" + "[" + "{"
-            + "\"Action\":" + "[" + "\"cloudtrail:DescribeTrails\","
-            + "\"ec2:Describe*\"" + "]," + "\"Effect\": \"Allow\","
-            + "\"Resource\": \"*\"" + "}" + "]" + "}";
-
-    /** Name of the role being created. */
-    private static final String DESCRIBE_ROLE_NAME = "java-sdk-config-describe-role-"
-            + System.currentTimeMillis();
-
-    /** Reference to the config service client */
-    protected static AmazonConfigClient configServiceClient;
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
@@ -59,10 +54,12 @@ public class StarlingIntegrationTest extends AWSTestBase {
 
     @AfterClass
     public static void tearDown() {
-        if (configServiceClient != null)
+        if (configServiceClient != null) {
             configServiceClient.shutdown();
-        if (iam != null)
+        }
+        if (iam != null) {
             iam.shutdown();
+        }
     }
 
     /**
@@ -79,8 +76,8 @@ public class StarlingIntegrationTest extends AWSTestBase {
             createRoleForConfigurationRecorder();
             configServiceClient
                     .putConfigurationRecorder(new PutConfigurationRecorderRequest()
-                            .withConfigurationRecorder(new ConfigurationRecorder()
-                                    .withRoleARN(configRecorderRoleArn)));
+                                                      .withConfigurationRecorder(new ConfigurationRecorder()
+                                                                                         .withRoleARN(configRecorderRoleArn)));
             describeConfigRecorderResult = configServiceClient
                     .describeConfigurationRecorders();
             configurationRecorders = describeConfigRecorderResult
@@ -112,7 +109,7 @@ public class StarlingIntegrationTest extends AWSTestBase {
         try {
             configServiceClient
                     .startConfigurationRecorder(new StartConfigurationRecorderRequest()
-                            .withConfigurationRecorderName(recorderName));
+                                                        .withConfigurationRecorderName(recorderName));
         } catch (AmazonServiceException e) {
             // Expected.
             // Delivery channel is not associated with the configuration

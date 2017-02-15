@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -58,7 +59,7 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  * <p>
  * S3 is eventually consistent. It may take time for the versioning status of a
  * bucket to be propagated throughout the system.
- * 
+ *
  * @see AmazonS3#getBucketVersioningConfiguration(String)
  * @see AmazonS3#setBucketVersioningConfiguration(SetBucketVersioningConfigurationRequest)
  */
@@ -84,8 +85,8 @@ public class BucketVersioningConfiguration implements Serializable {
      * bucket.
      */
     public static final String ENABLED = "Enabled";
-   
-    
+
+
     /** The current status of versioning */
     private String status;
 
@@ -95,7 +96,7 @@ public class BucketVersioningConfiguration implements Serializable {
      */
     private Boolean isMfaDeleteEnabled = null;
 
-    
+
     /**
      * Creates a new bucket versioning configuration object which defaults to
      * {@link #OFF} status.
@@ -111,11 +112,11 @@ public class BucketVersioningConfiguration implements Serializable {
      * Note that once versioning has been enabled for a bucket, its status can
      * only be {@link #SUSPENDED suspended} and can never be set back to
      * {@link #OFF off}.
-     * 
+     *
      * @param status
      *            The desired bucket versioning status for the new configuration
      *            object.
-     * 
+     *
      * @see #ENABLED
      * @see #SUSPENDED
      */
@@ -127,10 +128,10 @@ public class BucketVersioningConfiguration implements Serializable {
      * Returns the current status of versioning for this bucket versioning
      * configuration object, indicating if versioning is enabled or not for a
      * bucket.
-     * 
+     *
      * @return The current status of versioning for this bucket versioning
      *         configuration.
-     * 
+     *
      * @see #OFF
      * @see #ENABLED
      * @see #SUSPENDED
@@ -146,11 +147,11 @@ public class BucketVersioningConfiguration implements Serializable {
      * Note that once versioning has been enabled for a bucket, its status can
      * only be {@link #SUSPENDED suspended} and can never be set back to
      * {@link #OFF off}.
-     * 
+     *
      * @param status
      *            The desired status of versioning for this bucket versioning
      *            configuration.
-     * 
+     *
      * @see #ENABLED
      * @see #SUSPENDED
      */
@@ -166,14 +167,14 @@ public class BucketVersioningConfiguration implements Serializable {
      * Note that once versioning has been enabled for a bucket, its status can
      * only be {@link #SUSPENDED suspended} and can never be set back to
      * {@link #OFF off}.
-     * 
+     *
      * @param status
      *            The desired status of versioning for this bucket versioning
      *            configuration.
-     * 
+     *
      * @return The updated S3BucketVersioningConfiguration object so that
      *         additional method calls may be chained together.
-     * 
+     *
      * @see #ENABLED
      * @see #SUSPENDED
      */
@@ -196,7 +197,7 @@ public class BucketVersioningConfiguration implements Serializable {
      * <p>
      * When enabling or disabling MFA Delete controls, you <b>must</b> also
      * supply an MFA token from the hardware token generator.
-     * 
+     *
      * @return True if the Multi-Factor Authentication (MFA) Delete is enabled
      *         for this bucket versioning configuration, false if it isn't
      *         enabled, and null if no information is present on the status of
@@ -218,7 +219,7 @@ public class BucketVersioningConfiguration implements Serializable {
      * When enabling or disabling MFA Delete controls, you <b>must</b> also
      * supply an MFA token from the hardware token generator as part of the
      * request.
-     * 
+     *
      * @param mfaDeleteEnabled
      *            True if the Multi-Factor Authentication (MFA) Delete is being
      *            enabled enabled, false if it is being disabled.
@@ -240,11 +241,11 @@ public class BucketVersioningConfiguration implements Serializable {
      * When enabling or disabling MFA Delete controls, you <b>must</b> also
      * supply an MFA token from the hardware token generator as part of the
      * request.
-     * 
+     *
      * @param mfaDeleteEnabled
      *            True if the Multi-Factor Authentication (MFA) Delete is being
      *            enabled enabled, false if it is being disabled.
-     * 
+     *
      * @return The updated S3BucketVersioningConfiguration object so that
      *         additional method calls may be chained together.
      */
@@ -252,5 +253,5 @@ public class BucketVersioningConfiguration implements Serializable {
         setMfaDeleteEnabled(mfaDeleteEnabled);
         return this;
     }
-    
+
 }

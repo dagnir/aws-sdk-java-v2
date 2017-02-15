@@ -54,7 +54,7 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
     @Test
     public void testDBInstanceOperations() throws Exception {
         Date startTime = new Date();
-        String databaseInstanceName    = "java-integ-test-db-" + System.currentTimeMillis();
+        String databaseInstanceName = "java-integ-test-db-" + System.currentTimeMillis();
         String readReplicaInstanceName = "java-integ-read-replica-db-" + System.currentTimeMillis();
         databaseInstancesToRelease.add(databaseInstanceName);
         databaseInstancesToRelease.add(readReplicaInstanceName);
@@ -62,17 +62,17 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         // Create a DB
         DBInstance createdInstance = rds.createDBInstance(
                 new CreateDBInstanceRequest()
-                    .withAllocatedStorage(5)
-                    .withDBInstanceClass(DB_INSTANCE_CLASS)
-                    .withDBInstanceIdentifier(databaseInstanceName)
-                    .withEngine(ENGINE)
-                    .withDBName("integtestdb")
-                    .withMasterUsername("admin")
-                    .withMasterUserPassword("password-with-at-least-8-chars")
-                    .withMultiAZ(true)
-                    .withPort(PORT)
-                    .withPubliclyAccessible(true)
-                    .withLicenseModel("general-public-license"));
+                        .withAllocatedStorage(5)
+                        .withDBInstanceClass(DB_INSTANCE_CLASS)
+                        .withDBInstanceIdentifier(databaseInstanceName)
+                        .withEngine(ENGINE)
+                        .withDBName("integtestdb")
+                        .withMasterUsername("admin")
+                        .withMasterUserPassword("password-with-at-least-8-chars")
+                        .withMultiAZ(true)
+                        .withPort(PORT)
+                        .withPubliclyAccessible(true)
+                        .withLicenseModel("general-public-license"));
         assertValidDbInstance(createdInstance);
 
         waitForDbInstanceToTransitionToState(databaseInstanceName, "available");
@@ -93,29 +93,29 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         // Create a Read Replica
         DBInstance createdReadReplicaInstance = rds.createDBInstanceReadReplica(
                 new CreateDBInstanceReadReplicaRequest(readReplicaInstanceName, databaseInstanceName)
-                    .withAutoMinorVersionUpgrade(true)
-                    .withDBInstanceClass(DB_INSTANCE_CLASS)
-                    .withPort(PORT));
+                        .withAutoMinorVersionUpgrade(true)
+                        .withDBInstanceClass(DB_INSTANCE_CLASS)
+                        .withPort(PORT));
         assertValidDbInstance(createdReadReplicaInstance);
 
         // Describe our read replica DB
         waitForDbInstanceToTransitionToState(readReplicaInstanceName, "available");
         Thread.sleep(120 * 1000);
         List<DBInstance> dbInstances = rds.describeDBInstances(new DescribeDBInstancesRequest()
-            .withDBInstanceIdentifier(readReplicaInstanceName)
-            .withMaxRecords(20)).getDBInstances();
+                                                                       .withDBInstanceIdentifier(readReplicaInstanceName)
+                                                                       .withMaxRecords(20)).getDBInstances();
         assertEquals(1, dbInstances.size());
         assertValidDbInstance(dbInstances.get(0));
         assertNotEmpty(dbInstances.get(0).getReadReplicaSourceDBInstanceIdentifier());
 
         assertEquals(0, dbInstances.get(0).getReadReplicaDBInstanceIdentifiers().size());
         assertEquals(dbInstances.get(0).getPubliclyAccessible(), true);
-        assertTrue(dbInstances.get(0).getStatusInfos().size()>0);
+        assertTrue(dbInstances.get(0).getStatusInfos().size() > 0);
 
-        DBInstanceStatusInfo replicationStatus=null;
+        DBInstanceStatusInfo replicationStatus = null;
         for (int i = 0; i < dbInstances.get(0).getStatusInfos().size(); i++) {
             if (dbInstances.get(0).getStatusInfos().get(i).getStatusType()
-                    .equals("read replication")) {
+                           .equals("read replication")) {
                 replicationStatus = dbInstances.get(0).getStatusInfos().get(i);
                 break;
             }
@@ -123,13 +123,13 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         assertNotNull("Could not find a Read Replication status.", replicationStatus);
         assertEquals(replicationStatus.getStatus(), "replicating");
         assertTrue(replicationStatus.getNormal());
-        assertTrue(replicationStatus.getMessage()==null || replicationStatus.getMessage().isEmpty());
+        assertTrue(replicationStatus.getMessage() == null || replicationStatus.getMessage().isEmpty());
 
         // Describe our master DB
         dbInstances = rds.describeDBInstances(
                 new DescribeDBInstancesRequest()
-                    .withDBInstanceIdentifier(databaseInstanceName)
-                    .withMaxRecords(20)).getDBInstances();
+                        .withDBInstanceIdentifier(databaseInstanceName)
+                        .withMaxRecords(20)).getDBInstances();
         assertEquals(1, dbInstances.size());
         assertValidDbInstance(dbInstances.get(0));
         assertTrue(dbInstances.get(0).getMultiAZ());
@@ -143,17 +143,17 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         waitForDbInstanceToTransitionToState(databaseInstanceName, "available");
         DBInstance modifiedInstance = rds.modifyDBInstance(
                 new ModifyDBInstanceRequest()
-                    .withDBInstanceIdentifier(databaseInstanceName)
-                    .withAllocatedStorage(6)
-                    .withMultiAZ(true)
-                    .withMasterUserPassword("password-with-at-least-8-chars"));
+                        .withDBInstanceIdentifier(databaseInstanceName)
+                        .withAllocatedStorage(6)
+                        .withMultiAZ(true)
+                        .withMasterUserPassword("password-with-at-least-8-chars"));
         assertValidDbInstance(modifiedInstance);
 
 
         // Reboot it
         DBInstance rebootedInstance = rds.rebootDBInstance(
                 new RebootDBInstanceRequest()
-                    .withDBInstanceIdentifier(databaseInstanceName));
+                        .withDBInstanceIdentifier(databaseInstanceName));
         assertValidDbInstance(rebootedInstance);
 
 
@@ -162,16 +162,16 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         snapshotIdentifier = "java-integ-test-snapshot-" + new Date().getTime();
         DBSnapshot createdSnapshot = rds.createDBSnapshot(
                 new CreateDBSnapshotRequest()
-                    .withDBSnapshotIdentifier(snapshotIdentifier)
-                    .withDBInstanceIdentifier(databaseInstanceName));
+                        .withDBSnapshotIdentifier(snapshotIdentifier)
+                        .withDBInstanceIdentifier(databaseInstanceName));
         assertValidSnapshot(createdSnapshot);
 
 
         // Describe our snapshot
         List<DBSnapshot> dbSnapshots = rds.describeDBSnapshots(
                 new DescribeDBSnapshotsRequest()
-                    .withDBSnapshotIdentifier(snapshotIdentifier)
-        ).getDBSnapshots();
+                        .withDBSnapshotIdentifier(snapshotIdentifier)
+                                                              ).getDBSnapshots();
         assertEquals(1, dbSnapshots.size());
         assertValidSnapshot(dbSnapshots.get(0));
 
@@ -179,9 +179,9 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         // Currently, only automated snapshot can be copied. Automated snapshot
         // is available every day during the preferred backup window, and there
         // is no easy way get an automated snapshot during our test.
-//        rds.copyDBSnapshot(new CopyDBSnapshotRequest()
-//                .withSourceDBSnapshotIdentifier(snapshotIdentifier)
-//                .withTargetDBSnapshotIdentifier(snapshotCopyIdentifier));
+        //        rds.copyDBSnapshot(new CopyDBSnapshotRequest()
+        //                .withSourceDBSnapshotIdentifier(snapshotIdentifier)
+        //                .withTargetDBSnapshotIdentifier(snapshotCopyIdentifier));
 
         // Restore from our snapshot
         waitForSnapshotToTransitionToState(snapshotIdentifier, "available");
@@ -189,12 +189,12 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         databaseInstancesToRelease.add(restoredDatabaseInstanceName);
         DBInstance restoredInstanceFromSnapshot = rds.restoreDBInstanceFromDBSnapshot(
                 new RestoreDBInstanceFromDBSnapshotRequest()
-                    .withDBInstanceClass(DB_INSTANCE_CLASS)
-                    .withPort(PORT)
-                    .withMultiAZ(true)
-                    .withDBInstanceIdentifier(restoredDatabaseInstanceName)
-                    .withDBSnapshotIdentifier(snapshotIdentifier)
-                    .withLicenseModel("general-public-license"));
+                        .withDBInstanceClass(DB_INSTANCE_CLASS)
+                        .withPort(PORT)
+                        .withMultiAZ(true)
+                        .withDBInstanceIdentifier(restoredDatabaseInstanceName)
+                        .withDBSnapshotIdentifier(snapshotIdentifier)
+                        .withLicenseModel("general-public-license"));
         assertValidDbInstance(restoredInstanceFromSnapshot);
         assertEquals(restoredInstanceFromSnapshot.getPubliclyAccessible(), true);
         // Wait for it to start up so that we don't have problems deleting the snapshot
@@ -204,19 +204,19 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         // Restore from a point in time
         Date restoreTime = rds.describeDBInstances(
                 new DescribeDBInstancesRequest()
-                    .withDBInstanceIdentifier(databaseInstanceName)
-        ).getDBInstances().get(0).getLatestRestorableTime();
+                        .withDBInstanceIdentifier(databaseInstanceName)
+                                                  ).getDBInstances().get(0).getLatestRestorableTime();
         restoredDatabaseInstanceName = "java-integ-test-restored-database-" + new Date().getTime();
         databaseInstancesToRelease.add(restoredDatabaseInstanceName);
         DBInstance restoredInstanceToPointInTime = rds.restoreDBInstanceToPointInTime(
                 new RestoreDBInstanceToPointInTimeRequest()
-                    .withDBInstanceClass(DB_INSTANCE_CLASS)
-                    .withPort(PORT)
-                    .withMultiAZ(true)
-                    .withRestoreTime(restoreTime)
-                    .withSourceDBInstanceIdentifier(databaseInstanceName)
-                    .withTargetDBInstanceIdentifier(restoredDatabaseInstanceName)
-        );
+                        .withDBInstanceClass(DB_INSTANCE_CLASS)
+                        .withPort(PORT)
+                        .withMultiAZ(true)
+                        .withRestoreTime(restoreTime)
+                        .withSourceDBInstanceIdentifier(databaseInstanceName)
+                        .withTargetDBInstanceIdentifier(restoredDatabaseInstanceName)
+                                                                                     );
         assertValidDbInstance(restoredInstanceToPointInTime);
         assertEquals(restoredInstanceToPointInTime.getPubliclyAccessible(), true);
         // Wait for it to start up so that we don't have problems deleting the snapshot
@@ -227,19 +227,19 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         waitForSnapshotToTransitionToState(snapshotIdentifier, "available");
         DBSnapshot deleteDBSnapshot = rds.deleteDBSnapshot(
                 new DeleteDBSnapshotRequest()
-                    .withDBSnapshotIdentifier(snapshotIdentifier));
+                        .withDBSnapshotIdentifier(snapshotIdentifier));
         assertValidSnapshot(deleteDBSnapshot);
 
 
         // Event Operations
         List<Event> events = rds.describeEvents(
                 new DescribeEventsRequest()
-                    .withMaxRecords(20)
-                    .withSourceType("db-instance")
-                    .withSourceIdentifier(databaseInstanceName)
-                    .withStartTime(startTime)
-                    .withEndTime(new Date())
-        ).getEvents();
+                        .withMaxRecords(20)
+                        .withSourceType("db-instance")
+                        .withSourceIdentifier(databaseInstanceName)
+                        .withStartTime(startTime)
+                        .withEndTime(new Date())
+                                               ).getEvents();
         assertFalse(events.isEmpty());
         assertValidEvent(events.get(0));
 
@@ -252,16 +252,16 @@ public class RdsInstancesIntegrationTest extends IntegrationTestBase {
         databaseInstancesToRelease.add(readReplicaInstanceName + "second");
         createdReadReplicaInstance = rds.createDBInstanceReadReplica(
                 new CreateDBInstanceReadReplicaRequest(readReplicaInstanceName + "second", readReplicaInstanceName)
-                    .withAutoMinorVersionUpgrade(true)
-                    .withDBInstanceClass(DB_INSTANCE_CLASS)
-                    .withPort(PORT));
+                        .withAutoMinorVersionUpgrade(true)
+                        .withDBInstanceClass(DB_INSTANCE_CLASS)
+                        .withPort(PORT));
         assertValidDbInstance(createdReadReplicaInstance);
 
         // Delete it
         DBInstance deletedInstance = rds.deleteDBInstance(
                 new DeleteDBInstanceRequest()
-                    .withDBInstanceIdentifier(databaseInstanceName)
-                    .withSkipFinalSnapshot(true));
+                        .withDBInstanceIdentifier(databaseInstanceName)
+                        .withSkipFinalSnapshot(true));
         databaseInstancesToRelease.remove(databaseInstanceName);
         assertValidDbInstance(deletedInstance);
     }

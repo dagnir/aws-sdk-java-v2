@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,25 +28,21 @@ import software.amazon.awssdk.util.ValidationUtils;
 public class PredefinedBackoffStrategies {
 
     /**
-     * Default base sleep time (milliseconds) for non-throttled exceptions.
-     **/
-    private static final int SDK_DEFAULT_BASE_DELAY = 100;
-
-    /**
      * Default base sleep time (milliseconds) for throttled exceptions.
      **/
     static final int SDK_DEFAULT_THROTTLED_BASE_DELAY = 500;
-
     /**
      * Default maximum back-off time before retrying a request
      */
     static final int SDK_DEFAULT_MAX_BACKOFF_IN_MILLISECONDS = 20 * 1000;
-
     /**
      * Default base sleep time for DynamoDB.
      **/
     static final int DYNAMODB_DEFAULT_BASE_DELAY = 25;
-
+    /**
+     * Default base sleep time (milliseconds) for non-throttled exceptions.
+     **/
+    private static final int SDK_DEFAULT_BASE_DELAY = 100;
     /**
      * Maximum retry limit. Avoids integer overflow issues.
      *
@@ -54,6 +50,11 @@ public class PredefinedBackoffStrategies {
      * issues during delay calculation.
      **/
     private static final int MAX_RETRIES = 30;
+
+    private static int calculateExponentialDelay(int retriesAttempted, int baseDelay, int maxBackoffTime) {
+        int retries = Math.min(retriesAttempted, MAX_RETRIES);
+        return (int) Math.min((1L << retries) * baseDelay, maxBackoffTime);
+    }
 
     public static class FullJitterBackoffStrategy extends V2CompatibleBackoffStrategyAdapter {
 
@@ -110,12 +111,6 @@ public class PredefinedBackoffStrategies {
             return calculateExponentialDelay(context.retriesAttempted(), baseDelay, maxBackoffTime);
         }
     }
-
-    private static int calculateExponentialDelay(int retriesAttempted, int baseDelay, int maxBackoffTime) {
-        int retries = Math.min(retriesAttempted, MAX_RETRIES);
-        return (int) Math.min((1L << retries) * baseDelay, maxBackoffTime);
-    }
-
 
     /**
      * A private class that implements the default back-off strategy.

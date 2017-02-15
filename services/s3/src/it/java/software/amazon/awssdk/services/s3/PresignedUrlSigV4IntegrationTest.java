@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -70,7 +70,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
         setUpCredentials();
         s3SigV2 = new AmazonS3TestClient(credentials);
         s3SigV4 = new AmazonS3TestClient(credentials,
-                new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
+                                         new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
         s3SigV4.createBucket(BUCKET);
         file = CryptoTestUtils.generateRandomAsciiFile(100);
         nonDefaultKmsKeyId = KmsTestKeyCache.getInstance(Regions.US_EAST_1, credentials).getNonDefaultKeyId();
@@ -88,7 +88,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
      * with that of the given file.
      */
     private void downloadFileAndVerify(File srcFile, HttpGet getreq) throws IOException,
-            ClientProtocolException, FileNotFoundException {
+                                                                            ClientProtocolException, FileNotFoundException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse res = httpclient.execute(getreq);
         InputStream is = res.getEntity().getContent();
@@ -102,7 +102,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
 
 
     private StatusLine fire(HttpGet getreq) throws IOException,
-            ClientProtocolException, FileNotFoundException {
+                                                   ClientProtocolException, FileNotFoundException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse res = httpclient.execute(getreq);
         StatusLine statusLine = res.getStatusLine();
@@ -114,7 +114,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
      * Put the given file to S3 using the given HttpPut.
      */
     private CloseableHttpResponse putFileToS3(File file, HttpPut putreq) throws IOException,
-            ClientProtocolException {
+                                                                                ClientProtocolException {
         putreq.setEntity(new FileEntity(file));
         CloseableHttpClient httpclient = HttpClients.createDefault();
         CloseableHttpResponse res = httpclient.execute(putreq);
@@ -146,10 +146,10 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
                     SSEAlgorithm.AES256.getAlgorithm()));
             putreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY, Base64
-                            .encodeAsString(secretKey)));
+                    .encodeAsString(secretKey)));
             putreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5, Md5Utils
-                            .md5AsBase64(secretKey)));
+                    .md5AsBase64(secretKey)));
             putFileToS3(file, putreq);
         }
 
@@ -168,10 +168,10 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
                     ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION));
             getreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY, Base64
-                            .encodeAsString(secretKey)));
+                    .encodeAsString(secretKey)));
             getreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5, Md5Utils
-                            .md5AsBase64(secretKey)));
+                    .md5AsBase64(secretKey)));
             downloadFileAndVerify(file, getreq);
         }
 
@@ -190,10 +190,10 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
                     ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION));
             getreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY, Base64
-                            .encodeAsString(secretKey)));
+                    .encodeAsString(secretKey)));
             getreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5, Md5Utils
-                            .md5AsBase64(secretKey)));
+                    .md5AsBase64(secretKey)));
             StatusLine statusLine = fire(getreq);
             Assert.assertTrue(statusLine.getStatusCode() / 100 == 4);
         }
@@ -203,19 +203,19 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
      * Test presigned URL, both for Put presigned-url and Get presgined-url,
      * when SSE_C wihtout the customer key is involved.
      */
-     @Test
+    @Test
     public void presignedPutGet_SSE_C_withoutKey() throws IOException {
         String KEY = "SSE_C_withoutKey-" + file.getName();
-         byte[] secretKey = new byte[32];
-         // Generate presigned PUT URL with use of SSE-C without the actual
-         // customer key
-         {
+        byte[] secretKey = new byte[32];
+        // Generate presigned PUT URL with use of SSE-C without the actual
+        // customer key
+        {
             GeneratePresignedUrlRequest genreq = new GeneratePresignedUrlRequest(
                     BUCKET, KEY, HttpMethod.PUT);
             genreq.setSSECustomerKeyAlgorithm(SSEAlgorithm.getDefault());
             // We can optionally specify the storage class
             genreq.putCustomRequestHeader(Headers.STORAGE_CLASS,
-                    StorageClass.ReducedRedundancy.toString());
+                                          StorageClass.ReducedRedundancy.toString());
             URL url = s3SigV4.generatePresignedUrl(genreq);
             System.err.println("Presigned PUT URL for SSE-C (without key): " + url);
 
@@ -226,12 +226,12 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
                     SSEAlgorithm.AES256.getAlgorithm()));
             putreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY, Base64
-                            .encodeAsString(secretKey)));
+                    .encodeAsString(secretKey)));
             putreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5, Md5Utils
-                            .md5AsBase64(secretKey)));
+                    .md5AsBase64(secretKey)));
             putreq.addHeader(new BasicHeader(Headers.STORAGE_CLASS,
-                    StorageClass.ReducedRedundancy.toString()));
+                                             StorageClass.ReducedRedundancy.toString()));
             putFileToS3(file, putreq);
         }
 
@@ -250,10 +250,10 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
                     SSEAlgorithm.AES256.getAlgorithm()));
             getreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY, Base64
-                            .encodeAsString(secretKey)));
+                    .encodeAsString(secretKey)));
             getreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5, Md5Utils
-                            .md5AsBase64(secretKey)));
+                    .md5AsBase64(secretKey)));
             downloadFileAndVerify(file, getreq);
         }
     }
@@ -275,7 +275,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
 
             HttpPut putreq = new HttpPut(URI.create(url.toExternalForm()));
             putreq.addHeader(new BasicHeader(Headers.SERVER_SIDE_ENCRYPTION,
-                    SSEAlgorithm.AES256.getAlgorithm()));
+                                             SSEAlgorithm.AES256.getAlgorithm()));
 
             putFileToS3(file, putreq);
         }
@@ -311,10 +311,10 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
 
             HttpPut putreq = new HttpPut(URI.create(url.toExternalForm()));
             putreq.addHeader(new BasicHeader(Headers.SERVER_SIDE_ENCRYPTION,
-                    kmsParam.getEncryption()));
+                                             kmsParam.getEncryption()));
             putreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_AWS_KMS_KEYID, kmsParam
-                            .getAwsKmsKeyId()));
+                    .getAwsKmsKeyId()));
             putFileToS3(file, putreq);
         }
         // Generate presigned GET URL for SSE object.  Note nothing extra needs
@@ -353,7 +353,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
                     BUCKET, KEY, HttpMethod.PUT);
             // Deliberately bypass the input validation via custom headers
             req.putCustomRequestHeader(Headers.SERVER_SIDE_ENCRYPTION,
-                    SSEAlgorithm.KMS.getAlgorithm());
+                                       SSEAlgorithm.KMS.getAlgorithm());
             URL url = s3SigV4.generatePresignedUrl(req);
             System.err.println("Presigned PUT URL for SSE KMS: " + url);
 
@@ -361,10 +361,10 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
             SSEAwsKeyManagementParams kmsParam = new SSEAwsKeyManagementParams(
                     KmsTestKeyCache.getInstance(Regions.US_EAST_1, credentials).getNonDefaultKeyId());
             putreq.addHeader(new BasicHeader(Headers.SERVER_SIDE_ENCRYPTION,
-                    kmsParam.getEncryption()));
+                                             kmsParam.getEncryption()));
             putreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_AWS_KMS_KEYID, kmsParam
-                            .getAwsKmsKeyId()));
+                    .getAwsKmsKeyId()));
             CloseableHttpResponse res = putFileToS3(file, putreq);
             StatusLine sl = res.getStatusLine();
             Assert.assertTrue(sl.getStatusCode() / 100 == 4);
@@ -389,7 +389,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
 
             HttpPut putreq = new HttpPut(URI.create(url.toExternalForm()));
             putreq.addHeader(new BasicHeader(Headers.SERVER_SIDE_ENCRYPTION,
-                    SSEAlgorithm.KMS.getAlgorithm()));
+                                             SSEAlgorithm.KMS.getAlgorithm()));
             CloseableHttpResponse res = putFileToS3(file, putreq);
             StatusLine sl = res.getStatusLine();
             Assert.assertTrue(sl.getStatusCode() / 100 == 2);
@@ -428,7 +428,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
 
             HttpPut putreq = new HttpPut(URI.create(url.toExternalForm()));
             putreq.addHeader(new BasicHeader(Headers.SERVER_SIDE_ENCRYPTION,
-                    SSEAlgorithm.KMS.getAlgorithm()));
+                                             SSEAlgorithm.KMS.getAlgorithm()));
             putreq.addHeader(new BasicHeader(
                     Headers.SERVER_SIDE_ENCRYPTION_AWS_KMS_KEYID,
                     "alias/aws/s3"));

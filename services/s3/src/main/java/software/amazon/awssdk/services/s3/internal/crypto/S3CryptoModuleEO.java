@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly;
@@ -42,29 +43,30 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
         super(kms, s3, credentialsProvider, encryptionMaterialsProvider,
-                cryptoConfig);
-        if (cryptoConfig.getCryptoMode() != EncryptionOnly)
+              cryptoConfig);
+        if (cryptoConfig.getCryptoMode() != EncryptionOnly) {
             throw new IllegalArgumentException();
+        }
     }
 
     /**
      * Used for testing purposes only.
      */
     S3CryptoModuleEO(S3Direct s3,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            CryptoConfiguration cryptoConfig) {
+                     EncryptionMaterialsProvider encryptionMaterialsProvider,
+                     CryptoConfiguration cryptoConfig) {
         this(null, s3, new DefaultAWSCredentialsProviderChain(),
-                encryptionMaterialsProvider, cryptoConfig);
+             encryptionMaterialsProvider, cryptoConfig);
     }
 
     /**
      * Used for testing purposes only.
      */
     S3CryptoModuleEO(AWSKMS kms, S3Direct s3,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            CryptoConfiguration cryptoConfig) {
+                     EncryptionMaterialsProvider encryptionMaterialsProvider,
+                     CryptoConfiguration cryptoConfig) {
         this(kms, s3, new DefaultAWSCredentialsProviderChain(),
-                encryptionMaterialsProvider, cryptoConfig);
+             encryptionMaterialsProvider, cryptoConfig);
     }
 
     @Override
@@ -76,7 +78,7 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
 
     @Override
     public ObjectMetadata getObjectSecurely(GetObjectRequest getObjectRequest,
-            File destinationFile) {
+                                            File destinationFile) {
         // Should never get here, as S3 object encrypted in either EO or AE
         // format should all be handled by the AE module.
         throw new IllegalStateException();
@@ -90,14 +92,14 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
                 req.getBucketName(), req.getKey(), cekMaterial);
         byte[] iv = cekMaterial.getCipherLite().getIV();
         encryptedUploadContext.setNextInitializationVector(iv);
-        return encryptedUploadContext; 
+        return encryptedUploadContext;
     }
 
 
     @Override
     final void updateUploadContext(MultipartUploadCbcContext uploadContext,
-            SdkFilterInputStream is) {
-        ByteRangeCapturingInputStream bis = (ByteRangeCapturingInputStream)is;
+                                   SdkFilterInputStream is) {
+        ByteRangeCapturingInputStream bis = (ByteRangeCapturingInputStream) is;
         uploadContext.setNextInitializationVector(bis.getBlock());
         return;
     }
@@ -106,19 +108,20 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
     final ByteRangeCapturingInputStream wrapForMultipart(
             CipherLiteInputStream is, long partSize) {
         int blockSize = contentCryptoScheme.getBlockSizeInBytes();
-        return new ByteRangeCapturingInputStream(is, 
-                partSize - blockSize,
-                partSize);
+        return new ByteRangeCapturingInputStream(is,
+                                                 partSize - blockSize,
+                                                 partSize);
     }
-    
+
     @Override
     final long computeLastPartSize(UploadPartRequest request) {
         long plaintextLength;
         if (request.getFile() != null) {
-            if (request.getPartSize() > 0)
+            if (request.getPartSize() > 0) {
                 plaintextLength = request.getPartSize();
-            else
+            } else {
                 plaintextLength = request.getFile().length();
+            }
         } else if (request.getInputStream() != null) {
             plaintextLength = request.getPartSize();
         } else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.File;
@@ -35,7 +36,7 @@ import software.amazon.awssdk.event.ProgressListener;
  * Required Parameters: BucketName, Key, UploadId, PartNumber
  */
 public class UploadPartRequest extends AmazonWebServiceRequest implements
-        SSECustomerKeyProvider, S3DataSource, Serializable {
+                                                               SSECustomerKeyProvider, S3DataSource, Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -112,6 +113,15 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
      */
     private boolean isRequesterPays;
 
+    /**
+     * Returns the stream containing the data to upload for the new part.
+     *
+     * @return the stream containing the data to upload for the new part.
+     */
+    @Override
+    public InputStream getInputStream() {
+        return inputStream;
+    }
 
     /**
      * Sets the stream containing the data to upload for the new part.
@@ -122,16 +132,6 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
     @Override
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
-    }
-
-    /**
-     * Returns the stream containing the data to upload for the new part.
-     *
-     * @return the stream containing the data to upload for the new part.
-     */
-    @Override
-    public InputStream getInputStream() {
-        return inputStream;
     }
 
     /**
@@ -479,20 +479,6 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
     }
 
     /**
-     * Sets the optional progress listener for receiving updates about object
-     * upload status.
-     *
-     * @param progressListener
-     *            The legacy progress listener that is used exclusively for Amazon S3 client.
-     *
-     * @deprecated use {@link #setGeneralProgressListener(ProgressListener)} instead.
-     */
-    @Deprecated
-    public void setProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener progressListener) {
-        setGeneralProgressListener(new LegacyS3ProgressListener(progressListener));
-    }
-
-    /**
      * Returns the optional progress listener for receiving updates about object
      * upload status.
      *
@@ -505,10 +491,24 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
     public software.amazon.awssdk.services.s3.model.ProgressListener getProgressListener() {
         ProgressListener generalProgressListener = getGeneralProgressListener();
         if (generalProgressListener instanceof LegacyS3ProgressListener) {
-            return ((LegacyS3ProgressListener)generalProgressListener).unwrap();
+            return ((LegacyS3ProgressListener) generalProgressListener).unwrap();
         } else {
-             return null;
+            return null;
         }
+    }
+
+    /**
+     * Sets the optional progress listener for receiving updates about object
+     * upload status.
+     *
+     * @param progressListener
+     *            The legacy progress listener that is used exclusively for Amazon S3 client.
+     *
+     * @deprecated use {@link #setGeneralProgressListener(ProgressListener)} instead.
+     */
+    @Deprecated
+    public void setProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener progressListener) {
+        setGeneralProgressListener(new LegacyS3ProgressListener(progressListener));
     }
 
     /**
@@ -541,12 +541,12 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
     }
 
     /**
-    * Marks this part as the last part being uploaded in a multipart upload.
-    *
-    * @param isLastPart
-    *            Whether or not this is the last part being uploaded in a
-    *            multipart upload.
-    */
+     * Marks this part as the last part being uploaded in a multipart upload.
+     *
+     * @param isLastPart
+     *            Whether or not this is the last part being uploaded in a
+     *            multipart upload.
+     */
     public void setLastPart(boolean isLastPart) {
         this.isLastPart = isLastPart;
     }
@@ -601,6 +601,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
         setSSECustomerKey(sseKey);
         return this;
     }
+
     /**
      * Returns the additional information about the part being uploaded.
      */

@@ -65,7 +65,7 @@ public abstract class ElasticBeanstalkIntegrationTestBase extends AWSTestBase {
             Thread.sleep(1000 * 30);
             if (count++ > 100) {
                 throw new RuntimeException("Environment " + environmentName + " never transitioned to " + state + "/"
-                        + health);
+                                           + health);
             }
 
             List<EnvironmentDescription> environments = elasticbeanstalk.describeEnvironments(
@@ -77,10 +77,12 @@ public abstract class ElasticBeanstalkIntegrationTestBase extends AWSTestBase {
 
             EnvironmentDescription environment = environments.get(0);
             System.out.println(" - " + environment.getStatus() + "/" + environment.getHealth());
-            if (environment.getStatus().equalsIgnoreCase(state.toString()) == false)
+            if (environment.getStatus().equalsIgnoreCase(state.toString()) == false) {
                 continue;
-            if (health != null && environment.getHealth().equalsIgnoreCase(health.toString()) == false)
+            }
+            if (health != null && environment.getHealth().equalsIgnoreCase(health.toString()) == false) {
                 continue;
+            }
             return;
         }
     }

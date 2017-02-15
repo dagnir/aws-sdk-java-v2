@@ -30,7 +30,7 @@ public class SDKGlobalConfiguration {
      * (i.e. check certificates by default)
      */
     public static final String DISABLE_CERT_CHECKING_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.sdk.disableCertChecking";
+            "software.amazon.awssdk.sdk.disableCertChecking";
 
     /**
      * System property used when starting up the JVM to enable the default
@@ -43,20 +43,20 @@ public class SDKGlobalConfiguration {
      * </pre>
      */
     public static final String DEFAULT_METRICS_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.sdk.enableDefaultMetrics";
+            "software.amazon.awssdk.sdk.enableDefaultMetrics";
 
     /** System property name for the AWS access key ID */
     public static final String ACCESS_KEY_SYSTEM_PROPERTY = "aws.accessKeyId";
 
     /** System property name for the AWS secret key */
-    public  static final String SECRET_KEY_SYSTEM_PROPERTY = "aws.secretKey";
+    public static final String SECRET_KEY_SYSTEM_PROPERTY = "aws.secretKey";
 
     /**
      * System property for overriding the Amazon EC2 Instance Metadata Service
      * endpoint.
      */
     public static final String EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.sdk.ec2MetadataServiceEndpointOverride";
+            "software.amazon.awssdk.sdk.ec2MetadataServiceEndpointOverride";
 
     /**
      * System property for enabling retry throttling.
@@ -84,7 +84,7 @@ public class SDKGlobalConfiguration {
      * that maps service/region pairs to endpoints and vice versa.
      */
     public static final String REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.regions.RegionUtils.fileOverride";
+            "software.amazon.awssdk.regions.RegionUtils.fileOverride";
 
     /**
      * By default, the SDK will attempt to download an up-to-date set of
@@ -106,7 +106,7 @@ public class SDKGlobalConfiguration {
      * network outages.
      */
     public static final String DISABLE_REMOTE_REGIONS_FILE_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.regions.RegionUtils.disableRemote";
+            "software.amazon.awssdk.regions.RegionUtils.disableRemote";
 
     /**
      * By default, the AmazonS3Client will continue to use the legacy
@@ -124,7 +124,7 @@ public class SDKGlobalConfiguration {
      */
     @Deprecated
     public static final String ENABLE_S3_SIGV4_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.services.s3.enableV4";
+            "software.amazon.awssdk.services.s3.enableV4";
 
     /**
      * Like {@link #ENABLE_S3_SIGV4_SYSTEM_PROPERTY}, but causes the client to
@@ -136,7 +136,7 @@ public class SDKGlobalConfiguration {
      */
     @Deprecated
     public static final String ENFORCE_S3_SIGV4_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.services.s3.enforceV4";
+            "software.amazon.awssdk.services.s3.enforceV4";
 
     /**
      * By default, the S3 client constructor does not set a region.
@@ -158,7 +158,7 @@ public class SDKGlobalConfiguration {
      * a call to a single, fixed region.
      */
     public static final String DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.services.s3.disableImplicitGlobalClients";
+            "software.amazon.awssdk.services.s3.disableImplicitGlobalClients";
 
     /**
      * Overrides the client default {@link ClientConfiguration} to use
@@ -184,7 +184,7 @@ public class SDKGlobalConfiguration {
      */
     @Deprecated
     public static final String DEFAULT_S3_STREAM_BUFFER_SIZE =
-        "software.amazon.awssdk.sdk.s3.defaultStreamBufferSize";
+            "software.amazon.awssdk.sdk.s3.defaultStreamBufferSize";
 
     /**
      * @deprecated by {@link #DEFAULT_METRICS_SYSTEM_PROPERTY}.
@@ -193,7 +193,7 @@ public class SDKGlobalConfiguration {
      */
     @Deprecated
     public static final String PROFILING_SYSTEM_PROPERTY =
-        "software.amazon.awssdk.sdk.enableRuntimeProfiling";
+            "software.amazon.awssdk.sdk.enableRuntimeProfiling";
 
     /////////////////////// Environment Variables ///////////////////////
     /** Environment variable name for the AWS access key ID */
@@ -247,19 +247,19 @@ public class SDKGlobalConfiguration {
     public static final String AWS_ION_BINARY_DISABLE_SYSTEM_PROPERTY = "software.amazon.awssdk.sdk.disableIonBinary";
 
     /**
-     * @deprecated by {@link SDKGlobalTime#setGlobalTimeOffset(int)}
-     */
-    @Deprecated
-    public  static void setGlobalTimeOffset(int timeOffset) {
-        SDKGlobalTime.setGlobalTimeOffset(timeOffset);
-    }
-
-    /**
      * @deprecated by {@link SDKGlobalTime#getGlobalTimeOffset()}
      */
     @Deprecated
     public static int getGlobalTimeOffset() {
         return SDKGlobalTime.getGlobalTimeOffset();
+    }
+
+    /**
+     * @deprecated by {@link SDKGlobalTime#setGlobalTimeOffset(int)}
+     */
+    @Deprecated
+    public static void setGlobalTimeOffset(int timeOffset) {
+        SDKGlobalTime.setGlobalTimeOffset(timeOffset);
     }
 
     public static boolean isInRegionOptimizedModeEnabled() {
@@ -272,12 +272,12 @@ public class SDKGlobalConfiguration {
 
     public static boolean isCborDisabled() {
         return isPropertyEnabled(System.getProperty(AWS_CBOR_DISABLE_SYSTEM_PROPERTY)) ||
-                isPropertyEnabled(System.getenv(AWS_CBOR_DISABLE_ENV_VAR));
+               isPropertyEnabled(System.getenv(AWS_CBOR_DISABLE_ENV_VAR));
     }
 
     public static boolean isIonBinaryDisabled() {
         return isPropertyEnabled(System.getProperty(AWS_ION_BINARY_DISABLE_SYSTEM_PROPERTY)) ||
-                isPropertyEnabled(System.getenv(AWS_ION_BINARY_DISABLE_ENV_VAR));
+               isPropertyEnabled(System.getenv(AWS_ION_BINARY_DISABLE_ENV_VAR));
     }
 
     private static boolean isPropertyEnabled(final String property) {

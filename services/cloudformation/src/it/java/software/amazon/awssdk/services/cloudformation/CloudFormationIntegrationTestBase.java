@@ -22,9 +22,9 @@ public class CloudFormationIntegrationTestBase extends AWSTestBase {
     protected static String templateForCloudFormationIntegrationTests = "templateForCloudFormationIntegrationTests";
     protected static String templateForStackIntegrationTests = "templateForStackIntegrationTests";
     protected static String templateUrlForCloudFormationIntegrationTests = "https://s3.amazonaws.com/" + bucketName
-            + "/" + templateForCloudFormationIntegrationTests;
+                                                                           + "/" + templateForCloudFormationIntegrationTests;
     protected static String templateUrlForStackIntegrationTests = "https://s3.amazonaws.com/" + bucketName + "/"
-            + templateForStackIntegrationTests;
+                                                                  + templateForStackIntegrationTests;
     protected static AmazonS3Client s3;
 
     /**
@@ -39,7 +39,7 @@ public class CloudFormationIntegrationTestBase extends AWSTestBase {
         s3 = new AmazonS3Client(credentials);
         s3.createBucket(bucketName);
         s3.putObject(bucketName, templateForCloudFormationIntegrationTests, new File("tst/"
-                + templateForCloudFormationIntegrationTests));
+                                                                                     + templateForCloudFormationIntegrationTests));
         s3.putObject(bucketName, templateForStackIntegrationTests, new File("tst/" + templateForStackIntegrationTests));
     }
 
@@ -59,7 +59,7 @@ public class CloudFormationIntegrationTestBase extends AWSTestBase {
         ObjectListing objectListing = s3.listObjects(bucketName);
 
         while (true) {
-            for (Iterator<S3ObjectSummary> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext();) {
+            for (Iterator<S3ObjectSummary> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
                 S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
                 s3.deleteObject(bucketName, objectSummary.getKey());
             }

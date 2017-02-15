@@ -1,6 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -39,10 +35,15 @@ import software.amazon.awssdk.util.StringInputStream;
  */
 public class MockServer {
 
-    public enum ServerBehavior {
-        UNRESPONSIVE,
-        OVERLOADED,
-        DUMMY_RESPONSE;
+    private final ServerBehaviorStrategy serverBehaviorStrategy;
+    /**
+     * The server socket which the test service will listen to.
+     */
+    private ServerSocket serverSocket;
+    private Thread listenerThread;
+
+    public MockServer(final ServerBehaviorStrategy serverBehaviorStrategy) {
+        this.serverBehaviorStrategy = serverBehaviorStrategy;
     }
 
     public static MockServer createMockServer(ServerBehavior serverBehavior) {
@@ -54,19 +55,6 @@ public class MockServer {
             default:
                 throw new IllegalArgumentException("Unsupported implementation for server issue: " + serverBehavior);
         }
-    }
-
-    private final ServerBehaviorStrategy serverBehaviorStrategy;
-
-    /**
-     * The server socket which the test service will listen to.
-     */
-    private ServerSocket serverSocket;
-
-    private Thread listenerThread;
-
-    public MockServer(final ServerBehaviorStrategy serverBehaviorStrategy) {
-        this.serverBehaviorStrategy = serverBehaviorStrategy;
     }
 
     public void startServer() {
@@ -111,6 +99,16 @@ public class MockServer {
         return "https://localhost:" + getPort();
     }
 
+    public enum ServerBehavior {
+        UNRESPONSIVE,
+        OVERLOADED,
+        DUMMY_RESPONSE;
+    }
+
+    public interface ServerBehaviorStrategy {
+        public void runServer(ServerSocket serverSocket);
+    }
+
     private static class MockServerListenerThread extends Thread {
         /** The server socket which this thread listens and responds to */
         private final ServerSocket serverSocket;
@@ -127,10 +125,6 @@ public class MockServer {
         public void run() {
             this.behaviorStrategy.runServer(serverSocket);
         }
-    }
-
-    public interface ServerBehaviorStrategy {
-        public void runServer(ServerSocket serverSocket);
     }
 
     /**
@@ -197,6 +191,14 @@ public class MockServer {
         private final HttpResponse response;
         private String content;
 
+        public DummyResponseServerBehavior(HttpResponse response) {
+            this.response = response;
+            try {
+                this.content = IOUtils.toString(response.getEntity().getContent());
+            } catch (Exception e) {
+            }
+        }
+
         public static DummyResponseServerBehavior build(int statusCode, String statusMessage, String content) {
             HttpResponse response = new BasicHttpResponse(
                     new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), statusCode, statusMessage));
@@ -213,14 +215,6 @@ public class MockServer {
                 response.setEntity(entity);
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
-            }
-        }
-
-        public DummyResponseServerBehavior(HttpResponse response) {
-            this.response = response;
-            try {
-                this.content = IOUtils.toString(response.getEntity().getContent());
-            } catch (Exception e) {
             }
         }
 

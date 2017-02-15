@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -111,9 +111,9 @@ abstract class AddShapes {
             }
 
             shapeModel.withHasHeaderMember(hasHeaderMember)
-                    .withHasStatusCodeMember(hasStatusCodeMember)
-                    .withHasPayloadMember(hasPayloadMember)
-                    .withHasStreamingMember(hasStreamingMember);
+                      .withHasStatusCodeMember(hasStatusCodeMember)
+                      .withHasPayloadMember(hasPayloadMember)
+                      .withHasStreamingMember(hasStreamingMember);
         }
 
         final List<String> enumValues = shape.getEnumValues();
@@ -151,7 +151,7 @@ abstract class AddShapes {
         final MemberModel memberModel = new MemberModel();
 
         memberModel.withC2jName(c2jMemberName).withC2jShape(c2jShapeName)
-                .withName(Utils.capitialize(c2jMemberName)).withVariable(
+                   .withName(Utils.capitialize(c2jMemberName)).withVariable(
                 new VariableModel(variableName, variableType, variableDeclarationType)
                         .withDocumentation(c2jMemberDefinition.getDocumentation())).withSetterModel(
                 new VariableModel(variableName, variableType, variableDeclarationType)
@@ -183,7 +183,7 @@ abstract class AddShapes {
 
         final String payload = parentShape.getPayload();
         httpMapping.withPayload(payload != null && payload.equals(c2jMemberName))
-                .withStreaming(allC2jShapes.get(c2jMemberDefinition.getShape()).isStreaming());
+                   .withStreaming(allC2jShapes.get(c2jMemberDefinition.getShape()).isStreaming());
 
         memberModel.setHttp(httpMapping);
 
@@ -201,12 +201,12 @@ abstract class AddShapes {
         Shape memberShape = allC2jShapes.get(member.getShape());
 
         mapping.withLocation(Location.forValue(member.getLocation()))
-                .withPayload(member.isPayload()).withStreaming(member.isStreaming())
-                .withFlattened(member.isFlattened() || memberShape.isFlattened())
-                .withUnmarshallLocationName(deriveUnmarshallerLocationName(memberName, member))
-                .withMarshallLocationName(
-                        deriveMarshallerLocationName(memberName, member, protocol))
-                .withIsGreedy(isGreedy(parentShape, allC2jShapes, mapping));
+               .withPayload(member.isPayload()).withStreaming(member.isStreaming())
+               .withFlattened(member.isFlattened() || memberShape.isFlattened())
+               .withUnmarshallLocationName(deriveUnmarshallerLocationName(memberName, member))
+               .withMarshallLocationName(
+                       deriveMarshallerLocationName(memberName, member, protocol))
+               .withIsGreedy(isGreedy(parentShape, allC2jShapes, mapping));
 
         return mapping;
     }
@@ -238,10 +238,10 @@ abstract class AddShapes {
      */
     private String findRequestUri(Shape parentShape, Map<String, Shape> allC2jShapes) {
         return builder.getService().getOperations().values().stream()
-                .filter(o -> o.getInput() != null)
-                .filter(o -> allC2jShapes.get(o.getInput().getShape()).equals(parentShape))
-                .map(o -> o.getHttp().getRequestUri())
-                .findFirst().orElseThrow(() -> new RuntimeException("Could not find request URI for input shape"));
+                      .filter(o -> o.getInput() != null)
+                      .filter(o -> allC2jShapes.get(o.getInput().getShape()).equals(parentShape))
+                      .map(o -> o.getHttp().getRequestUri())
+                      .findFirst().orElseThrow(() -> new RuntimeException("Could not find request URI for input shape"));
     }
 
     private String deriveUnmarshallerLocationName(String memberName, Member member) {
@@ -290,8 +290,8 @@ abstract class AddShapes {
             listMemberModel = generateMemberModel("member", listMemberDefinition, protocol,
                                                   memberC2jShape, c2jShapes);
             final String listImpl = getCustomizationConfig().isUseAutoConstructList() ?
-                    TypeUtils.getDataTypeMapping(TypeUtils.LIST_AUTO_CONSTRUCT_IMPL) :
-                    TypeUtils.getDataTypeMapping(TypeUtils.LIST_DEFAULT_IMPL);
+                                    TypeUtils.getDataTypeMapping(TypeUtils.LIST_AUTO_CONSTRUCT_IMPL) :
+                                    TypeUtils.getDataTypeMapping(TypeUtils.LIST_DEFAULT_IMPL);
             memberModel.setListModel(
                     new ListModel(getTypeUtils().getJavaDataType(c2jShapes, listMemberC2jShapeName),
                                   memberC2jShape.getListMember().getLocationName(), listImpl,
@@ -325,14 +325,14 @@ abstract class AddShapes {
             mapValueModel = generateMemberModel("value", mapValueMemberDefinition, protocol,
                                                 memberC2jShape, c2jShapes);
             final String mapImpl = getCustomizationConfig().isUseAutoConstructMap() ?
-                    TypeUtils.getDataTypeMapping(TypeUtils.MAP_AUTO_CONSTRUCT_IMPL) :
-                    TypeUtils.getDataTypeMapping(TypeUtils.MAP_DEFAULT_IMPL);
+                                   TypeUtils.getDataTypeMapping(TypeUtils.MAP_AUTO_CONSTRUCT_IMPL) :
+                                   TypeUtils.getDataTypeMapping(TypeUtils.MAP_DEFAULT_IMPL);
 
             String keyLocation = memberC2jShape.getMapKeyType().getLocationName() != null ?
-                    memberC2jShape.getMapKeyType().getLocationName() : "key";
+                                 memberC2jShape.getMapKeyType().getLocationName() : "key";
 
             String valueLocation = memberC2jShape.getMapValueType().getLocationName() != null ?
-                    memberC2jShape.getMapValueType().getLocationName() : "value";
+                                   memberC2jShape.getMapValueType().getLocationName() : "value";
 
             memberModel.setMapModel(new MapModel(mapImpl, TypeUtils.getDataTypeMapping(TypeUtils.MAP_INTERFACE),
                                                  getTypeUtils().getJavaDataType(c2jShapes,

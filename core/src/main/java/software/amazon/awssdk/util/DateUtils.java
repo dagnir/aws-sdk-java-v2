@@ -1,9 +1,6 @@
 /*
  * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
- *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
@@ -37,30 +34,25 @@ import software.amazon.awssdk.annotation.ThreadSafe;
 @ThreadSafe
 public class DateUtils {
     private static final DateTimeZone GMT = new FixedDateTimeZone("GMT", "GMT", 0, 0);
-    private static final long MILLI_SECONDS_OF_365_DAYS = 365L*24*60*60*1000;
-
-    private static final int AWS_DATE_MILLI_SECOND_PRECISION = 3;
-
     /** ISO 8601 format */
     protected static final DateTimeFormatter iso8601DateFormat =
-        ISODateTimeFormat.dateTime().withZone(GMT);
-
+            ISODateTimeFormat.dateTime().withZone(GMT);
     /** Alternate ISO 8601 format without fractional seconds */
     protected static final DateTimeFormatter alternateIso8601DateFormat =
-        DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(GMT);
-
+            DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(GMT);
     /** RFC 822 format */
     protected static final DateTimeFormatter rfc822DateFormat =
-        DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
-                      .withLocale(Locale.US)
-                      .withZone(GMT);
-
+            DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
+                          .withLocale(Locale.US)
+                          .withZone(GMT);
     /**
      * This is another ISO 8601 format that's used in clock skew error response
      */
     protected static final DateTimeFormatter compressedIso8601DateFormat =
             DateTimeFormat.forPattern("yyyyMMdd'T'HHmmss'Z'")
-            .withZone(GMT);
+                          .withZone(GMT);
+    private static final long MILLI_SECONDS_OF_365_DAYS = 365L * 24 * 60 * 60 * 1000;
+    private static final int AWS_DATE_MILLI_SECOND_PRECISION = 3;
 
     /**
      * Parses the specified date string as an ISO 8601 date and returns the Date
@@ -74,7 +66,7 @@ public class DateUtils {
     public static Date parseISO8601Date(String dateString) {
         try {
             return doParseISO8601Date(dateString);
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             throw handleException(ex);
         }
     }
@@ -113,7 +105,7 @@ public class DateUtils {
                 return new Date(alternateIso8601DateFormat.parseMillis(dateString));
                 // If the first ISO 8601 parser didn't work, try the alternate
                 // version which doesn't include fractional seconds
-            } catch(Exception oops) {
+            } catch (Exception oops) {
                 // no the alternative route doesn't work; let's bubble up the original exception
                 throw e;
             }
@@ -129,10 +121,10 @@ public class DateUtils {
      */
     private static String tempDateStringForJodaTime(String dateString) {
         final String fromPrefix = "292278994-";
-        final String toPrefix   = "292278993-";
+        final String toPrefix = "292278993-";
         return dateString.startsWith(fromPrefix)
-             ? toPrefix + dateString.substring(fromPrefix.length())
-             : dateString;
+               ? toPrefix + dateString.substring(fromPrefix.length())
+               : dateString;
     }
 
     /**
@@ -143,8 +135,9 @@ public class DateUtils {
      * doens't appear to be of the right version.
      */
     private static <E extends RuntimeException> E handleException(E ex) {
-        if (JodaTime.hasExpectedBehavior())
+        if (JodaTime.hasExpectedBehavior()) {
             return ex;
+        }
         throw new IllegalStateException("Joda-time 2.2 or later version is required, but found version: " + JodaTime.getVersion(), ex);
     }
 
@@ -159,7 +152,7 @@ public class DateUtils {
     public static String formatISO8601Date(Date date) {
         try {
             return iso8601DateFormat.print(date.getTime());
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             throw handleException(ex);
         }
     }
@@ -193,7 +186,7 @@ public class DateUtils {
         }
         try {
             return new Date(rfc822DateFormat.parseMillis(dateString));
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             throw handleException(ex);
         }
     }
@@ -209,7 +202,7 @@ public class DateUtils {
     public static String formatRFC822Date(Date date) {
         try {
             return rfc822DateFormat.print(date.getTime());
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             throw handleException(ex);
         }
     }
@@ -229,22 +222,23 @@ public class DateUtils {
         } catch (RuntimeException ex) {
             throw handleException(ex);
         }
-   }
+    }
 
     /**
      * Parses the given date string returned by the AWS service into a Date
      * object.
      */
     public static Date parseServiceSpecificDate(String dateString) {
-        if (dateString == null)
+        if (dateString == null) {
             return null;
+        }
         try {
             BigDecimal dateValue = new BigDecimal(dateString);
             return new Date(dateValue.scaleByPowerOfTen(
                     AWS_DATE_MILLI_SECOND_PRECISION).longValue());
         } catch (NumberFormatException nfe) {
             throw new SdkClientException("Unable to parse date : "
-                    + dateString, nfe);
+                                         + dateString, nfe);
         }
     }
 
@@ -252,11 +246,12 @@ public class DateUtils {
      * Formats the give date object into an AWS Service format.
      */
     public static String formatServiceSpecificDate(Date date) {
-        if (date == null)
+        if (date == null) {
             return null;
+        }
         BigDecimal dateValue = BigDecimal.valueOf(date.getTime());
         return dateValue.scaleByPowerOfTen(0 - AWS_DATE_MILLI_SECOND_PRECISION)
-                .toPlainString();
+                        .toPlainString();
     }
 
     public static Date cloneDate(Date date) {

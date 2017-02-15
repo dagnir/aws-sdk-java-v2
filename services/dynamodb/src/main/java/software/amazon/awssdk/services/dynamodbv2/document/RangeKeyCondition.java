@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -77,6 +77,7 @@ public class RangeKeyCondition {
         kcond = KeyConditions.BEGINS_WITH;
         return withValues(val);
     }
+
     /**
      * Creates and returns a condition of the range key that has a value between
      * the given values.
@@ -122,7 +123,7 @@ public class RangeKeyCondition {
         return withValues(val);
     }
 
-    private RangeKeyCondition withValues(Object ... values) {
+    private RangeKeyCondition withValues(Object... values) {
         this.values = values;
         return this;
     }

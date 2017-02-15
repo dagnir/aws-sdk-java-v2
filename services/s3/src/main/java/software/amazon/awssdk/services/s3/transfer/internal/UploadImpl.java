@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.util.concurrent.ExecutionException;
@@ -30,7 +31,7 @@ import software.amazon.awssdk.services.s3.transfer.model.UploadResult;
 public class UploadImpl extends AbstractTransfer implements Upload {
 
     public UploadImpl(String description, TransferProgress transferProgressInternalState,
-            ProgressListenerChain progressListenerChain, TransferStateChangeListener listener) {
+                      ProgressListenerChain progressListenerChain, TransferStateChangeListener listener) {
         super(description, transferProgressInternalState, progressListenerChain, listener);
     }
 
@@ -58,7 +59,7 @@ public class UploadImpl extends AbstractTransfer implements Upload {
             UploadResult result = null;
             while (!monitor.isDone() || result == null) {
                 Future<?> f = monitor.getFuture();
-                result = (UploadResult)f.get();
+                result = (UploadResult) f.get();
             }
             return result;
         } catch (ExecutionException e) {

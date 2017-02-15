@@ -18,7 +18,7 @@ package software.amazon.awssdk.jmespath;
 /**
  * Implements logical NOT on the given expression
  */
-public class JmesPathNotExpression implements JmesPathExpression{
+public class JmesPathNotExpression implements JmesPathExpression {
 
     /**
      * Represents the input expression

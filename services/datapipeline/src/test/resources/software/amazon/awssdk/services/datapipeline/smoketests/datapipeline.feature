@@ -8,5 +8,5 @@ Feature: AWS Data Pipeline
 
   Scenario: Handling errors
     When I attempt to call the "GetPipelineDefinition" API with:
-    | pipelineId | fake-id |
+      | pipelineId | fake-id |
     Then I expect the response error code to be "PipelineNotFoundException"

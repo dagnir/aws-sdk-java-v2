@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -54,31 +54,30 @@ class MachineMetricFactory {
     /**
      * Add the given list of metrics and corresponding values specified in
      * "metricValues" to the given list of metric datum.
-     * 
+     *
      * @param list
      *            list of metric data
      * @param metricValues
      *            list of metrics and their corresponding values
      */
     private void addMetrics(List<MetricDatum> list,
-            MetricValues metricValues,
-            StandardUnit unit) {
+                            MetricValues metricValues,
+                            StandardUnit unit) {
         List<MachineMetric> machineMetrics = metricValues.getMetrics();
         List<Long> values = metricValues.getValues();
-        for (int i=0; i < machineMetrics.size(); i++) {
+        for (int i = 0; i < machineMetrics.size(); i++) {
             MachineMetric metric = machineMetrics.get(i);
             long val = values.get(i).longValue();
             // skip zero values in some cases
             if (val != 0 || metric.includeZeroValue()) {
                 MetricDatum datum = new MetricDatum()
-                    .withMetricName(metric.getMetricName())
-                    .withDimensions(
-                        new Dimension()
-                        .withName(metric.getDimensionName())
-                        .withValue(metric.name()))
-                    .withUnit(unit)
-                    .withValue((double) val)
-                    ;
+                        .withMetricName(metric.getMetricName())
+                        .withDimensions(
+                                new Dimension()
+                                        .withName(metric.getDimensionName())
+                                        .withValue(metric.name()))
+                        .withUnit(unit)
+                        .withValue((double) val);
                 list.add(datum);
             }
         }
@@ -89,15 +88,16 @@ class MachineMetricFactory {
      * registry; or an empty set if there is none. Note any machine metrics
      * found in the registry must have been custom specified, as the default
      * behavior is to include all machine metrics when enabled.
-     * 
+     *
      * @return a non-null set of machine metrics. An empty set means no custom
      *         machine metrics have been specified.
      */
     private Set<MachineMetric> customMachineMetrics() {
         Set<MachineMetric> customized = new HashSet<MachineMetric>();
-        for (MetricType m: AwsSdkMetrics.getPredefinedMetrics()) {
-            if (m instanceof MachineMetric)
-                customized.add((MachineMetric)m);
+        for (MetricType m : AwsSdkMetrics.getPredefinedMetrics()) {
+            if (m instanceof MachineMetric) {
+                customized.add((MachineMetric) m);
+            }
         }
         return customized;
     }
@@ -108,7 +108,7 @@ class MachineMetricFactory {
      * custom set is empty, the full set of default machine metrics and values
      * will be returned. (In particular, as in set theory, a set is a subset of
      * itself.)
-     * 
+     *
      * @param customSet
      *            custom machine metrics specified in the SDK metrics registry
      * @param defaults
@@ -117,14 +117,14 @@ class MachineMetricFactory {
      *            corresponding values of each metric in "defaults"
      */
     private MetricValues metricValues(Set<MachineMetric> customSet,
-            List<MachineMetric> defaults, List<Long> values) {
+                                      List<MachineMetric> defaults, List<Long> values) {
         List<MachineMetric> actualMetrics = defaults;
         List<Long> actualValues = values;
         if (customSet.size() > 0) {
             // custom set of machine metrics specified
             actualMetrics = new ArrayList<MachineMetric>();
             actualValues = new ArrayList<Long>();
-            for (int i=0; i < defaults.size(); i++) {
+            for (int i = 0; i < defaults.size(); i++) {
                 MachineMetric mm = defaults.get(i);
                 if (customSet.contains(mm)) {
                     actualMetrics.add(mm);
@@ -136,8 +136,9 @@ class MachineMetricFactory {
     }
 
     List<MetricDatum> generateMetrics() {
-        if (AwsSdkMetrics.isMachineMetricExcluded())
+        if (AwsSdkMetrics.isMachineMetricExcluded()) {
             return Collections.emptyList();
+        }
         Set<MachineMetric> customSet = customMachineMetrics();
         List<MetricDatum> targetList = new ArrayList<MetricDatum>(
                 MachineMetric.values().length);
@@ -159,7 +160,7 @@ class MachineMetricFactory {
     }
 
     private void addMemoryMetrics(List<MetricDatum> targetList,
-            Set<MachineMetric> customSet) {
+                                  Set<MachineMetric> customSet) {
         Runtime rt = Runtime.getRuntime();
         long totalMem = rt.totalMemory();
         long freeMem = rt.freeMemory();
@@ -171,7 +172,7 @@ class MachineMetricFactory {
     }
 
     private void addFileDescriptorMetrics(List<MetricDatum> targetList,
-            Set<MachineMetric> customSet) {
+                                          Set<MachineMetric> customSet) {
         JmxInfoProvider provider = JmxInfoProvider.Factory.getJmxInfoProvider();
         long[] fdInfo = provider.getFileDecriptorInfo();
 
@@ -179,13 +180,13 @@ class MachineMetricFactory {
             long openFdCount = fdInfo[0];
             long maxFdCount = fdInfo[1];
             List<Long> values = Arrays.asList(openFdCount, maxFdCount - openFdCount);
-            MetricValues metricValues = fdMetricValues(customSet, values); 
+            MetricValues metricValues = fdMetricValues(customSet, values);
             addMetrics(targetList, metricValues, StandardUnit.Count);
         }
     }
 
     private void addThreadMetrics(List<MetricDatum> targetList,
-            Set<MachineMetric> customSet) {
+                                  Set<MachineMetric> customSet) {
         long threadCount = jmxInfoProvider.getThreadCount();
         long[] ids = jmxInfoProvider.findDeadlockedThreads();
         long deadLockThreadCount = ids == null ? 0 : ids.length;
@@ -193,18 +194,18 @@ class MachineMetricFactory {
         long peakThreadCount = jmxInfoProvider.getPeakThreadCount();
         long totalStartedThreadCount = jmxInfoProvider.getTotalStartedThreadCount();
         List<Long> values = Arrays.asList(threadCount,
-            deadLockThreadCount,
-            daemonThreadCount,
-            peakThreadCount,
-            totalStartedThreadCount);
-        MetricValues metricValues = threadMetricValues(customSet, values); 
+                                          deadLockThreadCount,
+                                          daemonThreadCount,
+                                          peakThreadCount,
+                                          totalStartedThreadCount);
+        MetricValues metricValues = threadMetricValues(customSet, values);
         addMetrics(targetList, metricValues, StandardUnit.Count);
     }
 
     /**
      * Returns the set of memory metrics and the corresponding values based on
      * the default and the customized set of metrics, if any.
-     * 
+     *
      * @param customSet
      *            a non-null customized set of metrics
      * @param values
@@ -212,15 +213,15 @@ class MachineMetricFactory {
      *            memory metrics
      */
     private MetricValues memoryMetricValues(Set<MachineMetric> customSet,
-            List<Long> values) {
+                                            List<Long> values) {
         return metricValues(customSet, MachineMetricFactory.memoryMetrics,
-                values);
+                            values);
     }
 
     /**
      * Returns the set of file-descriptor metrics and the corresponding values based on
      * the default and the customized set of metrics, if any.
-     * 
+     *
      * @param customSet
      *            a non-null customized set of metrics
      * @param values
@@ -228,14 +229,14 @@ class MachineMetricFactory {
      *            file-descriptor metrics
      */
     private MetricValues fdMetricValues(Set<MachineMetric> customSet,
-            List<Long> values) {
+                                        List<Long> values) {
         return metricValues(customSet, MachineMetricFactory.fdMetrics, values);
     }
 
     /**
      * Returns the set of thread metrics and the corresponding values based on
      * the default and the customized set of metrics, if any.
-     * 
+     *
      * @param customSet
      *            a non-null customized set of metrics
      * @param values
@@ -243,20 +244,27 @@ class MachineMetricFactory {
      *            thread metrics
      */
     private MetricValues threadMetricValues(Set<MachineMetric> customSet,
-            List<Long> values) {
+                                            List<Long> values) {
         return metricValues(customSet, MachineMetricFactory.threadMetrics,
-                values);
+                            values);
     }
 
     // Used to get around the limitation of Java returning at most a single value
     private static class MetricValues {
         private final List<MachineMetric> metrics;
         private final List<Long> values;
+
         MetricValues(List<MachineMetric> metrics, List<Long> values) {
             this.metrics = metrics;
             this.values = values;
         }
-        List<MachineMetric> getMetrics() { return metrics; }
-        List<Long> getValues() { return values; }
+
+        List<MachineMetric> getMetrics() {
+            return metrics;
+        }
+
+        List<Long> getValues() {
+            return values;
+        }
     }
 }

@@ -41,7 +41,7 @@ public class EC2SpotFleetIntegrationTest extends EC2IntegrationTestBase {
     private static AmazonIdentityManagementClient iam;
 
     private static String roleName = "ec2-spot-fleet-java-"
-            + System.currentTimeMillis();
+                                     + System.currentTimeMillis();
 
     private static String roleArn;
     private static String requestId;
@@ -52,25 +52,25 @@ public class EC2SpotFleetIntegrationTest extends EC2IntegrationTestBase {
         iam = new AmazonIdentityManagementClient(getCredentials());
 
         roleArn = iam.createRole(new CreateRoleRequest()
-                .withAssumeRolePolicyDocument(
-                        "{"
-                        + "\"Version\": \"2012-10-17\","
-                        + "\"Statement\": ["
-                          + "{"
-                            + "\"Sid\": \"\","
-                            + "\"Effect\": \"Allow\","
-                            + "\"Principal\": {"
-                              + "\"Service\": \"spotfleet.amazonaws.com\""
-                              + "},"
-                            + "\"Action\": \"sts:AssumeRole\""
-                          + "}"
-                        + "]"
-                      + "}")
-                .withRoleName(roleName)).getRole().getArn();
+                                         .withAssumeRolePolicyDocument(
+                                                 "{"
+                                                 + "\"Version\": \"2012-10-17\","
+                                                 + "\"Statement\": ["
+                                                 + "{"
+                                                 + "\"Sid\": \"\","
+                                                 + "\"Effect\": \"Allow\","
+                                                 + "\"Principal\": {"
+                                                 + "\"Service\": \"spotfleet.amazonaws.com\""
+                                                 + "},"
+                                                 + "\"Action\": \"sts:AssumeRole\""
+                                                 + "}"
+                                                 + "]"
+                                                 + "}")
+                                         .withRoleName(roleName)).getRole().getArn();
 
         iam.attachRolePolicy(new AttachRolePolicyRequest()
-               .withRoleName(roleName)
-               .withPolicyArn("arn:aws:iam::aws:policy/AmazonEC2FullAccess"));
+                                     .withRoleName(roleName)
+                                     .withPolicyArn("arn:aws:iam::aws:policy/AmazonEC2FullAccess"));
 
         System.out.println("Sleeping for 60 seconds for eventual consistency");
         Thread.sleep(60000);
@@ -80,16 +80,16 @@ public class EC2SpotFleetIntegrationTest extends EC2IntegrationTestBase {
     public static void cleanUp() {
         try {
             ec2.cancelSpotFleetRequests(new CancelSpotFleetRequestsRequest()
-                    .withSpotFleetRequestIds(requestId)
-                    .withTerminateInstances(true));
+                                                .withSpotFleetRequestIds(requestId)
+                                                .withTerminateInstances(true));
         } catch (AmazonServiceException e) {
             e.printStackTrace();
         }
 
         try {
             iam.detachRolePolicy(new DetachRolePolicyRequest()
-                    .withRoleName(roleName)
-                    .withPolicyArn("arn:aws:iam::aws:policy/AmazonEC2FullAccess"));
+                                         .withRoleName(roleName)
+                                         .withPolicyArn("arn:aws:iam::aws:policy/AmazonEC2FullAccess"));
         } catch (AmazonServiceException e) {
             e.printStackTrace();
         }
@@ -104,39 +104,39 @@ public class EC2SpotFleetIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testRequestSpotFleet() {
         requestId = ec2.requestSpotFleet(new RequestSpotFleetRequest()
-            .withSpotFleetRequestConfig(new SpotFleetRequestConfigData()
-                .withSpotPrice("0.01")
-                .withIamFleetRole(roleArn)
-                .withTargetCapacity(1)
-                .withTerminateInstancesWithExpiration(true)
-                .withValidFrom(new Date())
-                .withValidUntil(new Date(System.currentTimeMillis() + 60000))
-                .withLaunchSpecifications(new SpotFleetLaunchSpecification()
-                    .withInstanceType(InstanceType.T1Micro)
-                    .withImageId("ami-0022c769"))))
-                            .getSpotFleetRequestId();
+                                                 .withSpotFleetRequestConfig(new SpotFleetRequestConfigData()
+                                                                                     .withSpotPrice("0.01")
+                                                                                     .withIamFleetRole(roleArn)
+                                                                                     .withTargetCapacity(1)
+                                                                                     .withTerminateInstancesWithExpiration(true)
+                                                                                     .withValidFrom(new Date())
+                                                                                     .withValidUntil(new Date(System.currentTimeMillis() + 60000))
+                                                                                     .withLaunchSpecifications(new SpotFleetLaunchSpecification()
+                                                                                                                       .withInstanceType(InstanceType.T1Micro)
+                                                                                                                       .withImageId("ami-0022c769"))))
+                       .getSpotFleetRequestId();
 
         DescribeSpotFleetRequestsResult result = ec2.describeSpotFleetRequests(
-            new DescribeSpotFleetRequestsRequest()
-                .withSpotFleetRequestIds(requestId));
+                new DescribeSpotFleetRequestsRequest()
+                        .withSpotFleetRequestIds(requestId));
 
         Assert.assertNotNull(result
-                .getSpotFleetRequestConfigs()
-                .get(0)
-                .getSpotFleetRequestConfig()
-                .getValidFrom());
+                                     .getSpotFleetRequestConfigs()
+                                     .get(0)
+                                     .getSpotFleetRequestConfig()
+                                     .getValidFrom());
 
         Assert.assertNotNull(result
-                .getSpotFleetRequestConfigs()
-                .get(0)
-                .getSpotFleetRequestConfig()
-                .getValidUntil());
+                                     .getSpotFleetRequestConfigs()
+                                     .get(0)
+                                     .getSpotFleetRequestConfig()
+                                     .getValidUntil());
 
         DescribeSpotFleetRequestHistoryResult result2 =
-            ec2.describeSpotFleetRequestHistory(
-                new DescribeSpotFleetRequestHistoryRequest()
-                    .withSpotFleetRequestId(requestId)
-                    .withStartTime(new Date(System.currentTimeMillis() - 60000)));
+                ec2.describeSpotFleetRequestHistory(
+                        new DescribeSpotFleetRequestHistoryRequest()
+                                .withSpotFleetRequestId(requestId)
+                                .withStartTime(new Date(System.currentTimeMillis() - 60000)));
 
         Assert.assertNotNull(result2.getStartTime());
         Assert.assertNotNull(result2.getLastEvaluatedTime());

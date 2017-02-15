@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -64,11 +64,11 @@ public class StateMachineValidator {
 
     public StateMachine validate() {
         ValidationContext context = ValidationContext.builder()
-                .problemReporter(problemReporter)
-                .parentContext(null)
-                .identifier("Root")
-                .location(Location.StateMachine)
-                .build();
+                                                     .problemReporter(problemReporter)
+                                                     .parentContext(null)
+                                                     .identifier("Root")
+                                                     .location(Location.StateMachine)
+                                                     .build();
         context.assertStringNotEmpty(stateMachine.getStartAt(), PropertyNames.START_AT);
         context.assertIsPositiveIfPresent(stateMachine.getTimeoutSeconds(), PropertyNames.TIMEOUT_SECONDS);
         context.assertNotEmpty(stateMachine.getStates(), PropertyNames.STATES);

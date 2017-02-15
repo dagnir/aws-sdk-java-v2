@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -42,7 +42,9 @@ public class RenameShapesProcessor implements CodegenCustomizationProcessor {
     @Override
     public void preprocess(ServiceModel serviceModel) {
 
-        if (renameShapes == null || renameShapes.isEmpty()) return;
+        if (renameShapes == null || renameShapes.isEmpty()) {
+            return;
+        }
         // sanity check
         for (Entry<String, String> entry : renameShapes.entrySet()) {
 
@@ -53,12 +55,12 @@ public class RenameShapesProcessor implements CodegenCustomizationProcessor {
             if (originalShape == null) {
                 throw new IllegalStateException(
                         String.format("Cannot find shape [%s] in the model when processing "
-                                + "customization config renameShapes.%s", originalName, originalName));
+                                      + "customization config renameShapes.%s", originalName, originalName));
             }
             if (serviceModel.getShapes().containsKey(newName)) {
                 throw new IllegalStateException(
                         String.format("The shape [%s] for the new name is already in the model when processing "
-                                + "customization config renameShapes.%s", newName, originalName));
+                                      + "customization config renameShapes.%s", newName, originalName));
             }
         }
 

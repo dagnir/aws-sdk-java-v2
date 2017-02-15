@@ -1,8 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,7 +29,7 @@ import software.amazon.awssdk.internal.io.Releasable;
 /**
  * A mark-and-resettable input stream that can be used on files or file input
  * streams.
- * 
+ *
  * In particular, a {@link ResettableInputStream} allows the close operation to
  * be disabled via {@link #disableClose()} (to avoid accidentally being closed).
  * This is necessary when such input stream needs to be marked-and-reset
@@ -41,7 +38,7 @@ import software.amazon.awssdk.internal.io.Releasable;
  * The creator of this input stream should therefore always call
  * {@link #release()} in a finally block to truly release the underlying
  * resources.
- * 
+ *
  * @see Releasable
  */
 @NotThreadSafe
@@ -69,7 +66,7 @@ public class ResettableInputStream extends ReleasableInputStream {
      *            block that created it, then it is necessary that the release
      *            method must not be called while the execution is made in other
      *            stack frames.
-     * 
+     *
      *            In such case, as other stack frames may inadvertently or
      *            indirectly call the close method of the stream, the creator of
      *            the stream would need to explicitly disable the accidental
@@ -92,7 +89,7 @@ public class ResettableInputStream extends ReleasableInputStream {
      * (in a finally block) by the very same code block that created it, then it
      * is necessary that the release method must not be called while the
      * execution is made in other stack frames.
-     * 
+     *
      * In such case, as other stack frames may inadvertently or indirectly call
      * the close method of the stream, the creator of the stream would need to
      * explicitly disable the accidental closing via
@@ -115,6 +112,102 @@ public class ResettableInputStream extends ReleasableInputStream {
         this.markPos = fileChannel.position();
     }
 
+    /**
+     * Convenient factory method to construct a new resettable input stream for
+     * the given file, converting any IOException into SdkClientException.
+     * <p>
+     * Note the creation of a {@link ResettableInputStream} would entail
+     * physically opening a file. If the opened file is meant to be closed only
+     * (in a finally block) by the very same code block that created it, then it
+     * is necessary that the release method must not be called while the
+     * execution is made in other stack frames.
+     *
+     * In such case, as other stack frames may inadvertently or indirectly call
+     * the close method of the stream, the creator of the stream would need to
+     * explicitly disable the accidental closing via
+     * {@link ResettableInputStream#disableClose()}, so that the release method
+     * becomes the only way to truly close the opened file.
+     */
+    public static ResettableInputStream newResettableInputStream(File file) {
+        return newResettableInputStream(file, null);
+    }
+
+    /**
+     * Convenient factory method to construct a new resettable input stream for
+     * the given file, converting any IOException into SdkClientException
+     * with the given error message.
+     * <p>
+     * Note the creation of a {@link ResettableInputStream} would entail
+     * physically opening a file. If the opened file is meant to be closed only
+     * (in a finally block) by the very same code block that created it, then it
+     * is necessary that the release method must not be called while the
+     * execution is made in other stack frames.
+     *
+     * In such case, as other stack frames may inadvertently or indirectly call
+     * the close method of the stream, the creator of the stream would need to
+     * explicitly disable the accidental closing via
+     * {@link ResettableInputStream#disableClose()}, so that the release method
+     * becomes the only way to truly close the opened file.
+     */
+    public static ResettableInputStream newResettableInputStream(File file,
+                                                                 String errmsg) {
+        try {
+            return new ResettableInputStream(file);
+        } catch (IOException e) {
+            throw errmsg == null
+                  ? new SdkClientException(e)
+                  : new SdkClientException(errmsg, e);
+        }
+    }
+
+    /**
+     * Convenient factory method to construct a new resettable input stream for
+     * the given file input stream, converting any IOException into
+     * SdkClientException.
+     * <p>
+     * Note the creation of a {@link ResettableInputStream} would entail
+     * physically opening a file. If the opened file is meant to be closed only
+     * (in a finally block) by the very same code block that created it, then it
+     * is necessary that the release method must not be called while the
+     * execution is made in other stack frames.
+     *
+     * In such case, as other stack frames may inadvertently or indirectly call
+     * the close method of the stream, the creator of the stream would need to
+     * explicitly disable the accidental closing via
+     * {@link ResettableInputStream#disableClose()}, so that the release method
+     * becomes the only way to truly close the opened file.
+     */
+    public static ResettableInputStream newResettableInputStream(
+            FileInputStream fis) {
+        return newResettableInputStream(fis, null);
+    }
+
+    /**
+     * Convenient factory method to construct a new resettable input stream for
+     * the given file input stream, converting any IOException into
+     * SdkClientException with the given error message.
+     * <p>
+     * Note the creation of a {@link ResettableInputStream} would entail
+     * physically opening a file. If the opened file is meant to be closed only
+     * (in a finally block) by the very same code block that created it, then it
+     * is necessary that the release method must not be called while the
+     * execution is made in other stack frames.
+     *
+     * In such case, as other stack frames may inadvertently or indirectly call
+     * the close method of the stream, the creator of the stream would need to
+     * explicitly disable the accidental closing via
+     * {@link ResettableInputStream#disableClose()}, so that the release method
+     * becomes the only way to truly close the opened file.
+     */
+    public static ResettableInputStream newResettableInputStream(
+            FileInputStream fis, String errmsg) {
+        try {
+            return new ResettableInputStream(fis);
+        } catch (IOException e) {
+            throw new SdkClientException(errmsg, e);
+        }
+    }
+
     @Override
     public final boolean markSupported() {
         return true;
@@ -131,13 +224,13 @@ public class ResettableInputStream extends ReleasableInputStream {
      * (in a finally block) by the very same code block that created it, then it
      * is necessary that the release method must not be called while the
      * execution is made in other stack frames.
-     * 
+     *
      * In such case, as other stack frames may inadvertently or indirectly call
      * the close method of the stream, the creator of the stream would need to
      * explicitly disable the accidental closing via
      * {@link ResettableInputStream#disableClose()}, so that the release method
      * becomes the only way to truly close the opened file.
-     * 
+     *
      * @param _
      *            ignored
      */
@@ -149,8 +242,9 @@ public class ResettableInputStream extends ReleasableInputStream {
         } catch (IOException e) {
             throw new SdkClientException("Failed to mark the file position", e);
         }
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("File input stream marked at position " + markPos);
+        }
     }
 
     /**
@@ -163,7 +257,7 @@ public class ResettableInputStream extends ReleasableInputStream {
      * (in a finally block) by the very same code block that created it, then it
      * is necessary that the release method must not be called while the
      * execution is made in other stack frames.
-     * 
+     *
      * In such case, as other stack frames may inadvertently or indirectly call
      * the close method of the stream, the creator of the stream would need to
      * explicitly disable the accidental closing via
@@ -174,8 +268,9 @@ public class ResettableInputStream extends ReleasableInputStream {
     public void reset() throws IOException {
         abortIfNeeded();
         fileChannel.position(markPos);
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
             log.trace("Reset to position " + markPos);
+        }
     }
 
     @Override
@@ -207,101 +302,5 @@ public class ResettableInputStream extends ReleasableInputStream {
      */
     public File getFile() {
         return file;
-    }
-
-    /**
-     * Convenient factory method to construct a new resettable input stream for
-     * the given file, converting any IOException into SdkClientException.
-     * <p>
-     * Note the creation of a {@link ResettableInputStream} would entail
-     * physically opening a file. If the opened file is meant to be closed only
-     * (in a finally block) by the very same code block that created it, then it
-     * is necessary that the release method must not be called while the
-     * execution is made in other stack frames.
-     * 
-     * In such case, as other stack frames may inadvertently or indirectly call
-     * the close method of the stream, the creator of the stream would need to
-     * explicitly disable the accidental closing via
-     * {@link ResettableInputStream#disableClose()}, so that the release method
-     * becomes the only way to truly close the opened file.
-     */
-    public static ResettableInputStream newResettableInputStream(File file) {
-        return newResettableInputStream(file, null);
-    }
-
-    /**
-     * Convenient factory method to construct a new resettable input stream for
-     * the given file, converting any IOException into SdkClientException
-     * with the given error message.
-     * <p>
-     * Note the creation of a {@link ResettableInputStream} would entail
-     * physically opening a file. If the opened file is meant to be closed only
-     * (in a finally block) by the very same code block that created it, then it
-     * is necessary that the release method must not be called while the
-     * execution is made in other stack frames.
-     * 
-     * In such case, as other stack frames may inadvertently or indirectly call
-     * the close method of the stream, the creator of the stream would need to
-     * explicitly disable the accidental closing via
-     * {@link ResettableInputStream#disableClose()}, so that the release method
-     * becomes the only way to truly close the opened file.
-     */
-    public static ResettableInputStream newResettableInputStream(File file,
-            String errmsg) {
-        try {
-            return new ResettableInputStream(file);
-        } catch (IOException e) {
-            throw errmsg == null
-                ? new SdkClientException(e)
-                : new SdkClientException(errmsg, e);
-        }
-    }
-
-    /**
-     * Convenient factory method to construct a new resettable input stream for
-     * the given file input stream, converting any IOException into
-     * SdkClientException.
-     * <p>
-     * Note the creation of a {@link ResettableInputStream} would entail
-     * physically opening a file. If the opened file is meant to be closed only
-     * (in a finally block) by the very same code block that created it, then it
-     * is necessary that the release method must not be called while the
-     * execution is made in other stack frames.
-     * 
-     * In such case, as other stack frames may inadvertently or indirectly call
-     * the close method of the stream, the creator of the stream would need to
-     * explicitly disable the accidental closing via
-     * {@link ResettableInputStream#disableClose()}, so that the release method
-     * becomes the only way to truly close the opened file.
-     */
-    public static ResettableInputStream newResettableInputStream(
-            FileInputStream fis) {
-        return newResettableInputStream(fis, null);
-    }
-
-    /**
-     * Convenient factory method to construct a new resettable input stream for
-     * the given file input stream, converting any IOException into
-     * SdkClientException with the given error message.
-     * <p>
-     * Note the creation of a {@link ResettableInputStream} would entail
-     * physically opening a file. If the opened file is meant to be closed only
-     * (in a finally block) by the very same code block that created it, then it
-     * is necessary that the release method must not be called while the
-     * execution is made in other stack frames.
-     * 
-     * In such case, as other stack frames may inadvertently or indirectly call
-     * the close method of the stream, the creator of the stream would need to
-     * explicitly disable the accidental closing via
-     * {@link ResettableInputStream#disableClose()}, so that the release method
-     * becomes the only way to truly close the opened file.
-     */
-    public static ResettableInputStream newResettableInputStream(
-            FileInputStream fis, String errmsg) {
-        try {
-            return new ResettableInputStream(fis);
-        } catch (IOException e) {
-            throw new SdkClientException(errmsg, e);
-        }
     }
 }

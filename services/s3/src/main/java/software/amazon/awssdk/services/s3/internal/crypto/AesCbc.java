@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,13 +12,37 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 class AesCbc extends ContentCryptoScheme {
-    @Override String getKeyGeneratorAlgorithm() { return "AES"; }
-    @Override String getCipherAlgorithm() { return "AES/CBC/PKCS5Padding"; }
-    @Override int getKeyLengthInBits() { return 256; }
-    @Override int getBlockSizeInBytes() { return 16; }
-    @Override int getIVLengthInBytes() { return 16; }
-    @Override long getMaxPlaintextSize() { return MAX_CBC_BYTES; }
+    @Override
+    String getKeyGeneratorAlgorithm() {
+        return "AES";
+    }
+
+    @Override
+    String getCipherAlgorithm() {
+        return "AES/CBC/PKCS5Padding";
+    }
+
+    @Override
+    int getKeyLengthInBits() {
+        return 256;
+    }
+
+    @Override
+    int getBlockSizeInBytes() {
+        return 16;
+    }
+
+    @Override
+    int getIVLengthInBytes() {
+        return 16;
+    }
+
+    @Override
+    long getMaxPlaintextSize() {
+        return MAX_CBC_BYTES;
+    }
 }

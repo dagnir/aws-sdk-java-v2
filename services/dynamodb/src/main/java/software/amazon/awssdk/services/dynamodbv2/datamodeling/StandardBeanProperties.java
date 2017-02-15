@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -38,7 +38,15 @@ final class StandardBeanProperties {
      */
     @SuppressWarnings("unchecked")
     static final <T> Beans<T> of(Class<T> clazz) {
-        return ((CachedBeans<T>)CachedBeans.CACHE).getBeans(clazz);
+        return ((CachedBeans<T>) CachedBeans.CACHE).getBeans(clazz);
+    }
+
+    /**
+     * Gets the field name given the getter method.
+     */
+    static final String fieldNameOf(Method getter) {
+        final String name = getter.getName().replaceFirst("^(get|is)", "");
+        return StringUtils.lowerCase(name.substring(0, 1)) + name.substring(1);
     }
 
     /**
@@ -46,12 +54,12 @@ final class StandardBeanProperties {
      */
     private static final class CachedBeans<T> {
         private static final CachedBeans<Object> CACHE = new CachedBeans<Object>();
-        private final ConcurrentMap<Class<T>,Beans<T>> cache = new ConcurrentHashMap<Class<T>,Beans<T>>();
+        private final ConcurrentMap<Class<T>, Beans<T>> cache = new ConcurrentHashMap<Class<T>, Beans<T>>();
 
         private final Beans<T> getBeans(Class<T> clazz) {
             if (!cache.containsKey(clazz)) {
                 final TableMap<T> annotations = StandardAnnotationMaps.<T>of(clazz);
-                final BeanMap<T,Object> map = new BeanMap<T,Object>(clazz, false);
+                final BeanMap<T, Object> map = new BeanMap<T, Object>(clazz, false);
                 cache.putIfAbsent(clazz, new Beans<T>(annotations, map));
             }
             return cache.get(clazz);
@@ -63,9 +71,9 @@ final class StandardBeanProperties {
      */
     static final class Beans<T> {
         private final DynamoDBMapperTableModel.Properties<T> properties;
-        private final Map<String,Bean<T,Object>> map;
+        private final Map<String, Bean<T, Object>> map;
 
-        private Beans(TableMap<T> annotations, Map<String,Bean<T,Object>> map) {
+        private Beans(TableMap<T> annotations, Map<String, Bean<T, Object>> map) {
             this.properties = new DynamoDBMapperTableModel.Properties.Immutable<T>(annotations);
             this.map = Collections.unmodifiableMap(map);
         }
@@ -74,7 +82,7 @@ final class StandardBeanProperties {
             return this.properties;
         }
 
-        final Map<String,Bean<T,Object>> map() {
+        final Map<String, Bean<T, Object>> map() {
             return this.map;
         }
     }
@@ -82,12 +90,12 @@ final class StandardBeanProperties {
     /**
      * Holds the reflection bean properties for a given property.
      */
-    static final class Bean<T,V> {
+    static final class Bean<T, V> {
         private final DynamoDBMapperFieldModel.Properties<V> properties;
         private final ConvertibleType<V> type;
-        private final Reflect<T,V> reflect;
+        private final Reflect<T, V> reflect;
 
-        private Bean(FieldMap<V> annotations, Reflect<T,V> reflect, Method getter) {
+        private Bean(FieldMap<V> annotations, Reflect<T, V> reflect, Method getter) {
             this.properties = new DynamoDBMapperFieldModel.Properties.Immutable<V>(annotations);
             this.type = ConvertibleType.<V>of(getter, annotations);
             this.reflect = reflect;
@@ -101,7 +109,7 @@ final class StandardBeanProperties {
             return this.type;
         }
 
-        final Reflect<T,V> reflect() {
+        final Reflect<T, V> reflect() {
             return this.reflect;
         }
     }
@@ -109,7 +117,7 @@ final class StandardBeanProperties {
     /**
      * Get/set reflection operations.
      */
-    static final class MethodReflect<T,V> implements Reflect<T,V> {
+    static final class MethodReflect<T, V> implements Reflect<T, V> {
         private final Method getter, setter;
 
         private MethodReflect(Method getter) {
@@ -117,10 +125,19 @@ final class StandardBeanProperties {
             this.getter = getter;
         }
 
+        static Method setterOf(Method getter) {
+            try {
+                final String name = "set" + getter.getName().replaceFirst("^(get|is)", "");
+                return getter.getDeclaringClass().getMethod(name, getter.getReturnType());
+            } catch (final Exception no) {
+            }
+            return null;
+        }
+
         @Override
         public V get(T object) {
             try {
-                return (V)getter.invoke(object);
+                return (V) getter.invoke(object);
             } catch (final Exception e) {
                 throw new DynamoDBMappingException("could not invoke " + getter + " on " + object.getClass(), e);
             }
@@ -132,31 +149,31 @@ final class StandardBeanProperties {
                 setter.invoke(object, value);
             } catch (final Exception e) {
                 throw new DynamoDBMappingException("could not invoke " + setter + " on " + object.getClass() +
-                    " with value " + value + " of type " + (value == null ? null : value.getClass()), e);
+                                                   " with value " + value + " of type " + (value == null ? null : value.getClass()), e);
             }
-        }
-
-        static Method setterOf(Method getter) {
-            try {
-                final String name = "set" + getter.getName().replaceFirst("^(get|is)","");
-                return getter.getDeclaringClass().getMethod(name, getter.getReturnType());
-            } catch (final Exception no) {}
-            return null;
         }
     }
 
     /**
      * Get/set reflection operations with a declaring property.
      */
-    static final class DeclaringReflect<T,V> implements Reflect<T,V> {
-        private final Reflect<T,V> reflect;
-        private final Reflect<T,T> declaring;
+    static final class DeclaringReflect<T, V> implements Reflect<T, V> {
+        private final Reflect<T, V> reflect;
+        private final Reflect<T, T> declaring;
         private final Class<T> targetType;
 
-        private DeclaringReflect(Method getter, Reflect<T,T> declaring, Class<T> targetType) {
-            this.reflect = new MethodReflect<T,V>(getter);
+        private DeclaringReflect(Method getter, Reflect<T, T> declaring, Class<T> targetType) {
+            this.reflect = new MethodReflect<T, V>(getter);
             this.declaring = declaring;
             this.targetType = targetType;
+        }
+
+        static <T> T newInstance(Class<T> targetType) {
+            try {
+                return targetType.newInstance();
+            } catch (final Exception e) {
+                throw new DynamoDBMappingException("could not instantiate " + targetType, e);
+            }
         }
 
         @Override
@@ -176,20 +193,12 @@ final class StandardBeanProperties {
             }
             reflect.set(declaringObject, value);
         }
-
-        static <T> T newInstance(Class<T> targetType) {
-            try {
-                return targetType.newInstance();
-            } catch (final Exception e) {
-                throw new DynamoDBMappingException("could not instantiate " + targetType, e);
-            }
-        }
     }
 
     /**
      * {@link Map} of {@link Bean}
      */
-    static final class BeanMap<T,V> extends LinkedHashMap<String,Bean<T,V>> {
+    static final class BeanMap<T, V> extends LinkedHashMap<String, Bean<T, V>> {
         private final Class<T> clazz;
 
         BeanMap(Class<T> clazz, boolean inherited) {
@@ -202,25 +211,25 @@ final class StandardBeanProperties {
                 if (canMap(method, inherited)) {
                     final FieldMap<V> annotations = StandardAnnotationMaps.<V>of(method, null);
                     if (!annotations.ignored()) {
-                        final Reflect<T,V> reflect = new MethodReflect<T,V>(method);
+                        final Reflect<T, V> reflect = new MethodReflect<T, V>(method);
                         putOrFlatten(annotations, reflect, method);
                     }
                 }
             }
         }
 
-        private void putOrFlatten(FieldMap<V> annotations, Reflect<T,V> reflect, Method getter) {
+        private void putOrFlatten(FieldMap<V> annotations, Reflect<T, V> reflect, Method getter) {
             if (annotations.flattened()) {
-                flatten((Class<T>)annotations.targetType(), annotations.attributes(), (Reflect<T,T>)reflect);
+                flatten((Class<T>) annotations.targetType(), annotations.attributes(), (Reflect<T, T>) reflect);
             } else {
-                final Bean<T,V> bean = new Bean<T,V>(annotations, reflect, getter);
+                final Bean<T, V> bean = new Bean<T, V>(annotations, reflect, getter);
                 if (put(bean.properties().attributeName(), bean) != null) {
                     throw new DynamoDBMappingException("duplicate attribute name");
                 }
             }
         }
 
-        private void flatten(Class<T> targetType, Map<String,String> attributes, Reflect<T,T> declaring) {
+        private void flatten(Class<T> targetType, Map<String, String> attributes, Reflect<T, T> declaring) {
             for (final Method method : targetType.getMethods()) {
                 if (canMap(method, true)) {
                     String name = fieldNameOf(method);
@@ -229,7 +238,7 @@ final class StandardBeanProperties {
                     }
                     final FieldMap<V> annotations = StandardAnnotationMaps.<V>of(method, name);
                     if (!annotations.ignored()) {
-                        final Reflect<T,V> reflect = new DeclaringReflect<T,V>(method, declaring, targetType);
+                        final Reflect<T, V> reflect = new DeclaringReflect<T, V>(method, declaring, targetType);
                         putOrFlatten(annotations, reflect, method);
                     }
                 }
@@ -249,20 +258,12 @@ final class StandardBeanProperties {
             } else if (method.getDeclaringClass() == Object.class) {
                 return false;
             } else if (!inherited && method.getDeclaringClass() != this.clazz &&
-                StandardAnnotationMaps.of(method.getDeclaringClass()).attributeType() == null) {
+                       StandardAnnotationMaps.of(method.getDeclaringClass()).attributeType() == null) {
                 return false;
             } else {
                 return true;
             }
         }
-    }
-
-    /**
-     * Gets the field name given the getter method.
-     */
-    static final String fieldNameOf(Method getter) {
-        final String name = getter.getName().replaceFirst("^(get|is)","");
-        return StringUtils.lowerCase(name.substring(0, 1)) + name.substring(1);
     }
 
 }

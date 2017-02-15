@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -38,35 +38,35 @@ public class ConditionTest {
     @Test
     public void explicitBracketingForJava_850() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .withCondition(
-            _(_( attribute_not_exists("item_version")
-                .and( attribute_not_exists("config_id") )
-                .and( attribute_not_exists("config_version") )
-            ).or( _(N("item_version").lt(123)) )
-             .or( _(N("item_version").eq(123)
-                 .and( N("config_id").lt(456))) )
-             .or( _(N("item_version").eq(123)
-                 .and( N("config_id").eq(456) )
-                 .and( N("config_version").lt(999)) ))))
-            .buildForUpdate();
+                .withCondition(
+                        _(_(attribute_not_exists("item_version")
+                                    .and(attribute_not_exists("config_id"))
+                                    .and(attribute_not_exists("config_version"))
+                           ).or(_(N("item_version").lt(123)))
+                            .or(_(N("item_version").eq(123)
+                                                   .and(N("config_id").lt(456))))
+                            .or(_(N("item_version").eq(123)
+                                                   .and(N("config_id").eq(456))
+                                                   .and(N("config_version").lt(999))))))
+                .buildForUpdate();
         String c = xspec.getConditionExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(c);
         System.out.println(nm);
         System.out.println(vm);
-        
+
         assertEquals(
-               "((attribute_not_exists(#0) AND attribute_not_exists(#1) AND attribute_not_exists(#2)) OR " + 
-                "(#0 < :0) OR " + 
-                "(#0 = :0 AND #1 < :1) OR " + 
+                "((attribute_not_exists(#0) AND attribute_not_exists(#1) AND attribute_not_exists(#2)) OR " +
+                "(#0 < :0) OR " +
+                "(#0 = :0 AND #1 < :1) OR " +
                 "(#0 = :0 AND #1 = :1 AND #2 < :2))",
                 c);
         assertEquals("item_version", nm.get("#0"));
         assertEquals("config_id", nm.get("#1"));
         assertEquals("config_version", nm.get("#2"));
-        
+
         assertTrue(vm.get(":0").equals(123));
         assertTrue(vm.get(":1").equals(456));
         assertTrue(vm.get(":2").equals(999));
@@ -82,34 +82,34 @@ public class ConditionTest {
     @Test
     public void minBracketingForJava_850() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .withCondition(
-                 attribute_not_exists("item_version")
-                    .and( attribute_not_exists("config_id") )
-                    .and( attribute_not_exists("config_version")
-                            .or(N("item_version").lt(123)) )
-                 .or( N("item_version").eq(123)
-                         .and( N("config_id").lt(456)) )
-                 .or( N("item_version").eq(123)
-                     .and( N("config_id").eq(456) )
-                     .and( N("config_version").lt(999)) ))
-            .buildForUpdate();
+                .withCondition(
+                        attribute_not_exists("item_version")
+                                .and(attribute_not_exists("config_id"))
+                                .and(attribute_not_exists("config_version")
+                                             .or(N("item_version").lt(123)))
+                                .or(N("item_version").eq(123)
+                                                     .and(N("config_id").lt(456)))
+                                .or(N("item_version").eq(123)
+                                                     .and(N("config_id").eq(456))
+                                                     .and(N("config_version").lt(999))))
+                .buildForUpdate();
         String c = xspec.getConditionExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(c);
         System.out.println(nm);
         System.out.println(vm);
-        
+
         assertEquals(
-               "attribute_not_exists(#0) AND attribute_not_exists(#1) AND (attribute_not_exists(#2) OR #0 < :0) OR " +
-                "#0 = :0 AND #1 < :1 OR " + 
+                "attribute_not_exists(#0) AND attribute_not_exists(#1) AND (attribute_not_exists(#2) OR #0 < :0) OR " +
+                "#0 = :0 AND #1 < :1 OR " +
                 "#0 = :0 AND #1 = :1 AND #2 < :2",
                 c);
         assertEquals("item_version", nm.get("#0"));
         assertEquals("config_id", nm.get("#1"));
         assertEquals("config_version", nm.get("#2"));
-        
+
         assertTrue(vm.get(":0").equals(123));
         assertTrue(vm.get(":1").equals(456));
         assertTrue(vm.get(":2").equals(999));
@@ -120,13 +120,13 @@ public class ConditionTest {
     @Test
     public void anotherExample() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .withCondition(
-                    N("Price").between(100, 200)
-                    .and( S("ProductCategory").in("category1", "category2", "category3") ))
-            .buildForUpdate();
+                .withCondition(
+                        N("Price").between(100, 200)
+                                  .and(S("ProductCategory").in("category1", "category2", "category3")))
+                .buildForUpdate();
         String c = xspec.getConditionExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(c);
         System.out.println(nm);
@@ -135,7 +135,7 @@ public class ConditionTest {
         assertEquals("#0 BETWEEN :0 AND :1 AND #1 IN (:2, :3, :4)", c);
         assertEquals("Price", nm.get("#0"));
         assertEquals("ProductCategory", nm.get("#1"));
-        
+
         assertTrue(vm.get(":0").equals(100));
         assertTrue(vm.get(":1").equals(200));
         assertTrue(vm.get(":2").equals("category1"));
@@ -148,20 +148,20 @@ public class ConditionTest {
     @Test
     public void someComplexConditions() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .withCondition(
-                    _( N("a").eq(1).and( N("b").eq(2).or(N("c").eq(3)) ).or( N("d").ne(4) ) )
-                    .and( N("e").eq(5).and( N("f").eq(6).or( N("g").eq(7).or(N("h").eq(N("i")).and(N("j").eq(8))) ) ))
-            ).buildForUpdate();
+                .withCondition(
+                        _(N("a").eq(1).and(N("b").eq(2).or(N("c").eq(3))).or(N("d").ne(4)))
+                                .and(N("e").eq(5).and(N("f").eq(6).or(N("g").eq(7).or(N("h").eq(N("i")).and(N("j").eq(8))))))
+                              ).buildForUpdate();
         String c = xspec.getConditionExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(c);
         System.out.println(nm);
         System.out.println(vm);
 
-        assertEquals("(#0 = :0 AND (#1 = :1 OR #2 = :2) OR #3 <> :3) AND " 
-                   + "#4 = :4 AND (#5 = :5 OR (#6 = :6 OR #7 = #8 AND #9 = :7))", c);
+        assertEquals("(#0 = :0 AND (#1 = :1 OR #2 = :2) OR #3 <> :3) AND "
+                     + "#4 = :4 AND (#5 = :5 OR (#6 = :6 OR #7 = #8 AND #9 = :7))", c);
         assertEquals("a", nm.get("#0"));
         assertEquals("b", nm.get("#1"));
         assertEquals("c", nm.get("#2"));
@@ -172,7 +172,7 @@ public class ConditionTest {
         assertEquals("h", nm.get("#7"));
         assertEquals("i", nm.get("#8"));
         assertEquals("j", nm.get("#9"));
-        
+
         assertTrue(vm.get(":0").equals(1));
         assertTrue(vm.get(":1").equals(2));
         assertTrue(vm.get(":2").equals(3));
@@ -186,20 +186,20 @@ public class ConditionTest {
     @Test
     public void negation() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .withCondition(
-                    not( N("a").eq(1).and( N("b").eq(2).or(N("c").eq(3)) ).and( N("d").ne(4) ) )
-                    .and( not(N("e").eq(5).and( N("f").eq(6).or( N("g").eq(7).or(N("h").eq(N("i")).and(N("j").eq(8))) ) )))
-            ).buildForUpdate();
+                .withCondition(
+                        not(N("a").eq(1).and(N("b").eq(2).or(N("c").eq(3))).and(N("d").ne(4)))
+                                .and(not(N("e").eq(5).and(N("f").eq(6).or(N("g").eq(7).or(N("h").eq(N("i")).and(N("j").eq(8)))))))
+                              ).buildForUpdate();
         String c = xspec.getConditionExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(c);
         System.out.println(nm);
         System.out.println(vm);
 
-        assertEquals("NOT (#0 = :0 AND (#1 = :1 OR #2 = :2) AND #3 <> :3) AND " 
-                   + "NOT (#4 = :4 AND (#5 = :5 OR (#6 = :6 OR #7 = #8 AND #9 = :7)))", c);
+        assertEquals("NOT (#0 = :0 AND (#1 = :1 OR #2 = :2) AND #3 <> :3) AND "
+                     + "NOT (#4 = :4 AND (#5 = :5 OR (#6 = :6 OR #7 = #8 AND #9 = :7)))", c);
         assertEquals("a", nm.get("#0"));
         assertEquals("b", nm.get("#1"));
         assertEquals("c", nm.get("#2"));
@@ -210,7 +210,7 @@ public class ConditionTest {
         assertEquals("h", nm.get("#7"));
         assertEquals("i", nm.get("#8"));
         assertEquals("j", nm.get("#9"));
-        
+
         assertTrue(vm.get(":0").equals(1));
         assertTrue(vm.get(":1").equals(2));
         assertTrue(vm.get(":2").equals(3));

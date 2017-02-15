@@ -33,49 +33,11 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
 
     private static final int SESSION_DURATION = 60 * 60;
     private static final String ROLE_ARN = "arn:aws:iam::599169622985:role/java-test-role";
-    private static final String USER_NAME  = "user-" + System.currentTimeMillis();
+    private static final String USER_NAME = "user-" + System.currentTimeMillis();
 
     @AfterClass
     public static void tearDown() {
         deleteUser(USER_NAME);
-    }
-
-    /** Tests that we can call assumeRole successfully. */
-    @Test
-    public void testAssumeRole() throws InterruptedException {
-        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest()
-            .withDurationSeconds(SESSION_DURATION)
-            .withRoleArn(ROLE_ARN)
-            .withRoleSessionName("Name")
-            .withPolicy(new Policy()
-                .withStatements(new Statement(Effect.Allow)
-                    .withActions(SecurityTokenServiceActions.AllSecurityTokenServiceActions)
-                    .withResources(new Resource("*")))
-                .toJson());
-
-        AWSSecurityTokenService sts = getIamClient();
-        Thread.sleep(1000 * 60);
-        AssumeRoleResult assumeRoleResult = sts.assumeRole(assumeRoleRequest);
-        assertNotNull(assumeRoleResult.getAssumedRoleUser());
-        assertNotNull(assumeRoleResult.getAssumedRoleUser().getArn());
-        assertNotNull(assumeRoleResult.getAssumedRoleUser().getAssumedRoleId());
-        assertNotNull(assumeRoleResult.getCredentials());
-        assertNotNull(assumeRoleResult.getPackedPolicySize());
-    }
-
-    private AWSSecurityTokenService getIamClient() {
-          iam.createUser(new CreateUserRequest().withUserName(USER_NAME));
-
-          String policyDoc = new Policy()
-              .withStatements(new Statement(Effect.Allow)
-                  .withActions(SecurityTokenServiceActions.AssumeRole)
-                  .withResources(new Resource("*")))
-              .toJson();
-
-        iam.putUserPolicy(new PutUserPolicyRequest().withPolicyDocument(policyDoc).withUserName(USER_NAME).withPolicyName("assume-role"));
-        CreateAccessKeyResult createAccessKeyResult = iam.createAccessKey(new CreateAccessKeyRequest().withUserName(USER_NAME));
-        AWSCredentials credentials = new BasicAWSCredentials(createAccessKeyResult.getAccessKey().getAccessKeyId(), createAccessKeyResult.getAccessKey().getSecretAccessKey());
-        return new AWSSecurityTokenServiceClient(credentials);
     }
 
     private static void deleteAccessKeysForUser(String userName) {
@@ -105,14 +67,52 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
         }
         try {
             iam.deleteLoginProfile(new DeleteLoginProfileRequest()
-                    .withUserName(userName));
+                                           .withUserName(userName));
         } catch (Exception e) {
 
         }
         try {
-        iam.deleteUser(new DeleteUserRequest().withUserName(userName));
+            iam.deleteUser(new DeleteUserRequest().withUserName(userName));
         } catch (Exception e) {
 
         }
     }
- }
+
+    /** Tests that we can call assumeRole successfully. */
+    @Test
+    public void testAssumeRole() throws InterruptedException {
+        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest()
+                .withDurationSeconds(SESSION_DURATION)
+                .withRoleArn(ROLE_ARN)
+                .withRoleSessionName("Name")
+                .withPolicy(new Policy()
+                                    .withStatements(new Statement(Effect.Allow)
+                                                            .withActions(SecurityTokenServiceActions.AllSecurityTokenServiceActions)
+                                                            .withResources(new Resource("*")))
+                                    .toJson());
+
+        AWSSecurityTokenService sts = getIamClient();
+        Thread.sleep(1000 * 60);
+        AssumeRoleResult assumeRoleResult = sts.assumeRole(assumeRoleRequest);
+        assertNotNull(assumeRoleResult.getAssumedRoleUser());
+        assertNotNull(assumeRoleResult.getAssumedRoleUser().getArn());
+        assertNotNull(assumeRoleResult.getAssumedRoleUser().getAssumedRoleId());
+        assertNotNull(assumeRoleResult.getCredentials());
+        assertNotNull(assumeRoleResult.getPackedPolicySize());
+    }
+
+    private AWSSecurityTokenService getIamClient() {
+        iam.createUser(new CreateUserRequest().withUserName(USER_NAME));
+
+        String policyDoc = new Policy()
+                .withStatements(new Statement(Effect.Allow)
+                                        .withActions(SecurityTokenServiceActions.AssumeRole)
+                                        .withResources(new Resource("*")))
+                .toJson();
+
+        iam.putUserPolicy(new PutUserPolicyRequest().withPolicyDocument(policyDoc).withUserName(USER_NAME).withPolicyName("assume-role"));
+        CreateAccessKeyResult createAccessKeyResult = iam.createAccessKey(new CreateAccessKeyRequest().withUserName(USER_NAME));
+        AWSCredentials credentials = new BasicAWSCredentials(createAccessKeyResult.getAccessKey().getAccessKeyId(), createAccessKeyResult.getAccessKey().getSecretAccessKey());
+        return new AWSSecurityTokenServiceClient(credentials);
+    }
+}

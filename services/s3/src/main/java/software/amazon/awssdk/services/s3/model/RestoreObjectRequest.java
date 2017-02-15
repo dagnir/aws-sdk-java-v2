@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -123,6 +124,17 @@ public class RestoreObjectRequest extends AmazonWebServiceRequest implements Ser
 
     /**
      * Sets the name of the bucket containing the reference to the object to
+     * restore which is now stored in Amazon Glacier.
+     *
+     * @see RestoreObjectRequest#getBucketName()
+     * @see RestoreObjectRequest#withBucketName(String)
+     */
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
+    }
+
+    /**
+     * Sets the name of the bucket containing the reference to the object to
      * restore which is now stored in Amazon Glacier, and returns a reference
      * to this object(RestoreObjectRequest) for method chaining.
      *
@@ -132,17 +144,6 @@ public class RestoreObjectRequest extends AmazonWebServiceRequest implements Ser
     public RestoreObjectRequest withBucketName(String bucketName) {
         this.bucketName = bucketName;
         return this;
-    }
-
-    /**
-     * Sets the name of the bucket containing the reference to the object to
-     * restore which is now stored in Amazon Glacier.
-     *
-     * @see RestoreObjectRequest#getBucketName()
-     * @see RestoreObjectRequest#withBucketName(String)
-     */
-    public void setBucketName(String bucketName) {
-        this.bucketName = bucketName;
     }
 
     /**
@@ -204,18 +205,18 @@ public class RestoreObjectRequest extends AmazonWebServiceRequest implements Ser
     }
 
     /**
+     * Returns the time in days from an object's creation to its expiration.
+     */
+    public int getExpirationInDays() {
+        return expirationInDays;
+    }
+
+    /**
      * Sets the time, in days, between when an object is uploaded to the bucket
      * and when it expires.
      */
     public void setExpirationInDays(int expirationInDays) {
         this.expirationInDays = expirationInDays;
-    }
-
-    /**
-     * Returns the time in days from an object's creation to its expiration.
-     */
-    public int getExpirationInDays() {
-        return expirationInDays;
     }
 
     /**

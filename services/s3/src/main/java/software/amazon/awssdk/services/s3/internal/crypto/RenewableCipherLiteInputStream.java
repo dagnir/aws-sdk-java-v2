@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import java.io.IOException;
@@ -31,12 +32,12 @@ public final class RenewableCipherLiteInputStream extends CipherLiteInputStream 
     }
 
     public RenewableCipherLiteInputStream(InputStream is, CipherLite c,
-            int buffsize) {
+                                          int buffsize) {
         super(is, c, buffsize);
     }
 
     public RenewableCipherLiteInputStream(InputStream is, CipherLite c,
-            int buffsize, boolean multipart, boolean lastMultiPart) {
+                                          int buffsize, boolean multipart, boolean lastMultiPart) {
         super(is, c, buffsize, multipart, lastMultiPart);
     }
 
@@ -61,7 +62,7 @@ public final class RenewableCipherLiteInputStream extends CipherLiteInputStream 
      * if the underlying input stream supports mark-and-reset, this input stream
      * can then be marked at and get reset back to the very beginning of the
      * stream (but not anywhere else).
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if mark is called after this stream has been accessed.
      */
@@ -71,7 +72,7 @@ public final class RenewableCipherLiteInputStream extends CipherLiteInputStream 
         if (hasBeenAccessed) {
             throw new UnsupportedOperationException(
                     "Marking is only supported before your first call to "
-                            + "read or skip.");
+                    + "read or skip.");
         }
         in.mark(readlimit);
     }

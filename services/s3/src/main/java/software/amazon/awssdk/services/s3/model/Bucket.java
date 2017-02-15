@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -69,10 +67,11 @@ public class Bucket implements Serializable {
 
     /**
      * Constructs a bucket without any name specified.
-     * 
+     *
      * @see Bucket#Bucket(String)
      */
-    public Bucket() {}
+    public Bucket() {
+    }
 
     /**
      * Creates a bucket with a name. 
@@ -81,8 +80,8 @@ public class Bucket implements Serializable {
      *
      * @param name
      *            The name for the bucket.
-     *            
-     * @see Bucket#Bucket()        
+     *
+     * @see Bucket#Bucket()
      */
     public Bucket(String name) {
         this.name = name;
@@ -93,17 +92,17 @@ public class Bucket implements Serializable {
      */
     public String toString() {
         return "S3Bucket [name=" + getName()
-                + ", creationDate=" + getCreationDate()
-                + ", owner=" + getOwner() + "]";
+               + ", creationDate=" + getCreationDate()
+               + ", owner=" + getOwner() + "]";
     }
 
     /**
      * Gets the bucket's owner.  Returns <code>null</code>
      * if the bucket's owner is unknown.
-     * 
-     * @return 
+     *
+     * @return
      *  The bucket's owner, or <code>null</code> if it is unknown.
-     *  
+     *
      *  @see Bucket#setOwner(Owner)
      */
     public Owner getOwner() {
@@ -117,7 +116,7 @@ public class Bucket implements Serializable {
      *
      * @param owner
      *          The bucket's owner.
-     * 
+     *
      * @see Bucket#getOwner()
      */
     public void setOwner(Owner owner) {
@@ -152,7 +151,7 @@ public class Bucket implements Serializable {
      * Gets the name of the bucket.
      *
      * @return The name of this bucket.
-     * 
+     *
      * @see Bucket#setName(String)
      */
     public String getName() {

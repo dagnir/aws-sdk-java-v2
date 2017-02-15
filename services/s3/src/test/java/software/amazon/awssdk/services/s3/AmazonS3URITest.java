@@ -1,3 +1,17 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 
 package software.amazon.awssdk.services.s3;
 
@@ -323,9 +337,9 @@ public class AmazonS3URITest {
 
     @Test
     public void testMultipleQueryParams() {
-        AmazonS3URI uri  = new AmazonS3URI(URI.create(
+        AmazonS3URI uri = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?unrelated=true&versionId=%61%62%63123&unrelated=true"));
+                + "?unrelated=true&versionId=%61%62%63123&unrelated=true"));
 
         Assert.assertEquals("bucket", uri.getBucket());
         Assert.assertEquals("key", uri.getKey());
@@ -335,9 +349,9 @@ public class AmazonS3URITest {
 
     @Test
     public void testMultipleQueryParamsWithSemicolons() {
-        AmazonS3URI uri  = new AmazonS3URI(URI.create(
+        AmazonS3URI uri = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?unrelated=true;versionId=abc%3B%31%32%33;unrelated=true"));
+                + "?unrelated=true;versionId=abc%3B%31%32%33;unrelated=true"));
 
         Assert.assertEquals("bucket", uri.getBucket());
         Assert.assertEquals("key", uri.getKey());
@@ -347,9 +361,9 @@ public class AmazonS3URITest {
 
     @Test
     public void testVersionId() {
-        AmazonS3URI uri  = new AmazonS3URI(URI.create(
+        AmazonS3URI uri = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?versionId=abc123"));
+                + "?versionId=abc123"));
 
         Assert.assertEquals("bucket", uri.getBucket());
         Assert.assertEquals("key", uri.getKey());
@@ -359,9 +373,9 @@ public class AmazonS3URITest {
 
     @Test
     public void testEncodedVersionId() {
-        AmazonS3URI uri  = new AmazonS3URI(URI.create(
+        AmazonS3URI uri = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?versionId=%61%62%63%26123"));
+                + "?versionId=%61%62%63%26123"));
 
         Assert.assertEquals("bucket", uri.getBucket());
         Assert.assertEquals("key", uri.getKey());
@@ -373,11 +387,11 @@ public class AmazonS3URITest {
     public void testEqualsWithVersionId() {
         AmazonS3URI one = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?versionId=abc123"));
+                + "?versionId=abc123"));
 
         AmazonS3URI two = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?versionId=abc123"));
+                + "?versionId=abc123"));
 
         Assert.assertEquals(one, two);
         Assert.assertEquals(one.hashCode(), two.hashCode());
@@ -387,11 +401,11 @@ public class AmazonS3URITest {
     public void testNotEqualsWithVersionId() {
         AmazonS3URI one = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?versionId=abc123"));
+                + "?versionId=abc123"));
 
         AmazonS3URI two = new AmazonS3URI(URI.create(
                 "https://s3-us-west-2.amazonaws.com/bucket/key"
-                        + "?versionId=def456"));
+                + "?versionId=def456"));
 
         Assert.assertNotEquals(one, two);
         Assert.assertNotEquals(one.hashCode(), two.hashCode());

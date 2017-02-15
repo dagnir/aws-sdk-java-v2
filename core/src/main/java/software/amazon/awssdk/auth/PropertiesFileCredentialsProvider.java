@@ -28,27 +28,28 @@ import software.amazon.awssdk.SdkClientException;
  * <code>secretKey</code> property.
  */
 public class PropertiesFileCredentialsProvider implements
-        AWSCredentialsProvider {
+                                               AWSCredentialsProvider {
 
     private final String credentialsFilePath;
 
     /**
      * Creates a new PropertiesFileCredentialsProvider that will attempt to load
      * a custom file from the path specified to read AWS security credentials.
-     * 
+     *
      * @param credentialsFilePath
      *            The custom classpath resource path to a properties file from
      *            which the AWS security credentials should be loaded.
-     * 
+     *
      *            For example,
      *            <ul>
      *            <li>/etc/somewhere/credentials.properties</li>
      *            </ul>
      */
     public PropertiesFileCredentialsProvider(String credentialsFilePath) {
-        if (credentialsFilePath == null)
+        if (credentialsFilePath == null) {
             throw new IllegalArgumentException(
                     "Credentials file path cannot be null");
+        }
         this.credentialsFilePath = credentialsFilePath;
     }
 
@@ -58,7 +59,7 @@ public class PropertiesFileCredentialsProvider implements
         } catch (IOException e) {
             throw new SdkClientException(
                     "Unable to load AWS credentials from the "
-                            + credentialsFilePath + " file", e);
+                    + credentialsFilePath + " file", e);
         }
     }
 

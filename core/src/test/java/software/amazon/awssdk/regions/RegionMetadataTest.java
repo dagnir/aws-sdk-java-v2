@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -32,17 +28,17 @@ public class RegionMetadataTest {
     @BeforeClass
     public static void setUp() {
         Region us_east_1_region = new Region(new InMemoryRegionImpl
-                ("us-east-1",
-                null).addEndpoint("s3", "s3.amazonaws.com"));
+                                                     ("us-east-1",
+                                                      null).addEndpoint("s3", "s3.amazonaws.com"));
 
         Region us_west_1_region = new Region(new InMemoryRegionImpl
-                ("us-west-1", null).addEndpoint("s3", "s3-us-west-1.amazonaws.com"));
+                                                     ("us-west-1", null).addEndpoint("s3", "s3-us-west-1.amazonaws.com"));
 
         Region cn_north_1_region = new Region(new InMemoryRegionImpl("cn-north-1",
-                "amazonaws.com.cn"));
+                                                                     "amazonaws.com.cn"));
 
         metadata = new RegionMetadata(new InMemoryRegionsProvider(Arrays
-                .asList(us_east_1_region, us_west_1_region,cn_north_1_region)));
+                                                                          .asList(us_east_1_region, us_west_1_region, cn_north_1_region)));
     }
 
     @Test
@@ -80,7 +76,7 @@ public class RegionMetadataTest {
     @Test
     public void testGetRegionByEndpoint() {
         Region region =
-            metadata.getRegionByEndpoint("s3-us-west-1.amazonaws.com");
+                metadata.getRegionByEndpoint("s3-us-west-1.amazonaws.com");
 
         Assert.assertNotNull(region);
         Assert.assertEquals("us-west-1", region.getName());

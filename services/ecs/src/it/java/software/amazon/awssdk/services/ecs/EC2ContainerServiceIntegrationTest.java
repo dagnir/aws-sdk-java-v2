@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ecs;
 
 import java.util.Arrays;
@@ -26,7 +41,7 @@ public class EC2ContainerServiceIntegrationTest extends AWSTestBase {
 
     @BeforeClass
     public static void setup() throws Exception {
-//        BasicConfigurator.configure();
+        //        BasicConfigurator.configure();
 
         setUpCredentials();
 
@@ -43,12 +58,20 @@ public class EC2ContainerServiceIntegrationTest extends AWSTestBase {
         clusterArn = result.getCluster().getClusterArn();
 
         while (!client.describeClusters(new DescribeClustersRequest()
-                    .withClusters(CLUSTER_NAME))
-                    .getClusters()
-                    .get(0)
-                    .getStatus().equals("ACTIVE")) {
+                                                .withClusters(CLUSTER_NAME))
+                      .getClusters()
+                      .get(0)
+                      .getStatus().equals("ACTIVE")) {
 
             Thread.sleep(1000);
+        }
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        if (client != null) {
+            client.deleteCluster(new DeleteClusterRequest().withCluster(CLUSTER_NAME));
+            client.shutdown();
         }
     }
 
@@ -61,28 +84,28 @@ public class EC2ContainerServiceIntegrationTest extends AWSTestBase {
         RegisterTaskDefinitionResult result =
                 client.registerTaskDefinition(new RegisterTaskDefinitionRequest()
 
-            .withFamily("test")
-            .withContainerDefinitions(new ContainerDefinition()
-                .withCommand("command", "command", "command")
-                .withCpu(1)
-                .withEntryPoint("entryPoint", "entryPoint")
-                .withImage("image")
-                .withMemory(1)
-                .withName("test")
-                .withPortMappings(new PortMapping()
-                    .withHostPort(12345)
-                    .withContainerPort(6789)
-                )
-            )
-        );
+                                                      .withFamily("test")
+                                                      .withContainerDefinitions(new ContainerDefinition()
+                                                                                        .withCommand("command", "command", "command")
+                                                                                        .withCpu(1)
+                                                                                        .withEntryPoint("entryPoint", "entryPoint")
+                                                                                        .withImage("image")
+                                                                                        .withMemory(1)
+                                                                                        .withName("test")
+                                                                                        .withPortMappings(new PortMapping()
+                                                                                                                  .withHostPort(12345)
+                                                                                                                  .withContainerPort(6789)
+                                                                                                         )
+                                                                               )
+                                             );
 
         Assert.assertEquals("test", result.getTaskDefinition().getFamily());
         Assert.assertNotNull(result.getTaskDefinition().getRevision());
         Assert.assertNotNull(result.getTaskDefinition().getTaskDefinitionArn());
 
         ContainerDefinition def = result.getTaskDefinition()
-                .getContainerDefinitions()
-                .get(0);
+                                        .getContainerDefinitions()
+                                        .get(0);
 
         Assert.assertEquals("image", def.getImage());
         Assert.assertEquals(
@@ -96,17 +119,9 @@ public class EC2ContainerServiceIntegrationTest extends AWSTestBase {
         // Can't deregister task definitions yet... :(
 
         List<String> taskArns = client.listTaskDefinitions()
-                .getTaskDefinitionArns();
+                                      .getTaskDefinitionArns();
 
         Assert.assertNotNull(taskArns);
         Assert.assertFalse(taskArns.isEmpty());
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        if (client != null) {
-            client.deleteCluster(new DeleteClusterRequest().withCluster(CLUSTER_NAME));
-            client.shutdown();
-        }
     }
 }

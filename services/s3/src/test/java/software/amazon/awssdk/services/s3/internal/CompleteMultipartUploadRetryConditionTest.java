@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import org.junit.Assert;
@@ -28,7 +29,7 @@ public class CompleteMultipartUploadRetryConditionTest {
         CompleteMultipartUploadRetryCondition retryCondition = new
                 CompleteMultipartUploadRetryCondition();
         Assert.assertFalse(retryCondition.shouldRetry(null,
-                new AmazonClientException("null"), 0));
+                                                      new AmazonClientException("null"), 0));
         Assert.assertFalse(retryCondition.shouldRetry(null, new
                 AmazonServiceException("null"), 0));
     }
@@ -37,14 +38,14 @@ public class CompleteMultipartUploadRetryConditionTest {
     public void AlwaysFalsePredicate_ReturnsFalse() {
         CompleteMultipartUploadRetryCondition retryCondition = new
                 CompleteMultipartUploadRetryCondition(new
-                SdkPredicate<AmazonS3Exception>() {
-                    @Override
-                    public boolean test(AmazonS3Exception e) {
-                        return false;
-                    }
-                }, 0);
+                                                              SdkPredicate<AmazonS3Exception>() {
+                                                                  @Override
+                                                                  public boolean test(AmazonS3Exception e) {
+                                                                      return false;
+                                                                  }
+                                                              }, 0);
         Assert.assertFalse(retryCondition.shouldRetry(null,
-                new AmazonS3Exception("null"), 0));
+                                                      new AmazonS3Exception("null"), 0));
 
     }
 
@@ -56,38 +57,38 @@ public class CompleteMultipartUploadRetryConditionTest {
     @Test
     public void RetryAttemptsExhausted_ReturnsFalse() {
         AmazonS3Exception s3Exception = new AmazonS3Exception("Please try " +
-                "again");
+                                                              "again");
         s3Exception.setErrorCode("InternalError");
 
         CompleteMultipartUploadRetryCondition retryCondition = new
                 CompleteMultipartUploadRetryCondition();
         Assert.assertFalse(retryCondition.shouldRetry(null,
-                s3Exception, 4));
+                                                      s3Exception, 4));
     }
 
     @Test
     public void MaxRetryAttemptsSetToZero_ReturnsFalse() {
         AmazonS3Exception s3Exception = new AmazonS3Exception("Please try " +
-                "again");
+                                                              "again");
         s3Exception.setErrorCode("InternalError");
 
         CompleteMultipartUploadRetryCondition retryCondition = new
                 CompleteMultipartUploadRetryCondition(new
-                CompleteMultipartUploadRetryablePredicate(), 0);
+                                                              CompleteMultipartUploadRetryablePredicate(), 0);
         Assert.assertFalse(retryCondition.shouldRetry(null,
-                s3Exception, 1));
+                                                      s3Exception, 1));
     }
 
     @Test
     public void ValidRetryableExceptionRetriesNotExhausted_ReturnsTrue() {
         AmazonS3Exception s3Exception = new AmazonS3Exception("Please try " +
-                "again");
+                                                              "again");
         s3Exception.setErrorCode("InternalError");
 
         CompleteMultipartUploadRetryCondition retryCondition = new
                 CompleteMultipartUploadRetryCondition(new
-                CompleteMultipartUploadRetryablePredicate(), 4);
+                                                              CompleteMultipartUploadRetryablePredicate(), 4);
         Assert.assertFalse(retryCondition.shouldRetry(null,
-                s3Exception, 1));
+                                                      s3Exception, 1));
     }
 }

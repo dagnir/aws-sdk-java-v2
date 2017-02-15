@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertFalse;
@@ -44,8 +59,8 @@ public class CipherLiteInputStream3Test {
     // Test the case when a null buffer is invalidly passed causing NPE
     @Test
     public void testNullBuffer() throws Exception {
-        ContentCryptoScheme[] schemes = { ContentCryptoScheme.AES_CBC,
-                ContentCryptoScheme.AES_GCM, ContentCryptoScheme.AES_CTR };
+        ContentCryptoScheme[] schemes = {ContentCryptoScheme.AES_CBC,
+                                         ContentCryptoScheme.AES_GCM, ContentCryptoScheme.AES_CTR};
         for (ContentCryptoScheme scheme : schemes) {
             try {
                 doTestNullBuffer(scheme);
@@ -85,15 +100,15 @@ public class CipherLiteInputStream3Test {
     }
 
     private byte[] readWithBuffer(ContentCryptoScheme scheme,
-            boolean randomlyReturnZero) throws Exception {
+                                  boolean randomlyReturnZero) throws Exception {
         CipherLite cipherLite = createTestCipherLite(Cipher.ENCRYPT_MODE,
-                scheme);
+                                                     scheme);
         ConstantInputStream cis = new ConstantInputStream(DATA_SIZE,
-                (byte) 'Z', randomlyReturnZero);
+                                                          (byte) 'Z', randomlyReturnZero);
         CipherLiteInputStream is = new CipherLiteInputStream(cis, cipherLite);
         assertFalse(is.markSupported());
         byte[] ret = IOUtils.toByteArray(is); // IOUtils invokes read with byte
-                                              // buffer
+        // buffer
         is.close();
         if (randomlyReturnZero) {
             assertTrue(cis.getRandomZerosCount() > 0);
@@ -104,11 +119,11 @@ public class CipherLiteInputStream3Test {
     }
 
     private byte[] readWithNoBuffer(ContentCryptoScheme scheme,
-            boolean randomlyReturnZero) throws Exception {
+                                    boolean randomlyReturnZero) throws Exception {
         CipherLite cipherLite = createTestCipherLite(Cipher.ENCRYPT_MODE,
-                scheme);
+                                                     scheme);
         ConstantInputStream cis = new ConstantInputStream(DATA_SIZE,
-                (byte) 'Z', randomlyReturnZero);
+                                                          (byte) 'Z', randomlyReturnZero);
         InputStream is = new CipherLiteInputStream(cis, cipherLite);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         int b = is.read();
@@ -128,7 +143,7 @@ public class CipherLiteInputStream3Test {
     private byte[] doTestNullBuffer(ContentCryptoScheme scheme)
             throws Exception {
         CipherLite cipherLite = createTestCipherLite(Cipher.ENCRYPT_MODE,
-                scheme);
+                                                     scheme);
         ConstantInputStream cis = new ConstantInputStream(DATA_SIZE, (byte) 'Z');
         CipherLiteInputStream is = new CipherLiteInputStream(cis, cipherLite);
         is.read(null); // expect to throw NPE here
@@ -145,9 +160,9 @@ public class CipherLiteInputStream3Test {
     }
 
     private byte[] readWithZeroLenNullBuffer(ContentCryptoScheme scheme,
-            boolean useZeroLenNullBufferRandomly) throws Exception {
+                                             boolean useZeroLenNullBufferRandomly) throws Exception {
         CipherLite cipherLite = createTestCipherLite(Cipher.ENCRYPT_MODE,
-                scheme);
+                                                     scheme);
         ConstantInputStream cis = new ConstantInputStream(DATA_SIZE, (byte) 'Z');
         InputStream is = new CipherLiteInputStream(cis, cipherLite);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -170,10 +185,11 @@ public class CipherLiteInputStream3Test {
             }
         }
         is.close();
-        if (useZeroLenNullBufferRandomly)
+        if (useZeroLenNullBufferRandomly) {
             assertTrue(countNullBufferUse > 0);
-        else
+        } else {
             assertTrue(countNullBufferUse == 0);
+        }
         return bos.toByteArray();
     }
 
@@ -186,9 +202,9 @@ public class CipherLiteInputStream3Test {
     }
 
     private byte[] readWithZeroLenBuffer(ContentCryptoScheme scheme,
-            boolean useZeroLenBufferRandomly) throws Exception {
+                                         boolean useZeroLenBufferRandomly) throws Exception {
         CipherLite cipherLite = createTestCipherLite(Cipher.ENCRYPT_MODE,
-                scheme);
+                                                     scheme);
         ConstantInputStream cis = new ConstantInputStream(DATA_SIZE, (byte) 'Z');
         InputStream is = new CipherLiteInputStream(cis, cipherLite);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -211,10 +227,11 @@ public class CipherLiteInputStream3Test {
             }
         }
         is.close();
-        if (useZeroLenBufferRandomly)
+        if (useZeroLenBufferRandomly) {
             assertTrue(countZeroBufferUse > 0);
-        else
+        } else {
             assertTrue(countZeroBufferUse == 0);
+        }
         return bos.toByteArray();
     }
 }

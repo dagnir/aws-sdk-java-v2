@@ -33,16 +33,7 @@ import software.amazon.awssdk.http.HttpResponse;
 @SdkInternalApi
 public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
 
-    /** The current JsonToken that the private JsonParser is currently pointing to. **/
-    private JsonToken currentToken;
-
-    /** A cache of the next token if it has been peeked ahead. **/
-    private JsonToken nextToken;
-
     private final JsonParser jsonParser;
-
-    private String currentHeader;
-
     /**
      * A stack of JsonFieldTokenPair objects that indicates the current state of the context.
      * For example, if we have a JSON object:
@@ -62,7 +53,13 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
      *  [ (C, START_OBJECT), (B, START_ARRAY), (A, START_OBJECT) ]
      */
     private final Stack<JsonFieldTokenPair> stack = new Stack<JsonFieldTokenPair>();
-
+    private final HttpResponse httpResponse;
+    private final Map<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>> unmarshallerMap;
+    /** The current JsonToken that the private JsonParser is currently pointing to. **/
+    private JsonToken currentToken;
+    /** A cache of the next token if it has been peeked ahead. **/
+    private JsonToken nextToken;
+    private String currentHeader;
     /**
      * The name of the field that is currently being parsed. This value is
      * nulled out when the parser reaches into the object/array structure of the
@@ -76,20 +73,15 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
      *       stack and only currentField will be updated from null to "D".
      */
     private String currentField;
-
     /**
      * This string is used to cache the parent element that was just parsed,
      * after it is removed from the stack.
      */
     private String lastParsedParentElement;
-
     private Map<String, String> metadata = new HashMap<String, String>();
 
-    private final HttpResponse httpResponse;
-
-    private final Map<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>> unmarshallerMap;
-
-    public JsonUnmarshallerContextImpl(JsonParser jsonParser, Map<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>> mapper, HttpResponse httpResponse) {
+    public JsonUnmarshallerContextImpl(JsonParser jsonParser, Map<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>> mapper,
+                                       HttpResponse httpResponse) {
         this.jsonParser = jsonParser;
         this.unmarshallerMap = mapper;
         this.httpResponse = httpResponse;
@@ -97,7 +89,9 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
 
     @Override
     public String getHeader(String header) {
-        if (httpResponse == null) return null;
+        if (httpResponse == null) {
+            return null;
+        }
 
         return httpResponse.getHeaders().get(header);
     }
@@ -110,7 +104,9 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
     @Override
     public int getCurrentDepth() {
         int depth = stack.size();
-        if (currentField != null) depth++;
+        if (currentField != null) {
+            depth++;
+        }
         return depth;
     }
 
@@ -125,20 +121,23 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
 
     private String readCurrentJsonTokenValue() throws IOException {
         switch (currentToken) {
-        case VALUE_STRING:
-            String text = jsonParser.getText();
-            return text;
-        case VALUE_FALSE: return "false";
-        case VALUE_TRUE: return "true";
-        case VALUE_NULL: return null;
-        case VALUE_NUMBER_FLOAT:
-        case VALUE_NUMBER_INT:
-            return jsonParser.getNumberValue().toString();
-        case FIELD_NAME:
-            return jsonParser.getText();
-        default:
-            throw new RuntimeException(
-                    "We expected a VALUE token but got: " + currentToken);
+            case VALUE_STRING:
+                String text = jsonParser.getText();
+                return text;
+            case VALUE_FALSE:
+                return "false";
+            case VALUE_TRUE:
+                return "true";
+            case VALUE_NULL:
+                return null;
+            case VALUE_NUMBER_FLOAT:
+            case VALUE_NUMBER_INT:
+                return jsonParser.getNumberValue().toString();
+            case FIELD_NAME:
+                return jsonParser.getText();
+            default:
+                throw new RuntimeException(
+                        "We expected a VALUE token but got: " + currentToken);
         }
     }
 
@@ -161,7 +160,7 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
                 return currentField.equals(expression);
             } else {
                 return (!stack.isEmpty())
-                        && stack.peek().getField().equals(expression);
+                       && stack.peek().getField().equals(expression);
             }
         }
     }
@@ -171,7 +170,7 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
         String parentElement;
         if (currentField != null) {
             parentElement = currentField;
-        } else if ( !stack.isEmpty() ) {
+        } else if (!stack.isEmpty()) {
             parentElement = stack.peek().getField();
         } else {
             parentElement = "";
@@ -185,7 +184,7 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
             return true;
         } else {
             return testExpression(expression)
-                    && stackDepth == getCurrentDepth();
+                   && stackDepth == getCurrentDepth();
         }
     }
 
@@ -194,7 +193,7 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
         // Use the value from the nextToken field if
         // we've already populated it to peek ahead.
         JsonToken token = (nextToken != null) ?
-                nextToken : jsonParser.nextToken();
+                          nextToken : jsonParser.nextToken();
 
         this.currentToken = token;
         nextToken = null;
@@ -205,7 +204,9 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
 
     @Override
     public JsonToken peek() throws IOException {
-        if (nextToken != null) return nextToken;
+        if (nextToken != null) {
+            return nextToken;
+        }
 
         nextToken = jsonParser.nextToken();
         return nextToken;
@@ -240,7 +241,9 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
 
     private void updateContext() throws IOException {
         lastParsedParentElement = null;
-        if (currentToken == null) return;
+        if (currentToken == null) {
+            return;
+        }
 
         if (currentToken == START_OBJECT || currentToken == START_ARRAY) {
             if (currentField != null) {

@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -48,26 +48,30 @@ import java.lang.annotation.Target;
  * <p>May be used as a meta-annotation.</p>
  */
 @DynamoDB
-@DynamoDBTypeConverted(converter=DynamoDBConvertedBool.Converter.class)
+@DynamoDBTypeConverted(converter = DynamoDBConvertedBool.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target( {ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface DynamoDBConvertedBool {
-
-    /**
-     * Enumeration of the supported format options.
-     */
-    public static enum Format { true_false, T_F, Y_N };
 
     /**
      * The format type for converting to and from {@link String}.
      */
     Format value();
 
+    ;
+
+    /**
+     * Enumeration of the supported format options.
+     */
+    public static enum Format {
+        true_false, T_F, Y_N
+    }
+
     /**
      * Boolean type converter.
      */
-    static final class Converter implements DynamoDBTypeConverter<String,Boolean> {
+    static final class Converter implements DynamoDBTypeConverter<String, Boolean> {
         private final String valueTrue, valueFalse;
 
         public Converter(Class<Boolean> targetType, DynamoDBConvertedBool annotation) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -47,19 +47,19 @@ public class BatchWriteRetryStrategyTest {
 
     private static Map<String, List<WriteRequest>> unprocessedItems;
 
-    private AmazonDynamoDB ddbMock;
-    private DynamoDBMapper mapper;
-
     static {
         WriteRequest writeReq = new WriteRequest()
                 .withPutRequest(new PutRequest()
-                        .withItem(Collections.singletonMap(
-                                HASH_ATTR,
-                                new AttributeValue("foo"))));
+                                        .withItem(Collections.singletonMap(
+                                                HASH_ATTR,
+                                                new AttributeValue("foo"))));
 
         unprocessedItems = Collections.singletonMap(TABLE_NAME,
-                Arrays.asList(writeReq));
+                                                    Arrays.asList(writeReq));
     }
+
+    private AmazonDynamoDB ddbMock;
+    private DynamoDBMapper mapper;
 
     @Before
     public void setup() {
@@ -133,7 +133,7 @@ public class BatchWriteRetryStrategyTest {
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemSuccess() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
                 .andReturn(new BatchWriteItemResult()
-                        .withUnprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()));
+                                   .withUnprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()));
     }
 
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemReturnUnprocessedItems() {
@@ -156,7 +156,7 @@ public class BatchWriteRetryStrategyTest {
     }
 
     private static class BatchWriteRetryStrategyWithNoDelay implements
-            BatchWriteRetryStrategy {
+                                                            BatchWriteRetryStrategy {
 
         private final int maxRetry;
 
@@ -193,6 +193,7 @@ public class BatchWriteRetryStrategyTest {
         public String getHash() {
             return hash;
         }
+
         public void setHash(String hash) {
             this.hash = hash;
         }

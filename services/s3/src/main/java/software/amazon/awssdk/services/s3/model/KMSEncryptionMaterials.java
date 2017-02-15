@@ -1,5 +1,5 @@
 /*
- * Copyright 20104 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -29,7 +30,8 @@ public class KMSEncryptionMaterials extends EncryptionMaterials implements Seria
      * Name of the material description to be persisted in S3 for the KMS's
      * customer master key id.
      */
-    public static final String CUSTOMER_MASTER_KEY_ID = "kms_cmk_id"; 
+    public static final String CUSTOMER_MASTER_KEY_ID = "kms_cmk_id";
+
     /**
      * @param defaultCustomerMasterKeyId
      *            KMS's customer master key id; must not be null
@@ -37,9 +39,10 @@ public class KMSEncryptionMaterials extends EncryptionMaterials implements Seria
     public KMSEncryptionMaterials(String defaultCustomerMasterKeyId) {
         super(null, null);
         if (defaultCustomerMasterKeyId == null
-                || defaultCustomerMasterKeyId.length() == 0)
+            || defaultCustomerMasterKeyId.length() == 0) {
             throw new IllegalArgumentException(
                     "The default customer master key id must be specified");
+        }
         addDescription(CUSTOMER_MASTER_KEY_ID, defaultCustomerMasterKeyId);
     }
 
@@ -61,9 +64,9 @@ public class KMSEncryptionMaterials extends EncryptionMaterials implements Seria
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Always returns true.
-     * 
+     *
      * @return true
      */
     @Override

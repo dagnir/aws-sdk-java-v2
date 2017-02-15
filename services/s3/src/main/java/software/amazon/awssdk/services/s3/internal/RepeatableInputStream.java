@@ -1,9 +1,6 @@
 /*
  * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
- *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
@@ -28,7 +25,7 @@ import software.amazon.awssdk.runtime.io.SdkInputStream;
 
 /**
  * @deprecated by {@link SdkBufferedInputStream}.
- * 
+ *
  * A repeatable input stream wrapper for any input stream. This input stream
  * relies on buffered data to repeat, and can therefore only be repeated when
  * less data has been read than this buffer can hold.
@@ -69,7 +66,7 @@ public class RepeatableInputStream extends SdkInputStream {
 
         if (log.isDebugEnabled()) {
             log.debug("Underlying input stream will be repeatable up to "
-                    + this.buffer.length + " bytes");
+                      + this.buffer.length + " bytes");
         }
     }
 
@@ -90,8 +87,8 @@ public class RepeatableInputStream extends SdkInputStream {
             bufferOffset = 0;
         } else {
             throw new IOException(
-                "Input stream cannot be reset as " + this.bytesReadPastMark
-                + " bytes have been written, exceeding the available buffer size of " + this.bufferSize);
+                    "Input stream cannot be reset as " + this.bytesReadPastMark
+                    + " bytes have been written, exceeding the available buffer size of " + this.bufferSize);
         }
     }
 
@@ -119,7 +116,7 @@ public class RepeatableInputStream extends SdkInputStream {
              * less than bufferSize, which is an int.
              */
             byte[] newBuffer = new byte[this.bufferSize];
-            System.arraycopy(buffer, bufferOffset, newBuffer, 0, (int)(bytesReadPastMark - bufferOffset));
+            System.arraycopy(buffer, bufferOffset, newBuffer, 0, (int) (bytesReadPastMark - bufferOffset));
             this.buffer = newBuffer;
             this.bytesReadPastMark -= bufferOffset;
             this.bufferOffset = 0;
@@ -179,10 +176,10 @@ public class RepeatableInputStream extends SdkInputStream {
             bufferOffset += count;
         } else {
             // We have exceeded the buffer capacity, after which point it is of no use. Free the memory.
-            if (! hasWarnedBufferOverflow) {
+            if (!hasWarnedBufferOverflow) {
                 if (log.isDebugEnabled()) {
                     log.debug("Buffer size " + bufferSize + " has been exceeded and the input stream "
-                            + "will not be repeatable until the next mark. Freeing buffer memory");
+                              + "will not be repeatable until the next mark. Freeing buffer memory");
                 }
                 hasWarnedBufferOverflow = true;
             }

@@ -24,11 +24,11 @@ import software.amazon.awssdk.http.HttpResponse;
  */
 public interface AuthErrorRetryStrategy {
 
-	/**
-	 * Returns an alternative signing context (consists of a new signer instance
-	 * and a new request endpoint) that should be used to retry the request. Or
-	 * null if it should not be retried.
-	 */
-	AuthRetryParameters shouldRetryWithAuthParam(Request<?> originalRequest,
-			HttpResponse response, AmazonServiceException ase);
+    /**
+     * Returns an alternative signing context (consists of a new signer instance
+     * and a new request endpoint) that should be used to retry the request. Or
+     * null if it should not be retried.
+     */
+    AuthRetryParameters shouldRetryWithAuthParam(Request<?> originalRequest,
+                                                 HttpResponse response, AmazonServiceException ase);
 }

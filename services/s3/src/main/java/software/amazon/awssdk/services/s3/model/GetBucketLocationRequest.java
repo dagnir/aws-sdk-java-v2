@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -27,57 +28,57 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  */
 public class GetBucketLocationRequest extends AmazonWebServiceRequest implements Serializable {
 
-	/** The name of the bucket whose location is being requested. */
-	private String bucketName;
+    /** The name of the bucket whose location is being requested. */
+    private String bucketName;
 
-	
-	/**
-	 * Constructs a new request object to create a new bucket with the specified
-	 * name.
-	 * <p>
-	 * When choosing a bucket name, keep in mind that Amazon S3 bucket names are
-	 * globally unique.
-	 * 
-	 * @param bucketName
-	 *            The name for the new bucket.
-	 */
-	public GetBucketLocationRequest(String bucketName) {
-		this.bucketName = bucketName;
-	}
 
-	
-	/**
-	 * Returns the name of the bucket whose location is being requested.
-	 *
-	 * @return The name of the bucket whose location is being requested.
-	 */
-	public String getBucketName() {
-		return bucketName;
-	}
+    /**
+     * Constructs a new request object to create a new bucket with the specified
+     * name.
+     * <p>
+     * When choosing a bucket name, keep in mind that Amazon S3 bucket names are
+     * globally unique.
+     *
+     * @param bucketName
+     *            The name for the new bucket.
+     */
+    public GetBucketLocationRequest(String bucketName) {
+        this.bucketName = bucketName;
+    }
 
-	/**
-	 * Sets the name of the bucket whose location is being requested.
-	 *
-	 * @param bucketName
-	 *            The name of the bucket whose location is being requested.
-	 */
-	public void setBucketName(String bucketName) {
-		this.bucketName = bucketName;
-	}
 
-	/**
-	 * Sets the name of the bucket whose location is being requested, and
-	 * returns this updated object so that additional method calls can be
-	 * chained together.
-	 *
-	 * @param bucketName
-	 *            The name of the bucket whose location is being requested.
-	 *
-	 * @return This updated object, so that additional method calls can be
-	 *         chained together.
-	 */
-	public GetBucketLocationRequest withBucketName(String bucketName) {
-		setBucketName(bucketName);
-		return this;
-	}
+    /**
+     * Returns the name of the bucket whose location is being requested.
+     *
+     * @return The name of the bucket whose location is being requested.
+     */
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    /**
+     * Sets the name of the bucket whose location is being requested.
+     *
+     * @param bucketName
+     *            The name of the bucket whose location is being requested.
+     */
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
+    }
+
+    /**
+     * Sets the name of the bucket whose location is being requested, and
+     * returns this updated object so that additional method calls can be
+     * chained together.
+     *
+     * @param bucketName
+     *            The name of the bucket whose location is being requested.
+     *
+     * @return This updated object, so that additional method calls can be
+     *         chained together.
+     */
+    public GetBucketLocationRequest withBucketName(String bucketName) {
+        setBucketName(bucketName);
+        return this;
+    }
 }

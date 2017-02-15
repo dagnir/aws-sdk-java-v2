@@ -1,17 +1,18 @@
 /*
- * Copyright 2012 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.util.Collection;
@@ -32,7 +33,7 @@ public abstract class MultipleFileTransfer<T extends Transfer> extends AbstractT
     private AtomicBoolean subTransferStarted = new AtomicBoolean(false);
 
     MultipleFileTransfer(String description, TransferProgress transferProgress,
-            ProgressListenerChain progressListenerChain, Collection<? extends T> subTransfers) {
+                         ProgressListenerChain progressListenerChain, Collection<? extends T> subTransfers) {
         super(description, transferProgress, progressListenerChain);
         this.subTransfers = subTransfers;
     }
@@ -47,18 +48,19 @@ public abstract class MultipleFileTransfer<T extends Transfer> extends AbstractT
      */
     public void collateFinalState() {
         boolean seenCanceled = false;
-        for ( T download : subTransfers ) {
-            if ( download.getState() == TransferState.Failed ) {
+        for (T download : subTransfers) {
+            if (download.getState() == TransferState.Failed) {
                 setState(TransferState.Failed);
                 return;
-            } else if ( download.getState() == TransferState.Canceled ) {
+            } else if (download.getState() == TransferState.Canceled) {
                 seenCanceled = true;
             }
         }
-        if ( seenCanceled )
+        if (seenCanceled) {
             setState(TransferState.Canceled);
-        else
+        } else {
             setState(TransferState.Completed);
+        }
     }
 
     /**
@@ -70,27 +72,27 @@ public abstract class MultipleFileTransfer<T extends Transfer> extends AbstractT
         super.setState(state);
 
         switch (state) {
-        case Waiting:
-            fireProgressEvent(ProgressEventType.TRANSFER_PREPARING_EVENT);
-            break;
-        case InProgress:
-            if ( subTransferStarted.compareAndSet(false, true) ) {
+            case Waiting:
+                fireProgressEvent(ProgressEventType.TRANSFER_PREPARING_EVENT);
+                break;
+            case InProgress:
+                if (subTransferStarted.compareAndSet(false, true)) {
                 /* The first InProgress signal */
-                fireProgressEvent(ProgressEventType.TRANSFER_STARTED_EVENT);
-            }
+                    fireProgressEvent(ProgressEventType.TRANSFER_STARTED_EVENT);
+                }
             /* Don't need any event code update for subsequent InProgress signals */
-            break;
-        case Completed:
-            fireProgressEvent(ProgressEventType.TRANSFER_COMPLETED_EVENT);
-            break;
-        case Canceled:
-            fireProgressEvent(ProgressEventType.TRANSFER_CANCELED_EVENT);
-            break;
-        case Failed:
-            fireProgressEvent(ProgressEventType.TRANSFER_FAILED_EVENT);
-            break;
-        default:
-            break;
+                break;
+            case Completed:
+                fireProgressEvent(ProgressEventType.TRANSFER_COMPLETED_EVENT);
+                break;
+            case Canceled:
+                fireProgressEvent(ProgressEventType.TRANSFER_CANCELED_EVENT);
+                break;
+            case Failed:
+                fireProgressEvent(ProgressEventType.TRANSFER_FAILED_EVENT);
+                break;
+            default:
+                break;
         }
     }
 }

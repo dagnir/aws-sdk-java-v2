@@ -8,6 +8,6 @@ Feature: Amazon Simple Notification Service
 
   Scenario: Handling errors
     When I attempt to call the "Publish" API with:
-    | Message  | hello      |
-    | TopicArn | fake_topic |
+      | Message  | hello      |
+      | TopicArn | fake_topic |
     Then I expect the response error code to be "InvalidParameter"

@@ -66,7 +66,7 @@ class AddWaiters {
             OperationModel opModel = operations.get(waiterDefinition.getOperation());
             if (opModel == null) {
                 throw new RuntimeException(String.format("Waiter defines operation '%s' which does not exist in service model.",
-                        waiterDefinition.getOperation()));
+                                                         waiterDefinition.getOperation()));
             }
             waiterDefinitionModel.setOperationModel(opModel);
             for (Acceptor acceptor : waiterDefinition.getAcceptors()) {
@@ -92,7 +92,7 @@ class AddWaiters {
 
             final Process p = executeToAstProcess(argument);
 
-            if(p.exitValue() != 0) {
+            if (p.exitValue() != 0) {
                 throw new RuntimeException(IOUtils.toString(p.getErrorStream()));
             }
 

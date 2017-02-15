@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -40,7 +40,7 @@ final class RemoveUnusedShapes {
         Map<String, ShapeModel> out = new HashMap<String, ShapeModel>();
         Map<String, ShapeModel> in = model.getShapes();
 
-        for(OperationModel opModel : model.getOperations().values()) {
+        for (OperationModel opModel : model.getOperations().values()) {
             addOperationShapes(opModel, in, out);
         }
 
@@ -48,8 +48,8 @@ final class RemoveUnusedShapes {
     }
 
     private static void addOperationShapes(OperationModel op,
-            Map<String, ShapeModel> in,
-            Map<String, ShapeModel> out) {
+                                           Map<String, ShapeModel> in,
+                                           Map<String, ShapeModel> out) {
 
         final VariableModel input = op.getInput();
         if (input != null) {
@@ -73,13 +73,17 @@ final class RemoveUnusedShapes {
      * Adds the shape. Recursively adds the shapes represented by its members.
      */
     private static void addShapeAndMembers(String shapeName,
-            Map<String, ShapeModel> in,
-            Map<String, ShapeModel> out) {
+                                           Map<String, ShapeModel> in,
+                                           Map<String, ShapeModel> out) {
 
-        if (shapeName == null) return;
+        if (shapeName == null) {
+            return;
+        }
 
         final ShapeModel shape = in.get(shapeName);
-        if (shape == null) return;
+        if (shape == null) {
+            return;
+        }
 
         if (!out.containsKey(shapeName)) {
             out.put(shapeName, in.get(shapeName));
@@ -88,7 +92,9 @@ final class RemoveUnusedShapes {
             if (members != null) {
                 for (MemberModel member : members) {
                     List<String> memberShapes = resolveMemberShapes(member);
-                    if (memberShapes == null) continue;
+                    if (memberShapes == null) {
+                        continue;
+                    }
                     for (String memberShape : memberShapes) {
                         addShapeAndMembers(memberShape, in, out);
                     }
@@ -104,7 +110,9 @@ final class RemoveUnusedShapes {
      */
     private static List<String> resolveMemberShapes(MemberModel member) {
 
-        if (member == null) return new LinkedList<String>();
+        if (member == null) {
+            return new LinkedList<String>();
+        }
         if (member.getEnumType() != null) {
             return Collections.singletonList(member.getEnumType());
         } else if (member.isList()) {

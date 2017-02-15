@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class PartitionsRegionsTest {
     @Test
     public void endpoint_information_for_completely_new_service_returns_null() {
         final Region region = RegionUtils.getRegion(Regions.AP_NORTHEAST_1
-                .getName());
+                                                            .getName());
         final String serviceName = "unknown-service";
         Assert.assertNull(region.getServiceEndpoint(serviceName));
         Assert.assertFalse(region.hasHttpEndpoint(serviceName));

@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.smoketest;
@@ -116,11 +116,11 @@ public class AWSCucumberStepdefs {
         assertTrue(exception instanceof AmazonServiceException);
         String actual = exception.getErrorMessage().toLowerCase();
         assertTrue("Error message doesn't match. Expected : " + expected + ". Actual :" + actual,
-                actual.contains(expected.toLowerCase()));
+                   actual.contains(expected.toLowerCase()));
     }
 
     private void attemptCall(String operation, Map<String, String> args)
-             throws IllegalAccessException, IllegalArgumentException {
+            throws IllegalAccessException, IllegalArgumentException {
         try {
             call(operation, args);
         } catch (InvocationTargetException ite) {
@@ -156,11 +156,11 @@ public class AWSCucumberStepdefs {
 
     private Object convertTo(Class<?> type, String value) {
 
-        if (type.equals(Integer.class))
+        if (type.equals(Integer.class)) {
             return Integer.valueOf(value);
-        else if (type.equals(Boolean.class))
+        } else if (type.equals(Boolean.class)) {
             return Boolean.valueOf(value);
-        else if(type.equals(List.class)) {
+        } else if (type.equals(List.class)) {
             return Arrays.asList(value);
         }
         return value;
@@ -170,20 +170,20 @@ public class AWSCucumberStepdefs {
         private String serviceInterfaceName;
         private String sourcePackageName;
 
-        public void setServiceInterfaceName(String serviceInterfaceName) {
-            this.serviceInterfaceName = serviceInterfaceName;
-        }
-
         public String getServiceInterfaceName() {
             return this.serviceInterfaceName;
         }
 
-        public void setSourcePackageName(String sourcePackageName) {
-            this.sourcePackageName = sourcePackageName;
+        public void setServiceInterfaceName(String serviceInterfaceName) {
+            this.serviceInterfaceName = serviceInterfaceName;
         }
 
         public String getSourcePackageName() {
             return this.sourcePackageName;
+        }
+
+        public void setSourcePackageName(String sourcePackageName) {
+            this.sourcePackageName = sourcePackageName;
         }
     }
 }

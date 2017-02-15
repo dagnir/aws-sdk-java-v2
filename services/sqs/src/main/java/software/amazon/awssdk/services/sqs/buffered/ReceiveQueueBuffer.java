@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,56 +46,31 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
  */
 public class ReceiveQueueBuffer {
 
-    /**
-     * Simple interface to represent a condition
-     * 
-     * @param <T>
-     */
-    private interface Predicate<T> {
-        /**
-         * @param t
-         *            Object being evaluated against the condition
-         * @return True if t meets the condition, false if not
-         */
-        boolean test(T t);
-    }
-
     private static Log log = LogFactory.getLog(ReceiveQueueBuffer.class);
-
     private final QueueBufferConfig config;
-
     private final String qUrl;
-
     private final Executor executor;
-
     private final AmazonSQS sqsClient;
-
+    /**
+     * synchronize on this object to create new receive batches or modify inflight message count
+     */
+    private final Object taskSpawnSyncPoint = new Object();
+    /** message delivery futures we gave out */
+    private final LinkedList<ReceiveMessageFuture> futures = new LinkedList<ReceiveMessageFuture>();
+    /** shutdown buffer does not retrieve any more messages from sqs */
+    volatile boolean shutDown = false;
     private long bufferCounter = 0;
-
     /**
      * This buffer's queue visibility timeout. Used to detect expired message that should not be
      * returned by the {@code receiveMessage} call. Synchronized by {@code receiveMessageLock}. -1
      * indicates that the time is uninitialized.
      */
     private volatile long visibilityTimeoutNanos = -1;
-
     /**
      * Used as permits controlling the number of in flight receive batches. Synchronized by
      * {@code taskSpawnSyncPoint}.
      */
     private volatile int inflightReceiveMessageBatches;
-
-    /**
-     * synchronize on this object to create new receive batches or modify inflight message count
-     */
-    private final Object taskSpawnSyncPoint = new Object();
-
-    /** shutdown buffer does not retrieve any more messages from sqs */
-    volatile boolean shutDown = false;
-
-    /** message delivery futures we gave out */
-    private final LinkedList<ReceiveMessageFuture> futures = new LinkedList<ReceiveMessageFuture>();
-
     /** finished batches are stored in this list. */
     private LinkedList<ReceiveMessageBatchTask> finishedTasks = new LinkedList<ReceiveMessageBatchTask>();
 
@@ -114,8 +89,9 @@ public class ReceiveQueueBuffer {
     public void shutdown() {
         shutDown = true;
         try {
-            while (inflightReceiveMessageBatches > 0)
+            while (inflightReceiveMessageBatches > 0) {
                 Thread.sleep(100);
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -125,7 +101,7 @@ public class ReceiveQueueBuffer {
      * Submits the request for retrieval of messages from the queue and returns a future that will
      * be signalled when the request is satisfied. The future may already be signalled by the time
      * it is returned.
-     * 
+     *
      * @return never null
      */
     public QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult> receiveMessageAsync(ReceiveMessageRequest rq,
@@ -153,7 +129,7 @@ public class ReceiveQueueBuffer {
     /**
      * Creates and returns a new future object. Sleeps if the list of already-issued but as yet
      * unsatisfied futures is over a throttle limit.
-     * 
+     *
      * @return never null
      */
     private ReceiveMessageFuture issueFuture(int size,
@@ -259,7 +235,7 @@ public class ReceiveQueueBuffer {
      * Prune all tasks at the beginning of the finishedTasks list that meet the given condition.
      * Once a task is found that does not meet the given condition the pruning stops. This method
      * assumes that you are holding the finishedTasks lock when invoking it.
-     * 
+     *
      * @param pruneCondition
      *            Condition on whether a task is eligible to be pruned
      * @return Number of total tasks pruned from finishedTasks
@@ -290,8 +266,9 @@ public class ReceiveQueueBuffer {
         desiredBatches = desiredBatches < 1 ? 1 : desiredBatches;
 
         synchronized (finishedTasks) {
-            if (finishedTasks.size() >= desiredBatches)
+            if (finishedTasks.size() >= desiredBatches) {
                 return;
+            }
 
             // if we have some finished batches already, and
             // existing inflight batches will bring us to the limit,
@@ -305,10 +282,10 @@ public class ReceiveQueueBuffer {
         synchronized (taskSpawnSyncPoint) {
             if (visibilityTimeoutNanos == -1) {
                 GetQueueAttributesRequest request = new GetQueueAttributesRequest().withQueueUrl(qUrl)
-                        .withAttributeNames("VisibilityTimeout");
+                                                                                   .withAttributeNames("VisibilityTimeout");
                 ResultConverter.appendUserAgent(request, AmazonSQSBufferedAsyncClient.USER_AGENT);
                 long visibilityTimeoutSeconds = Long.parseLong(sqsClient.getQueueAttributes(request).getAttributes()
-                        .get("VisibilityTimeout"));
+                                                                        .get("VisibilityTimeout"));
                 visibilityTimeoutNanos = TimeUnit.NANOSECONDS.convert(visibilityTimeoutSeconds, TimeUnit.SECONDS);
             }
 
@@ -323,7 +300,7 @@ public class ReceiveQueueBuffer {
                 ++bufferCounter;
                 if (log.isTraceEnabled()) {
                     log.trace("Spawned receive batch #" + bufferCounter + " (" + inflightReceiveMessageBatches + " of "
-                            + max + " inflight) for queue " + qUrl);
+                              + max + " inflight) for queue " + qUrl);
                 }
                 executor.execute(task);
             }
@@ -367,6 +344,20 @@ public class ReceiveQueueBuffer {
         }
     }
 
+    /**
+     * Simple interface to represent a condition
+     *
+     * @param <T>
+     */
+    private interface Predicate<T> {
+        /**
+         * @param t
+         *            Object being evaluated against the condition
+         * @return True if t meets the condition, false if not
+         */
+        boolean test(T t);
+    }
+
     private class ReceiveMessageFuture extends QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult> {
         /* how many messages did the request ask for */
         private int requestedSize;
@@ -397,7 +388,7 @@ public class ReceiveQueueBuffer {
 
         /**
          * Constructs a receive task waiting the specified time before calling SQS.
-         * 
+         *
          * @param waitTimeMs
          *            the time to wait before calling SQS
          */
@@ -429,7 +420,7 @@ public class ReceiveQueueBuffer {
          * Returns a message if one is available.
          * <p>
          * The call adjusts the message count.
-         * 
+         *
          * @return a message or {@code null} if none is available
          */
         synchronized Message removeMessage() {
@@ -443,10 +434,11 @@ public class ReceiveQueueBuffer {
                 return null;
             }
 
-            if (messages.isEmpty())
+            if (messages.isEmpty()) {
                 return null;
-            else
+            } else {
                 return messages.remove(messages.size() - 1);
+            }
         }
 
         boolean isExpired() {
@@ -473,7 +465,7 @@ public class ReceiveQueueBuffer {
                 for (Message m : messages) {
 
                     entries.add(new ChangeMessageVisibilityBatchRequestEntry().withId(Integer.toString(i))
-                            .withReceiptHandle(m.getReceiptHandle()).withVisibilityTimeout(0));
+                                                                              .withReceiptHandle(m.getReceiptHandle()).withVisibilityTimeout(0));
                     ++i;
                 }
 
@@ -497,13 +489,13 @@ public class ReceiveQueueBuffer {
             try {
                 visibilityDeadlineNano = System.nanoTime() + visibilityTimeoutNanos;
                 ReceiveMessageRequest request = new ReceiveMessageRequest(qUrl).withMaxNumberOfMessages(config
-                        .getMaxBatchSize());
+                                                                                                                .getMaxBatchSize());
                 ResultConverter.appendUserAgent(request, AmazonSQSBufferedAsyncClient.USER_AGENT);
 
                 if (config.getVisibilityTimeoutSeconds() > 0) {
                     request.setVisibilityTimeout(config.getVisibilityTimeoutSeconds());
                     visibilityDeadlineNano = System.nanoTime()
-                            + TimeUnit.NANOSECONDS.convert(config.getVisibilityTimeoutSeconds(), TimeUnit.SECONDS);
+                                             + TimeUnit.NANOSECONDS.convert(config.getVisibilityTimeoutSeconds(), TimeUnit.SECONDS);
                 }
 
                 if (config.isLongPoll()) {

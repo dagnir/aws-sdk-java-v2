@@ -70,7 +70,6 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
     protected String snapshotCopyIdentifier;
 
 
-
     /**
      * Loads the AWS account info for the integration tests and creates an
      * EC2 client for tests to use.
@@ -86,31 +85,35 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
         if (parameterGroupName != null) {
             try {
                 rds.deleteDBParameterGroup(new DeleteDBParameterGroupRequest().withDBParameterGroupName(parameterGroupName));
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
 
         if (securityGroupName != null) {
             try {
                 rds.deleteDBSecurityGroup(new DeleteDBSecurityGroupRequest()
-                    .withDBSecurityGroupName(securityGroupName));
-            } catch (Exception e) {}
+                                                  .withDBSecurityGroupName(securityGroupName));
+            } catch (Exception e) {
+            }
         }
 
         for (String databaseInstanceName : databaseInstancesToRelease) {
             try {
                 waitForDbInstanceToTransitionToState(databaseInstanceName, "available");
                 rds.deleteDBInstance(new DeleteDBInstanceRequest()
-                .withDBInstanceIdentifier(databaseInstanceName)
-                .withSkipFinalSnapshot(true));
-            } catch (Exception e) {}
+                                             .withDBInstanceIdentifier(databaseInstanceName)
+                                             .withSkipFinalSnapshot(true));
+            } catch (Exception e) {
+            }
         }
 
         if (snapshotIdentifier != null) {
             try {
                 waitForSnapshotToTransitionToState(snapshotIdentifier, "available");
                 rds.deleteDBSnapshot(new DeleteDBSnapshotRequest()
-                    .withDBSnapshotIdentifier(snapshotIdentifier));
-            } catch (Exception e) {}
+                                             .withDBSnapshotIdentifier(snapshotIdentifier));
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -137,11 +140,13 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
         while (System.currentTimeMillis() < timeout) {
             String status = rds.describeDBInstances(
                     new DescribeDBInstancesRequest()
-                        .withDBInstanceIdentifier(dbInstanceName)
-            ).getDBInstances().get(0).getDBInstanceStatus();
+                            .withDBInstanceIdentifier(dbInstanceName)
+                                                   ).getDBInstances().get(0).getDBInstanceStatus();
 
             System.out.println("Current status: " + status);
-            if (status.equals(state)) return;
+            if (status.equals(state)) {
+                return;
+            }
 
             Thread.sleep(30 * 1000);
         }
@@ -166,12 +171,14 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
         while (System.currentTimeMillis() < timeout) {
             String status = rds.describeDBSnapshots(
                     new DescribeDBSnapshotsRequest()
-                        .withDBSnapshotIdentifier(snapshotName)
-            ).getDBSnapshots().get(0).getStatus();
+                            .withDBSnapshotIdentifier(snapshotName)
+                                                   ).getDBSnapshots().get(0).getStatus();
 
             System.out.println("Current satus: " + status);
 
-            if (status.equals(state)) return;
+            if (status.equals(state)) {
+                return;
+            }
             Thread.sleep(30 * 1000);
         }
 
@@ -193,19 +200,22 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
      * @param state
      *            The name of the expected state being waited for.
      */
-    protected void waitForSecurityGroupIPRangeToTransitionToState(String securityGroupName, String cidrIpRange, String state) throws Exception {
+    protected void waitForSecurityGroupIPRangeToTransitionToState(String securityGroupName, String cidrIpRange, String state)
+            throws Exception {
         for (int retries = 0; retries < 40; retries++) {
             Thread.sleep(30 * 1000);
 
             List<IPRange> ipRanges = rds.describeDBSecurityGroups(new DescribeDBSecurityGroupsRequest()
-                .withDBSecurityGroupName(securityGroupName)).getDBSecurityGroups().get(0).getIPRanges();
+                                                                          .withDBSecurityGroupName(securityGroupName)).getDBSecurityGroups().get(0).getIPRanges();
 
             IPRange ipRange = findIpRange(ipRanges, cidrIpRange);
             assertNotNull(ipRange);
 
             String status = ipRange.getStatus();
             System.out.println("Current satus: " + status);
-            if (status.equals(state)) return;
+            if (status.equals(state)) {
+                return;
+            }
         }
 
         fail("Security group IP range never transitioned to state " + state);
@@ -225,7 +235,9 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
      */
     private IPRange findIpRange(List<IPRange> ipRanges, String cidrIpRange) {
         for (IPRange ipRange : ipRanges) {
-            if (ipRange.getCIDRIP().equals(cidrIpRange)) return ipRange;
+            if (ipRange.getCIDRIP().equals(cidrIpRange)) {
+                return ipRange;
+            }
         }
 
         return null;

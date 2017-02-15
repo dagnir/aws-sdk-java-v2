@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
@@ -16,7 +16,7 @@
  * Synchronous client for accessing Amazon S3.
  *
  * <h1>Appendix: Amazon S3 client-side encryption meta information</h1>
- * 
+ *
  * <h2>Introduction</h2>
  * <p>
  * This appendix summarizes the current crypto related meta information
@@ -30,7 +30,7 @@
  * href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html"
  * >Java&trade; Cryptography Architecture Standard Algorithm Name Documentation</a>
  * for more details.
- * 
+ *
  * <h2>S3 metadata vs instruction file</h2>
  * <p>
  * Note when a key/value pair is stored as "user metadata" as part of the S3
@@ -38,13 +38,13 @@
  * the key name. In contrast, the SDK doesn't add any prefix when the key names
  * are stored in an instruction file. (The reason has to do with how the http
  * headers are handled.)
- * 
+ *
  * For example, <b>x-amz-key</b> would get stored as <b>x-amz-meta-x-amz-key</b>
  * in S3 metadata. In contrast, <b>x-amz-key</b> would simply be stored as is
  * (ie without the prefix) in an instruction file.
- * 
+ *
  * All the keys described below are considered "user metadata" by the SDK.
- * 
+ *
  * <h2>S3 v1 crypto meta information (supported by all SDK's)</h2>
  * <p>
  * For non-KMS client side encryption, this v1 crypto meta information is used
@@ -80,7 +80,7 @@
  * possible).</td>
  * </tr>
  * </table>
- * 
+ *
  * <h2>S3 v2 crypto meta information (currently supported by the Java SDK)</h2>
  * <p>
  * This v2 crypto meta information is used to support both authenticated
@@ -166,7 +166,7 @@
  * <h4>Sample S3 crypto meta information for KMS client-side encryption</h4>
  * <p>
  * <h5>CryptoMode: Encryption Only</h5>
- * 
+ *
  * <pre>
  * x-amz-meta-x-amz-key-v2: 
  * CiAJ2GqwpJRnt4izujwoalC2YdNRNSMEslG5rw3pEI+J8hKnAQEBAwB4CdhqsKSUZ7eIs7o8KGpQtmHTUTUjBLJRua8N6RCPifIAAAB+MHwGCSqGSIb3DQEHBqBvMG0CAQAwaAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyD0rzN3KHViWixDVcCARCAOwhZ6xA8rob3Z0mNx3uKFieHKVyIC/PKlchALvG1oVLnf86mcZJNpTXtwMkKkDocVj3Z1zGjZTufFsOH
@@ -176,9 +176,9 @@
  * x-amz-wrap-alg: kms
  * x-amz-matdesc: {"kms_cmk_id":"d3fd2273-4ca0-4da5-b1c2-c89742ec6a26"}
  * </pre>
- * 
+ *
  * <h5>CryptoMode: Authenticated Encryption</h5>
- * 
+ *
  * <pre>
  * x-amz-key-v2: CiAJ2GqwpJRnt4izujwoalC2YdNRNSMEslG5rw3pEI+J8hKnAQEBAwB4CdhqsKSUZ7eIs7o8KGpQtmHTUTUjBLJRua8N6RCPifIAAAB+MHwGCSqGSIb3DQEHBqBvMG0CAQAwaAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAytFVyW4I6QmwcPK1ECARCAO1VzoM6KxA9DHyNMm/BEbbjle2vLA7IY7f9OkUoSqrdxgKxpNID9QaL/7928m1Djtld0bJpHefjm89C
  * x-amz-iv: VZBksyij6DhrUMye
@@ -188,7 +188,7 @@
  * x-amz-matdesc: {"kms_cmk_id":"d3fd2273-4ca0-4da5-b1c2-c89742ec6a26"}
  * x-amz-tag-len: 128
  * </pre>
- * 
+ *
  * <h2>S3 metadata of an instruction file</h2>
  * <p>
  * The following key is always included as part of the S3 metadata of the
@@ -208,4 +208,5 @@
  * </tr>
  * </table>
  */
+
 package software.amazon.awssdk.services.s3;

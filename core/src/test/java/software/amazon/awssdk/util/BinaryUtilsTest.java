@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -54,7 +50,7 @@ public class BinaryUtilsTest {
 
     @Test
     public void testCopyBytesFromByteBuffer() {
-        byte[] ba = {1,2,3,4,5};
+        byte[] ba = {1, 2, 3, 4, 5};
         // capacity: 100
         final ByteBuffer b = ByteBuffer.allocate(100);
         b.put(ba);
@@ -80,7 +76,7 @@ public class BinaryUtilsTest {
 
     @Test
     public void testCopyBytesFrom_DirectByteBuffer() {
-        byte[] ba = {1,2,3,4,5};
+        byte[] ba = {1, 2, 3, 4, 5};
         // capacity: 100
         final ByteBuffer b = ByteBuffer.allocateDirect(100);
         b.put(ba);
@@ -106,7 +102,7 @@ public class BinaryUtilsTest {
 
     @Test
     public void testCopyBytesFromByteBuffer_Idempotent() {
-        byte[] ba = {1,2,3,4,5};
+        byte[] ba = {1, 2, 3, 4, 5};
         final ByteBuffer b = ByteBuffer.wrap(ba);
         b.limit(4);
         assertTrue(b.limit() == 4);
@@ -121,7 +117,7 @@ public class BinaryUtilsTest {
         assertTrue(b.position() == 1);
         assertFalse(allData1 == allData2);
         assertTrue(allData1.length == 4);
-        assertTrue(Arrays.equals(new byte[]{1,2,3,4}, allData1));
+        assertTrue(Arrays.equals(new byte[] {1, 2, 3, 4}, allData1));
 
         // copy partial bytes should be idempotent
         byte[] partial1 = BinaryUtils.copyBytesFrom(b);
@@ -130,12 +126,12 @@ public class BinaryUtilsTest {
         assertTrue(b.position() == 1);
         assertFalse(partial1 == partial2);
         assertTrue(partial1.length == 3);
-        assertTrue(Arrays.equals(new byte[]{2,3,4}, partial1));
+        assertTrue(Arrays.equals(new byte[] {2, 3, 4}, partial1));
     }
 
     @Test
     public void testCopyBytesFrom_DirectByteBuffer_Idempotent() {
-        byte[] ba = {1,2,3,4,5};
+        byte[] ba = {1, 2, 3, 4, 5};
         final ByteBuffer b = ByteBuffer.allocateDirect(ba.length);
         b.put(ba).rewind();
         b.limit(4);
@@ -151,7 +147,7 @@ public class BinaryUtilsTest {
         assertTrue(b.position() == 1);
         assertFalse(allData1 == allData2);
         assertTrue(allData1.length == 4);
-        assertTrue(Arrays.equals(new byte[]{1,2,3,4}, allData1));
+        assertTrue(Arrays.equals(new byte[] {1, 2, 3, 4}, allData1));
 
         // copy partial bytes should be idempotent
         byte[] partial1 = BinaryUtils.copyBytesFrom(b);
@@ -160,6 +156,6 @@ public class BinaryUtilsTest {
         assertTrue(b.position() == 1);
         assertFalse(partial1 == partial2);
         assertTrue(partial1.length == 3);
-        assertTrue(Arrays.equals(new byte[]{2,3,4}, partial1));
+        assertTrue(Arrays.equals(new byte[] {2, 3, 4}, partial1));
     }
 }

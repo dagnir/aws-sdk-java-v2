@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 /**
  * Utilities for working with Amazon Simple Notification Service such as validating
  * message signatures.

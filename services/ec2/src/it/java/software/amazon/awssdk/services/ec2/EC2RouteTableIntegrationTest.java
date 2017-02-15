@@ -66,9 +66,8 @@ import software.amazon.awssdk.services.ec2.model.Vpc;
  */
 public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
 
-    private static final String VPC_CIDR_BLOCK = "10.0.0.0/23";
     protected static final Log log = LogFactory.getLog(EC2RouteTableIntegrationTest.class);
-
+    private static final String VPC_CIDR_BLOCK = "10.0.0.0/23";
     private static final String AVAILABILITY_ZONE = "us-east-1b";
     private static final String USER_DATA = "foobarbazbar";
     private static final String INSTANCE_TYPE = "c1.medium";
@@ -97,9 +96,10 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
         deleteAllSubnets();
 
         // Delete the network ACL before the vpc
-        for ( NetworkAcl acl : ec2.describeNetworkAcls().getNetworkAcls() ) {
-            if ( !acl.getIsDefault() )
+        for (NetworkAcl acl : ec2.describeNetworkAcls().getNetworkAcls()) {
+            if (!acl.getIsDefault()) {
                 ec2.deleteNetworkAcl(new DeleteNetworkAclRequest().withNetworkAclId(acl.getNetworkAclId()));
+            }
         }
 
         // Assert there are no non-default ACLs left
@@ -114,7 +114,7 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
 
     private static void createVPC() {
         CreateVpcResult result = ec2.createVpc(new CreateVpcRequest()
-                .withCidrBlock(VPC_CIDR_BLOCK));
+                                                       .withCidrBlock(VPC_CIDR_BLOCK));
         vpc = result.getVpc();
     }
 
@@ -140,9 +140,9 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
 
     protected static void createSubnet() {
         subnet = ec2.createSubnet(new CreateSubnetRequest().withVpcId(vpc
-                .getVpcId()).withCidrBlock(VPC_CIDR_BLOCK)
-                .withAvailabilityZone(AVAILABILITY_ZONE))
-                .getSubnet();
+                                                                              .getVpcId()).withCidrBlock(VPC_CIDR_BLOCK)
+                                                           .withAvailabilityZone(AVAILABILITY_ZONE))
+                    .getSubnet();
     }
 
     private static void createVPCSecurityGroup() {
@@ -150,9 +150,9 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
         String description = "Test group";
         String vpcGroupId = ec2.createSecurityGroup(
                 new CreateSecurityGroupRequest().withGroupName(groupName).withDescription(description)
-                        .withVpcId(vpc.getVpcId())).getGroupId();
+                                                .withVpcId(vpc.getVpcId())).getGroupId();
         vpcGroup = ec2.describeSecurityGroups(new DescribeSecurityGroupsRequest().withGroupIds(vpcGroupId))
-                .getSecurityGroups().get(0);
+                      .getSecurityGroups().get(0);
 
         assertEquals(groupName, vpcGroup.getGroupName());
         assertEquals(vpc.getVpcId(), vpcGroup.getVpcId());
@@ -167,7 +167,7 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
         tagResource(table.getRouteTableId(), TAGS);
 
         DescribeRouteTablesRequest describeRequest = new DescribeRouteTablesRequest().withRouteTableIds(table
-                .getRouteTableId());
+                                                                                                                .getRouteTableId());
         DescribeRouteTablesResult describeResult = ec2.describeRouteTables(describeRequest);
 
         assertEquals(1, describeResult.getRouteTables().size());
@@ -229,7 +229,7 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
             waitForInstanceToTransitionToState(instanceId, InstanceStateName.Running);
 
             CreateRouteRequest createRouteRequest = new CreateRouteRequest().withDestinationCidrBlock("0.0.0.0/0")
-                    .withInstanceId(instanceId).withRouteTableId(table.getRouteTableId());
+                                                                            .withInstanceId(instanceId).withRouteTableId(table.getRouteTableId());
 
             ec2.createRoute(createRouteRequest);
 
@@ -237,14 +237,14 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
             assertEquals(2, table.getRoutes().size());
 
             ReplaceRouteRequest replaceRouteRequest = new ReplaceRouteRequest().withDestinationCidrBlock("0.0.0.0/0")
-                    .withInstanceId(instanceId).withRouteTableId(table.getRouteTableId());
+                                                                               .withInstanceId(instanceId).withRouteTableId(table.getRouteTableId());
             ec2.replaceRoute(replaceRouteRequest);
 
             table = describeTable();
             assertEquals(2, table.getRoutes().size());
 
             DeleteRouteRequest deleteRoute = new DeleteRouteRequest().withRouteTableId(table.getRouteTableId())
-                    .withDestinationCidrBlock("0.0.0.0/0");
+                                                                     .withDestinationCidrBlock("0.0.0.0/0");
             ec2.deleteRoute(deleteRoute);
 
             table = describeTable();
@@ -286,7 +286,7 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
         assertEquals(1, result.getReservation().getInstances().size());
         assertEquals(1, result.getReservation().getInstances().get(0).getSecurityGroups().size());
         assertEquals(vpcGroup.getGroupId(), result.getReservation().getInstances().get(0).getSecurityGroups().get(0)
-                .getGroupId());
+                                                  .getGroupId());
 
         DescribeInstancesRequest describeRequest = new DescribeInstancesRequest();
         describeRequest.withInstanceIds(result.getReservation().getInstances().get(0).getInstanceId());
@@ -299,7 +299,7 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
 
     private RouteTable describeTable() {
         return ec2.describeRouteTables(new DescribeRouteTablesRequest().withRouteTableIds(table.getRouteTableId()))
-                .getRouteTables().get(0);
+                  .getRouteTables().get(0);
     }
 
 }

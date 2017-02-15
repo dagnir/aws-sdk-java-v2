@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.model;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +39,42 @@ import software.amazon.awssdk.metrics.RequestMetricCollector;
 
 public class EncryptedPutObjectRequestTest {
 
+    public static void verifyBaseBeforeCopy(final AmazonWebServiceRequest to) {
+        assertNull(to.getCustomRequestHeaders());
+        assertSame(ProgressListener.NOOP, to.getGeneralProgressListener());
+        assertNull(to.getRequestCredentials());
+        assertNull(to.getRequestMetricCollector());
+
+        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == to
+                .getReadLimit());
+        RequestClientOptions toOptions = to.getRequestClientOptions();
+        assertNull(toOptions.getClientMarker(Marker.USER_AGENT));
+        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == toOptions
+                .getReadLimit());
+    }
+
+    private static void verifyBaseAfterCopy(final ProgressListener listener,
+                                            final AWSCredentials credentials,
+                                            final RequestMetricCollector collector,
+                                            final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
+        RequestClientOptions toOptions;
+        Map<String, String> headers = to.getCustomRequestHeaders();
+        assertTrue(2 == headers.size());
+        assertEquals("v1", headers.get("k1"));
+        assertEquals("v2", headers.get("k2"));
+        assertSame(listener, to.getGeneralProgressListener());
+        assertSame(credentials, to.getRequestCredentials());
+        assertSame(collector, to.getRequestMetricCollector());
+
+        assertTrue(1234 == to.getReadLimit());
+        toOptions = to.getRequestClientOptions();
+        assertEquals(
+                from.getRequestClientOptions().getClientMarker(
+                        Marker.USER_AGENT),
+                toOptions.getClientMarker(Marker.USER_AGENT));
+        assertTrue(1234 == toOptions.getReadLimit());
+    }
+
     @Test
     public void testClone() {
         File file = new File("somefile");
@@ -48,7 +99,7 @@ public class EncryptedPutObjectRequestTest {
             }
         };
         final AWSCredentials credentials = new BasicAWSCredentials("accesskey",
-                "accessid");
+                                                                   "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override
             public void collectMetrics(Request<?> request, Response<?> response) {
@@ -107,42 +158,6 @@ public class EncryptedPutObjectRequestTest {
         assertNotSame(from.getMaterialsDescription(), to.getMaterialsDescription());
         assertEquals(from.getMaterialsDescription(), to.getMaterialsDescription());
 
-    }
-
-    public static void verifyBaseBeforeCopy(final AmazonWebServiceRequest to) {
-        assertNull(to.getCustomRequestHeaders());
-        assertSame(ProgressListener.NOOP, to.getGeneralProgressListener());
-        assertNull(to.getRequestCredentials());
-        assertNull(to.getRequestMetricCollector());
-
-        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == to
-                .getReadLimit());
-        RequestClientOptions toOptions = to.getRequestClientOptions();
-        assertNull(toOptions.getClientMarker(Marker.USER_AGENT));
-        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == toOptions
-                .getReadLimit());
-    }
-
-    private static void verifyBaseAfterCopy(final ProgressListener listener,
-            final AWSCredentials credentials,
-            final RequestMetricCollector collector,
-            final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
-        RequestClientOptions toOptions;
-        Map<String, String> headers = to.getCustomRequestHeaders();
-        assertTrue(2 == headers.size());
-        assertEquals("v1", headers.get("k1"));
-        assertEquals("v2", headers.get("k2"));
-        assertSame(listener, to.getGeneralProgressListener());
-        assertSame(credentials, to.getRequestCredentials());
-        assertSame(collector, to.getRequestMetricCollector());
-
-        assertTrue(1234 == to.getReadLimit());
-        toOptions = to.getRequestClientOptions();
-        assertEquals(
-                from.getRequestClientOptions().getClientMarker(
-                        Marker.USER_AGENT),
-                toOptions.getClientMarker(Marker.USER_AGENT));
-        assertTrue(1234 == toOptions.getReadLimit());
     }
 
 }

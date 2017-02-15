@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static org.junit.Assert.assertEquals;
@@ -33,64 +48,66 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
     protected static final int MINUTES = 1000;
     protected static final String MULTIPART_UPLOAD_ETAG_PATTERN = "^[0-9a-zA-Z]*-\\d*$";
     protected static final String PUT_OBJECT_ETAG_PATTERN = "^[0-9a-zA-Z]*$";
-
-    /**
-     * Name of the bucket in Amazon S3 used for testing.
-     */
-    protected String bucketName = "java-sdk-tx-man-"
-            + System.currentTimeMillis();
-
     /**
      * Name of the Amazon S3 object used for testing.
      */
     protected static final String KEY = "key";
-
+    /**
+     * Name of the temporary file being used in the testing.
+     */
+    protected static final String fileName = "java-sdk-transfer-test-"
+                                             + System.currentTimeMillis();
+    /**
+     * Name of the directory used in the testing.
+     */
+    protected static final String directoryName = "java-sdk-transfer-man-directory-"
+                                                  + System.currentTimeMillis();
+    /**
+     * Default thread pool size to be used by the transfer manager.
+     */
+    protected static final int DEFAULT_THREAD_POOL_SIZE = 50;
+    /**
+     * Default upload threshold for multi part uploads.
+     */
+    protected static final long DEFAULT_MULTIPART_UPLOAD_THRESHOLD = 20 * MB;
+    /**
+     * Default part size for multi part uploads.
+     */
+    protected static final long DEFAULT_MULTIPART_UPLOAD_PART_SIZE = 10 * MB;
+    /**
+     * Default copy threshold for multi part copies.
+     */
+    protected static final long DEFAULT_MULTIPART_COPY_THRESHOLD = 20 * MB;
+    /**
+     * References to the temporary file being used for testing purposes.
+     */
+    protected static File tempFile;
+    /**
+     * Reference to the directory used for testing.
+     */
+    protected static File directory;
+    /**
+     * Name of the bucket in Amazon S3 used for testing.
+     */
+    protected String bucketName = "java-sdk-tx-man-"
+                                  + System.currentTimeMillis();
     /**
      * Reference to the Transfer manager instance used for testing.
      */
     protected TransferManager tm;
 
     /**
-     * References to the temporary file being used for testing purposes.
+     * Generates a secret key to used for testing purposes.
      */
-    protected static File tempFile;
-
-    /**
-     * Name of the temporary file being used in the testing.
-     */
-    protected static final String fileName = "java-sdk-transfer-test-"
-            + System.currentTimeMillis();
-
-    /**
-     * Reference to the directory used for testing.
-     */
-    protected static File directory;
-
-    /**
-     * Name of the directory used in the testing.
-     */
-    protected static final String directoryName = "java-sdk-transfer-man-directory-"
-            + System.currentTimeMillis();
-
-    /**
-     * Default thread pool size to be used by the transfer manager.
-     */
-    protected static final int DEFAULT_THREAD_POOL_SIZE = 50;
-
-    /**
-     * Default upload threshold for multi part uploads.
-     */
-    protected static final long DEFAULT_MULTIPART_UPLOAD_THRESHOLD = 20 * MB;
-
-    /**
-     * Default part size for multi part uploads.
-     */
-    protected static final long DEFAULT_MULTIPART_UPLOAD_PART_SIZE = 10 * MB;
-
-    /**
-     * Default copy threshold for multi part copies.
-     */
-    protected static final long DEFAULT_MULTIPART_COPY_THRESHOLD = 20 * MB;
+    protected static SecretKey generateSecretKey() {
+        try {
+            KeyGenerator generator = KeyGenerator.getInstance("AES");
+            generator.init(256, new SecureRandom());
+            return generator.generateKey();
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to generate key", e);
+        }
+    }
 
     /**
      * Sets up the Amazon S3 client, Creates an Amazon S3 bucket and also
@@ -129,10 +146,11 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
     protected boolean doesUploadExist(String uploadId) {
         List<MultipartUpload> uploads = s3.listMultipartUploads(
                 new ListMultipartUploadsRequest(bucketName))
-                .getMultipartUploads();
+                                          .getMultipartUploads();
         for (MultipartUpload upload : uploads) {
-            if (upload.getUploadId().equals(uploadId))
+            if (upload.getUploadId().equals(uploadId)) {
                 return true;
+            }
         }
 
         return false;
@@ -151,9 +169,9 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
      */
     protected void initializeTransferManager(int threadPoolSize) {
         initializeTransferManager(threadPoolSize,
-                DEFAULT_MULTIPART_UPLOAD_PART_SIZE,
-                DEFAULT_MULTIPART_UPLOAD_THRESHOLD,
-                DEFAULT_MULTIPART_COPY_THRESHOLD);
+                                  DEFAULT_MULTIPART_UPLOAD_PART_SIZE,
+                                  DEFAULT_MULTIPART_UPLOAD_THRESHOLD,
+                                  DEFAULT_MULTIPART_COPY_THRESHOLD);
     }
 
     /**
@@ -161,10 +179,10 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
      * configuration.
      */
     protected void initializeTransferManager(int threadPoolSize,
-            long uploadPartSize, long uploadThreshold, long copyThreshold) {
+                                             long uploadPartSize, long uploadThreshold, long copyThreshold) {
         tm = new TransferManager(s3,
-                (ThreadPoolExecutor) Executors
-                        .newFixedThreadPool(threadPoolSize));
+                                 (ThreadPoolExecutor) Executors
+                                         .newFixedThreadPool(threadPoolSize));
         TransferManagerConfiguration configuration = new TransferManagerConfiguration();
         configuration.setMinimumUploadPartSize(uploadPartSize);
         configuration.setMultipartUploadThreshold(uploadThreshold);
@@ -173,25 +191,12 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
     }
 
     /**
-     * Generates a secret key to used for testing purposes.
-     */
-    protected static SecretKey generateSecretKey() {
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance("AES");
-            generator.init(256, new SecureRandom());
-            return generator.generateKey();
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to generate key", e);
-        }
-    }
-
-    /**
      * Asserts that the given ETag satisfies the multi part ETag pattern.
      */
     protected void assertMultipartETag(String eTag) {
         assertNotNull(eTag);
         assertTrue("Not a multipart ETag: " + eTag,
-                eTag.matches(MULTIPART_UPLOAD_ETAG_PATTERN));
+                   eTag.matches(MULTIPART_UPLOAD_ETAG_PATTERN));
     }
 
     /**
@@ -201,16 +206,16 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
     protected void assertSinglePartETag(String eTag) {
         assertNotNull(eTag);
         assertTrue("Not a single part ETag: " + eTag,
-                eTag.matches(PUT_OBJECT_ETAG_PATTERN));
+                   eTag.matches(PUT_OBJECT_ETAG_PATTERN));
     }
 
     /**
      * Uploads a input stream with random data of given length to the Amazon S3.
      */
     protected Upload uploadRandomInputStream(long contentLength,
-            ObjectMetadata metadata) {
+                                             ObjectMetadata metadata) {
         return tm.upload(bucketName, KEY, new RandomInputStream(contentLength),
-                metadata);
+                         metadata);
     }
 
     /**
@@ -235,8 +240,9 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
      * Deletes a directory and its contents.
      */
     protected void deleteDirectoryAndItsContents(File dir) {
-        if (!dir.exists())
+        if (!dir.exists()) {
             return;
+        }
         if (!dir.isDirectory()) {
             assertTrue(dir.delete());
             return;
@@ -248,15 +254,16 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
             deleteDirectoryAndItsContents(fileToDelete);
         }
 
-        if (dir.list().length == 0)
+        if (dir.list().length == 0) {
             assertTrue(dir.delete());
+        }
     }
 
     /**
      * Checks if the contents of the directory matches the given keys.
      */
     protected void assertKeysToDirectory(File directory, String[] keys,
-            long contentLength) {
+                                         long contentLength) {
 
         @SuppressWarnings("rawtypes")
         Iterator iter = FileUtils.iterateFiles(directory, null, true);
@@ -268,8 +275,8 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
             File f = (File) iter.next();
             assertEquals((Long) contentLength, (Long) f.length());
             setAbsolutePath.add(f.getAbsolutePath()
-                    .substring(directory.getAbsolutePath().length() + 1)
-                    .replaceAll("\\\\", "/"));
+                                 .substring(directory.getAbsolutePath().length() + 1)
+                                 .replaceAll("\\\\", "/"));
         }
         assertEquals(setKeys, setAbsolutePath);
 

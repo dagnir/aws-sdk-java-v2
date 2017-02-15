@@ -37,7 +37,8 @@ public class StandardErrorUnmarshaller extends AbstractErrorUnmarshaller<Node> {
      * Constructs a new unmarshaller that will unmarshall a standard AWS error
      * message as a generic AmazonServiceException object.
      */
-    public StandardErrorUnmarshaller() {}
+    public StandardErrorUnmarshaller() {
+    }
 
     /**
      * Constructor allowing subclasses to specify a specific type of

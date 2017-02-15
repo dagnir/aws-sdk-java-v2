@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -42,16 +42,16 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     private ConsumedCapacity accumulatedConsumedCapacity;
 
     protected final void accumulateStats(ConsumedCapacity consumedCapacity,
-            Integer count, Integer scannedCount) {
+                                         Integer count, Integer scannedCount) {
         if (consumedCapacity != null) {
             if (accumulatedConsumedCapacity == null) {
                 // Create a new consumed capacity by cloning the one passed in
                 this.accumulatedConsumedCapacity = new ConsumedCapacity();
                 accumulatedConsumedCapacity.setCapacityUnits(consumedCapacity.getCapacityUnits());
                 accumulatedConsumedCapacity.setGlobalSecondaryIndexes(
-                    clone(consumedCapacity.getGlobalSecondaryIndexes()));
+                        clone(consumedCapacity.getGlobalSecondaryIndexes()));
                 accumulatedConsumedCapacity.setLocalSecondaryIndexes(
-                    clone(consumedCapacity.getLocalSecondaryIndexes()));
+                        clone(consumedCapacity.getLocalSecondaryIndexes()));
                 accumulatedConsumedCapacity.setTable(clone(consumedCapacity.getTable()));
                 accumulatedConsumedCapacity.setTableName(consumedCapacity.getTableName());
             } else {
@@ -62,27 +62,27 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
                     accumulatedConsumedCapacity.setCapacityUnits(delta);
                 } else {
                     accumulatedConsumedCapacity.setCapacityUnits(capunit.doubleValue()
-                        + (delta == null ? 0 : delta.doubleValue()));
+                                                                 + (delta == null ? 0 : delta.doubleValue()));
                 }
                 // Accumulate the GSI capacities
                 final Map<String, Capacity> gsi = accumulatedConsumedCapacity.getGlobalSecondaryIndexes();
                 if (gsi == null) {
                     accumulatedConsumedCapacity.setGlobalSecondaryIndexes(
-                        clone(consumedCapacity.getGlobalSecondaryIndexes()));
+                            clone(consumedCapacity.getGlobalSecondaryIndexes()));
                 } else {
                     accumulatedConsumedCapacity.setGlobalSecondaryIndexes(add(
-                        consumedCapacity.getGlobalSecondaryIndexes(),
-                        accumulatedConsumedCapacity.getGlobalSecondaryIndexes()));
+                            consumedCapacity.getGlobalSecondaryIndexes(),
+                            accumulatedConsumedCapacity.getGlobalSecondaryIndexes()));
                 }
                 // Accumulate the LSI capacities
                 final Map<String, Capacity> lsi = accumulatedConsumedCapacity.getLocalSecondaryIndexes();
                 if (lsi == null) {
                     accumulatedConsumedCapacity.setLocalSecondaryIndexes(
-                        clone(consumedCapacity.getLocalSecondaryIndexes()));
+                            clone(consumedCapacity.getLocalSecondaryIndexes()));
                 } else {
                     accumulatedConsumedCapacity.setLocalSecondaryIndexes(add(
-                        consumedCapacity.getLocalSecondaryIndexes(),
-                        accumulatedConsumedCapacity.getLocalSecondaryIndexes()));
+                            consumedCapacity.getLocalSecondaryIndexes(),
+                            accumulatedConsumedCapacity.getLocalSecondaryIndexes()));
                 }
                 // Accumulate table capacity
                 final Capacity tableCapacity = accumulatedConsumedCapacity.getTable();
@@ -90,7 +90,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
                     accumulatedConsumedCapacity.setTable(clone(consumedCapacity.getTable()));
                 } else {
                     accumulatedConsumedCapacity.setTable(add(consumedCapacity.getTable(),
-                            accumulatedConsumedCapacity.getTable()));
+                                                             accumulatedConsumedCapacity.getTable()));
                 }
             }
         }
@@ -103,8 +103,9 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     }
 
     private Map<String, Capacity> add(Map<String, Capacity> from, Map<String, Capacity> to) {
-        if (to == null)
+        if (to == null) {
             return clone(from);
+        }
         if (from != null) {
             for (Map.Entry<String, Capacity> entryFrom : from.entrySet()) {
                 final String key = entryFrom.getKey();
@@ -114,7 +115,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
                     to.put(key, clone(fromcap));
                 } else {
                     to.put(key, new Capacity().withCapacityUnits(
-                        doubleOf(tocap) + doubleOf(fromcap)));
+                            doubleOf(tocap) + doubleOf(fromcap)));
                 }
             }
         }
@@ -126,24 +127,27 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     }
 
     private Map<String, Capacity> clone(Map<String, Capacity> capacityMap) {
-        if (capacityMap == null)
+        if (capacityMap == null) {
             return null;
-        Map<String,Capacity> clone =
-            new HashMap<String,Capacity>(capacityMap.size());
-        for (Map.Entry<String, Capacity> e : capacityMap.entrySet())
+        }
+        Map<String, Capacity> clone =
+                new HashMap<String, Capacity>(capacityMap.size());
+        for (Map.Entry<String, Capacity> e : capacityMap.entrySet()) {
             clone.put(e.getKey(), clone(e.getValue()));
+        }
         return clone;
     }
 
     private Capacity clone(Capacity capacity) {
         return capacity == null
-             ? null
-             : new Capacity().withCapacityUnits(capacity.getCapacityUnits());
+               ? null
+               : new Capacity().withCapacityUnits(capacity.getCapacityUnits());
     }
 
     private double doubleOf(Capacity cap) {
-        if (cap == null)
+        if (cap == null) {
             return 0.0;
+        }
         Double val = cap.getCapacityUnits();
         return val == null ? 0.0 : val.doubleValue();
     }

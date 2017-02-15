@@ -64,7 +64,7 @@ public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
 
     /** Default Properties Credentials file path */
     private static final String propertiesFilePath = System.getProperty("user.home")
-            + "/.aws/awsTestAccount.properties";
+                                                     + "/.aws/awsTestAccount.properties";
 
     private static final String TEST_CREDENTIALS_PROFILE_NAME = "aws-java-sdk-test";
 
@@ -81,16 +81,8 @@ public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
 
     /** Name of the test key these tests will create, test, delete, etc */
     private static final String expectedKey = "integ-test-key-" + new Date().getTime();
-
-    private static File file;
-
     protected static AmazonS3 s3dualstack;
-
-    @Before
-    public void setup() throws Exception {
-        file = CryptoTestUtils.generateRandomAsciiFile(100);
-    }
-
+    private static File file;
 
     /**
      * Tests that we can correctly create an S3 bucket in the default location
@@ -99,10 +91,10 @@ public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
     @BeforeClass
     public static void createBucket() {
         s3dualstack = AmazonS3ClientBuilder.standard()
-                .withCredentials(chain)
-                .withRegion(Regions.US_WEST_2)
-                .withDualstackEnabled(true)
-                .build();
+                                           .withCredentials(chain)
+                                           .withRegion(Regions.US_WEST_2)
+                                           .withDualstackEnabled(true)
+                                           .build();
 
         CreateBucketRequest request = new CreateBucketRequest(expectedBucketName);
         request.setCannedAcl(CannedAccessControlList.AuthenticatedRead);
@@ -127,6 +119,11 @@ public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
             s3.setS3ClientOptions(S3ClientOptions.builder().setAccelerateModeEnabled(false).build());
             deleteBucketAndAllContents(expectedBucketName);
         }
+    }
+
+    @Before
+    public void setup() throws Exception {
+        file = CryptoTestUtils.generateRandomAsciiFile(100);
     }
 
     @Test
@@ -204,8 +201,9 @@ public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
     private boolean objectListContainsKey(List<S3ObjectSummary> objects, String expectedKey) {
         for (Iterator<S3ObjectSummary> iterator = objects.iterator(); iterator.hasNext(); ) {
             S3ObjectSummary obj = iterator.next();
-            if (obj.getKey().equals(expectedKey))
+            if (obj.getKey().equals(expectedKey)) {
                 return true;
+            }
         }
 
         return false;

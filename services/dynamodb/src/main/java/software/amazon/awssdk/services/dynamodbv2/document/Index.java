@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -53,16 +53,19 @@ public class Index implements QueryApi, ScanApi {
     private final ScanImpl scanDelegate;
 
     Index(AmazonDynamoDB client, String indexName, Table table) {
-        if (client == null)
+        if (client == null) {
             throw new IllegalArgumentException("client must be specified");
-        if (indexName == null || indexName.trim().length() == 0)
+        }
+        if (indexName == null || indexName.trim().length() == 0) {
             throw new IllegalArgumentException("index name must not be null or empty");
-        if (table == null)
+        }
+        if (table == null) {
             throw new IllegalArgumentException("table must be specified");
+        }
         this.table = table;
         this.indexName = indexName;
         this.queryDelegate = new IndexQueryImpl(client, this);
-        this.scanDelegate  = new IndexScanImpl(client, this);
+        this.scanDelegate = new IndexScanImpl(client, this);
     }
 
     /**
@@ -81,40 +84,40 @@ public class Index implements QueryApi, ScanApi {
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition) {
+                                              RangeKeyCondition rangeKeyCondition) {
         return queryDelegate.query(hashKey, rangeKeyCondition);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters) {
+                                              RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters) {
         return queryDelegate.query(hashKey, rangeKeyCondition, queryFilters);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, String filterExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                              RangeKeyCondition rangeKeyCondition, String filterExpression,
+                                              Map<String, String> nameMap, Map<String, Object> valueMap) {
         return queryDelegate.query(hashKey, rangeKeyCondition,
-                filterExpression, nameMap, valueMap);
+                                   filterExpression, nameMap, valueMap);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, String projectionExpression,
-            String filterExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                              RangeKeyCondition rangeKeyCondition, String projectionExpression,
+                                              String filterExpression, Map<String, String> nameMap,
+                                              Map<String, Object> valueMap) {
         return queryDelegate.query(hashKey, rangeKeyCondition,
-                projectionExpression, filterExpression, nameMap, valueMap);
+                                   projectionExpression, filterExpression, nameMap, valueMap);
     }
 
     @Beta
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, QueryExpressionSpec queryExpressions) {
+                                              RangeKeyCondition rangeKeyCondition, QueryExpressionSpec queryExpressions) {
         return queryDelegate.query(hashKey, rangeKeyCondition,
-                queryExpressions.getProjectionExpression(),
-                queryExpressions.getFilterExpression(),
-                queryExpressions.getNameMap(), queryExpressions.getValueMap());
+                                   queryExpressions.getProjectionExpression(),
+                                   queryExpressions.getFilterExpression(),
+                                   queryExpressions.getNameMap(), queryExpressions.getValueMap());
     }
 
     @Override
@@ -130,35 +133,35 @@ public class Index implements QueryApi, ScanApi {
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition) {
         return queryDelegate.query(hashKeyName, hashKeyValue, rangeKeyCondition);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            QueryFilter... queryFilters) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              QueryFilter... queryFilters) {
         return queryDelegate.query(hashKeyName, hashKeyValue,
-                rangeKeyCondition, queryFilters);
+                                   rangeKeyCondition, queryFilters);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            String filterExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression, Map<String, String> nameMap,
+                                              Map<String, Object> valueMap) {
         return queryDelegate.query(hashKeyName, hashKeyValue,
-                rangeKeyCondition, filterExpression, nameMap, valueMap);
+                                   rangeKeyCondition, filterExpression, nameMap, valueMap);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            String filterExpression, String projectionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression, String projectionExpression,
+                                              Map<String, String> nameMap, Map<String, Object> valueMap) {
         return queryDelegate.query(hashKeyName, hashKeyValue,
-                rangeKeyCondition, filterExpression, projectionExpression,
-                nameMap, valueMap);
+                                   rangeKeyCondition, filterExpression, projectionExpression,
+                                   nameMap, valueMap);
     }
 
     @Override
@@ -193,11 +196,11 @@ public class Index implements QueryApi, ScanApi {
     public TableDescription updateGSI(
             ProvisionedThroughput provisionedThroughput) {
         return table.updateTable(new UpdateTableSpec()
-            .withGlobalSecondaryIndexUpdates(
-                new GlobalSecondaryIndexUpdate().withUpdate(
-                    new UpdateGlobalSecondaryIndexAction()
-                    .withIndexName(indexName)
-                    .withProvisionedThroughput(provisionedThroughput))));
+                                         .withGlobalSecondaryIndexUpdates(
+                                                 new GlobalSecondaryIndexUpdate().withUpdate(
+                                                         new UpdateGlobalSecondaryIndexAction()
+                                                                 .withIndexName(indexName)
+                                                                 .withProvisionedThroughput(provisionedThroughput))));
     }
 
     /**
@@ -208,15 +211,15 @@ public class Index implements QueryApi, ScanApi {
      * <code>ACTIVE</code> state for this operation to succeed. Deleting a GSI
      * is an asynchronous operation; while executing the operation, the index is
      * in the <code>DELETING</code> state.
-     * 
+     *
      * @return the updated table description returned from DynamoDB.
      */
     public TableDescription deleteGSI() {
         return table.updateTable(new UpdateTableSpec()
-            .withGlobalSecondaryIndexUpdates(
-                new GlobalSecondaryIndexUpdate().withDelete(
-                    new DeleteGlobalSecondaryIndexAction()
-                    .withIndexName(indexName))));
+                                         .withGlobalSecondaryIndexUpdates(
+                                                 new GlobalSecondaryIndexUpdate().withDelete(
+                                                         new DeleteGlobalSecondaryIndexAction()
+                                                                 .withIndexName(indexName))));
     }
 
     /**
@@ -229,7 +232,7 @@ public class Index implements QueryApi, ScanApi {
      * result in <code>IllegalArgumentException</code>.
      *
      * @return the table description when the index has become active
-     * 
+     *
      * @throws IllegalArgumentException if the table is being deleted, or if
      * the GSI is not being created or updated, or if the GSI doesn't exist
      * @throws ResourceNotFoundException if the table doesn't exist
@@ -238,14 +241,15 @@ public class Index implements QueryApi, ScanApi {
         final Table table = getTable();
         final String tableName = table.getTableName();
         final String indexName = getIndexName();
-        retry: for (;;) {
+        retry:
+        for (; ; ) {
             TableDescription desc = table.waitForActive();
             final List<GlobalSecondaryIndexDescription> list = desc.getGlobalSecondaryIndexes();
             if (list != null) {
-                for (GlobalSecondaryIndexDescription d: list) {
+                for (GlobalSecondaryIndexDescription d : list) {
                     if (d.getIndexName().equals(indexName)) {
                         final String status = d.getIndexStatus();
-                        switch(IndexStatus.fromValue(status)) {
+                        switch (IndexStatus.fromValue(status)) {
                             case ACTIVE:
                                 return desc;
                             case CREATING:
@@ -254,16 +258,16 @@ public class Index implements QueryApi, ScanApi {
                                 continue retry;
                             default:
                                 throw new IllegalArgumentException(
-                                    "Global Secondary Index "
-                                    + indexName
-                                    + " is not being created or updated (with status="
-                                    + status + ")");
+                                        "Global Secondary Index "
+                                        + indexName
+                                        + " is not being created or updated (with status="
+                                        + status + ")");
                         }
                     }
                 }
             }
             throw new IllegalArgumentException("Global Secondary Index "
-                    + indexName + " does not exist in Table " + tableName + ")");
+                                               + indexName + " does not exist in Table " + tableName + ")");
         }
     }
 
@@ -285,11 +289,12 @@ public class Index implements QueryApi, ScanApi {
      */
     public TableDescription waitForDelete() throws InterruptedException {
         final String indexName = getIndexName();
-        retry: for (;;) {
+        retry:
+        for (; ; ) {
             final TableDescription desc = getTable().waitForActive();
             List<GlobalSecondaryIndexDescription> list = desc.getGlobalSecondaryIndexes();
             if (list != null) {
-                for (GlobalSecondaryIndexDescription d: list) {
+                for (GlobalSecondaryIndexDescription d : list) {
                     if (d.getIndexName().equals(indexName)) {
                         final String status = d.getIndexStatus();
                         if (IndexStatus.fromValue(status) == IndexStatus.DELETING) {
@@ -297,8 +302,8 @@ public class Index implements QueryApi, ScanApi {
                             continue retry;
                         }
                         throw new IllegalArgumentException(
-                            "Global Secondary Index " + indexName
-                            + " is not being deleted (with status=" + status + ")");
+                                "Global Secondary Index " + indexName
+                                + " is not being deleted (with status=" + status + ")");
                     }
                 }
             }
@@ -325,15 +330,17 @@ public class Index implements QueryApi, ScanApi {
     public TableDescription waitForActiveOrDelete() throws InterruptedException {
         final Table table = getTable();
         final String indexName = getIndexName();
-        retry: for (;;) {
+        retry:
+        for (; ; ) {
             TableDescription desc = table.waitForActive();
             List<GlobalSecondaryIndexDescription> list = desc.getGlobalSecondaryIndexes();
             if (list != null) {
-                for (GlobalSecondaryIndexDescription d: desc.getGlobalSecondaryIndexes()) {
+                for (GlobalSecondaryIndexDescription d : desc.getGlobalSecondaryIndexes()) {
                     if (d.getIndexName().equals(indexName)) {
                         final String status = d.getIndexStatus();
-                        if (IndexStatus.fromValue(status) == IndexStatus.ACTIVE)
+                        if (IndexStatus.fromValue(status) == IndexStatus.ACTIVE) {
                             return desc;
+                        }
                         Thread.sleep(SLEEP_TIME_MILLIS);
                         continue retry;
                     }
@@ -350,23 +357,23 @@ public class Index implements QueryApi, ScanApi {
 
     @Override
     public ItemCollection<ScanOutcome> scan(String filterExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                            Map<String, String> nameMap, Map<String, Object> valueMap) {
         return scanDelegate.scan(filterExpression, nameMap, valueMap);
     }
 
     @Override
     public ItemCollection<ScanOutcome> scan(String filterExpression,
-            String projectionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                            String projectionExpression, Map<String, String> nameMap,
+                                            Map<String, Object> valueMap) {
         return scanDelegate.scan(filterExpression, projectionExpression, nameMap, valueMap);
     }
 
     @Beta
     public ItemCollection<ScanOutcome> scan(ScanExpressionSpec xspec) {
-        return scanDelegate.scan(xspec.getFilterExpression(), 
-                xspec.getProjectionExpression(),
-                xspec.getNameMap(), 
-                xspec.getValueMap());
+        return scanDelegate.scan(xspec.getFilterExpression(),
+                                 xspec.getProjectionExpression(),
+                                 xspec.getNameMap(),
+                                 xspec.getValueMap());
     }
 
     @Override

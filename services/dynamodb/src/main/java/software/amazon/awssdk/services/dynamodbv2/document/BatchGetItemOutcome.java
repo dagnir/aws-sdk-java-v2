@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,8 +35,9 @@ public class BatchGetItemOutcome {
      * @param result the low-level result; must not be null
      */
     public BatchGetItemOutcome(BatchGetItemResult result) {
-        if (result == null)
+        if (result == null) {
             throw new IllegalArgumentException();
+        }
         this.result = result;
     }
 
@@ -44,10 +45,10 @@ public class BatchGetItemOutcome {
      * Returns a map of table name to the list of retrieved items 
      */
     public Map<String, List<Item>> getTableItems() {
-        Map<String, List<Map<String, AttributeValue>>> res = 
-            result.getResponses();
+        Map<String, List<Map<String, AttributeValue>>> res =
+                result.getResponses();
         Map<String, List<Item>> map = new LinkedHashMap<String, List<Item>>(res.size());
-        for (Map.Entry<String, List<Map<String, AttributeValue>>> e 
+        for (Map.Entry<String, List<Map<String, AttributeValue>>> e
                 : res.entrySet()) {
             String tableName = e.getKey();
             List<Map<String, AttributeValue>> items = e.getValue();
@@ -58,7 +59,7 @@ public class BatchGetItemOutcome {
 
     /**
      * Convenient method to return the low-level unprocessed keys.
-     * 
+     *
      * @see BatchGetItemApi#batchGetItemUnprocessed(Map)
      * @see BatchGetItemApi#batchGetItemUnprocessed(software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity,
      *      Map)

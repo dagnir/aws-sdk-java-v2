@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -56,10 +56,8 @@ public class ParallelScanTask {
      * Used as the monitor for synchronization.
      */
     private final List<SegmentScanState> segmentScanStates;
-
-    private ExecutorService executorService;
-
     private final AmazonDynamoDB dynamo;
+    private ExecutorService executorService;
 
     @Deprecated
     public ParallelScanTask(DynamoDBMapper mapper, AmazonDynamoDB dynamo, List<ScanRequest> parallelScanRequests) {
@@ -93,10 +91,11 @@ public class ParallelScanTask {
     }
 
     public boolean isAllSegmentScanFinished() {
-        synchronized(segmentScanStates) {
+        synchronized (segmentScanStates) {
             for (int segment = 0; segment < totalSegments; segment++) {
-                if (segmentScanStates.get(segment) != SegmentScanState.SegmentScanCompleted)
+                if (segmentScanStates.get(segment) != SegmentScanState.SegmentScanCompleted) {
                     return false;
+                }
             }
             // Shut down if all data have been scanned and loaded.
             executorService.shutdown();
@@ -112,9 +111,9 @@ public class ParallelScanTask {
         /**
          * Wait till all the tasks have finished.
          */
-        synchronized(segmentScanStates) {
+        synchronized (segmentScanStates) {
             while (segmentScanStates.contains(SegmentScanState.Waiting)
-                    || segmentScanStates.contains(SegmentScanState.Scanning)) {
+                   || segmentScanStates.contains(SegmentScanState.Scanning)) {
                 try {
                     segmentScanStates.wait();
                 } catch (InterruptedException ie) {
@@ -136,14 +135,14 @@ public class ParallelScanTask {
             /**
              * Assert: Should never see any task in state of "Scanning" when starting a new batch.
              */
-            if (currentSegmentState == SegmentScanState.Scanning){
+            if (currentSegmentState == SegmentScanState.Scanning) {
                 throw new SdkClientException("Should never see a 'Scanning' state when starting parallel scans.");
             }
             /**
              * Skip any failed or completed segment, and clear the corresponding cached result.
              */
             else if (currentSegmentState == SegmentScanState.Failed
-                    || currentSegmentState == SegmentScanState.SegmentScanCompleted) {
+                     || currentSegmentState == SegmentScanState.SegmentScanCompleted) {
                 segmentScanResults.set(currentSegment, null);
                 continue;
             }
@@ -152,7 +151,7 @@ public class ParallelScanTask {
              */
             else {
                 // Update the state to "Scanning" and notify any waiting thread.
-                synchronized(segmentScanStates) {
+                synchronized (segmentScanStates) {
                     segmentScanStates.set(currentSegment, SegmentScanState.Scanning);
                     segmentScanStates.notifyAll();
                 }
@@ -162,11 +161,9 @@ public class ParallelScanTask {
                         try {
                             if (currentSegmentState == SegmentScanState.HasNextPage) {
                                 return scanNextPageOfSegment(currentSegment, true);
-                            }
-                            else if (currentSegmentState == SegmentScanState.Waiting) {
+                            } else if (currentSegmentState == SegmentScanState.Waiting) {
                                 return scanNextPageOfSegment(currentSegment, false);
-                            }
-                            else {
+                            } else {
                                 throw new SdkClientException("Should not start a new future task");
                             }
                         } catch (Exception e) {
@@ -197,11 +194,11 @@ public class ParallelScanTask {
                     segmentScanFutureTasks.get(segment).get();
                     throw new SdkClientException("No Exception found in the failed scan task.");
                 } catch (ExecutionException ee) {
-                    if ( ee.getCause() instanceof AmazonClientException) {
+                    if (ee.getCause() instanceof AmazonClientException) {
                         throw (SdkClientException) (ee.getCause());
                     } else {
                         throw new SdkClientException("Internal error during the scan on segment #" + segment + ".",
-                                ee.getCause());
+                                                     ee.getCause());
                     }
                 } catch (Exception e) {
                     throw new SdkClientException("Error during the scan on segment #" + segment + ".", e);
@@ -211,12 +208,11 @@ public class ParallelScanTask {
              * Get the ScanResult from cache if the segment scan has finished.
              */
             else if (currentSegmentState == SegmentScanState.HasNextPage
-                    || currentSegmentState == SegmentScanState.SegmentScanCompleted) {
+                     || currentSegmentState == SegmentScanState.SegmentScanCompleted) {
                 ScanResult scanResult = segmentScanResults.get(segment);
                 scanResults.add(scanResult);
-            }
-            else if (currentSegmentState == SegmentScanState.Waiting
-                    || currentSegmentState == SegmentScanState.Scanning){
+            } else if (currentSegmentState == SegmentScanState.Waiting
+                       || currentSegmentState == SegmentScanState.Scanning) {
                 throw new SdkClientException("Should never see a 'Scanning' or 'Waiting' state when marshalling parallel scan results.");
             }
         }
@@ -242,11 +238,12 @@ public class ParallelScanTask {
         /**
          * Update the state and notify any waiting thread.
          */
-        synchronized(segmentScanStates) {
-            if (null == scanResult.getLastEvaluatedKey())
+        synchronized (segmentScanStates) {
+            if (null == scanResult.getLastEvaluatedKey()) {
                 segmentScanStates.set(currentSegment, SegmentScanState.SegmentScanCompleted);
-            else
+            } else {
                 segmentScanStates.set(currentSegment, SegmentScanState.HasNextPage);
+            }
             segmentScanStates.notifyAll();
         }
         return scanResult;

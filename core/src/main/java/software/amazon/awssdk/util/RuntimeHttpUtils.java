@@ -114,19 +114,19 @@ public class RuntimeHttpUtils {
 
         StringBuilder userAgent = new StringBuilder(userDefinedPrefix.trim());
 
-        if(!ClientConfiguration.DEFAULT_USER_AGENT.equals(userDefinedPrefix)) {
+        if (!ClientConfiguration.DEFAULT_USER_AGENT.equals(userDefinedPrefix)) {
             userAgent.append(COMMA).append(ClientConfiguration.DEFAULT_USER_AGENT);
         }
 
-        if(StringUtils.hasValue(userDefinedSuffix)) {
+        if (StringUtils.hasValue(userDefinedSuffix)) {
             userAgent.append(COMMA).append(userDefinedSuffix.trim());
         }
 
-        if(StringUtils.hasValue(awsExecutionEnvironment)) {
+        if (StringUtils.hasValue(awsExecutionEnvironment)) {
             userAgent.append(SPACE).append(AWS_EXECUTION_ENV_PREFIX).append(awsExecutionEnvironment.trim());
         }
 
-        if(StringUtils.hasValue(userAgentMarker)) {
+        if (StringUtils.hasValue(userAgentMarker)) {
             userAgent.append(SPACE).append(userAgentMarker.trim());
         }
 
@@ -213,8 +213,8 @@ public class RuntimeHttpUtils {
                                           boolean removeLeadingSlashInResourcePath,
                                           boolean urlEncode) {
         String resourcePath = urlEncode ?
-                SdkHttpUtils.urlEncode(request.getResourcePath(), true)
-                : request.getResourcePath();
+                              SdkHttpUtils.urlEncode(request.getResourcePath(), true)
+                                        : request.getResourcePath();
 
         // Removed the padding "/" that was already added into the request's resource path.
         if (removeLeadingSlashInResourcePath
@@ -239,8 +239,8 @@ public class RuntimeHttpUtils {
                 queryParams = queryParams.length() > 0 ? queryParams
                         .append("&") : queryParams.append("?");
                 queryParams.append(SdkHttpUtils.urlEncode(entry.getKey(), false))
-                        .append("=")
-                        .append(SdkHttpUtils.urlEncode(value, false));
+                           .append("=")
+                           .append(SdkHttpUtils.urlEncode(value, false));
             }
         }
         url.append(queryParams.toString());

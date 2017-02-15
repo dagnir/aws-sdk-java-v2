@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -22,34 +37,32 @@ import software.amazon.awssdk.services.s3.model.ReplicationRuleStatus;
 import software.amazon.awssdk.services.s3.model.SetBucketVersioningConfigurationRequest;
 
 public class BucketReplicationIntegrationTest extends
-        S3IntegrationTestBase {
+                                              S3IntegrationTestBase {
 
     /** source bucket name for the replication integration test */
     private static final String SOURCE_BUCKET_NAME = "bucket-replication-integ-test-"
-            + System.currentTimeMillis();
+                                                     + System.currentTimeMillis();
 
     /** destination bucket name for the replication integration test */
     private static final String DESTINATION_BUCKET_NAME = "bucket-dest-replication-integ-test-"
-            + System.currentTimeMillis();
+                                                          + System.currentTimeMillis();
 
     private static final String RULE1 = "replication-rule-1-"
-            + System.currentTimeMillis();
+                                        + System.currentTimeMillis();
     private static final String RULE2 = "replication-rule-2-"
-            + System.currentTimeMillis();
+                                        + System.currentTimeMillis();
 
     private static final String DEST_BUCKET_ARN = "arn:aws:s3:::"
-            + DESTINATION_BUCKET_NAME;
+                                                  + DESTINATION_BUCKET_NAME;
 
     /**
      * ARN of the IAM role used for replication.
      */
     private static final String ROLE = "arn:aws:iam::pikc123456:role/abcdef";
 
-    private static final long CONTENT_LENGTH = 2*MB;
-
-    private static File file = null;
-
+    private static final long CONTENT_LENGTH = 2 * MB;
     private static final Log LOG = LogFactory.getLog(CryptoTestUtils.class);
+    private static File file = null;
 
     /**
      * creates the s3 bucket, sns topic and sqs queue. also authorizes s3 to
@@ -62,28 +75,28 @@ public class BucketReplicationIntegrationTest extends
         s3.createBucket(DESTINATION_BUCKET_NAME);
         euS3.setBucketVersioningConfiguration(new SetBucketVersioningConfigurationRequest(
                 SOURCE_BUCKET_NAME, new BucketVersioningConfiguration(
-                        "Enabled")));
+                "Enabled")));
         s3.setBucketVersioningConfiguration(new SetBucketVersioningConfigurationRequest(
                 DESTINATION_BUCKET_NAME, new BucketVersioningConfiguration(
-                        "Enabled")));
-        file = getRandomTempFile( "foo", CONTENT_LENGTH);
+                "Enabled")));
+        file = getRandomTempFile("foo", CONTENT_LENGTH);
     }
 
     @AfterClass
     public static void teardown() {
         try {
             CryptoTestUtils.deleteBucketAndAllContents(euS3,
-                    SOURCE_BUCKET_NAME);
+                                                       SOURCE_BUCKET_NAME);
             CryptoTestUtils.deleteBucketAndAllContents(s3,
-                    DESTINATION_BUCKET_NAME);
+                                                       DESTINATION_BUCKET_NAME);
             if (file != null) {
                 file.delete();
             }
         } catch (Exception e) {
             LOG.error(
                     "Failure to clear resources for "
-                            + BucketReplicationIntegrationTest.class
-                                    .getCanonicalName(), e);
+                    + BucketReplicationIntegrationTest.class
+                            .getCanonicalName(), e);
         }
     }
 
@@ -117,7 +130,7 @@ public class BucketReplicationIntegrationTest extends
                                         .withBucketARN(DEST_BUCKET_ARN)));
 
         euS3.setBucketReplicationConfiguration(SOURCE_BUCKET_NAME,
-                configuration);
+                                               configuration);
 
         BucketReplicationConfiguration retrievedReplicationConfig = euS3
                 .getBucketReplicationConfiguration(SOURCE_BUCKET_NAME);
@@ -128,12 +141,12 @@ public class BucketReplicationIntegrationTest extends
         assertNotNull(replRule2);
         assertEquals("testPrefix1", replRule1.getPrefix());
         assertEquals(DEST_BUCKET_ARN, replRule1.getDestinationConfig()
-                .getBucketARN());
-        assertEquals(ROLE,retrievedReplicationConfig.getRoleARN());
+                                               .getBucketARN());
+        assertEquals(ROLE, retrievedReplicationConfig.getRoleARN());
 
         assertEquals("testPrefix2", replRule2.getPrefix());
         assertEquals(DEST_BUCKET_ARN, replRule2.getDestinationConfig()
-                .getBucketARN());
+                                               .getBucketARN());
 
         // disabling second rule.
         replRule2.setStatus(ReplicationRuleStatus.Disabled);
@@ -141,9 +154,9 @@ public class BucketReplicationIntegrationTest extends
                 .addRule(RULE1, replRule1).addRule(RULE2, replRule2)
                 .withRoleARN(ROLE);
         euS3.setBucketReplicationConfiguration(SOURCE_BUCKET_NAME,
-                updatedConfiguration);
-        GetBucketReplicationConfigurationRequest getBucketReplicationConfigurationRequest = 
-        		new GetBucketReplicationConfigurationRequest(SOURCE_BUCKET_NAME); 
+                                               updatedConfiguration);
+        GetBucketReplicationConfigurationRequest getBucketReplicationConfigurationRequest =
+                new GetBucketReplicationConfigurationRequest(SOURCE_BUCKET_NAME);
         retrievedReplicationConfig = euS3
                 .getBucketReplicationConfiguration(getBucketReplicationConfigurationRequest);
 
@@ -153,15 +166,15 @@ public class BucketReplicationIntegrationTest extends
         assertNotNull(replRule2);
         assertEquals("testPrefix1", replRule1.getPrefix());
         assertEquals(DEST_BUCKET_ARN, replRule1.getDestinationConfig()
-                .getBucketARN());
+                                               .getBucketARN());
         assertEquals(ReplicationRuleStatus.Enabled.toString(),
-                replRule1.getStatus());
+                     replRule1.getStatus());
 
         assertEquals("testPrefix2", replRule2.getPrefix());
         assertEquals(DEST_BUCKET_ARN, replRule2.getDestinationConfig()
-                .getBucketARN());
+                                               .getBucketARN());
         assertEquals(ReplicationRuleStatus.Disabled.toString(),
-                replRule2.getStatus());
+                     replRule2.getStatus());
     }
 
     public void testDeleteConfiguration() {

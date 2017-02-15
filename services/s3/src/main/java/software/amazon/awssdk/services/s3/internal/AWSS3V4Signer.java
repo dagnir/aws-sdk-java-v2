@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_CONTENT_SHA256;
@@ -50,11 +51,38 @@ public class AWSS3V4Signer extends AWS4Signer {
     }
 
     /**
+     * Read the content of the request to get the length of the stream. This
+     * method will wrap the stream by SdkBufferedInputStream if it is not
+     * mark-supported.
+     */
+    static long getContentLength(SignableRequest<?> request) throws IOException {
+        final InputStream content = request.getContent();
+        if (!content.markSupported()) {
+            throw new IllegalStateException("Bug: request input stream must have been made mark-and-resettable at this point");
+        }
+        ReadLimitInfo info = request.getReadLimitInfo();
+        final int readLimit = info.getReadLimit();
+        long contentLength = 0;
+        byte[] tmp = new byte[4096];
+        int read;
+        content.mark(readLimit);
+        while ((read = content.read(tmp)) != -1) {
+            contentLength += read;
+        }
+        try {
+            content.reset();
+        } catch (IOException ex) {
+            throw new ResetException("Failed to reset the input stream", ex);
+        }
+        return contentLength;
+    }
+
+    /**
      * If necessary, creates a chunk-encoding wrapper on the request payload.
      */
     @Override
     protected void processRequestPayload(SignableRequest<?> request, byte[] signature,
-            byte[] signingKey, AWS4SignerRequestParams signerRequestParams) {
+                                         byte[] signingKey, AWS4SignerRequestParams signerRequestParams) {
         if (useChunkEncoding(request)) {
             AwsChunkedEncodingInputStream chunkEncodededStream = new AwsChunkedEncodingInputStream(
                     request.getContent(), signingKey,
@@ -66,7 +94,7 @@ public class AWSS3V4Signer extends AWS4Signer {
     }
 
     @Override
-    protected String calculateContentHashPresign(SignableRequest<?> request){
+    protected String calculateContentHashPresign(SignableRequest<?> request) {
         return "UNSIGNED-PAYLOAD";
     }
 
@@ -131,7 +159,7 @@ public class AWSS3V4Signer extends AWS4Signer {
             return false;
         }
         if (request.getOriginalRequestObject() instanceof PutObjectRequest
-                || request.getOriginalRequestObject() instanceof UploadPartRequest) {
+            || request.getOriginalRequestObject() instanceof UploadPartRequest) {
             return true;
         }
         return false;
@@ -169,31 +197,5 @@ public class AWSS3V4Signer extends AWS4Signer {
             return isPayloadSigningEnabled != null && isPayloadSigningEnabled;
         }
         return false;
-    }
-
-    /**
-     * Read the content of the request to get the length of the stream. This
-     * method will wrap the stream by SdkBufferedInputStream if it is not
-     * mark-supported.
-     */
-    static long getContentLength(SignableRequest<?> request) throws IOException {
-        final InputStream content = request.getContent();
-        if (!content.markSupported())
-            throw new IllegalStateException("Bug: request input stream must have been made mark-and-resettable at this point");
-        ReadLimitInfo info = request.getReadLimitInfo();
-        final int readLimit = info.getReadLimit();
-        long contentLength = 0;
-        byte[] tmp = new byte[4096];
-        int read;
-        content.mark(readLimit);
-        while ((read = content.read(tmp)) != -1) {
-            contentLength += read;
-        }
-        try {
-            content.reset();
-        } catch(IOException ex) {
-            throw new ResetException("Failed to reset the input stream", ex);
-        }
-        return contentLength;
     }
 }

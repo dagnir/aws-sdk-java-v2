@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,15 +25,13 @@ import software.amazon.awssdk.http.HttpResponse;
 @SdkProtectedApi
 public class JsonErrorMessageParser {
 
-    private static final List<String> DEFAULT_ERROR_MESSAGE_LOCATIONS = Arrays
-            .asList("message", "Message", "errorMessage");
-
     /**
      * x-amzn-error-message may be returned by RESTFUL services that do not send a response
      * payload (like in a HEAD request).
      */
     public static final String X_AMZN_ERROR_MESSAGE = "x-amzn-error-message";
-
+    private static final List<String> DEFAULT_ERROR_MESSAGE_LOCATIONS = Arrays
+            .asList("message", "Message", "errorMessage");
     /**
      * Standard JSON Error Message Parser that checks for JSON fields in this order: 'message',
      * 'Message', 'errorMessage'

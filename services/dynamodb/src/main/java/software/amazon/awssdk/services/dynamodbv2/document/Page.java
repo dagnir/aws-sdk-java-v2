@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,9 +31,21 @@ import software.amazon.awssdk.AmazonServiceException;
  * @param <T> item type
  * @param <R> low level result type
  */
-public abstract class Page<T,R> implements Iterable<T> {
+public abstract class Page<T, R> implements Iterable<T> {
     private final List<T> content;
     private final R lowLevelResult;
+
+    /**
+     * @param content an unmodifiable list of content
+     * @param lowLevelResult the low level (response) result from AWSS
+     */
+    public Page(List<T> content, R lowLevelResult) {
+        if (content == null || lowLevelResult == null) {
+            throw new IllegalArgumentException("both content and lowLevelResult must be specified");
+        }
+        this.content = content;
+        this.lowLevelResult = lowLevelResult;
+    }
 
     /**
      * Checks whether this page has a "next page." If this method returns
@@ -52,18 +64,7 @@ public abstract class Page<T,R> implements Iterable<T> {
      * @throws NoSuchElementException if there is no next page
      * @throws AmazonServiceException on error making the remote call
      */
-    public abstract Page<T,R> nextPage();
-
-    /**
-     * @param content an unmodifiable list of content
-     * @param lowLevelResult the low level (response) result from AWSS
-     */
-    public Page(List<T> content, R lowLevelResult) {
-        if (content == null || lowLevelResult == null)
-            throw new IllegalArgumentException("both content and lowLevelResult must be specified");
-        this.content = content;
-        this.lowLevelResult = lowLevelResult;
-    }
+    public abstract Page<T, R> nextPage();
 
     public final int size() {
         return content.size();

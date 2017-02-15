@@ -27,6 +27,24 @@ public class ConversionToAttributeValuesTest {
     private DynamoDBMapperModelFactory models;
     private DynamoDBMapperConfig finalConfig;
 
+    public static boolean equals(Object o1, Object o2) {
+        if (o1 == o2) {
+            return true;
+        }
+        if (o1 != null) {
+            return o1.equals(o2);
+        }
+        return false;
+    }
+
+    public static int hash(Object... objs) {
+        int hash = 7;
+        for (int i = 0; i < objs.length; ++i) {
+            hash = hash * 31 + objs[i].hashCode();
+        }
+        return hash;
+    }
+
     @Before
     public void setUp() throws Exception {
         finalConfig = new DynamoDBMapperConfig.Builder()
@@ -43,7 +61,6 @@ public class ConversionToAttributeValuesTest {
         assertEquals("bar", tableModel.unconvert(withSubData).getSubDocument().getaData().getValue());
     }
 
-
     private <T> DynamoDBMapperTableModel<T> getTable(Class<T> clazz) {
         return this.models.getTableFactory(finalConfig).getTable(clazz);
     }
@@ -51,12 +68,10 @@ public class ConversionToAttributeValuesTest {
     @DynamoDBTable(tableName = "test")
     public static class ConverterData {
 
-        @DynamoDBHashKey
-        private String key;
-
         @DynamoDBTypeConverted(converter = CustomDataConverter.class)
         CustomData customConverted;
-
+        @DynamoDBHashKey
+        private String key;
         private ConverterSubDocument subDocument;
 
         public ConverterData() {
@@ -91,8 +106,12 @@ public class ConversionToAttributeValuesTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             ConverterData that = (ConverterData) o;
             return ConversionToAttributeValuesTest.equals(subDocument, that.subDocument);
         }
@@ -120,8 +139,12 @@ public class ConversionToAttributeValuesTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             ConverterSubDocument that = (ConverterSubDocument) o;
             return ConversionToAttributeValuesTest.equals(aData, that.aData);
         }
@@ -131,7 +154,6 @@ public class ConversionToAttributeValuesTest {
             return ConversionToAttributeValuesTest.hash(aData);
         }
     }
-
 
     public static class CustomData {
 
@@ -147,8 +169,12 @@ public class ConversionToAttributeValuesTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             CustomData that = (CustomData) o;
             return ConversionToAttributeValuesTest.equals(value, that.value);
         }
@@ -168,21 +194,5 @@ public class ConversionToAttributeValuesTest {
         public CustomData unconvert(String object) {
             return new CustomData(object);
         }
-    }
-
-    public static boolean equals(Object o1, Object o2) {
-        if (o1 == o2) return true;
-        if (o1 != null) {
-            return o1.equals(o2);
-        }
-        return false;
-    }
-
-    public static int hash(Object... objs) {
-        int hash = 7;
-        for (int i = 0; i < objs.length; ++i) {
-            hash = hash * 31 + objs[i].hashCode();
-        }
-        return hash;
     }
 }

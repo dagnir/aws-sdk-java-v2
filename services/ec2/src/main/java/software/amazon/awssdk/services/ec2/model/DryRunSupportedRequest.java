@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import software.amazon.awssdk.Request;
 
 /**
  * Generic interface for operation request that is supported with dry-run.
- * 
+ *
  * @param <X>
  *            The type of original, user facing request represented by this
  *            DryRunSupportedRequest.
  */
 public interface DryRunSupportedRequest<X extends AmazonWebServiceRequest> {
-    
+
     /**
      * This method is intended for internal use only.
      * Returns the marshaled request configured with additional parameters to

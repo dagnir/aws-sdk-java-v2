@@ -62,7 +62,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     /* The log message body and the pattern that we use to filter out such message */
     private static final String LOG_MESSAGE = String.format("%s [%d] %s", LOG_MESSAGE_PREFIX, LOG_MESSAGE_TIMESTAMP,
-            LOG_MESSAGE_CONTENT);
+                                                            LOG_MESSAGE_CONTENT);
     private static final String LOG_METRIC_FILTER_PATTERN = "[prefix=java-integ-test, timestamp, content]";
 
     private static final String CLOUDWATCH_METRIC_NAME = "java-integ-test-transformed-metric-name";
@@ -74,6 +74,67 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     private final String logGroupName = "java-integ-test-log-group-name-" + nameSuffix;
     private final String logStreamName = "java-integ-test-log-stream-name-" + nameSuffix;
     private final String logMetricFilterName = "java-integ-test-log-metric-filter-" + nameSuffix;
+
+    /**
+     * Test creating a log group using the specified group name.
+     */
+    public static void testCreateLogGroup(final String groupName) {
+        awsLogs.createLogGroup(new CreateLogGroupRequest(groupName));
+
+        try {
+            awsLogs.createLogGroup(new CreateLogGroupRequest(groupName));
+            Assert.fail("ResourceAlreadyExistsException is expected.");
+        } catch (ResourceAlreadyExistsException expected) {
+        }
+
+        final LogGroup createdGroup = findLogGroupByName(awsLogs, groupName);
+
+        Assert.assertNotNull(String.format("Log group [%s] is not found in the DescribeLogGroups response.", groupName),
+                             createdGroup);
+
+        Assert.assertEquals(groupName, createdGroup.getLogGroupName());
+        Assert.assertNotNull(createdGroup.getCreationTime());
+        Assert.assertNotNull(createdGroup.getArn());
+
+        /* The log group should have no filter and no stored bytes */
+        Assert.assertEquals(0, createdGroup.getMetricFilterCount().intValue());
+        Assert.assertEquals(0, createdGroup.getStoredBytes().longValue());
+
+        /* Retention policy is still unspecified */
+        Assert.assertNull(createdGroup.getRetentionInDays());
+
+    }
+
+    /**
+     * Test creating a log stream for the specified group.
+     */
+    public static void testCreateLogStream(final String groupName, final String logStreamName) {
+        awsLogs.createLogStream(new CreateLogStreamRequest(groupName, logStreamName));
+
+        try {
+            awsLogs.createLogStream(new CreateLogStreamRequest(groupName, logStreamName));
+            Assert.fail("ResourceAlreadyExistsException is expected.");
+        } catch (ResourceAlreadyExistsException expected) {
+        }
+
+        final LogStream createdStream = findLogStreamByName(awsLogs, groupName, logStreamName);
+
+        Assert.assertNotNull(
+                String.format("Log stream [%s] is not found in the [%s] log group.", logStreamName, groupName),
+                createdStream);
+
+        Assert.assertEquals(logStreamName, createdStream.getLogStreamName());
+        Assert.assertNotNull(createdStream.getCreationTime());
+        Assert.assertNotNull(createdStream.getArn());
+
+        /* The log stream should have no stored bytes */
+        Assert.assertEquals(0, createdStream.getStoredBytes().longValue());
+
+        /* No log event is pushed yet */
+        Assert.assertNull(createdStream.getFirstEventTimestamp());
+        Assert.assertNull(createdStream.getLastEventTimestamp());
+        Assert.assertNull(createdStream.getLastIngestionTime());
+    }
 
     @Before
     public void setup() throws FileNotFoundException, IOException {
@@ -112,7 +173,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         // Insert a new log event
         PutLogEventsResult putResult = awsLogs.putLogEvents(new PutLogEventsRequest(logGroupName, logStreamName,
-                Arrays.asList(new InputLogEvent().withMessage(LOG_MESSAGE).withTimestamp(LOG_MESSAGE_TIMESTAMP))));
+                                                                                    Arrays.asList(new InputLogEvent().withMessage(LOG_MESSAGE).withTimestamp(LOG_MESSAGE_TIMESTAMP))));
 
         Assert.assertNotNull(putResult.getNextSequenceToken());
 
@@ -173,15 +234,15 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     public void putLogEvents_InvalidSequenceNumber_HasExpectedSequenceNumberInException() {
         // First call to PutLogEvents does not need a sequence number, subsequent calls do
         awsLogs.putLogEvents(new PutLogEventsRequest().withLogGroupName(logGroupName).withLogStreamName(logStreamName)
-                .withLogEvents(new InputLogEvent().withMessage(LOG_MESSAGE).withTimestamp(LOG_MESSAGE_TIMESTAMP)));
+                                                      .withLogEvents(new InputLogEvent().withMessage(LOG_MESSAGE).withTimestamp(LOG_MESSAGE_TIMESTAMP)));
         try {
             // This call requires a sequence number, if we provide an invalid one the service should
             // throw an exception with the expected sequence number
             awsLogs.putLogEvents(
                     new PutLogEventsRequest().withLogGroupName(logGroupName).withLogStreamName(logStreamName)
-                            .withLogEvents(
-                                    new InputLogEvent().withMessage(LOG_MESSAGE).withTimestamp(LOG_MESSAGE_TIMESTAMP))
-                    .withSequenceToken("invalid"));
+                                             .withLogEvents(
+                                                     new InputLogEvent().withMessage(LOG_MESSAGE).withTimestamp(LOG_MESSAGE_TIMESTAMP))
+                                             .withSequenceToken("invalid"));
         } catch (InvalidSequenceTokenException e) {
             assertNotNull(e.getExpectedSequenceToken());
         }
@@ -205,73 +266,12 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     }
 
     /**
-     * Test creating a log group using the specified group name.
-     */
-    public static void testCreateLogGroup(final String groupName) {
-        awsLogs.createLogGroup(new CreateLogGroupRequest(groupName));
-
-        try {
-            awsLogs.createLogGroup(new CreateLogGroupRequest(groupName));
-            Assert.fail("ResourceAlreadyExistsException is expected.");
-        } catch (ResourceAlreadyExistsException expected) {
-        }
-
-        final LogGroup createdGroup = findLogGroupByName(awsLogs, groupName);
-
-        Assert.assertNotNull(String.format("Log group [%s] is not found in the DescribeLogGroups response.", groupName),
-                createdGroup);
-
-        Assert.assertEquals(groupName, createdGroup.getLogGroupName());
-        Assert.assertNotNull(createdGroup.getCreationTime());
-        Assert.assertNotNull(createdGroup.getArn());
-
-        /* The log group should have no filter and no stored bytes */
-        Assert.assertEquals(0, createdGroup.getMetricFilterCount().intValue());
-        Assert.assertEquals(0, createdGroup.getStoredBytes().longValue());
-
-        /* Retention policy is still unspecified */
-        Assert.assertNull(createdGroup.getRetentionInDays());
-
-    }
-
-    /**
-     * Test creating a log stream for the specified group.
-     */
-    public static void testCreateLogStream(final String groupName, final String logStreamName) {
-        awsLogs.createLogStream(new CreateLogStreamRequest(groupName, logStreamName));
-
-        try {
-            awsLogs.createLogStream(new CreateLogStreamRequest(groupName, logStreamName));
-            Assert.fail("ResourceAlreadyExistsException is expected.");
-        } catch (ResourceAlreadyExistsException expected) {
-        }
-
-        final LogStream createdStream = findLogStreamByName(awsLogs, groupName, logStreamName);
-
-        Assert.assertNotNull(
-                String.format("Log stream [%s] is not found in the [%s] log group.", logStreamName, groupName),
-                createdStream);
-
-        Assert.assertEquals(logStreamName, createdStream.getLogStreamName());
-        Assert.assertNotNull(createdStream.getCreationTime());
-        Assert.assertNotNull(createdStream.getArn());
-
-        /* The log stream should have no stored bytes */
-        Assert.assertEquals(0, createdStream.getStoredBytes().longValue());
-
-        /* No log event is pushed yet */
-        Assert.assertNull(createdStream.getFirstEventTimestamp());
-        Assert.assertNull(createdStream.getLastEventTimestamp());
-        Assert.assertNull(createdStream.getLastIngestionTime());
-    }
-
-    /**
      * Test creating a log metric filter for the specified group.
      */
     public void testCreateMetricFilter(final String groupName, final String filterName) {
         awsLogs.putMetricFilter(new PutMetricFilterRequest(groupName, filterName, LOG_METRIC_FILTER_PATTERN,
-                Arrays.asList(new MetricTransformation().withMetricName(CLOUDWATCH_METRIC_NAME)
-                        .withMetricNamespace(CLOUDWATCH_METRIC_NAMESPACE).withMetricValue("$content"))));
+                                                           Arrays.asList(new MetricTransformation().withMetricName(CLOUDWATCH_METRIC_NAME)
+                                                                                                   .withMetricNamespace(CLOUDWATCH_METRIC_NAMESPACE).withMetricValue("$content"))));
 
         final MetricFilter mf = findMetricFilterByName(awsLogs, groupName, filterName);
 

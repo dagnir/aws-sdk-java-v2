@@ -29,7 +29,7 @@ public final class SignerFactory {
     private static final String NO_OP_SIGNER = "NoOpSignerType";
 
     private static final Map<String, Class<? extends Signer>> SIGNERS
-        = new ConcurrentHashMap<String, Class<? extends Signer>>();
+            = new ConcurrentHashMap<String, Class<? extends Signer>>();
 
     static {
         // Register the standard signer types.
@@ -91,7 +91,7 @@ public final class SignerFactory {
      * @return a non-null signer.
      */
     public static Signer getSignerByTypeAndService(String signerType,
-            final String serviceName) {
+                                                   final String serviceName) {
         return createSigner(signerType, serviceName);
     }
 
@@ -102,7 +102,7 @@ public final class SignerFactory {
     private static Signer lookupAndCreateSigner(String serviceName, String regionName) {
         InternalConfig config = InternalConfig.Factory.getInternalConfig();
         SignerConfig signerConfig =
-            config.getSignerConfig(serviceName, regionName);
+                config.getSignerConfig(serviceName, regionName);
         String signerType = signerConfig.getSignerType();
         return createSigner(signerType, serviceName);
     }
@@ -112,21 +112,22 @@ public final class SignerFactory {
      * and configuring it with the service name if applicable.
      */
     private static Signer createSigner(String signerType,
-            final String serviceName) {
+                                       final String serviceName) {
         Class<? extends Signer> signerClass = SIGNERS.get(signerType);
-        if (signerClass == null)
+        if (signerClass == null) {
             throw new IllegalArgumentException("unknown signer type: " + signerType);
+        }
         Signer signer;
         try {
             signer = signerClass.newInstance();
         } catch (InstantiationException ex) {
             throw new IllegalStateException(
-                "Cannot create an instance of " + signerClass.getName(),
-                ex);
+                    "Cannot create an instance of " + signerClass.getName(),
+                    ex);
         } catch (IllegalAccessException ex) {
             throw new IllegalStateException(
-                "Cannot create an instance of " + signerClass.getName(),
-                ex);
+                    "Cannot create an instance of " + signerClass.getName(),
+                    ex);
         }
 
         if (signer instanceof ServiceAwareSigner) {

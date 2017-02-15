@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,17 +46,17 @@ public class BatchGetItemImpl implements BatchGetItemApi {
     @Override
     public BatchGetItemOutcome batchGetItem(
             ReturnConsumedCapacity returnConsumedCapacity,
-            TableKeysAndAttributes ... tableKeysAndAttributes) {
+            TableKeysAndAttributes... tableKeysAndAttributes) {
         return doBatchGetItem(new BatchGetItemSpec()
-            .withReturnConsumedCapacity(returnConsumedCapacity)
-            .withTableKeyAndAttributes(tableKeysAndAttributes));
+                                      .withReturnConsumedCapacity(returnConsumedCapacity)
+                                      .withTableKeyAndAttributes(tableKeysAndAttributes));
     }
 
     @Override
     public BatchGetItemOutcome batchGetItem(
-            TableKeysAndAttributes ... tableKeysAndAttributes) {
+            TableKeysAndAttributes... tableKeysAndAttributes) {
         return doBatchGetItem(new BatchGetItemSpec()
-            .withTableKeyAndAttributes(tableKeysAndAttributes));
+                                      .withTableKeyAndAttributes(tableKeysAndAttributes));
     }
 
     @Override
@@ -74,26 +74,26 @@ public class BatchGetItemImpl implements BatchGetItemApi {
             requestItems = new LinkedHashMap<String, KeysAndAttributes>();
         }
         if (tableKeysAndAttributesCol != null) {
-            for (TableKeysAndAttributes tableKeysAndAttributes: tableKeysAndAttributesCol) {
+            for (TableKeysAndAttributes tableKeysAndAttributes : tableKeysAndAttributesCol) {
                 // attributes against one table
                 final Set<String> attrNames = tableKeysAndAttributes.getAttributeNames();
                 // primary keys against one table
                 final List<PrimaryKey> pks = tableKeysAndAttributes.getPrimaryKeys();
-                final List<Map<String,AttributeValue>> keys = new ArrayList<Map<String,AttributeValue>>(pks.size());
-                for (PrimaryKey pk: pks)
+                final List<Map<String, AttributeValue>> keys = new ArrayList<Map<String, AttributeValue>>(pks.size());
+                for (PrimaryKey pk : pks) {
                     keys.add(InternalUtils.toAttributeValueMap(pk));
+                }
                 final KeysAndAttributes keysAndAttrs = new KeysAndAttributes()
-                    .withAttributesToGet(attrNames)
-                    .withConsistentRead(tableKeysAndAttributes.isConsistentRead())
-                    .withKeys(keys)
-                    .withProjectionExpression(tableKeysAndAttributes.getProjectionExpression())
-                    .withExpressionAttributeNames(tableKeysAndAttributes.getNameMap())
-                    ;
+                        .withAttributesToGet(attrNames)
+                        .withConsistentRead(tableKeysAndAttributes.isConsistentRead())
+                        .withKeys(keys)
+                        .withProjectionExpression(tableKeysAndAttributes.getProjectionExpression())
+                        .withExpressionAttributeNames(tableKeysAndAttributes.getNameMap());
                 requestItems.put(tableKeysAndAttributes.getTableName(), keysAndAttrs);
             }
         }
         BatchGetItemRequest req = spec.getRequest()
-                                  .withRequestItems(requestItems);
+                                      .withRequestItems(requestItems);
         BatchGetItemResult result = client.batchGetItem(req);
         return new BatchGetItemOutcome(result);
     }
@@ -103,14 +103,14 @@ public class BatchGetItemImpl implements BatchGetItemApi {
             ReturnConsumedCapacity returnConsumedCapacity,
             Map<String, KeysAndAttributes> unprocessedKeys) {
         return doBatchGetItem(new BatchGetItemSpec()
-                .withReturnConsumedCapacity(returnConsumedCapacity)
-                .withUnprocessedKeys(unprocessedKeys));
+                                      .withReturnConsumedCapacity(returnConsumedCapacity)
+                                      .withUnprocessedKeys(unprocessedKeys));
     }
 
     @Override
     public BatchGetItemOutcome batchGetItemUnprocessed(
             Map<String, KeysAndAttributes> unprocessedKeys) {
         return doBatchGetItem(new BatchGetItemSpec()
-                .withUnprocessedKeys(unprocessedKeys));
+                                      .withUnprocessedKeys(unprocessedKeys));
     }
 }

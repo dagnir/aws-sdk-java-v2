@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -41,77 +56,6 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
         createTestData();
     }
 
-    @Test
-    public void testLazyLoading() {
-        // Get all the paginated lists using the tested loading strategy
-        PaginatedList<RangeKeyClass> queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.LAZY_LOADING);
-        PaginatedList<RangeKeyClass> scanList = getTestPaginatedScanList(PaginationLoadingStrategy.LAZY_LOADING);
-        PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.LAZY_LOADING);
-
-        // check that only at most one page of results are loaded up to this point
-        assertTrue(getLoadedResultsNumber(queryList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(scanList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
-
-        testAllPaginatedListOperations(queryList);
-        testAllPaginatedListOperations(scanList);
-        testAllPaginatedListOperations(parallelScanList);
-
-        // Re-construct the paginated lists and test the iterator behavior
-        queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.LAZY_LOADING);
-        scanList = getTestPaginatedScanList(PaginationLoadingStrategy.LAZY_LOADING);
-        parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.LAZY_LOADING);
-
-        testPaginatedListIterator(queryList);
-        testPaginatedListIterator(scanList);
-        testPaginatedListIterator(parallelScanList);
-
-    }
-
-    @Test
-    public void testEagerLoading() {
-        // Get all the paginated lists using the tested loading strategy
-        PaginatedList<RangeKeyClass> queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.EAGER_LOADING);
-        PaginatedList<RangeKeyClass> scanList = getTestPaginatedScanList(PaginationLoadingStrategy.EAGER_LOADING);
-        PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.EAGER_LOADING);
-
-        // check that all results have been loaded
-        assertEquals(RESULTS_NUM, getLoadedResultsNumber(queryList));
-        assertEquals(RESULTS_NUM, getLoadedResultsNumber(scanList));
-        assertEquals(RESULTS_NUM, getLoadedResultsNumber(parallelScanList));
-
-        testAllPaginatedListOperations(queryList);
-        testAllPaginatedListOperations(scanList);
-        testAllPaginatedListOperations(parallelScanList);
-
-        // Re-construct the paginated lists and test the iterator behavior
-        queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.LAZY_LOADING);
-        scanList = getTestPaginatedScanList(PaginationLoadingStrategy.LAZY_LOADING);
-        parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.LAZY_LOADING);
-
-        testPaginatedListIterator(queryList);
-        testPaginatedListIterator(scanList);
-        testPaginatedListIterator(parallelScanList);
-    }
-
-    @Test
-    public void testIterationOnly() {
-        // Get all the paginated lists using the tested loading strategy
-        PaginatedList<RangeKeyClass> queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.ITERATION_ONLY);
-        PaginatedList<RangeKeyClass> scanList = getTestPaginatedScanList(PaginationLoadingStrategy.ITERATION_ONLY);
-        PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(
-                PaginationLoadingStrategy.ITERATION_ONLY);
-
-        // check that only at most one page of results are loaded up to this point
-        assertTrue(getLoadedResultsNumber(queryList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(scanList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
-
-        testIterationOnlyPaginatedListOperations(queryList);
-        testIterationOnlyPaginatedListOperations(scanList);
-        testIterationOnlyPaginatedListOperations(parallelScanList);
-    }
-
     private static void createTestData() {
         DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
 
@@ -137,8 +81,8 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
                 .withHashKeyValues(keyObject);
         queryExpression.withRangeKeyCondition("rangeKey",
                                               new Condition().withComparisonOperator(ComparisonOperator.GT.toString())
-                                                      .withAttributeValueList(
-                                                              new AttributeValue().withN("1.0"))).withLimit(PAGE_SIZE);
+                                                             .withAttributeValueList(
+                                                                     new AttributeValue().withN("1.0"))).withLimit(PAGE_SIZE);
 
         return mapper.query(RangeKeyClass.class, queryExpression, new DynamoDBMapperConfig(paginationLoadingStrategy));
     }
@@ -323,5 +267,76 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             fail(e.getMessage());
         }
         return allResults.size();
+    }
+
+    @Test
+    public void testLazyLoading() {
+        // Get all the paginated lists using the tested loading strategy
+        PaginatedList<RangeKeyClass> queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.LAZY_LOADING);
+        PaginatedList<RangeKeyClass> scanList = getTestPaginatedScanList(PaginationLoadingStrategy.LAZY_LOADING);
+        PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.LAZY_LOADING);
+
+        // check that only at most one page of results are loaded up to this point
+        assertTrue(getLoadedResultsNumber(queryList) <= PAGE_SIZE);
+        assertTrue(getLoadedResultsNumber(scanList) <= PAGE_SIZE);
+        assertTrue(getLoadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
+
+        testAllPaginatedListOperations(queryList);
+        testAllPaginatedListOperations(scanList);
+        testAllPaginatedListOperations(parallelScanList);
+
+        // Re-construct the paginated lists and test the iterator behavior
+        queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.LAZY_LOADING);
+        scanList = getTestPaginatedScanList(PaginationLoadingStrategy.LAZY_LOADING);
+        parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.LAZY_LOADING);
+
+        testPaginatedListIterator(queryList);
+        testPaginatedListIterator(scanList);
+        testPaginatedListIterator(parallelScanList);
+
+    }
+
+    @Test
+    public void testEagerLoading() {
+        // Get all the paginated lists using the tested loading strategy
+        PaginatedList<RangeKeyClass> queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.EAGER_LOADING);
+        PaginatedList<RangeKeyClass> scanList = getTestPaginatedScanList(PaginationLoadingStrategy.EAGER_LOADING);
+        PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.EAGER_LOADING);
+
+        // check that all results have been loaded
+        assertEquals(RESULTS_NUM, getLoadedResultsNumber(queryList));
+        assertEquals(RESULTS_NUM, getLoadedResultsNumber(scanList));
+        assertEquals(RESULTS_NUM, getLoadedResultsNumber(parallelScanList));
+
+        testAllPaginatedListOperations(queryList);
+        testAllPaginatedListOperations(scanList);
+        testAllPaginatedListOperations(parallelScanList);
+
+        // Re-construct the paginated lists and test the iterator behavior
+        queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.LAZY_LOADING);
+        scanList = getTestPaginatedScanList(PaginationLoadingStrategy.LAZY_LOADING);
+        parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.LAZY_LOADING);
+
+        testPaginatedListIterator(queryList);
+        testPaginatedListIterator(scanList);
+        testPaginatedListIterator(parallelScanList);
+    }
+
+    @Test
+    public void testIterationOnly() {
+        // Get all the paginated lists using the tested loading strategy
+        PaginatedList<RangeKeyClass> queryList = getTestPaginatedQueryList(PaginationLoadingStrategy.ITERATION_ONLY);
+        PaginatedList<RangeKeyClass> scanList = getTestPaginatedScanList(PaginationLoadingStrategy.ITERATION_ONLY);
+        PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(
+                PaginationLoadingStrategy.ITERATION_ONLY);
+
+        // check that only at most one page of results are loaded up to this point
+        assertTrue(getLoadedResultsNumber(queryList) <= PAGE_SIZE);
+        assertTrue(getLoadedResultsNumber(scanList) <= PAGE_SIZE);
+        assertTrue(getLoadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
+
+        testIterationOnlyPaginatedListOperations(queryList);
+        testIterationOnlyPaginatedListOperations(scanList);
+        testIterationOnlyPaginatedListOperations(parallelScanList);
     }
 }

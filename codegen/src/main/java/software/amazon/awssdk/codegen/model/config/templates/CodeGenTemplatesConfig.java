@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -72,16 +72,16 @@ public class CodeGenTemplatesConfig {
                 protocolConfigFilePath, CodeGenTemplatesConfig.class);
         if (input == null) {
             input = ClassLoaderHelper.getResourceAsStream("/"
-                    + protocolConfigFilePath, CodeGenTemplatesConfig.class);
+                                                          + protocolConfigFilePath, CodeGenTemplatesConfig.class);
         }
 
         try {
             return Jackson.load(CodeGenTemplatesConfig.class,
-                    input);
+                                input);
         } catch (Exception e) {
             throw new RuntimeException(
                     "Unable to load the protocol specific config file from the location "
-                            + protocolConfigFilePath, e);
+                    + protocolConfigFilePath, e);
         }
     }
 
@@ -115,7 +115,7 @@ public class CodeGenTemplatesConfig {
         merged.setModelClass(TopLevelTemplate.merge(
                 config.getModelClass(), override.getModelClass()));
         merged.setModelEnum(TopLevelTemplate.merge(config.getModelEnum(),
-                override.getModelEnum()));
+                                                   override.getModelEnum()));
 
         merged.setModelUnmarshaller(TopLevelTemplate.merge(
                 config.getModelUnmarshaller(), override.getModelUnmarshaller()));
@@ -302,7 +302,7 @@ public class CodeGenTemplatesConfig {
     }
 
     public void setExceptionUnmarshaller(
-                                         TopLevelTemplate exceptionUnmarshaller) {
+            TopLevelTemplate exceptionUnmarshaller) {
         this.exceptionUnmarshaller = exceptionUnmarshaller;
     }
 
@@ -311,7 +311,7 @@ public class CodeGenTemplatesConfig {
     }
 
     public void setCommonChildTemplates(
-                                        List<ChildTemplate> commonChildTemplates) {
+            List<ChildTemplate> commonChildTemplates) {
         this.commonChildTemplates = commonChildTemplates;
     }
 

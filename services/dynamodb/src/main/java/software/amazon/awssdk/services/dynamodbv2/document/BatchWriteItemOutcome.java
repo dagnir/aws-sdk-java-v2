@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,14 +32,15 @@ public class BatchWriteItemOutcome {
      * @param result the low-level result; must not be null
      */
     public BatchWriteItemOutcome(BatchWriteItemResult result) {
-        if (result == null)
+        if (result == null) {
             throw new IllegalArgumentException();
+        }
         this.result = result;
     }
 
     /**
      * Convenient method to return the low-level unprocessed items.
-     * 
+     *
      * @see BatchWriteItemApi#batchWriteItemUnprocessed(Map)
      * @see BatchWriteItemSpec#withUnprocessedItems(Map)
      */

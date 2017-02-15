@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.waiters;
 
-public class FixedDelayStrategy implements PollingStrategy.DelayStrategy{
+public class FixedDelayStrategy implements PollingStrategy.DelayStrategy {
 
     /**
      * Represents default delay time in seconds

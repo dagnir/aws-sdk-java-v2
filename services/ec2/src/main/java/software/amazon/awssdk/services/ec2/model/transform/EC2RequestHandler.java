@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class EC2RequestHandler extends AbstractRequestHandler {
     public void beforeRequest(Request<?> request) {
         AmazonWebServiceRequest originalRequest = request.getOriginalRequest();
         if (originalRequest instanceof ImportKeyPairRequest) {
-            ImportKeyPairRequest importKeyPairRequest = (ImportKeyPairRequest)originalRequest;
+            ImportKeyPairRequest importKeyPairRequest = (ImportKeyPairRequest) originalRequest;
             String publicKeyMaterial = importKeyPairRequest.getPublicKeyMaterial();
             String encodedKeyMaterial = Base64.encodeAsString(publicKeyMaterial.getBytes());
             request.addParameter("PublicKeyMaterial", encodedKeyMaterial);
@@ -50,7 +50,7 @@ public class EC2RequestHandler extends AbstractRequestHandler {
         // Request -> Query string marshalling for RequestSpotInstancesRequest is a little tricky since
         // the query string params follow a different form than the XML responses, so we manually set the parameters here.
         else if (originalRequest instanceof RequestSpotInstancesRequest) {
-            RequestSpotInstancesRequest requestSpotInstancesRequest = (RequestSpotInstancesRequest)originalRequest;
+            RequestSpotInstancesRequest requestSpotInstancesRequest = (RequestSpotInstancesRequest) originalRequest;
 
             // Marshall the security groups specified only by name
             int groupNameCount = 1;
@@ -74,7 +74,9 @@ public class EC2RequestHandler extends AbstractRequestHandler {
             // Remove any of the incorrect parameters.
             List<String> keysToRemove = new ArrayList<String>();
             for (String parameter : request.getParameters().keySet()) {
-                if (parameter.startsWith("LaunchSpecification.GroupSet.")) keysToRemove.add(parameter);
+                if (parameter.startsWith("LaunchSpecification.GroupSet.")) {
+                    keysToRemove.add(parameter);
+                }
             }
             for (String key : keysToRemove) {
                 request.getParameters().remove(key);
@@ -84,7 +86,7 @@ public class EC2RequestHandler extends AbstractRequestHandler {
         // If a RunInstancesRequest doesn't specify a ClientToken, fill one in, otherwise
         // retries could result in unwanted instances being launched in the customer's account.
         else if (originalRequest instanceof RunInstancesRequest) {
-            RunInstancesRequest runInstancesRequest = (RunInstancesRequest)originalRequest;
+            RunInstancesRequest runInstancesRequest = (RunInstancesRequest) originalRequest;
             if (runInstancesRequest.getClientToken() == null) {
                 request.addParameter("ClientToken", UUID.randomUUID().toString());
             }
@@ -108,24 +110,24 @@ public class EC2RequestHandler extends AbstractRequestHandler {
          * of security group info.
          */
         if (response instanceof DescribeSpotInstanceRequestsResult) {
-            DescribeSpotInstanceRequestsResult result = (DescribeSpotInstanceRequestsResult)response;
+            DescribeSpotInstanceRequestsResult result = (DescribeSpotInstanceRequestsResult) response;
             for (SpotInstanceRequest spotInstanceRequest : result.getSpotInstanceRequests()) {
                 LaunchSpecification launchSpecification = spotInstanceRequest.getLaunchSpecification();
                 populateLaunchSpecificationSecurityGroupNames(launchSpecification);
             }
         } else if (response instanceof RequestSpotInstancesResult) {
-            RequestSpotInstancesResult result = (RequestSpotInstancesResult)response;
+            RequestSpotInstancesResult result = (RequestSpotInstancesResult) response;
             for (SpotInstanceRequest spotInstanceRequest : result.getSpotInstanceRequests()) {
                 LaunchSpecification launchSpecification = spotInstanceRequest.getLaunchSpecification();
                 populateLaunchSpecificationSecurityGroupNames(launchSpecification);
             }
         } else if (response instanceof DescribeInstancesResult) {
-            DescribeInstancesResult result = (DescribeInstancesResult)response;
+            DescribeInstancesResult result = (DescribeInstancesResult) response;
             for (Reservation reservation : result.getReservations()) {
                 populateReservationSecurityGroupNames(reservation);
             }
         } else if (response instanceof RunInstancesResult) {
-            RunInstancesResult result = (RunInstancesResult)response;
+            RunInstancesResult result = (RunInstancesResult) response;
             populateReservationSecurityGroupNames(result.getReservation());
         }
     }

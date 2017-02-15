@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,28 +37,37 @@ enum MachineMetric implements MetricType {
 
     // OS Metrics
     OpenFileDescriptorCount(Dim.FileDescriptors, MetricName.OSMetric),
-    SpareFileDescriptorCount(Dim.FileDescriptors, MetricName.OSMetric),
-    ;
+    SpareFileDescriptorCount(Dim.FileDescriptors, MetricName.OSMetric),;
 
     private final Dim dimension;
-    private final boolean includeZeroValue; 
+    private final boolean includeZeroValue;
     private final MetricName metricName;
 
     private MachineMetric(Dim dimension, MetricName metricName) {
         this(dimension, metricName, _.INCLUDES_ZERO_VALUES);
     }
+
     private MachineMetric(Dim dimension, MetricName metricName, boolean includeZeroValue) {
         this.dimension = dimension;
         this.metricName = metricName;
         this.includeZeroValue = includeZeroValue;
     }
-    String getDimensionName() { return dimension.name(); }
-    String getMetricName() { return metricName.name(); }
-    boolean includeZeroValue() { return includeZeroValue; }
 
     /** Returns the metric name for OS metrics. */
     static String getOSMetricName() {
         return MetricName.OSMetric.name();
+    }
+
+    String getDimensionName() {
+        return dimension.name();
+    }
+
+    String getMetricName() {
+        return metricName.name();
+    }
+
+    boolean includeZeroValue() {
+        return includeZeroValue;
     }
 
     /**
@@ -66,18 +75,18 @@ enum MachineMetric implements MetricType {
      */
     private static enum MetricName {
         JvmMetric,
-        OSMetric,
-        ;
+        OSMetric,;
     }
+
     /**
      * Dimensions.
      */
     private static enum Dim {
         Memory,
         Threads,
-        FileDescriptors,
-        ;
+        FileDescriptors,;
     }
+
     /**
      * An internal class used to holds static constants used by the enum. 
      */

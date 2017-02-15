@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -61,9 +57,9 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("aws-dr-tools-test");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AWSSessionCredentials credentials = (AWSSessionCredentials)credentialsProvider.getCredentials();
+        AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider.getCredentials();
 
-        assertEquals("ACCESS_KEY_ID",     credentials.getAWSAccessKeyId());
+        assertEquals("ACCESS_KEY_ID", credentials.getAWSAccessKeyId());
         assertEquals("SECRET_ACCESS_KEY", credentials.getAWSSecretKey());
         assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
     }
@@ -78,9 +74,9 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("test-credentials");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AWSSessionCredentials credentials = (AWSSessionCredentials)credentialsProvider.getCredentials();
+        AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider.getCredentials();
 
-        assertEquals("ACCESS_KEY_ID",     credentials.getAWSAccessKeyId());
+        assertEquals("ACCESS_KEY_ID", credentials.getAWSAccessKeyId());
         assertEquals("SECRET_ACCESS_KEY", credentials.getAWSSecretKey());
         assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
     }
@@ -164,11 +160,11 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         credentialsProvider.getCredentials();
     }
 
-    private class RefreshThread extends Thread{
+    private class RefreshThread extends Thread {
 
         private InstanceProfileCredentialsProvider provider;
 
-        public RefreshThread(InstanceProfileCredentialsProvider provider){
+        public RefreshThread(InstanceProfileCredentialsProvider provider) {
             this.provider = provider;
             this.start();
         }

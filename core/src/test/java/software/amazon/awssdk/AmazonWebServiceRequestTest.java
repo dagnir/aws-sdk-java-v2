@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -35,9 +35,51 @@ import utils.model.EmptyAmazonWebServiceRequest;
 
 public class AmazonWebServiceRequestTest {
 
+    public static void verifyBaseBeforeCopy(final AmazonWebServiceRequest to) {
+        assertNull(to.getCustomRequestHeaders());
+        assertNull(to.getCustomQueryParameters());
+        assertSame(ProgressListener.NOOP, to.getGeneralProgressListener());
+        assertNull(to.getRequestCredentials());
+        assertNull(to.getRequestMetricCollector());
+
+        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == to
+                .getReadLimit());
+        RequestClientOptions toOptions = to.getRequestClientOptions();
+        assertNull(toOptions.getClientMarker(Marker.USER_AGENT));
+        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == toOptions
+                .getReadLimit());
+    }
+
+    private static void verifyBaseAfterCopy(final ProgressListener listener,
+                                            final AWSCredentials credentials,
+                                            final RequestMetricCollector collector,
+                                            final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
+        RequestClientOptions toOptions;
+        Map<String, String> headers = to.getCustomRequestHeaders();
+        assertTrue(2 == headers.size());
+        assertEquals("v1", headers.get("k1"));
+        assertEquals("v2", headers.get("k2"));
+        Map<String, List<String>> parmas = to.getCustomQueryParameters();
+        assertTrue(2 == parmas.size());
+        assertEquals(Arrays.asList("v1"), parmas.get("k1"));
+        assertEquals(Arrays.asList("v2a", "v2b"), parmas.get("k2"));
+        assertSame(listener, to.getGeneralProgressListener());
+        assertSame(credentials, to.getRequestCredentials());
+        assertSame(collector, to.getRequestMetricCollector());
+
+        assertTrue(1234 == to.getReadLimit());
+        toOptions = to.getRequestClientOptions();
+        assertEquals(
+                from.getRequestClientOptions().getClientMarker(
+                        Marker.USER_AGENT),
+                toOptions.getClientMarker(Marker.USER_AGENT));
+        assertTrue(1234 == toOptions.getReadLimit());
+    }
+
     @Test
     public void testClone() {
-        AmazonWebServiceRequest root = new AmazonWebServiceRequest() {};
+        AmazonWebServiceRequest root = new AmazonWebServiceRequest() {
+        };
         assertNull(root.getCloneSource());
         assertNull(root.getCloneRoot());
 
@@ -58,7 +100,7 @@ public class AmazonWebServiceRequestTest {
             }
         };
         final AWSCredentials credentials = new BasicAWSCredentials("accesskey",
-                "accessid");
+                                                                   "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override
             public void collectMetrics(Request<?> request, Response<?> response) {
@@ -94,46 +136,5 @@ public class AmazonWebServiceRequestTest {
         AmazonWebServiceRequest request = new EmptyAmazonWebServiceRequest();
         request.setRequestCredentials(null);
         assertNull(request.getRequestCredentialsProvider());
-    }
-
-    public static void verifyBaseBeforeCopy(final AmazonWebServiceRequest to) {
-        assertNull(to.getCustomRequestHeaders());
-        assertNull(to.getCustomQueryParameters());
-        assertSame(ProgressListener.NOOP, to.getGeneralProgressListener());
-        assertNull(to.getRequestCredentials());
-        assertNull(to.getRequestMetricCollector());
-
-        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == to
-                .getReadLimit());
-        RequestClientOptions toOptions = to.getRequestClientOptions();
-        assertNull(toOptions.getClientMarker(Marker.USER_AGENT));
-        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == toOptions
-                .getReadLimit());
-    }
-
-    private static void verifyBaseAfterCopy(final ProgressListener listener,
-            final AWSCredentials credentials,
-            final RequestMetricCollector collector,
-            final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
-        RequestClientOptions toOptions;
-        Map<String, String> headers = to.getCustomRequestHeaders();
-        assertTrue(2 == headers.size());
-        assertEquals("v1", headers.get("k1"));
-        assertEquals("v2", headers.get("k2"));
-        Map<String, List<String>> parmas = to.getCustomQueryParameters();
-        assertTrue(2 == parmas.size());
-        assertEquals(Arrays.asList("v1"), parmas.get("k1"));
-        assertEquals(Arrays.asList("v2a", "v2b"), parmas.get("k2"));
-        assertSame(listener, to.getGeneralProgressListener());
-        assertSame(credentials, to.getRequestCredentials());
-        assertSame(collector, to.getRequestMetricCollector());
-
-        assertTrue(1234 == to.getReadLimit());
-        toOptions = to.getRequestClientOptions();
-        assertEquals(
-                from.getRequestClientOptions().getClientMarker(
-                        Marker.USER_AGENT),
-                toOptions.getClientMarker(Marker.USER_AGENT));
-        assertTrue(1234 == toOptions.getReadLimit());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ public class ApiGatewayClientConfigurationFactory extends ClientConfigurationFac
     @Override
     protected ClientConfiguration getDefaultConfig() {
         return super.getDefaultConfig().withRetryPolicy(PredefinedRetryPolicies.NO_RETRY_POLICY)
-                                        .withCacheResponseMetadata(DEFAULT_CACHE_RESPONSE_METADATA)
-                                        .withSocketTimeout(DEFAULT_SOCKET_TIMEOUT);
+                    .withCacheResponseMetadata(DEFAULT_CACHE_RESPONSE_METADATA)
+                    .withSocketTimeout(DEFAULT_SOCKET_TIMEOUT);
     }
 
     @Override

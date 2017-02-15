@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,6 +28,14 @@ import software.amazon.awssdk.services.stepfunctions.builder.states.PassState;
 public class PassStateTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private static void assertJsonEquals(String expected, String actual) {
+        try {
+            assertEquals(MAPPER.readTree(expected), MAPPER.readTree(actual));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void getResult_ResultCreatedFromString_ReturnsJsonResult() {
@@ -61,13 +69,5 @@ public class PassStateTest {
 
     private PassState.Builder newPassState() {
         return passState().transition(end());
-    }
-
-    private static void assertJsonEquals(String expected, String actual) {
-        try {
-            assertEquals(MAPPER.readTree(expected), MAPPER.readTree(actual));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public interface ListTablesApi {
      * name after the specified <code>exclusiveStartTableName</code> . The
      * underlying collection is paginated with a page size of 100. A network
      * call is made whenever the collection is iterated across a page boundary.
-     * 
+     *
      * @param exclusiveStartTableName
      *            The first table name that this operation will evaluate,
      *            exclusive of the specified
@@ -56,7 +56,7 @@ public interface ListTablesApi {
      * specified <code>exclusiveStartTableName</code>. The underlying collection
      * is paginated with a page size of 100. A network call is made whenever the
      * collection is iterated across a page boundary.
-     * 
+     *
      * @param exclusiveStartTableName
      *            The first table name that this operation will evaluate
      *            exclusive of the specified
@@ -74,7 +74,7 @@ public interface ListTablesApi {
      * the current account and endpoint. The underlying collection
      * is paginated with a page size of 100. A network call is made whenever the
      * collection is iterated across a page boundary.
-     * 
+     *
      * @param maxResultSize
      *            A maximum number of table names to return.
      */
@@ -85,11 +85,11 @@ public interface ListTablesApi {
      * paginated with the specified page size (which defaults to 100). A network
      * call is made whenever the collection is iterated across a page boundary.
      *
-     * 
+     *
      * @param spec
      *            can be used to specify all the detailed parameters of listing
      *            tables.
-     * 
+     *
      * @return a collection of tables associated with the current account and
      *         endpoint.
      */

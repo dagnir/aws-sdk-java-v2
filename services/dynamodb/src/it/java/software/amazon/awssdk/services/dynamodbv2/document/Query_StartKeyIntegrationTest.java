@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import org.junit.Test;
@@ -11,8 +26,8 @@ public class Query_StartKeyIntegrationTest extends IntegrationTestBase {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "allDataTypes")
                 .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withInt("intAttr", 1234)
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")

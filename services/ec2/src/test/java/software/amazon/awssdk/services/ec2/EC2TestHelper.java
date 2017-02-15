@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ec2;
 
 import java.io.File;
@@ -58,7 +73,7 @@ public class EC2TestHelper {
 
     static {
         try {
-            if ( CREDENTIALS == null ) {
+            if (CREDENTIALS == null) {
                 File accountInfoPropertiesFile = new File(System.getProperty("user.home"), ".aws/awsTestAccount.properties");
                 try {
                     CREDENTIALS = new PropertiesCredentials(accountInfoPropertiesFile);
@@ -69,8 +84,7 @@ public class EC2TestHelper {
 
             EC2 = new AmazonEC2Client(CREDENTIALS);
             EC2.setEndpoint("http://ec2-shiraz.amazonaws.com");
-        }
-        catch ( Exception exception ) {
+        } catch (Exception exception) {
         }
     }
 
@@ -97,7 +111,7 @@ public class EC2TestHelper {
         for (VpnConnection connection : result.getVpnConnections()) {
             DeleteVpnConnectionRequest r = new DeleteVpnConnectionRequest();
             EC2.deleteVpnConnection(r.withVpnConnectionId(connection
-                    .getVpnConnectionId()));
+                                                                  .getVpnConnectionId()));
         }
     }
 
@@ -110,7 +124,7 @@ public class EC2TestHelper {
     public static void deleteCustomerGateway(String... customerGatewayIds) {
         for (String customerGatewayId : customerGatewayIds) {
             DeleteCustomerGatewayRequest request = new DeleteCustomerGatewayRequest()
-                .withCustomerGatewayId(customerGatewayId);
+                    .withCustomerGatewayId(customerGatewayId);
             EC2.deleteCustomerGateway(request);
         }
     }
@@ -131,10 +145,10 @@ public class EC2TestHelper {
             String ipAddress, Integer bgpAsn, String type) {
 
         CreateCustomerGatewayRequest request =
-            new CreateCustomerGatewayRequest()
-                .withPublicIp(ipAddress)
-                .withBgpAsn(bgpAsn)
-                .withType(type);
+                new CreateCustomerGatewayRequest()
+                        .withPublicIp(ipAddress)
+                        .withBgpAsn(bgpAsn)
+                        .withType(type);
 
         return EC2.createCustomerGateway(request);
     }
@@ -181,13 +195,13 @@ public class EC2TestHelper {
      * @return
      */
     public static CreateDhcpOptionsResult createDhcpOptions(String optionKey,
-            String... optionValue) {
+                                                            String... optionValue) {
 
         DhcpConfiguration configurationOne = new DhcpConfiguration()
-            .withKey(optionKey).withValues(optionValue);
+                .withKey(optionKey).withValues(optionValue);
 
         CreateDhcpOptionsRequest request = new CreateDhcpOptionsRequest()
-            .withDhcpConfigurations(configurationOne);
+                .withDhcpConfigurations(configurationOne);
 
         return EC2.createDhcpOptions(request);
     }
@@ -235,7 +249,7 @@ public class EC2TestHelper {
      */
     public static void associateDhcpOptions(String dhcpOptionsId, String vpcId) {
         AssociateDhcpOptionsRequest request = new AssociateDhcpOptionsRequest()
-            .withDhcpOptionsId(dhcpOptionsId).withVpcId(vpcId);
+                .withDhcpOptionsId(dhcpOptionsId).withVpcId(vpcId);
         EC2.associateDhcpOptions(request);
     }
 
@@ -248,7 +262,7 @@ public class EC2TestHelper {
     public static void deleteDhcpOptions(String... dhcpOptionsIds) {
         for (String dhcpOptionsId : dhcpOptionsIds) {
             DeleteDhcpOptionsRequest request = new DeleteDhcpOptionsRequest()
-                .withDhcpOptionsId(dhcpOptionsId);
+                    .withDhcpOptionsId(dhcpOptionsId);
             EC2.deleteDhcpOptions(request);
         }
     }
@@ -263,10 +277,10 @@ public class EC2TestHelper {
      * @return CreateVpnGatewayResult
      */
     public static CreateVpnGatewayResult createVpnGateway(String type,
-            String availabilityZone) {
+                                                          String availabilityZone) {
         CreateVpnGatewayRequest request = new CreateVpnGatewayRequest()
-            .withType(type)
-            .withAvailabilityZone(availabilityZone);
+                .withType(type)
+                .withAvailabilityZone(availabilityZone);
 
         return EC2.createVpnGateway(request);
     }
@@ -290,7 +304,7 @@ public class EC2TestHelper {
      */
     public static void deleteVpnGateway(String vpnGatewayId) {
         DeleteVpnGatewayRequest request = new DeleteVpnGatewayRequest()
-            .withVpnGatewayId(vpnGatewayId);
+                .withVpnGatewayId(vpnGatewayId);
         EC2.deleteVpnGateway(request);
     }
 
@@ -330,7 +344,7 @@ public class EC2TestHelper {
      */
     public static void deletVpnGateway(String vpnGatewayId) {
         DeleteVpnGatewayRequest request = new DeleteVpnGatewayRequest()
-            .withVpnGatewayId(vpnGatewayId);
+                .withVpnGatewayId(vpnGatewayId);
         EC2.deleteVpnGateway(request);
     }
 
@@ -342,7 +356,7 @@ public class EC2TestHelper {
      */
     public static void deleteVpnConnection(String vpnConnectionId) {
         DeleteVpnConnectionRequest request = new DeleteVpnConnectionRequest()
-            .withVpnConnectionId(vpnConnectionId);
+                .withVpnConnectionId(vpnConnectionId);
         EC2.deleteVpnConnection(request);
     }
 
@@ -370,12 +384,12 @@ public class EC2TestHelper {
      * @return
      */
     public static CreateVpnConnectionResult createVpnConnection(String type,
-            String customerGatewayId, String vpnGatewayId) {
+                                                                String customerGatewayId, String vpnGatewayId) {
 
         CreateVpnConnectionRequest request = new CreateVpnConnectionRequest()
-            .withType(type)
-            .withVpnGatewayId(vpnGatewayId)
-            .withCustomerGatewayId(customerGatewayId);
+                .withType(type)
+                .withVpnGatewayId(vpnGatewayId)
+                .withCustomerGatewayId(customerGatewayId);
 
         return EC2.createVpnConnection(request);
     }
@@ -433,18 +447,19 @@ public class EC2TestHelper {
         return EC2.describeVpcs(request);
     }
 
-    public static DescribeVpcAttributeResult describeVpcAttribute(String vpcId, boolean enableDnsHostnames, boolean enableDnsSupport) {
-       DescribeVpcAttributeRequest describeVpcAttributeRequest =  new DescribeVpcAttributeRequest().withVpcId(vpcId);
-       if (enableDnsHostnames == true) {
-           describeVpcAttributeRequest.setAttribute("enableDnsHostnames");
-       }
-       if (enableDnsSupport == true) {
-           describeVpcAttributeRequest.setAttribute("enableDnsSupport");
-       }
-       return EC2.describeVpcAttribute(describeVpcAttributeRequest);
+    public static DescribeVpcAttributeResult describeVpcAttribute(String vpcId, boolean enableDnsHostnames,
+                                                                  boolean enableDnsSupport) {
+        DescribeVpcAttributeRequest describeVpcAttributeRequest = new DescribeVpcAttributeRequest().withVpcId(vpcId);
+        if (enableDnsHostnames == true) {
+            describeVpcAttributeRequest.setAttribute("enableDnsHostnames");
+        }
+        if (enableDnsSupport == true) {
+            describeVpcAttributeRequest.setAttribute("enableDnsSupport");
+        }
+        return EC2.describeVpcAttribute(describeVpcAttributeRequest);
     }
 
-    public static void modifyVpcAttribute (String vpcId) {
+    public static void modifyVpcAttribute(String vpcId) {
         EC2.modifyVpcAttribute(new ModifyVpcAttributeRequest().withVpcId(vpcId).withEnableDnsSupport(true));
     }
 
@@ -466,7 +481,7 @@ public class EC2TestHelper {
      */
     public static void deleteSubnet(String subnetId) {
         DeleteSubnetRequest request = new DeleteSubnetRequest()
-            .withSubnetId(subnetId);
+                .withSubnetId(subnetId);
         EC2.deleteSubnet(request);
     }
 
@@ -481,7 +496,7 @@ public class EC2TestHelper {
      */
     public static CreateSubnetResult createSubnet(String vpcId, String cidrBlock) {
         CreateSubnetRequest request = new CreateSubnetRequest()
-            .withVpcId(vpcId).withCidrBlock(cidrBlock);
+                .withVpcId(vpcId).withCidrBlock(cidrBlock);
         return EC2.createSubnet(request);
     }
 
@@ -524,8 +539,8 @@ public class EC2TestHelper {
     public static PurchaseReservedInstancesOfferingResult purchaseReservedInstancesOffering(
             String offeringId, int instanceCount) {
         PurchaseReservedInstancesOfferingRequest request = new PurchaseReservedInstancesOfferingRequest()
-                        .withInstanceCount(instanceCount)
-                        .withReservedInstancesOfferingId(offeringId);
+                .withInstanceCount(instanceCount)
+                .withReservedInstancesOfferingId(offeringId);
 
         return EC2.purchaseReservedInstancesOffering(request);
     }

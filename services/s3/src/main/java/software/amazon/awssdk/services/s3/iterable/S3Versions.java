@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.iterable;
 
 import java.util.Iterator;
@@ -74,7 +75,7 @@ public class S3Versions implements Iterable<S3VersionSummary> {
      * @return An iterator for object version summaries.
      */
     public static S3Versions withPrefix(AmazonS3 s3, String bucketName,
-            String prefix) {
+                                        String prefix) {
         S3Versions versions = new S3Versions(s3, bucketName);
         versions.prefix = prefix;
         return versions;
@@ -130,6 +131,11 @@ public class S3Versions implements Iterable<S3VersionSummary> {
         return bucketName;
     }
 
+    @Override
+    public Iterator<S3VersionSummary> iterator() {
+        return new VersionIterator();
+    }
+
     private class VersionIterator implements Iterator<S3VersionSummary> {
 
         private VersionListing currentListing = null;
@@ -157,8 +163,8 @@ public class S3Versions implements Iterable<S3VersionSummary> {
 
         private S3VersionSummary nextMatchingSummary() {
             if (getKey() == null
-                    || (nextSummary != null && nextSummary.getKey().equals(
-                            getKey()))) {
+                || (nextSummary != null && nextSummary.getKey().equals(
+                    getKey()))) {
                 return nextSummary;
             } else {
                 return null;
@@ -167,8 +173,8 @@ public class S3Versions implements Iterable<S3VersionSummary> {
 
         private void prepareCurrentListing() {
             while (currentListing == null
-                    || (!currentIterator.hasNext() && currentListing
-                            .isTruncated())) {
+                   || (!currentIterator.hasNext() && currentListing
+                    .isTruncated())) {
                 if (currentListing == null) {
                     ListVersionsRequest req = new ListVersionsRequest();
                     req.setBucketName(getBucketName());
@@ -186,7 +192,7 @@ public class S3Versions implements Iterable<S3VersionSummary> {
                             currentListing);
                 }
                 currentIterator = currentListing.getVersionSummaries()
-                        .iterator();
+                                                .iterator();
             }
 
             if (nextSummary == null && currentIterator.hasNext()) {
@@ -194,11 +200,6 @@ public class S3Versions implements Iterable<S3VersionSummary> {
             }
         }
 
-    }
-
-    @Override
-    public Iterator<S3VersionSummary> iterator() {
-        return new VersionIterator();
     }
 
 }

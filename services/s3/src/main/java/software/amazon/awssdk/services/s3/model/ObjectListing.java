@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -26,13 +27,13 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  * the bucket, a list of common prefixes if a delimiter was specified in the
  * request, information describing if this is a complete or partial
  * listing, and the original request parameters.
- * 
+ *
  * @see AmazonS3#listObjects(String, String)
  * @see AmazonS3#listObjects(ListObjectsRequest)
  * @see AmazonS3#listNextBatchOfObjects(ObjectListing)
  */
 public class ObjectListing implements Serializable {
-    
+
     /** A list of summary information describing the objects stored in the bucket */
     private List<S3ObjectSummary> objectSummaries = new ArrayList<S3ObjectSummary>();
 
@@ -41,7 +42,7 @@ public class ObjectListing implements Serializable {
      * prefixes will only be populated for requests that specified a delimiter
      */
     private List<String> commonPrefixes = new ArrayList<String>();
-    
+
     /** The name of the Amazon S3 bucket containing the listed objects */
     private String bucketName;
 
@@ -51,7 +52,7 @@ public class ObjectListing implements Serializable {
      * truncated
      */
     private String nextMarker;
-    
+
     /**
      * Indicates if this is a complete listing, or if the caller needs to make
      * additional requests to Amazon S3 to see the full object listing for an S3
@@ -67,25 +68,25 @@ public class ObjectListing implements Serializable {
      * listing was returned
      */
     private String prefix;
-    
+
     /**
      * The marker parameter originally specified by the caller when this object
      * listing was returned
      */
     private String marker;
-    
+
     /**
      * The maxKeys parameter originally specified by the caller when this object
      * listing was returned
      */
     private int maxKeys;
-    
+
     /**
      * The delimiter parameter originally specified by the caller when this
      * object listing was returned
      */
     private String delimiter;
-    
+
     /**
      * The encodingType parameter originally specified by the caller when this
      * object listing was returned.
@@ -103,7 +104,7 @@ public class ObjectListing implements Serializable {
      * additional calls to
      * {@link AmazonS3#listNextBatchOfObjects(ObjectListing)} to get
      * additional results.
-     * 
+     *
      * @return A list of the object summaries describing the objects stored in
      *         the S3 bucket.
      */
@@ -137,7 +138,7 @@ public class ObjectListing implements Serializable {
      * will contain one entry in the common
      * prefixes list ("foo/bar/") and none of the keys beginning with that
      * common prefix will be included in the object summaries list.
-     * 
+     *
      * @return The list of common prefixes included in this object listing,
      *         which might be an empty list if no common prefixes were found.
      */
@@ -149,7 +150,7 @@ public class ObjectListing implements Serializable {
      * For internal use only. Sets the common prefixes for this
      * object listing, representing the key prefixes that were rolled up because
      * of the request's delimiter parameter.
-     * 
+     *
      * @param commonPrefixes
      *            The common prefixes for this object listing.
      */
@@ -166,7 +167,7 @@ public class ObjectListing implements Serializable {
      * truncated requests, this value is equal to the greatest
      * lexicographical value of the object keys and common prefixes included
      * in this listing.
-     * 
+     *
      * @return The marker to use in the next <code>listObjects</code> request in order to see
      *         the next page of results if this object listing is truncated.
      *         Returns <code>null</code> if this object listing isn't truncated.
@@ -179,7 +180,7 @@ public class ObjectListing implements Serializable {
      * For internal use only. Sets the marker to use in the
      * next list objects request in order to see the next page of results for a
      * truncated object listing.
-     * 
+     *
      * @param nextMarker
      *            The marker to use in the next listObjects request in order to
      *            see the next page of results for a truncated object listing.
@@ -191,7 +192,7 @@ public class ObjectListing implements Serializable {
     /**
      * Gets the name of the Amazon S3 bucket containing the objects listed in
      * this {@link ObjectListing}.
-     * 
+     *
      * @return The name of the Amazon S3 bucket containing the objects listed in
      *         this {@link ObjectListing}.
      */
@@ -203,7 +204,7 @@ public class ObjectListing implements Serializable {
      * For internal use only.  
      * Sets the name of the Amazon S3
      * bucket containing the objects listed in this S3ObjectListing.
-     * 
+     *
      * @param bucketName
      *            The name of the Amazon S3 bucket containing the objects listed
      *            in this S3ObjectListing.
@@ -217,7 +218,7 @@ public class ObjectListing implements Serializable {
      * <code>null</code> if no prefix was specified.
      * All objects and common prefixes included
      * in this object listing start with the specified prefix.
-     * 
+     *
      * @return The prefix parameter originally used to request this object
      *         listing. Returns <code>null</code> if no prefix was specified.
      */
@@ -229,7 +230,7 @@ public class ObjectListing implements Serializable {
      * For internal use only. 
      * Sets the prefix parameter
      * originally used to request this object listing.
-     * 
+     *
      * @param prefix
      *            The prefix parameter originally used to request this object
      *            listing.
@@ -244,7 +245,7 @@ public class ObjectListing implements Serializable {
      * If specified, all objects and common
      * prefixes included in this object listing will occur
      * alphabetically after the specified marker.
-     * 
+     *
      * @return The marker parameter originally used to request this object
      *         listing. Returns <code>null</code> if no marker was specified.
      */
@@ -256,7 +257,7 @@ public class ObjectListing implements Serializable {
      * For internal use only. 
      * Sets the marker parameter
      * originally used to request this object listing.
-     * 
+     *
      * @param marker
      *            The marker parameter originally used to request this object
      *            listing.
@@ -272,7 +273,7 @@ public class ObjectListing implements Serializable {
      * combined number of objects and common prefixes included in this object
      * listing. An object listing will never contain more objects plus common
      * prefixes than indicated by the <code>maxKeys</code>, but can of course contain less.
-     * 
+     *
      * @return The <code>maxKeys</code> parameter originally used to request this object
      *         listing. Returns the default <code>maxKeys</code> value applied by Amazon S3 if
      *         no value was specified.
@@ -286,7 +287,7 @@ public class ObjectListing implements Serializable {
      * Sets the <code>maxKeys</code> parameter
      * originally used to request this object listing, or the default maxKeys
      * applied by Amazon S3 if the requester didn't specify a value.
-     * 
+     *
      * @param maxKeys
      *            The <code>maxKeys</code> parameter originally used to request this object
      *            listing, or the default <code>maxKeys</code> value applied by Amazon S3 if
@@ -308,7 +309,7 @@ public class ObjectListing implements Serializable {
      * list of object summaries. Instead, the common prefixes list will have
      * one entry for the common prefix.
      * </p>
-     * 
+     *
      * @return The delimiter parameter originally used to request this object
      *         listing. Returns <code>null</code> if no delimiter was specified.
      */
@@ -319,7 +320,7 @@ public class ObjectListing implements Serializable {
     /**
      * For internal use only. Sets the delimiter parameter
      * originally used to request this object listing.
-     * 
+     *
      * @param delimiter
      *            The delimiter parameter originally used to request this object
      *            listing.
@@ -330,7 +331,7 @@ public class ObjectListing implements Serializable {
 
     /**
      * Gets whether or not this object listing is complete.
-     * 
+     *
      * @return The value <code>true</code> if the object listing is <b>not complete</b>.
      *         Returns the value <code>false</code> if otherwise.  
      *         When returning <code>true</code>,
@@ -346,7 +347,7 @@ public class ObjectListing implements Serializable {
      * this object listing, indicating if this is a complete listing or not and
      * whether the caller needs to make additional calls to S3 to get more
      * object summaries.
-     * 
+     *
      * @param isTruncated
      *            The value <code>true</code> if the object listing is <b>not complete</b>. 
      *            The value <code>false</code> if otherwise.  
@@ -362,7 +363,7 @@ public class ObjectListing implements Serializable {
      * encoded key name values in the following response elements:
      * <code>Delimiter, Marker, Prefix,
      * NextMarker, Key</code>.
-     * 
+     *
      * @return <code>Null</code> if <code>encodingType</code> is not specified
      *         in the request parameter.
      */
@@ -373,7 +374,7 @@ public class ObjectListing implements Serializable {
     /**
      * For internal use only. Sets the encoding type used by Amazon S3 to encode
      * object key names in the XML response.
-     * 
+     *
      * @param encodingType
      *            <code>Null</code> if <code>encodingType</code> is not
      *            specified in the request parameter.

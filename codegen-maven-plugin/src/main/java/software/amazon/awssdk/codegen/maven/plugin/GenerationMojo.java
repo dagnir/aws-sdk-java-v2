@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -71,12 +70,12 @@ public class GenerationMojo extends AbstractMojo {
             try {
                 getLog().info("Loading from: " + p.toString());
                 generateCode(C2jModels.builder()
-                        .codeGenConfig(loadCodeGenConfig(p))
-                        .customizationConfig(loadCustomizationConfig(p))
-                        .serviceModel(loadServiceModel(p))
-                        .waitersModel(loadWaiterModel(p))
-                        .examplesModel(loadExamplesModel(p))
-                        .build());
+                                      .codeGenConfig(loadCodeGenConfig(p))
+                                      .customizationConfig(loadCustomizationConfig(p))
+                                      .serviceModel(loadServiceModel(p))
+                                      .waitersModel(loadWaiterModel(p))
+                                      .examplesModel(loadExamplesModel(p))
+                                      .build());
             } catch (MojoExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -99,12 +98,12 @@ public class GenerationMojo extends AbstractMojo {
 
     private void generateCode(C2jModels models) {
         CodeGenerator.builder()
-                .models(models)
-                .sourcesDirectory(sourcesDirectory.toFile().getAbsolutePath())
-                .testsDirectory(testsDirectory.toFile().getAbsolutePath())
-                .fileNamePrefix(Utils.getFileNamePrefix(models.serviceModel()))
-                .build()
-                .execute();
+                     .models(models)
+                     .sourcesDirectory(sourcesDirectory.toFile().getAbsolutePath())
+                     .testsDirectory(testsDirectory.toFile().getAbsolutePath())
+                     .fileNamePrefix(Utils.getFileNamePrefix(models.serviceModel()))
+                     .build()
+                     .execute();
     }
 
     private BasicCodeGenConfig loadCodeGenConfig(Path root) throws MojoExecutionException {

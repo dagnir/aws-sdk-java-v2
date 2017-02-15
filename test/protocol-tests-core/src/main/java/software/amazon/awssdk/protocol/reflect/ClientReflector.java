@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -74,8 +74,8 @@ public class ClientReflector {
                 SdkSyncClientBuilder<?, ?> builder =
                         (SdkSyncClientBuilder<?, ?>) interfaceClass.getMethod("builder").invoke(null);
                 builder.getClass()
-                        .getMethod("iamCredentials", AWSCredentialsProvider.class)
-                        .invoke(builder, new AWSStaticCredentialsProvider(getMockCredentials()));
+                       .getMethod("iamCredentials", AWSCredentialsProvider.class)
+                       .invoke(builder, new AWSStaticCredentialsProvider(getMockCredentials()));
                 return builder
                         .endpoint("http://localhost:" + WireMockUtils.port())
                         .build();

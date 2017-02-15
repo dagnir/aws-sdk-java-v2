@@ -60,7 +60,7 @@ public class WorkRoleIntegrationTest extends ElasticBeanstalkIntegrationTestBase
         waitForEnvironmentToTransitionToStateAndHealth(environmentName, EnvironmentStatus.Ready, null);
         UpdateEnvironmentResult updateEnvironmentResult = elasticbeanstalk
                 .updateEnvironment(new UpdateEnvironmentRequest().withOptionSettings(optionSettings)
-                        .withEnvironmentName(environmentName));
+                                                                 .withEnvironmentName(environmentName));
         assertEquals(environmentName, updateEnvironmentResult.getEnvironmentName());
     }
 

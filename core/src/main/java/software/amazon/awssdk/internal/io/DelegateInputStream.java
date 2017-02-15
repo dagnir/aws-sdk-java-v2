@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ public class DelegateInputStream extends InputStream {
     public int read(byte b[]) throws IOException {
         return in.read(b);
     }
+
     public int read(byte b[], int off, int len) throws IOException {
         return in.read(b, off, len);
     }
@@ -45,9 +46,11 @@ public class DelegateInputStream extends InputStream {
     public long skip(long n) throws IOException {
         return in.skip(n);
     }
+
     public int available() throws IOException {
         return in.available();
     }
+
     public void close() throws IOException {
         in.close();
     }
@@ -55,6 +58,7 @@ public class DelegateInputStream extends InputStream {
     public void mark(int readlimit) {
         in.mark(readlimit);
     }
+
     public void reset() throws IOException {
         in.reset();
     }

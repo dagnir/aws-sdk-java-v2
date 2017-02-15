@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -33,12 +33,6 @@ class ShouldDoBlockingSessionRefresh extends SdkPredicate<SessionCredentialsHold
      */
     private static final int EXPIRY_TIME_MILLIS = 60 * 1000;
 
-    @Override
-    public boolean test(SessionCredentialsHolder sessionCredentialsHolder) {
-        return sessionCredentialsHolder == null ||
-               expiring(sessionCredentialsHolder.getSessionCredentialsExpiration());
-    }
-
     /**
      * Session credentials that expire in less than a minute are considered expiring.
      *
@@ -47,5 +41,11 @@ class ShouldDoBlockingSessionRefresh extends SdkPredicate<SessionCredentialsHold
     private static boolean expiring(Date expiry) {
         long timeRemaining = expiry.getTime() - System.currentTimeMillis();
         return timeRemaining < EXPIRY_TIME_MILLIS;
+    }
+
+    @Override
+    public boolean test(SessionCredentialsHolder sessionCredentialsHolder) {
+        return sessionCredentialsHolder == null ||
+               expiring(sessionCredentialsHolder.getSessionCredentialsExpiration());
     }
 }

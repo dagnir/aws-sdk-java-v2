@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -81,10 +81,10 @@ public class AWS4SignerTest {
     public void testSigning() throws Exception {
 
         final String EXPECTED_AUTHORIZATION_HEADER_WITHOUT_SHA256_HEADER =
-            "AWS4-HMAC-SHA256 Credential=access/19810216/us-east-1/demo/aws4_request, SignedHeaders=host;x-amz-archive-description;x-amz-date, Signature=77fe7c02927966018667f21d1dc3dfad9057e58401cbb9ed64f1b7868288e35a";
+                "AWS4-HMAC-SHA256 Credential=access/19810216/us-east-1/demo/aws4_request, SignedHeaders=host;x-amz-archive-description;x-amz-date, Signature=77fe7c02927966018667f21d1dc3dfad9057e58401cbb9ed64f1b7868288e35a";
 
         final String EXPECTED_AUTHORIZATION_HEADER_WITH_SHA256_HEADER =
-            "AWS4-HMAC-SHA256 Credential=access/19810216/us-east-1/demo/aws4_request, SignedHeaders=host;x-amz-archive-description;x-amz-date;x-amz-sha256, Signature=e73e20539446307a5dc71252dbd5b97e861f1d1267456abda3ebd8d57e519951";
+                "AWS4-HMAC-SHA256 Credential=access/19810216/us-east-1/demo/aws4_request, SignedHeaders=host;x-amz-archive-description;x-amz-date;x-amz-sha256, Signature=e73e20539446307a5dc71252dbd5b97e861f1d1267456abda3ebd8d57e519951";
 
 
         AWSCredentials credentials = new BasicAWSCredentials("access", "secret");
@@ -100,7 +100,7 @@ public class AWS4SignerTest {
 
         signer.sign(request, credentials);
         assertEquals(EXPECTED_AUTHORIZATION_HEADER_WITHOUT_SHA256_HEADER,
-                request.getHeaders().get("Authorization"));
+                     request.getHeaders().get("Authorization"));
 
 
         // Test request with 'x-amz-sha256' header
@@ -109,7 +109,7 @@ public class AWS4SignerTest {
 
         signer.sign(request, credentials);
         assertEquals(EXPECTED_AUTHORIZATION_HEADER_WITH_SHA256_HEADER,
-                request.getHeaders().get("Authorization"));
+                     request.getHeaders().get("Authorization"));
     }
 
     @Test
@@ -182,11 +182,11 @@ public class AWS4SignerTest {
 
     private SignableRequest<?> generateBasicRequest() {
         return MockRequestBuilder.create()
-                .withContent(new ByteArrayInputStream("{\"TableName\": \"foo\"}".getBytes()))
-                .withHeader("Host", "demo.us-east-1.amazonaws.com")
-                .withHeader("x-amz-archive-description", "test  test")
-                .withPath("/")
-                .withEndpoint("http://demo.us-east-1.amazonaws.com").build();
+                                 .withContent(new ByteArrayInputStream("{\"TableName\": \"foo\"}".getBytes()))
+                                 .withHeader("Host", "demo.us-east-1.amazonaws.com")
+                                 .withHeader("x-amz-archive-description", "test  test")
+                                 .withPath("/")
+                                 .withEndpoint("http://demo.us-east-1.amazonaws.com").build();
     }
 
     private String getOldTimeStamp(Date date) {

@@ -8,7 +8,7 @@ Feature: Amazon Simple Queue Service
 
   Scenario: Handling errors
     When I attempt to call the "GetQueueUrl" API with:
-    | QueueName | fake_queue |
+      | QueueName | fake_queue |
     Then I expect the response error code to be "AWS.SimpleQueueService.NonExistentQueue"
     And I expect the response error message to include:
     """

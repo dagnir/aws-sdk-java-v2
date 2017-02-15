@@ -20,7 +20,7 @@ import org.junit.Test;
 import software.amazon.awssdk.services.ec2.model.DescribeRegionsRequest;
 
 public class DryRunIntegrationTest extends EC2IntegrationTestBase {
-    
+
     @Test
     public void dry_run_returns_success() {
         Assert.assertNotNull(ec2.dryRun(new DescribeRegionsRequest()));

@@ -19,7 +19,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 @SdkInternalApi
-public class NoOpWaiterHandler extends WaiterHandler<AmazonWebServiceRequest>{
+public class NoOpWaiterHandler extends WaiterHandler<AmazonWebServiceRequest> {
 
     @Override
     public void onWaitSuccess(AmazonWebServiceRequest request) {

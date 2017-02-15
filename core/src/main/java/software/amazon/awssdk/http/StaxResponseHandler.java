@@ -42,14 +42,12 @@ import software.amazon.awssdk.util.StringUtils;
 @SdkProtectedApi
 public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServiceResponse<T>> {
 
-    /** The StAX unmarshaller to use when handling the response */
-    private Unmarshaller<T, StaxUnmarshallerContext> responseUnmarshaller;
-
     /** Shared logger for profiling information */
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.request");
-
     /** Shared factory for creating XML event readers */
     private static final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    /** The StAX unmarshaller to use when handling the response */
+    private Unmarshaller<T, StaxUnmarshallerContext> responseUnmarshaller;
 
     /**
      * Constructs a new response handler that will use the specified StAX
@@ -106,7 +104,7 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
             if (responseHeaders != null) {
                 if (responseHeaders.get(X_AMZN_REQUEST_ID_HEADER) != null) {
                     metadata.put(ResponseMetadata.AWS_REQUEST_ID,
-                            responseHeaders.get(X_AMZN_REQUEST_ID_HEADER));
+                                 responseHeaders.get(X_AMZN_REQUEST_ID_HEADER));
                 }
             }
             awsResponse.setResponseMetadata(getResponseMetadata(metadata));
@@ -138,7 +136,8 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
      *            The unmarshaller context used to configure a service's response
      *            data.
      */
-    protected void registerAdditionalMetadataExpressions(StaxUnmarshallerContext unmarshallerContext) {}
+    protected void registerAdditionalMetadataExpressions(StaxUnmarshallerContext unmarshallerContext) {
+    }
 
     /**
      * Since this response handler completely consumes all the data from the

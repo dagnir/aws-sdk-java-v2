@@ -63,7 +63,7 @@ public class RequestClientOptionsTest {
         // After copy
         from.copyTo(to);
         assertEquals(from.getClientMarker(Marker.USER_AGENT),
-                to.getClientMarker(Marker.USER_AGENT));
+                     to.getClientMarker(Marker.USER_AGENT));
         assertTrue(1234 == to.getReadLimit());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -58,71 +58,55 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResult;
  */
 public class SendQueueBuffer {
     private static Log log = LogFactory.getLog(SendQueueBuffer.class);
-
-    // Interface to support event notifications with a parameter.
-    private interface Listener<T> {
-        void invoke(T o);
-    };
-
     /** Config settings for this buffer */
     private final QueueBufferConfig config;
 
+    ;
     /** Url of our queue */
     private final String qUrl;
-
     /**
      * The {@code AmazonSQS} client to use for this buffer's operations.
      */
     private final AmazonSQS sqsClient;
-
     /**
      * The executor service for the batching tasks.
      */
     private final Executor executor;
-
     /**
      * Object used to serialize sendMessage calls.
      */
     private final Object sendMessageLock = new Object();
-
     /**
      * Object used to serialize deleteMessage calls.
      */
     private final Object deleteMessageLock = new Object();
-
     /**
      * Object used to serialize changeMessageVisibility calls.
      */
     private final Object changeMessageVisibilityLock = new Object();
-
     /**
      * Current batching task for sendMessage. Using a size 1 array to allow "passing by reference".
      * Synchronized by {@code sendMessageLock}.
      */
     private final SendMessageBatchTask[] openSendMessageBatchTask = new SendMessageBatchTask[1];
-
     /**
      * Current batching task for deleteMessage. Using a size 1 array to allow
      * "passing by reference". Synchronized by {@code deleteMessageLock}.
      */
     private final DeleteMessageBatchTask[] openDeleteMessageBatchTask = new DeleteMessageBatchTask[1];
-
     /**
      * Current batching task for changeMessageVisibility. Using a size 1 array to allow
      * "passing by reference". Synchronized by {@code changeMessageVisibilityLock}.
      */
     private final ChangeMessageVisibilityBatchTask[] openChangeMessageVisibilityBatchTask = new ChangeMessageVisibilityBatchTask[1];
-
     /**
      * Permits controlling the number of in flight SendMessage batches.
      */
     private final Semaphore inflightSendMessageBatches;
-
     /**
      * Permits controlling the number of in flight DeleteMessage batches.
      */
     private final Semaphore inflightDeleteMessageBatches;
-
     /**
      * Permits controlling the number of in flight ChangeMessageVisibility batches.
      */
@@ -152,7 +136,7 @@ public class SendQueueBuffer {
     public QueueBufferFuture<SendMessageRequest, SendMessageResult> sendMessage(SendMessageRequest request,
                                                                                 QueueBufferCallback<SendMessageRequest, SendMessageResult> callback) {
         QueueBufferFuture<SendMessageRequest, SendMessageResult> result = submitOutboundRequest(sendMessageLock,
-                openSendMessageBatchTask, request, inflightSendMessageBatches, callback);
+                                                                                                openSendMessageBatchTask, request, inflightSendMessageBatches, callback);
         return result;
     }
 
@@ -160,18 +144,19 @@ public class SendQueueBuffer {
      * @return never null
      */
     public QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult> deleteMessage(DeleteMessageRequest request,
-                                                                       QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback) {
+                                                                                      QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback) {
         return submitOutboundRequest(deleteMessageLock, openDeleteMessageBatchTask, request,
-                inflightDeleteMessageBatches, callback);
+                                     inflightDeleteMessageBatches, callback);
     }
 
     /**
      * @return never null
      */
-    public QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> changeMessageVisibility(ChangeMessageVisibilityRequest request,
-                                                                                           QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> callback) {
+    public QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> changeMessageVisibility(
+            ChangeMessageVisibilityRequest request,
+            QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> callback) {
         return submitOutboundRequest(changeMessageVisibilityLock, openChangeMessageVisibilityBatchTask, request,
-                inflightChangeMessageVisibilityBatches, callback);
+                                     inflightChangeMessageVisibilityBatches, callback);
     }
 
     /**
@@ -180,15 +165,17 @@ public class SendQueueBuffer {
     @SuppressWarnings("unchecked")
     private <R extends AmazonWebServiceRequest, Result> OutboundBatchTask<R, Result> newOutboundBatchTask(R request) {
 
-        if (request instanceof SendMessageRequest)
+        if (request instanceof SendMessageRequest) {
             return (OutboundBatchTask<R, Result>) new SendMessageBatchTask();
-        else if (request instanceof DeleteMessageRequest)
+        } else if (request instanceof DeleteMessageRequest) {
             return (OutboundBatchTask<R, Result>) new DeleteMessageBatchTask();
-        else if (request instanceof ChangeMessageVisibilityRequest)
+        } else if (request instanceof ChangeMessageVisibilityRequest) {
             return (OutboundBatchTask<R, Result>) new ChangeMessageVisibilityBatchTask();
-        else
-            // this should never happen
+        } else
+        // this should never happen
+        {
             throw new IllegalArgumentException("Unsupported request type " + request.getClass().getName());
+        }
     }
 
     /**
@@ -236,11 +223,12 @@ public class SendQueueBuffer {
      *             (see the various outbound calls for details)
      */
     @SuppressWarnings("unchecked")
-    <OBT extends OutboundBatchTask<R, Result>, R extends AmazonWebServiceRequest, Result> QueueBufferFuture<R, Result> submitOutboundRequest(Object operationLock,
-                                                                                                                                             OBT[] openOutboundBatchTask,
-                                                                                                                                             R request,
-                                                                                                                                             final Semaphore inflightOperationBatches,
-                                                                                                                                             QueueBufferCallback<R, Result> callback) {
+    <OBT extends OutboundBatchTask<R, Result>, R extends AmazonWebServiceRequest, Result> QueueBufferFuture<R, Result> submitOutboundRequest(
+            Object operationLock,
+            OBT[] openOutboundBatchTask,
+            R request,
+            final Semaphore inflightOperationBatches,
+            QueueBufferCallback<R, Result> callback) {
         /*
          * Callers add requests to a single batch task (openOutboundBatchTask) until it is full or
          * maxBatchOpenMs elapses. The total number of batch task in flight is controlled by the
@@ -250,7 +238,7 @@ public class SendQueueBuffer {
         try {
             synchronized (operationLock) {
                 if (openOutboundBatchTask[0] == null
-                        || ((theFuture = openOutboundBatchTask[0].addRequest(request, callback))) == null) {
+                    || ((theFuture = openOutboundBatchTask[0].addRequest(request, callback))) == null) {
 
                     OBT obt = (OBT) newOutboundBatchTask(request);
                     inflightOperationBatches.acquire();
@@ -267,7 +255,7 @@ public class SendQueueBuffer {
 
                     if (log.isTraceEnabled()) {
                         log.trace("Queue " + qUrl + " created new batch for " + request.getClass().toString() + " "
-                                + inflightOperationBatches.availablePermits() + " free slots remain");
+                                  + inflightOperationBatches.availablePermits() + " free slots remain");
                     }
 
                     theFuture = openOutboundBatchTask[0].addRequest(request, callback);
@@ -289,6 +277,11 @@ public class SendQueueBuffer {
         }
 
         return theFuture;
+    }
+
+    // Interface to support event notifications with a parameter.
+    private interface Listener<T> {
+        void invoke(T o);
     }
 
     /**
@@ -418,7 +411,7 @@ public class SendQueueBuffer {
             try {
 
                 long deadlineMs = TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS)
-                        + config.getMaxBatchOpenMs() + 1;
+                                  + config.getMaxBatchOpenMs() + 1;
                 long t = TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
 
                 List<R> requests;
@@ -475,7 +468,7 @@ public class SendQueueBuffer {
         @Override
         protected boolean isOkToAdd(SendMessageRequest request) {
             return (requests.size() < config.getMaxBatchSize())
-                    && ((request.getMessageBody().getBytes().length + batchSizeBytes) < config.getMaxBatchSizeBytes());
+                   && ((request.getMessageBody().getBytes().length + batchSizeBytes) < config.getMaxBatchSizeBytes());
         }
 
         @Override
@@ -502,9 +495,9 @@ public class SendQueueBuffer {
             List<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>(requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
                 entries.add(new SendMessageBatchRequestEntry().withId(Integer.toString(i))
-                        .withMessageBody(requests.get(i).getMessageBody())
-                        .withDelaySeconds(requests.get(i).getDelaySeconds())
-                        .withMessageAttributes(requests.get(i).getMessageAttributes()));
+                                                              .withMessageBody(requests.get(i).getMessageBody())
+                                                              .withDelaySeconds(requests.get(i).getDelaySeconds())
+                                                              .withMessageAttributes(requests.get(i).getMessageAttributes()));
             }
             batchRequest.setEntries(entries);
 
@@ -579,7 +572,8 @@ public class SendQueueBuffer {
         }
     }
 
-    private class ChangeMessageVisibilityBatchTask extends OutboundBatchTask<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> {
+    private class ChangeMessageVisibilityBatchTask
+            extends OutboundBatchTask<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> {
 
         @Override
         protected void process(List<ChangeMessageVisibilityRequest> requests,
@@ -597,8 +591,8 @@ public class SendQueueBuffer {
                     requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
                 entries.add(new ChangeMessageVisibilityBatchRequestEntry().withId(Integer.toString(i))
-                        .withReceiptHandle(requests.get(i).getReceiptHandle())
-                        .withVisibilityTimeout(requests.get(i).getVisibilityTimeout()));
+                                                                          .withReceiptHandle(requests.get(i).getReceiptHandle())
+                                                                          .withVisibilityTimeout(requests.get(i).getVisibilityTimeout()));
             }
             batchRequest.setEntries(entries);
 

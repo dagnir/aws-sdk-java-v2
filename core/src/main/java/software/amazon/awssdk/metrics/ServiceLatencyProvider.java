@@ -25,13 +25,16 @@ import software.amazon.awssdk.util.TimingInfo;
 @NotThreadSafe
 public class ServiceLatencyProvider {
     private final long startNano = System.nanoTime();
-    private long endNano = startNano;
     private final ServiceMetricType serviceMetricType;
+    private long endNano = startNano;
 
-    public ServiceLatencyProvider(ServiceMetricType type) { 
+    public ServiceLatencyProvider(ServiceMetricType type) {
         this.serviceMetricType = type;
     }
-    public ServiceMetricType getServiceMetricType() { return serviceMetricType; }
+
+    public ServiceMetricType getServiceMetricType() {
+        return serviceMetricType;
+    }
 
     /**
      * Ends the timing.  Must not be called more than once.
@@ -41,7 +44,7 @@ public class ServiceLatencyProvider {
             throw new IllegalStateException();
         }
         endNano = System.nanoTime();
-        return this; 
+        return this;
     }
 
     public double getDurationMilli() {
@@ -49,15 +52,17 @@ public class ServiceLatencyProvider {
             LogFactory.getLog(getClass()).debug(
                     "Likely to be a missing invocation of endTiming().");
         }
-        return TimingInfo.durationMilliOf(startNano, endNano); 
+        return TimingInfo.durationMilliOf(startNano, endNano);
     }
-    
-    public String getProviderId() { return super.toString(); }
+
+    public String getProviderId() {
+        return super.toString();
+    }
 
     @Override
     public String toString() {
         return String.format(
-                "providerId=%s, serviceMetricType=%s, startNano=%d, endNano=%d", 
+                "providerId=%s, serviceMetricType=%s, startNano=%d, endNano=%d",
                 getProviderId(), serviceMetricType, startNano, endNano);
     }
 }

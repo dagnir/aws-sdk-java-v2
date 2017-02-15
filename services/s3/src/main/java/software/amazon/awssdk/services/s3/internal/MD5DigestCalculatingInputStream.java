@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.IOException;
@@ -45,10 +46,10 @@ public class MD5DigestCalculatingInputStream extends SdkFilterInputStream {
             throw new IllegalStateException("unexpected", e);
         }
     }
-    
+
     private MessageDigest cloneFrom(MessageDigest from) {
         try {
-            return (MessageDigest)from.clone();
+            return (MessageDigest) from.clone();
         } catch (CloneNotSupportedException e) { // should never occur
             throw new IllegalStateException("unexpected", e);
         }
@@ -74,10 +75,10 @@ public class MD5DigestCalculatingInputStream extends SdkFilterInputStream {
         if (markSupported()) {
             super.reset();
             digest = (digestLastMarked == null)
-                   // This is necessary so that should there be a reset without a
-                   // preceding mark, the MD5 would still be computed correctly.
-                   ? newMD5()
-                   : cloneFrom(digestLastMarked);
+                     // This is necessary so that should there be a reset without a
+                     // preceding mark, the MD5 would still be computed correctly.
+                     ? newMD5()
+                     : cloneFrom(digestLastMarked);
         } else {
             throw new IOException("mark/reset not supported");
         }
@@ -87,7 +88,7 @@ public class MD5DigestCalculatingInputStream extends SdkFilterInputStream {
     public int read() throws IOException {
         int ch = super.read();
         if (ch != -1) {
-            digest.update((byte)ch);
+            digest.update((byte) ch);
         }
         return ch;
     }

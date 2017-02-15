@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -43,34 +58,28 @@ import software.amazon.awssdk.util.Md5Utils;
  * Integration tests for the SSE-CPK feature.
  */
 public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
-    protected static AmazonS3Client s3;
-    protected static AmazonS3Client s3Https;
-
     /** The bucket created and used by these tests */
     private static final String bucketName = "java-server-side-encryption-integ-test-" + new Date().getTime();
-
     /** The key used in these tests */
     private static final String KEY = "key";
-
+    private static final long SINGLE_UPLOAD_OBJECT_SIZE = 100000L;
+    private static final long MB = 1024 * 1024;
+    private static final int PART_NUMBER = 5;
+    private static final long PART_SIZE = 8 * MB;
+    protected static AmazonS3Client s3;
+    protected static AmazonS3Client s3Https;
     /** The file containing the test data uploaded to S3 */
     private static File file_singleUpload = null;
     private static File file_multipartUpload = null;
-
-    private static final long SINGLE_UPLOAD_OBJECT_SIZE = 100000L;
-
-    private static final long MB = 1024 * 1024;
-    private static final int  PART_NUMBER = 5;
-    private static final long PART_SIZE = 8 * MB;
-
     private static SecretKey secretKey;
     private static String secretKey_b64;
 
     @AfterClass
     public static void tearDown() throws Exception {
-        if ( file_singleUpload != null ) {
+        if (file_singleUpload != null) {
             file_singleUpload.delete();
         }
-        if ( file_multipartUpload != null ) {
+        if (file_multipartUpload != null) {
             file_multipartUpload.delete();
         }
         CryptoTestUtils.deleteBucketAndAllContents(s3, bucketName);
@@ -87,16 +96,28 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
         file_multipartUpload = new RandomTempFile("get-object-integ-test-multipart-upload", PART_NUMBER * PART_SIZE);
         setUpCredentials();
         s3 = new AmazonS3Client(credentials,
-                // Deliberately set to http so the requests with customer keys would
-                // fail
-                new ClientConfiguration().withProtocol(Protocol.HTTP));
+                                // Deliberately set to http so the requests with customer keys would
+                                // fail
+                                new ClientConfiguration().withProtocol(Protocol.HTTP));
         s3Https = new AmazonS3Client(credentials);
         secretKey = generateSecretKey();
         secretKey_b64 = Base64.encodeAsString(secretKey.getEncoded());
         s3Https.createBucket(bucketName);
         s3Https.putObject(new PutObjectRequest(bucketName, KEY,
-                file_singleUpload).withSSECustomerKey(new SSECustomerKey(
+                                               file_singleUpload).withSSECustomerKey(new SSECustomerKey(
                 secretKey)));
+    }
+
+    private static SecretKey generateSecretKey() {
+        KeyGenerator generator;
+        try {
+            generator = KeyGenerator.getInstance("AES");
+            generator.init(256, new SecureRandom());
+            return generator.generateKey();
+        } catch (Exception e) {
+            fail("Unable to generate symmetric key: " + e.getMessage());
+            return null;
+        }
     }
 
     @Test
@@ -108,7 +129,7 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
         try {
             s3.putObject(putObjectRequest);
             fail("secret key and http don't mix");
-        } catch(IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("HTTPS must be used"));
         }
     }
@@ -122,7 +143,7 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
         try {
             s3.getObject(request, destination);
             fail("secret key and http don't mix");
-        } catch(IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("HTTPS must be used"));
         }
     }
@@ -137,7 +158,7 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
         try {
             s3.initiateMultipartUpload(initRequest);
             fail("secret key and http don't mix");
-        } catch(IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("HTTPS must be used"));
         }
 
@@ -157,7 +178,7 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
         try {
             s3.uploadPart(uploadPartRequest);
             fail("secret key and http don't mix");
-        } catch(IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("HTTPS must be used"));
         }
     }
@@ -171,7 +192,7 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
         String newSecretKey_b64 = Base64.encodeAsString(newSecretKey.getEncoded());
         CopyObjectRequest copyRequest = new CopyObjectRequest(
                 bucketName, KEY, bucketName, destinationKey)
-                    .withDestinationSSECustomerKey(new SSECustomerKey(newSecretKey));
+                .withDestinationSSECustomerKey(new SSECustomerKey(newSecretKey));
 
         /*
          * http CopyObject request with a destination SSECustomerKey
@@ -189,7 +210,7 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
          * should be rejected
          */
         copyRequest
-            .withSourceSSECustomerKey(new SSECustomerKey(newSecretKey_b64));
+                .withSourceSSECustomerKey(new SSECustomerKey(newSecretKey_b64));
         try {
             s3.copyObject(copyRequest);
             fail("secret key and http don't mix");
@@ -225,34 +246,22 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
 
         /* source SSECustomerKey and http don't mix */
         copyRequest = new CopyPartRequest()
-            .withSourceBucketName(bucketName)
-            .withSourceKey(KEY)
-            .withDestinationBucketName(bucketName)
-            .withDestinationKey(destinationKey)
-            .withUploadId("foo")
-            .withFirstByte(0L)
-            .withLastByte(100L)
-            .withPartNumber(1)
-            .withSourceSSECustomerKey(serverSideEncryptionKey)
-            ;
+                .withSourceBucketName(bucketName)
+                .withSourceKey(KEY)
+                .withDestinationBucketName(bucketName)
+                .withDestinationKey(destinationKey)
+                .withUploadId("foo")
+                .withFirstByte(0L)
+                .withLastByte(100L)
+                .withPartNumber(1)
+                .withSourceSSECustomerKey(serverSideEncryptionKey)
+        ;
 
         try {
             s3.copyPart(copyRequest);
             fail("secret key and http don't mix");
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().contains("HTTPS must be used"));
-        }
-    }
-
-    private static SecretKey generateSecretKey() {
-        KeyGenerator generator;
-        try {
-            generator = KeyGenerator.getInstance("AES");
-            generator.init(256, new SecureRandom());
-            return generator.generateKey();
-        } catch (Exception e) {
-            fail("Unable to generate symmetric key: " + e.getMessage());
-            return null;
         }
     }
 
@@ -269,23 +278,23 @@ public class SSECustomerKeyHttpIntegrationTest extends AWSTestBase {
         presignedUrlRequest.setSSECustomerKeyAlgorithm(SSEAlgorithm.getDefault());
 
         S3Object s3Object = s3Https.getObject(new GetObjectRequest(bucketName,
-                KEY).withSSECustomerKey(new SSECustomerKey(secretKey)));
+                                                                   KEY).withSSECustomerKey(new SSECustomerKey(secretKey)));
         URL url = s3Https.generatePresignedUrl(presignedUrlRequest);
 
         HttpRequestBase httpRequest = null;
 
         httpRequest = new HttpGet(URI.create(url.toExternalForm()));
         httpRequest.setHeader(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY,
-                secretKey_b64);
+                              secretKey_b64);
         httpRequest.setHeader(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5,
-                Md5Utils.md5AsBase64(secretKey.getEncoded()));
+                              Md5Utils.md5AsBase64(secretKey.getEncoded()));
         httpRequest.setHeader(
                 Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_ALGORITHM,
                 ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION);
 
         HttpResponse response = new DefaultHttpClient().execute(httpRequest);
         assertEquals((Integer) 200, (Integer) response.getStatusLine()
-                .getStatusCode());
+                                                      .getStatusCode());
         assertStreamEqualsStream(s3Object.getObjectContent(), response
                 .getEntity().getContent());
     }

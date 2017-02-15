@@ -1,17 +1,18 @@
 /*
- * Copyright 2015 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import java.io.File;
@@ -50,7 +51,7 @@ import software.amazon.awssdk.util.IOUtils;
 @SdkInternalApi
 final class DownloadCallable implements Callable<File> {
     private static final Log LOG = LogFactory.getLog(DownloadCallable.class);
-
+    private static boolean testing;
     private final AmazonS3 s3;
     private final CountDownLatch latch;
     private final GetObjectRequest req;
@@ -64,21 +65,20 @@ final class DownloadCallable implements Callable<File> {
     private final ExecutorService executor;
     private final List<Future<File>> futureFiles;
     private final boolean isDownloadParallel;
-    private Integer lastFullyMergedPartNumber;
     private final boolean resumeOnRetry;
-
+    private Integer lastFullyMergedPartNumber;
     private long expectedFileLength;
 
     DownloadCallable(AmazonS3 s3, CountDownLatch latch,
-            GetObjectRequest req, boolean resumeExistingDownload,
-            DownloadImpl download, File dstfile, long origStartingByte,
-            long expectedFileLength, long timeout,
-            ScheduledExecutorService timedExecutor,
-            ExecutorService executor,
-            Integer lastFullyDownloadedPartNumber, boolean isDownloadParallel, boolean resumeOnRetry)
-    {
-        if (s3 == null || latch == null || req == null || dstfile == null || download == null)
+                     GetObjectRequest req, boolean resumeExistingDownload,
+                     DownloadImpl download, File dstfile, long origStartingByte,
+                     long expectedFileLength, long timeout,
+                     ScheduledExecutorService timedExecutor,
+                     ExecutorService executor,
+                     Integer lastFullyDownloadedPartNumber, boolean isDownloadParallel, boolean resumeOnRetry) {
+        if (s3 == null || latch == null || req == null || dstfile == null || download == null) {
             throw new IllegalArgumentException();
+        }
         this.s3 = s3;
         this.latch = latch;
         this.req = req;
@@ -94,6 +94,13 @@ final class DownloadCallable implements Callable<File> {
         this.lastFullyMergedPartNumber = lastFullyDownloadedPartNumber;
         this.isDownloadParallel = isDownloadParallel;
         this.resumeOnRetry = resumeOnRetry;
+    }
+
+    /**
+     * Used for testing purpose only.
+     */
+    static void setTesting(boolean b) {
+        testing = b;
     }
 
     /**
@@ -115,7 +122,7 @@ final class DownloadCallable implements Callable<File> {
                             if (download.getState() != TransferState.Completed) {
                                 download.abort();
                             }
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             throw new SdkClientException(
                                     "Unable to abort download after timeout", e);
                         }
@@ -130,7 +137,7 @@ final class DownloadCallable implements Callable<File> {
                 downloadInParallel(ServiceUtils.getPartCount(req, s3));
             } else {
                 S3Object s3Object = retryableDownloadS3ObjectToFile(dstfile,
-                        new DownloadTaskImpl(s3, download, req));
+                                                                    new DownloadTaskImpl(s3, download, req));
                 updateDownloadStatus(s3Object);
             }
             return dstfile;
@@ -143,10 +150,11 @@ final class DownloadCallable implements Callable<File> {
             if (download.getState() != TransferState.Canceled) {
                 download.setState(TransferState.Failed);
             }
-            if (t instanceof Exception)
+            if (t instanceof Exception) {
                 throw (Exception) t;
-            else
+            } else {
                 throw (Error) t;
+            }
         }
     }
 
@@ -175,10 +183,10 @@ final class DownloadCallable implements Callable<File> {
 
         for (int i = lastFullyMergedPartNumber + 1; i <= partCount; i++) {
             GetObjectRequest getPartRequest = new GetObjectRequest(req.getBucketName(), req.getKey(),
-                    req.getVersionId()).withUnmodifiedSinceConstraint(req.getUnmodifiedSinceConstraint())
-                            .withModifiedSinceConstraint(req.getModifiedSinceConstraint())
-                            .withResponseHeaders(req.getResponseHeaders()).withSSECustomerKey(req.getSSECustomerKey())
-                            .withGeneralProgressListener(req.getGeneralProgressListener());
+                                                                   req.getVersionId()).withUnmodifiedSinceConstraint(req.getUnmodifiedSinceConstraint())
+                                                                                      .withModifiedSinceConstraint(req.getModifiedSinceConstraint())
+                                                                                      .withResponseHeaders(req.getResponseHeaders()).withSSECustomerKey(req.getSSECustomerKey())
+                                                                                      .withGeneralProgressListener(req.getGeneralProgressListener());
 
             getPartRequest.setMatchingETagConstraints(req.getMatchingETagConstraints());
             getPartRequest.setNonmatchingETagConstraints(req.getNonmatchingETagConstraints());
@@ -239,15 +247,15 @@ final class DownloadCallable implements Callable<File> {
         if (dstfile.exists()) {
             if (!FileLocks.lock(dstfile)) {
                 throw new FileLockException("Fail to lock " + dstfile
-                        + " for range adjustment");
+                                            + " for range adjustment");
             }
             try {
                 expectedFileLength = dstfile.length();
                 long startingByte = this.origStartingByte + expectedFileLength;
                 LOG.info("Adjusting request range from " + Arrays.toString(range)
-                        + " to "
-                        + Arrays.toString(new long[] { startingByte, lastByte })
-                        + " for file " + dstfile);
+                         + " to "
+                         + Arrays.toString(new long[] {startingByte, lastByte})
+                         + " for file " + dstfile);
                 req.setRange(startingByte, lastByte);
                 totalBytesToDownload = lastByte - startingByte + 1;
             } finally {
@@ -257,38 +265,39 @@ final class DownloadCallable implements Callable<File> {
 
         if (totalBytesToDownload < 0) {
             throw new IllegalArgumentException(
-                "Unable to determine the range for download operation. lastByte="
-                        + lastByte + ", origStartingByte=" + origStartingByte
-                        + ", expectedFileLength=" + expectedFileLength
-                        + ", totalBytesToDownload=" + totalBytesToDownload);
+                    "Unable to determine the range for download operation. lastByte="
+                    + lastByte + ", origStartingByte=" + origStartingByte
+                    + ", expectedFileLength=" + expectedFileLength
+                    + ", totalBytesToDownload=" + totalBytesToDownload);
         }
     }
 
-
     private S3Object retryableDownloadS3ObjectToFile(File file,
-            RetryableS3DownloadTask retryableS3DownloadTask) {
+                                                     RetryableS3DownloadTask retryableS3DownloadTask) {
         boolean hasRetried = false;
         S3Object s3Object;
-        for (;;) {
+        for (; ; ) {
             final boolean appendData = resumeExistingDownload || (resumeOnRetry && hasRetried);
             if (appendData && hasRetried) {
                 // Need to adjust the get range or else we risk corrupting the downloaded file
                 adjustRequest(req);
             }
             s3Object = retryableS3DownloadTask.getS3ObjectStream();
-            if (s3Object == null)
+            if (s3Object == null) {
                 return null;
+            }
             try {
                 if (testing && resumeExistingDownload && !hasRetried) {
                     throw new SdkClientException("testing");
                 }
                 ServiceUtils.downloadToFile(s3Object, file,
-                        retryableS3DownloadTask.needIntegrityCheck(),
-                        appendData, expectedFileLength);
+                                            retryableS3DownloadTask.needIntegrityCheck(),
+                                            appendData, expectedFileLength);
                 return s3Object;
             } catch (AmazonClientException ace) {
-                if (!ace.isRetryable())
+                if (!ace.isRetryable()) {
                     throw ace;
+                }
                 // Determine whether an immediate retry is needed according to the captured SdkClientException.
                 // (There are three cases when downloadObjectToFile() throws SdkClientException:
                 //      1) SocketException or SSLProtocolException when writing to disk (e.g. when user aborts the download)
@@ -301,9 +310,9 @@ final class DownloadCallable implements Callable<File> {
                     || (cause instanceof SSLProtocolException)) {
                     throw ace;
                 } else {
-                    if (hasRetried)
+                    if (hasRetried) {
                         throw ace;
-                    else {
+                    } else {
                         LOG.info("Retry the download of object " + s3Object.getKey() + " (bucket " + s3Object.getBucketName() + ")", ace);
                         hasRetried = true;
                     }
@@ -316,13 +325,5 @@ final class DownloadCallable implements Callable<File> {
 
     private boolean isTimeoutEnabled() {
         return timeout > 0;
-    }
-
-    private static boolean testing;
-    /**
-     * Used for testing purpose only.
-     */
-    static void setTesting(boolean b) {
-        testing = b;
     }
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -39,6 +35,7 @@ import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
 
 public class DateUtilsTest {
     private static final boolean DEBUG = false;
+
     @Test
     public void tt0031561767() throws ParseException {
         String input = "Fri, 16 May 2014 23:56:46 GMT";
@@ -146,11 +143,12 @@ public class DateUtilsTest {
         sdf.parse(input);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalidDate() throws ParseException {
         final String input = "2014-03-06T14:28:58.000Z.000Z";
         DateUtils.parseISO8601Date(input);
     }
+
     @Test
     public void test() throws ParseException {
         Date date = new Date();
@@ -165,21 +163,24 @@ public class DateUtilsTest {
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         final String edgeCase = "292278994-08-17T07:12:55.807Z";
         Date expected = sdf.parse(edgeCase);
-        if (DEBUG)
+        if (DEBUG) {
             System.out.println("date: " + expected);
+        }
         String formatted = DateUtils.formatISO8601Date(expected);
-        if (DEBUG)
+        if (DEBUG) {
             System.out.println("formatted: " + formatted);
+        }
         assertEquals(edgeCase, formatted);
         Date parsed = DateUtils.parseISO8601Date(edgeCase);
-        if (DEBUG)
+        if (DEBUG) {
             System.out.println("parsed: " + parsed);
+        }
         assertEquals(expected, parsed);
         String reformatted = DateUtils.formatISO8601Date(parsed);
         assertEquals(edgeCase, reformatted);
     }
 
-    @Test(expected=IllegalFieldValueException.class)
+    @Test(expected = IllegalFieldValueException.class)
     public void testIssue233JodaTimeLimit() throws ParseException {
         // https://github.com/aws/aws-sdk-java/issues/233
         String s = DateUtils.iso8601DateFormat.print(Long.MAX_VALUE);
@@ -187,7 +188,7 @@ public class DateUtilsTest {
         try {
             DateTime dt = DateUtils.iso8601DateFormat.parseDateTime(s);
             fail("Unexpected success: " + dt);
-        } catch(IllegalFieldValueException ex) {
+        } catch (IllegalFieldValueException ex) {
             // expected
             throw ex;
         }
@@ -203,7 +204,7 @@ public class DateUtilsTest {
         Date od = sdf.parse(edgeCase);
         Date testd = sdf.parse(testCase);
         long diff = od.getTime() - testd.getTime();
-        assertTrue(diff == 365L*24*60*60*1000);
+        assertTrue(diff == 365L * 24 * 60 * 60 * 1000);
     }
 
     @Test
@@ -212,7 +213,7 @@ public class DateUtilsTest {
                 // 1 milli second passed the max time
                 "292278994-08-17T07:12:55.808Z",
                 // 1 year passed the max year
-                "292278995-01-17T07:12:55.807Z", };
+                "292278995-01-17T07:12:55.807Z",};
         for (String edgeCase : cases) {
             try {
                 Date parsed = DateUtils.parseISO8601Date(edgeCase);
@@ -220,7 +221,7 @@ public class DateUtilsTest {
             } catch (IllegalArgumentException ex) {
                 String msg = ex.getMessage();
                 assertTrue(msg
-                        .contains("must be in the range [-292275054,292278993]"));
+                                   .contains("must be in the range [-292275054,292278993]"));
             }
         }
     }
@@ -241,10 +242,10 @@ public class DateUtilsTest {
                 .formatServiceSpecificDate(new Date(dateInMilliSeconds));
 
         Date parsedDate = DateUtils.parseServiceSpecificDate(String
-                .valueOf(serverSpecificDateFormat));
+                                                                     .valueOf(serverSpecificDateFormat));
 
         assertEquals(Long.valueOf(dateInMilliSeconds),
-                Long.valueOf(parsedDate.getTime()));
+                     Long.valueOf(parsedDate.getTime()));
 
     }
 
@@ -270,16 +271,17 @@ public class DateUtilsTest {
         // verify no ending quote for the value
         assertFalse(s, s.endsWith("\"}"));
         final int endPos = s.indexOf("}");
-        final int dotPos = s.length()-5;
+        final int dotPos = s.length() - 5;
         assertTrue(s, s.charAt(dotPos) == '.');
         // verify all numeric before '.'
         char[] a = s.toCharArray();
-        for (int i=startPos; i < dotPos; i++)
-            assertTrue(a[i] <= '9' && a[i] >= '0' );
-        int j=0;
+        for (int i = startPos; i < dotPos; i++) {
+            assertTrue(a[i] <= '9' && a[i] >= '0');
+        }
+        int j = 0;
         // verify all numeric after '.'
-        for (int i=dotPos+1; i < endPos; i++) {
-            assertTrue(a[i] <= '9' && a[i] >= '0' );
+        for (int i = dotPos + 1; i < endPos; i++) {
+            assertTrue(a[i] <= '9' && a[i] >= '0');
             j++;
         }
         // verify decimal precision of exactly 3
@@ -290,8 +292,8 @@ public class DateUtilsTest {
     public void numberOfDaysSinceEpoch() {
         final long now = System.currentTimeMillis();
         final long days = DateUtils.numberOfDaysSinceEpoch(now);
-        final int oneDayMilli = 24*60*60*1000;
-        assertTrue(now > days*oneDayMilli);
-        assertTrue((now - days*oneDayMilli) <= oneDayMilli);
+        final int oneDayMilli = 24 * 60 * 60 * 1000;
+        assertTrue(now > days * oneDayMilli);
+        assertTrue((now - days * oneDayMilli) <= oneDayMilli);
     }
 }

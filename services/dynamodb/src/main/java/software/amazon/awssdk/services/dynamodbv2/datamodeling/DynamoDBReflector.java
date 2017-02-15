@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -62,24 +62,10 @@ class DynamoDBReflector {
     private final ReadLock readLockAttrName = readWriteLockAttrName.readLock();
     private final WriteLock writeLockAttrName = readWriteLockAttrName.writeLock();
 
-    /**
-     * Returns the set of getter methods which are relevant when marshalling or
-     * unmarshalling an object.
-     */
-    Collection<Method> getRelevantGetters(Class<?> clazz) {
-        synchronized (getterCache) {
-            if ( !getterCache.containsKey(clazz) ) {
-                List<Method> relevantGetters = findRelevantGetters(clazz);
-                getterCache.put(clazz, relevantGetters);
-            }
-            return getterCache.get(clazz);
-        }
-    }
-
     static List<Method> findRelevantGetters(Class<?> clazz) {
         List<Method> relevantGetters = new LinkedList<Method>();
-        for ( Method m : clazz.getMethods() ) {
-            if ( isRelevantGetter(m) ) {
+        for (Method m : clazz.getMethods()) {
+            if (isRelevantGetter(m)) {
                 relevantGetters.add(m);
             }
         }
@@ -94,15 +80,29 @@ class DynamoDBReflector {
      */
     private static boolean isRelevantGetter(Method m) {
         return (m.getName().startsWith("get") || m.getName().startsWith("is"))
-                && m.getParameterTypes().length == 0
-                && ! (m.isBridge() || m.isSynthetic())
-                && isDocumentType(m.getDeclaringClass())
-                && !ReflectionUtils.getterOrFieldHasAnnotation(m, DynamoDBIgnore.class);
+               && m.getParameterTypes().length == 0
+               && !(m.isBridge() || m.isSynthetic())
+               && isDocumentType(m.getDeclaringClass())
+               && !ReflectionUtils.getterOrFieldHasAnnotation(m, DynamoDBIgnore.class);
     }
 
     private static boolean isDocumentType(Class<?> clazz) {
         return (clazz.getAnnotation(DynamoDBTable.class) != null)
-                || (clazz.getAnnotation(DynamoDBDocument.class) != null);
+               || (clazz.getAnnotation(DynamoDBDocument.class) != null);
+    }
+
+    /**
+     * Returns the set of getter methods which are relevant when marshalling or
+     * unmarshalling an object.
+     */
+    Collection<Method> getRelevantGetters(Class<?> clazz) {
+        synchronized (getterCache) {
+            if (!getterCache.containsKey(clazz)) {
+                List<Method> relevantGetters = findRelevantGetters(clazz);
+                getterCache.put(clazz, relevantGetters);
+            }
+            return getterCache.get(clazz);
+        }
     }
 
     /**
@@ -111,11 +111,11 @@ class DynamoDBReflector {
      */
     <T> Method getPrimaryRangeKeyGetter(Class<T> clazz) {
         synchronized (primaryRangeKeyGetterCache) {
-            if ( !primaryRangeKeyGetterCache.containsKey(clazz) ) {
+            if (!primaryRangeKeyGetterCache.containsKey(clazz)) {
                 Method rangeKeyMethod = null;
-                for ( Method method : getRelevantGetters(clazz) ) {
-                    if ( method.getParameterTypes().length == 0
-                            && ReflectionUtils.getterOrFieldHasAnnotation(method, DynamoDBRangeKey.class)) {
+                for (Method method : getRelevantGetters(clazz)) {
+                    if (method.getParameterTypes().length == 0
+                        && ReflectionUtils.getterOrFieldHasAnnotation(method, DynamoDBRangeKey.class)) {
                         rangeKeyMethod = method;
                         break;
                     }
@@ -133,7 +133,7 @@ class DynamoDBReflector {
      */
     <T> Collection<Method> getPrimaryKeyGetters(Class<T> clazz) {
         synchronized (primaryKeyGettersCache) {
-            if ( !primaryKeyGettersCache.containsKey(clazz) ) {
+            if (!primaryKeyGettersCache.containsKey(clazz)) {
                 List<Method> keyGetters = new LinkedList<Method>();
                 for (Method getter : getRelevantGetters(clazz)) {
                     if (ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBHashKey.class)
@@ -155,10 +155,10 @@ class DynamoDBReflector {
     <T> Method getPrimaryHashKeyGetter(Class<T> clazz) {
         Method hashKeyMethod;
         synchronized (primaryHashKeyGetterCache) {
-            if ( !primaryHashKeyGetterCache.containsKey(clazz) ) {
-                for ( Method method : getRelevantGetters(clazz) ) {
-                    if ( method.getParameterTypes().length == 0
-                            && ReflectionUtils.getterOrFieldHasAnnotation(method, DynamoDBHashKey.class)) {
+            if (!primaryHashKeyGetterCache.containsKey(clazz)) {
+                for (Method method : getRelevantGetters(clazz)) {
+                    if (method.getParameterTypes().length == 0
+                        && ReflectionUtils.getterOrFieldHasAnnotation(method, DynamoDBHashKey.class)) {
                         primaryHashKeyGetterCache.put(clazz, method);
                         break;
                     }
@@ -167,9 +167,9 @@ class DynamoDBReflector {
             hashKeyMethod = primaryHashKeyGetterCache.get(clazz);
         }
 
-        if ( hashKeyMethod == null ) {
+        if (hashKeyMethod == null) {
             throw new DynamoDBMappingException("Public, zero-parameter hash key property must be annotated with "
-                    + DynamoDBHashKey.class);
+                                               + DynamoDBHashKey.class);
         }
         return hashKeyMethod;
     }
@@ -180,8 +180,9 @@ class DynamoDBReflector {
      */
     <T> DynamoDBTable getTable(Class<T> clazz) {
         DynamoDBTable table = clazz.getAnnotation(DynamoDBTable.class);
-        if ( table == null )
+        if (table == null) {
             throw new DynamoDBMappingException("Class " + clazz + " must be annotated with " + DynamoDBTable.class);
+        }
         return table;
     }
 
@@ -196,43 +197,50 @@ class DynamoDBReflector {
         } finally {
             readLockAttrName.unlock();
         }
-        if ( attributeName != null )
+        if (attributeName != null) {
             return attributeName;
+        }
         DynamoDBHashKey hashKeyAnnotation = ReflectionUtils.getAnnotationFromGetterOrField(getter, DynamoDBHashKey.class);
-        if ( hashKeyAnnotation != null ) {
+        if (hashKeyAnnotation != null) {
             attributeName = hashKeyAnnotation.attributeName();
-            if ( attributeName != null && attributeName.length() > 0 )
+            if (attributeName != null && attributeName.length() > 0) {
                 return cacheAttributeName(getter, attributeName);
+            }
         }
         DynamoDBIndexHashKey indexHashKey = ReflectionUtils.getAnnotationFromGetterOrField(getter, DynamoDBIndexHashKey.class);
-        if ( indexHashKey != null ) {
+        if (indexHashKey != null) {
             attributeName = indexHashKey.attributeName();
-            if ( attributeName != null && attributeName.length() > 0 )
+            if (attributeName != null && attributeName.length() > 0) {
                 return cacheAttributeName(getter, attributeName);
+            }
         }
         DynamoDBRangeKey rangeKey = ReflectionUtils.getAnnotationFromGetterOrField(getter, DynamoDBRangeKey.class);
-        if ( rangeKey != null ) {
+        if (rangeKey != null) {
             attributeName = rangeKey.attributeName();
-            if ( attributeName != null && attributeName.length() > 0 )
+            if (attributeName != null && attributeName.length() > 0) {
                 return cacheAttributeName(getter, attributeName);
+            }
         }
         DynamoDBIndexRangeKey indexRangeKey = ReflectionUtils.getAnnotationFromGetterOrField(getter, DynamoDBIndexRangeKey.class);
-        if ( indexRangeKey != null ) {
+        if (indexRangeKey != null) {
             attributeName = indexRangeKey.attributeName();
-            if ( attributeName != null && attributeName.length() > 0 )
+            if (attributeName != null && attributeName.length() > 0) {
                 return cacheAttributeName(getter, attributeName);
+            }
         }
         DynamoDBAttribute attribute = ReflectionUtils.getAnnotationFromGetterOrField(getter, DynamoDBAttribute.class);
-        if ( attribute != null ) {
+        if (attribute != null) {
             attributeName = attribute.attributeName();
-            if ( attributeName != null && attributeName.length() > 0 )
+            if (attributeName != null && attributeName.length() > 0) {
                 return cacheAttributeName(getter, attributeName);
+            }
         }
         DynamoDBVersionAttribute version = ReflectionUtils.getAnnotationFromGetterOrField(getter, DynamoDBVersionAttribute.class);
-        if ( version != null ) {
+        if (version != null) {
             attributeName = version.attributeName();
-            if ( attributeName != null && attributeName.length() > 0 )
+            if (attributeName != null && attributeName.length() > 0) {
                 return cacheAttributeName(getter, attributeName);
+            }
         }
         // Default to the camel-cased field name of the getter method, inferred
         // according to the Java naming convention.
@@ -256,18 +264,18 @@ class DynamoDBReflector {
      */
     Method getSetter(Method getter) {
         synchronized (setterCache) {
-            if ( !setterCache.containsKey(getter) ) {
+            if (!setterCache.containsKey(getter)) {
                 String fieldName = ReflectionUtils.getFieldNameByGetter(getter, false);
                 String setterName = "set" + fieldName;
                 Method setter = null;
                 try {
                     setter = getter.getDeclaringClass().getMethod(setterName, getter.getReturnType());
-                } catch ( NoSuchMethodException e ) {
+                } catch (NoSuchMethodException e) {
                     throw new DynamoDBMappingException("Expected a public, one-argument method called " + setterName
-                            + " on " + getter.getDeclaringClass(), e);
-                } catch ( SecurityException e ) {
+                                                       + " on " + getter.getDeclaringClass(), e);
+                } catch (SecurityException e) {
                     throw new DynamoDBMappingException("No access to public, one-argument method called " + setterName
-                            + " on " + getter.getDeclaringClass(), e);
+                                                       + " on " + getter.getDeclaringClass(), e);
                 }
                 setterCache.put(getter, setter);
             }
@@ -281,11 +289,11 @@ class DynamoDBReflector {
      */
     boolean isVersionAttributeGetter(Method getter) {
         synchronized (versionAttributeGetterCache) {
-            if ( !versionAttributeGetterCache.containsKey(getter) ) {
+            if (!versionAttributeGetterCache.containsKey(getter)) {
                 versionAttributeGetterCache.put(
                         getter,
                         getter.getName().startsWith("get") && getter.getParameterTypes().length == 0
-                                && ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBVersionAttribute.class));
+                        && ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBVersionAttribute.class));
             }
             return versionAttributeGetterCache.get(getter);
         }
@@ -296,14 +304,14 @@ class DynamoDBReflector {
      */
     boolean isAssignableKey(Method getter) {
         synchronized (autoGeneratedKeyGetterCache) {
-            if ( !autoGeneratedKeyGetterCache.containsKey(getter) ) {
+            if (!autoGeneratedKeyGetterCache.containsKey(getter)) {
                 autoGeneratedKeyGetterCache.put(
                         getter,
                         ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBAutoGeneratedKey.class)
-                                && ( ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBHashKey.class) ||
-                                     ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBRangeKey.class) ||
-                                     ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBIndexHashKey.class) ||
-                                     ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBIndexRangeKey.class)));
+                        && (ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBHashKey.class) ||
+                            ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBRangeKey.class) ||
+                            ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBIndexHashKey.class) ||
+                            ReflectionUtils.getterOrFieldHasAnnotation(getter, DynamoDBIndexRangeKey.class)));
             }
             return autoGeneratedKeyGetterCache.get(getter);
         }
@@ -323,9 +331,9 @@ class DynamoDBReflector {
     String getPrimaryRangeKeyName(Class<?> clazz) {
         Method primaryRangeKeyGetter = getPrimaryHashKeyGetter(clazz);
         return primaryRangeKeyGetter == null ?
-                null
-                :
-                getAttributeName(getPrimaryRangeKeyGetter(clazz));
+               null
+                                             :
+               getAttributeName(getPrimaryRangeKeyGetter(clazz));
     }
 
     /**

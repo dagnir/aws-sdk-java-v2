@@ -33,50 +33,17 @@ import software.amazon.awssdk.util.StringUtils;
  */
 public class AmazonServiceException extends SdkClientException {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Indicates who is responsible (if known) for a failed request.
-     *
-     * <p>For example, if a client is using an invalid AWS access key,
-     * the returned exception will indicate that there is an error in the
-     * request the caller is sending. Retrying that same request will *not*
-     * result in a successful response. The Client ErrorType indicates that
-     * there is a problem in the request the user is sending (ex: incorrect
-     * access keys, invalid parameter value, missing parameter, etc.), and that
-     * the caller must take some action to correct the request before it should
-     * be resent. Client errors are typically associated an HTTP error code in
-     * the 4xx range.
-     *
-     * <p>The Service ErrorType indicates that although the request the
-     * caller sent was valid, the service was unable to fulfill the request
-     * because of problems on the service's side. These types of errors can be
-     * retried by the caller since the caller's request was valid and the
-     * problem occurred while processing the request on the service side.
-     * Service errors will be accompanied by an HTTP error code in the 5xx
-     * range.
-     *
-     * <p>Finally, if there isn't enough information to determine who's
-     * fault the error response is, an Unknown ErrorType will be set.
-     */
-    public enum ErrorType {
-        Client,
-        Service,
-        Unknown
-    }
-
     /**
      * The unique AWS identifier for the service request the caller made. The
      * AWS request ID can uniquely identify the AWS request, and is used for
      * reporting an error to AWS support team.
      */
     private String requestId;
-
     /**
      * The AWS error code represented by this exception (ex:
      * InvalidParameterValue).
      */
     private String errorCode;
-
     /**
      * Indicates (if known) whether this exception was the fault of the caller
      * or the service.
@@ -84,25 +51,20 @@ public class AmazonServiceException extends SdkClientException {
      * @see ErrorType
      */
     private ErrorType errorType = ErrorType.Unknown;
-
     /**
      * The error message as returned by the service.
      */
     private String errorMessage;
-
     /** The HTTP status code that was returned with this error */
     private int statusCode;
-
     /**
      * The name of the Amazon service that sent this error response.
      */
     private String serviceName;
-
     /**
      * All HTTP headers in the response for additional context and debugging.
      */
     private Map<String, String> httpHeaders;
-
     /**
      * The raw response payload.
      */
@@ -115,7 +77,7 @@ public class AmazonServiceException extends SdkClientException {
      *            An error message describing what went wrong.
      */
     public AmazonServiceException(String errorMessage) {
-        super((String)null);
+        super((String) null);
         this.errorMessage = errorMessage;
     }
 
@@ -134,6 +96,17 @@ public class AmazonServiceException extends SdkClientException {
     }
 
     /**
+     * Returns the AWS request ID that uniquely identifies the service request
+     * the caller made.
+     *
+     * @return The AWS request ID that uniquely identifies the service request
+     *         the caller made.
+     */
+    public String getRequestId() {
+        return requestId;
+    }
+
+    /**
      * Sets the AWS requestId for this exception.
      *
      * @param requestId
@@ -144,14 +117,12 @@ public class AmazonServiceException extends SdkClientException {
     }
 
     /**
-     * Returns the AWS request ID that uniquely identifies the service request
-     * the caller made.
+     * Returns the name of the service that sent this error response.
      *
-     * @return The AWS request ID that uniquely identifies the service request
-     *         the caller made.
+     * @return The name of the service that sent this error response.
      */
-    public String getRequestId() {
-        return requestId;
+    public String getServiceName() {
+        return serviceName;
     }
 
     /**
@@ -165,12 +136,12 @@ public class AmazonServiceException extends SdkClientException {
     }
 
     /**
-     * Returns the name of the service that sent this error response.
+     * Returns the AWS error code represented by this exception.
      *
-     * @return The name of the service that sent this error response.
+     * @return The AWS error code represented by this exception.
      */
-    public String getServiceName() {
-        return serviceName;
+    public String getErrorCode() {
+        return errorCode;
     }
 
     /**
@@ -184,12 +155,13 @@ public class AmazonServiceException extends SdkClientException {
     }
 
     /**
-     * Returns the AWS error code represented by this exception.
+     * Indicates who is responsible for this exception (caller, service,
+     * or unknown).
      *
-     * @return The AWS error code represented by this exception.
+     * @return A value indicating who is responsible for this exception (caller, service, or unknown).
      */
-    public String getErrorCode() {
-        return errorCode;
+    public ErrorType getErrorType() {
+        return errorType;
     }
 
     /**
@@ -204,16 +176,6 @@ public class AmazonServiceException extends SdkClientException {
      */
     public void setErrorType(ErrorType errorType) {
         this.errorType = errorType;
-    }
-
-    /**
-     * Indicates who is responsible for this exception (caller, service,
-     * or unknown).
-     *
-     * @return A value indicating who is responsible for this exception (caller, service, or unknown).
-     */
-    public ErrorType getErrorType() {
-        return errorType;
     }
 
     /**
@@ -237,17 +199,6 @@ public class AmazonServiceException extends SdkClientException {
     }
 
     /**
-     * Sets the HTTP status code that was returned with this service exception.
-     *
-     * @param statusCode
-     *            The HTTP status code that was returned with this service
-     *            exception.
-     */
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    /**
      * Returns the HTTP status code that was returned with this service
      * exception.
      *
@@ -258,13 +209,24 @@ public class AmazonServiceException extends SdkClientException {
         return statusCode;
     }
 
+    /**
+     * Sets the HTTP status code that was returned with this service exception.
+     *
+     * @param statusCode
+     *            The HTTP status code that was returned with this service
+     *            exception.
+     */
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
     @Override
     public String getMessage() {
         return getErrorMessage()
-            + " (Service: " + getServiceName()
-            + "; Status Code: " + getStatusCode()
-            + "; Error Code: " + getErrorCode()
-            + "; Request ID: " + getRequestId() + ")";
+               + " (Service: " + getServiceName()
+               + "; Status Code: " + getStatusCode()
+               + "; Error Code: " + getErrorCode()
+               + "; Request ID: " + getRequestId() + ")";
     }
 
     /**
@@ -311,5 +273,35 @@ public class AmazonServiceException extends SdkClientException {
      */
     public void setHttpHeaders(Map<String, String> httpHeaders) {
         this.httpHeaders = httpHeaders;
+    }
+
+    /**
+     * Indicates who is responsible (if known) for a failed request.
+     *
+     * <p>For example, if a client is using an invalid AWS access key,
+     * the returned exception will indicate that there is an error in the
+     * request the caller is sending. Retrying that same request will *not*
+     * result in a successful response. The Client ErrorType indicates that
+     * there is a problem in the request the user is sending (ex: incorrect
+     * access keys, invalid parameter value, missing parameter, etc.), and that
+     * the caller must take some action to correct the request before it should
+     * be resent. Client errors are typically associated an HTTP error code in
+     * the 4xx range.
+     *
+     * <p>The Service ErrorType indicates that although the request the
+     * caller sent was valid, the service was unable to fulfill the request
+     * because of problems on the service's side. These types of errors can be
+     * retried by the caller since the caller's request was valid and the
+     * problem occurred while processing the request on the service side.
+     * Service errors will be accompanied by an HTTP error code in the 5xx
+     * range.
+     *
+     * <p>Finally, if there isn't enough information to determine who's
+     * fault the error response is, an Unknown ErrorType will be set.
+     */
+    public enum ErrorType {
+        Client,
+        Service,
+        Unknown
     }
 }

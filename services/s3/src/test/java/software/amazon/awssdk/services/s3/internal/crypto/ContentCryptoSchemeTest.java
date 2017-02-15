@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +41,7 @@ public class ContentCryptoSchemeTest {
     @Test
     public void testEncryptGCMDecryptCTR() throws Exception {
         CipherLite gcm_encrypter = CryptoTestUtils.createTestCipher(AES_GCM,
-                AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
+                                                                    AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
         String plaintext = "1234567890123456ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         byte[] pt = plaintext.getBytes(UTF8);
         // Encrypt with GCM
@@ -37,7 +52,7 @@ public class ContentCryptoSchemeTest {
         String expectedTag = "FzYYyfQmuL9izA5Ez6T4bw==";
         assertEquals(expectedCipherText + expectedTag, ct_gcm_b64);
         System.out.println("pt.length=" + pt.length + ", ct_gcm.length="
-                + ct_gcm.length);
+                           + ct_gcm.length);
         assertTrue(ct_gcm.length == pt.length + 16);
         // Encrypt with CTR
         CipherLite ctr_encrypter = gcm_encrypter.createAuxiliary(0);
@@ -56,7 +71,7 @@ public class ContentCryptoSchemeTest {
         int offset = 16;
         ctr_decrypter = gcm_decrypter.createAuxiliary(offset);
         decrypted = ctr_decrypter.doFinal(ct_gcm, offset, ct_gcm.length - 16
-                - offset);
+                                                          - offset);
         decryptedStr = new String(decrypted, UTF8);
         System.out.println(decryptedStr);
         // "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -65,7 +80,7 @@ public class ContentCryptoSchemeTest {
         offset = 32;
         ctr_decrypter = gcm_decrypter.createAuxiliary(offset);
         decrypted = ctr_decrypter.doFinal(ct_gcm, offset, ct_gcm.length - 16
-                - offset);
+                                                          - offset);
         decryptedStr = new String(decrypted, UTF8);
         System.out.println(decryptedStr);
         // "QRSTUVWXYZ"
@@ -87,7 +102,7 @@ public class ContentCryptoSchemeTest {
             // System.out.println("start=" + start + ", delta=" + delta +
             // ", sum=" + sum);
             assertTrue("Rightmost 4 bytes have been incremented by delta",
-                    sum == bb.getLong());
+                       sum == bb.getLong());
         }
     }
 
@@ -118,7 +133,7 @@ public class ContentCryptoSchemeTest {
         long expected = rlong + MAX_GCM_BLOCKS;
         System.out.println("      expected: " + hexOf(expected));
         assertTrue("original bits in rlong must be intact",
-                rlong == (expected & rlong));
+                   rlong == (expected & rlong));
         bb = ByteBuffer.allocate(16);
         bb.putLong(0).putLong(rlong);
         ContentCryptoScheme.incrementBlocks(bb.array(), MAX_GCM_BLOCKS);
@@ -142,7 +157,7 @@ public class ContentCryptoSchemeTest {
     public void testDeltaLimit_incrementBlocks() {
         ByteBuffer bb = ByteBuffer.allocate(16);
         try {
-            ContentCryptoScheme.incrementBlocks(bb.array(), MAX_GCM_BLOCKS+1);
+            ContentCryptoScheme.incrementBlocks(bb.array(), MAX_GCM_BLOCKS + 1);
             fail("max delta exceeded");
         } catch (IllegalStateException good) {
         }
@@ -159,7 +174,7 @@ public class ContentCryptoSchemeTest {
         String expectedCipherText = StringUtils.upperCase("ff95730978565c563e7ef4e189c7a82e3322408e72e06d3c98e8bec238487ade8c18e27c181cb62318b2");
         // Encrypt with CTR
         CipherLite cipher_ctr = CryptoTestUtils.createTestCipher(AES_CTR,
-                AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
+                                                                 AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
         byte[] ct_ctr = cipher_ctr.doFinal(pt);
         String ct_ctr_str = encodeHexString(ct_ctr);
         System.err.println("ct_ctr_str: " + ct_ctr_str);
@@ -167,11 +182,11 @@ public class ContentCryptoSchemeTest {
 
         CipherLite cipher_ctr_with_offset = CryptoTestUtils
                 .createTestCipherWithStartingBytePos(AES_CTR,
-                        AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 16);
+                                                     AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 16);
         // Cipher cipher_ctr_with_offset = AES_GCM.createAuxillaryCipher(cek,
         // iv, cipherMode, securityProvider, startingBytePos)
         byte[] ct_ctr_offset = cipher_ctr_with_offset.doFinal(pt, 16,
-                pt.length - 16);
+                                                              pt.length - 16);
         String ct_ctr_offset_str = encodeHexString(ct_ctr_offset);
         System.err.println("ct_ctr_offset_str: " + ct_ctr_offset_str);
         assertEquals(ct_ctr_str.substring(16 * 2), ct_ctr_offset_str);

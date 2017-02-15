@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ public class GeneratorTaskParams {
     private final GeneratorPathProvider pathProvider;
     private final Log log = LogFactory.getLog(GeneratorTaskParams.class);
 
-    public static GeneratorTaskParams create(IntermediateModel model, String sourceDirectory, String testDirectory) {
-        final GeneratorPathProvider pathProvider = new GeneratorPathProvider(model, sourceDirectory, testDirectory);
-        return new GeneratorTaskParams(Freemarker.create(model), model, pathProvider);
-    }
-
     private GeneratorTaskParams(Freemarker freemarker,
-                               IntermediateModel model,
-                               GeneratorPathProvider pathProvider) {
+                                IntermediateModel model,
+                                GeneratorPathProvider pathProvider) {
         this.freemarker = freemarker;
         this.model = model;
         this.pathProvider = pathProvider;
+    }
+
+    public static GeneratorTaskParams create(IntermediateModel model, String sourceDirectory, String testDirectory) {
+        final GeneratorPathProvider pathProvider = new GeneratorPathProvider(model, sourceDirectory, testDirectory);
+        return new GeneratorTaskParams(Freemarker.create(model), model, pathProvider);
     }
 
     /**

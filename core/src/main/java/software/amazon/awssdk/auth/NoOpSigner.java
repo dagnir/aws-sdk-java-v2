@@ -23,5 +23,6 @@ import software.amazon.awssdk.SignableRequest;
 public class NoOpSigner implements Signer {
 
     @Override
-    public void sign(SignableRequest<?> request, AWSCredentials credentials) { }
+    public void sign(SignableRequest<?> request, AWSCredentials credentials) {
+    }
 }

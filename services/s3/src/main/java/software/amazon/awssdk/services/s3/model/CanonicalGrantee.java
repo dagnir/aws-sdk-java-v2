@@ -1,8 +1,5 @@
 /*
-  * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
 
 /**
@@ -29,35 +28,46 @@ import java.io.Serializable;
  * human-friendly name that Amazon has linked to the canonical ID (eg. the user's
  * login name).
  * </p>
- * 
+ *
  * @see CanonicalGrantee#CanonicalGrantee(String)
  */
-public class CanonicalGrantee implements Grantee,Serializable {
+public class CanonicalGrantee implements Grantee, Serializable {
     private String id = null;
     private String displayName = null;
-        
-    /* (non-Javadoc)
-     * @see software.amazon.awssdk.services.s3.model.Grantee#getTypeIdentifier()
-     */
-    public String getTypeIdentifier() {
-        return "id";
-    }
-    
+
     /**
-     * Constructs a new {@link CanonicalGrantee} object 
+     * Constructs a new {@link CanonicalGrantee} object
      * with the given canonical ID.
-     * 
+     *
      * @param identifier
      */
     public CanonicalGrantee(String identifier) {
         this.setIdentifier(identifier);
     }
 
+    /* (non-Javadoc)
+     * @see software.amazon.awssdk.services.s3.model.Grantee#getTypeIdentifier()
+     */
+    public String getTypeIdentifier() {
+        return "id";
+    }
+
+    /**
+     * <p>
+     * Returns the unique identifier for this grantee.
+     * </p>
+     *
+     * @see CanonicalGrantee#setIdentifier(String)
+     */
+    public String getIdentifier() {
+        return id;
+    }
+
     /**
      * <p>
      * Sets the unique identifier for this grantee.
      * </p>
-     * 
+     *
      * @see CanonicalGrantee#getIdentifier()
      */
     public void setIdentifier(String id) {
@@ -66,40 +76,28 @@ public class CanonicalGrantee implements Grantee,Serializable {
 
     /**
      * <p>
-     * Returns the unique identifier for this grantee.
-     * </p>
-     * 
-     * @see CanonicalGrantee#setIdentifier(String)
-     */
-    public String getIdentifier() {
-        return id;
-    }
-    
-    
-    /**
-     * <p>
-     * Sets the display name for this grantee.
-     * </p>
-     * 
-     * @param displayName
-     * 
-     * @see CanonicalGrantee#getDisplayName()
-     */
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    /**
-     * <p>
      * Returns the display name for this grantee.
      * </p>
-     * 
+     *
      * @return The display name for this grantee.
-     * 
+     *
      * @see CanonicalGrantee#setDisplayName(String)
      */
     public String getDisplayName() {
         return this.displayName;
+    }
+
+    /**
+     * <p>
+     * Sets the display name for this grantee.
+     * </p>
+     *
+     * @param displayName
+     *
+     * @see CanonicalGrantee#getDisplayName()
+     */
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public boolean equals(Object obj) {

@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.internal;
@@ -45,14 +45,11 @@ import utils.http.SocketUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class EC2CredentialsUtilsTest {
 
+    private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
+    private static final String SUCCESS_BODY = "{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\","
+                                               + "\"Token\":\"TOKEN_TOKEN_TOKEN\",\"Expiration\":\"3000-05-03T04:55:54Z\"}";
     @ClassRule
     public static WireMockRule mockServer = new WireMockRule(0);
-
-    private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
-
-    private static final String SUCCESS_BODY = "{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\","
-            + "\"Token\":\"TOKEN_TOKEN_TOKEN\",\"Expiration\":\"3000-05-03T04:55:54Z\"}";
-
     private static URI endpoint;
 
     private static CustomRetryPolicy customRetryPolicy;
@@ -72,7 +69,7 @@ public class EC2CredentialsUtilsTest {
     /**
      * When a connection to end host cannot be opened, throws {@link IOException}.
      */
-    @Test (expected = IOException.class)
+    @Test(expected = IOException.class)
     public void readResourceThrowsIOExceptionWhenNoConnection() throws IOException, URISyntaxException {
         int port = 0;
         try {
@@ -175,7 +172,7 @@ public class EC2CredentialsUtilsTest {
             new EC2CredentialsUtils(mockConnection).readResource(endpoint, customRetryPolicy);
             fail("Expected an IOexception");
         } catch (IOException exception) {
-             Mockito.verify(mockConnection, Mockito.times(CustomRetryPolicy.MAX_RETRIES + 1)).connectToEndpoint(endpoint);
+            Mockito.verify(mockConnection, Mockito.times(CustomRetryPolicy.MAX_RETRIES + 1)).connectToEndpoint(endpoint);
         }
     }
 
@@ -200,11 +197,11 @@ public class EC2CredentialsUtilsTest {
     private void generateStub(int statusCode, String message) {
         stubFor(
                 get(urlPathEqualTo(CREDENTIALS_PATH))
-                .willReturn(aResponse()
-                                .withStatus(statusCode)
-                                .withHeader("Content-Type", "application/json")
-                                .withHeader("charset", "utf-8")
-                                .withBody(message)));
+                        .willReturn(aResponse()
+                                            .withStatus(statusCode)
+                                            .withHeader("Content-Type", "application/json")
+                                            .withHeader("charset", "utf-8")
+                                            .withBody(message)));
     }
 
     /**

@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -54,20 +54,20 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
             QueryResult queryResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
             DynamoDBMapperConfig config
-    ) {
+                             ) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.queryRequest = queryRequest;
-        this.queryResult  = queryResult;
+        this.queryResult = queryResult;
         this.config = config;
 
 
         allResults.addAll(mapper.marshallIntoObjects(
-            mapper.toParameters(
-                    queryResult.getItems(),
-                    clazz,
-                    queryRequest.getTableName(),
-                    config)));
+                mapper.toParameters(
+                        queryResult.getItems(),
+                        clazz,
+                        queryRequest.getTableName(),
+                        config)));
 
         // If the results should be eagerly loaded at once
         if (paginationLoadingStrategy == PaginationLoadingStrategy.EAGER_LOADING) {

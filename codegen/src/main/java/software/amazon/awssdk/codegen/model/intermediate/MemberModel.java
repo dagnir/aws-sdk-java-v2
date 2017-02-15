@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -215,13 +215,13 @@ public class MemberModel extends DocumentationModel {
         return mapModel;
     }
 
+    public void setMapModel(MapModel map) {
+        this.mapModel = map;
+    }
+
     public MemberModel withListModel(ListModel list) {
         setListModel(list);
         return this;
-    }
-
-    public void setMapModel(MapModel map) {
-        this.mapModel = map;
     }
 
     public MemberModel withMapModel(MapModel map) {
@@ -264,27 +264,27 @@ public class MemberModel extends DocumentationModel {
                 this.getGetterModel().getReturnType())) {
 
             docBuilder.append("<p>")
-                    .append(LINE_SEPARATOR)
-                    .append("AWS SDK for Java performs a Base64 " +
-                            "encoding on this field before sending this request to AWS " +
-                            "service by default. " +
-                            "Users of the SDK should not perform Base64 " +
-                            "encoding on this field.")
-                    .append(LINE_SEPARATOR)
-                    .append("</p>")
-                    .append(LINE_SEPARATOR);
+                      .append(LINE_SEPARATOR)
+                      .append("AWS SDK for Java performs a Base64 " +
+                              "encoding on this field before sending this request to AWS " +
+                              "service by default. " +
+                              "Users of the SDK should not perform Base64 " +
+                              "encoding on this field.")
+                      .append(LINE_SEPARATOR)
+                      .append("</p>")
+                      .append(LINE_SEPARATOR);
 
             docBuilder.append("<p>")
-                    .append(LINE_SEPARATOR)
-                    .append("Warning: ByteBuffers returned by the SDK are mutable. " +
-                            "Changes to the content or position of the byte buffer will be " +
-                            "seen by all objects that have a reference to this object. " +
-                            "It is recommended to call ByteBuffer.duplicate() or " +
-                            "ByteBuffer.asReadOnlyBuffer() before using or reading from the buffer. " +
-                            "This behavior will be changed in a future major version of the SDK.")
-                    .append(LINE_SEPARATOR)
-                    .append("</p>")
-                    .append(LINE_SEPARATOR);
+                      .append(LINE_SEPARATOR)
+                      .append("Warning: ByteBuffers returned by the SDK are mutable. " +
+                              "Changes to the content or position of the byte buffer will be " +
+                              "seen by all objects that have a reference to this object. " +
+                              "It is recommended to call ByteBuffer.duplicate() or " +
+                              "ByteBuffer.asReadOnlyBuffer() before using or reading from the buffer. " +
+                              "This behavior will be changed in a future major version of the SDK.")
+                      .append(LINE_SEPARATOR)
+                      .append("</p>")
+                      .append(LINE_SEPARATOR);
         }
 
         docBuilder.append(getParamDoc())
@@ -304,21 +304,21 @@ public class MemberModel extends DocumentationModel {
                 this.getGetterModel().getReturnType())) {
 
             docBuilder.append("<p>")
-                    .append(LINE_SEPARATOR)
-                    .append("{@code ByteBuffer}s are stateful. Calling "
-                            + "their {@code get} methods changes their "
-                            + "{@code position}. We recommend using "
-                            + "{@link java.nio.ByteBuffer#asReadOnlyBuffer()} "
-                            + "to create a read-only view of the buffer with "
-                            + "an independent {@code position}, and calling "
-                            + "{@code get} methods on this rather than "
-                            + "directly on the returned {@code ByteBuffer}. "
-                            + "Doing so will ensure that anyone else using "
-                            + "the {@code ByteBuffer} will not be affected by "
-                            + "changes to the {@code position}.")
-                    .append(LINE_SEPARATOR)
-                    .append("</p>")
-                    .append(LINE_SEPARATOR);
+                      .append(LINE_SEPARATOR)
+                      .append("{@code ByteBuffer}s are stateful. Calling "
+                              + "their {@code get} methods changes their "
+                              + "{@code position}. We recommend using "
+                              + "{@link java.nio.ByteBuffer#asReadOnlyBuffer()} "
+                              + "to create a read-only view of the buffer with "
+                              + "an independent {@code position}, and calling "
+                              + "{@code get} methods on this rather than "
+                              + "directly on the returned {@code ByteBuffer}. "
+                              + "Doing so will ensure that anyone else using "
+                              + "the {@code ByteBuffer} will not be affected by "
+                              + "changes to the {@code position}.")
+                      .append(LINE_SEPARATOR)
+                      .append("</p>")
+                      .append(LINE_SEPARATOR);
         }
 
         String variableDesc = documentation != null ? documentation : DocumentationUtils.DEFAULT_GETTER_PARAM.replace("%s", name);
@@ -358,7 +358,7 @@ public class MemberModel extends DocumentationModel {
                   .append("@return " + DocumentationUtils.stripHTMLTags(DocumentationUtils.DEFAULT_FLUENT_RETURN))
                   .append(getEnumDoc());
 
-         docBuilder.append("*/");
+        docBuilder.append("*/");
 
         return docBuilder.toString();
     }
@@ -366,19 +366,19 @@ public class MemberModel extends DocumentationModel {
     private String getSetterDoc() {
 
         return documentation != null
-                ? documentation
-                : DocumentationUtils.DEFAULT_SETTER.replace("%s", name);
+               ? documentation
+               : DocumentationUtils.DEFAULT_SETTER.replace("%s", name);
     }
 
     private String getParamDoc() {
         StringBuilder docBuilder = new StringBuilder();
 
         String variableDesc = documentation != null ? documentation
-                : DocumentationUtils.DEFAULT_SETTER_PARAM.replace("%s", name);
+                                                    : DocumentationUtils.DEFAULT_SETTER_PARAM.replace("%s", name);
 
         docBuilder.append(LINE_SEPARATOR)
                   .append("@param " + variable.getVariableName() + " "
-                              + DocumentationUtils.stripHTMLTags(variableDesc));
+                          + DocumentationUtils.stripHTMLTags(variableDesc));
         return docBuilder.toString();
     }
 

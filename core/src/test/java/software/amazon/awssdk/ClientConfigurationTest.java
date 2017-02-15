@@ -56,12 +56,12 @@ public class ClientConfigurationTest {
         assertNotNull("httpclient config must never be null", httpclientConfig);
 
         assertNull("default ssl socket factory is null",
-                httpclientConfig.getSslSocketFactory());
+                   httpclientConfig.getSslSocketFactory());
 
         SSLSocketFactory customFactory = new SSLSocketFactory((KeyStore) null);
         config.getApacheHttpClientConfig().setSslSocketFactory(customFactory);
         assertSame("custom ssl socket factory configured", customFactory,
-                config.getApacheHttpClientConfig().getSslSocketFactory());
+                   config.getApacheHttpClientConfig().getSslSocketFactory());
 
         config.getApacheHttpClientConfig().setSslSocketFactory(null);
         assertNull("no more custom ssl socket factory configured", config
@@ -69,24 +69,24 @@ public class ClientConfigurationTest {
 
         config.getApacheHttpClientConfig().withSslSocketFactory(customFactory);
         assertSame("custom ssl socket factory configured via fluent API",
-                customFactory,
-                config.getApacheHttpClientConfig().getSslSocketFactory());
+                   customFactory,
+                   config.getApacheHttpClientConfig().getSslSocketFactory());
 
         ClientConfiguration config2 = new ClientConfiguration(config);
         assertSame("custom ssl socket factory copied via ctor",
-                customFactory,
-                config2.getApacheHttpClientConfig().getSslSocketFactory());
+                   customFactory,
+                   config2.getApacheHttpClientConfig().getSslSocketFactory());
 
         config.getApacheHttpClientConfig().setSslSocketFactory(null);
         assertNull(
-            "ssl socket factory set to null for the original httpclient config",
-            config.getApacheHttpClientConfig().getSslSocketFactory());
+                "ssl socket factory set to null for the original httpclient config",
+                config.getApacheHttpClientConfig().getSslSocketFactory());
         assertNotNull(
-            "ssl soscket of the new httpclient config should not be affected",
-            config2.getApacheHttpClientConfig().getSslSocketFactory());
+                "ssl soscket of the new httpclient config should not be affected",
+                config2.getApacheHttpClientConfig().getSslSocketFactory());
 
         assertNotNull("Client Configuration must have a default DnsResolver",
-                config.getDnsResolver());
+                      config.getDnsResolver());
 
         try {
             config.setDnsResolver(null);
@@ -103,8 +103,8 @@ public class ClientConfigurationTest {
 
         config.setDnsResolver(resolver);
         assertSame("custom dns resolver set via fluent API",
-                resolver,
-                config.getDnsResolver());
+                   resolver,
+                   config.getDnsResolver());
     }
 
     private void clearProxyProperties() {
@@ -278,7 +278,7 @@ public class ClientConfigurationTest {
                 field.set(customConfig, ImmutableMapParameter.of("foo", "bar"));
             } else if (clzz.isAssignableFrom(ApacheHttpClientConfig.class)) {
                 customConfig.getApacheHttpClientConfig()
-                        .setSslSocketFactory(Mockito.mock(ConnectionSocketFactory.class));
+                            .setSslSocketFactory(Mockito.mock(ConnectionSocketFactory.class));
             } else {
                 throw new RuntimeException(
                         String.format("Field %s of type %s is not supported",

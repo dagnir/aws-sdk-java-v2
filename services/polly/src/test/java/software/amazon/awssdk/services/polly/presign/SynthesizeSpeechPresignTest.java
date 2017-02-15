@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -56,15 +56,24 @@ public class SynthesizeSpeechPresignTest {
 
     private AmazonPollyPresigners presigners;
 
+    private static Date getFixedDate() {
+        Calendar c = new GregorianCalendar();
+        c.setTimeZone(TimeZone.getTimeZone("UTC"));
+        // 20161107T173933Z
+        // Note: month is 0-based
+        c.set(2016, 10, 7, 17, 39, 33);
+        return c.getTime();
+    }
+
     @Before
     public void setup() {
         presigners = new AmazonPollyPresigners(
                 PresignerParams.builder()
-                        .credentialsProvider(CREDENTIALS)
-                        .endpoint(URI.create("https://polly.us-east-1.amazonaws.com"))
-                        .signerProvider(createSigner())
-                        .clock(CLOCK)
-                        .build());
+                               .credentialsProvider(CREDENTIALS)
+                               .endpoint(URI.create("https://polly.us-east-1.amazonaws.com"))
+                               .signerProvider(createSigner())
+                               .clock(CLOCK)
+                               .build());
     }
 
     private SignerProvider createSigner() {
@@ -116,15 +125,6 @@ public class SynthesizeSpeechPresignTest {
         assertEquals(
                 "https://polly.us-east-1.amazonaws.com/v1/speech?Text=S3%20is%20an%20AWS%20service&VoiceId=Salli&OutputFormat=mp3&LexiconNames=FooLexicon&LexiconNames=AwsLexicon&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20161107T173933Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1800&X-Amz-Credential=akid%2F20161107%2Fus-east-1%2Fpolly%2Faws4_request&X-Amz-Signature=62f1bea76407769779e61e5b0ed18a4e40607c9637109c005f53ba1785d4874a",
                 url.toExternalForm());
-    }
-
-    private static Date getFixedDate() {
-        Calendar c = new GregorianCalendar();
-        c.setTimeZone(TimeZone.getTimeZone("UTC"));
-        // 20161107T173933Z
-        // Note: month is 0-based
-        c.set(2016, 10, 7, 17, 39, 33);
-        return c.getTime();
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.io.File;
@@ -71,14 +72,20 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
      * this stream is considered fully initialized.
      */
     public MultiFileOutputStream(File root, String namePrefix) {
-        if (root == null || !root.isDirectory() || !root.canWrite())
+        if (root == null || !root.isDirectory() || !root.canWrite()) {
             throw new IllegalArgumentException(root
-                    + " must be a writable directory");
-        if (namePrefix == null || namePrefix.trim().length() == 0)
+                                               + " must be a writable directory");
+        }
+        if (namePrefix == null || namePrefix.trim().length() == 0) {
             throw new IllegalArgumentException(
                     "Please specify a non-empty name prefix");
+        }
         this.root = root;
         this.namePrefix = namePrefix;
+    }
+
+    static String yyMMdd_hhmmss() {
+        return DateTimeFormat.forPattern("yyMMdd-hhmmss").print(new DateTime());
     }
 
     /**
@@ -86,36 +93,37 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
      * interface) that is called from <code>AmazonS3EncryptionClient</code>.
      * <p>
      * Implementation of this method should never block.
-     * 
+     *
      * @param observer
      *            the upload object observer
      * @param partSize
      *            part size for multi-part upload
      * @param diskLimit
      *            the maximum disk space to be used for this multi-part upload
-     * 
+     *
      * @return this object
      */
     public MultiFileOutputStream init(UploadObjectObserver observer,
-            long partSize, long diskLimit) {
-        if (observer == null)
+                                      long partSize, long diskLimit) {
+        if (observer == null) {
             throw new IllegalArgumentException("Observer must be specified");
+        }
         this.observer = observer;
         if (diskLimit < partSize << 1) {
             throw new IllegalArgumentException(
-                "Maximum temporary disk space must be at least twice as large as the part size: partSize="
-                + partSize + ", diskSize=" + diskLimit);
+                    "Maximum temporary disk space must be at least twice as large as the part size: partSize="
+                    + partSize + ", diskSize=" + diskLimit);
         }
         this.partSize = partSize;
         this.diskLimit = diskLimit;
-        final int max = (int)(diskLimit/partSize);
+        final int max = (int) (diskLimit / partSize);
         this.diskPermits = max < 0 ? null : new Semaphore(max);
         return this;
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * This method would block as necessary if running out of disk space.
      */
     @Override
@@ -127,13 +135,14 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * This method would block as necessary if running out of disk space.
      */
     @Override
     public void write(byte[] b) throws IOException {
-        if (b.length == 0)
+        if (b.length == 0) {
             return;
+        }
         fos().write(b);
         currFileBytesWritten += b.length;
         totalBytesWritten += b.length;
@@ -141,13 +150,14 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * This method would block as necessary if running out of disk space.
      */
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        if (b.length == 0)
+        if (b.length == 0) {
             return;
+        }
         fos().write(b, off, len);
         currFileBytesWritten += len;
         totalBytesWritten += len;
@@ -156,12 +166,13 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
     /**
      * Returns the file output stream to be used for writing, blocking if
      * necessary if running out of disk space.
-     * 
+     *
      * @throws InterruptedException if the running thread was interrupted
      */
     private FileOutputStream fos() throws IOException {
-        if (closed)
+        if (closed) {
             throw new IOException("Output stream is already closed");
+        }
         if (os == null || currFileBytesWritten >= partSize) {
             if (os != null) {
                 os.close();
@@ -181,20 +192,22 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
 
     @Override
     public void onFileDelete(FileDeletionEvent event) {
-        if (diskPermits != null)
+        if (diskPermits != null) {
             diskPermits.release();
+        }
     }
 
     /**
      * Blocks the running thread if running out of disk space.
-     * 
+     *
      * @throws AbortedException
      *             if the running thread is interrupted while acquiring a
      *             semaphore
      */
     private void blockIfNecessary() {
-        if (diskPermits == null || diskLimit == Long.MAX_VALUE)
+        if (diskPermits == null || diskLimit == Long.MAX_VALUE) {
             return;
+        }
         try {
             diskPermits.acquire();
         } catch (InterruptedException e) {
@@ -206,14 +219,16 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
 
     @Override
     public void flush() throws IOException {
-        if (os != null)
+        if (os != null) {
             os.flush();
+        }
     }
 
     @Override
     public void close() throws IOException {
-        if (closed)
+        if (closed) {
             return;
+        }
         closed = true;
         if (os != null) {
             os.close();
@@ -232,7 +247,7 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
     }
 
     public void cleanup() {
-        for (int i=0; i < getNumFilesWritten(); i++) {
+        for (int i = 0; i < getNumFilesWritten(); i++) {
             File f = getFile(i);
             if (f.exists()) {
                 if (!f.delete()) {
@@ -269,10 +284,6 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
 
     public long getTotalBytesWritten() {
         return totalBytesWritten;
-    }
-
-    static String yyMMdd_hhmmss() {
-        return DateTimeFormat.forPattern("yyMMdd-hhmmss").print(new DateTime());
     }
 
     public boolean isClosed() {

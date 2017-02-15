@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import software.amazon.awssdk.SdkClientException;
@@ -30,7 +31,7 @@ class MultipartUploadCryptoContext extends MultipartUploadContext {
     private volatile boolean partUploadInProgress;
 
     MultipartUploadCryptoContext(String bucketName, String key,
-            ContentCryptoMaterial cekMaterial) {
+                                 ContentCryptoMaterial cekMaterial) {
         super(bucketName, key);
         this.cekMaterial = cekMaterial;
     }
@@ -59,16 +60,17 @@ class MultipartUploadCryptoContext extends MultipartUploadContext {
      * upon successful completion of this method. Caller of this method is
      * responsible to call {@link #endPartUpload()} in a finally block once
      * the respective part-upload is completed (either normally or abruptly).
-     * 
+     *
      * @see #endPartUpload()
-     * 
+     *
      * @throws SdkClientException
      *             if parallel part upload is detected
      */
     void beginPartUpload(final int nextPartNumber)
             throws SdkClientException {
-        if (nextPartNumber < 1)
+        if (nextPartNumber < 1) {
             throw new IllegalArgumentException("part number must be at least 1");
+        }
         if (partUploadInProgress) {
             throw new SdkClientException(
                     "Parts are required to be uploaded in series");
@@ -80,8 +82,8 @@ class MultipartUploadCryptoContext extends MultipartUploadContext {
             } else {
                 throw new SdkClientException(
                         "Parts are required to be uploaded in series (partNumber="
-                                + partNumber + ", nextPartNumber="
-                                + nextPartNumber + ")");
+                        + partNumber + ", nextPartNumber="
+                        + nextPartNumber + ")");
             }
         }
     }
@@ -90,7 +92,7 @@ class MultipartUploadCryptoContext extends MultipartUploadContext {
      * Used to mark the completion of a part upload before the next. Should be
      * invoked in a finally block, and must be preceded previously by a call to
      * {@link #beginPartUpload(int)}.
-     * 
+     *
      * @see #beginPartUpload(int)
      */
     void endPartUpload() {

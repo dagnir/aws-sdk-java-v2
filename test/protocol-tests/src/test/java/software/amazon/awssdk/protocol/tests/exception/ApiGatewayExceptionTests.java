@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,10 +41,30 @@ public class ApiGatewayExceptionTests {
 
     private static ApiGatewayProtocol buildClient(WireMockRule wireMock) {
         return ApiGatewayProtocol.builder()
-                .endpoint("http://localhost:" + wireMock.port())
-                .iamCredentials(
-                        new AWSStaticCredentialsProvider(new BasicAWSCredentials("akid", "skid")))
-                .build();
+                                 .endpoint("http://localhost:" + wireMock.port())
+                                 .iamCredentials(
+                                         new AWSStaticCredentialsProvider(new BasicAWSCredentials("akid", "skid")))
+                                 .build();
+    }
+
+    private static void stub500Response(String path, String body) {
+        stubFor(get(urlEqualTo(path)).willReturn(aResponse().withStatus(500).withBody(body)));
+    }
+
+    private static void stub404Response(String path, String body) {
+        stubFor(get(urlEqualTo(path)).willReturn(aResponse().withStatus(404).withBody(body)));
+    }
+
+    private static void stub413Response(String path, String body) {
+        stubFor(get(urlEqualTo(path)).willReturn(aResponse().withStatus(413).withBody(body)));
+    }
+
+    private static void assertIsBaseException(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (ApiGatewayProtocolException e) {
+            assertEquals(ApiGatewayProtocolException.class, e.getClass());
+        }
     }
 
     /**
@@ -216,26 +236,6 @@ public class ApiGatewayExceptionTests {
 
         private void callApi() {
             client.sameShapeDifferentStatusCodes(new SameShapeDifferentStatusCodesRequest());
-        }
-    }
-
-    private static void stub500Response(String path, String body) {
-        stubFor(get(urlEqualTo(path)).willReturn(aResponse().withStatus(500).withBody(body)));
-    }
-
-    private static void stub404Response(String path, String body) {
-        stubFor(get(urlEqualTo(path)).willReturn(aResponse().withStatus(404).withBody(body)));
-    }
-
-    private static void stub413Response(String path, String body) {
-        stubFor(get(urlEqualTo(path)).willReturn(aResponse().withStatus(413).withBody(body)));
-    }
-
-    private static void assertIsBaseException(Runnable runnable) {
-        try {
-            runnable.run();
-        } catch (ApiGatewayProtocolException e) {
-            assertEquals(ApiGatewayProtocolException.class, e.getClass());
         }
     }
 }

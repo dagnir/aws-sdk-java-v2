@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public interface ScanApi {
     /**
      * Retrieves items by the specified list of scan filters.
      */
-    public ItemCollection<ScanOutcome> scan(ScanFilter ... scanFilters);
+    public ItemCollection<ScanOutcome> scan(ScanFilter... scanFilters);
 
     /**
      * Scans table using a Filter Expression.
@@ -47,8 +47,8 @@ public interface ScanApi {
      *            is no attribute-value placeholder.
      */
     public ItemCollection<ScanOutcome> scan(String filterExpression,
-            Map<String, String> nameMap,
-            Map<String, Object> valueMap);
+                                            Map<String, String> nameMap,
+                                            Map<String, Object> valueMap);
 
     /**
      * Scans table using a Filter Expression and a Projection Expression.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,10 +46,10 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      * The name of the application being created.
      */
     private static final String APP_NAME = "java-sdk-appln-"
-            + System.currentTimeMillis();
+                                           + System.currentTimeMillis();
     /** The name of the deployment group being created, */
     private static final String DEPLOYMENT_GROUP_NAME = "java-sdk-deploy-"
-            + System.currentTimeMillis();
+                                                        + System.currentTimeMillis();
 
     /**
      * The id of the application created in AWS Code Deploy service.
@@ -76,9 +76,10 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      */
     @AfterClass
     public static void tearDown() {
-        if (applicationId != null)
+        if (applicationId != null) {
             codeDeploy.deleteApplication(new DeleteApplicationRequest()
-                    .withApplicationName(APP_NAME));
+                                                 .withApplicationName(APP_NAME));
+        }
         IntegrationTestBase.tearDown();
     }
 
@@ -102,7 +103,7 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     public void testGetApplication() {
         GetApplicationResult getResult = codeDeploy
                 .getApplication(new GetApplicationRequest()
-                        .withApplicationName(APP_NAME));
+                                        .withApplicationName(APP_NAME));
         ApplicationInfo applicationInfo = getResult.getApplication();
         assertEquals(applicationId, applicationInfo.getApplicationId());
         assertEquals(APP_NAME, applicationInfo.getApplicationName());
@@ -117,7 +118,7 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     public void testCreateDeploymentGroup() {
         try {
             codeDeploy.createDeploymentGroup(new CreateDeploymentGroupRequest()
-                    .withApplicationName(APP_NAME).withDeploymentGroupName(
+                                                     .withApplicationName(APP_NAME).withDeploymentGroupName(
                             DEPLOYMENT_GROUP_NAME));
             fail("Create Deployment group should fail as it requires a service role ARN to be specified");
         } catch (Exception ace) {

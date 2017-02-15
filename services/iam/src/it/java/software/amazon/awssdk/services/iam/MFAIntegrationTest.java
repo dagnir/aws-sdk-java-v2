@@ -29,14 +29,15 @@ public class MFAIntegrationTest extends IntegrationTestBase {
     public void tearDown() throws Exception {
         try {
             iam.deleteVirtualMFADevice(new DeleteVirtualMFADeviceRequest().withSerialNumber(serialNumber));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     @Test
     public void testMFADeviceOperations() throws Exception {
         // Create Virtual MFA Device
         VirtualMFADevice mfaDevice = iam.createVirtualMFADevice(new CreateVirtualMFADeviceRequest()
-            .withVirtualMFADeviceName(deviceName)).getVirtualMFADevice();
+                                                                        .withVirtualMFADeviceName(deviceName)).getVirtualMFADevice();
         serialNumber = mfaDevice.getSerialNumber();
         assertNotNull(serialNumber);
         assertNotNull(mfaDevice.getBase32StringSeed());

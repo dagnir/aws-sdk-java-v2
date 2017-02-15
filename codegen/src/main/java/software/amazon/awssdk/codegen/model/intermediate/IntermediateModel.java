@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -86,7 +86,7 @@ public class IntermediateModel {
         return operations;
     }
 
-    public OperationModel getOperation(String operationName){
+    public OperationModel getOperation(String operationName) {
         return getOperations().get(operationName);
     }
 
@@ -106,7 +106,9 @@ public class IntermediateModel {
         return examples;
     }
 
-    public Map<String, WaiterDefinitionModel> getWaiters() {return waiters;}
+    public Map<String, WaiterDefinitionModel> getWaiters() {
+        return waiters;
+    }
 
     /**
      * ClientConfigurationFactory to use when producing default client configuration for the
@@ -161,7 +163,7 @@ public class IntermediateModel {
         try (InputStream inputStream = getClass()
                 .getResourceAsStream("/software/amazon/awssdk/codegen/DefaultFileHeader.txt")) {
             return IOUtils.toString(inputStream)
-                    .replaceFirst("%COPYRIGHT_DATE_RANGE%", getCopyrightDateRange());
+                          .replaceFirst("%COPYRIGHT_DATE_RANGE%", getCopyrightDateRange());
         }
     }
 
@@ -171,12 +173,12 @@ public class IntermediateModel {
         return String.format("%d-%d", copyrightStartYear, currentYear);
     }
 
-    public boolean getHasWaiters(){
+    public boolean getHasWaiters() {
         return waiters.size() > 0;
     }
 
     public String getSdkBaseResponseFqcn() {
-        if(metadata.getProtocol() == Protocol.API_GATEWAY) {
+        if (metadata.getProtocol() == Protocol.API_GATEWAY) {
             return "software.amazon.awssdk.opensdk.BaseResult";
         } else {
             return String.format("software.amazon.awssdk.AmazonWebServiceResult<%s>",
@@ -186,8 +188,8 @@ public class IntermediateModel {
 
     private String getResponseMetadataClassName() {
         return customizationConfig.getCustomResponseMetadataClassName() == null ?
-                "software.amazon.awssdk.ResponseMetadata" :
-                customizationConfig.getCustomResponseMetadataClassName();
+               "software.amazon.awssdk.ResponseMetadata" :
+               customizationConfig.getCustomResponseMetadataClassName();
     }
 
     public Map<String, AuthorizerModel> getCustomAuthorizers() {

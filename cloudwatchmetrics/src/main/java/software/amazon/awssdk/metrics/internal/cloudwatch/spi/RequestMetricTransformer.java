@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,6 +30,14 @@ import software.amazon.awssdk.util.TimingInfo;
  * {@link Object#hashCode()} methods are overridden as necessary.
  */
 public interface RequestMetricTransformer {
+    /** A convenient instance of a no-op request metric transformer. */
+    public static final RequestMetricTransformer NONE = new RequestMetricTransformer() {
+        public List<MetricDatum> toMetricData(MetricType requestMetric,
+                                              Request<?> request, Response<?> response) {
+            return null;
+        }
+    };
+
     /**
      * Returns a list of metric datum for the metrics collected for the given
      * request/response, or null if this transformer does not recognize the
@@ -37,20 +45,12 @@ public interface RequestMetricTransformer {
      * <p>
      * Note returning an empty list means the transformer recognized the metric
      * type but concluded there is no metrics to be generated for it.
-     * 
+     *
      * @param metricType
      *            the predefined metric type
      */
     public List<MetricDatum> toMetricData(MetricType metricType,
-            Request<?> request, Response<?> response);
-    
-    /** A convenient instance of a no-op request metric transformer. */
-    public static final RequestMetricTransformer NONE = new RequestMetricTransformer() {
-        public List<MetricDatum> toMetricData(MetricType requestMetric,
-                Request<?> request, Response<?> response) {
-            return null;
-        }
-    };
+                                          Request<?> request, Response<?> response);
 
     /** Common utilities for implementing this SPI. */
     public static enum Utils {

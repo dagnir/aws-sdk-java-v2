@@ -18,7 +18,7 @@ package software.amazon.awssdk.waiters;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
-public class HttpSuccessStatusAcceptor<Output> extends WaiterAcceptor<Output>{
+public class HttpSuccessStatusAcceptor<Output> extends WaiterAcceptor<Output> {
 
     private final WaiterState waiterState;
 

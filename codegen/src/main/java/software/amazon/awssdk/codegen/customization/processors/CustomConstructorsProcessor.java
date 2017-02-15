@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -53,8 +53,9 @@ final class CustomConstructorsProcessor implements CodegenCustomizationProcessor
     private void addConstructors(Map<String, ShapeModel> javaShapes) {
         Map<String, ConstructorFormsWrapper> additionalConstructors =
                 customConfig.getAdditionalShapeConstructors();
-        if (additionalConstructors == null)
+        if (additionalConstructors == null) {
             return;
+        }
 
         for (Map.Entry<String, ConstructorFormsWrapper> entry : additionalConstructors
                 .entrySet()) {
@@ -67,7 +68,7 @@ final class CustomConstructorsProcessor implements CodegenCustomizationProcessor
             if (shapeModel == null) {
                 throw new RuntimeException(
                         "Not able to add constructor. No shape defined with name "
-                                + shapeName);
+                        + shapeName);
             }
 
             Map<String, MemberModel> members = shapeModel.getMembersAsMap();
@@ -80,27 +81,27 @@ final class CustomConstructorsProcessor implements CodegenCustomizationProcessor
                     if (memberModel == null) {
                         throw new RuntimeException(
                                 "Not able to add constructor. Member "
-                                        + argument + " not present in shape "
-                                        + shapeName);
+                                + argument + " not present in shape "
+                                + shapeName);
                     }
                     if (memberModel.getVariable() == null) {
                         throw new RuntimeException(
                                 "Not able to add constructor. Member "
-                                        + argument
-                                        + " doesnt have variable defined "
-                                        + shapeName);
+                                + argument
+                                + " doesnt have variable defined "
+                                + shapeName);
                     }
 
                     if (memberModel.isSimple()
-                            && memberModel.getEnumType() != null) {
+                        && memberModel.getEnumType() != null) {
 
                         hasEnumMember = true;
                     }
 
                     final String name = memberModel.getVariable()
-                            .getVariableName();
+                                                   .getVariableName();
                     final String type = memberModel.getVariable()
-                            .getVariableType();
+                                                   .getVariableType();
                     final ArgumentModel arg = new ArgumentModel()
                             .withName(name).withType(type);
                     arg.setDocumentation(memberModel.getDocumentation());
@@ -119,7 +120,7 @@ final class CustomConstructorsProcessor implements CodegenCustomizationProcessor
                         String enumType = memberModel.getEnumType();
 
                         final String type = enumType != null ? enumType
-                                : variable.getVariableType();
+                                                             : variable.getVariableType();
                         final ArgumentModel arg = new ArgumentModel()
                                 .withName(variable.getVariableName())
                                 .withType(type).withIsEnumArg(enumType != null);

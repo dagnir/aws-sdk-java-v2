@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -45,13 +45,6 @@ public class MarshallingTestRunner {
         this.clientReflector = clientReflector;
     }
 
-    public void runTest(TestCase testCase) throws Exception {
-        resetWireMock();
-        clientReflector.invokeMethod(testCase, createRequestObject(testCase));
-        LoggedRequest actualRequest = getLoggedRequest();
-        testCase.getThen().getMarshallingAssertion().assertMatches(actualRequest);
-    }
-
     /**
      * @return LoggedRequest that wire mock captured.
      */
@@ -59,6 +52,13 @@ public class MarshallingTestRunner {
         List<LoggedRequest> requests = WireMockUtils.findAllLoggedRequests();
         assertEquals(1, requests.size());
         return requests.get(0);
+    }
+
+    public void runTest(TestCase testCase) throws Exception {
+        resetWireMock();
+        clientReflector.invokeMethod(testCase, createRequestObject(testCase));
+        LoggedRequest actualRequest = getLoggedRequest();
+        testCase.getThen().getMarshallingAssertion().assertMatches(actualRequest);
     }
 
     /**

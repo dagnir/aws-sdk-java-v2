@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class SdkFilterOutputStream extends FilterOutputStream implements
     @Override
     public boolean isMetricActivated() {
         if (out instanceof MetricAware) {
-            MetricAware metricAware = (MetricAware)out;
+            MetricAware metricAware = (MetricAware) out;
             return metricAware.isMetricActivated();
         }
         return false;
@@ -45,7 +45,7 @@ public class SdkFilterOutputStream extends FilterOutputStream implements
         if (out instanceof Releasable) {
             // This allows any underlying stream that has the close operation
             // disabled to be truly released
-            Releasable r = (Releasable)out;
+            Releasable r = (Releasable) out;
             r.release();
         }
     }

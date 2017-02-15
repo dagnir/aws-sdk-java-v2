@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.directory;
 
 import static org.junit.Assert.assertNotNull;
@@ -32,8 +47,8 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         String dsId = dsClient
                 .createDirectory(new CreateDirectoryRequest().withDescription("This is my directory!")
-                        .withName("AWS.Java.SDK.Directory").withShortName("md").withPassword("My.Awesome.Password.2015")
-                        .withSize(DirectorySize.Small).withVpcSettings(
+                                                             .withName("AWS.Java.SDK.Directory").withShortName("md").withPassword("My.Awesome.Password.2015")
+                                                             .withSize(DirectorySize.Small).withVpcSettings(
                                 new DirectoryVpcSettings().withVpcId(vpcId).withSubnetIds(subnetId_0, subnetId_1)))
                 .getDirectoryId();
 
@@ -50,8 +65,8 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     private String getSubnetIdInVpc(String vpcId, String az) {
         List<Subnet> subnets = ec2Client.describeSubnets(new DescribeSubnetsRequest()
-                .withFilters(new Filter("vpc-id").withValues(vpcId), new Filter("availabilityZone").withValues(az)))
-                .getSubnets();
+                                                                 .withFilters(new Filter("vpc-id").withValues(vpcId), new Filter("availabilityZone").withValues(az)))
+                                        .getSubnets();
         if (subnets.isEmpty()) {
             Assert.fail("No Subnet found in VPC " + vpcId + " AvailabilityZone: " + az);
         }

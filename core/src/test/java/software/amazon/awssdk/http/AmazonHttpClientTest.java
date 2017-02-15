@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -76,15 +72,15 @@ public class AmazonHttpClientTest {
         EasyMock.reset(httpClient);
 
         EasyMock
-            .expect(httpClient.getConnectionManager())
-            .andReturn(null)
-            .anyTimes();
+                .expect(httpClient.getConnectionManager())
+                .andReturn(null)
+                .anyTimes();
 
         EasyMock
-            .expect(httpClient.execute(EasyMock.<HttpUriRequest>anyObject(),
-                                       EasyMock.<HttpContext>anyObject()))
-            .andThrow(exception)
-            .times(4);
+                .expect(httpClient.execute(EasyMock.<HttpUriRequest>anyObject(),
+                                           EasyMock.<HttpContext>anyObject()))
+                .andThrow(exception)
+                .times(4);
 
         EasyMock.replay(httpClient);
 
@@ -116,14 +112,14 @@ public class AmazonHttpClientTest {
                 EasyMock.createMock(HttpResponseHandler.class);
 
         EasyMock
-            .expect(handler.needsConnectionLeftOpen())
-            .andReturn(false)
-            .anyTimes();
+                .expect(handler.needsConnectionLeftOpen())
+                .andReturn(false)
+                .anyTimes();
 
         EasyMock
-            .expect(handler.handle(EasyMock.<HttpResponse>anyObject()))
-            .andThrow(exception)
-            .times(4);
+                .expect(handler.handle(EasyMock.<HttpResponse>anyObject()))
+                .andThrow(exception)
+                .times(4);
 
         EasyMock.replay(handler);
 
@@ -132,15 +128,15 @@ public class AmazonHttpClientTest {
         EasyMock.reset(httpClient);
 
         EasyMock
-            .expect(httpClient.getConnectionManager())
-            .andReturn(null)
-            .anyTimes();
+                .expect(httpClient.getConnectionManager())
+                .andReturn(null)
+                .anyTimes();
 
         EasyMock
-            .expect(httpClient.execute(EasyMock.<HttpUriRequest>anyObject(),
-                                       EasyMock.<HttpContext>anyObject()))
-            .andReturn(response)
-            .times(4);
+                .expect(httpClient.execute(EasyMock.<HttpUriRequest>anyObject(),
+                                           EasyMock.<HttpContext>anyObject()))
+                .andReturn(response)
+                .times(4);
 
         EasyMock.replay(httpClient);
 
@@ -321,40 +317,40 @@ public class AmazonHttpClientTest {
         EasyMock.reset(httpClient);
 
         EasyMock
-            .expect(httpClient.getConnectionManager())
-            .andReturn(null)
-            .anyTimes();
+                .expect(httpClient.getConnectionManager())
+                .andReturn(null)
+                .anyTimes();
 
         for (int i = 0; i < 4; ++i) {
             EasyMock
-                .expect(httpClient.execute(
-                        EasyMock.<HttpUriRequest>anyObject(),
-                        EasyMock.<HttpContext>anyObject()))
-                .andAnswer(new IAnswer<org.apache.http.HttpResponse>() {
+                    .expect(httpClient.execute(
+                            EasyMock.<HttpUriRequest>anyObject(),
+                            EasyMock.<HttpContext>anyObject()))
+                    .andAnswer(new IAnswer<org.apache.http.HttpResponse>() {
 
-                    @Override
-                    public org.apache.http.HttpResponse answer()
-                            throws Throwable {
+                        @Override
+                        public org.apache.http.HttpResponse answer()
+                                throws Throwable {
 
-                        HttpEntityEnclosingRequestBase request =
-                                (HttpEntityEnclosingRequestBase)
-                                        EasyMock.getCurrentArguments()[0];
+                            HttpEntityEnclosingRequestBase request =
+                                    (HttpEntityEnclosingRequestBase)
+                                            EasyMock.getCurrentArguments()[0];
 
-                        InputStream stream = request.getEntity().getContent();
-                        int len = 0;
-                        while (true) {
-                            int b = stream.read(new byte[1024]);
-                            if (b == -1) {
-                                break;
+                            InputStream stream = request.getEntity().getContent();
+                            int len = 0;
+                            while (true) {
+                                int b = stream.read(new byte[1024]);
+                                if (b == -1) {
+                                    break;
+                                }
+                                len += b;
                             }
-                            len += b;
+
+                            assertEquals(contentLength, len);
+
+                            throw new IOException("BOOM");
                         }
-
-                        assertEquals(contentLength, len);
-
-                        throw new IOException("BOOM");
-                    }
-                });
+                    });
         }
 
         EasyMock.replay(httpClient);
@@ -365,7 +361,9 @@ public class AmazonHttpClientTest {
         request.setHttpMethod(methodName);
         request.setContent(new ByteArrayInputStream(new byte[100]));
         request.setEndpoint(URI.create(uri));
-        if (hasCL) request.addHeader("Content-Length", "100");
+        if (hasCL) {
+            request.addHeader("Content-Length", "100");
+        }
 
         return request;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import static software.amazon.awssdk.services.s3.model.InstructionFileId.DEFAULT_INSTRUCTION_FILE_SUFFIX;
@@ -47,9 +48,10 @@ public class S3ObjectId implements Serializable {
      *            optional version id
      */
     public S3ObjectId(String bucket, String key, String versionId) {
-        if (bucket == null || key == null)
+        if (bucket == null || key == null) {
             throw new IllegalArgumentException(
                     "bucket and key must be specified");
+        }
         this.bucket = bucket;
         this.key = key;
         this.versionId = versionId;
@@ -95,15 +97,15 @@ public class S3ObjectId implements Serializable {
     public InstructionFileId instructionFileId(String suffix) {
         String ifileKey = key + DOT;
         ifileKey += (suffix == null || suffix.trim().length() == 0)
-                  ? DEFAULT_INSTRUCTION_FILE_SUFFIX
-                  : suffix
-                  ;
-         return new InstructionFileId(bucket, ifileKey, versionId);
+                    ? DEFAULT_INSTRUCTION_FILE_SUFFIX
+                    : suffix
+        ;
+        return new InstructionFileId(bucket, ifileKey, versionId);
     }
 
     @Override
     public String toString() {
         return "bucket: " + bucket + ", key: " + key + ", versionId: "
-                + versionId;
+               + versionId;
     }
 }

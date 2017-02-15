@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -71,7 +71,6 @@ public class IntermediateModelBuilder {
     }
 
 
-
     /**
      * Create default shape processors.
      */
@@ -86,7 +85,7 @@ public class IntermediateModelBuilder {
         return processors;
     }
 
-    public IntermediateModel build() throws IOException{
+    public IntermediateModel build() throws IOException {
         // Note: This needs to come before any pre/post processing of the
         // models, as the transformer must have access to the original shapes,
         // before any customizations have been applied (which modifies them).
@@ -187,25 +186,25 @@ public class IntermediateModelBuilder {
         }
 
         model.getOperations().values().stream()
-                .filter(OperationModel::isAuthenticated)
-                .forEach(operation -> {
-                    Operation c2jOperation = service.getOperation(operation.getOperationName());
+             .filter(OperationModel::isAuthenticated)
+             .forEach(operation -> {
+                 Operation c2jOperation = service.getOperation(operation.getOperationName());
 
-                    ShapeModel shape = operation.getInputShape();
-                    if (shape == null) {
-                        throw new RuntimeException(String.format("Operation %s has unknown input shape", operation.getOperationName()));
-                    }
-                    if(AuthType.CUSTOM.equals(c2jOperation.getAuthType())) {
-                        AuthorizerModel auth = model.getCustomAuthorizers().get(c2jOperation.getAuthorizer());
-                        if (auth == null) {
-                            throw new RuntimeException(String.format("Required custom auth not defined: %s", c2jOperation.getAuthorizer()));
-                        }
-                        shape.setRequestSignerClassFqcn(model.getMetadata().getPackageName() + ".auth." + auth.getInterfaceName());
-                    } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
-                        model.getMetadata().setRequiresIamSigners(true);
-                        shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");
-                    }
-                });
+                 ShapeModel shape = operation.getInputShape();
+                 if (shape == null) {
+                     throw new RuntimeException(String.format("Operation %s has unknown input shape", operation.getOperationName()));
+                 }
+                 if (AuthType.CUSTOM.equals(c2jOperation.getAuthType())) {
+                     AuthorizerModel auth = model.getCustomAuthorizers().get(c2jOperation.getAuthorizer());
+                     if (auth == null) {
+                         throw new RuntimeException(String.format("Required custom auth not defined: %s", c2jOperation.getAuthorizer()));
+                     }
+                     shape.setRequestSignerClassFqcn(model.getMetadata().getPackageName() + ".auth." + auth.getInterfaceName());
+                 } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
+                     model.getMetadata().setRequiresIamSigners(true);
+                     shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");
+                 }
+             });
     }
 
     public CustomizationConfig getCustomConfig() {

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -53,10 +53,10 @@ public class ApacheHttpClientFactory implements HttpClientFactory<ConnectionMana
         final HttpClientConnectionManager cm = cmFactory.create(settings);
 
         builder.setRequestExecutor(new SdkHttpRequestExecutor())
-                .setKeepAliveStrategy(buildKeepAliveStrategy(settings))
-                .disableRedirectHandling()
-                .disableAutomaticRetries()
-                .setConnectionManager(ClientConnectionManagerFactory.wrap(cm));
+               .setKeepAliveStrategy(buildKeepAliveStrategy(settings))
+               .disableRedirectHandling()
+               .disableAutomaticRetries()
+               .setConnectionManager(ClientConnectionManagerFactory.wrap(cm));
 
         // By default http client enables Gzip compression. So we disable it
         // here.
@@ -91,14 +91,14 @@ public class ApacheHttpClientFactory implements HttpClientFactory<ConnectionMana
         if (isProxyEnabled(settings)) {
 
             LOG.info("Configuring Proxy. Proxy Host: " + settings.getProxyHost() + " " +
-                    "Proxy Port: " + settings.getProxyPort());
+                     "Proxy Port: " + settings.getProxyPort());
 
             builder.setRoutePlanner(new SdkProxyRoutePlanner(
                     settings.getProxyHost(), settings.getProxyPort(), settings.getNonProxyHosts()));
 
             if (isAuthenticatedProxy(settings)) {
                 builder.setDefaultCredentialsProvider(ApacheUtils
-                        .newProxyCredentialsProvider(settings));
+                                                              .newProxyCredentialsProvider(settings));
             }
         }
     }
@@ -106,13 +106,13 @@ public class ApacheHttpClientFactory implements HttpClientFactory<ConnectionMana
     private ConnectionKeepAliveStrategy buildKeepAliveStrategy
             (HttpClientSettings settings) {
         return settings.getMaxIdleConnectionTime() > 0
-                ? new SdkConnectionKeepAliveStrategy(settings.getMaxIdleConnectionTime())
-                : null;
+               ? new SdkConnectionKeepAliveStrategy(settings.getMaxIdleConnectionTime())
+               : null;
     }
 
     private boolean isAuthenticatedProxy(HttpClientSettings settings) {
         return settings.getProxyUsername() != null
-                && settings.getProxyPassword() != null;
+               && settings.getProxyPassword() != null;
     }
 
     private boolean isProxyEnabled(HttpClientSettings settings) {

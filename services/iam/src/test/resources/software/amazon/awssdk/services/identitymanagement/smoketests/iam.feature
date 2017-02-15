@@ -8,7 +8,7 @@ Feature: AWS Identity and Access Management
 
   Scenario: Handling errors
     When I attempt to call the "GetUser" API with:
-    | UserName | fake_user |
+      | UserName | fake_user |
     Then I expect the response error code to be "NoSuchEntity"
     And I expect the response error message to include:
     """

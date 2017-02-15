@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -18,15 +18,17 @@ package software.amazon.awssdk.services.dynamodbv2.document;
 /**
  * Can be used to listen to the event of receiving a low level result of type R
  * from the server side.
- * 
+ *
  * @param <R>
  *            low level result type
  */
 public abstract class LowLevelResultListener<R> {
-    public static final LowLevelResultListener<?> NONE = 
-        new LowLevelResultListener<Object>() {
-            @Override public void onLowLevelResult(Object result) {}
-        };
+    public static final LowLevelResultListener<?> NONE =
+            new LowLevelResultListener<Object>() {
+                @Override
+                public void onLowLevelResult(Object result) {
+                }
+            };
 
     @SuppressWarnings("unchecked")
     public static <T> LowLevelResultListener<T> none() {

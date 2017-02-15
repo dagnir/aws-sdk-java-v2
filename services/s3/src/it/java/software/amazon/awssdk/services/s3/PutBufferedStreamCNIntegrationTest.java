@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -20,12 +35,12 @@ import software.amazon.awssdk.test.util.UnreliableRandomInputStream;
 /**
  * Integration tests for uploading objects to Amazon S3 through caller provided
  * InputStreams.
- * 
+ *
  * @author Jason Fulghum <fulghum@amazon.com>
  */
 @Category(S3Categories.Slow.class)
 public class PutBufferedStreamCNIntegrationTest extends S3IntegrationTestBase {
-    
+
     private String bucketName = "put-stream-object-integ-test-" + new Date().getTime();
     private String key = "key";
 
@@ -34,8 +49,14 @@ public class PutBufferedStreamCNIntegrationTest extends S3IntegrationTestBase {
     public void tearDown() {
         // Clear the system property by setting to blank
         System.clearProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
-        try {cnS3.deleteObject(bucketName, key);} catch (Exception e) {}
-        try {cnS3.deleteBucket(bucketName);} catch (Exception e) {}
+        try {
+            cnS3.deleteObject(bucketName, key);
+        } catch (Exception e) {
+        }
+        try {
+            cnS3.deleteBucket(bucketName);
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -51,12 +72,12 @@ public class PutBufferedStreamCNIntegrationTest extends S3IntegrationTestBase {
         long contentLength = 10L * 1024L * 1024L;
         System.setProperty(
                 SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE,
-                String.valueOf(contentLength+1));
+                String.valueOf(contentLength + 1));
         InputStream input = new BufferedInputStream(new RandomInputStream(contentLength));
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(contentLength);
         cnS3.putObject(bucketName, key, input, metadata);
-        
+
         metadata = cnS3.getObjectMetadata(bucketName, key);
         assertEquals(contentLength, metadata.getContentLength());
         assertEquals(Mimetypes.MIMETYPE_OCTET_STREAM, metadata.getContentType());
@@ -74,24 +95,24 @@ public class PutBufferedStreamCNIntegrationTest extends S3IntegrationTestBase {
         long contentLength = Constants.DEFAULT_STREAM_BUFFER_SIZE;
         System.setProperty(
                 SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE,
-                String.valueOf(contentLength+1));
-        InputStream unreliableInputStream = 
+                String.valueOf(contentLength + 1));
+        InputStream unreliableInputStream =
                 new BufferedInputStream(new UnreliableRandomInputStream(contentLength));
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(contentLength);
         cnS3.putObject(bucketName, key, unreliableInputStream, metadata);
-        
+
         ObjectMetadata returnedMetadata = cnS3.getObjectMetadata(bucketName, key);
         assertEquals(contentLength, returnedMetadata.getContentLength());
     }
 
-    @Test(expected=ResetException.class)
+    @Test(expected = ResetException.class)
     public void testResetFailure() {
         cnS3.createBucket(bucketName);
         // content length bigger than the default reset buffer size
-        long contentLength = Constants.DEFAULT_STREAM_BUFFER_SIZE*2;
-        InputStream unreliableInputStream = 
+        long contentLength = Constants.DEFAULT_STREAM_BUFFER_SIZE * 2;
+        InputStream unreliableInputStream =
                 new BufferedInputStream(new UnreliableRandomInputStream(contentLength));
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(contentLength);

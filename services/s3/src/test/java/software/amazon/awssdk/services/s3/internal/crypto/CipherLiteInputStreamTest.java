@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertFalse;
@@ -46,16 +61,16 @@ public class CipherLiteInputStreamTest {
         is.close();
         // Encrypt it
         CipherLite cipherWrapper = createTestCipherLite(Cipher.ENCRYPT_MODE,
-                ContentCryptoScheme.AES_GCM);
+                                                        ContentCryptoScheme.AES_GCM);
         is = new CipherLiteInputStream(new FileInputStream(file),
-                cipherWrapper);
+                                       cipherWrapper);
         byte[] ct_aead = IOUtils.toByteArray(is);
         is.close();
         File encryptedFileAead = new File(
                 "/tmp/S3CipherInputStreamTest-v2-ct.bin");
         FileUtils.writeByteArrayToFile(encryptedFileAead, ct_aead);
         cipherWrapper = createTestCipherLite(Cipher.ENCRYPT_MODE,
-                ContentCryptoScheme.AES_CBC);
+                                             ContentCryptoScheme.AES_CBC);
         is = new CipherLiteInputStream(new FileInputStream(file), cipherWrapper);
         byte[] ct_v1 = IOUtils.toByteArray(is);
         is.close();
@@ -69,43 +84,43 @@ public class CipherLiteInputStreamTest {
         FileUtils.writeByteArrayToFile(encryptedFileV1, ct_v1);
         // Decrypt the right file with AEAD
         cipherWrapper = createTestCipherLite(Cipher.DECRYPT_MODE,
-                ContentCryptoScheme.AES_GCM);
+                                             ContentCryptoScheme.AES_GCM);
         is = new CipherLiteInputStream(new FileInputStream(encryptedFileAead), cipherWrapper);
         byte[] pt_aead = IOUtils.toByteArray(is);
         is.close();
         assertTrue(Arrays.equals(pt, pt_aead));
         // Decrypt the wrong file with AEAD using S3CipherInputStream
         cipherWrapper = createTestCipherLite(Cipher.DECRYPT_MODE,
-                ContentCryptoScheme.AES_GCM);
+                                             ContentCryptoScheme.AES_GCM);
         is = new CipherLiteInputStream(new FileInputStream(encryptedFileV1), cipherWrapper);
         try {
             IOUtils.toByteArray(is);
             fail("Should see something like mac check in GCM failed");
-        } catch(SecurityException ex) {
-//            ex.printStackTrace();
+        } catch (SecurityException ex) {
+            //            ex.printStackTrace();
         }
         // Decrypt the wrong file with AEAD using CipherInputStream
         cipherWrapper = createTestCipherLite(Cipher.DECRYPT_MODE,
-                ContentCryptoScheme.AES_GCM);
+                                             ContentCryptoScheme.AES_GCM);
         byte[] garbage = null;
         try {
             is = new CipherInputStream(new FileInputStream(encryptedFileV1), cipherWrapper.getCipher());
             garbage = IOUtils.toByteArray(is);
             assertFalse(Arrays.equals(pt, garbage));
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             // Some versions of Java 7 has changed behavior to fail correctly; so that's fine too
             assertTrue(ex.getMessage().contains("mac check in GCM failed"));
         }
         // Decrypt the right file with v1 crypto
         cipherWrapper = createTestCipherLite(Cipher.DECRYPT_MODE,
-                ContentCryptoScheme.AES_CBC);
+                                             ContentCryptoScheme.AES_CBC);
         is = new CipherLiteInputStream(new FileInputStream(encryptedFileV1), cipherWrapper);
         byte[] pt_v1 = IOUtils.toByteArray(is);
         is.close();
         assertTrue(Arrays.equals(pt, pt_v1));
         // Decrypt the wrong file with v1 crypto
         cipherWrapper = createTestCipherLite(Cipher.DECRYPT_MODE,
-                ContentCryptoScheme.AES_CBC);
+                                             ContentCryptoScheme.AES_CBC);
         is = new CipherLiteInputStream(new FileInputStream(encryptedFileAead), cipherWrapper);
         garbage = IOUtils.toByteArray(is);
         is.close();
@@ -115,22 +130,22 @@ public class CipherLiteInputStreamTest {
         // authentication would fail
         byte[] ct_corrupted = flipRandomBit(ct_aead);
         cipherWrapper = createTestCipherLite(Cipher.DECRYPT_MODE,
-                ContentCryptoScheme.AES_GCM);
+                                             ContentCryptoScheme.AES_GCM);
         is = new CipherLiteInputStream(new ByteArrayInputStream(ct_corrupted), cipherWrapper);
         try {
             IOUtils.toByteArray(is);
             fail("Should see something like mac check in GCM failed");
-        } catch(SecurityException ex) {
-//            ex.printStackTrace();
+        } catch (SecurityException ex) {
+            //            ex.printStackTrace();
         }
         // In contrast, CipherInputStreamm would just happily return garbage
         cipherWrapper = createTestCipherLite(Cipher.DECRYPT_MODE,
-                ContentCryptoScheme.AES_GCM);
+                                             ContentCryptoScheme.AES_GCM);
         try {
             is = new CipherInputStream(new ByteArrayInputStream(ct_corrupted), cipherWrapper.getCipher());
             garbage = IOUtils.toByteArray(is);
             assertFalse(Arrays.equals(pt, garbage));
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             // Some versions of Java 7 has changed behavior to fail correctly; so that's fine too
             assertTrue(ex.getMessage().contains("mac check in GCM failed"));
         }

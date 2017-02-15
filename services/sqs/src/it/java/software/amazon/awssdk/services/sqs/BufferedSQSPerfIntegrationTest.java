@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sqs;
 
 import java.util.ArrayList;
@@ -40,13 +55,8 @@ public class BufferedSQSPerfIntegrationTest extends IntegrationTestBase {
     private static final int MAX_CONSUMER = 15;
     private static final int MAX_DELETER = 15;
     private static final int MAX_LIST = 15;
-
-    private AtomicLong sendCounter = new AtomicLong(0);
-    private AtomicLong receiveCounter = new AtomicLong(0);
-    private AtomicLong deleteCounter = new AtomicLong(0);
     private final AmazonSQSAsync sqsClient = getSharedSqsAsyncClient();
-    private final String queueName = getUniqueQueueName(); 
-
+    private final String queueName = getUniqueQueueName();
     /**
      * how long the test will run. the 1 minute default is woefully inadequate for any serious
      * performance test, but is acceptable for experimenting with various settings and for
@@ -54,6 +64,9 @@ public class BufferedSQSPerfIntegrationTest extends IntegrationTestBase {
      * proper pef tests
      */
     private final long RUN_TIME_MS = 1 * 60 * 1000;
+    private AtomicLong sendCounter = new AtomicLong(0);
+    private AtomicLong receiveCounter = new AtomicLong(0);
+    private AtomicLong deleteCounter = new AtomicLong(0);
 
     @Test
     @Ignore
@@ -87,7 +100,7 @@ public class BufferedSQSPerfIntegrationTest extends IntegrationTestBase {
         }
         for (int i = 0; i < MAX_CONSUMER; i++) {
             Consumer consumer = new Consumer(keepGoing, buffSqs, receiveCounter, createRes.getQueueUrl(), sentSet,
-                    handleLists);
+                                             handleLists);
             allFutures.add(exec.submit(consumer));
         }
 
@@ -168,7 +181,7 @@ public class BufferedSQSPerfIntegrationTest extends IntegrationTestBase {
         long splitRate = split / splitSec;
 
         System.out.println(statName + " ttlRate=" + totalRate + " splitRate=" + splitRate + " count=" + total
-                + " splitCount=" + split + " ttlSec=" + totalSec + " splitSec=" + splitSec);
+                           + " splitCount=" + split + " ttlSec=" + totalSec + " splitSec=" + splitSec);
 
     }
 }
@@ -182,7 +195,7 @@ class Sender implements Runnable {
     Set<String> sent;
 
     public Sender(AtomicBoolean paramGoing, AmazonSQSAsync paramSqs, AtomicLong paramCounter, String paramUrl,
-            Set<String> paramSent) {
+                  Set<String> paramSent) {
         keepGoing = paramGoing;
         sqs = paramSqs;
         counter = paramCounter;
@@ -222,16 +235,16 @@ class Sender implements Runnable {
 
 class Consumer implements Runnable {
 
+    final Random random = new Random();
     AtomicBoolean keepGoing;
     AmazonSQSAsync sqs;
     AtomicLong recCount;
     String url;
     Set<String> sentSet;
     List<List<String>> hanldeListList;
-    final Random random = new Random();
 
     public Consumer(AtomicBoolean paramGoing, AmazonSQSAsync paramSqs, AtomicLong paramRecCount, String paramUrl,
-            Set<String> paramSentSet, List<List<String>> paramHandleSet) {
+                    Set<String> paramSentSet, List<List<String>> paramHandleSet) {
         keepGoing = paramGoing;
         sqs = paramSqs;
         recCount = paramRecCount;
@@ -284,7 +297,7 @@ class Deleter implements Runnable {
     List<List<String>> hanldeListList;
 
     public Deleter(AtomicBoolean paramGoing, AmazonSQSAsync paramSqs, AtomicLong paramDelCount, String paramUrl,
-            List<List<String>> paramHandleSet) {
+                   List<List<String>> paramHandleSet) {
         keepGoing = paramGoing;
         sqs = paramSqs;
         delCount = paramDelCount;

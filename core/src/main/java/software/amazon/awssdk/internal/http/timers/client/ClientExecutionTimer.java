@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class ClientExecutionTimer {
     /**
      * Start the timer with the specified timeout and return a object that can be used to track the
      * state of the timer and cancel it if need be.
-     * 
+     *
      * @param clientExecutionTimeoutMillis
      *            A positive value here enables the timer, a non-positive value disables it and
      *            returns a dummy tracker task
@@ -67,7 +67,7 @@ public class ClientExecutionTimer {
 
     /**
      * This method is current exposed for testing purposes
-     * 
+     *
      * @return The underlying {@link ScheduledThreadPoolExecutor}
      */
     @SdkTestInternalApi
@@ -88,7 +88,7 @@ public class ClientExecutionTimer {
     private ClientExecutionAbortTrackerTask scheduleTimerTask(int clientExecutionTimeoutMillis) {
         ClientExecutionAbortTask timerTask = new ClientExecutionAbortTaskImpl(Thread.currentThread());
         ScheduledFuture<?> timerTaskFuture = executor.schedule(timerTask, clientExecutionTimeoutMillis,
-                TimeUnit.MILLISECONDS);
+                                                               TimeUnit.MILLISECONDS);
         return new ClientExecutionAbortTrackerTaskImpl(timerTask, timerTaskFuture);
     }
 

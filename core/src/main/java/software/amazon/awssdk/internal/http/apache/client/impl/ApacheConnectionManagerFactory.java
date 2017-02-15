@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -56,7 +56,7 @@ import software.amazon.awssdk.internal.net.SdkSSLContext;
  */
 @SdkInternalApi
 public class ApacheConnectionManagerFactory implements
-        ConnectionManagerFactory<HttpClientConnectionManager> {
+                                            ConnectionManagerFactory<HttpClientConnectionManager> {
 
     private final Log LOG = LogFactory.getLog(AmazonHttpClient.class);
 
@@ -85,39 +85,39 @@ public class ApacheConnectionManagerFactory implements
         ConnectionSocketFactory sslsf = settings.getApacheHttpClientConfig().getSslSocketFactory();
 
         return sslsf != null
-                ? sslsf
-                : new SdkTLSSocketFactory(
-                SdkSSLContext.getPreferredSSLContext(settings.getSecureRandom()),
-                getHostNameVerifier(settings));
+               ? sslsf
+               : new SdkTLSSocketFactory(
+                       SdkSSLContext.getPreferredSSLContext(settings.getSecureRandom()),
+                       getHostNameVerifier(settings));
     }
 
 
     private SocketConfig buildSocketConfig(HttpClientSettings settings) {
         return SocketConfig.custom()
-                .setSoKeepAlive(settings.useTcpKeepAlive())
-                .setSoTimeout(settings.getSocketTimeout())
-                .setTcpNoDelay(true)
-                .build();
+                           .setSoKeepAlive(settings.useTcpKeepAlive())
+                           .setSoTimeout(settings.getSocketTimeout())
+                           .setTcpNoDelay(true)
+                           .build();
     }
 
     private ConnectionConfig buildConnectionConfig(HttpClientSettings settings) {
 
         int socketBufferSize = Math.max(settings.getSocketBufferSize()[0],
-                settings.getSocketBufferSize()[1]);
+                                        settings.getSocketBufferSize()[1]);
 
         return socketBufferSize <= 0
-                ? null
-                : ConnectionConfig.custom()
-                .setBufferSize(socketBufferSize)
-                .build();
+               ? null
+               : ConnectionConfig.custom()
+                                 .setBufferSize(socketBufferSize)
+                                 .build();
     }
 
     private HostnameVerifier getHostNameVerifier
             (HttpClientSettings options) {
         // TODO Need to find a better way to handle these deprecations.
         return options.useBrowserCompatibleHostNameVerifier()
-                ? SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER
-                : SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER;
+               ? SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER
+               : SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER;
     }
 
     private Registry<ConnectionSocketFactory> createSocketFactoryRegistry(ConnectionSocketFactory sslSocketFactory) {
@@ -130,7 +130,7 @@ public class ApacheConnectionManagerFactory implements
         if (SDKGlobalConfiguration.isCertCheckingDisabled()) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("SSL Certificate checking for endpoints has been " +
-                        "explicitly disabled.");
+                         "explicitly disabled.");
             }
             sslSocketFactory = new TrustingSocketFactory();
         }
@@ -147,14 +147,14 @@ public class ApacheConnectionManagerFactory implements
      * class is only intended to be used for testing purposes.
      */
     private static class TrustingSocketFactory implements
-            LayeredConnectionSocketFactory {
+                                               LayeredConnectionSocketFactory {
 
         private SSLContext sslcontext = null;
 
         private static SSLContext createSSLContext() throws IOException {
             try {
                 SSLContext context = SSLContext.getInstance("TLS");
-                context.init(null, new TrustManager[]{new TrustingX509TrustManager()}, null);
+                context.init(null, new TrustManager[] {new TrustingX509TrustManager()}, null);
                 return context;
             } catch (Exception e) {
                 throw new IOException(e.getMessage(), e);
@@ -162,9 +162,10 @@ public class ApacheConnectionManagerFactory implements
         }
 
         @Override
-        public Socket createLayeredSocket(Socket socket, String target, int port, HttpContext context) throws IOException, UnknownHostException {
+        public Socket createLayeredSocket(Socket socket, String target, int port, HttpContext context)
+                throws IOException, UnknownHostException {
             return getSSLContext().getSocketFactory().createSocket(socket,
-                    target, port, true);
+                                                                   target, port, true);
         }
 
         @Override
@@ -173,11 +174,14 @@ public class ApacheConnectionManagerFactory implements
         }
 
         @Override
-        public Socket connectSocket(int connectTimeout, Socket sock, HttpHost host, InetSocketAddress remoteAddress, InetSocketAddress localAddress, HttpContext context) throws IOException {
+        public Socket connectSocket(int connectTimeout, Socket sock, HttpHost host, InetSocketAddress remoteAddress,
+                                    InetSocketAddress localAddress, HttpContext context) throws IOException {
 
             SSLSocket sslsock = (SSLSocket) ((sock != null) ? sock :
-                    createSocket(context));
-            if (localAddress != null) sslsock.bind(localAddress);
+                                             createSocket(context));
+            if (localAddress != null) {
+                sslsock.bind(localAddress);
+            }
 
 
             sslsock.connect(remoteAddress, connectTimeout);
@@ -187,7 +191,9 @@ public class ApacheConnectionManagerFactory implements
         }
 
         private SSLContext getSSLContext() throws IOException {
-            if (this.sslcontext == null) this.sslcontext = createSSLContext();
+            if (this.sslcontext == null) {
+                this.sslcontext = createSSLContext();
+            }
             return this.sslcontext;
         }
     }

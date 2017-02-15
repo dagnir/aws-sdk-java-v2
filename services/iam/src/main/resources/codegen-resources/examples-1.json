@@ -199,7 +199,6 @@
             "InstanceProfileName": "Webserver",
             "Path": "/",
             "Roles": [
-
             ]
           }
         },

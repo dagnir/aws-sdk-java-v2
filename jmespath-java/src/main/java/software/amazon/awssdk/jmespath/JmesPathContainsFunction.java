@@ -25,7 +25,7 @@ import java.util.List;
  * Implements the contains function that checks if the given
  * array or string contains the given element
  */
-public class JmesPathContainsFunction extends JmesPathFunction{
+public class JmesPathContainsFunction extends JmesPathFunction {
 
     public JmesPathContainsFunction(JmesPathExpression... expressions) {
         this(Arrays.asList(expressions));
@@ -39,31 +39,6 @@ public class JmesPathContainsFunction extends JmesPathFunction{
      */
     public JmesPathContainsFunction(List<JmesPathExpression> expressions) {
         super(expressions);
-    }
-
-    /**
-     * Retrieves the subject(lhs expression) which could be an array
-     * or string, the search(rhs expression) which could be any JmesPath
-     * expression. If subject is an array, this function returns true if
-     * one of the elements in the array is equal to the provided search
-     * value. If the provided subject is a string, this function returns
-     * true if the string contains the provided search argument.
-     *
-     * @param evaluatedArgs List of input expressions
-     * @return True subject contains search;
-     * False otherwise
-     */
-    @Override
-    public JsonNode evaluate(List<JsonNode> evaluatedArgs) {
-        JsonNode subject = evaluatedArgs.get(0);
-        JsonNode search = evaluatedArgs.get(1);
-        if (subject.isArray()) {
-            return doesArrayContain(subject, search);
-        } else if (subject.isTextual()) {
-            return doesStringContain(subject, search);
-        }
-
-        throw new InvalidTypeException("Type mismatch. Expecting a string or an array.");
     }
 
     /**
@@ -100,5 +75,30 @@ public class JmesPathContainsFunction extends JmesPathFunction{
             return BooleanNode.TRUE;
         }
         return BooleanNode.FALSE;
+    }
+
+    /**
+     * Retrieves the subject(lhs expression) which could be an array
+     * or string, the search(rhs expression) which could be any JmesPath
+     * expression. If subject is an array, this function returns true if
+     * one of the elements in the array is equal to the provided search
+     * value. If the provided subject is a string, this function returns
+     * true if the string contains the provided search argument.
+     *
+     * @param evaluatedArgs List of input expressions
+     * @return True subject contains search;
+     * False otherwise
+     */
+    @Override
+    public JsonNode evaluate(List<JsonNode> evaluatedArgs) {
+        JsonNode subject = evaluatedArgs.get(0);
+        JsonNode search = evaluatedArgs.get(1);
+        if (subject.isArray()) {
+            return doesArrayContain(subject, search);
+        } else if (subject.isTextual()) {
+            return doesStringContain(subject, search);
+        }
+
+        throw new InvalidTypeException("Type mismatch. Expecting a string or an array.");
     }
 }

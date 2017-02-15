@@ -30,14 +30,37 @@ public class SubClass {
         value = 123;
     }
 
-    public String getName() { return name; }
-    public void setName(String n) { name = n; }
+    public static <T> boolean equals(T one, T two) {
+        if (one == null) {
+            return (two == null);
+        } else {
+            return one.equals(two);
+        }
+    }
 
-    public Integer getValue() { return value; }
-    public void setValue(Integer i) { value = i; }
+    public String getName() {
+        return name;
+    }
 
-    public ByteBuffer getNull() { return bb; }
-    public void setNull(ByteBuffer b) { bb = b; }
+    public void setName(String n) {
+        name = n;
+    }
+
+    public Integer getValue() {
+        return value;
+    }
+
+    public void setValue(Integer i) {
+        value = i;
+    }
+
+    public ByteBuffer getNull() {
+        return bb;
+    }
+
+    public void setNull(ByteBuffer b) {
+        bb = b;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -51,20 +74,12 @@ public class SubClass {
         SubClass that = (SubClass) o;
 
         return equals(this.name, that.name)
-                && equals(this.value, that.value)
-                && equals(this.bb, that.bb);
+               && equals(this.value, that.value)
+               && equals(this.bb, that.bb);
     }
 
     @Override
     public String toString() {
         return "{name=" + name + ", value=" + value + ", bb=" + bb + "}";
-    }
-
-    public static <T> boolean equals(T one, T two) {
-        if (one == null) {
-            return (two == null);
-        } else {
-            return one.equals(two);
-        }
     }
 }

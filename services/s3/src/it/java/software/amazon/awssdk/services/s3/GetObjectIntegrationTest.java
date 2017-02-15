@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +55,7 @@ import software.amazon.awssdk.util.StringInputStream;
  */
 public class GetObjectIntegrationTest extends S3IntegrationTestBase {
 
-//    private static final Random RANDOM = new Random();
+    //    private static final Random RANDOM = new Random();
     private static final boolean ANDROID_TESTING = false;
 
     /** The bucket created and used by these tests */
@@ -48,32 +63,25 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
 
     /** The key used in these tests */
     private static final String key = "key";
-
+    private static final long sleepTimeInMillis = 3000;
     /** A date earlier than the uploaded object's last modified date */
     private static Date earlierDate;
-
     /** A date after the uploaded object's last modified date */
     private static Date laterDate;
-
     /** The ETag of the uploaded object being retrieved */
     private static String etag;
-
     /** The file containing the test data uploaded to S3 */
     private static File file;
-
     /** The file size of the file containing the test data uploaded to S3*/
     private static long fileSize = 100000L;
-
     /** The inputStream containing the test data uploaded to S3 */
     private static byte[] tempData;
-
-    private static final long sleepTimeInMillis = 3000;
 
     @AfterClass
     public static void tearDown() throws Exception {
         CryptoTestUtils.deleteBucketAndAllContents(s3, bucketName);
 
-        if ( file != null ) {
+        if (file != null) {
             file.delete();
         }
     }
@@ -86,17 +94,17 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
 
         S3IntegrationTestBase.setUp();
 
-        if ( !ANDROID_TESTING ) {
+        if (!ANDROID_TESTING) {
             setUpCredentials();
         }
 
-        tempData = tempDataBuffer((int)fileSize);
+        tempData = tempDataBuffer((int) fileSize);
 
         AmazonS3 s3 = new AmazonS3Client(credentials);
         s3.createBucket(bucketName);
 
         ObjectMetadata metadata = null;
-        if ( !ANDROID_TESTING ) {
+        if (!ANDROID_TESTING) {
             file = new RandomTempFile("get-object-integ-test", fileSize);
             file.deleteOnExit();
             s3.putObject(bucketName, key, file);
@@ -129,9 +137,9 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
      * and then calls the close method multiple times.
      */
     @Test
-    public void testCloseS3Object(){
+    public void testCloseS3Object() {
 
-        S3Object object=s3.getObject(bucketName, key);
+        S3Object object = s3.getObject(bucketName, key);
 
         try {
             drainStream(object.getObjectContent());
@@ -149,12 +157,12 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
      * Use timeout to test whether a big object is drained or not.
      */
     @Test
-    public void testCloseS3Object_abort() throws IOException{
+    public void testCloseS3Object_abort() throws IOException {
         String keyName = "a-big-object";
-        long objectSize = 100000000;	// 100M
+        long objectSize = 100000000;    // 100M
         File objectFile = null;
 
-        long abortTimeCriteria = 10L;	// 10ms time criteria for the abort time, this should be much smaller than both the upload and download times.
+        long abortTimeCriteria = 10L;    // 10ms time criteria for the abort time, this should be much smaller than both the upload and download times.
         objectFile = new RandomTempFile(keyName, objectSize);
         objectFile.deleteOnExit();
 
@@ -240,7 +248,7 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testRange() throws Exception {
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, key)
-            .withRange(50, 100));
+                                               .withRange(50, 100));
 
         assertEquals(51L, drainStream(object.getObjectContent()));
     }
@@ -253,7 +261,7 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
     public void testStartRange() throws IOException {
         long start = 50000L;
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, key)
-                .withRange(start));
+                                               .withRange(start));
 
         assertEquals(fileSize - start, drainStream(object.getObjectContent()));
     }
@@ -265,18 +273,17 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testNonMatchingETagConstraint() {
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, key)
-            .withNonmatchingETagConstraint("non-matching-etag")
-            .withNonmatchingETagConstraint("another-non-matching-etag"));
+                                               .withNonmatchingETagConstraint("non-matching-etag")
+                                               .withNonmatchingETagConstraint("another-non-matching-etag"));
 
-        if ( androidRootDir == null ) {
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
-            SdkAsserts.assertStringEqualsStream(new String( tempData ), object.getObjectContent());
+        } else {
+            SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
 
         assertNull(s3.getObject(new GetObjectRequest(bucketName, key)
-            .withNonmatchingETagConstraint(etag)));
+                                        .withNonmatchingETagConstraint(etag)));
     }
 
     /**
@@ -287,74 +294,67 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
         String override = "OVERRIDE";
 
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, key).withResponseHeaders(new ResponseHeaderOverrides()
-                .withCacheControl(override)));
+                                                                                                         .withCacheControl(override)));
 
-        if ( androidRootDir == null ) {
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertEquals(override, object.getObjectMetadata().getCacheControl());
 
         object = s3.getObject(new GetObjectRequest(bucketName, key).withResponseHeaders(new ResponseHeaderOverrides()
-                .withContentDisposition(override)));
-        if ( androidRootDir == null ) {
+                                                                                                .withContentDisposition(override)));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
-            SdkAsserts.assertStringEqualsStream( new String( tempData ), object.getObjectContent() );
+        } else {
+            SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertEquals(override, object.getObjectMetadata().getContentDisposition());
 
         object = s3.getObject(new GetObjectRequest(bucketName, key).withResponseHeaders(new ResponseHeaderOverrides()
-                .withContentEncoding(override)));
-        if ( androidRootDir == null ) {
+                                                                                                .withContentEncoding(override)));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertEquals(override, object.getObjectMetadata().getContentEncoding());
 
         object = s3.getObject(new GetObjectRequest(bucketName, key).withResponseHeaders(new ResponseHeaderOverrides()
-                .withContentLanguage(override)));
-        if ( androidRootDir == null ) {
+                                                                                                .withContentLanguage(override)));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertEquals(override,
-                object.getObjectMetadata().getRawMetadata().get("Content-Language"));
+                     object.getObjectMetadata().getRawMetadata().get("Content-Language"));
 
         object = s3.getObject(new GetObjectRequest(bucketName, key).withResponseHeaders(new ResponseHeaderOverrides()
-                .withContentType(override)));
-        if ( androidRootDir == null ) {
+                                                                                                .withContentType(override)));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertEquals(override, object.getObjectMetadata().getContentType());
 
         object = s3.getObject(new GetObjectRequest(bucketName, key).withResponseHeaders(new ResponseHeaderOverrides()
-                .withExpires("Sat, 01 Jan 2000 00:00:00 GMT")));
-        if ( androidRootDir == null ) {
+                                                                                                .withExpires("Sat, 01 Jan 2000 00:00:00 GMT")));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertEquals(new Date(946684800000L), object.getObjectMetadata().getHttpExpiresDate());
 
         object = s3.getObject(new GetObjectRequest(bucketName, key).withResponseHeaders(new ResponseHeaderOverrides()
-                .withCacheControl(override).withContentDisposition(override).withContentEncoding(override)
-                .withContentLanguage(override).withContentType(override).withExpires("Sat, 01 Jan 2000 00:00:00 GMT")));
-        if ( androidRootDir == null ) {
+                                                                                                .withCacheControl(override).withContentDisposition(override).withContentEncoding(override)
+                                                                                                .withContentLanguage(override).withContentType(override).withExpires("Sat, 01 Jan 2000 00:00:00 GMT")));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertEquals(override, object.getObjectMetadata().getCacheControl());
@@ -373,18 +373,17 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testMatchingETagConstraint() {
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, key)
-            .withMatchingETagConstraint(etag)
-            .withMatchingETagConstraint("one-that-doesn't-match"));
-        if ( androidRootDir == null ) {
+                                               .withMatchingETagConstraint(etag)
+                                               .withMatchingETagConstraint("one-that-doesn't-match"));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertNull(object.getObjectMetadata().getVersionId());
 
         assertNull(s3.getObject(new GetObjectRequest(bucketName, key)
-            .withMatchingETagConstraint("another-non-matching-etag")));
+                                        .withMatchingETagConstraint("another-non-matching-etag")));
     }
 
     /**
@@ -394,17 +393,16 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testModifiedSinceConstraint() {
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, key)
-            .withModifiedSinceConstraint(earlierDate));
-        if ( androidRootDir == null ) {
+                                               .withModifiedSinceConstraint(earlierDate));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertNull(object.getObjectMetadata().getVersionId());
 
         assertNull(s3.getObject(new GetObjectRequest(bucketName, key)
-            .withModifiedSinceConstraint(laterDate)));
+                                        .withModifiedSinceConstraint(laterDate)));
     }
 
     /**
@@ -414,17 +412,16 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testUnmodifiedSinceConstraint() {
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, key)
-            .withUnmodifiedSinceConstraint(laterDate));
-        if ( androidRootDir == null ) {
+                                               .withUnmodifiedSinceConstraint(laterDate));
+        if (androidRootDir == null) {
             SdkAsserts.assertFileEqualsStream(file, object.getObjectContent());
-        }
-        else {
+        } else {
             SdkAsserts.assertStringEqualsStream(new String(tempData), object.getObjectContent());
         }
         assertNull(object.getObjectMetadata().getVersionId());
 
         assertNull(s3.getObject(new GetObjectRequest(bucketName, key)
-            .withUnmodifiedSinceConstraint(earlierDate)));
+                                        .withUnmodifiedSinceConstraint(earlierDate)));
     }
 
     /**
@@ -432,7 +429,7 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
      */
     @Test
     public void testGetObjectAsFile() throws Exception {
-        if ( androidRootDir == null ) {
+        if (androidRootDir == null) {
             File tempFile = File.createTempFile("aws-java-sdk-integ-test", ".dat");
             tempFile.deleteOnExit();
             ObjectMetadata objectMetadata = s3.getObject(new GetObjectRequest(bucketName, key), tempFile);
@@ -461,7 +458,7 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
         s3.putObject(bucketName, directoryKey, data);
 
         File tempFile = File.createTempFile("aws-java-sdk-integ-test", ".dat");
-//        File tempFile = new File("C:\\tmp\\newfile.dat");
+        //        File tempFile = new File("C:\\tmp\\newfile.dat");
         tempFile.deleteOnExit();
         ObjectMetadata objectMetadata = s3.getObject(new GetObjectRequest(bucketName, directoryKey), tempFile);
         assertNull(objectMetadata.getSSEAlgorithm());
@@ -491,7 +488,7 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
             putObjectRequest.getMetadata().setSSEAlgorithm("BAD");
             s3.putObject(putObjectRequest);
             fail("Expected exception");
-        } catch ( AmazonServiceException expected ) {
+        } catch (AmazonServiceException expected) {
         }
     }
 
@@ -543,7 +540,7 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
             throws AmazonServiceException, AmazonClientException, UnsupportedEncodingException {
         final String storageClassObjectKey = "object-with-reduced-redundancy";
         s3.putObject(new PutObjectRequest(bucketName, storageClassObjectKey, new StringInputStream("hi"), null)
-                .withStorageClass(StorageClass.ReducedRedundancy));
+                             .withStorageClass(StorageClass.ReducedRedundancy));
         S3Object object = s3.getObject(bucketName, storageClassObjectKey);
         assertEquals(StorageClass.ReducedRedundancy.toString(), object.getObjectMetadata().getStorageClass());
     }
@@ -559,7 +556,9 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
      */
     private long drainStream(InputStream inputStream) throws IOException {
         long count = 0;
-        for (; inputStream.read() != -1; count++);
+        for (; inputStream.read() != -1; count++) {
+            ;
+        }
         inputStream.close();
 
         return count;

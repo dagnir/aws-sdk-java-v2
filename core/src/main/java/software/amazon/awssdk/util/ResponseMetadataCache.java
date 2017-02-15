@@ -42,7 +42,9 @@ public class ResponseMetadataCache implements MetadataCache {
 
     @Override
     public synchronized void add(Object obj, ResponseMetadata metadata) {
-        if (obj == null) return;
+        if (obj == null) {
+            return;
+        }
         internalCache.put(System.identityHashCode(obj), metadata);
     }
 
@@ -70,7 +72,7 @@ public class ResponseMetadataCache implements MetadataCache {
         }
 
         @Override
-        protected boolean removeEldestEntry(Entry<Integer,ResponseMetadata> eldest) {
+        protected boolean removeEldestEntry(Entry<Integer, ResponseMetadata> eldest) {
             return size() > maxSize;
         }
     }

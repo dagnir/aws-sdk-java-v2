@@ -19,7 +19,7 @@ public class SecurityTokenServiceIntegrationTest extends IntegrationTestBase {
 
     private static final int SESSION_DURATION = 60 * 60;
     private static final String ROLE_ARN = "arn:aws:iam::599169622985:role/java-test-role";
-    private static final String USER_NAME  = "user-" + System.currentTimeMillis();
+    private static final String USER_NAME = "user-" + System.currentTimeMillis();
 
     /** Tests that we can call GetSession to start a session. */
     @Test
@@ -126,4 +126,4 @@ public class SecurityTokenServiceIntegrationTest extends IntegrationTestBase {
         sts.getSessionToken();
         assertTrue(SDKGlobalConfiguration.getGlobalTimeOffset() == 3600);
     }
- }
+}

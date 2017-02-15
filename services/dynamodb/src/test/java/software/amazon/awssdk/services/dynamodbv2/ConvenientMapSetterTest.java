@@ -53,7 +53,7 @@ public class ConvenientMapSetterTest {
     @Test
     public void testPredefinedMapEntryMethod() {
         ScanRequest scanRequest = new ScanRequest().withExclusiveStartKey(
-                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", new AttributeValue().withS("1")), 
+                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", new AttributeValue().withS("1")),
                 new AbstractMap.SimpleEntry<String, AttributeValue>("range-key", new AttributeValue().withS("2")));
 
         Map<String, AttributeValue> item = scanRequest.getExclusiveStartKey();
@@ -76,7 +76,7 @@ public class ConvenientMapSetterTest {
         // hashKey is set as not nullable, and rangeKey is nullable
         // so this call should be fine.
         ScanRequest scanRequest = new ScanRequest().withExclusiveStartKey(
-                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", new AttributeValue().withS("1")), 
+                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", new AttributeValue().withS("1")),
                 null);
 
         // but this call should throw IllegalArgumentException.

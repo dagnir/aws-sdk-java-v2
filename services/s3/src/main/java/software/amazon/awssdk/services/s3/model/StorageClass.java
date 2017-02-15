@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 /**
@@ -59,9 +60,13 @@ public enum StorageClass {
     /**
      * Standard Infrequent Access storage class
      */
-    StandardInfrequentAccess("STANDARD_IA"),
+    StandardInfrequentAccess("STANDARD_IA"),;
 
-    ;
+    private final String storageClassId;
+
+    private StorageClass(String id) {
+        this.storageClassId = id;
+    }
 
     /**
      * Returns the Amazon S3 {@link StorageClass} enumeration value representing the
@@ -81,17 +86,13 @@ public enum StorageClass {
      */
     public static StorageClass fromValue(String s3StorageClassString) throws IllegalArgumentException {
         for (StorageClass storageClass : StorageClass.values()) {
-            if (storageClass.toString().equals(s3StorageClassString)) return storageClass;
+            if (storageClass.toString().equals(s3StorageClassString)) {
+                return storageClass;
+            }
         }
 
         throw new IllegalArgumentException(
                 "Cannot create enum from " + s3StorageClassString + " value!");
-    }
-
-    private final String storageClassId;
-
-    private StorageClass(String id) {
-        this.storageClassId = id;
     }
 
     /* (non-Javadoc)

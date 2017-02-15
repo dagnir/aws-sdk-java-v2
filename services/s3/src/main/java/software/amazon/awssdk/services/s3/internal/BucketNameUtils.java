@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.regex.Pattern;
@@ -67,7 +68,7 @@ public enum BucketNameUtils {
      * Convience method that allows the DNS rules to be altered for different SDKs.
      */
     public static boolean isDNSBucketName(String bucketName) {
-        return isValidV2BucketName( bucketName );
+        return isValidV2BucketName(bucketName);
     }
 
     /**
@@ -80,7 +81,7 @@ public enum BucketNameUtils {
      * @return true if the name is valid, false if not
      */
     private static boolean isValidV2BucketName(final String bucketName,
-                                        final boolean throwOnError) {
+                                               final boolean throwOnError) {
 
         if (bucketName == null) {
             return exception(throwOnError, "Bucket name cannot be null");
@@ -90,16 +91,16 @@ public enum BucketNameUtils {
             bucketName.length() > MAX_BUCKET_NAME_LENGTH) {
 
             return exception(
-                throwOnError,
-                "Bucket name should be between " + MIN_BUCKET_NAME_LENGTH + " and " + MAX_BUCKET_NAME_LENGTH +" characters long"
-            );
+                    throwOnError,
+                    "Bucket name should be between " + MIN_BUCKET_NAME_LENGTH + " and " + MAX_BUCKET_NAME_LENGTH + " characters long"
+                            );
         }
 
         if (ipAddressPattern.matcher(bucketName).matches()) {
             return exception(
                     throwOnError,
                     "Bucket name must not be formatted as an IP Address"
-            );
+                            );
         }
 
         char previous = '\0';
@@ -109,58 +110,58 @@ public enum BucketNameUtils {
 
             if (next >= 'A' && next <= 'Z') {
                 return exception(
-                    throwOnError,
-                    "Bucket name should not contain uppercase characters"
-                );
+                        throwOnError,
+                        "Bucket name should not contain uppercase characters"
+                                );
             }
 
             if (next == ' ' || next == '\t' || next == '\r' || next == '\n') {
                 return exception(
-                    throwOnError,
-                    "Bucket name should not contain white space"
-                );
+                        throwOnError,
+                        "Bucket name should not contain white space"
+                                );
             }
 
             if (next == '.') {
                 if (previous == '\0') {
                     return exception(
-                        throwOnError,
-                        "Bucket name should not begin with a period"
-                    );
+                            throwOnError,
+                            "Bucket name should not begin with a period"
+                                    );
                 }
                 if (previous == '.') {
                     return exception(
-                        throwOnError,
-                        "Bucket name should not contain two adjacent periods"
-                    );
+                            throwOnError,
+                            "Bucket name should not contain two adjacent periods"
+                                    );
                 }
                 if (previous == '-') {
                     return exception(
-                        throwOnError,
-                        "Bucket name should not contain dashes next to periods"
-                    );
+                            throwOnError,
+                            "Bucket name should not contain dashes next to periods"
+                                    );
                 }
             } else if (next == '-') {
                 if (previous == '.') {
                     return exception(
-                        throwOnError,
-                        "Bucket name should not contain dashes next to periods"
-                    );
+                            throwOnError,
+                            "Bucket name should not contain dashes next to periods"
+                                    );
                 }
                 if (previous == '\0') {
                     return exception(
                             throwOnError,
                             "Bucket name should not begin with a '-'"
-                    );
+                                    );
                 }
             } else if ((next < '0')
                        || (next > '9' && next < 'a')
                        || (next > 'z')) {
 
                 return exception(
-                     throwOnError,
-                    "Bucket name should not contain '" + next + "'"
-                );
+                        throwOnError,
+                        "Bucket name should not contain '" + next + "'"
+                                );
             }
 
             previous = next;
@@ -168,9 +169,9 @@ public enum BucketNameUtils {
 
         if (previous == '.' || previous == '-') {
             return exception(
-                throwOnError,
-                "Bucket name should not end with '-' or '.'"
-            );
+                    throwOnError,
+                    "Bucket name should not end with '-' or '.'"
+                            );
         }
 
         return true;

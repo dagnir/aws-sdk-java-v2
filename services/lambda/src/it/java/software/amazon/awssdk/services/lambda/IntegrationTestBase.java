@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.lambda;
 
 import java.io.ByteArrayOutputStream;
@@ -27,33 +42,24 @@ import software.amazon.awssdk.test.AWSTestBase;
 
 public class IntegrationTestBase extends AWSTestBase {
 
+    private static final String HELLOWORLD_JS = "helloworld.js";
+    private static final String LAMBDA_SERVICE_ROLE_NAME = "lambda-java-sdk-test-role-" + System.currentTimeMillis();
+    private static final String LAMBDA_SERVICE_ROLE_POLICY_NAME = LAMBDA_SERVICE_ROLE_NAME + "-policy";
+    private static final String LAMBDA_ROLE_EXECUTION_POLICY = "{" + "\"Version\": \"2012-10-17\","
+                                                               + "\"Statement\": [" + "{" + "\"Sid\": \"\"," + "\"Effect\": \"Allow\"," + "\"Action\": \"kinesis:*\","
+                                                               + "\"Resource\": \"*\"" + "}" + "]" + "}";
+    private static final String LAMBDA_ASSUME_ROLE_POLICY = "{" + "\"Version\": \"2012-10-17\"," + "\"Statement\": ["
+                                                            + "{" + "\"Sid\": \"\"," + "\"Effect\": \"Allow\"," + "\"Principal\": {"
+                                                            + "\"Service\": \"lambda.amazonaws.com\"" + "}," + "\"Action\": \"sts:AssumeRole\"" + "}" + "]" + "}";
+    private static final String KINESIS_STREAM_NAME = "lambda-java-sdk-test-kinesis-stream-"
+                                                      + System.currentTimeMillis();
     protected static AWSLambdaClient lambda;
     protected static File cloudFuncZip;
     protected static String lambdaServiceRoleArn;
-    private static String roleExecutionPolicyArn;
-
-    private static final String HELLOWORLD_JS = "helloworld.js";
-
-    private static AmazonIdentityManagement iam;
-
-    private static final String LAMBDA_SERVICE_ROLE_NAME = "lambda-java-sdk-test-role-" + System.currentTimeMillis();
-
-    private static final String LAMBDA_SERVICE_ROLE_POLICY_NAME = LAMBDA_SERVICE_ROLE_NAME + "-policy";
-
-    private static final String LAMBDA_ROLE_EXECUTION_POLICY = "{" + "\"Version\": \"2012-10-17\","
-            + "\"Statement\": [" + "{" + "\"Sid\": \"\"," + "\"Effect\": \"Allow\"," + "\"Action\": \"kinesis:*\","
-            + "\"Resource\": \"*\"" + "}" + "]" + "}";
-
-    private static final String LAMBDA_ASSUME_ROLE_POLICY = "{" + "\"Version\": \"2012-10-17\"," + "\"Statement\": ["
-            + "{" + "\"Sid\": \"\"," + "\"Effect\": \"Allow\"," + "\"Principal\": {"
-            + "\"Service\": \"lambda.amazonaws.com\"" + "}," + "\"Action\": \"sts:AssumeRole\"" + "}" + "]" + "}";
-
-    private static AmazonKinesis kinesis;
-
     protected static String streamArn;
-
-    private static final String KINESIS_STREAM_NAME = "lambda-java-sdk-test-kinesis-stream-"
-            + System.currentTimeMillis();
+    private static String roleExecutionPolicyArn;
+    private static AmazonIdentityManagement iam;
+    private static AmazonKinesis kinesis;
 
     @BeforeClass
     public static void setup() throws IOException {
@@ -104,7 +110,7 @@ public class IntegrationTestBase extends AWSTestBase {
         iam = new AmazonIdentityManagementClient(credentials);
 
         CreateRoleResult result = iam.createRole(new CreateRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME)
-                .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
+                                                                        .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
 
         lambdaServiceRoleArn = result.getRole().getArn();
 

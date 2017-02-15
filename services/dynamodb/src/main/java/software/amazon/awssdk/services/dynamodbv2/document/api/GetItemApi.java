@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public interface GetItemApi {
      * @return the (non-null) result of item retrieval.
      */
     public GetItemOutcome getItemOutcome(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue);
+                                         String rangeKeyName, Object rangeKeyValue);
 
     /**
      * Retrieves an item and the associated information using projection
@@ -81,45 +81,45 @@ public interface GetItemApi {
      * @return the (non-null) result of item retrieval.
      */
     public GetItemOutcome getItemOutcome(PrimaryKey primaryKey,
-            String projectionExpression, Map<String, String> nameMap);
+                                         String projectionExpression, Map<String, String> nameMap);
 
     /**
      * Retrieves an item and the associated information via the specified hash
      * key using projection expression. Incurs network access.
-     * 
+     *
      * @return the (non-null) result of item retrieval.
      */
     public GetItemOutcome getItemOutcome(String hashKeyName, Object hashKeyValue,
-            String projectionExpression, Map<String, String> nameMap);
+                                         String projectionExpression, Map<String, String> nameMap);
 
     /**
      * Retrieves an item and the associated information via the specified hash
      * key and range key using projection expression. Incurs network access.
-     * 
+     *
      * @return the (non-null) result of item retrieval.
      */
     public GetItemOutcome getItemOutcome(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String projectionExpression, Map<String, String> nameMap);
+                                         String rangeKeyName, Object rangeKeyValue,
+                                         String projectionExpression, Map<String, String> nameMap);
 
     /**
      * Retrieves an item via the specified hash key using projection expression.
      * Incurs network access.
-     * 
+     *
      * @return the retrieved item; or null if the item doesn't exist.
      */
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String projectionExpression, Map<String, String> nameMap);
+                        String projectionExpression, Map<String, String> nameMap);
 
     /**
      * Retrieves an item via the specified hash key and range key using
      * projection expression. Incurs network access.
-     * 
+     *
      * @return the retrieved item; or null if the item doesn't exist.
      */
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue,
-            String projectionExpression, Map<String, String> nameMap);
+                        String rangeKeyName, Object rangeKeyValue,
+                        String projectionExpression, Map<String, String> nameMap);
 
     /**
      * Retrieves an item and the associated information by specifying all the
@@ -159,8 +159,8 @@ public interface GetItemApi {
      * @return the retrieved item; or null if the item doesn't exist.
      */
     public Item getItem(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue);
-    
+                        String rangeKeyName, Object rangeKeyValue);
+
     /**
      * Retrieves an item using projection expression. Incurs network access.
      *
@@ -174,11 +174,11 @@ public interface GetItemApi {
      * @return the retrieved item; or null if the item doesn't exist.
      */
     public Item getItem(PrimaryKey primaryKey, String projectionExpression,
-            Map<String, String> nameMap);
+                        Map<String, String> nameMap);
 
     /**
      * Retrieves an item by specifying all the details. Incurs network access.
-     * 
+     *
      * @return the retrieved item; or null if the item doesn't exist.
      */
     public Item getItem(GetItemSpec spec);

@@ -8,7 +8,7 @@ Feature: Amazon Elastic Compute Cloud
 
   Scenario: Handling errors
     When I attempt to call the "DescribeInstances" API with:
-    | InstanceIds | i-12345678 |
+      | InstanceIds | i-12345678 |
     Then I expect the response error code to be "InvalidInstanceID.NotFound"
     And I expect the response error message to include:
     """

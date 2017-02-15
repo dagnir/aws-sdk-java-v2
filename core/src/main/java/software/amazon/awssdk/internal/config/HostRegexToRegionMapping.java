@@ -51,8 +51,8 @@ public class HostRegexToRegionMapping {
     public String getRegionName() {
         return regionName;
     }
-    
+
     public boolean isHostNameMatching(String hostname) {
-    	return hostNameRegexPattern.matcher(hostname).matches();
+        return hostNameRegexPattern.matcher(hostname).matches();
     }
 }

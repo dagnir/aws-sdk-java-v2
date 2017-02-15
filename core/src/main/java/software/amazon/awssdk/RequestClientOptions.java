@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk;
@@ -36,17 +36,8 @@ public final class RequestClientOptions {
      * have been invalidated.
      *
      */
-    public static final int DEFAULT_STREAM_BUFFER_SIZE = (1 << 17)+1;
-    public static enum Marker {
-        /**
-         * Used to specify the http user_agent value.
-         * This marker is intended only for internal use by the AWS SDK.
-         */
-        USER_AGENT,
-        ;
-    }
-
-    private final EnumMap<Marker,String> markers = new EnumMap<Marker,String>(Marker.class);
+    public static final int DEFAULT_STREAM_BUFFER_SIZE = (1 << 17) + 1;
+    private final EnumMap<Marker, String> markers = new EnumMap<Marker, String>(Marker.class);
     /**
      * Used for mark-and-reset purposes during retry.
      */
@@ -75,8 +66,9 @@ public final class RequestClientOptions {
      */
     public void appendUserAgent(String userAgent) {
         String marker = markers.get(Marker.USER_AGENT);
-        if (marker == null)
+        if (marker == null) {
             marker = "";
+        }
         marker = createUserAgentMarkerString(marker, userAgent);
         putClientMarker(Marker.USER_AGENT, marker);
     }
@@ -114,7 +106,16 @@ public final class RequestClientOptions {
      */
     void copyTo(RequestClientOptions target) {
         target.setReadLimit(getReadLimit());
-        for (Marker marker: Marker.values())
+        for (Marker marker : Marker.values()) {
             target.putClientMarker(marker, getClientMarker(marker));
+        }
+    }
+
+    public static enum Marker {
+        /**
+         * Used to specify the http user_agent value.
+         * This marker is intended only for internal use by the AWS SDK.
+         */
+        USER_AGENT,;
     }
 }

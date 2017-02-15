@@ -65,7 +65,8 @@ public class Policy {
      * Constructs an empty AWS access control policy ready to be populated with
      * statements.
      */
-    public Policy() {}
+    public Policy() {
+    }
 
     /**
      * Constructs a new AWS access control policy with the specified policy ID.
@@ -101,6 +102,22 @@ public class Policy {
     public Policy(String id, Collection<Statement> statements) {
         this(id);
         setStatements(statements);
+    }
+
+    /**
+     * Returns an AWS access control policy object generated from JSON string.
+     *
+     * @param jsonString
+     *            The JSON string representation of this AWS access control policy.
+     *
+     * @return An AWS access control policy object.
+     *
+     * @throws IllegalArgumentException
+     *      If the specified JSON string is null or invalid and cannot be
+     *      converted to an AWS policy object.
+     */
+    public static Policy fromJson(String jsonString) {
+        return new JsonPolicyReader().createPolicyFromJsonString(jsonString);
     }
 
     /**
@@ -213,33 +230,23 @@ public class Policy {
         return new JsonPolicyWriter().writePolicyToString(this);
     }
 
-    /**
-     * Returns an AWS access control policy object generated from JSON string.
-     *
-     * @param jsonString
-     *            The JSON string representation of this AWS access control policy.
-     *
-     * @return An AWS access control policy object.
-     *
-     * @throws IllegalArgumentException
-     *      If the specified JSON string is null or invalid and cannot be
-     *      converted to an AWS policy object.
-     */
-    public static Policy fromJson(String jsonString) {
-        return new JsonPolicyReader().createPolicyFromJsonString(jsonString);
-    }
-
     private void assignUniqueStatementIds() {
         Set<String> usedStatementIds = new HashSet<String>();
         for (Statement statement : statements) {
-            if (statement.getId() != null) usedStatementIds.add(statement.getId());
+            if (statement.getId() != null) {
+                usedStatementIds.add(statement.getId());
+            }
         }
 
         int counter = 0;
         for (Statement statement : statements) {
-            if (statement.getId() != null) continue;
+            if (statement.getId() != null) {
+                continue;
+            }
 
-            while (usedStatementIds.contains(Integer.toString(++counter)));
+            while (usedStatementIds.contains(Integer.toString(++counter))) {
+                ;
+            }
             statement.setId(Integer.toString(counter));
         }
     }

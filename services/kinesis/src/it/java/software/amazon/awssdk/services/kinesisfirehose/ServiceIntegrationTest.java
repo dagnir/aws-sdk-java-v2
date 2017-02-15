@@ -26,7 +26,7 @@ import software.amazon.awssdk.test.AWSTestBase;
 public class ServiceIntegrationTest extends AWSTestBase {
 
     private static final String DEVLIVERY_STREAM_NAME = "java-sdk-delivery-stream-"
-            + System.currentTimeMillis();
+                                                        + System.currentTimeMillis();
     private static final String FAKE_S3_BUCKET_ARN = "arn:aws:s3:::fake-s3-bucket-arn";
     private static final String FAKE_IAM_ROLE_ARN = "arn:aws:iam:::fake-iam-role-arn";
 
@@ -35,9 +35,9 @@ public class ServiceIntegrationTest extends AWSTestBase {
 
     @BeforeClass
     public static void setup() throws FileNotFoundException, IOException {
-//        setUpCredentials();
-//        firehose = new AmazonKinesisFirehoseClient(credentials);
-//        s3 = new AmazonS3Client(credentials);
+        //        setUpCredentials();
+        //        firehose = new AmazonKinesisFirehoseClient(credentials);
+        //        s3 = new AmazonS3Client(credentials);
 
         // TODO: firehose can't whitelist our shared account at this point, so
         // for now we are using the test account provided by the firehose team
@@ -48,40 +48,40 @@ public class ServiceIntegrationTest extends AWSTestBase {
 
     @AfterClass
     public static void tearDown() {
-//        firehose.deleteDeliveryStream(new DeleteDeliveryStreamRequest()
-//                .withDeliveryStreamName(DEVLIVERY_STREAM_NAME));
+        //        firehose.deleteDeliveryStream(new DeleteDeliveryStreamRequest()
+        //                .withDeliveryStreamName(DEVLIVERY_STREAM_NAME));
     }
 
-//    @Test
+    //    @Test
     // Nope, can't make it work without full access to S3 and IAM
     public void testOperations() {
 
         // create delivery stream
         firehose.createDeliveryStream(new CreateDeliveryStreamRequest()
-                .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
-                .withS3DestinationConfiguration(
-                        new S3DestinationConfiguration()
-                                .withBucketARN(FAKE_S3_BUCKET_ARN)
-                                .withRoleARN(FAKE_IAM_ROLE_ARN)));
+                                              .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
+                                              .withS3DestinationConfiguration(
+                                                      new S3DestinationConfiguration()
+                                                              .withBucketARN(FAKE_S3_BUCKET_ARN)
+                                                              .withRoleARN(FAKE_IAM_ROLE_ARN)));
 
         // put record
         String recordId = firehose.putRecord(new PutRecordRequest()
-                .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
-                .withRecord(new Record()
-                        .withData(ByteBuffer.wrap(new byte[] { 0, 1, 2 }))
-                        )
-                 ).getRecordId();
+                                                     .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
+                                                     .withRecord(new Record()
+                                                                         .withData(ByteBuffer.wrap(new byte[] {0, 1, 2}))
+                                                                )
+                                            ).getRecordId();
         assertNotEmpty(recordId);
 
         // put record batch
         List<PutRecordBatchResponseEntry> entries = firehose.putRecordBatch(
                 new PutRecordBatchRequest()
-                    .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
-                    .withRecords(
-                            new Record().withData(ByteBuffer.wrap(new byte[] {0})),
-                            new Record().withData(ByteBuffer.wrap(new byte[] {1}))
-                             )
-                ).getRequestResponses();
+                        .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
+                        .withRecords(
+                                new Record().withData(ByteBuffer.wrap(new byte[] {0})),
+                                new Record().withData(ByteBuffer.wrap(new byte[] {1}))
+                                    )
+                                                                           ).getRequestResponses();
         assertEquals(2, entries.size());
         for (PutRecordBatchResponseEntry entry : entries) {
             if (entry.getErrorCode() == null) {

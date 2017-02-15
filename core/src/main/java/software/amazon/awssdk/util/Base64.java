@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,9 +32,10 @@ public enum Base64 {
     /**
      * Returns a base 64 encoded string of the given bytes.
      */
-    public static String encodeAsString(byte ... bytes) {
-        if (bytes == null)
+    public static String encodeAsString(byte... bytes) {
+        if (bytes == null) {
             return null;
+        }
         try {
             return DatatypeConverter.printBase64Binary(bytes);
         } catch (NullPointerException ex) {
@@ -43,7 +44,7 @@ public enum Base64 {
 
             // Note the converter should eventually be initialized and printBase64Binary should start working again
             InternalLogFactory.getLog(Base64.class)
-                .debug("Recovering from JAXB bug: https://netbeans.org/bugzilla/show_bug.cgi?id=224923", ex);
+                              .debug("Recovering from JAXB bug: https://netbeans.org/bugzilla/show_bug.cgi?id=224923", ex);
         }
         return bytes.length == 0 ? "" : CodecUtils.toStringDirect(codec.encode(bytes));
     }
@@ -51,17 +52,21 @@ public enum Base64 {
     /**
      * Returns a 64 encoded byte array of the given bytes.
      */
-    public static byte[] encode(byte[] bytes) { return bytes == null || bytes.length == 0 ? bytes : codec.encode(bytes); }
+    public static byte[] encode(byte[] bytes) {
+        return bytes == null || bytes.length == 0 ? bytes : codec.encode(bytes);
+    }
 
     /**
      * Decodes the given base 64 encoded string,
      * skipping carriage returns, line feeds and spaces as needed.
      */
     public static byte[] decode(String b64) {
-        if (b64 == null)
+        if (b64 == null) {
             return null;
-        if (b64.length() == 0)
+        }
+        if (b64.length() == 0) {
             return new byte[0];
+        }
         byte[] buf = new byte[b64.length()];
         int len = CodecUtils.sanitize(b64, buf);
         return codec.decode(buf, len);
@@ -70,5 +75,7 @@ public enum Base64 {
     /**
      * Decodes the given base 64 encoded bytes.
      */
-    public static byte[] decode(byte[] b64) { return b64 == null || b64.length == 0 ? b64 :  codec.decode(b64, b64.length); }
+    public static byte[] decode(byte[] b64) {
+        return b64 == null || b64.length == 0 ? b64 : codec.decode(b64, b64.length);
+    }
 }

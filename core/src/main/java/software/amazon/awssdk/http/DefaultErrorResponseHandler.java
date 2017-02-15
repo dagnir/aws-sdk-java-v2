@@ -96,7 +96,8 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
         return null;
     }
 
-    private Document documentFromContent(InputStream content, String idString) throws ParserConfigurationException, SAXException, IOException {
+    private Document documentFromContent(InputStream content, String idString)
+            throws ParserConfigurationException, SAXException, IOException {
         try {
             return parseXml(contentToString(content, idString), idString);
         } catch (Exception e) {
@@ -131,10 +132,12 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
                 idString.append("Invocation Id:").append(errorResponse.getRequest().getHeaders().get(AmazonHttpClient.HEADER_SDK_TRANSACTION_ID));
             }
             if (errorResponse.getHeaders().containsKey(X_AMZN_REQUEST_ID_HEADER)) {
-                if (idString.length() > 0) { idString.append(", "); }
+                if (idString.length() > 0) {
+                    idString.append(", ");
+                }
                 idString.append("Request Id:").append(errorResponse.getHeaders().get(X_AMZN_REQUEST_ID_HEADER));
             }
-        } catch (NullPointerException npe){
+        } catch (NullPointerException npe) {
             log.info("Error getting Request or Invocation ID from response", npe);
         }
         return idString.length() > 0 ? idString.toString() : "Unknown";

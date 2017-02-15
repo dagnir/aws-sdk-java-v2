@@ -30,7 +30,7 @@ public class EC2AccountAttributesIntegrationTest extends EC2IntegrationTestBase 
 
         List<AccountAttribute> attributes = ec2.describeAccountAttributes(
                 new DescribeAccountAttributesRequest()
-                ).getAccountAttributes();
+                                                                         ).getAccountAttributes();
 
         assertNotNull(attributes);
         assertTrue(attributes.size() > 0);

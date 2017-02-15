@@ -28,13 +28,17 @@ import software.amazon.awssdk.util.TimingInfo;
 final class RequestHandler2Adaptor extends RequestHandler2 {
     @SuppressWarnings("deprecation")
     private final RequestHandler old;
+
     RequestHandler2Adaptor(@SuppressWarnings("deprecation") RequestHandler old) {
-        if (old == null)
+        if (old == null) {
             throw new IllegalArgumentException();
+        }
         this.old = old;
     }
+
     @SuppressWarnings("deprecation")
-    @Override public void beforeRequest(Request<?> request) {
+    @Override
+    public void beforeRequest(Request<?> request) {
         old.beforeRequest(request);
     }
 
@@ -46,24 +50,28 @@ final class RequestHandler2Adaptor extends RequestHandler2 {
         Object awsResponse = response == null ? null : response
                 .getAwsResponse();
         TimingInfo timingInfo = awsRequestMetrics == null ? null
-                : awsRequestMetrics.getTimingInfo();
+                                                          : awsRequestMetrics.getTimingInfo();
         old.afterResponse(request, awsResponse, timingInfo);
     }
 
     @SuppressWarnings("deprecation")
-    @Override public void afterError(Request<?> request, Response<?> response,
-            Exception e) {
+    @Override
+    public void afterError(Request<?> request, Response<?> response,
+                           Exception e) {
         old.afterError(request, e);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return old.hashCode();
     }
 
-    @Override public boolean equals(Object o) {
-        if (!(o instanceof RequestHandler2Adaptor))
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof RequestHandler2Adaptor)) {
             return false;
-        RequestHandler2Adaptor that = (RequestHandler2Adaptor)o;
+        }
+        RequestHandler2Adaptor that = (RequestHandler2Adaptor) o;
         return this.old.equals(that.old);
     }
 }

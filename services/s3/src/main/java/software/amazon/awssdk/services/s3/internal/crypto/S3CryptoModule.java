@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import java.io.File;
@@ -49,7 +50,7 @@ public abstract class S3CryptoModule<T extends MultipartUploadContext> {
     public abstract S3Object getObjectSecurely(GetObjectRequest req);
 
     public abstract ObjectMetadata getObjectSecurely(GetObjectRequest req,
-            File dest);
+                                                     File dest);
 
     public abstract CompleteMultipartUploadResult completeMultipartUploadSecurely(
             CompleteMultipartUploadRequest req);
@@ -69,7 +70,7 @@ public abstract class S3CryptoModule<T extends MultipartUploadContext> {
      *         subsequently retrieved using the new instruction file via the
      *         usual get operation by specifying a
      *         {@link EncryptedGetObjectRequest}.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if the specified S3 object doesn't exist.
      * @throws SecurityException
@@ -88,5 +89,5 @@ public abstract class S3CryptoModule<T extends MultipartUploadContext> {
      * @param os output stream which will be closed upon method completion.
      */
     public abstract void putLocalObjectSecurely(UploadObjectRequest req,
-            String uploadId, OutputStream os) throws IOException;
+                                                String uploadId, OutputStream os) throws IOException;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.File;
@@ -24,7 +25,9 @@ import software.amazon.awssdk.event.ProgressListener;
  * Abstract base class for a put object or put object like request.
  */
 public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest implements
-        Cloneable, SSECustomerKeyProvider, SSEAwsKeyManagementParamsProvider, S3DataSource, Serializable {
+                                                                               Cloneable, SSECustomerKeyProvider,
+                                                                               SSEAwsKeyManagementParamsProvider, S3DataSource,
+                                                                               Serializable {
     /**
      * The name of an existing bucket, to which this request will upload a new
      * object. You must have {@link Permission#Write} permission granted to you
@@ -133,7 +136,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      *            The redirect location of this new object.
      */
     public AbstractPutObjectRequest(String bucketName, String key,
-            String redirectLocation) {
+                                    String redirectLocation) {
         this.bucketName = bucketName;
         this.key = key;
         this.redirectLocation = redirectLocation;
@@ -165,7 +168,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      *            content length for the stream of data being uploaded.
      */
     protected AbstractPutObjectRequest(String bucketName, String key,
-            InputStream input, ObjectMetadata metadata) {
+                                       InputStream input, ObjectMetadata metadata) {
         this.bucketName = bucketName;
         this.key = key;
         this.inputStream = input;
@@ -229,7 +232,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withBucketName(
             String bucketName) {
         setBucketName(bucketName);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -273,7 +276,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      */
     public <T extends AbstractPutObjectRequest> T withKey(String key) {
         setKey(key);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -296,6 +299,25 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      */
     public String getStorageClass() {
         return storageClass;
+    }
+
+    /**
+     * Sets the optional Amazon S3 storage class to use when storing the new
+     * object. If not specified, the default standard storage class will be
+     * used when storing the object.
+     * <p>
+     * For more information on Amazon S3 storage classes and available values,
+     * see the {@link StorageClass} enumeration.
+     * </p>
+     *
+     * @param storageClass
+     *         The storage class to use when storing the new object.
+     *
+     * @see #getStorageClass()
+     * @see #setStorageClass(String)
+     */
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass.toString();
     }
 
     /**
@@ -343,27 +365,8 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withStorageClass(
             String storageClass) {
         setStorageClass(storageClass);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
-    }
-
-    /**
-     * Sets the optional Amazon S3 storage class to use when storing the new
-     * object. If not specified, the default standard storage class will be
-     * used when storing the object.
-     * <p>
-     * For more information on Amazon S3 storage classes and available values,
-     * see the {@link StorageClass} enumeration.
-     * </p>
-     *
-     * @param storageClass
-     *         The storage class to use when storing the new object.
-     *
-     * @see #getStorageClass()
-     * @see #setStorageClass(String)
-     */
-    public void setStorageClass(StorageClass storageClass) {
-        this.storageClass = storageClass.toString();
     }
 
     /**
@@ -390,7 +393,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withStorageClass(
             StorageClass storageClass) {
         setStorageClass(storageClass);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -454,7 +457,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      */
     public <T extends AbstractPutObjectRequest> T withFile(File file) {
         setFile(file);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -532,7 +535,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withMetadata(
             ObjectMetadata metadata) {
         setMetadata(metadata);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -617,7 +620,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withAccessControlList(
             AccessControlList accessControlList) {
         setAccessControlList(accessControlList);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -685,8 +688,15 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withInputStream(
             InputStream inputStream) {
         setInputStream(inputStream);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
+    }
+
+    /**
+     * Gets the optional redirect location for the new object.
+     */
+    public String getRedirectLocation() {
+        return this.redirectLocation;
     }
 
     /**
@@ -700,13 +710,6 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     }
 
     /**
-     * Gets the optional redirect location for the new object.
-     */
-    public String getRedirectLocation() {
-        return this.redirectLocation;
-    }
-
-    /**
      * Sets the optional redirect location for the new object.Returns this
      * {@link AbstractPutObjectRequest}, enabling additional method calls to be chained
      * together.
@@ -716,7 +719,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withRedirectLocation(
             String redirectLocation) {
         this.redirectLocation = redirectLocation;
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -736,7 +739,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public void setSSECustomerKey(SSECustomerKey sseKey) {
         if (sseKey != null && this.sseAwsKeyManagementParams != null) {
             throw new IllegalArgumentException(
-                "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
+                    "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
         this.sseCustomerKey = sseKey;
     }
@@ -756,7 +759,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withSSECustomerKey(
             SSECustomerKey sseKey) {
         setSSECustomerKey(sseKey);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -770,22 +773,8 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
 
     public <T extends PutObjectRequest> T withTagging(ObjectTagging tagSet) {
         setTagging(tagSet);
-        T t = (T)this;
+        T t = (T) this;
         return t;
-    }
-
-    /**
-     * Sets the optional progress listener for receiving updates for object
-     * upload status.
-     *
-     * @param progressListener
-     *            The legacy progress listener that is used exclusively for Amazon S3 client.
-     *
-     * @deprecated use {@link #setGeneralProgressListener(ProgressListener)} instead.
-     */
-    @Deprecated
-    public void setProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener progressListener) {
-        setGeneralProgressListener(new LegacyS3ProgressListener(progressListener));
     }
 
     /**
@@ -801,10 +790,24 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public software.amazon.awssdk.services.s3.model.ProgressListener getProgressListener() {
         ProgressListener generalProgressListener = getGeneralProgressListener();
         if (generalProgressListener instanceof LegacyS3ProgressListener) {
-            return ((LegacyS3ProgressListener)generalProgressListener).unwrap();
+            return ((LegacyS3ProgressListener) generalProgressListener).unwrap();
         } else {
-             return null;
+            return null;
         }
+    }
+
+    /**
+     * Sets the optional progress listener for receiving updates for object
+     * upload status.
+     *
+     * @param progressListener
+     *            The legacy progress listener that is used exclusively for Amazon S3 client.
+     *
+     * @deprecated use {@link #setGeneralProgressListener(ProgressListener)} instead.
+     */
+    @Deprecated
+    public void setProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener progressListener) {
+        setGeneralProgressListener(new LegacyS3ProgressListener(progressListener));
     }
 
     /**
@@ -823,7 +826,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withProgressListener(
             software.amazon.awssdk.services.s3.model.ProgressListener progressListener) {
         setProgressListener(progressListener);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -843,7 +846,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public void setSSEAwsKeyManagementParams(SSEAwsKeyManagementParams params) {
         if (params != null && this.sseCustomerKey != null) {
             throw new IllegalArgumentException(
-                "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
+                    "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
         this.sseAwsKeyManagementParams = params;
     }
@@ -857,7 +860,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     public <T extends AbstractPutObjectRequest> T withSSEAwsKeyManagementParams(
             SSEAwsKeyManagementParams sseAwsKeyManagementParams) {
         setSSEAwsKeyManagementParams(sseAwsKeyManagementParams);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -871,13 +874,13 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
         copyBaseTo(target);
         final ObjectMetadata metadata = getMetadata();
         return target.withAccessControlList(getAccessControlList())
-            .withCannedAcl(getCannedAcl())
-            .withInputStream(getInputStream())
-            .withMetadata(metadata == null ? null : metadata.clone())
-            .withRedirectLocation(getRedirectLocation())
-            .withStorageClass(getStorageClass())
-            .withSSEAwsKeyManagementParams(getSSEAwsKeyManagementParams())
-            .withSSECustomerKey(getSSECustomerKey())
-            ;
+                     .withCannedAcl(getCannedAcl())
+                     .withInputStream(getInputStream())
+                     .withMetadata(metadata == null ? null : metadata.clone())
+                     .withRedirectLocation(getRedirectLocation())
+                     .withStorageClass(getStorageClass())
+                     .withSSEAwsKeyManagementParams(getSSEAwsKeyManagementParams())
+                     .withSSECustomerKey(getSSECustomerKey())
+                ;
     }
 }

@@ -21,7 +21,6 @@
       {
         "input": {
           "NotificationARNs": [
-
           ],
           "Parameters": [
             {
@@ -34,11 +33,9 @@
             }
           ],
           "ResourceTypes": [
-
           ],
           "StackName": "MyStack",
           "Tags": [
-
           ],
           "TemplateURL": "https://s3.amazonaws.com/example/updated.template"
         },
@@ -58,7 +55,6 @@
       {
         "input": {
           "NotificationARNs": [
-
           ],
           "Parameters": [
             {
@@ -71,11 +67,9 @@
             }
           ],
           "ResourceTypes": [
-
           ],
           "StackName": "MyStack",
           "Tags": [
-
           ],
           "TemplateURL": "https://s3.amazonaws.com/example/updated.template"
         },
@@ -95,21 +89,17 @@
       {
         "input": {
           "Capabilities": [
-
           ],
           "NotificationARNs": [
             "arn:aws:sns:use-east-1:123456789012:mytopic1",
             "arn:aws:sns:us-east-1:123456789012:mytopic2"
           ],
           "Parameters": [
-
           ],
           "ResourceTypes": [
-
           ],
           "StackName": "MyStack",
           "Tags": [
-
           ],
           "TemplateURL": "https://s3.amazonaws.com/example/updated.template",
           "UsePreviousTemplate": true
@@ -135,12 +125,10 @@
         },
         "output": {
           "Capabilities": [
-
           ],
           "CapabilitiesReason": "",
           "Description": "AWS CloudFormation Example Template S3_Bucket: An example template that shows how to create a publicly-accessible S3 bucket. IMPORTANT: This template creates an S3 bucket. You will be billed for the AWS resources used if you create a stack from this template.",
           "Parameters": [
-
           ]
         },
         "comments": {

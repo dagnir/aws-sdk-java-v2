@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -45,10 +45,10 @@ public class QueryStringSignerTest {
     @Test
     public void testRequestResourcePath() throws Exception {
         SignableRequest<?> request = MockRequestBuilder.create()
-                .withEndpoint("http://foo.amazon.com")
-                .withParameter("foo", "bar")
-                .withPath("foo/bar")
-                .build();
+                                                       .withEndpoint("http://foo.amazon.com")
+                                                       .withParameter("foo", "bar")
+                                                       .withPath("foo/bar")
+                                                       .build();
 
         signer.sign(request, credentials);
 
@@ -58,10 +58,10 @@ public class QueryStringSignerTest {
     @Test
     public void testRequestAndEndpointResourcePath() throws Exception {
         SignableRequest<?> request = MockRequestBuilder.create()
-                .withEndpoint("http://foo.amazon.com/foo")
-                .withParameter("foo", "bar")
-                .withPath("/bar")
-                .build();
+                                                       .withEndpoint("http://foo.amazon.com/foo")
+                                                       .withParameter("foo", "bar")
+                                                       .withPath("/bar")
+                                                       .build();
 
         signer.sign(request, credentials);
 
@@ -71,10 +71,10 @@ public class QueryStringSignerTest {
     @Test
     public void testRequestAndEndpointResourcePathNoSlash() throws Exception {
         SignableRequest<?> request = MockRequestBuilder.create()
-                .withEndpoint("http://foo.amazon.com/foo")
-                .withParameter("foo", "bar")
-                .withPath("bar")
-                .build();
+                                                       .withEndpoint("http://foo.amazon.com/foo")
+                                                       .withParameter("foo", "bar")
+                                                       .withPath("bar")
+                                                       .build();
 
         signer.sign(request, credentials);
 
@@ -84,10 +84,10 @@ public class QueryStringSignerTest {
     @Test
     public void testAnonymous() throws Exception {
         SignableRequest<?> request = MockRequestBuilder.create()
-                .withEndpoint("http://foo.amazon.com")
-                .withParameter("foo", "bar")
-                .withPath("bar")
-                .build();
+                                                       .withEndpoint("http://foo.amazon.com")
+                                                       .withParameter("foo", "bar")
+                                                       .withPath("bar")
+                                                       .build();
 
         signer.sign(request, new AnonymousAWSCredentials());
 
@@ -99,7 +99,7 @@ public class QueryStringSignerTest {
      * signing the request.
      */
     private void assertSignature(String expected,
-            Map<String, List<String>> requestParams) {
+                                 Map<String, List<String>> requestParams) {
         List<String> signature = requestParams.get("Signature");
         assertNotNull(signature);
         assertEquals(1, signature.size());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package utils.resources;
 
 import java.lang.annotation.ElementType;
@@ -24,31 +25,13 @@ import java.lang.annotation.Target;
  * either a type (test class) or a method (test method).
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target( {ElementType.METHOD, ElementType.TYPE})
 public @interface RequiredResources {
 
     /**
      * An array of RequiredResource annotations
      */
     RequiredResource[] value() default {};
-
-    public static @interface RequiredResource {
-
-        /**
-         * The Class object of the TestResource class
-         */
-        Class<? extends TestResource> resource();
-
-        /**
-         * How the resource should be created before the test starts.
-         */
-        ResourceCreationPolicy creationPolicy();
-
-        /**
-         * Retention policy after the test is done.
-         */
-        ResourceRetentionPolicy retentionPolicy();
-    }
 
     public static enum ResourceCreationPolicy {
         /**
@@ -72,6 +55,24 @@ public @interface RequiredResources {
          */
         DESTROY_IMMEDIATELY,
         DESTROY_AFTER_ALL_TESTS;
+    }
+
+    public static @interface RequiredResource {
+
+        /**
+         * The Class object of the TestResource class
+         */
+        Class<? extends TestResource> resource();
+
+        /**
+         * How the resource should be created before the test starts.
+         */
+        ResourceCreationPolicy creationPolicy();
+
+        /**
+         * Retention policy after the test is done.
+         */
+        ResourceRetentionPolicy retentionPolicy();
     }
 
 }

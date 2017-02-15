@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class ExecutionContext {
 
     @Deprecated
     public ExecutionContext(List<RequestHandler2> requestHandler2s, boolean isMetricEnabled,
-            AmazonWebServiceClient awsClient) {
+                            AmazonWebServiceClient awsClient) {
         this.requestHandler2s = requestHandler2s;
         awsRequestMetrics = isMetricEnabled ? new AWSRequestMetricsFullSupport() : new AWSRequestMetrics();
         this.awsClient = awsClient;
@@ -89,6 +89,10 @@ public class ExecutionContext {
         this.awsRequestMetrics = builder.useRequestMetrics ? new AWSRequestMetricsFullSupport() : new AWSRequestMetrics();
         this.awsClient = builder.awsClient;
         this.signerProvider = builder.signerProvider;
+    }
+
+    public static ExecutionContext.Builder builder() {
+        return new ExecutionContext.Builder();
     }
 
     public List<RequestHandler2> getRequestHandler2s() {
@@ -120,7 +124,9 @@ public class ExecutionContext {
      *
      * @return true if retry capacity was consumed
      */
-    public boolean retryCapacityConsumed() { return retryCapacityConsumed; }
+    public boolean retryCapacityConsumed() {
+        return retryCapacityConsumed;
+    }
 
     /**
      * Marks that a retry during this request lifecycle has consumed retry capacity.  This is inspected
@@ -134,7 +140,9 @@ public class ExecutionContext {
      * Passes in the provided {@link SignerProviderContext} into a {@link SignerProvider} and returns
      * a {@link Signer} instance.
      */
-    public Signer getSigner(SignerProviderContext context) { return signerProvider.getSigner(context); }
+    public Signer getSigner(SignerProviderContext context) {
+        return signerProvider.getSigner(context);
+    }
 
     /**
      * Returns the signer for the given uri. Note S3 in particular overrides this method.
@@ -142,6 +150,17 @@ public class ExecutionContext {
     @Deprecated
     public Signer getSignerByURI(URI uri) {
         return awsClient == null ? null : awsClient.getSignerByURI(uri);
+    }
+
+    /**
+     * Returns the credentials provider used for fetching the credentials. The credentials fetched
+     * is used for signing the request. If there is no credential provider, then the runtime will
+     * not attempt to sign (or resign on retries) requests.
+     *
+     * @return the credentials provider to fetch {@link AWSCredentials}
+     */
+    public AWSCredentialsProvider getCredentialsProvider() {
+        return this.credentialsProvider;
     }
 
     /**
@@ -154,17 +173,6 @@ public class ExecutionContext {
      */
     public void setCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
         this.credentialsProvider = credentialsProvider;
-    }
-
-    /**
-     * Returns the credentials provider used for fetching the credentials. The credentials fetched
-     * is used for signing the request. If there is no credential provider, then the runtime will
-     * not attempt to sign (or resign on retries) requests.
-     *
-     * @return the credentials provider to fetch {@link AWSCredentials}
-     */
-    public AWSCredentialsProvider getCredentialsProvider() {
-        return this.credentialsProvider;
     }
 
     /**
@@ -197,8 +205,6 @@ public class ExecutionContext {
         this.clientExecutionTrackerTask = clientExecutionTrackerTask;
     }
 
-    public static ExecutionContext.Builder builder() { return new ExecutionContext.Builder(); }
-
     public static class Builder {
 
         private boolean useRequestMetrics;
@@ -206,7 +212,8 @@ public class ExecutionContext {
         private AmazonWebServiceClient awsClient;
         private SignerProvider signerProvider = new NoOpSignerProvider();
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public boolean useRequestMetrics() {
             return useRequestMetrics;

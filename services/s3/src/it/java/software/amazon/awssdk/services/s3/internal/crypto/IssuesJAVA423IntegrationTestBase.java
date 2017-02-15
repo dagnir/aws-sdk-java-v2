@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -84,25 +99,33 @@ public abstract class IssuesJAVA423IntegrationTestBase {
      * to test the edge case of retrieving encrypted S3 object with no material
      * description.
      */
-    private AmazonS3EncryptionClient createS3v1Client(EncryptionMaterials kekMaterial, CryptoConfiguration config) throws IOException {
-        AmazonS3EncryptionClient s3v1 = config == null 
-            ? new S3CryptoTestClient(awsTestCredentials(), kekMaterial)
-            : new S3CryptoTestClient(
-                awsTestCredentials(),
-                kekMaterial,
-                config)
-            ;
+    private AmazonS3EncryptionClient createS3v1Client(EncryptionMaterials kekMaterial, CryptoConfiguration config)
+            throws IOException {
+        AmazonS3EncryptionClient s3v1 = config == null
+                                        ? new S3CryptoTestClient(awsTestCredentials(), kekMaterial)
+                                        : new S3CryptoTestClient(
+                                                awsTestCredentials(),
+                                                kekMaterial,
+                                                config);
         // Add a handler to remove empty material description
         s3v1.addRequestHandler(new RequestHandler2() {
-            @Override public void beforeRequest(Request<?> request) {
-                Map<String,String> headers = request.getHeaders();
+            @Override
+            public void beforeRequest(Request<?> request) {
+                Map<String, String> headers = request.getHeaders();
                 String matdesc = headers.remove(Headers.S3_USER_METADATA_PREFIX
-                        + Headers.MATERIALS_DESCRIPTION);
-                if (matdesc != null)
+                                                + Headers.MATERIALS_DESCRIPTION);
+                if (matdesc != null) {
                     assertEquals("{}", matdesc);
+                }
             }
-            @Override public void afterResponse(Request<?> request, Response<?> response) {}
-            @Override public void afterError(Request<?> request, Response<?> response, Exception e) {}
+
+            @Override
+            public void afterResponse(Request<?> request, Response<?> response) {
+            }
+
+            @Override
+            public void afterError(Request<?> request, Response<?> response, Exception e) {
+            }
         });
         return s3v1;
     }
@@ -119,7 +142,7 @@ public abstract class IssuesJAVA423IntegrationTestBase {
 
         File file = generateRandomAsciiFile(100);
         final String plaintext = FileUtils.readFileToString(file);
-//        System.err.println(plaintext);
+        //        System.err.println(plaintext);
 
         // upload file to s3 using v1 and get it back
         s3v1.putObject(bucketName, v1key, file);
@@ -161,9 +184,9 @@ public abstract class IssuesJAVA423IntegrationTestBase {
         System.err.println(key + "/" + bucketName);
 
         AmazonS3EncryptionClient s3v1 = createS3v1Client(kekMaterial,
-                new CryptoConfiguration()
-                    .withStorageMode(CryptoStorageMode.InstructionFile)
-        );
+                                                         new CryptoConfiguration()
+                                                                 .withStorageMode(CryptoStorageMode.InstructionFile)
+                                                        );
         // A S3 raw client used to inspect the raw data
         AmazonS3Client s3 = new AmazonS3TestClient(awsTestCredentials());
 
@@ -174,14 +197,14 @@ public abstract class IssuesJAVA423IntegrationTestBase {
         // upload file to s3 using v1 and get it back
         s3v1.putObject(bucketName, v1key, file);
         // verify s3v1 is able to read back and decrypt the s3 object
-        
+
         S3Object s3object = s3v1.getObject(bucketName, v1key);
         assertEquals(plaintext, valueOf(s3object));
         // Check the instruction file for v1 format
         s3object = s3v1.getObject(bucketName, v1key + ".instruction");
         String json = ContentCryptoMaterial.parseInstructionFile(s3object);
         @SuppressWarnings("unchecked")
-        Map<String,String> imap = Jackson.fromJsonString(json, Map.class);
+        Map<String, String> imap = Jackson.fromJsonString(json, Map.class);
         assertNull(imap.get(Headers.CRYPTO_CEK_ALGORITHM));
         assertNull(imap.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -57,7 +72,7 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3IntegrationTestBase {
     private static final boolean cleanup = true;
     /** Length of the random temp file to upload */
-    private static final int RANDOM_OBJECT_DATA_LENGTH = 10*1024*1024;
+    private static final int RANDOM_OBJECT_DATA_LENGTH = 10 * 1024 * 1024;
 
     /** Suffix appended to the end of instruction files */
     private static final String INSTRUCTION_SUFFIX = ".instruction";
@@ -97,17 +112,17 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         createTemporaryFiles();
 
         s3_metadata = new S3CryptoTestClient(credentials,
-                new EncryptionMaterials(keyPair),
-                // subclass specifies the crypto mode to use
-                newCryptoConfiguration()
-                .withIgnoreMissingInstructionFile(false));
+                                             new EncryptionMaterials(keyPair),
+                                             // subclass specifies the crypto mode to use
+                                             newCryptoConfiguration()
+                                                     .withIgnoreMissingInstructionFile(false));
         s3_metadata.createBucket(expectedBucketName);
 
         CryptoConfiguration cryptoConfig = newCryptoConfiguration()
                 .withIgnoreMissingInstructionFile(false);
         cryptoConfig.setStorageMode(CryptoStorageMode.InstructionFile);
         s3_instructionFile = new S3CryptoTestClient(credentials,
-                new EncryptionMaterials(keyPair), cryptoConfig);
+                                                    new EncryptionMaterials(keyPair), cryptoConfig);
     }
 
     /** Tests that a multipart upload can be created, listed and aborted. */
@@ -116,8 +131,8 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         String bucketName = expectedBucketName;
         InitiateMultipartUploadResult initiateResult = s3_metadata.initiateMultipartUpload(
                 new InitiateMultipartUploadRequest(bucketName, "key")
-                    .withCannedACL(CannedAccessControlList.PublicRead)
-                    .withStorageClass(StorageClass.ReducedRedundancy));
+                        .withCannedACL(CannedAccessControlList.PublicRead)
+                        .withStorageClass(StorageClass.ReducedRedundancy));
         String uploadId = initiateResult.getUploadId();
         uploadParts(bucketName, uploadId, s3_metadata);
 
@@ -137,8 +152,9 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
             temporaryFile.delete();
             retrievedTemporaryFile.delete();
         }
-        if (cleanup)
+        if (cleanup) {
             deleteBucketAndAllContents(expectedBucketName);
+        }
     }
 
 
@@ -147,7 +163,7 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
      */
     @Test
     public void testUploadWithInstructionFile() throws Exception {
-        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5*1024*1024;
+        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5 * 1024 * 1024;
         long secondPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - firstPartLength;
 
         InitiateMultipartUploadResult initiateMultipartUpload = s3_instructionFile
@@ -156,22 +172,22 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         String uploadId = initiateMultipartUpload.getUploadId();
 
         UploadPartResult uploadPartResult = s3_instructionFile.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withFile(temporaryFile)
-            .withPartNumber(1)
-            .withPartSize(firstPartLength)
-            .withUploadId(uploadId));
+                                                                                  .withBucketName(expectedBucketName)
+                                                                                  .withKey(expectedObjectName)
+                                                                                  .withFile(temporaryFile)
+                                                                                  .withPartNumber(1)
+                                                                                  .withPartSize(firstPartLength)
+                                                                                  .withUploadId(uploadId));
 
         UploadPartResult uploadPartResult2 = s3_instructionFile.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withLastPart(true)
-            .withFile(temporaryFile)
-            .withFileOffset(firstPartLength)
-            .withPartNumber(2)
-            .withPartSize(secondPartLength)
-            .withUploadId(uploadId));
+                                                                                   .withBucketName(expectedBucketName)
+                                                                                   .withKey(expectedObjectName)
+                                                                                   .withLastPart(true)
+                                                                                   .withFile(temporaryFile)
+                                                                                   .withFileOffset(firstPartLength)
+                                                                                   .withPartNumber(2)
+                                                                                   .withPartSize(secondPartLength)
+                                                                                   .withUploadId(uploadId));
 
         ArrayList<PartETag> partETags = new ArrayList<PartETag>();
         partETags.add(uploadPartResult.getPartETag());
@@ -202,14 +218,15 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         int badPartSize = JceEncryptionConstants.SYMMETRIC_CIPHER_BLOCK_SIZE * 1024 + 1;
         try {
             s3_metadata.uploadPart(new UploadPartRequest()
-                .withBucketName(expectedBucketName)
-                .withKey(expectedObjectName)
-                .withFile(temporaryFile)
-                .withPartNumber(1)
-                .withPartSize(badPartSize)
-                .withUploadId(uploadId));
+                                           .withBucketName(expectedBucketName)
+                                           .withKey(expectedObjectName)
+                                           .withFile(temporaryFile)
+                                           .withPartNumber(1)
+                                           .withPartSize(badPartSize)
+                                           .withUploadId(uploadId));
             fail("Expected an AmazonClientException, but wasn't thrown");
-        } catch (AmazonClientException ace) {}
+        } catch (AmazonClientException ace) {
+        }
     }
 
     /**
@@ -219,34 +236,35 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
     @Test
     public void testMultipleLastParts() throws Exception {
         long largeObjectLength = RANDOM_OBJECT_DATA_LENGTH;
-        long firstPartLength = largeObjectLength - 5*1024*1024;
+        long firstPartLength = largeObjectLength - 5 * 1024 * 1024;
         long secondPartLength = largeObjectLength - firstPartLength;
 
         InitiateMultipartUploadResult initiateMultipartUpload =
-            s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
+                s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
         String uploadId = initiateMultipartUpload.getUploadId();
 
         s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withLastPart(true)
-            .withFile(temporaryFile)
-            .withPartNumber(1)
-            .withPartSize(firstPartLength)
-            .withUploadId(uploadId));
+                                       .withBucketName(expectedBucketName)
+                                       .withKey(expectedObjectName)
+                                       .withLastPart(true)
+                                       .withFile(temporaryFile)
+                                       .withPartNumber(1)
+                                       .withPartSize(firstPartLength)
+                                       .withUploadId(uploadId));
 
         try {
             s3_metadata.uploadPart(new UploadPartRequest()
-                .withBucketName(expectedBucketName)
-                .withKey(expectedObjectName)
-                .withLastPart(true)
-                .withFile(temporaryFile)
-                .withFileOffset(firstPartLength)
-                .withPartNumber(2)
-                .withPartSize(secondPartLength)
-                .withUploadId(uploadId));
+                                           .withBucketName(expectedBucketName)
+                                           .withKey(expectedObjectName)
+                                           .withLastPart(true)
+                                           .withFile(temporaryFile)
+                                           .withFileOffset(firstPartLength)
+                                           .withPartNumber(2)
+                                           .withPartSize(secondPartLength)
+                                           .withUploadId(uploadId));
             fail("Expected an AmazonClientException, but wasn't thrown");
-        } catch (AmazonClientException ace) {}
+        } catch (AmazonClientException ace) {
+        }
     }
 
     /**
@@ -257,28 +275,28 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
     @Test
     public void testLastPartNotSpecified() throws Exception {
         long largeObjectLength = RANDOM_OBJECT_DATA_LENGTH;
-        long firstPartLength = largeObjectLength - 5*1024*1024;
+        long firstPartLength = largeObjectLength - 5 * 1024 * 1024;
         long secondPartLength = largeObjectLength - firstPartLength;
 
         InitiateMultipartUploadResult initiateMultipartUpload = s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
         String uploadId = initiateMultipartUpload.getUploadId();
 
         UploadPartResult uploadPartResult = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withFile(temporaryFile)
-            .withPartNumber(1)
-            .withPartSize(firstPartLength)
-            .withUploadId(uploadId));
+                                                                           .withBucketName(expectedBucketName)
+                                                                           .withKey(expectedObjectName)
+                                                                           .withFile(temporaryFile)
+                                                                           .withPartNumber(1)
+                                                                           .withPartSize(firstPartLength)
+                                                                           .withUploadId(uploadId));
 
         UploadPartResult uploadPartResult2 = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withFile(temporaryFile)
-            .withFileOffset(firstPartLength)
-            .withPartNumber(2)
-            .withPartSize(secondPartLength)
-            .withUploadId(uploadId));
+                                                                            .withBucketName(expectedBucketName)
+                                                                            .withKey(expectedObjectName)
+                                                                            .withFile(temporaryFile)
+                                                                            .withFileOffset(firstPartLength)
+                                                                            .withPartNumber(2)
+                                                                            .withPartSize(secondPartLength)
+                                                                            .withUploadId(uploadId));
 
         ArrayList<PartETag> partETags = new ArrayList<PartETag>();
         partETags.add(uploadPartResult.getPartETag());
@@ -287,7 +305,8 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         try {
             s3_metadata.completeMultipartUpload(new CompleteMultipartUploadRequest(expectedBucketName, expectedObjectName, uploadId, partETags));
             fail("Expected an AmazonClientException, but wasn't thrown");
-        } catch (AmazonClientException ace) {}
+        } catch (AmazonClientException ace) {
+        }
     }
 
     /**
@@ -297,29 +316,29 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
      */
     @Test
     public void testUploadWithMetadata() throws Exception {
-        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5*1024*1024;
+        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5 * 1024 * 1024;
         long secondPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - firstPartLength;
 
         InitiateMultipartUploadResult initiateMultipartUpload = s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
         String uploadId = initiateMultipartUpload.getUploadId();
 
         UploadPartResult uploadPartResult = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withFile(temporaryFile)
-            .withPartNumber(1)
-            .withPartSize(firstPartLength)
-            .withUploadId(uploadId));
+                                                                           .withBucketName(expectedBucketName)
+                                                                           .withKey(expectedObjectName)
+                                                                           .withFile(temporaryFile)
+                                                                           .withPartNumber(1)
+                                                                           .withPartSize(firstPartLength)
+                                                                           .withUploadId(uploadId));
 
         UploadPartResult uploadPartResult2 = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withLastPart(true)
-            .withFile(temporaryFile)
-            .withFileOffset(firstPartLength)
-            .withPartNumber(2)
-            .withPartSize(secondPartLength)
-            .withUploadId(uploadId));
+                                                                            .withBucketName(expectedBucketName)
+                                                                            .withKey(expectedObjectName)
+                                                                            .withLastPart(true)
+                                                                            .withFile(temporaryFile)
+                                                                            .withFileOffset(firstPartLength)
+                                                                            .withPartNumber(2)
+                                                                            .withPartSize(secondPartLength)
+                                                                            .withUploadId(uploadId));
 
         ArrayList<PartETag> partETags = new ArrayList<PartETag>();
         partETags.add(uploadPartResult.getPartETag());
@@ -339,30 +358,30 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
      */
     @Test
     public void testUploadWithMetadataRecoverableError() throws Exception {
-        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5*1024*1024;
+        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5 * 1024 * 1024;
         long secondPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - firstPartLength;
 
         InitiateMultipartUploadResult initiateMultipartUpload = s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
         String uploadId = initiateMultipartUpload.getUploadId();
         InputStream is = new UnreliableRepeatableFileInputStream(temporaryFile)
-                        .disableClose();    // requires explicit release
+                .disableClose();    // requires explicit release
 
         UploadPartResult uploadPartResult = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withInputStream(is)
-            .withPartNumber(1)
-            .withPartSize(firstPartLength)
-            .withUploadId(uploadId));
+                                                                           .withBucketName(expectedBucketName)
+                                                                           .withKey(expectedObjectName)
+                                                                           .withInputStream(is)
+                                                                           .withPartNumber(1)
+                                                                           .withPartSize(firstPartLength)
+                                                                           .withUploadId(uploadId));
 
         UploadPartResult uploadPartResult2 = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withLastPart(true)
-            .withInputStream(is)
-            .withPartNumber(2)
-            .withPartSize(secondPartLength)
-            .withUploadId(uploadId));
+                                                                            .withBucketName(expectedBucketName)
+                                                                            .withKey(expectedObjectName)
+                                                                            .withLastPart(true)
+                                                                            .withInputStream(is)
+                                                                            .withPartNumber(2)
+                                                                            .withPartSize(secondPartLength)
+                                                                            .withUploadId(uploadId));
 
         ArrayList<PartETag> partETags = new ArrayList<PartETag>();
         partETags.add(uploadPartResult.getPartETag());
@@ -382,7 +401,7 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
      */
     @Test
     public void testUploadWithMetadataRecoverableError2() throws Exception {
-        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5*1024*1024;
+        long firstPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - 5 * 1024 * 1024;
         long secondPartLength = (long) RANDOM_OBJECT_DATA_LENGTH - firstPartLength;
 
         InitiateMultipartUploadResult initiateMultipartUpload = s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
@@ -399,21 +418,21 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
                 firstPartLength, secondPartLength, true);
 
         UploadPartResult uploadPartResult = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withInputStream(part1Stream)
-            .withPartNumber(1)
-            .withPartSize(firstPartLength)
-            .withUploadId(uploadId));
+                                                                           .withBucketName(expectedBucketName)
+                                                                           .withKey(expectedObjectName)
+                                                                           .withInputStream(part1Stream)
+                                                                           .withPartNumber(1)
+                                                                           .withPartSize(firstPartLength)
+                                                                           .withUploadId(uploadId));
 
         UploadPartResult uploadPartResult2 = s3_metadata.uploadPart(new UploadPartRequest()
-            .withBucketName(expectedBucketName)
-            .withKey(expectedObjectName)
-            .withLastPart(true)
-            .withInputStream(part2Stream)
-            .withPartNumber(2)
-            .withPartSize(secondPartLength)
-            .withUploadId(uploadId));
+                                                                            .withBucketName(expectedBucketName)
+                                                                            .withKey(expectedObjectName)
+                                                                            .withLastPart(true)
+                                                                            .withInputStream(part2Stream)
+                                                                            .withPartNumber(2)
+                                                                            .withPartSize(secondPartLength)
+                                                                            .withUploadId(uploadId));
 
         ArrayList<PartETag> partETags = new ArrayList<PartETag>();
         partETags.add(uploadPartResult.getPartETag());
@@ -452,38 +471,41 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
             fail("Unable to generate asymmetric keys: " + e.getMessage());
         }
     }
-    private List<PartETag> uploadParts(String bucketName, String uploadId, AmazonS3 s3) throws AmazonServiceException, AmazonClientException, InterruptedException {
+
+    private List<PartETag> uploadParts(String bucketName, String uploadId, AmazonS3 s3)
+            throws AmazonServiceException, AmazonClientException, InterruptedException {
         List<PartETag> partETags = new ArrayList<PartETag>();
 
         UploadPartResult uploadPartResult = s3.uploadPart(new UploadPartRequest()
-            .withBucketName(bucketName)
-            .withInputStream(new RandomInputStream(RANDOM_OBJECT_DATA_LENGTH))
-            .withKey("key")
-            .withPartNumber(1)
-            .withPartSize(RANDOM_OBJECT_DATA_LENGTH)
-            .withUploadId(uploadId));
+                                                                  .withBucketName(bucketName)
+                                                                  .withInputStream(new RandomInputStream(RANDOM_OBJECT_DATA_LENGTH))
+                                                                  .withKey("key")
+                                                                  .withPartNumber(1)
+                                                                  .withPartSize(RANDOM_OBJECT_DATA_LENGTH)
+                                                                  .withUploadId(uploadId));
         assertEquals(1, uploadPartResult.getPartNumber());
         assertNotEmpty(uploadPartResult.getETag());
         partETags.add(new PartETag(uploadPartResult.getPartNumber(), uploadPartResult.getETag()));
 
         uploadPartResult = s3.uploadPart(new UploadPartRequest()
-            .withBucketName(bucketName)
-            .withInputStream(new RandomInputStream(RANDOM_OBJECT_DATA_LENGTH))
-            .withKey("key")
-            .withPartNumber(2)
-            .withPartSize(RANDOM_OBJECT_DATA_LENGTH)
-            .withUploadId(uploadId));
+                                                 .withBucketName(bucketName)
+                                                 .withInputStream(new RandomInputStream(RANDOM_OBJECT_DATA_LENGTH))
+                                                 .withKey("key")
+                                                 .withPartNumber(2)
+                                                 .withPartSize(RANDOM_OBJECT_DATA_LENGTH)
+                                                 .withUploadId(uploadId));
         assertEquals(2, uploadPartResult.getPartNumber());
         assertNotEmpty(uploadPartResult.getETag());
         partETags.add(new PartETag(uploadPartResult.getPartNumber(), uploadPartResult.getETag()));
 
         return partETags;
     }
+
     private void listParts(String bucketName, String uploadId, AmazonS3 s3) {
         PartListing listPartsResult = s3.listParts(new ListPartsRequest(bucketName, "key", uploadId)
-            .withMaxParts(100)
-            .withPartNumberMarker(new Integer(0))
-            .withEncodingType("url"));
+                                                           .withMaxParts(100)
+                                                           .withPartNumberMarker(new Integer(0))
+                                                           .withEncodingType("url"));
         assertEquals(bucketName, listPartsResult.getBucketName());
         assertEquals("key", listPartsResult.getKey());
         assertEquals(100, listPartsResult.getMaxParts().intValue());
@@ -513,9 +535,9 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         // Test all the request parameters for ListMultipartUploads
         MultipartUploadListing listMultipartUploadsResult = s3.listMultipartUploads(
                 new ListMultipartUploadsRequest(bucketName)
-                    .withKeyMarker("key")
-                    .withMaxUploads(100)
-                    .withUploadIdMarker(uploadId));
+                        .withKeyMarker("key")
+                        .withMaxUploads(100)
+                        .withUploadIdMarker(uploadId));
         assertEquals(bucketName, listMultipartUploadsResult.getBucketName());
         assertEquals("key", listMultipartUploadsResult.getKeyMarker());
         assertEquals(100, listMultipartUploadsResult.getMaxUploads());
@@ -527,7 +549,7 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         // Now test some multipart upload data
         MultipartUploadListing listMultipartUploadsResult = s3.listMultipartUploads(
                 new ListMultipartUploadsRequest(bucketName)
-                    .withEncodingType("url"));
+                        .withEncodingType("url"));
         assertEquals(bucketName, listMultipartUploadsResult.getBucketName());
         assertNotNull(listMultipartUploadsResult.getNextKeyMarker());
         assertNotNull(listMultipartUploadsResult.getNextUploadIdMarker());
@@ -545,7 +567,7 @@ public abstract class S3MultipartUploadCryptoIntegrationTestBase extends S3Integ
         assertNotNull(multiPartUpload.getInitiator());
         assertNotEmpty(multiPartUpload.getInitiator().getDisplayName());
         assertNotEmpty(multiPartUpload.getInitiator().getId());
-        
+
         // EncodingType parameter should be returned in the response
         assertEquals("url", listMultipartUploadsResult.getEncodingType());
     }

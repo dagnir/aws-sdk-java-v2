@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,8 +26,9 @@ public class SdkSocket extends DelegateSocket {
 
     public SdkSocket(Socket sock) {
         super(sock);
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("created: " + endpoint());
+        }
     }
 
     /**
@@ -39,40 +40,47 @@ public class SdkSocket extends DelegateSocket {
 
     @Override
     public void connect(SocketAddress endpoint) throws IOException {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("connecting to: " + endpoint);
+        }
         sock.connect(endpoint);
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("connected to: " + endpoint());
+        }
     }
 
     @Override
     public void connect(SocketAddress endpoint, int timeout) throws IOException {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("connecting to: " + endpoint);
+        }
         sock.connect(endpoint, timeout);
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("connected to: " + endpoint());
+        }
     }
 
     @Override
     public void close() throws IOException {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("closing " + endpoint());
+        }
         sock.close();
     }
 
     @Override
     public void shutdownInput() throws IOException {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("shutting down input of " + endpoint());
+        }
         sock.shutdownInput();
     }
 
     @Override
     public void shutdownOutput() throws IOException {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("shutting down output of " + endpoint());
+        }
         sock.shutdownOutput();
     }
 }

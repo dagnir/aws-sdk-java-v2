@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -35,6 +50,14 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
         mapper = new DynamoDBMapper(dynamo);
     }
 
+    private static boolean equalLsi(Collection<LocalSecondaryIndex> a, Collection<LocalSecondaryIndex> b) {
+        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new LocalSecondaryIndexDefinitionComparator());
+    }
+
+    private static boolean equalGsi(Collection<GlobalSecondaryIndex> a, Collection<GlobalSecondaryIndex> b) {
+        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new GlobalSecondaryIndexDefinitionComparator());
+    }
+
     @Test
     public void testParseIndexRangeKeyClass() {
         CreateTableRequest request = mapper.generateCreateTableRequest(IndexRangeKeyClass.class);
@@ -43,7 +66,7 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
         List<KeySchemaElement> expectedKeyElements = Arrays.asList(
                 new KeySchemaElement("key", KeyType.HASH),
                 new KeySchemaElement("rangeKey", KeyType.RANGE)
-        );
+                                                                  );
         assertEquals(expectedKeyElements, request.getKeySchema());
 
         List<AttributeDefinition> expectedAttrDefinitions = Arrays.asList(
@@ -52,7 +75,7 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
                 new AttributeDefinition("indexFooRangeKey", ScalarAttributeType.N),
                 new AttributeDefinition("indexBarRangeKey", ScalarAttributeType.N),
                 new AttributeDefinition("multipleIndexRangeKey", ScalarAttributeType.N)
-        );
+                                                                         );
         assertTrue(UnorderedCollectionComparator.equalUnorderedCollections(
                 expectedAttrDefinitions,
                 request.getAttributeDefinitions()));
@@ -92,7 +115,7 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
         List<KeySchemaElement> expectedKeyElements = Arrays.asList(
                 new KeySchemaElement("primaryHashKey", KeyType.HASH),
                 new KeySchemaElement("primaryRangeKey", KeyType.RANGE)
-        );
+                                                                  );
         assertEquals(expectedKeyElements, request.getKeySchema());
 
         List<AttributeDefinition> expectedAttrDefinitions = Arrays.asList(
@@ -101,7 +124,7 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
                 new AttributeDefinition("primaryRangeKey", ScalarAttributeType.S),
                 new AttributeDefinition("indexRangeKey", ScalarAttributeType.S),
                 new AttributeDefinition("anotherIndexRangeKey", ScalarAttributeType.S)
-        );
+                                                                         );
         assertTrue(UnorderedCollectionComparator.equalUnorderedCollections(
                 expectedAttrDefinitions,
                 request.getAttributeDefinitions()));
@@ -158,14 +181,6 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
         assertTrue(equalGsi(expectedGsi, request.getGlobalSecondaryIndexes()));
 
         assertNull(request.getProvisionedThroughput());
-    }
-
-    private static boolean equalLsi(Collection<LocalSecondaryIndex> a, Collection<LocalSecondaryIndex> b) {
-        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new LocalSecondaryIndexDefinitionComparator());
-    }
-
-    private static boolean equalGsi(Collection<GlobalSecondaryIndex> a, Collection<GlobalSecondaryIndex> b) {
-        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new GlobalSecondaryIndexDefinitionComparator());
     }
 
     private static class LocalSecondaryIndexDefinitionComparator

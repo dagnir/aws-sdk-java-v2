@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,11 +21,12 @@ import software.amazon.awssdk.metrics.MetricAdmin;
 
 public class SdkMBeanRegistrySupport implements SdkMBeanRegistry {
     ;
+
     @Override
     public boolean registerMetricAdminMBean(String objectName) {
         try {
             return MBeans.registerMBean(objectName, new MetricAdmin());
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             LogFactory.getLog(SdkMBeanRegistrySupport.class).warn("", ex);
         }
         return false;
@@ -35,7 +36,7 @@ public class SdkMBeanRegistrySupport implements SdkMBeanRegistry {
     public boolean unregisterMBean(String objectName) {
         try {
             return MBeans.unregisterMBean(objectName);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             LogFactory.getLog(SdkMBeanRegistrySupport.class).warn("", ex);
         }
         return false;

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -39,42 +39,42 @@ public class UpdateExpressionTest {
     @Test
     public void udpateAttributes() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(S("Brand").set("AWS"))
-            .addUpdate(N("Price").set(100))
-            .buildForUpdate();
+                .addUpdate(S("Brand").set("AWS"))
+                .addUpdate(N("Price").set(100))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
-    
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
+
         System.out.println(expr);
         System.out.println(nm);
         System.out.println(vm);
-    
+
         assertEquals("SET #0 = :0, #1 = :1", expr);
         assertEquals("Brand", nm.get("#0"));
         assertEquals("Price", nm.get("#1"));
-        
+
         assertTrue(vm.get(":0").equals("AWS"));
         assertTrue(vm.get(":1").equals(100));
     }
-    
+
     // SET RelatedItems[0] = :ri
     @Test
     public void updateListAttribute() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(S("RelatedItems[0]").set("Amazon"))
-            .buildForUpdate();
+                .addUpdate(S("RelatedItems[0]").set("Amazon"))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
-    
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
+
         System.out.println(expr);
         System.out.println(nm);
         System.out.println(vm);
-    
+
         assertEquals("SET #0[0] = :0", expr);
         assertEquals("RelatedItems", nm.get("#0"));
-        
+
         assertTrue(vm.get(":0").equals("Amazon"));
     }
 
@@ -82,56 +82,56 @@ public class UpdateExpressionTest {
     @Test
     public void nestedMapAttributes() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(S("ProductReviews[0]").set("Good"))
-            .addUpdate(S("ProductReviews[1]").set("Bad"))
-            .buildForUpdate();
+                .addUpdate(S("ProductReviews[0]").set("Good"))
+                .addUpdate(S("ProductReviews[1]").set("Bad"))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
-    
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
+
         System.out.println(expr);
         System.out.println(nm);
         System.out.println(vm);
-    
+
         assertEquals("SET #0[0] = :0, #0[1] = :1", expr);
         assertEquals("ProductReviews", nm.get("#0"));
         assertTrue(vm.get(":0").equals("Good"));
         assertTrue(vm.get(":1").equals("Bad"));
     }
-    
+
     // SET Price = Price - :p
     @Test
     public void decreasthePrice() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(N("Price").set(N("Price").minus(10)))
-            .buildForUpdate();
+                .addUpdate(N("Price").set(N("Price").minus(10)))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
-    
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
+
         System.out.println(expr);
         System.out.println(nm);
         System.out.println(vm);
-    
+
         assertEquals("SET #0 = #0 - :0", expr);
         assertEquals("Price", nm.get("#0"));
         assertTrue(vm.get(":0").equals(10));
     }
-    
+
     // SET Price = if_not_exists(Price, 100) 
     @Test
     public void ifNotExists() {
         UpdateItemExpressionSpec builder = new ExpressionSpecBuilder()
-            .addUpdate(N("Price").set(if_not_exists("Price", 100)))
-            .buildForUpdate();
+                .addUpdate(N("Price").set(if_not_exists("Price", 100)))
+                .buildForUpdate();
         String expr = builder.getUpdateExpression();
-        Map<String,String> nm = builder.getNameMap();
-        Map<String,Object> vm = builder.getValueMap();
-    
+        Map<String, String> nm = builder.getNameMap();
+        Map<String, Object> vm = builder.getValueMap();
+
         System.out.println(expr);
         System.out.println(nm);
         System.out.println(vm);
-    
+
         assertEquals("SET #0 = if_not_exists(#0,:0)", expr);
         assertEquals("Price", nm.get("#0"));
         assertEquals(100, vm.get(":0"));
@@ -141,54 +141,54 @@ public class UpdateExpressionTest {
     @Test
     public void listAppend() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(L("ProductReview.FiveStar").set(list_append("ProductReview.FiveStar", 100)))
-            .buildForUpdate();
+                .addUpdate(L("ProductReview.FiveStar").set(list_append("ProductReview.FiveStar", 100)))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
-    
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
+
         System.out.println(expr);
         System.out.println(nm);
         System.out.println(vm);
-    
+
         assertEquals("SET #0.#1 = list_append(#0.#1, :0)", expr);
         assertEquals("ProductReview", nm.get("#0"));
         assertEquals("FiveStar", nm.get("#1"));
         assertEquals(Arrays.asList(100), vm.get(":0"));
     }
-    
+
     // SET #pr.FiveStar = list_append(:r, #pr.FiveStar)
     @Test
     public void listAppend2() {
         List<Number> list = Arrays.<Number>asList(100);
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-              .addUpdate(L("ProductReview.FiveStar").set(list_append(list, "ProductReview.FiveStar")))
-              .buildForUpdate();
-          String expr = xspec.getUpdateExpression();
-          Map<String,String> nm = xspec.getNameMap();
-          Map<String,Object> vm = xspec.getValueMap();
-      
-          System.out.println(expr);
-          System.out.println(nm);
-          System.out.println(vm);
-      
-          assertEquals("SET #0.#1 = list_append(:0, #0.#1)", expr);
-          assertEquals("ProductReview", nm.get("#0"));
-          assertEquals("FiveStar", nm.get("#1"));
-          assertEquals(Arrays.asList(100), vm.get(":0"));
+                .addUpdate(L("ProductReview.FiveStar").set(list_append(list, "ProductReview.FiveStar")))
+                .buildForUpdate();
+        String expr = xspec.getUpdateExpression();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
+
+        System.out.println(expr);
+        System.out.println(nm);
+        System.out.println(vm);
+
+        assertEquals("SET #0.#1 = list_append(:0, #0.#1)", expr);
+        assertEquals("ProductReview", nm.get("#0"));
+        assertEquals("FiveStar", nm.get("#1"));
+        assertEquals(Arrays.asList(100), vm.get(":0"));
     }
-    
+
     // REMOVE Title, RelatedItems[2], Pictures.RearView
     @Test
     public void removeExpr() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(remove("Title"))
-            .addUpdate(remove("RelatedItems[2]"))
-            .addUpdate(remove("Pictures.RearView"))
-            .buildForUpdate();
+                .addUpdate(remove("Title"))
+                .addUpdate(remove("RelatedItems[2]"))
+                .addUpdate(remove("Pictures.RearView"))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(expr);
         System.out.println(nm);
@@ -206,11 +206,11 @@ public class UpdateExpressionTest {
     @Test
     public void addNumeric() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(N("Price").add(100))
-            .buildForUpdate();
+                .addUpdate(N("Price").add(100))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(expr);
         System.out.println(nm);
@@ -225,11 +225,11 @@ public class UpdateExpressionTest {
     @Test
     public void addToStringSet() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(SS("Color").append("blue"))
-            .buildForUpdate();
+                .addUpdate(SS("Color").append("blue"))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(expr);
         System.out.println(nm);
@@ -244,11 +244,11 @@ public class UpdateExpressionTest {
     @Test
     public void deleteFromStringSet() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(SS("Color").delete("blue"))
-            .buildForUpdate();
+                .addUpdate(SS("Color").delete("blue"))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(expr);
         System.out.println(nm);
@@ -264,16 +264,16 @@ public class UpdateExpressionTest {
     @Test
     public void multiUpdates() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addUpdate(S("list[0]").set("someValue"))
-            .addUpdate(remove("someMap.nestedField1"))
-            .addUpdate(remove("someMap.nestedField2"))
-            .addUpdate(N("aNumber").add(10))
-            .addUpdate(N("anotherNumber").add(20))
-            .addUpdate(SS("aSet").delete("elementToDelete"))
-            .buildForUpdate();
+                .addUpdate(S("list[0]").set("someValue"))
+                .addUpdate(remove("someMap.nestedField1"))
+                .addUpdate(remove("someMap.nestedField2"))
+                .addUpdate(N("aNumber").add(10))
+                .addUpdate(N("anotherNumber").add(20))
+                .addUpdate(SS("aSet").delete("elementToDelete"))
+                .buildForUpdate();
         String expr = xspec.getUpdateExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(expr);
         System.out.println(nm);

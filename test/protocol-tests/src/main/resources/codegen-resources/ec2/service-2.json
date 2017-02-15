@@ -1,129 +1,193 @@
 {
-  "version":"2.0",
-  "metadata":{
-    "apiVersion":"2016-03-11",
-    "endpointPrefix":"ec2",
-    "protocol":"ec2",
-    "serviceAbbreviation":"EC2ProtocolTests",
-    "serviceFullName":"AWS DR Tools EC2 Protocol Tests",
-    "signatureVersion":"v4",
-    "timestampFormat":"unixTimestamp"
+  "version": "2.0",
+  "metadata": {
+    "apiVersion": "2016-03-11",
+    "endpointPrefix": "ec2",
+    "protocol": "ec2",
+    "serviceAbbreviation": "EC2ProtocolTests",
+    "serviceFullName": "AWS DR Tools EC2 Protocol Tests",
+    "signatureVersion": "v4",
+    "timestampFormat": "unixTimestamp"
   },
-  "operations":{
-    "AllTypes":{
-      "name":"AllTypes",
-      "http":{
-        "method":"POST",
-        "requestUri":"/"
+  "operations": {
+    "AllTypes": {
+      "name": "AllTypes",
+      "http": {
+        "method": "POST",
+        "requestUri": "/"
       },
-      "input":{"shape":"AllTypesStructure"},
-      "output":{"shape":"AllTypesStructure"}
-    },
-    "Ec2Types":{
-      "name":"Ec2Types",
-      "http":{
-        "method":"POST",
-        "requestUri":"/"
+      "input": {
+        "shape": "AllTypesStructure"
       },
-      "input":{"shape":"Ec2TypesInput"},
-      "output":{"shape":"Ec2TypesInput"}
-    }
-  },
-  "shapes":{
-    "AllTypesStructure":{
-      "type":"structure",
-      "members":{
-        "stringMember":{"shape":"String"},
-        "integerMember":{"shape":"Integer"},
-        "booleanMember":{"shape":"Boolean"},
-        "floatMember":{"shape":"Float"},
-        "doubleMember":{"shape":"Double"},
-        "longMember":{"shape":"Long"},
-        "simpleStructMember":{"shape":"SimpleStruct"},
-        "simpleList":{"shape":"ListOfStrings"},
-        "listOfStructs":{"shape":"ListOfSimpleStructs"},
-        "timestampMember":{"shape":"Timestamp"},
-        "structWithNestedTimestampMember":{"shape":"StructWithTimestamp"},
-        "blobArg":{"shape":"BlobType"}
+      "output": {
+        "shape": "AllTypesStructure"
       }
     },
-    "BlobType":{"type":"blob"},
-    "Boolean":{"type":"boolean"},
-    "Double":{"type":"double"},
-    "Ec2TypesInput":{
-      "type":"structure",
-      "members":{
-        "FlattenedListOfStrings":{"shape":"FlattenedListOfStrings"},
-        "FlattenedListOfStructs":{"shape":"FlattenedListOfStructs"},
-        "FlattenedListWithLocation":{
-          "shape":"FlattenedListWithLocation",
-          "locationName":"ListMemberName"
+    "Ec2Types": {
+      "name": "Ec2Types",
+      "http": {
+        "method": "POST",
+        "requestUri": "/"
+      },
+      "input": {
+        "shape": "Ec2TypesInput"
+      },
+      "output": {
+        "shape": "Ec2TypesInput"
+      }
+    }
+  },
+  "shapes": {
+    "AllTypesStructure": {
+      "type": "structure",
+      "members": {
+        "stringMember": {
+          "shape": "String"
         },
-        "StringMemberWithLocation":{
-          "shape":"String",
-          "locationName":"someLocation"
+        "integerMember": {
+          "shape": "Integer"
         },
-        "StringMemberWithQueryName":{
-          "shape":"String",
-          "queryName":"someQueryName"
+        "booleanMember": {
+          "shape": "Boolean"
         },
-        "StringMemberWithLocationAndQueryName":{
-          "shape":"String",
-          "queryName":"someQueryName"
+        "floatMember": {
+          "shape": "Float"
         },
-        "ListMemberWithLocationAndQueryName":{
-          "shape":"ListOfStrings",
-          "locationName":"someLocation",
-          "queryName":"listQueryName"
+        "doubleMember": {
+          "shape": "Double"
         },
-        "ListMemberWithOnlyMemberLocation":{
-          "shape":"ListOfStrings",
-          "locationName":"item"
+        "longMember": {
+          "shape": "Long"
+        },
+        "simpleStructMember": {
+          "shape": "SimpleStruct"
+        },
+        "simpleList": {
+          "shape": "ListOfStrings"
+        },
+        "listOfStructs": {
+          "shape": "ListOfSimpleStructs"
+        },
+        "timestampMember": {
+          "shape": "Timestamp"
+        },
+        "structWithNestedTimestampMember": {
+          "shape": "StructWithTimestamp"
+        },
+        "blobArg": {
+          "shape": "BlobType"
         }
       }
     },
-    "FlattenedListOfStrings":{
-      "type":"list",
-      "member":{"shape":"String"},
-      "flattened":true
+    "BlobType": {
+      "type": "blob"
     },
-    "FlattenedListOfStructs":{
-      "type":"list",
-      "member":{"shape":"SimpleStruct"},
-      "flattened":true
+    "Boolean": {
+      "type": "boolean"
     },
-    "FlattenedListWithLocation":{
-      "type":"list",
-      "member":{
-        "shape":"String",
-        "locationName":"item"
+    "Double": {
+      "type": "double"
+    },
+    "Ec2TypesInput": {
+      "type": "structure",
+      "members": {
+        "FlattenedListOfStrings": {
+          "shape": "FlattenedListOfStrings"
+        },
+        "FlattenedListOfStructs": {
+          "shape": "FlattenedListOfStructs"
+        },
+        "FlattenedListWithLocation": {
+          "shape": "FlattenedListWithLocation",
+          "locationName": "ListMemberName"
+        },
+        "StringMemberWithLocation": {
+          "shape": "String",
+          "locationName": "someLocation"
+        },
+        "StringMemberWithQueryName": {
+          "shape": "String",
+          "queryName": "someQueryName"
+        },
+        "StringMemberWithLocationAndQueryName": {
+          "shape": "String",
+          "queryName": "someQueryName"
+        },
+        "ListMemberWithLocationAndQueryName": {
+          "shape": "ListOfStrings",
+          "locationName": "someLocation",
+          "queryName": "listQueryName"
+        },
+        "ListMemberWithOnlyMemberLocation": {
+          "shape": "ListOfStrings",
+          "locationName": "item"
+        }
+      }
+    },
+    "FlattenedListOfStrings": {
+      "type": "list",
+      "member": {
+        "shape": "String"
       },
-      "flattened":true
+      "flattened": true
     },
-    "Float":{"type":"float"},
-    "Integer":{"type":"integer"},
-    "ListOfSimpleStructs":{
-      "type":"list",
-      "member":{"shape":"SimpleStruct"}
+    "FlattenedListOfStructs": {
+      "type": "list",
+      "member": {
+        "shape": "SimpleStruct"
+      },
+      "flattened": true
     },
-    "ListOfStrings":{
-      "type":"list",
-      "member":{"shape":"String"}
+    "FlattenedListWithLocation": {
+      "type": "list",
+      "member": {
+        "shape": "String",
+        "locationName": "item"
+      },
+      "flattened": true
     },
-    "Long":{"type":"long"},
-    "SimpleStruct":{
-      "type":"structure",
-      "members":{
-        "StringMember":{"shape":"String"}
+    "Float": {
+      "type": "float"
+    },
+    "Integer": {
+      "type": "integer"
+    },
+    "ListOfSimpleStructs": {
+      "type": "list",
+      "member": {
+        "shape": "SimpleStruct"
       }
     },
-    "String":{"type":"string"},
-    "StructWithTimestamp":{
-      "type":"structure",
-      "members":{
-        "NestedTimestamp":{"shape":"Timestamp"}
+    "ListOfStrings": {
+      "type": "list",
+      "member": {
+        "shape": "String"
       }
     },
-    "Timestamp":{"type":"timestamp"}
+    "Long": {
+      "type": "long"
+    },
+    "SimpleStruct": {
+      "type": "structure",
+      "members": {
+        "StringMember": {
+          "shape": "String"
+        }
+      }
+    },
+    "String": {
+      "type": "string"
+    },
+    "StructWithTimestamp": {
+      "type": "structure",
+      "members": {
+        "NestedTimestamp": {
+          "shape": "Timestamp"
+        }
+      }
+    },
+    "Timestamp": {
+      "type": "timestamp"
+    }
   }
 }

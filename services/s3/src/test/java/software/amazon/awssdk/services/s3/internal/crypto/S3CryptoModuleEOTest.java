@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -25,12 +40,12 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
 
     @Override
     protected S3CryptoModuleBase<?> createS3CryptoModule(S3Direct s3,
-            EncryptionMaterialsProvider provider,
-            CryptoConfiguration cryptoConfig) {
+                                                         EncryptionMaterialsProvider provider,
+                                                         CryptoConfiguration cryptoConfig) {
         return new S3CryptoModuleEO(s3, provider,
-                cryptoConfig.clone()
-                    .withCryptoMode(EncryptionOnly)
-                    .readOnly());
+                                    cryptoConfig.clone()
+                                                .withCryptoMode(EncryptionOnly)
+                                                .readOnly());
     }
 
     protected S3Direct mockS3Direct_putObjectSecurely() {
@@ -46,14 +61,14 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
                 ObjectMetadata md = req.getMetadata();
                 // plaintext 100
                 assertTrue(getExpectedCipherTextByteLength(100) == md.getContentLength());
-                Map<String,String> userMD = md.getUserMetadata();
+                Map<String, String> userMD = md.getUserMetadata();
                 String plaintextLen = userMD.get(Headers.UNENCRYPTED_CONTENT_LENGTH);
                 assertEquals("100", plaintextLen);
-                String b64cekEncrypted= userMD.get(Headers.CRYPTO_KEY); 
+                String b64cekEncrypted = userMD.get(Headers.CRYPTO_KEY);
                 assertNotNull(b64cekEncrypted);
                 byte[] cekWrapped = decodeBase64(b64cekEncrypted);
                 assertTrue(48 == cekWrapped.length);
-                String b64iv = userMD.get(Headers.CRYPTO_IV); 
+                String b64iv = userMD.get(Headers.CRYPTO_IV);
                 assertNotNull(b64iv);
                 byte[] iv = decodeBase64(b64iv);
                 assertTrue(AES_CBC.getIVLengthInBytes() == iv.length);
@@ -70,6 +85,7 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
         // A mocked S3Direct object to verify the put request
         return new S3DirectMock() {
             private int count;
+
             @Override
             public PutObjectResult putObject(PutObjectRequest req) {
                 try {
@@ -85,29 +101,29 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
                 count++;
                 System.out.println("count: " + count);
                 ObjectMetadata md = req.getMetadata();
-                Map<String,String> userMD = md.getUserMetadata();
+                Map<String, String> userMD = md.getUserMetadata();
                 // The x-amz-unencrypted-content-length seems erroneously
                 // repeated in the user meta data of the instruction file.
                 // This is now removed from the V2 client.
                 String plaintextLen = userMD.get(Headers.UNENCRYPTED_CONTENT_LENGTH);
-//                assertEquals("100", plaintextLen);
-//                assertNull(plaintextLen);
+                //                assertEquals("100", plaintextLen);
+                //                assertNull(plaintextLen);
                 if (count == 1) {
                     // Verify the content S3 object
-                  // plaintext 100
-                  assertTrue(getExpectedCipherTextByteLength(100) == md.getContentLength());
-                  assertTrue(userMD.size() == 1);
-                  assertTrue(req.getKey().equals("key"));
+                    // plaintext 100
+                    assertTrue(getExpectedCipherTextByteLength(100) == md.getContentLength());
+                    assertTrue(userMD.size() == 1);
+                    assertTrue(req.getKey().equals("key"));
                 } else if (count == 2) {
                     // Verify the instruction file S3 object
                     assertTrue(md.getContentLength() > 0);
                     assertNotNull(userMD.get(Headers.CRYPTO_INSTRUCTION_FILE));
                     assertTrue(req.getKey().equals("key.instruction"));
-//                    assertTrue(userMD.size() == 2);
+                    //                    assertTrue(userMD.size() == 2);
                     assertTrue(userMD.size() == 1);
                     String json = IOUtils.toString(req.getInputStream(), "UTF-8");
                     @SuppressWarnings("unchecked")
-                    Map<String,String> map = Jackson.fromJsonString(json, Map.class);
+                    Map<String, String> map = Jackson.fromJsonString(json, Map.class);
                     String b64cekWrapped = map.get(Headers.CRYPTO_KEY);
                     assertNotNull(b64cekWrapped);
                     byte[] cekWrapped = decodeBase64(b64cekWrapped);
@@ -150,13 +166,13 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
 
         // verify the key wrapping scheme
         String kwa = inst.getKeyWrappingAlgorithm();
-//        assertEquals(S3KeyWrapScheme.AESWrap, kwa);
+        //        assertEquals(S3KeyWrapScheme.AESWrap, kwa);
         assertNull(kwa);
 
         // verify the key wrapped
         byte[] encryptedCEK = inst.getEncryptedCEK();
-//        assertTrue(""+encryptedCEK.length, encryptedCEK.length == 40);
-        assertTrue(""+encryptedCEK.length, encryptedCEK.length == 48);
+        //        assertTrue(""+encryptedCEK.length, encryptedCEK.length == 40);
+        assertTrue("" + encryptedCEK.length, encryptedCEK.length == 48);
 
         // verify the cipher
         CipherLite cipher = inst.getCipherLite();

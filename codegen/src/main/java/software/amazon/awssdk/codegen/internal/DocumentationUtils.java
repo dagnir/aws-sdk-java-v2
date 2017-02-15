@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -51,7 +51,7 @@ public class DocumentationUtils {
             "apigateway", "budgets", "cloudsearch", "cloudsearchdomain",
             "discovery", "elastictranscoder", "es", "glacier", "importexport",
             "iot", "data.iot", "machinelearning", "rekognition", "s3", "sdb", "swf"
-    ));
+                                                                                                       ));
 
     public static String generateSetterDocumentation() {
         return null;
@@ -84,9 +84,9 @@ public class DocumentationUtils {
             int startTagIndex = documentation.indexOf(">");
             final int closingTagIndex = documentation.lastIndexOf("<");
             if (closingTagIndex > startTagIndex) {
-                documentation =  stripHTMLTags(documentation.substring
+                documentation = stripHTMLTags(documentation.substring
                         (startTagIndex + 1,
-                        closingTagIndex));
+                         closingTagIndex));
             } else {
                 documentation = stripHTMLTags(documentation.substring
                         (startTagIndex + 1));
@@ -129,9 +129,9 @@ public class DocumentationUtils {
     public static String createLinkToServiceDocumentation(Metadata metadata, String name) {
         if (isCrossLinkingEnabledForService(metadata)) {
             return String.format("@see <a href=\"http://%s/goto/WebAPI/%s/%s\" target=\"_top\">AWS API Documentation</a>",
-                    AWS_DOCS_HOST,
-                    metadata.getUid(),
-                    name);
+                                 AWS_DOCS_HOST,
+                                 metadata.getUid(),
+                                 name);
         }
         return "";
     }

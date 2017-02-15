@@ -57,6 +57,20 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
     }
 
     /**
+     * Deletes the specified key pair.
+     *
+     * @param name
+     *            The name of the key pair to delete.
+     */
+    private static void deleteKeyPair(String name) {
+        ec2.deleteKeyPair(new DeleteKeyPairRequest(name));
+    }
+
+    /*
+     * Individual Tests
+     */
+
+    /**
      * Runs the individual KeyPair tests in a specific order, so that we hit all
      * keypair operations, and so that tests that require data from earlier
      * tests run in the correct order.
@@ -69,10 +83,6 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         testDeleteKeyPair();
     }
 
-    /*
-     * Individual Tests
-     */
-
     /**
      * Tests that we can correctly create a new key pair.
      */
@@ -80,8 +90,8 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         assertFalse(doesKeyPairExist(testKeyPairName));
 
         KeyPair keyPair = ec2.createKeyPair(new CreateKeyPairRequest()
-                .withKeyName(testKeyPairName)
-                ).getKeyPair();
+                                                    .withKeyName(testKeyPairName)
+                                           ).getKeyPair();
 
         assertEquals(testKeyPairName, keyPair.getKeyName());
         assertTrue(keyPair.getKeyFingerprint().length() > 10);
@@ -121,13 +131,18 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         List<KeyPairInfo> keyPairs = ec2.describeKeyPairs(
                 new DescribeKeyPairsRequest()
                         .withFilters(new Filter()
-                                .withName("key-name")
-                                .withValues(testKeyPairName)
-                        )
-                ).getKeyPairs();
+                                             .withName("key-name")
+                                             .withValues(testKeyPairName)
+                                    )
+                                                         ).getKeyPairs();
         assertEquals(1, keyPairs.size());
         assertEquals(testKeyPairName, keyPairs.get(0).getKeyName());
     }
+
+
+    /*
+     * Test Helper Methods
+     */
 
     /**
      * Tests that we can delete the key pair we created earlier.
@@ -140,11 +155,6 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         assertFalse(doesKeyPairExist(testKeyPairName));
         testKeyPairName = null;
     }
-
-
-    /*
-     * Test Helper Methods
-     */
 
     /**
      * Returns true if the specified key pair name exists.
@@ -159,7 +169,7 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         try {
             DescribeKeyPairsResult result =
                     ec2.describeKeyPairs(new DescribeKeyPairsRequest()
-                            .withKeyNames(name));
+                                                 .withKeyNames(name));
             return result.getKeyPairs().size() > 0;
 
         } catch (AmazonServiceException ase) {
@@ -187,16 +197,6 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         }
 
         return keyPairsByName;
-    }
-
-    /**
-     * Deletes the specified key pair.
-     *
-     * @param name
-     *            The name of the key pair to delete.
-     */
-    private static void deleteKeyPair(String name) {
-        ec2.deleteKeyPair(new DeleteKeyPairRequest(name));
     }
 
 }

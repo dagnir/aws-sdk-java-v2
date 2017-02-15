@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -66,7 +81,7 @@ import software.amazon.awssdk.util.Md5Utils;
 public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
 
     /** Length of the random temp file to upload */
-    private static final int RANDOM_OBJECT_DATA_LENGTH = 32*1024;
+    private static final int RANDOM_OBJECT_DATA_LENGTH = 32 * 1024;
 
     /** Suffix appended to the end of instruction files */
     private static final String INSTRUCTION_SUFFIX = ".instruction";
@@ -165,10 +180,10 @@ public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
      */
     @Test
     public void testRecoverableErrorHandling() throws Exception {
-        int tempFileSize = 1024*1024*8+2345;
+        int tempFileSize = 1024 * 1024 * 8 + 2345;
         RandomTempFile randomTempFile = new RandomTempFile("s3-encryption-error-recovery", tempFileSize);
 
-        PutObjectRequest putObjectRequest = new PutObjectRequest(expectedBucketName, expectedObjectName, (File)null);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(expectedBucketName, expectedObjectName, (File) null);
         putObjectRequest.setMetadata(new ObjectMetadata());
         putObjectRequest.getMetadata().setContentLength(tempFileSize);
         putObjectRequest.setInputStream(new UnreliableRepeatableFileInputStream(randomTempFile).disableClose());
@@ -384,6 +399,7 @@ public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
         testGetObjectWithoutDecrypting(objectNamePrefix);
         testNoEncryptionInfoInMetadata(objectNamePrefix);
     }
+
     /**
      * Test that a client in metadata storage mode is able to retrieve an object that was previously stored in instruction file mode.
      *
@@ -500,7 +516,7 @@ public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
             }
             if (summary.getKey().equals(expectedObjectName + deleteFileSuffix + INSTRUCTION_SUFFIX)) {
                 fail(String.format("Instruction file '%s' was not deleted from bucket '%s'",
-                        summary.getKey(), summary.getBucketName()));
+                                   summary.getKey(), summary.getBucketName()));
             }
         }
     }
@@ -517,7 +533,7 @@ public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
         metadata.setContentMD5(BinaryUtils.toBase64(md5Hash));
 
         // PUT the same object with both the encryption client and the standard client
-        defaultSymmetricEncryption.putObject(expectedBucketName, cryptoClientPrefix + expectedObjectName, new FileInputStream(temporaryFile),metadata);
+        defaultSymmetricEncryption.putObject(expectedBucketName, cryptoClientPrefix + expectedObjectName, new FileInputStream(temporaryFile), metadata);
 
         // GET the object with both the encryption client and the standard client
         GetObjectRequest retrieveRequest = new GetObjectRequest(expectedBucketName, cryptoClientPrefix + expectedObjectName);
@@ -576,61 +592,6 @@ public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
      * Private Helper Methods
      */
 
-    class TestEncryptionProvider implements EncryptionMaterialsProvider {
-        static final String MATERIAL_TYPE = "TYPE";
-        static final String ASYMMETRIC_TYPE = "ASYMMETRIC";
-        static final String SYMMETRIC_TYPE = "SYMMETRIC";
-        private final EncryptionMaterials symmetricEncryptionMaterials;
-        private final EncryptionMaterials asymmetricEncryptionMaterials;
-
-        public TestEncryptionProvider(EncryptionMaterials symmetricEncryptionMaterials, EncryptionMaterials asymmetricEncryptionMaterials) {
-            this.symmetricEncryptionMaterials = symmetricEncryptionMaterials;
-            this.asymmetricEncryptionMaterials = asymmetricEncryptionMaterials;
-        }
-
-        @Override
-        public EncryptionMaterials getEncryptionMaterials(Map<String, String> materialsDescription) {
-            if (materialsDescription.get(MATERIAL_TYPE).equals(ASYMMETRIC_TYPE)) {
-                return asymmetricEncryptionMaterials;
-            }
-
-            if (materialsDescription.get(MATERIAL_TYPE).equals(SYMMETRIC_TYPE)) {
-                return symmetricEncryptionMaterials;
-            }
-
-            throw new IllegalStateException("Invalid materialsDescription");
-        }
-
-        @Override
-        public EncryptionMaterials getEncryptionMaterials() {
-            throw new IllegalStateException("expected to use getEncryptionMaterials(Map<String, String> materialsDescription)");
-        }
-
-        @Override
-        public void refresh() {
-            // nothing for testing.
-        }
-    }
-
-    class TestEncryptionMaterials extends EncryptionMaterials {
-
-        private Map<String, String> matDesc;
-
-        public TestEncryptionMaterials(KeyPair keyPair, Map<String, String> matDesc) {
-            super(keyPair);
-            this.matDesc = matDesc;
-        }
-
-        public TestEncryptionMaterials(SecretKey key, Map<String, String> matDesc) {
-            super(key);
-            this.matDesc = matDesc;
-        }
-
-        public Map<String, String> getMaterialsDescription(){
-            return matDesc;
-        }
-    }
-
     /*
      * Generates temporary files for uploading and downloading
      */
@@ -682,7 +643,8 @@ public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
         s3Client.putObject(expectedBucketName, namePrefix + expectedObjectName, uploadInputStream, metadata);
     }
 
-    private void testEncryptedPutObject(AmazonS3 s3Client, String namePrefix, Map<String, String> materialsDescription) throws IOException {
+    private void testEncryptedPutObject(AmazonS3 s3Client, String namePrefix, Map<String, String> materialsDescription)
+            throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(RANDOM_OBJECT_DATA_LENGTH);
         metadata.addUserMetadata("foo", "bar");
@@ -750,5 +712,61 @@ public class S3CryptoIntegrationTest extends S3IntegrationTestBase {
         assertNull(metadata.get(Headers.CRYPTO_IV));
         assertNull(metadata.get(Headers.CRYPTO_KEY));
         assertNull(metadata.get(Headers.MATERIALS_DESCRIPTION));
+    }
+
+    class TestEncryptionProvider implements EncryptionMaterialsProvider {
+        static final String MATERIAL_TYPE = "TYPE";
+        static final String ASYMMETRIC_TYPE = "ASYMMETRIC";
+        static final String SYMMETRIC_TYPE = "SYMMETRIC";
+        private final EncryptionMaterials symmetricEncryptionMaterials;
+        private final EncryptionMaterials asymmetricEncryptionMaterials;
+
+        public TestEncryptionProvider(EncryptionMaterials symmetricEncryptionMaterials,
+                                      EncryptionMaterials asymmetricEncryptionMaterials) {
+            this.symmetricEncryptionMaterials = symmetricEncryptionMaterials;
+            this.asymmetricEncryptionMaterials = asymmetricEncryptionMaterials;
+        }
+
+        @Override
+        public EncryptionMaterials getEncryptionMaterials(Map<String, String> materialsDescription) {
+            if (materialsDescription.get(MATERIAL_TYPE).equals(ASYMMETRIC_TYPE)) {
+                return asymmetricEncryptionMaterials;
+            }
+
+            if (materialsDescription.get(MATERIAL_TYPE).equals(SYMMETRIC_TYPE)) {
+                return symmetricEncryptionMaterials;
+            }
+
+            throw new IllegalStateException("Invalid materialsDescription");
+        }
+
+        @Override
+        public EncryptionMaterials getEncryptionMaterials() {
+            throw new IllegalStateException("expected to use getEncryptionMaterials(Map<String, String> materialsDescription)");
+        }
+
+        @Override
+        public void refresh() {
+            // nothing for testing.
+        }
+    }
+
+    class TestEncryptionMaterials extends EncryptionMaterials {
+
+        private Map<String, String> matDesc;
+
+        public TestEncryptionMaterials(KeyPair keyPair, Map<String, String> matDesc) {
+            super(keyPair);
+            this.matDesc = matDesc;
+        }
+
+        public TestEncryptionMaterials(SecretKey key, Map<String, String> matDesc) {
+            super(key);
+            this.matDesc = matDesc;
+        }
+
+        public Map<String, String> getMaterialsDescription() {
+            return matDesc;
+        }
     }
 }

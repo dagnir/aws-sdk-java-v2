@@ -24,7 +24,7 @@ import software.amazon.awssdk.annotation.Immutable;
  * Retry policy that can be configured on a specific service client using
  * {@link ClientConfiguration}. This class is immutable, therefore safe to be
  * shared by multiple clients.
- * 
+ *
  * @see ClientConfiguration
  * @see PredefinedRetryPolicies
  */
@@ -36,18 +36,18 @@ public final class RetryPolicy {
      * should not be null.
      */
     private final RetryCondition retryCondition;
-    
+
     /**
      * Back-off strategy to control the sleep time between retry attempts. This
      * field should not be null.
      */
     private final BackoffStrategy backoffStrategy;
-    
+
     /**
      * Non-negative integer indicating the max retry count.
      */
     private final int maxErrorRetry;
-    
+
     /**
      * Whether this retry policy should honor the max error retry set in ClientConfiguration.
      * @see ClientConfiguration#setMaxErrorRetry(int)
@@ -58,7 +58,7 @@ public final class RetryPolicy {
      * Constructs a new retry policy. See {@link PredefinedRetryPolicies} for
      * some pre-defined policy components, and also the default policies used by
      * SDK.
-     * 
+     *
      * @param retryCondition
      *            Retry condition on whether a specific request and exception
      *            should be retried. If null value is specified, the SDK'
@@ -88,16 +88,18 @@ public final class RetryPolicy {
         if (maxErrorRetry < 0) {
             throw new IllegalArgumentException("Please provide a non-negative value for maxErrorRetry.");
         }
-        
+
         this.retryCondition = retryCondition;
         this.backoffStrategy = backoffStrategy;
         this.maxErrorRetry = maxErrorRetry;
         this.honorMaxErrorRetryInClientConfig = honorMaxErrorRetryInClientConfig;
-    };
+    }
+
+    ;
 
     /**
      * Returns the retry condition included in this retry policy.
-     * 
+     *
      * @return The retry condition included in this retry policy.
      */
     public RetryCondition getRetryCondition() {
@@ -106,7 +108,7 @@ public final class RetryPolicy {
 
     /**
      * Returns the back-off strategy included in this retry policy.
-     * 
+     *
      * @return The back-off strategy included in this retry policy.
      */
     public BackoffStrategy getBackoffStrategy() {
@@ -115,17 +117,17 @@ public final class RetryPolicy {
 
     /**
      * Returns the maximum number of retry attempts.
-     * 
+     *
      * @return The maximum number of retry attempts.
      */
     public int getMaxErrorRetry() {
         return maxErrorRetry;
     }
-    
+
     /**
      * Returns whether this retry policy should honor the max error retry set in
      * ClientConfiguration.
-     * 
+     *
      * @return Whether this retry policy should honor the max error retry set in
      *         ClientConfiguration
      * @see ClientConfiguration#setMaxErrorRetry(int)
@@ -133,7 +135,7 @@ public final class RetryPolicy {
     public boolean isMaxErrorRetryInClientConfigHonored() {
         return honorMaxErrorRetryInClientConfig;
     }
-    
+
     /**
      * The hook for providing custom condition on whether a failed request
      * should be retried.
@@ -157,7 +159,7 @@ public final class RetryPolicy {
          *   <li> if the request contains non-repeatable content,
          *   <li> if any RuntimeException or Error is thrown when executing the request.
          * </ul>
-         * 
+         *
          * @param originalRequest
          *            The original request object being executed. For
          *            performance reason, this object is not a defensive copy,
@@ -179,13 +181,13 @@ public final class RetryPolicy {
          * @param retriesAttempted
          *            The number of times the current request has been
          *            attempted.
-         * 
+         *
          * @return True if the failed request should be retried.
          */
         boolean shouldRetry(AmazonWebServiceRequest originalRequest,
-                                   AmazonClientException exception,
-                                   int retriesAttempted);
-        
+                            AmazonClientException exception,
+                            int retriesAttempted);
+
     }
 
     /**
@@ -204,7 +206,7 @@ public final class RetryPolicy {
 
         /**
          * Returns the delay (in milliseconds) before next retry attempt.
-         * 
+         *
          * @param originalRequest
          *            The original request object being executed. For
          *            performance reason, this object is not a defensive copy,
@@ -226,11 +228,11 @@ public final class RetryPolicy {
          * @param retriesAttempted
          *            The number of times the current request has been attempted
          *            (not including the next attempt after the delay).
-         * 
+         *
          * @return The delay (in milliseconds) before next retry attempt.
          */
         long delayBeforeNextRetry(AmazonWebServiceRequest originalRequest,
-                                         AmazonClientException exception,
-                                         int retriesAttempted);
+                                  AmazonClientException exception,
+                                  int retriesAttempted);
     }
 }

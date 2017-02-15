@@ -29,7 +29,8 @@ public class AmazonWebServiceClientTest {
     @Test
     public void emptyClient() {
         AmazonWebServiceClient client =
-            new AmazonWebServiceClient(new ClientConfiguration()) { };
+                new AmazonWebServiceClient(new ClientConfiguration()) {
+                };
 
         try {
             client.getServiceName();

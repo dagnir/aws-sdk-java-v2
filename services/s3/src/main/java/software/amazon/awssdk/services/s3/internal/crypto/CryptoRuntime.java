@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.internal.crypto.S3KeyWrapScheme.RSA_ECB_OAEPWithSHA256AndMGF1Padding;
@@ -35,7 +36,7 @@ public class CryptoRuntime {
         }
         try {
             @SuppressWarnings("unchecked")
-            Class<Provider> c = (Class<Provider>)Class.forName(BC_PROVIDER_FQCN);
+            Class<Provider> c = (Class<Provider>) Class.forName(BC_PROVIDER_FQCN);
             Provider provider = c.newInstance();
             Security.addProvider(provider);
         } catch (Exception e) {
@@ -53,8 +54,13 @@ public class CryptoRuntime {
         recheckRsaKeyWrapAvailablility();
     }
 
-    public static boolean isAesGcmAvailable() { return AesGcm.isAvailable; }
-    public static void recheckAesGcmAvailablility() { AesGcm.recheck(); }
+    public static boolean isAesGcmAvailable() {
+        return AesGcm.isAvailable;
+    }
+
+    public static void recheckAesGcmAvailablility() {
+        AesGcm.recheck();
+    }
 
     static boolean isRsaKeyWrapAvailable() {
         return RsaEcbOaepWithSHA256AndMGF1Padding.isAvailable;
@@ -66,7 +72,11 @@ public class CryptoRuntime {
 
     private static final class AesGcm {
         static volatile boolean isAvailable = check();
-        static boolean recheck() { return isAvailable = check(); }
+
+        static boolean recheck() {
+            return isAvailable = check();
+        }
+
         private static boolean check() {
             try {
                 Cipher.getInstance(
@@ -78,13 +88,18 @@ public class CryptoRuntime {
             }
         }
     }
+
     private static final class RsaEcbOaepWithSHA256AndMGF1Padding {
         static volatile boolean isAvailable = check();
-        static boolean recheck() { return isAvailable = check(); }
+
+        static boolean recheck() {
+            return isAvailable = check();
+        }
+
         private static boolean check() {
             try {
                 Cipher.getInstance(RSA_ECB_OAEPWithSHA256AndMGF1Padding,
-                        BOUNCY_CASTLE_PROVIDER);
+                                   BOUNCY_CASTLE_PROVIDER);
                 return true;
             } catch (Exception e) {
                 return false;

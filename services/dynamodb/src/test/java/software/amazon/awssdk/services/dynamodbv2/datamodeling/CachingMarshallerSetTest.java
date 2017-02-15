@@ -28,25 +28,6 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.TestClass;
 
 public class CachingMarshallerSetTest {
 
-    private static class TestMarshallerSet implements MarshallerSet {
-
-        private final Deque<ArgumentMarshaller> queue =
-            new ArrayDeque<ArgumentMarshaller>();
-
-        private final Deque<ArgumentMarshaller> memberQueue =
-            new ArrayDeque<ArgumentMarshaller>();
-
-        @Override
-        public ArgumentMarshaller getMarshaller(Method getter) {
-            return queue.remove();
-        }
-
-        @Override
-        public ArgumentMarshaller getMemberMarshaller(Type memberType) {
-            return memberQueue.remove();
-        }
-    }
-
     private static final TestMarshallerSet mock = new TestMarshallerSet();
     private static final MarshallerSet sut = new CachingMarshallerSet(mock);
 
@@ -82,5 +63,24 @@ public class CachingMarshallerSetTest {
         result = sut.getMarshaller(TestClass.class.getMethod("getInt"));
 
         Assert.assertSame(marshaller2, result);
+    }
+
+    private static class TestMarshallerSet implements MarshallerSet {
+
+        private final Deque<ArgumentMarshaller> queue =
+                new ArrayDeque<ArgumentMarshaller>();
+
+        private final Deque<ArgumentMarshaller> memberQueue =
+                new ArrayDeque<ArgumentMarshaller>();
+
+        @Override
+        public ArgumentMarshaller getMarshaller(Method getter) {
+            return queue.remove();
+        }
+
+        @Override
+        public ArgumentMarshaller getMemberMarshaller(Type memberType) {
+            return memberQueue.remove();
+        }
     }
 }

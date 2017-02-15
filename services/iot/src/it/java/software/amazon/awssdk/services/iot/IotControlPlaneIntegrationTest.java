@@ -15,30 +15,23 @@ import software.amazon.awssdk.test.AWSTestBase;
  */
 public class IotControlPlaneIntegrationTest extends AWSTestBase {
 
-    private static AWSIotClient client;
-
     private static final String THING_NAME = "java-sdk-thing-" + System.currentTimeMillis();
-
     private static final Map<String, String> THING_ATTRIBUTES = new HashMap<String, String>();
-
     private static final String ATTRIBUTE_NAME = "foo";
-
     private static final String ATTRIBUTE_VALUE = "bar";
-
     private static final String POLICY_NAME = "java-sdk-iot-policy-" + System.currentTimeMillis();
-
     private static final String POLICY_DOC = "{\n" +
-            "  \"Version\": \"2012-10-17\",\n" +
-            "  \"Statement\": [\n" +
-            "    {\n" +
-            "      \"Sid\": \"Stmt1443818583140\",\n" +
-            "      \"Action\": \"iot:*\",\n" +
-            "      \"Effect\": \"Deny\",\n" +
-            "      \"Resource\": \"*\"\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
-
+                                             "  \"Version\": \"2012-10-17\",\n" +
+                                             "  \"Statement\": [\n" +
+                                             "    {\n" +
+                                             "      \"Sid\": \"Stmt1443818583140\",\n" +
+                                             "      \"Action\": \"iot:*\",\n" +
+                                             "      \"Effect\": \"Deny\",\n" +
+                                             "      \"Resource\": \"*\"\n" +
+                                             "    }\n" +
+                                             "  ]\n" +
+                                             "}";
+    private static AWSIotClient client;
     private static String certificateId = null;
 
     @BeforeClass
@@ -65,15 +58,15 @@ public class IotControlPlaneIntegrationTest extends AWSTestBase {
     public void describe_and_list_thing_returns_created_thing() {
 
         final CreateThingRequest createReq = new CreateThingRequest()
-                                                    .withThingName(THING_NAME)
-                                                    .withAttributePayload(new AttributePayload()
-                                                            .withAttributes(THING_ATTRIBUTES));
+                .withThingName(THING_NAME)
+                .withAttributePayload(new AttributePayload()
+                                              .withAttributes(THING_ATTRIBUTES));
         CreateThingResult result = client.createThing(createReq);
         Assert.assertNotNull(result.getThingArn());
         Assert.assertEquals(THING_NAME, result.getThingName());
 
         final DescribeThingRequest descRequest = new DescribeThingRequest()
-                                            .withThingName(THING_NAME);
+                .withThingName(THING_NAME);
 
         DescribeThingResult descResult = client.describeThing(descRequest);
         Map<String, String> actualAttributes = descResult.getAttributes();
@@ -89,8 +82,8 @@ public class IotControlPlaneIntegrationTest extends AWSTestBase {
     public void get_policy_returns_created_policy() {
 
         final CreatePolicyRequest createReq = new CreatePolicyRequest()
-                                                    .withPolicyName(POLICY_NAME)
-                                                    .withPolicyDocument(POLICY_DOC);
+                .withPolicyName(POLICY_NAME)
+                .withPolicyDocument(POLICY_DOC);
 
         CreatePolicyResult createResult = client.createPolicy(createReq);
         Assert.assertNotNull(createResult.getPolicyArn());
@@ -98,8 +91,8 @@ public class IotControlPlaneIntegrationTest extends AWSTestBase {
 
 
         final GetPolicyVersionRequest getRequest = new GetPolicyVersionRequest()
-                                                        .withPolicyName(POLICY_NAME)
-                                                        .withPolicyVersionId(createResult.getPolicyVersionId());
+                .withPolicyName(POLICY_NAME)
+                .withPolicyVersionId(createResult.getPolicyVersionId());
 
         GetPolicyVersionResult getResult = client.getPolicyVersion(getRequest);
         Assert.assertEquals(createResult.getPolicyArn(), getResult.getPolicyArn());
@@ -109,7 +102,7 @@ public class IotControlPlaneIntegrationTest extends AWSTestBase {
     @Test
     public void createCertificate_Returns_success() {
         final CreateKeysAndCertificateRequest createReq = new CreateKeysAndCertificateRequest()
-                                                                .withSetAsActive(true);
+                .withSetAsActive(true);
         CreateKeysAndCertificateResult createResult = client.createKeysAndCertificate(createReq);
         Assert.assertNotNull(createResult.getCertificateArn());
         Assert.assertNotNull(createResult.getCertificateId());
@@ -119,13 +112,13 @@ public class IotControlPlaneIntegrationTest extends AWSTestBase {
         certificateId = createResult.getCertificateId();
 
         client.updateCertificate(new UpdateCertificateRequest()
-                                    .withCertificateId(certificateId)
-                                    .withNewStatus(CertificateStatus.REVOKED));
+                                         .withCertificateId(certificateId)
+                                         .withNewStatus(CertificateStatus.REVOKED));
     }
 
     @Test(expected = InvalidRequestException.class)
     public void create_certificate_from_invalid_csr_throws_exception() {
         client.createCertificateFromCsr(new CreateCertificateFromCsrRequest()
-                .withCertificateSigningRequest("invalid-csr-string"));
+                                                .withCertificateSigningRequest("invalid-csr-string"));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -75,12 +75,12 @@ public class ProfileAssumeRoleCredentialsProvider implements AWSCredentialsProvi
 
 
         final String roleSessionName = (this.profile.getRoleSessionName() == null) ?
-                "aws-sdk-java-" + System.currentTimeMillis() : this.profile.getRoleSessionName();
+                                       "aws-sdk-java-" + System.currentTimeMillis() : this.profile.getRoleSessionName();
 
         RoleInfo roleInfo = new RoleInfo().withRoleArn(this.profile.getRoleArn())
-                .withRoleSessionName(roleSessionName)
-                .withExternalId(this.profile.getRoleExternalId())
-                .withLongLivedCredentials(sourceCredentials);
+                                          .withRoleSessionName(roleSessionName)
+                                          .withExternalId(this.profile.getRoleExternalId())
+                                          .withLongLivedCredentials(sourceCredentials);
         return profileCredentialsService.getAssumeRoleCredentialsProvider(roleInfo);
     }
 }

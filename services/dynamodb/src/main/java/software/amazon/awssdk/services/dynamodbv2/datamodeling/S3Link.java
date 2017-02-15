@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -117,12 +117,34 @@ public class S3Link {
         this.s3cc = s3cc;
         this.id = id;
 
-        if ( s3cc == null ) {
+        if (s3cc == null) {
             throw new IllegalArgumentException("S3ClientCache must be configured for use with S3Link");
         }
-        if ( id == null || id.getBucket() == null || id.getKey() == null ) {
+        if (id == null || id.getBucket() == null || id.getKey() == null) {
             throw new IllegalArgumentException("Bucket and key must be specified for S3Link");
         }
+    }
+
+    /**
+     * Deserializes from a JSON string.
+     */
+    public static S3Link fromJson(S3ClientCache s3cc, String json) {
+        ID id = Jackson.fromJsonString(json, ID.class);
+        return new S3Link(s3cc, id);
+    }
+
+    private static String convertRegionToString(Region region, String bucketName) {
+        String regionAsString;
+        if (region == null) {
+            if (BucketNameUtils.isDNSBucketName(bucketName)) {
+                regionAsString = Region.US_Standard.getFirstRegionId();
+            } else {
+                throw new IllegalArgumentException("Region must be specified for bucket that cannot be addressed using virtual host style");
+            }
+        } else {
+            regionAsString = region.getFirstRegionId();
+        }
+        return regionAsString;
     }
 
     public String getKey() {
@@ -153,7 +175,7 @@ public class S3Link {
      *         If no region is provided during S3Link creation, returns us-east-1.
      */
     public String getRegion() {
-       return id.getRegionId() == null ? "us-east-1" : id.getRegionId();
+        return id.getRegionId() == null ? "us-east-1" : id.getRegionId();
     }
 
     /**
@@ -163,14 +185,6 @@ public class S3Link {
      */
     public String toJson() {
         return id.toJson();
-    }
-
-    /**
-     * Deserializes from a JSON string.
-     */
-    public static S3Link fromJson(S3ClientCache s3cc, String json) {
-        ID id = Jackson.fromJsonString(json, ID.class);
-        return new S3Link(s3cc, id);
     }
 
     public AmazonS3 getAmazonS3Client() {
@@ -200,14 +214,14 @@ public class S3Link {
      * request metric collector.
      */
     public PutObjectResult uploadFrom(final File source,
-            RequestMetricCollector requestMetricCollector) {
+                                      RequestMetricCollector requestMetricCollector) {
         return uploadFrom0(source, requestMetricCollector);
     }
 
     private PutObjectResult uploadFrom0(final File source,
-            RequestMetricCollector requestMetricCollector) {
+                                        RequestMetricCollector requestMetricCollector) {
         PutObjectRequest req = new PutObjectRequest(getBucketName(), getKey(),
-                source).withRequestMetricCollector(requestMetricCollector);
+                                                    source).withRequestMetricCollector(requestMetricCollector);
         return getAmazonS3Client().putObject(req);
     }
 
@@ -230,16 +244,16 @@ public class S3Link {
      * request metric collector.
      */
     public PutObjectResult uploadFrom(final byte[] buffer,
-            RequestMetricCollector requestMetricCollector) {
+                                      RequestMetricCollector requestMetricCollector) {
         return uploadFrom0(buffer, requestMetricCollector);
     }
 
     private PutObjectResult uploadFrom0(final byte[] buffer,
-            RequestMetricCollector requestMetricCollector) {
+                                        RequestMetricCollector requestMetricCollector) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(buffer.length);
         PutObjectRequest req = new PutObjectRequest(getBucketName(), getKey(),
-                new ByteArrayInputStream(buffer), objectMetadata)
+                                                    new ByteArrayInputStream(buffer), objectMetadata)
                 .withRequestMetricCollector(requestMetricCollector);
         return getAmazonS3Client().putObject(req);
     }
@@ -287,7 +301,7 @@ public class S3Link {
      * request metric collector.
      */
     public void setAcl(AccessControlList acl,
-            RequestMetricCollector requestMetricCollector) {
+                       RequestMetricCollector requestMetricCollector) {
         setAcl0(acl, requestMetricCollector);
     }
 
@@ -328,12 +342,12 @@ public class S3Link {
      * request metric collector.
      */
     public ObjectMetadata downloadTo(final File destination,
-            RequestMetricCollector requestMetricCollector) {
+                                     RequestMetricCollector requestMetricCollector) {
         return downloadTo0(destination, requestMetricCollector);
     }
 
     private ObjectMetadata downloadTo0(final File destination,
-            RequestMetricCollector requestMetricCollector) {
+                                       RequestMetricCollector requestMetricCollector) {
         GetObjectRequest req = new GetObjectRequest(getBucketName(), getKey())
                 .withRequestMetricCollector(requestMetricCollector);
         return getAmazonS3Client().getObject(req, destination);
@@ -357,14 +371,14 @@ public class S3Link {
      * request metric collector.
      */
     public ObjectMetadata downloadTo(final OutputStream output,
-            RequestMetricCollector requestMetricCollector) {
+                                     RequestMetricCollector requestMetricCollector) {
         return downloadTo0(output, requestMetricCollector);
     }
 
     private ObjectMetadata downloadTo0(final OutputStream output,
-            RequestMetricCollector requestMetricCollector) {
+                                       RequestMetricCollector requestMetricCollector) {
         GetObjectRequest req = new GetObjectRequest(getBucketName(), getKey())
-            .withRequestMetricCollector(requestMetricCollector);
+                .withRequestMetricCollector(requestMetricCollector);
         S3Object s3Object = getAmazonS3Client().getObject(req);
         S3ObjectInputStream objectContent = s3Object.getObjectContent();
 
@@ -378,7 +392,10 @@ public class S3Link {
             objectContent.abort();
             throw new SdkClientException("Unable to transfer content from Amazon S3 to the output stream", ioe);
         } finally {
-            try { objectContent.close(); } catch (IOException ioe) {}
+            try {
+                objectContent.close();
+            } catch (IOException ioe) {
+            }
         }
 
         return s3Object.getObjectMetadata();
@@ -400,32 +417,41 @@ public class S3Link {
         @JsonProperty("s3")
         private S3 s3;
 
-        ID() {} // used by Jackson to unmarshall
+        ID() {
+        } // used by Jackson to unmarshall
+
         ID(String bucketName, String key) {
             this.s3 = new S3(bucketName, key);
         }
+
         ID(String region, String bucketName, String key) {
             this.s3 = new S3(region, bucketName, key);
         }
+
         ID(S3 s3) {
             this.s3 = s3;
         }
+
         @JsonProperty("s3")
         public S3 getS3() {
             return s3;
         }
+
         @JsonIgnore
         public String getRegionId() {
             return s3.getRegionId();
         }
+
         @JsonIgnore
         public String getBucket() {
             return s3.getBucket();
         }
+
         @JsonIgnore
         public String getKey() {
             return s3.getKey();
         }
+
         String toJson() {
             return Jackson.toJsonString(this);
         }
@@ -457,7 +483,8 @@ public class S3Link {
         private String regionId;
 
         @SuppressWarnings("unused")
-        S3() {}  // used by Jackson to unmarshall
+        S3() {
+        }  // used by Jackson to unmarshall
 
         /**
          * Constructs a new {@link S3} with all the required parameters.
@@ -518,17 +545,16 @@ public class S3Link {
     /**
      * {@link S3Link} factory.
      */
-    public static final class Factory implements DynamoDBTypeConverter<String,S3Link> {
-        static final Factory DEFAULT = new Factory((S3ClientCache)null);
-
-        public static final Factory of(final AWSCredentialsProvider provider) {
-            return provider == null ? DEFAULT : new Factory(new S3ClientCache(provider));
-        }
-
+    public static final class Factory implements DynamoDBTypeConverter<String, S3Link> {
+        static final Factory DEFAULT = new Factory((S3ClientCache) null);
         private final S3ClientCache s3cc;
 
         public Factory(final S3ClientCache s3cc) {
             this.s3cc = s3cc;
+        }
+
+        public static final Factory of(final AWSCredentialsProvider provider) {
+            return provider == null ? DEFAULT : new Factory(new S3ClientCache(provider));
         }
 
         public S3Link createS3Link(Region s3region, String bucketName, String key) {
@@ -555,20 +581,6 @@ public class S3Link {
         public S3Link unconvert(final String o) {
             return S3Link.fromJson(getS3ClientCache(), o);
         }
-    }
-
-    private static String convertRegionToString(Region region, String bucketName) {
-        String regionAsString;
-        if (region == null) {
-            if (BucketNameUtils.isDNSBucketName(bucketName)) {
-                regionAsString = Region.US_Standard.getFirstRegionId();
-            } else {
-                throw new IllegalArgumentException("Region must be specified for bucket that cannot be addressed using virtual host style");
-            }
-        } else {
-            regionAsString = region.getFirstRegionId();
-        }
-        return regionAsString;
     }
 
 }

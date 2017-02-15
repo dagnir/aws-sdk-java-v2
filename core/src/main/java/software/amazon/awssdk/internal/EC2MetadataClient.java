@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -33,12 +33,10 @@ import software.amazon.awssdk.util.EC2MetadataUtils;
 @Deprecated
 public class EC2MetadataClient {
 
-    /** Default endpoint for the Amazon EC2 Instance Metadata Service. */
-    private static final String EC2_METADATA_SERVICE_URL = "http://169.254.169.254";
-
     /** Default resource path for credentials in the Amazon EC2 Instance Metadata Service. */
     public static final String SECURITY_CREDENTIALS_RESOURCE = "/latest/meta-data/iam/security-credentials/";
-
+    /** Default endpoint for the Amazon EC2 Instance Metadata Service. */
+    private static final String EC2_METADATA_SERVICE_URL = "http://169.254.169.254";
     private static final Log log = LogFactory.getLog(EC2MetadataClient.class);
 
     /**
@@ -57,7 +55,9 @@ public class EC2MetadataClient {
 
         securityCredentialsList = securityCredentialsList.trim();
         String[] securityCredentials = securityCredentialsList.split("\n");
-        if (securityCredentials.length == 0) return null;
+        if (securityCredentials.length == 0) {
+            return null;
+        }
 
         String securityCredentialsName = securityCredentials[0];
 
@@ -84,7 +84,7 @@ public class EC2MetadataClient {
         URL url = getEc2MetadataServiceUrlForResource(resourcePath);
         log.debug("Connecting to EC2 instance metadata service at URL: " + url.toString());
 
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setConnectTimeout(1000 * 2);
         connection.setReadTimeout(1000 * 5);
         connection.setRequestMethod("GET");
@@ -109,8 +109,9 @@ public class EC2MetadataClient {
      *             If any problems ocurred while reading the response.
      */
     private String readResponse(HttpURLConnection connection) throws IOException {
-        if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND)
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
             throw new SdkClientException("The requested metadata is not found at " + connection.getURL());
+        }
 
         InputStream inputStream = connection.getInputStream();
 
@@ -118,8 +119,10 @@ public class EC2MetadataClient {
             StringBuilder buffer = new StringBuilder();
             while (true) {
                 int c = inputStream.read();
-                if (c == -1) break;
-                buffer.append((char)c);
+                if (c == -1) {
+                    break;
+                }
+                buffer.append((char) c);
             }
 
             return buffer.toString();

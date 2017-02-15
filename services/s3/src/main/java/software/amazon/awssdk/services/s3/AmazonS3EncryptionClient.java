@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -78,9 +79,9 @@ import software.amazon.awssdk.util.VersionInfoUtils;
  * protect the CEK which is then stored along side with the S3 object.
  */
 public class AmazonS3EncryptionClient extends AmazonS3Client implements
-        AmazonS3Encryption {
+                                                             AmazonS3Encryption {
     public static final String USER_AGENT = AmazonS3EncryptionClient.class.getName()
-            + "/" + VersionInfoUtils.getVersion();
+                                            + "/" + VersionInfoUtils.getVersion();
     private final S3CryptoModule<?> crypto;
     private final AWSKMS kms;
     /**
@@ -92,6 +93,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     private final boolean isKMSClientInternal;
 
     // ///////////////////// Constructors ////////////////
+
     /**
      * <p>
      * Constructs a new Amazon S3 Encryption client that will make <b>anonymous</b>
@@ -160,8 +162,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             EncryptionMaterialsProvider encryptionMaterialsProvider) {
 
         this(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()),
-                encryptionMaterialsProvider,
-                configFactory.getConfig(), new CryptoConfiguration());
+             encryptionMaterialsProvider,
+             configFactory.getConfig(), new CryptoConfiguration());
     }
 
 
@@ -201,9 +203,9 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(EncryptionMaterials encryptionMaterials,
-            CryptoConfiguration cryptoConfig) {
+                                    CryptoConfiguration cryptoConfig) {
         this(new StaticEncryptionMaterialsProvider(encryptionMaterials),
-                cryptoConfig);
+             cryptoConfig);
     }
 
     /**
@@ -246,8 +248,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             CryptoConfiguration cryptoConfig) {
 
         this(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()),
-                encryptionMaterialsProvider,
-                configFactory.getConfig(), cryptoConfig);
+             encryptionMaterialsProvider,
+             configFactory.getConfig(), cryptoConfig);
     }
 
     /**
@@ -267,7 +269,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(AWSCredentials credentials,
-            EncryptionMaterials encryptionMaterials) {
+                                    EncryptionMaterials encryptionMaterials) {
         this(credentials, new StaticEncryptionMaterialsProvider(
                 encryptionMaterials));
     }
@@ -289,9 +291,9 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(AWSCredentials credentials,
-            EncryptionMaterialsProvider encryptionMaterialsProvider) {
+                                    EncryptionMaterialsProvider encryptionMaterialsProvider) {
         this(credentials, encryptionMaterialsProvider,
-                configFactory.getConfig(), new CryptoConfiguration());
+             configFactory.getConfig(), new CryptoConfiguration());
     }
 
     /**
@@ -314,7 +316,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             AWSCredentialsProvider credentialsProvider,
             EncryptionMaterialsProvider encryptionMaterialsProvider) {
         this(credentialsProvider, encryptionMaterialsProvider,
-                configFactory.getConfig(), new CryptoConfiguration());
+             configFactory.getConfig(), new CryptoConfiguration());
     }
 
     /**
@@ -338,8 +340,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(AWSCredentials credentials,
-            EncryptionMaterials encryptionMaterials,
-            CryptoConfiguration cryptoConfig) {
+                                    EncryptionMaterials encryptionMaterials,
+                                    CryptoConfiguration cryptoConfig) {
         this(credentials, new StaticEncryptionMaterialsProvider(
                 encryptionMaterials), cryptoConfig);
     }
@@ -365,10 +367,10 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(AWSCredentials credentials,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            CryptoConfiguration cryptoConfig) {
+                                    EncryptionMaterialsProvider encryptionMaterialsProvider,
+                                    CryptoConfiguration cryptoConfig) {
         this(credentials, encryptionMaterialsProvider,
-                configFactory.getConfig(), cryptoConfig);
+             configFactory.getConfig(), cryptoConfig);
     }
 
     /**
@@ -396,7 +398,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             EncryptionMaterialsProvider encryptionMaterialsProvider,
             CryptoConfiguration cryptoConfig) {
         this(credentialsProvider, encryptionMaterialsProvider,
-                configFactory.getConfig(), cryptoConfig);
+             configFactory.getConfig(), cryptoConfig);
     }
 
     /**
@@ -426,8 +428,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(AWSCredentials credentials,
-            EncryptionMaterials encryptionMaterials,
-            ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+                                    EncryptionMaterials encryptionMaterials,
+                                    ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         this(credentials, new StaticEncryptionMaterialsProvider(
                 encryptionMaterials), clientConfig, cryptoConfig);
     }
@@ -440,10 +442,10 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(AWSCredentials credentials,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+                                    EncryptionMaterialsProvider encryptionMaterialsProvider,
+                                    ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         this(new AWSStaticCredentialsProvider(credentials),
-                encryptionMaterialsProvider, clientConfig, cryptoConfig);
+             encryptionMaterialsProvider, clientConfig, cryptoConfig);
     }
 
     /**
@@ -459,9 +461,9 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             ClientConfiguration clientConfig,
             CryptoConfiguration cryptoConfig) {
         this(credentialsProvider, kekMaterialsProvider, clientConfig,
-                cryptoConfig,
-                null    // request metric collector
-        );
+             cryptoConfig,
+             null    // request metric collector
+            );
     }
 
     /**
@@ -479,8 +481,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             CryptoConfiguration cryptoConfig,
             RequestMetricCollector requestMetricCollector) {
         this(null, // KMS client
-            credentialsProvider, kekMaterialsProvider, clientConfig,
-            cryptoConfig, requestMetricCollector);
+             credentialsProvider, kekMaterialsProvider, clientConfig,
+             cryptoConfig, requestMetricCollector);
     }
 
     /**
@@ -493,23 +495,23 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     @Deprecated
     public AmazonS3EncryptionClient(AWSKMSClient kms,
-            AWSCredentialsProvider credentialsProvider,
-            EncryptionMaterialsProvider kekMaterialsProvider,
-            ClientConfiguration clientConfig,
-            CryptoConfiguration cryptoConfig,
-            RequestMetricCollector requestMetricCollector) {
+                                    AWSCredentialsProvider credentialsProvider,
+                                    EncryptionMaterialsProvider kekMaterialsProvider,
+                                    ClientConfiguration clientConfig,
+                                    CryptoConfiguration cryptoConfig,
+                                    RequestMetricCollector requestMetricCollector) {
         super(credentialsProvider, clientConfig, requestMetricCollector);
         assertParameterNotNull(kekMaterialsProvider,
-                "EncryptionMaterialsProvider parameter must not be null.");
+                               "EncryptionMaterialsProvider parameter must not be null.");
         assertParameterNotNull(cryptoConfig,
-                "CryptoConfiguration parameter must not be null.");
+                               "CryptoConfiguration parameter must not be null.");
         this.isKMSClientInternal = kms == null;
-        this.kms = isKMSClientInternal 
-            ? newAWSKMSClient(credentialsProvider, clientConfig, cryptoConfig, 
-                    requestMetricCollector)
-            : kms;
+        this.kms = isKMSClientInternal
+                   ? newAWSKMSClient(credentialsProvider, clientConfig, cryptoConfig,
+                                     requestMetricCollector)
+                   : kms;
         this.crypto = new CryptoModuleDispatcher(this.kms, new S3DirectImpl(),
-                credentialsProvider, kekMaterialsProvider, cryptoConfig);
+                                                 credentialsProvider, kekMaterialsProvider, cryptoConfig);
     }
 
     @SdkInternalApi
@@ -519,12 +521,12 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
         assertParameterNotNull(params.getCryptoConfiguration(), "CryptoConfiguration parameter must not be null.");
         this.isKMSClientInternal = params.getKmsClient() == null;
         this.kms = isKMSClientInternal ?
-                newAWSKMSClient(params.getClientParams().getCredentialsProvider(),
-                        params.getClientParams().getClientConfiguration(),
-                        params.getCryptoConfiguration(),
-                        params.getClientParams().getRequestMetricCollector()) : params.getKmsClient();
+                   newAWSKMSClient(params.getClientParams().getCredentialsProvider(),
+                                   params.getClientParams().getClientConfiguration(),
+                                   params.getCryptoConfiguration(),
+                                   params.getClientParams().getRequestMetricCollector()) : params.getKmsClient();
         this.crypto = new CryptoModuleDispatcher(this.kms, new S3DirectImpl(),
-                params.getClientParams().getCredentialsProvider(), params.getEncryptionMaterials(), params.getCryptoConfiguration());
+                                                 params.getClientParams().getCredentialsProvider(), params.getEncryptionMaterials(), params.getCryptoConfiguration());
     }
 
     public static AmazonS3EncryptionClientBuilder encryptionBuilder() {
@@ -540,19 +542,21 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             ClientConfiguration clientConfig,
             CryptoConfiguration cryptoConfig,
             RequestMetricCollector requestMetricCollector
-    ) {
+                                        ) {
         final AWSKMSClient kmsClient = new AWSKMSClient(
-            credentialsProvider, clientConfig, requestMetricCollector);
+                credentialsProvider, clientConfig, requestMetricCollector);
         final Region kmsRegion = cryptoConfig.getAwsKmsRegion();
-        if (kmsRegion != null)
+        if (kmsRegion != null) {
             kmsClient.setRegion(kmsRegion);
+        }
         return kmsClient;
     }
 
     private void assertParameterNotNull(Object parameterValue,
-            String errorMessage) {
-        if (parameterValue == null)
+                                        String errorMessage) {
+        if (parameterValue == null) {
             throw new IllegalArgumentException(errorMessage);
+        }
     }
 
     /**
@@ -562,7 +566,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      * this request.AmazonS3EncryptionClient would use {@link EncryptionMaterialsProvider#getEncryptionMaterials(java.util.Map)} to 
      * retrieve encryption materials corresponding to the materialsDescription specified in the current request.
      * </p>
-     * 
+     *
      */
     @Override
     public PutObjectResult putObject(PutObjectRequest req) {
@@ -598,7 +602,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
         return crypto.completeMultipartUploadSecurely(req);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      * <p>
      * Use {@link EncryptedInitiateMultipartUploadRequest} to specify materialsDescription for the EncryptionMaterials to be used for this request.
@@ -611,14 +615,14 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             InitiateMultipartUploadRequest req) {
         boolean isCreateEncryptionMaterial = true;
         if (req instanceof EncryptedInitiateMultipartUploadRequest) {
-            EncryptedInitiateMultipartUploadRequest cryptoReq = 
+            EncryptedInitiateMultipartUploadRequest cryptoReq =
                     (EncryptedInitiateMultipartUploadRequest) req;
             isCreateEncryptionMaterial = cryptoReq.isCreateEncryptionMaterial();
         }
         return isCreateEncryptionMaterial
-             ? crypto.initiateMultipartUploadSecurely(req)
-             : super.initiateMultipartUpload(req)
-             ;
+               ? crypto.initiateMultipartUploadSecurely(req)
+               : super.initiateMultipartUpload(req)
+                ;
     }
 
     /**
@@ -655,7 +659,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      * User of this method is responsible for explicitly deleting/updating the
      * instruction file so created should the corresponding S3 object is
      * deleted/created.
-     * 
+     *
      * @return the result of the put (instruction file) operation.
      */
     public PutObjectResult putInstructionFile(PutInstructionFileRequest req) {
@@ -673,60 +677,12 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     @Override
     public void shutdown() {
         super.shutdown();
-        if (isKMSClientInternal)
+        if (isKMSClientInternal) {
             kms.shutdown();
+        }
     }
 
     // /////////////////// Access to the methods in the super class //////////
-    /**
-     * An internal implementation used to provide limited but direct access to
-     * the underlying methods of AmazonS3Client without any encryption or
-     * decryption operations.
-     */
-    private final class S3DirectImpl extends S3Direct {
-        @Override
-        public PutObjectResult putObject(PutObjectRequest req) {
-            return AmazonS3EncryptionClient.super.putObject(req);
-        }
-
-        @Override
-        public S3Object getObject(GetObjectRequest req) {
-            return AmazonS3EncryptionClient.super.getObject(req);
-        }
-
-        @Override
-        public ObjectMetadata getObject(GetObjectRequest req, File dest) {
-            return AmazonS3EncryptionClient.super.getObject(req, dest);
-        }
-
-        @Override
-        public CompleteMultipartUploadResult completeMultipartUpload(
-                CompleteMultipartUploadRequest req) {
-            return AmazonS3EncryptionClient.super.completeMultipartUpload(req);
-        }
-
-        @Override
-        public InitiateMultipartUploadResult initiateMultipartUpload(
-                InitiateMultipartUploadRequest req) {
-            return AmazonS3EncryptionClient.super.initiateMultipartUpload(req);
-        }
-
-        @Override
-        public UploadPartResult uploadPart(UploadPartRequest req)
-                throws SdkClientException, AmazonServiceException {
-            return AmazonS3EncryptionClient.super.uploadPart(req);
-        }
-
-        @Override
-        public CopyPartResult copyPart(CopyPartRequest req) {
-            return AmazonS3EncryptionClient.super.copyPart(req);
-        }
-
-        @Override
-        public void abortMultipartUpload(AbortMultipartUploadRequest req) {
-            AmazonS3EncryptionClient.super.abortMultipartUpload(req);
-        }
-    }
 
     /**
      * Used to encrypt data first to disk with pipelined concurrent multi-part
@@ -776,9 +732,9 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      * <li>Finally, clean up and complete the multi-part upload by calling
      * {@link UploadObjectObserver#onCompletion(List)}.</li>
      * </ol>
-     * 
+     *
      * @return the result of the completed muti-part uploads
-     * 
+     *
      * @throws IOException
      *             if the encryption to disk failed
      * @throws InterruptedException
@@ -792,19 +748,22 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
         // Set up a thread pool for this pipeline
         ExecutorService es = req.getExecutorService();
         final boolean defaultExecutorService = es == null;
-        if (es == null)
+        if (es == null) {
             es = Executors.newFixedThreadPool(clientConfiguration.getMaxConnections());
+        }
         UploadObjectObserver observer = req.getUploadObjectObserver();
-        if (observer == null)
+        if (observer == null) {
             observer = new UploadObjectObserver();
+        }
         // initialize the observer
         observer.init(req, new S3DirectImpl(), this, es);
         // Initiate upload
         final String uploadId = observer.onUploadInitiation(req);
         final List<PartETag> partETags = new ArrayList<PartETag>();
         MultiFileOutputStream mfos = req.getMultiFileOutputStream();
-        if (mfos == null)
+        if (mfos == null) {
             mfos = new MultiFileOutputStream();
+        }
         try {
             // initialize the multi-file output stream
             mfos.init(observer, req.getPartSize(), req.getDiskLimit());
@@ -812,23 +771,24 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
             // Note mfos is automatically closed upon method completion.
             crypto.putLocalObjectSecurely(req, uploadId, mfos);
             // block till all part have been uploaded
-            for (Future<UploadPartResult> future: observer.getFutures()) {
+            for (Future<UploadPartResult> future : observer.getFutures()) {
                 UploadPartResult partResult = future.get();
                 partETags.add(new PartETag(partResult.getPartNumber(), partResult.getETag()));
             }
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             throw onAbort(observer, ex);
-        } catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             throw onAbort(observer, ex);
-        } catch(ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw onAbort(observer, ex);
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             throw onAbort(observer, ex);
-        } catch(Error ex) {
+        } catch (Error ex) {
             throw onAbort(observer, ex);
         } finally {
-            if (defaultExecutorService)
+            if (defaultExecutorService) {
                 es.shutdownNow();   // shut down the locally created thread pool
+            }
             mfos.cleanup();       // delete left-over temp files
         }
         // Complete upload
@@ -842,5 +802,55 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     private <T extends Throwable> T onAbort(UploadObjectObserver observer, T t) {
         observer.onAbort();
         return t;
+    }
+
+    /**
+     * An internal implementation used to provide limited but direct access to
+     * the underlying methods of AmazonS3Client without any encryption or
+     * decryption operations.
+     */
+    private final class S3DirectImpl extends S3Direct {
+        @Override
+        public PutObjectResult putObject(PutObjectRequest req) {
+            return AmazonS3EncryptionClient.super.putObject(req);
+        }
+
+        @Override
+        public S3Object getObject(GetObjectRequest req) {
+            return AmazonS3EncryptionClient.super.getObject(req);
+        }
+
+        @Override
+        public ObjectMetadata getObject(GetObjectRequest req, File dest) {
+            return AmazonS3EncryptionClient.super.getObject(req, dest);
+        }
+
+        @Override
+        public CompleteMultipartUploadResult completeMultipartUpload(
+                CompleteMultipartUploadRequest req) {
+            return AmazonS3EncryptionClient.super.completeMultipartUpload(req);
+        }
+
+        @Override
+        public InitiateMultipartUploadResult initiateMultipartUpload(
+                InitiateMultipartUploadRequest req) {
+            return AmazonS3EncryptionClient.super.initiateMultipartUpload(req);
+        }
+
+        @Override
+        public UploadPartResult uploadPart(UploadPartRequest req)
+                throws SdkClientException, AmazonServiceException {
+            return AmazonS3EncryptionClient.super.uploadPart(req);
+        }
+
+        @Override
+        public CopyPartResult copyPart(CopyPartRequest req) {
+            return AmazonS3EncryptionClient.super.copyPart(req);
+        }
+
+        @Override
+        public void abortMultipartUpload(AbortMultipartUploadRequest req) {
+            AmazonS3EncryptionClient.super.abortMultipartUpload(req);
+        }
     }
 }

@@ -42,18 +42,14 @@ import software.amazon.awssdk.metrics.internal.ServiceMetricTypeGuesser;
 @SdkInternalApi
 public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
 
-    /** True if the request entity hasn't been written out yet */
-    private boolean firstAttempt = true;
-
-    /** The underlying InputStreamEntity being delegated to */
-    private InputStreamEntity inputStreamRequestEntity;
-
-    /** The InputStream containing the content to write out */
-    private InputStream content;
-
     private static final Log log = LogFactory
             .getLog(RepeatableInputStreamRequestEntity.class);
-
+    /** True if the request entity hasn't been written out yet */
+    private boolean firstAttempt = true;
+    /** The underlying InputStreamEntity being delegated to */
+    private InputStreamEntity inputStreamRequestEntity;
+    /** The InputStream containing the content to write out */
+    private InputStream content;
     /**
      * Record the original exception if we do attempt a retry, so that if the
      * retry fails, we can report the original exception. Otherwise, we're most
@@ -94,18 +90,18 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
             }
         } catch (NumberFormatException nfe) {
             log.warn("Unable to parse content length from request.  " +
-                    "Buffering contents in memory.");
+                     "Buffering contents in memory.");
         }
 
         String contentType = request.getHeaders().get("Content-Type");
         ThroughputMetricType type = ServiceMetricTypeGuesser
                 .guessThroughputMetricType(request,
-                        ServiceMetricType.UPLOAD_THROUGHPUT_NAME_SUFFIX,
-                        ServiceMetricType.UPLOAD_BYTE_COUNT_NAME_SUFFIX);
+                                           ServiceMetricType.UPLOAD_THROUGHPUT_NAME_SUFFIX,
+                                           ServiceMetricType.UPLOAD_BYTE_COUNT_NAME_SUFFIX);
 
         content = getContent(request);
         inputStreamRequestEntity = (type == null) ? new InputStreamEntity(content, contentLength) :
-                new MetricInputStreamEntity(type, content, contentLength);
+                                   new MetricInputStreamEntity(type, content, contentLength);
         inputStreamRequestEntity.setContentType(contentType);
 
         setContent(content);
@@ -118,7 +114,7 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
      */
     private InputStream getContent(Request<?> request) {
         return (request.getContent() == null) ? new ByteArrayInputStream(new byte[0]) :
-                request.getContent();
+               request.getContent();
     }
 
     @Override
@@ -155,12 +151,16 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
     @Override
     public void writeTo(OutputStream output) throws IOException {
         try {
-            if (!firstAttempt && isRepeatable()) content.reset();
+            if (!firstAttempt && isRepeatable()) {
+                content.reset();
+            }
 
             firstAttempt = false;
             inputStreamRequestEntity.writeTo(output);
         } catch (IOException ioe) {
-            if (originalException == null) originalException = ioe;
+            if (originalException == null) {
+                originalException = ioe;
+            }
             throw originalException;
         }
     }

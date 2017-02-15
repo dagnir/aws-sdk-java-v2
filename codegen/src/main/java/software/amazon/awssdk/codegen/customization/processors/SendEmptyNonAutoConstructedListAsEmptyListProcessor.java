@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ public class SendEmptyNonAutoConstructedListAsEmptyListProcessor implements
     public void postprocess(IntermediateModel intermediateModel) {
         if (customizationConfig.isSendExplicitlyEmptyListsForQuery()) {
             intermediateModel.getShapes().values().stream()
-                    .filter(s -> s.getMembers() != null)
-                    .flatMap(s -> s.getMembers().stream())
-                    .filter(m -> m.isList())
-                    .map(m -> m.getListModel())
-                    .forEach(m -> m.setMarshallNonAutoConstructedEmptyLists(true));
+                             .filter(s -> s.getMembers() != null)
+                             .flatMap(s -> s.getMembers().stream())
+                             .filter(m -> m.isList())
+                             .map(m -> m.getListModel())
+                             .forEach(m -> m.setMarshallNonAutoConstructedEmptyLists(true));
         }
     }
 }

@@ -34,7 +34,7 @@ public class ResponseMetadata {
     /**
      * Creates a new ResponseMetadata object from a specified map of raw
      * metadata information.
-     * 
+     *
      * @param metadata
      *            The raw metadata for the new ResponseMetadata object.
      */
@@ -67,7 +67,9 @@ public class ResponseMetadata {
 
     @Override
     public String toString() {
-        if (metadata == null) return "{}";
+        if (metadata == null) {
+            return "{}";
+        }
         return metadata.toString();
     }
 

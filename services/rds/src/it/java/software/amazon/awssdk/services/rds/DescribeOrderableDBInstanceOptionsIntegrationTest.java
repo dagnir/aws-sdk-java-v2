@@ -45,7 +45,7 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
 
         assertNotNull(result);
         assertNotNull(result.getOrderableDBInstanceOptions());
-        for ( OrderableDBInstanceOption opt : result.getOrderableDBInstanceOptions() ) {
+        for (OrderableDBInstanceOption opt : result.getOrderableDBInstanceOptions()) {
             assertNotNull(opt.getAvailabilityZones());
             assertTrue(opt.getAvailabilityZones().size() > 0);
             assertNotEmpty(opt.getDBInstanceClass());
@@ -70,11 +70,11 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
 
         DescribeOrderableDBInstanceOptionsResult result = rds
                 .describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine(engine)
-                        .withEngineVersion(engineVersion));
+                                                                                                   .withEngineVersion(engineVersion));
 
         assertNotNull(result);
         assertNotNull(result.getOrderableDBInstanceOptions());
-        for ( OrderableDBInstanceOption opt : result.getOrderableDBInstanceOptions() ) {
+        for (OrderableDBInstanceOption opt : result.getOrderableDBInstanceOptions()) {
             assertEquals(engine, opt.getEngine());
             assertEquals(engineVersion, opt.getEngineVersion());
         }
@@ -130,7 +130,7 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
         int pageSize = 20;  // min page size
         do {
             result = rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest()
-                    .withEngine(engine).withMaxRecords(pageSize).withMarker(result.getMarker()));
+                                                                    .withEngine(engine).withMaxRecords(pageSize).withMarker(result.getMarker()));
             assertNotNull(result);
             assertNotNull(result.getOrderableDBInstanceOptions());
             numResults += result.getOrderableDBInstanceOptions().size();
@@ -143,7 +143,7 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
     @Test(expected = AmazonClientException.class)
     public void testInvalidParam() {
         rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine("mysql")
-                .withLicenseModel("not-a-valid-license"));
+                                                                                              .withLicenseModel("not-a-valid-license"));
     }
 
     @Test(expected = AmazonClientException.class)

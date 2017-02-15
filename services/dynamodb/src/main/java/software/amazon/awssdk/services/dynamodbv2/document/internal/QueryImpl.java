@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName, Object hashKey) {
         return doQuery(new QuerySpec()
-            .withHashKey(new KeyAttribute(hashKeyName, hashKey)));
+                               .withHashKey(new KeyAttribute(hashKeyName, hashKey)));
     }
 
     @Override
@@ -53,41 +53,41 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition) {
+                                              RangeKeyCondition rangeKeyCondition) {
         return doQuery(new QuerySpec().withHashKey(hashKey)
-                .withRangeKeyCondition(rangeKeyCondition));
+                                      .withRangeKeyCondition(rangeKeyCondition));
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters) {
+                                              RangeKeyCondition rangeKeyCondition, QueryFilter... queryFilters) {
         return doQuery(new QuerySpec().withHashKey(hashKey)
-                .withRangeKeyCondition(rangeKeyCondition)
-                .withQueryFilters(queryFilters));
+                                      .withRangeKeyCondition(rangeKeyCondition)
+                                      .withQueryFilters(queryFilters));
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, String filterExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                              RangeKeyCondition rangeKeyCondition, String filterExpression,
+                                              Map<String, String> nameMap, Map<String, Object> valueMap) {
         return doQuery(new QuerySpec().withHashKey(hashKey)
-                .withRangeKeyCondition(rangeKeyCondition)
-                .withFilterExpression(filterExpression)
-                .withNameMap(nameMap)
-                .withValueMap(valueMap));
+                                      .withRangeKeyCondition(rangeKeyCondition)
+                                      .withFilterExpression(filterExpression)
+                                      .withNameMap(nameMap)
+                                      .withValueMap(valueMap));
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(KeyAttribute hashKey,
-            RangeKeyCondition rangeKeyCondition, String filterExpression,
-            String projectionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                              RangeKeyCondition rangeKeyCondition, String filterExpression,
+                                              String projectionExpression, Map<String, String> nameMap,
+                                              Map<String, Object> valueMap) {
         return doQuery(new QuerySpec().withHashKey(hashKey)
-                .withRangeKeyCondition(rangeKeyCondition)
-                .withFilterExpression(filterExpression)
-                .withProjectionExpression(projectionExpression)
-                .withNameMap(nameMap)
-                .withValueMap(valueMap));
+                                      .withRangeKeyCondition(rangeKeyCondition)
+                                      .withFilterExpression(filterExpression)
+                                      .withProjectionExpression(projectionExpression)
+                                      .withNameMap(nameMap)
+                                      .withValueMap(valueMap));
     }
 
     @Override
@@ -103,25 +103,27 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
         final KeyAttribute hashKey = spec.getHashKey();
         if (hashKey != null) {
             req.addKeyConditionsEntry(hashKey.getName(),
-                    new Condition()
-                    .withComparisonOperator(ComparisonOperator.EQ)
-                    .withAttributeValueList(InternalUtils.toAttributeValue(hashKey.getValue()))
-            );
+                                      new Condition()
+                                              .withComparisonOperator(ComparisonOperator.EQ)
+                                              .withAttributeValueList(InternalUtils.toAttributeValue(hashKey.getValue()))
+                                     );
         }
         // range key condition
         RangeKeyCondition rangeKeyCond = spec.getRangeKeyCondition();
         if (rangeKeyCond != null) {
             KeyConditions keyCond = rangeKeyCond.getKeyCondition();
-            if (keyCond == null)
+            if (keyCond == null) {
                 throw new IllegalArgumentException("key condition not specified in range key condition");
+            }
             Object[] values = rangeKeyCond.getValues();
-            if (values == null)
+            if (values == null) {
                 throw new IllegalArgumentException("key condition values not specified in range key condition");
+            }
             req.addKeyConditionsEntry(rangeKeyCond.getAttrName(),
-                    new Condition()
-                    .withComparisonOperator(keyCond.toComparisonOperator())
-                    .withAttributeValueList(InternalUtils.toAttributeValues(values))
-            );
+                                      new Condition()
+                                              .withComparisonOperator(keyCond.toComparisonOperator())
+                                              .withAttributeValueList(InternalUtils.toAttributeValues(values))
+                                     );
         }
         // query filters;
         Collection<QueryFilter> filters = spec.getQueryFilters();
@@ -131,48 +133,49 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
 
         // set up the start key, if any
         Collection<KeyAttribute> startKey = spec.getExclusiveStartKey();
-        if (startKey != null)
+        if (startKey != null) {
             req.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
+        }
 
         // set up the value map, if any (when expression API is used)
-        final Map<String,AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
+        final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up expressions, if any
         req.withExpressionAttributeNames(spec.getNameMap())
            .withExpressionAttributeValues(attrValMap)
-           ;
+        ;
         return new QueryCollection(getClient(), spec);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition) {
         return query(new KeyAttribute(hashKeyName, hashKeyValue), rangeKeyCondition);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            QueryFilter... queryFilters) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              QueryFilter... queryFilters) {
         return query(new KeyAttribute(hashKeyName, hashKeyValue),
-                rangeKeyCondition, queryFilters);
+                     rangeKeyCondition, queryFilters);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            String filterExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression, Map<String, String> nameMap,
+                                              Map<String, Object> valueMap) {
         return query(new KeyAttribute(hashKeyName, hashKeyValue),
-                rangeKeyCondition, filterExpression, nameMap, valueMap);
+                     rangeKeyCondition, filterExpression, nameMap, valueMap);
     }
 
     @Override
     public ItemCollection<QueryOutcome> query(String hashKeyName,
-            Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-            String filterExpression, String projectionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
+                                              String filterExpression, String projectionExpression,
+                                              Map<String, String> nameMap, Map<String, Object> valueMap) {
         return query(new KeyAttribute(hashKeyName, hashKeyValue),
-                rangeKeyCondition, filterExpression, projectionExpression,
-                nameMap, valueMap);
+                     rangeKeyCondition, filterExpression, projectionExpression,
+                     nameMap, valueMap);
     }
 }

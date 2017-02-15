@@ -18,7 +18,7 @@ import software.amazon.awssdk.test.AWSIntegrationTestBase;
 public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 
     private static AmazonGameLift gameLift;
-    
+
     private static String aliasId = null;
 
     @BeforeClass
@@ -26,37 +26,37 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
         gameLift = new AmazonGameLiftClient(getCredentials());
     }
 
-    @Test
-    public void aliasOperations() {
-        String aliasName = "alias-foo";
-        String fleetId = "fleet-foo";
-        
-        CreateAliasResult createAliasResult = gameLift
-                .createAlias(new CreateAliasRequest().withName(aliasName).withRoutingStrategy(
-                        new RoutingStrategy().withType(RoutingStrategyType.SIMPLE).withFleetId(fleetId)));
-        
-        Alias createdAlias = createAliasResult.getAlias();
-        aliasId = createdAlias.getAliasId();
-        RoutingStrategy strategy = createdAlias.getRoutingStrategy();
-        
-        Assert.assertNotNull(createAliasResult);
-        Assert.assertNotNull(createAliasResult.getAlias());
-        Assert.assertEquals(createdAlias.getName(), aliasName);
-        Assert.assertEquals(strategy.getType(), RoutingStrategyType.SIMPLE.toString());
-        Assert.assertEquals(strategy.getFleetId(), fleetId);
-        
-        DescribeAliasResult describeAliasResult = gameLift
-                .describeAlias(new DescribeAliasRequest().withAliasId(aliasId));
-        Assert.assertNotNull(describeAliasResult);
-        Alias describedAlias = describeAliasResult.getAlias();
-        Assert.assertEquals(createdAlias, describedAlias);
-    }
-    
     @AfterClass
     public static void cleanUp() {
         if (aliasId != null) {
             gameLift.deleteAlias(new DeleteAliasRequest().withAliasId(aliasId));
         }
+    }
+
+    @Test
+    public void aliasOperations() {
+        String aliasName = "alias-foo";
+        String fleetId = "fleet-foo";
+
+        CreateAliasResult createAliasResult = gameLift
+                .createAlias(new CreateAliasRequest().withName(aliasName).withRoutingStrategy(
+                        new RoutingStrategy().withType(RoutingStrategyType.SIMPLE).withFleetId(fleetId)));
+
+        Alias createdAlias = createAliasResult.getAlias();
+        aliasId = createdAlias.getAliasId();
+        RoutingStrategy strategy = createdAlias.getRoutingStrategy();
+
+        Assert.assertNotNull(createAliasResult);
+        Assert.assertNotNull(createAliasResult.getAlias());
+        Assert.assertEquals(createdAlias.getName(), aliasName);
+        Assert.assertEquals(strategy.getType(), RoutingStrategyType.SIMPLE.toString());
+        Assert.assertEquals(strategy.getFleetId(), fleetId);
+
+        DescribeAliasResult describeAliasResult = gameLift
+                .describeAlias(new DescribeAliasRequest().withAliasId(aliasId));
+        Assert.assertNotNull(describeAliasResult);
+        Alias describedAlias = describeAliasResult.getAlias();
+        Assert.assertEquals(createdAlias, describedAlias);
     }
 
 }

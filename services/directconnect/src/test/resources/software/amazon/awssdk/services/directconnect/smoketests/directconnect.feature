@@ -8,7 +8,7 @@ Feature: AWS Direct Connect
 
   Scenario: Handling errors
     When I attempt to call the "DescribeConnections" API with:
-    | ConnectionId | fake-connection |
+      | ConnectionId | fake-connection |
     Then I expect the response error code to be "DirectConnectClientException"
     And I expect the response error message to include:
     """

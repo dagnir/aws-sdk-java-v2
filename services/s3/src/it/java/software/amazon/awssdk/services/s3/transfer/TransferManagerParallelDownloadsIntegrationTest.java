@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3.transfer;
@@ -47,18 +47,17 @@ import software.amazon.awssdk.test.util.TestExecutors;
 
 @Category(S3Categories.Slow.class)
 public class TransferManagerParallelDownloadsIntegrationTest extends
-        S3IntegrationTestBase
-{
-    /** Reference to the Transfer manager instance used for testing */
-    private static TransferManager tm;
-    private static TransferManagerConfiguration tmConfig;
-
+                                                             S3IntegrationTestBase {
+    /** Default upload threshold for multipart uploads */
+    protected static final long DEFAULT_MULTIPART_UPLOAD_THRESHOLD = 15 * MB;
+    /** Default part size for multipart uploads */
+    protected static final long DEFAULT_MULTIPART_UPLOAD_PART_SIZE = 5 * MB;
     /** The bucket used for these tests */
     private final static String BUCKET_NAME = "java-parallel-downloads-integ-test" + new Date().getTime();
 
     /** The versioning enabled bucket used for these tests */
     private final static String VERSION_ENABLED_BUCKET_NAME = "java-parallel-downloads-versioning-integ-test"
-            + new Date().getTime();
+                                                              + new Date().getTime();
 
     /** The key used for testing multipart object */
     private final static String MULTIPART_OBJECT_KEY = "multiPartkey";
@@ -80,24 +79,16 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
 
     /** The size of the non multipart object uploaded to S3 */
     private final static long NON_MULTIPART_OBJECT_SIZE = 12 * MB;
-
-    /** Default upload threshold for multipart uploads */
-    protected static final long DEFAULT_MULTIPART_UPLOAD_THRESHOLD = 15 * MB;
-
-    /** Default part size for multipart uploads */
-    protected static final long DEFAULT_MULTIPART_UPLOAD_PART_SIZE = 5 * MB;
-
     /** Default size used for interrupting downloads */
     private static final long INTERRUPT_SIZE = 10 * MB;
-
     /** Start of Range */
     private static final long START_BYTE = 100;
-
     /** End of Range */
     private static final long END_BYTE = MULTIPART_OBJECT_SIZE - 1000;
-
     private static final File TEMP_DIR = new File(System.getProperty("java.io.tmpdir"));
-
+    /** Reference to the Transfer manager instance used for testing */
+    private static TransferManager tm;
+    private static TransferManagerConfiguration tmConfig;
     /** File that contains the multipart data uploaded to S3 */
     private static File multiPartFile;
 
@@ -165,6 +156,15 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
         // Upload object with Server-side encryption
         myUpload = tm.upload(new PutObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY_WITH_SSE, multiPartFile).withSSECustomerKey(SSE_KEY));
         myUpload.waitForCompletion();
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        CryptoTestUtils.deleteBucketAndAllContents(s3, BUCKET_NAME);
+        CryptoTestUtils.deleteBucketAndAllContents(s3, VERSION_ENABLED_BUCKET_NAME);
+        tm.shutdownNow();
+        multiPartFile.deleteOnExit();
+        nonMultiPartFile.deleteOnExit();
     }
 
     /**
@@ -254,8 +254,9 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
     @Test
     public void testAbortOnNonMultiPartObject() throws Exception {
         Download download = tm.download(new GetObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY), downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
         download.abort();
 
         assertEquals(TransferState.Canceled, download.getState());
@@ -268,8 +269,9 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
     @Test
     public void testAbortImmediatelyOnMultiPartObject() throws Exception {
         Download download = tm.download(new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY), downloadFile);
-        while (download.getState() != TransferState.InProgress)
+        while (download.getState() != TransferState.InProgress) {
             ;
+        }
         download.abort();
 
         assertEquals(TransferState.Canceled, download.getState());
@@ -283,8 +285,9 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
     @Test
     public void testAbortAfterPartialDownloadOnMultiPartObject() throws Exception {
         Download download = tm.download(new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY), downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
 
         download.abort();
 
@@ -297,10 +300,11 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
      */
     @Test
     public void testDownloadPauseAndResumeOnNonMultiPartObjectReturnsEntireObject() throws Exception {
-    	GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY);
+        GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY);
         Download download = tm.download(req, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
 
         PersistableDownload persistableDownload = download.pause();
         download = tm.resumeDownload(persistableDownload);
@@ -308,7 +312,7 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
 
         assertEquals(TransferState.Completed, download.getState());
         SdkAsserts.assertFileEqualsStream(downloadFile,
-                s3.getObject(req).getObjectContent());
+                                          s3.getObject(req).getObjectContent());
 
         assertEquals(downloadFile.length(), download.getProgress().getTotalBytesToTransfer());
         assertEquals(100.00, download.getProgress().getPercentTransferred(), .001);
@@ -323,10 +327,11 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
     @Test
     public void testDownloadPauseAndResumeOnNonMultiPartObjectWithRangeReturnsRangedObject() throws Exception {
         GetObjectRequest getObjectRequest = new GetObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY).withRange(100,
-                NON_MULTIPART_OBJECT_SIZE - 1000);
+                                                                                                                  NON_MULTIPART_OBJECT_SIZE - 1000);
         Download download = tm.download(getObjectRequest, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
 
         PersistableDownload persistableDownload = download.pause();
         download = tm.resumeDownload(persistableDownload);
@@ -346,10 +351,11 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
      */
     @Test
     public void testDownloadPauseAndResumeImmediatelyOnMultiPartObjectReturnsEntireObject() throws Exception {
-    	GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY);
+        GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY);
         Download download = tm.download(req, downloadFile);
-        while (download.getState() != TransferState.InProgress)
+        while (download.getState() != TransferState.InProgress) {
             ;
+        }
 
         PersistableDownload persistableDownload = download.pause();
 
@@ -358,7 +364,7 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
 
         assertEquals(TransferState.Completed, download.getState());
         SdkAsserts.assertFileEqualsStream(downloadFile,
-                s3.getObject(req).getObjectContent());
+                                          s3.getObject(req).getObjectContent());
 
         assertEquals(downloadFile.length(), download.getProgress().getTotalBytesToTransfer());
         assertEquals(100.00, download.getProgress().getPercentTransferred(), .001);
@@ -371,17 +377,18 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
      */
     @Test
     public void testDownloadPauseAndResumeAfterPartialDownloadOnMultiPartObjectReturnsEntireObject() throws Exception {
-    	GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY);
+        GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY);
         Download download = tm.download(req, downloadFile);
-        while (download.getProgress().getBytesTransferred() < MULTIPART_OBJECT_SIZE)
+        while (download.getProgress().getBytesTransferred() < MULTIPART_OBJECT_SIZE) {
             ;
+        }
         PersistableDownload persistableDownload = download.pause();
         download = tm.resumeDownload(persistableDownload);
         download.waitForCompletion();
 
         assertEquals(TransferState.Completed, download.getState());
         SdkAsserts.assertFileEqualsStream(downloadFile,
-                s3.getObject(req).getObjectContent());
+                                          s3.getObject(req).getObjectContent());
 
         assertEquals(downloadFile.length(), download.getProgress().getTotalBytesToTransfer());
         assertEquals(100.00, download.getProgress().getPercentTransferred(), .001);
@@ -394,7 +401,7 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
      */
     @Test
     public void testDownloadPauseAndResumeAfterDownloadCompleteOnMultiPartObjectReturnsEntireObject() throws Exception {
-    	GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY);
+        GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY);
         Download download = tm.download(req, downloadFile);
         download.waitForCompletion();
 
@@ -404,7 +411,7 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
 
         assertEquals(TransferState.Completed, download.getState());
         SdkAsserts.assertFileEqualsStream(downloadFile,
-                s3.getObject(req).getObjectContent());
+                                          s3.getObject(req).getObjectContent());
 
         assertEquals(downloadFile.length(), download.getProgress().getTotalBytesToTransfer());
         assertEquals(100.00, download.getProgress().getPercentTransferred(), .001);
@@ -423,8 +430,9 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
                 .withRange(START_BYTE, END_BYTE);
         Download download = tm.download(getObjectRequest, downloadFile);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
 
         PersistableDownload persistableDownload = download.pause();
         download = tm.resumeDownload(persistableDownload);
@@ -445,8 +453,9 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
     @Test(expected = AmazonClientException.class)
     public void testDownloadPauseAndResumeWhileObjectModifiedAfterPauseThrowsAmazonClientException() throws Exception {
         Download download = tm.download(new GetObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY), downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
 
         PersistableDownload persistableDownload = download.pause();
 
@@ -470,9 +479,10 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
         upload.waitForCompletion();
 
         Download download = tm.download(new GetObjectRequest(VERSION_ENABLED_BUCKET_NAME, NON_MULTIPART_OBJECT_KEY),
-                downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+                                        downloadFile);
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
         PersistableDownload persistableDownload = download.pause();
 
         upload = tm.upload(VERSION_ENABLED_BUCKET_NAME, NON_MULTIPART_OBJECT_KEY, multiPartFile);
@@ -498,8 +508,9 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
 
         Download download = tm.download(
                 new GetObjectRequest(VERSION_ENABLED_BUCKET_NAME, NON_MULTIPART_OBJECT_KEY, versionID), downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
         PersistableDownload persistableDownload = download.pause();
 
         upload = tm.upload(VERSION_ENABLED_BUCKET_NAME, NON_MULTIPART_OBJECT_KEY, multiPartFile);
@@ -510,8 +521,8 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
 
         assertEquals(TransferState.Completed, download.getState());
         SdkAsserts.assertFileEqualsStream(downloadFile,
-                s3.getObject(new GetObjectRequest(VERSION_ENABLED_BUCKET_NAME, NON_MULTIPART_OBJECT_KEY, versionID))
-                        .getObjectContent());
+                                          s3.getObject(new GetObjectRequest(VERSION_ENABLED_BUCKET_NAME, NON_MULTIPART_OBJECT_KEY, versionID))
+                                            .getObjectContent());
 
         assertEquals(downloadFile.length(), download.getProgress().getTotalBytesToTransfer());
         assertEquals(100.00, download.getProgress().getPercentTransferred(), .001);
@@ -522,12 +533,13 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
      * This test case performs a pause on SSE encrypted non multipart object,
      * a PauseException should be thrown.
      */
-    @Test (expected = PauseException.class)
+    @Test(expected = PauseException.class)
     public void testDownloadPauseOnSseEncryptedNonMultiPartObjectThrowsPauseException() throws Exception {
         GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY_WITH_SSE).withSSECustomerKey(SSE_KEY);
         Download download = tm.download(req, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
 
         download.pause();
     }
@@ -536,12 +548,13 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
      * This test case performs a pause on SSE encrypted multipart object,
      * a PauseException should be thrown.
      */
-    @Test (expected = PauseException.class)
+    @Test(expected = PauseException.class)
     public void testDownloadPauseOnSseEncryptedMultiPartObjectThrowsPauseException() throws Exception {
         GetObjectRequest req = new GetObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY_WITH_SSE).withSSECustomerKey(SSE_KEY);
         Download download = tm.download(req, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUPT_SIZE) {
             ;
+        }
 
         download.pause();
     }
@@ -561,15 +574,6 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
         if (downloadFile != null) {
             downloadFile.delete();
         }
-    }
-
-    @AfterClass
-    public static void tearDown() throws Exception {
-        CryptoTestUtils.deleteBucketAndAllContents(s3, BUCKET_NAME);
-        CryptoTestUtils.deleteBucketAndAllContents(s3, VERSION_ENABLED_BUCKET_NAME);
-        tm.shutdownNow();
-        multiPartFile.deleteOnExit();
-        nonMultiPartFile.deleteOnExit();
     }
 
     private File fileInDirectoryThatDoesNotExist() {

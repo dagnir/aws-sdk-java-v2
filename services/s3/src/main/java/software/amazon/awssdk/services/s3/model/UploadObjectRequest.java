@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.File;
@@ -32,11 +33,9 @@ import software.amazon.awssdk.services.s3.internal.MultiFileOutputStream;
  * @see AmazonS3EncryptionClient#uploadObject(UploadObjectRequest)
  */
 public class UploadObjectRequest extends AbstractPutObjectRequest implements
-        MaterialsDescriptionProvider, Serializable {
-	private static final long serialVersionUID = 1L;
-
-	static final int MIN_PART_SIZE = 5 << 20; // 5 MB
-
+                                                                  MaterialsDescriptionProvider, Serializable {
+    static final int MIN_PART_SIZE = 5 << 20; // 5 MB
+    private static final long serialVersionUID = 1L;
     /**
      * Optional metadata to be included in each upload part requests.
      */
@@ -77,7 +76,7 @@ public class UploadObjectRequest extends AbstractPutObjectRequest implements
     }
 
     public UploadObjectRequest(String bucketName, String key,
-            InputStream input, ObjectMetadata metadata) {
+                               InputStream input, ObjectMetadata metadata) {
         super(bucketName, key, input, metadata);
     }
 
@@ -98,9 +97,10 @@ public class UploadObjectRequest extends AbstractPutObjectRequest implements
      * @return this object for method chaining purposes
      */
     public UploadObjectRequest withPartSize(long partSize) {
-        if (partSize < MIN_PART_SIZE)
+        if (partSize < MIN_PART_SIZE) {
             throw new IllegalArgumentException("partSize must be at least "
-                    + MIN_PART_SIZE);
+                                               + MIN_PART_SIZE);
+        }
         this.partSize = partSize;
         return this;
     }
@@ -198,9 +198,9 @@ public class UploadObjectRequest extends AbstractPutObjectRequest implements
      */
     public void setMaterialsDescription(Map<String, String> materialsDescription) {
         this.materialsDescription = materialsDescription == null
-            ? null
-            : Collections.unmodifiableMap(
-                new HashMap<String, String>(materialsDescription));
+                                    ? null
+                                    : Collections.unmodifiableMap(
+                                            new HashMap<String, String>(materialsDescription));
     }
 
     /**
@@ -232,7 +232,7 @@ public class UploadObjectRequest extends AbstractPutObjectRequest implements
     public <T extends UploadObjectRequest> T withUploadPartMetadata(
             ObjectMetadata partUploadMetadata) {
         setUploadPartMetadata(partUploadMetadata);
-        @SuppressWarnings("unchecked") T t = (T)this;
+        @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
 
@@ -247,15 +247,15 @@ public class UploadObjectRequest extends AbstractPutObjectRequest implements
         final ObjectMetadata uploadPartMetadata = getUploadPartMetadata();
         return cloned
                 .withMaterialsDescription(materialsDescription == null
-                    ? null
-                    : new HashMap<String, String>(materialsDescription))
+                                          ? null
+                                          : new HashMap<String, String>(materialsDescription))
                 .withDiskLimit(getDiskLimit())
                 .withExecutorService(getExecutorService())
                 .withMultiFileOutputStream(getMultiFileOutputStream())
                 .withPartSize(getPartSize())
                 .withUploadObjectObserver(getUploadObjectObserver())
                 .withUploadPartMetadata(uploadPartMetadata == null
-                    ? null : uploadPartMetadata.clone())
+                                        ? null : uploadPartMetadata.clone())
                 ;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class PartitionRegionImpl implements RegionImpl {
      * endpoint cache for a service.
      */
     private final Map<String, Endpoint> endpointCache = new ConcurrentHashMap<String,
-                Endpoint>();
+            Endpoint>();
 
     public PartitionRegionImpl(String region, Partition p) {
         this.partition = ValidationUtils.assertNotNull(p, "partition");
@@ -111,25 +111,25 @@ public class PartitionRegionImpl implements RegionImpl {
                 Endpoint merged = Endpoint.merge(
                         partition.getDefaults(),
                         Endpoint.merge(service.getDefaults(),
-                                service.getEndpoints().get(region)));
+                                       service.getEndpoints().get(region)));
 
                 return merged;
 
             } else if (service.isPartitionWideEndpointAvailable() && !service
-                        .isRegionalized()) {
+                    .isRegionalized()) {
                 // partition doesn't have any information about a service.
 
                 Endpoint merged = Endpoint.merge(
                         partition.getDefaults(),
                         Endpoint.merge(service.getDefaults(),
-                                service.getEndpoints().get(
-                                        service.getPartitionEndpoint())));
+                                       service.getEndpoints().get(
+                                               service.getPartitionEndpoint())));
 
                 return merged;
 
             } else {
                 if (partition.getDefaults() != null
-                        && partition.getDefaults().getHostName() != null) {
+                    && partition.getDefaults().getHostName() != null) {
                     return partition.getDefaults();
                 }
             }
@@ -139,11 +139,11 @@ public class PartitionRegionImpl implements RegionImpl {
 
     private String getEndpointString(String serviceName, Endpoint endpoint) {
         return endpoint == null
-                ? null
-                : endpoint.getHostName()
-                .replace(SERVICE, serviceName)
-                .replace(REGION, region)
-                .replace(DNS_SUFFIX, partition.getDnsSuffix());
+               ? null
+               : endpoint.getHostName()
+                         .replace(SERVICE, serviceName)
+                         .replace(REGION, region)
+                         .replace(DNS_SUFFIX, partition.getDnsSuffix());
     }
 
     /**
@@ -165,14 +165,14 @@ public class PartitionRegionImpl implements RegionImpl {
      */
     private boolean isServiceSupportedInRegion(String serviceName) {
         return partition.getServices().get(serviceName) != null
-                && partition.getServices().get(serviceName).getEndpoints()
-                .containsKey(region);
+               && partition.getServices().get(serviceName).getEndpoints()
+                           .containsKey(region);
     }
 
     private boolean isServicePartitionWide(String serviceName) {
         return partition.getServices().get(serviceName) != null
-                && partition.getServices().get(serviceName)
-                .getPartitionEndpoint() != null;
+               && partition.getServices().get(serviceName)
+                           .getPartitionEndpoint() != null;
     }
 
     /**
@@ -185,7 +185,9 @@ public class PartitionRegionImpl implements RegionImpl {
     @Override
     public boolean hasHttpsEndpoint(String serviceName) {
 
-        if (!isServiceSupported(serviceName)) return false;
+        if (!isServiceSupported(serviceName)) {
+            return false;
+        }
 
         return getEndpoint(serviceName).hasHttpsSupport();
 
@@ -200,7 +202,9 @@ public class PartitionRegionImpl implements RegionImpl {
      */
     @Override
     public boolean hasHttpEndpoint(String serviceName) {
-        if (!isServiceSupported(serviceName)) return false;
+        if (!isServiceSupported(serviceName)) {
+            return false;
+        }
 
         return getEndpoint(serviceName).hasHttpSupport();
     }

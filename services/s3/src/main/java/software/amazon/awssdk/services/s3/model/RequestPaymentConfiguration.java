@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
 
 /**
@@ -27,11 +26,9 @@ import java.io.Serializable;
  */
 public class RequestPaymentConfiguration implements Serializable {
 
-    public static enum Payer {
-        Requester, BucketOwner
-    };
-
     private Payer payer;
+
+    ;
 
     public RequestPaymentConfiguration(Payer payer) {
         this.payer = payer;
@@ -43,6 +40,10 @@ public class RequestPaymentConfiguration implements Serializable {
 
     public void setPayer(Payer payer) {
         this.payer = payer;
+    }
+
+    public static enum Payer {
+        Requester, BucketOwner
     }
 
 }

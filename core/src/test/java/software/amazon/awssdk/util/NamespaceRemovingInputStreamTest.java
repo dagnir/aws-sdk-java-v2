@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -33,44 +29,44 @@ import org.junit.Test;
 public class NamespaceRemovingInputStreamTest {
 
     private static final String SAMPLE_RESPONSE_1 =
-        "<DomainMetadataResponse xmlns=\"http://sdb.amazonaws.com/doc/2009-04-15/\">\n" +
-        "  <DomainMetadataResult>\n" +
-        "    <ItemCount>195078</ItemCount>\n" +
-        "  </DomainMetadataResult>\n" +
-        "  <ResponseMetadata>\n" +
-        "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
-        "  </ResponseMetadata>\n" +
-        "</DomainMetadataResponse>";
+            "<DomainMetadataResponse xmlns=\"http://sdb.amazonaws.com/doc/2009-04-15/\">\n" +
+            "  <DomainMetadataResult>\n" +
+            "    <ItemCount>195078</ItemCount>\n" +
+            "  </DomainMetadataResult>\n" +
+            "  <ResponseMetadata>\n" +
+            "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
+            "  </ResponseMetadata>\n" +
+            "</DomainMetadataResponse>";
 
     private static final String SAMPLE_RESPONSE_2 =
-        "<DomainMetadataResponse xmlns = \"http://sdb.amazonaws.com/doc/2009-04-15/\">\n" +
-        "  <DomainMetadataResult>\n" +
-        "    <ItemCount>195078</ItemCount>\n" +
-        "  </DomainMetadataResult>\n" +
-        "  <ResponseMetadata>\n" +
-        "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
-        "  </ResponseMetadata>\n" +
-        "</DomainMetadataResponse>";
+            "<DomainMetadataResponse xmlns = \"http://sdb.amazonaws.com/doc/2009-04-15/\">\n" +
+            "  <DomainMetadataResult>\n" +
+            "    <ItemCount>195078</ItemCount>\n" +
+            "  </DomainMetadataResult>\n" +
+            "  <ResponseMetadata>\n" +
+            "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
+            "  </ResponseMetadata>\n" +
+            "</DomainMetadataResponse>";
 
     private static final String SAMPLE_RESPONSE_3 =
-        "<DomainMetadataResponse xmlns=  \"http://sdb.amazonaws.com/doc/2009-04-15/\">\n" +
-        "  <DomainMetadataResult>\n" +
-        "    <ItemCount>195078</ItemCount>\n" +
-        "  </DomainMetadataResult>\n" +
-        "  <ResponseMetadata>\n" +
-        "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
-        "  </ResponseMetadata>\n" +
-        "</DomainMetadataResponse>";
+            "<DomainMetadataResponse xmlns=  \"http://sdb.amazonaws.com/doc/2009-04-15/\">\n" +
+            "  <DomainMetadataResult>\n" +
+            "    <ItemCount>195078</ItemCount>\n" +
+            "  </DomainMetadataResult>\n" +
+            "  <ResponseMetadata>\n" +
+            "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
+            "  </ResponseMetadata>\n" +
+            "</DomainMetadataResponse>";
 
     private static final String EXPECTED_RESULT =
-        "<DomainMetadataResponse >\n" +
-        "  <DomainMetadataResult>\n" +
-        "    <ItemCount>195078</ItemCount>\n" +
-        "  </DomainMetadataResult>\n" +
-        "  <ResponseMetadata>\n" +
-        "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
-        "  </ResponseMetadata>\n" +
-        "</DomainMetadataResponse>";
+            "<DomainMetadataResponse >\n" +
+            "  <DomainMetadataResult>\n" +
+            "    <ItemCount>195078</ItemCount>\n" +
+            "  </DomainMetadataResult>\n" +
+            "  <ResponseMetadata>\n" +
+            "        <RequestId>b1e8f1f7-42e9-494c-ad09-2674e557526d</RequestId>\n" +
+            "  </ResponseMetadata>\n" +
+            "</DomainMetadataResponse>";
 
     @Test
     public void testNamespaceRemoval() throws Exception {

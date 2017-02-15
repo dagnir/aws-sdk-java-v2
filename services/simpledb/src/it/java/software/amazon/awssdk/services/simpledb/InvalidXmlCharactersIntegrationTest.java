@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.simpledb;
 
 import static org.junit.Assert.assertEquals;
@@ -18,13 +33,13 @@ import software.amazon.awssdk.services.simpledb.model.SelectResult;
 /**
  * Tests that we can handle SimpleDBs base64 encoding attributes when users upload data that isn't
  * XML-compatible.
- * 
+ *
  * @author Jason Fulghum <fulghum@amazon.com>
  */
 public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
 
-    private static String domainName = "invalid-characters-integ-test-" + new Date().getTime();
     private static final String NON_XML_COMPATIBLE_STRING = "\u0001" + "foobar";
+    private static String domainName = "invalid-characters-integ-test-" + new Date().getTime();
 
     /** Releases all resources used by this test */
     @After
@@ -42,7 +57,7 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
         createTestData();
 
         SelectResult selectResult = sdb.select(new SelectRequest().withSelectExpression("SELECT * FROM `" + domainName
-                + "`"));
+                                                                                        + "`"));
 
         List<Item> items = selectResult.getItems();
         assertEquals(1, items.size());
@@ -71,7 +86,7 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
         ReplaceableAttribute attribute = new ReplaceableAttribute().withName(NON_XML_COMPATIBLE_STRING).withValue(
                 NON_XML_COMPATIBLE_STRING);
         sdb.putAttributes(new PutAttributesRequest().withDomainName(domainName).withItemName(NON_XML_COMPATIBLE_STRING)
-                .withAttributes(new ReplaceableAttribute[] { attribute }));
+                                                    .withAttributes(new ReplaceableAttribute[] {attribute}));
 
         // Sleep 5s to let data propagate
         Thread.sleep(5 * 1000);

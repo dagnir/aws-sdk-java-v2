@@ -16,6 +16,10 @@
 package software.amazon.awssdk.services.dynamodbv2.pojos;
 
 public class UnannotatedSubClass {
-    public UnannotatedSubClass getChild() { return null; }
-    public void setChild(UnannotatedSubClass c) { }
+    public UnannotatedSubClass getChild() {
+        return null;
+    }
+
+    public void setChild(UnannotatedSubClass c) {
+    }
 }

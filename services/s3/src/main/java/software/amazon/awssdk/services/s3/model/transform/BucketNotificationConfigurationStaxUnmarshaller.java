@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.io.InputStream;
@@ -24,17 +25,16 @@ import software.amazon.awssdk.services.s3.model.BucketNotificationConfiguration;
 import software.amazon.awssdk.services.s3.model.NotificationConfiguration;
 
 public class BucketNotificationConfigurationStaxUnmarshaller implements
-        Unmarshaller<BucketNotificationConfiguration, InputStream> {
+                                                             Unmarshaller<BucketNotificationConfiguration, InputStream> {
 
     private static BucketNotificationConfigurationStaxUnmarshaller instance = new BucketNotificationConfigurationStaxUnmarshaller();
-
-    public static BucketNotificationConfigurationStaxUnmarshaller getInstance() {
-        return instance;
-    }
-
     private final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
     private BucketNotificationConfigurationStaxUnmarshaller() {
+    }
+
+    public static BucketNotificationConfigurationStaxUnmarshaller getInstance() {
+        return instance;
     }
 
     @Override
@@ -60,15 +60,15 @@ public class BucketNotificationConfigurationStaxUnmarshaller implements
             if (xmlEvent.isAttribute() || xmlEvent.isStartElement()) {
                 if (context.testExpression("TopicConfiguration", targetDepth)) {
                     Entry<String, NotificationConfiguration> entry = TopicConfigurationStaxUnmarshaller.getInstance()
-                            .unmarshall(context);
+                                                                                                       .unmarshall(context);
                     config.addConfiguration(entry.getKey(), entry.getValue());
                 } else if (context.testExpression("QueueConfiguration", targetDepth)) {
                     Entry<String, NotificationConfiguration> entry = QueueConfigurationStaxUnmarshaller.getInstance()
-                            .unmarshall(context);
+                                                                                                       .unmarshall(context);
                     config.addConfiguration(entry.getKey(), entry.getValue());
                 } else if (context.testExpression("CloudFunctionConfiguration", targetDepth)) {
                     Entry<String, NotificationConfiguration> entry = LambdaConfigurationStaxUnmarshaller.getInstance()
-                            .unmarshall(context);
+                                                                                                        .unmarshall(context);
                     config.addConfiguration(entry.getKey(), entry.getValue());
                 }
             } else if (xmlEvent.isEndElement()) {

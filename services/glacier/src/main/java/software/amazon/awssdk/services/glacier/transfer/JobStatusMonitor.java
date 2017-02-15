@@ -1,16 +1,16 @@
 /*
- * Copyright 2012 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.glacier.transfer;
@@ -56,13 +56,11 @@ import software.amazon.awssdk.util.BinaryUtils;
 public class JobStatusMonitor {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
+    private static final Log log = LogFactory.getLog(JobStatusMonitor.class);
     private AmazonSQSClient sqs;
     private AmazonSNSClient sns;
     private String queueUrl;
     private String topicArn;
-
-    private static final Log log = LogFactory.getLog(JobStatusMonitor.class);
 
     public JobStatusMonitor(AWSCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
         sqs = new AmazonSQSClient(credentialsProvider, clientConfiguration);
@@ -125,10 +123,14 @@ public class JobStatusMonitor {
                     String messageStatus = json.get("StatusMessage").asText();
 
                     // Don't process this message if it wasn't the job we were looking for
-                    if (!jobId.equals(messageJobId)) continue;
+                    if (!jobId.equals(messageJobId)) {
+                        continue;
+                    }
 
                     try {
-                        if (StatusCode.Succeeded.toString().equals(messageStatus)) return;
+                        if (StatusCode.Succeeded.toString().equals(messageStatus)) {
+                            return;
+                        }
                         if (StatusCode.Failed.toString().equals(messageStatus)) {
                             throw new AmazonClientException("Archive retrieval failed");
                         }
@@ -155,7 +157,8 @@ public class JobStatusMonitor {
     private void deleteMessage(Message message) {
         try {
             sqs.deleteMessage(new DeleteMessageRequest(queueUrl, message.getReceiptHandle()));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     private void setupQueueAndTopic() {
@@ -168,25 +171,26 @@ public class JobStatusMonitor {
         String queueARN = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl).withAttributeNames("QueueArn")).getAttributes().get("QueueArn");
 
         Policy sqsPolicy =
-            new Policy().withStatements(
-                    new Statement(Effect.Allow)
-                    .withPrincipals(Principal.AllUsers)
-                    .withActions(SQSActions.SendMessage)
-                    .withResources(new Resource(queueARN))
-                    .withConditions(ConditionFactory.newSourceArnCondition(topicArn)));
+                new Policy().withStatements(
+                        new Statement(Effect.Allow)
+                                .withPrincipals(Principal.AllUsers)
+                                .withActions(SQSActions.SendMessage)
+                                .withResources(new Resource(queueARN))
+                                .withConditions(ConditionFactory.newSourceArnCondition(topicArn)));
         sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, newAttributes("Policy", sqsPolicy.toJson())));
 
         sns.subscribe(new SubscribeRequest(topicArn, "sqs", queueARN));
     }
 
     private Map<String, String> newAttributes(String... keyValuePairs) {
-        if (keyValuePairs.length % 2 != 0)
+        if (keyValuePairs.length % 2 != 0) {
             throw new IllegalArgumentException("Incorrect number of arguments passed.  Input must be specified as: key, value, key, value, ...");
+        }
 
         Map<String, String> map = new HashMap<String, String>();
         for (int i = 0; i < keyValuePairs.length; i += 2) {
-            String key   = keyValuePairs[i];
-            String value = keyValuePairs[i+1];
+            String key = keyValuePairs[i];
+            String value = keyValuePairs[i + 1];
             map.put(key, value);
         }
 

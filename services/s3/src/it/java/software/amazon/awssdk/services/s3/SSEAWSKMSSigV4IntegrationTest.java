@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -40,43 +40,38 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
      * Bucket name in the standard region.
      */
     private static final String BUCKET_NAME = "java-sdk-kms-put-"
-            + System.currentTimeMillis();
+                                              + System.currentTimeMillis();
 
     /**
      * Bucket name in US_WEST region.
      */
     private static final String BUCKET_NAME_US_WEST = "java-sdk-kms-us-west-put-"
-            + System.currentTimeMillis();
+                                                      + System.currentTimeMillis();
 
     private static final String FILE_NAME = "sdk-kms-put-file-"
-            + System.currentTimeMillis();
+                                            + System.currentTimeMillis();
 
     /**
      * Content Length of the file used for upload.
      */
     private static final long CONTENT_LENGTH = 2 * MB;
-
+    private static final Log LOG = LogFactory.getLog(SSEAWSKMSSigV4IntegrationTest.class);
     /**
      * Reference to the file uploaded for testing.
      */
     private static File fileToUpload = null;
-
     /**
      * Name of the Amazon S3 Object.
      */
     private static String KEY = "key";
-
     /**
      * Client for the s3USWest region.
      */
     private static AmazonS3Client s3USWest;
-
     /**
      * Metric collector that collects the RequestCount metric.
      */
     private final RequestCountMetricCollector requestCountCollector = new RequestCountMetricCollector();
-
-    private static final Log LOG = LogFactory.getLog(SSEAWSKMSSigV4IntegrationTest.class);
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -93,9 +88,10 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         try {
             CryptoTestUtils.deleteBucketAndAllContents(s3, BUCKET_NAME);
             CryptoTestUtils.deleteBucketAndAllContents(s3USWest,
-                    BUCKET_NAME_US_WEST);
-            if (fileToUpload != null)
+                                                       BUCKET_NAME_US_WEST);
+            if (fileToUpload != null) {
                 fileToUpload.delete();
+            }
         } catch (Exception e) {
             LOG.error(
                     "Error in cleaning up the resources after test completion.",
@@ -114,7 +110,7 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         final AmazonS3Client s3Client = new AmazonS3Client(credentials);
 
         PutObjectRequest request = new PutObjectRequest(BUCKET_NAME, KEY,
-                fileToUpload).withSSEAwsKeyManagementParams(
+                                                        fileToUpload).withSSEAwsKeyManagementParams(
                 new SSEAwsKeyManagementParams()).withRequestMetricCollector(
                 requestCountCollector);
         s3Client.putObject(request);
@@ -135,7 +131,7 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         s3Client.configureRegion(Regions.US_EAST_1);
 
         PutObjectRequest request = new PutObjectRequest(BUCKET_NAME_US_WEST,
-                KEY, fileToUpload).withSSEAwsKeyManagementParams(
+                                                        KEY, fileToUpload).withSSEAwsKeyManagementParams(
                 new SSEAwsKeyManagementParams()).withRequestMetricCollector(
                 requestCountCollector);
         s3Client.putObject(request);
@@ -152,7 +148,7 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         s3Client.configureRegion(Regions.US_WEST_1);
 
         PutObjectRequest request = new PutObjectRequest(BUCKET_NAME_US_WEST,
-                KEY, fileToUpload).withSSEAwsKeyManagementParams(
+                                                        KEY, fileToUpload).withSSEAwsKeyManagementParams(
                 new SSEAwsKeyManagementParams()).withRequestMetricCollector(
                 requestCountCollector);
         s3Client.putObject(request);
@@ -167,8 +163,8 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         public void collectMetrics(Request<?> request, Response<?> response) {
 
             requestCount = request.getAWSRequestMetrics().getTimingInfo()
-                    .getCounter(AWSRequestMetrics.Field.RequestCount.name())
-                    .intValue();
+                                  .getCounter(AWSRequestMetrics.Field.RequestCount.name())
+                                  .intValue();
         }
 
         public int getRequestCount() {

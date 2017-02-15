@@ -28,7 +28,8 @@ public class ClientConnectionRequestFactoryTest {
     ConnectionRequest noop = new ConnectionRequest() {
 
         @Override
-        public HttpClientConnection get(long timeout, TimeUnit tunit) throws InterruptedException, ExecutionException, ConnectionPoolTimeoutException {
+        public HttpClientConnection get(long timeout, TimeUnit tunit)
+                throws InterruptedException, ExecutionException, ConnectionPoolTimeoutException {
             return null;
         }
 

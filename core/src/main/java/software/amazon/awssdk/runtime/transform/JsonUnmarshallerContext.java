@@ -177,7 +177,7 @@ public abstract class JsonUnmarshallerContext {
      *            The key under which to store the matching element's data.
      */
     public void registerMetadataExpression(String expression, int targetDepth,
-            String storageKey) {
+                                           String storageKey) {
     }
 
     /**

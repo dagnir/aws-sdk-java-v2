@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.auth;
@@ -59,26 +59,23 @@ class EC2CredentialsFetcher {
 
     /** The name of the Json Object that contains the token.*/
     private static final String TOKEN = "Token";
-
-    /** The current instance profile credentials */
-    private volatile AWSCredentials credentials;
-
-    /** The expiration for the current instance profile credentials */
-    private volatile Date credentialsExpiration;
-
-    /** The time of the last attempt to check for new credentials */
-    protected volatile Date lastInstanceProfileCheck;
-
     /** Used to load the endpoint where the credentials are stored. */
     private final CredentialsEndpointProvider credentailsEndpointProvider;
+    /** The time of the last attempt to check for new credentials */
+    protected volatile Date lastInstanceProfileCheck;
+    /** The current instance profile credentials */
+    private volatile AWSCredentials credentials;
+    /** The expiration for the current instance profile credentials */
+    private volatile Date credentialsExpiration;
 
     public EC2CredentialsFetcher(CredentialsEndpointProvider credentailsEndpointProvider) {
         this.credentailsEndpointProvider = credentailsEndpointProvider;
     }
 
     public AWSCredentials getCredentials() {
-        if (needsToLoadCredentials())
+        if (needsToLoadCredentials()) {
             fetchCredentials();
+        }
         if (expired()) {
             throw new SdkClientException(
                     "The credentials received have been expired");
@@ -90,15 +87,21 @@ class EC2CredentialsFetcher {
      * Returns true if credentials are null, credentials are within expiration or
      * if the last attempt to refresh credentials is beyond the refresh threshold.
      */
-     protected boolean needsToLoadCredentials() {
-        if (credentials == null) return true;
+    protected boolean needsToLoadCredentials() {
+        if (credentials == null) {
+            return true;
+        }
 
         if (credentialsExpiration != null) {
-            if (isWithinExpirationThreshold()) return true;
+            if (isWithinExpirationThreshold()) {
+                return true;
+            }
         }
 
         if (lastInstanceProfileCheck != null) {
-            if (isPastRefreshThreshold()) return true;
+            if (isPastRefreshThreshold()) {
+                return true;
+            }
         }
 
         return false;
@@ -108,7 +111,9 @@ class EC2CredentialsFetcher {
      * Fetches the credentials from the endpoint.
      */
     private synchronized void fetchCredentials() {
-        if (!needsToLoadCredentials()) return;
+        if (!needsToLoadCredentials()) {
+            return;
+        }
 
         JsonNode accessKey;
         JsonNode secretKey;
@@ -130,10 +135,10 @@ class EC2CredentialsFetcher {
 
             if (null != token) {
                 credentials = new BasicSessionCredentials(accessKey.asText(),
-                        secretKey.asText(), token.asText());
+                                                          secretKey.asText(), token.asText());
             } else {
                 credentials = new BasicAWSCredentials(accessKey.asText(),
-                        secretKey.asText());
+                                                      secretKey.asText());
             }
 
             JsonNode expirationJsonNode = node.get("Expiration");
@@ -148,7 +153,7 @@ class EC2CredentialsFetcher {
 
                 try {
                     credentialsExpiration = DateUtils.parseISO8601Date(expiration);
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     handleError("Unable to parse credentials expiration date from Amazon EC2 instance", ex);
                 }
             }
@@ -175,8 +180,9 @@ class EC2CredentialsFetcher {
      */
     private void handleError(String errorMessage, Exception e) {
         // If we don't have any valid credentials to fall back on, then throw an exception
-        if (credentials == null || expired())
+        if (credentials == null || expired()) {
             throw new SdkClientException(errorMessage, e);
+        }
 
         // Otherwise, just log the error and continuing using the current credentials
         LOG.debug(errorMessage, e);

@@ -8,5 +8,5 @@ Feature: Amazon Simple Email Service
 
   Scenario: Handling errors
     When I attempt to call the "VerifyEmailIdentity" API with:
-    | EmailAddress | fake_email |
+      | EmailAddress | fake_email |
     Then I expect the response error code to be "InvalidParameterValue"

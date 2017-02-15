@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -147,19 +147,19 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     }
 
     /**
+     * @see OutputFormat
+     */
+    public void setOutputFormat(OutputFormat outputFormat) {
+        this.outputFormat = outputFormat.toString();
+    }
+
+    /**
      * @return Returns a reference to this object so that method calls can be chained together.
      * @see OutputFormat
      */
     public SynthesizeSpeechPresignRequest withOutputFormat(String outputFormat) {
         setOutputFormat(outputFormat);
         return this;
-    }
-
-    /**
-     * @see OutputFormat
-     */
-    public void setOutputFormat(OutputFormat outputFormat) {
-        this.outputFormat = outputFormat.toString();
     }
 
     /**
@@ -172,17 +172,17 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     }
 
     /**
-     * @param sampleRate
-     */
-    public void setSampleRate(String sampleRate) {
-        this.sampleRate = sampleRate;
-    }
-
-    /**
      * @return
      */
     public String getSampleRate() {
         return this.sampleRate;
+    }
+
+    /**
+     * @param sampleRate
+     */
+    public void setSampleRate(String sampleRate) {
+        this.sampleRate = sampleRate;
     }
 
     /**
@@ -194,17 +194,17 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     }
 
     /**
-     * @param text
-     */
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    /**
      * @return
      */
     public String getText() {
         return this.text;
+    }
+
+    /**
+     * @param text
+     */
+    public void setText(String text) {
+        this.text = text;
     }
 
     /**
@@ -230,19 +230,19 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     }
 
     /**
+     * @see TextType
+     */
+    public void setTextType(TextType textType) {
+        this.textType = textType.toString();
+    }
+
+    /**
      * @return Returns a reference to this object so that method calls can be chained together.
      * @see TextType
      */
     public SynthesizeSpeechPresignRequest withTextType(String textType) {
         setTextType(textType);
         return this;
-    }
-
-    /**
-     * @see TextType
-     */
-    public void setTextType(TextType textType) {
-        this.textType = textType.toString();
     }
 
     /**
@@ -269,19 +269,19 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     }
 
     /**
+     * @see VoiceId
+     */
+    public void setVoiceId(VoiceId voiceId) {
+        this.voiceId = voiceId.toString();
+    }
+
+    /**
      * @return Returns a reference to this object so that method calls can be chained together.
      * @see VoiceId
      */
     public SynthesizeSpeechPresignRequest withVoiceId(String voiceId) {
         setVoiceId(voiceId);
         return this;
-    }
-
-    /**
-     * @see VoiceId
-     */
-    public void setVoiceId(VoiceId voiceId) {
-        this.voiceId = voiceId.toString();
     }
 
     /**

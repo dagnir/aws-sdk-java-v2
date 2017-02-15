@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -93,10 +93,10 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanPrope
  * <p>May be used as a meta-annotation.</p>
  */
 @DynamoDB
-@DynamoDBTypeConverted(converter=DynamoDBDelimited.Converter.class)
+@DynamoDBTypeConverted(converter = DynamoDBDelimited.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface DynamoDBDelimited {
 
     /**
@@ -112,29 +112,29 @@ public @interface DynamoDBDelimited {
     /**
      * Type converter for string delimited attributes.
      */
-    static final class Converter<T> implements DynamoDBTypeConverter<String,T> {
-        private final Field<T,Object>[] fields;
+    static final class Converter<T> implements DynamoDBTypeConverter<String, T> {
+        private final Field<T, Object>[] fields;
         private final Class<T> targetType;
         private final String delimiter;
 
         public Converter(Class<T> targetType, DynamoDBDelimited annotation) {
-            final BeanMap<T,Object> beans = new BeanMap<T,Object>(targetType, true);
+            final BeanMap<T, Object> beans = new BeanMap<T, Object>(targetType, true);
 
             final String[] names = annotation.attributeNames();
             if (names.length <= 1) {
                 throw new DynamoDBMappingException(targetType +
-                    " missing attributeNames in @DynamoDBDelimited; must specify two or more attribute names");
+                                                   " missing attributeNames in @DynamoDBDelimited; must specify two or more attribute names");
             }
 
             this.delimiter = String.valueOf(annotation.delimiter());
             this.fields = new Field[names.length];
             this.targetType = targetType;
 
-            for (int i = 0; i < fields.length; i ++) {
+            for (int i = 0; i < fields.length; i++) {
                 if (beans.containsKey(names[i]) == false) {
                     throw new DynamoDBMappingException(targetType + " does not map %s on model " + names[i]);
                 }
-                this.fields[i] = new Field<T,Object>(targetType, beans.get(names[i]));
+                this.fields[i] = new Field<T, Object>(targetType, beans.get(names[i]));
             }
         }
 
@@ -149,9 +149,9 @@ public @interface DynamoDBDelimited {
                 if (value != null) {
                     if (value.contains(delimiter)) {
                         throw new DynamoDBMappingException(String.format(
-                            "%s[%s] field value \"%s\" must not contain delimiter %s",
-                            targetType, fields[i].bean.properties().attributeName(), value, delimiter
-                        ));
+                                "%s[%s] field value \"%s\" must not contain delimiter %s",
+                                targetType, fields[i].bean.properties().attributeName(), value, delimiter
+                                                                        ));
                     }
                     string.append(value);
                 }
@@ -168,11 +168,12 @@ public @interface DynamoDBDelimited {
             }
             return object;
         }
-    
-        private static final class Field<T,V> {
-            private final DynamoDBTypeConverter<String,V> converter;
-            private final Bean<T,V> bean;
-            private Field(final Class<T> type, final Bean<T,V> bean) {
+
+        private static final class Field<T, V> {
+            private final DynamoDBTypeConverter<String, V> converter;
+            private final Bean<T, V> bean;
+
+            private Field(final Class<T> type, final Bean<T, V> bean) {
                 if (bean.type().typeConverter() == null) {
                     this.converter = StandardTypeConverters.factory().getConverter(String.class, bean.type().targetType());
                 } else {
@@ -180,6 +181,7 @@ public @interface DynamoDBDelimited {
                 }
                 this.bean = bean;
             }
+
             private final String get(final T object) {
                 final V value = bean.reflect().get(object);
                 if (value == null) {
@@ -187,6 +189,7 @@ public @interface DynamoDBDelimited {
                 }
                 return converter.convert(value);
             }
+
             private final void set(final T object, final String string) {
                 if (!string.isEmpty()) {
                     final V value = converter.unconvert(string);

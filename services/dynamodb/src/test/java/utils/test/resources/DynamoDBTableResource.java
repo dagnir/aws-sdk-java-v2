@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package utils.test.resources;
 
 import java.util.List;
@@ -31,6 +32,65 @@ import utils.resources.TestResource;
 import utils.test.util.DynamoDBTestBase;
 
 public abstract class DynamoDBTableResource implements TestResource {
+
+    /**
+     * Returns true if the two lists of GlobalSecondaryIndex and
+     * GlobalSecondaryIndexDescription share the same set of:
+     * 1) indexName
+     * 2) projection
+     * 3) keySchema (compared as unordered lists)
+     */
+    static boolean equalUnorderedGsiLists(List<GlobalSecondaryIndex> listA, List<GlobalSecondaryIndexDescription> listB) {
+        return UnorderedCollectionComparator.equalUnorderedCollections(
+                listA, listB,
+                new UnorderedCollectionComparator.CrossTypeComparator<GlobalSecondaryIndex, GlobalSecondaryIndexDescription>() {
+                    @Override
+                    public boolean equals(GlobalSecondaryIndex a, GlobalSecondaryIndexDescription b) {
+                        return a.getIndexName().equals(b.getIndexName())
+                               && equalProjections(a.getProjection(), b.getProjection())
+                               && UnorderedCollectionComparator.equalUnorderedCollections(a.getKeySchema(), b.getKeySchema());
+                    }
+                });
+    }
+
+    /**
+     * Returns true if the two lists of LocalSecondaryIndex and
+     * LocalSecondaryIndexDescription share the same set of:
+     * 1) indexName
+     * 2) projection
+     * 3) keySchema (compared as unordered lists)
+     */
+    static boolean equalUnorderedLsiLists(List<LocalSecondaryIndex> listA, List<LocalSecondaryIndexDescription> listB) {
+        return UnorderedCollectionComparator.equalUnorderedCollections(
+                listA, listB,
+                new UnorderedCollectionComparator.CrossTypeComparator<LocalSecondaryIndex, LocalSecondaryIndexDescription>() {
+                    @Override
+                    public boolean equals(LocalSecondaryIndex a, LocalSecondaryIndexDescription b) {
+                        // Project parameter might not be specified in the
+                        // CreateTableRequest. But it should be treated as equal
+                        // to the default projection type - KEYS_ONLY.
+                        return a.getIndexName().equals(b.getIndexName())
+                               && equalProjections(a.getProjection(), b.getProjection())
+                               && UnorderedCollectionComparator.equalUnorderedCollections(a.getKeySchema(), b.getKeySchema());
+                    }
+                });
+    }
+
+    /**
+     * Compares the Projection parameter included in the CreateTableRequest,
+     * with the one returned from DescribeTableResult.
+     */
+    static boolean equalProjections(Projection fromCreateTableRequest, Projection fromDescribeTableResult) {
+        if (fromCreateTableRequest == null || fromDescribeTableResult == null) {
+            throw new IllegalStateException("The projection parameter should never be null.");
+        }
+
+        return fromCreateTableRequest.getProjectionType().equals(
+                fromDescribeTableResult.getProjectionType())
+               && UnorderedCollectionComparator.equalUnorderedCollections(
+                fromCreateTableRequest.getNonKeyAttributes(),
+                fromDescribeTableResult.getNonKeyAttributes());
+    }
 
     protected abstract AmazonDynamoDB getClient();
 
@@ -99,66 +159,6 @@ public abstract class DynamoDBTableResource implements TestResource {
             return ResourceStatus.NOT_EXIST;
         }
     }
-
-    /**
-     * Returns true if the two lists of GlobalSecondaryIndex and
-     * GlobalSecondaryIndexDescription share the same set of:
-     * 1) indexName
-     * 2) projection
-     * 3) keySchema (compared as unordered lists)
-     */
-    static boolean equalUnorderedGsiLists(List<GlobalSecondaryIndex> listA, List<GlobalSecondaryIndexDescription> listB) {
-        return UnorderedCollectionComparator.equalUnorderedCollections(
-                listA, listB,
-                new UnorderedCollectionComparator.CrossTypeComparator<GlobalSecondaryIndex, GlobalSecondaryIndexDescription>() {
-                    @Override
-                    public boolean equals(GlobalSecondaryIndex a, GlobalSecondaryIndexDescription b) {
-                        return a.getIndexName().equals(b.getIndexName())
-                               && equalProjections(a.getProjection(), b.getProjection())
-                               && UnorderedCollectionComparator.equalUnorderedCollections(a.getKeySchema(), b.getKeySchema());
-                    }
-                });
-    }
-
-    /**
-     * Returns true if the two lists of LocalSecondaryIndex and
-     * LocalSecondaryIndexDescription share the same set of:
-     * 1) indexName
-     * 2) projection
-     * 3) keySchema (compared as unordered lists)
-     */
-    static boolean equalUnorderedLsiLists(List<LocalSecondaryIndex> listA, List<LocalSecondaryIndexDescription> listB) {
-        return UnorderedCollectionComparator.equalUnorderedCollections(
-                listA, listB,
-                new UnorderedCollectionComparator.CrossTypeComparator<LocalSecondaryIndex, LocalSecondaryIndexDescription>() {
-                    @Override
-                    public boolean equals(LocalSecondaryIndex a, LocalSecondaryIndexDescription b) {
-                        // Project parameter might not be specified in the
-                        // CreateTableRequest. But it should be treated as equal
-                        // to the default projection type - KEYS_ONLY.
-                        return a.getIndexName().equals(b.getIndexName())
-                               && equalProjections(a.getProjection(), b.getProjection())
-                               && UnorderedCollectionComparator.equalUnorderedCollections(a.getKeySchema(), b.getKeySchema());
-                    }
-                });
-    }
-
-    /**
-     * Compares the Projection parameter included in the CreateTableRequest,
-     * with the one returned from DescribeTableResult.
-     */
-    static boolean equalProjections(Projection fromCreateTableRequest, Projection fromDescribeTableResult) {
-        if (fromCreateTableRequest == null || fromDescribeTableResult == null) {
-            throw new IllegalStateException("The projection parameter should never be null.");
-        }
-
-        return fromCreateTableRequest.getProjectionType().equals(
-                fromDescribeTableResult.getProjectionType())
-               && UnorderedCollectionComparator.equalUnorderedCollections(
-                fromCreateTableRequest.getNonKeyAttributes(),
-                fromDescribeTableResult.getNonKeyAttributes());
-    }
-
 
     /**
      * Object interfaces

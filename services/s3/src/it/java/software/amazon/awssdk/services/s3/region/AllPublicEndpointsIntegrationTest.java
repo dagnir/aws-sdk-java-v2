@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.region;
 
 import java.io.File;
@@ -20,16 +35,15 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 @Category(S3Categories.Slow.class)
 public class AllPublicEndpointsIntegrationTest extends S3IntegrationTestBase {
 
+    private static final String KEY = "key";
     private static AmazonS3Client s3;
     private static File file;
-
-    private static final String KEY = "key";
 
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-    	s3 = new AmazonS3Client(credentials);
-    	file = new RandomTempFile("source", 100L);
+        s3 = new AmazonS3Client(credentials);
+        file = new RandomTempFile("source", 100L);
     }
 
     @Test
@@ -45,9 +59,9 @@ public class AllPublicEndpointsIntegrationTest extends S3IntegrationTestBase {
                 "s3-ap-southeast-2.amazonaws.com",
                 "s3-ap-northeast-1.amazonaws.com",
                 "s3-sa-east-1.amazonaws.com",
-        };
+                };
 
-        for (String endpoint: endpoints) {
+        for (String endpoint : endpoints) {
             testOperations(endpoint, s3);
         }
     }
@@ -60,7 +74,7 @@ public class AllPublicEndpointsIntegrationTest extends S3IntegrationTestBase {
                 "s3-fips-us-gov-west-1.amazonaws.com"
         };
 
-        for (String endpoint: endpoints) {
+        for (String endpoint : endpoints) {
             try {
                 testOperations(endpoint, s3);
             } catch (AmazonS3Exception ase) {
@@ -74,7 +88,7 @@ public class AllPublicEndpointsIntegrationTest extends S3IntegrationTestBase {
 
         s3.setEndpoint(endpoint);
 
-        if ( !s3.doesBucketExist(BUCKET) ) {
+        if (!s3.doesBucketExist(BUCKET)) {
             s3.createBucket(BUCKET);
         }
 

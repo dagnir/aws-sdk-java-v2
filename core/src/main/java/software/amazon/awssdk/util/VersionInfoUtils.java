@@ -30,20 +30,15 @@ import software.amazon.awssdk.internal.config.InternalConfig;
 public class VersionInfoUtils {
     /** The AWS SDK version info file with SDK versioning info */
     static final String VERSION_INFO_FILE = "/software/amazon/awssdk/sdk/versionInfo.properties";
-
-    /** SDK version info */
-    private static volatile String version;
-
-    /** SDK platform info */
-    private static volatile String platform;
-
-    /** User Agent info */
-    private static volatile String userAgent;
-
     /** Shared logger for any issues while loading version information */
     private static final Log log = LogFactory.getLog(VersionInfoUtils.class);
-
     private static final String UNKNOWN = "unknown";
+    /** SDK version info */
+    private static volatile String version;
+    /** SDK platform info */
+    private static volatile String platform;
+    /** User Agent info */
+    private static volatile String userAgent;
 
     /**
      * Returns the current version for the AWS SDK in which this class is
@@ -57,9 +52,10 @@ public class VersionInfoUtils {
      */
     public static String getVersion() {
         if (version == null) {
-            synchronized(VersionInfoUtils.class) {
-                if (version == null)
+            synchronized (VersionInfoUtils.class) {
+                if (version == null) {
                     initializeVersion();
+                }
             }
         }
         return version;
@@ -77,30 +73,32 @@ public class VersionInfoUtils {
      */
     public static String getPlatform() {
         if (platform == null) {
-            synchronized(VersionInfoUtils.class) {
-                if (platform == null)
+            synchronized (VersionInfoUtils.class) {
+                if (platform == null) {
                     initializeVersion();
+                }
             }
         }
         return platform;
     }
 
-     /**
+    /**
      * @return Returns the User Agent string to be used when communicating with
-	 * the AWS services.  The User Agent encapsulates SDK, Java, OS and
-	 * region information.
+     * the AWS services.  The User Agent encapsulates SDK, Java, OS and
+     * region information.
      */
     public static String getUserAgent() {
         if (userAgent == null) {
-            synchronized(VersionInfoUtils.class) {
-                if (userAgent == null)
+            synchronized (VersionInfoUtils.class) {
+                if (userAgent == null) {
                     initializeUserAgent();
+                }
             }
         }
         return userAgent;
     }
 
-   /**
+    /**
      * Loads the versionInfo.properties file from the AWS Java SDK and
      * stores the information so that the file doesn't have to be read the
      * next time the data is needed.
@@ -110,8 +108,9 @@ public class VersionInfoUtils {
                 VERSION_INFO_FILE, true, VersionInfoUtils.class);
         Properties versionInfoProperties = new Properties();
         try {
-            if (inputStream == null)
+            if (inputStream == null) {
                 throw new Exception(VERSION_INFO_FILE + " not found on classpath");
+            }
 
             versionInfoProperties.load(inputStream);
             version = versionInfoProperties.getProperty("version");
@@ -137,21 +136,21 @@ public class VersionInfoUtils {
     static String userAgent() {
 
         String ua = InternalConfig.Factory.getInternalConfig()
-                .getUserAgentTemplate();
+                                          .getUserAgentTemplate();
 
         if (ua == null) {
             return "aws-sdk-java";
         }
 
         ua = ua
-            .replace("{platform}",  StringUtils.lowerCase(getPlatform()))
-            .replace("{version}", getVersion())
-            .replace("{os.name}", replaceSpaces(System.getProperty("os.name")))
-            .replace("{os.version}", replaceSpaces(System.getProperty("os.version")))
-            .replace("{java.vm.name}", replaceSpaces(System.getProperty("java.vm.name")))
-            .replace("{java.vm.version}", replaceSpaces(System.getProperty("java.vm.version")))
-            .replace("{java.version}", replaceSpaces(System.getProperty("java.version")))
-            .replace("{additional.languages}", getAdditionalJvmLanguages());
+                .replace("{platform}", StringUtils.lowerCase(getPlatform()))
+                .replace("{version}", getVersion())
+                .replace("{os.name}", replaceSpaces(System.getProperty("os.name")))
+                .replace("{os.version}", replaceSpaces(System.getProperty("os.version")))
+                .replace("{java.vm.name}", replaceSpaces(System.getProperty("java.vm.name")))
+                .replace("{java.vm.version}", replaceSpaces(System.getProperty("java.vm.version")))
+                .replace("{java.version}", replaceSpaces(System.getProperty("java.version")))
+                .replace("{additional.languages}", getAdditionalJvmLanguages());
 
         String language = System.getProperty("user.language");
         String region = System.getProperty("user.region");
@@ -192,12 +191,12 @@ public class VersionInfoUtils {
         try {
             Class<?> scalaProperties = Class.forName("scala.util.Properties");
             scalaVersion = "scala";
-            String version = (String)scalaProperties.getMethod("versionNumberString").invoke(null);
+            String version = (String) scalaProperties.getMethod("versionNumberString").invoke(null);
             scalaVersion = concat(scalaVersion, version, "/");
         } catch (ClassNotFoundException e) {
             //Ignore
         } catch (Exception e) {
-            if (log.isTraceEnabled()){
+            if (log.isTraceEnabled()) {
                 log.trace("Exception attempting to get Scala version.", e);
             }
         }
@@ -223,7 +222,7 @@ public class VersionInfoUtils {
         } catch (ClassNotFoundException e) {
             //Ignore
         } catch (Exception e) {
-            if (log.isTraceEnabled()){
+            if (log.isTraceEnabled()) {
                 log.trace("Exception attempting to get Kotlin version.", e);
             }
         } finally {

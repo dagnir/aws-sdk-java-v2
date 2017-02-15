@@ -1,14 +1,14 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"). You may not
- * use this file except in compliance with the License. A copy of the License is
- * located at
- * 
- * http://aws.amazon.com/apache2.0
- * 
- * or in the "license" file accompanying this file. This file is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
@@ -46,17 +46,46 @@ import software.amazon.ion.system.IonSystemBuilder;
  */
 @RunWith(Parameterized.class)
 public class IonRoundtripTest {
-    
+
+    private static final IonSystem SYSTEM = IonSystemBuilder.standard().build();
+    private final Data data;
+
+    public IonRoundtripTest(Data data) {
+        this.data = data;
+    }
+
+    @Parameters
+    public static Collection<Object[]> data() {
+        List<Object[]> parameters = new ArrayList<Object[]>();
+        for (Data data : Data.values()) {
+            parameters.add(new Object[] {data});
+        }
+        return parameters;
+    }
+
+    @Test
+    public void testRoundtrip() throws IOException {
+        SdkIonGenerator generator = SdkIonGenerator.create(IonBinaryWriterBuilder.standard(), "foo");
+        data.generate(generator);
+        IonParser parser = new IonParser(SYSTEM.newReader(generator.getBytes()), false);
+        data.parse(parser);
+        assertNull(parser.nextToken()); // Asserts data was read fully.
+        assertFalse(parser.hasCurrentToken());
+        assertFalse(parser.isClosed());
+        parser.close();
+        assertTrue(parser.isClosed());
+    }
+
     private enum Data {
         NULL {
             @Override
             public void generate(SdkIonGenerator generator) {
                 // Is this the only way to write a null value?
-                generator.writeValue((String)null);
-                generator.writeValue((BigInteger)null);
-                generator.writeValue((BigDecimal)null);
-                generator.writeValue((Date)null);
-                generator.writeValue((ByteBuffer)null);
+                generator.writeValue((String) null);
+                generator.writeValue((BigInteger) null);
+                generator.writeValue((BigDecimal) null);
+                generator.writeValue((Date) null);
+                generator.writeValue((ByteBuffer) null);
             }
 
             @Override
@@ -101,23 +130,23 @@ public class IonRoundtripTest {
                 assertEquals(0, parser.getLongValue());
                 assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
                 assertEquals(Byte.MAX_VALUE, parser.getByteValue());
-                assertEquals((short)Byte.MAX_VALUE, parser.getShortValue());
-                assertEquals((int)Byte.MAX_VALUE, parser.getIntValue());
-                assertEquals((long)Byte.MAX_VALUE, parser.getLongValue());
+                assertEquals((short) Byte.MAX_VALUE, parser.getShortValue());
+                assertEquals((int) Byte.MAX_VALUE, parser.getIntValue());
+                assertEquals((long) Byte.MAX_VALUE, parser.getLongValue());
                 assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
                 assertEquals(Byte.MIN_VALUE, parser.getByteValue());
-                assertEquals((short)Byte.MIN_VALUE, parser.getShortValue());
-                assertEquals((int)Byte.MIN_VALUE, parser.getIntValue());
-                assertEquals((long)Byte.MIN_VALUE, parser.getLongValue());
+                assertEquals((short) Byte.MIN_VALUE, parser.getShortValue());
+                assertEquals((int) Byte.MIN_VALUE, parser.getIntValue());
+                assertEquals((long) Byte.MIN_VALUE, parser.getLongValue());
                 assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
                 assertEquals(Short.MAX_VALUE, parser.getShortValue());
-                assertEquals((int)Short.MAX_VALUE, parser.getIntValue());
-                assertEquals((long)Short.MAX_VALUE, parser.getLongValue());
+                assertEquals((int) Short.MAX_VALUE, parser.getIntValue());
+                assertEquals((long) Short.MAX_VALUE, parser.getLongValue());
                 assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
                 assertEquals(Short.MIN_VALUE, parser.getShortValue());
-                assertEquals((int)Short.MIN_VALUE, parser.getIntValue());
-                assertEquals((long)Short.MIN_VALUE, parser.getLongValue());
-                
+                assertEquals((int) Short.MIN_VALUE, parser.getIntValue());
+                assertEquals((long) Short.MIN_VALUE, parser.getLongValue());
+
             }
         },
         INT {
@@ -131,10 +160,10 @@ public class IonRoundtripTest {
             public void parse(IonParser parser) throws IOException {
                 assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
                 assertEquals(Integer.MAX_VALUE, parser.getIntValue());
-                assertEquals((long)Integer.MAX_VALUE, parser.getLongValue());
+                assertEquals((long) Integer.MAX_VALUE, parser.getLongValue());
                 assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
                 assertEquals(Integer.MIN_VALUE, parser.getIntValue());
-                assertEquals((long)Integer.MIN_VALUE, parser.getLongValue());
+                assertEquals((long) Integer.MIN_VALUE, parser.getLongValue());
             }
         },
         LONG {
@@ -152,7 +181,7 @@ public class IonRoundtripTest {
                 assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
                 assertEquals(Long.MIN_VALUE, parser.getLongValue());
                 assertEquals(BigInteger.valueOf(Long.MIN_VALUE), parser.getBigIntegerValue());
-                
+
             }
         },
         BIG_INTEGER {
@@ -192,14 +221,14 @@ public class IonRoundtripTest {
             public void parse(IonParser parser) throws IOException {
                 assertEquals(JsonToken.VALUE_NUMBER_FLOAT, parser.nextToken());
                 assertEquals(Float.MAX_VALUE, parser.getFloatValue(), 1e-9);
-                assertEquals((double)Float.MAX_VALUE, parser.getDoubleValue(), 1e-9);
+                assertEquals((double) Float.MAX_VALUE, parser.getDoubleValue(), 1e-9);
                 assertEquals(JsonToken.VALUE_NUMBER_FLOAT, parser.nextToken());
                 assertEquals(Float.MIN_VALUE, parser.getFloatValue(), 1e-9);
-                assertEquals((double)Float.MIN_VALUE, parser.getDoubleValue(), 1e-9);
+                assertEquals((double) Float.MIN_VALUE, parser.getDoubleValue(), 1e-9);
                 assertEquals(JsonToken.VALUE_NUMBER_FLOAT, parser.nextToken());
                 assertEquals(-Float.MAX_VALUE, parser.getFloatValue(), 1e-9);
-                assertEquals((double)-Float.MAX_VALUE, parser.getDoubleValue(), 1e-9);
-                
+                assertEquals((double) -Float.MAX_VALUE, parser.getDoubleValue(), 1e-9);
+
             }
         },
         DOUBLE {
@@ -221,7 +250,7 @@ public class IonRoundtripTest {
                 assertEquals(JsonToken.VALUE_NUMBER_FLOAT, parser.nextToken());
                 assertEquals(-Double.MAX_VALUE, parser.getDoubleValue(), 1e-9);
                 assertEquals(BigDecimal.valueOf(-Double.MAX_VALUE), parser.getDecimalValue());
-                
+
             }
         },
         BIG_DECIMAL {
@@ -347,7 +376,7 @@ public class IonRoundtripTest {
                 assertEquals(JsonToken.VALUE_TRUE, parser.nextToken());
                 assertEquals(true, parser.getBooleanValue());
                 assertEquals(JsonToken.END_ARRAY, parser.nextToken());
-                
+
             }
         },
         STRUCT_IN_LIST {
@@ -463,40 +492,10 @@ public class IonRoundtripTest {
                 assertEquals(JsonToken.END_ARRAY, parser.nextToken());
             }
         };
-        
+
         public abstract void generate(SdkIonGenerator generator);
+
         public abstract void parse(IonParser parser) throws IOException;
     }
-    
-    @Parameters
-    public static Collection<Object[]> data() {
-        List<Object[]> parameters = new ArrayList<Object[]>();
-        for (Data data : Data.values()) {
-            parameters.add(new Object[]{ data });
-        }
-        return parameters;
-    }
-    
-    private static final IonSystem SYSTEM = IonSystemBuilder.standard().build();
-    
-    private final Data data;
-    
-    public IonRoundtripTest(Data data) {
-        this.data = data;
-    }
-    
-    @Test
-    public void testRoundtrip() throws IOException
-    {
-        SdkIonGenerator generator = SdkIonGenerator.create(IonBinaryWriterBuilder.standard(), "foo");
-        data.generate(generator);
-        IonParser parser = new IonParser(SYSTEM.newReader(generator.getBytes()), false);
-        data.parse(parser);
-        assertNull(parser.nextToken()); // Asserts data was read fully.
-        assertFalse(parser.hasCurrentToken());
-        assertFalse(parser.isClosed());
-        parser.close();
-        assertTrue(parser.isClosed());
-    }
-    
+
 }

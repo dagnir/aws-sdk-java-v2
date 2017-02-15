@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,15 +22,15 @@ import software.amazon.awssdk.services.dynamodbv2.document.Page;
  * @param <T> resource type
  * @param <R> low level result type
  */
-public class PageIterable<T,R> implements Iterable<Page<T,R>> {
-    private final PageBasedCollection<T,R> col;
+public class PageIterable<T, R> implements Iterable<Page<T, R>> {
+    private final PageBasedCollection<T, R> col;
 
-    PageIterable(PageBasedCollection<T,R> col) {
+    PageIterable(PageBasedCollection<T, R> col) {
         this.col = col;
     }
 
     @Override
-    public PageIterator<T,R> iterator() {
-        return new PageIterator<T,R>(col);
+    public PageIterator<T, R> iterator() {
+        return new PageIterator<T, R>(col);
     }
 }

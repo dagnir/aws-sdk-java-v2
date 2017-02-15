@@ -1,18 +1,19 @@
 /*
- * Copyright 2015 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +46,7 @@ public final class L extends PathOperand {
 
     public FunctionCondition contains(Object value) {
         return new FunctionCondition("contains", this,
-                new LiteralOperand(value));
+                                     new LiteralOperand(value));
     }
 
     public ComparatorCondition eq(FunctionOperand value) {
@@ -79,7 +80,7 @@ public final class L extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >list_append(operand, operand)</a> function for the purpose of adding the
      * specified values to the current list attribute.
-     * 
+     *
      * @param values
      *            the specified values to be added to the current list
      *            attribute.
@@ -95,7 +96,7 @@ public final class L extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >list_append(operand, operand)</a> function for the purpose of adding the
      * specified list of values to that of the current list attribute.
-     * 
+     *
      * @param values
      *            the specified list of values to be added to the current list
      *            attribute.
@@ -110,7 +111,7 @@ public final class L extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >list_append(operand, operand)</a> function for the purpose of adding the
      * values of the specified list attribute to the current list attribute.
-     * 
+     *
      * @param that
      *            the specified list attribute whose values will be added to the
      *            current list attribute.
@@ -185,14 +186,14 @@ public final class L extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value that will be used as the operand to the
      *            if_not_exists function call.

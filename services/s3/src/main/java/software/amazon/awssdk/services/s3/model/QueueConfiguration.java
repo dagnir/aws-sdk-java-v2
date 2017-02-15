@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -33,7 +34,7 @@ public class QueueConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Creates a new queue configuration with the given queue arn and set of events.
-     * 
+     *
      * @param queueARN
      *            the Amazon SQS queue arn to which the notifications are to be sent.
      * @param events
@@ -46,7 +47,7 @@ public class QueueConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Creates a new queue configuration with the given queue arn and set of events.
-     * 
+     *
      * @param queueARN
      *            the Amazon SQS queue arn to which the notifications are to be sent.
      * @param events
@@ -66,7 +67,7 @@ public class QueueConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Sets the queue ARN for this configuration
-     * 
+     *
      * @param queueARN
      *            ARN for the SQS queue
      */
@@ -76,7 +77,7 @@ public class QueueConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Fluent method to set the queue ARN for this configuration
-     * 
+     *
      * @param queueARN
      *            ARN for the SQS queue
      * @return This object for method chaining

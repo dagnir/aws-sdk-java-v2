@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@ public class ItemValueConformer extends ValueTransformer {
      * This method is assumed to be called for the purpose of a setter method
      * invocation, but NOT a getter method invocation.
      */
-    @Override public Object transform(Object value) {
+    @Override
+    public Object transform(Object value) {
         if (value == null) {
             return value;
         } else if (value instanceof Boolean) {
@@ -43,16 +44,17 @@ public class ItemValueConformer extends ValueTransformer {
         } else if (value instanceof String) {
             return value;
         } else if (value instanceof Number) {
-            return InternalUtils.toBigDecimal((Number)value);
+            return InternalUtils.toBigDecimal((Number) value);
         } else if (value instanceof byte[]) {
             return value;
         } else if (value instanceof ByteBuffer) {
-            return copyBytesFrom((ByteBuffer)value);
+            return copyBytesFrom((ByteBuffer) value);
         } else if (value instanceof Set) {
             @SuppressWarnings("unchecked")
             Set<Object> set = (Set<Object>) value;
-            if (set.size() == 0)
+            if (set.size() == 0) {
                 return value;
+            }
             Object element = set.iterator().next();
             if (element instanceof String) {
                 return value;
@@ -62,8 +64,9 @@ public class ItemValueConformer extends ValueTransformer {
                 @SuppressWarnings("unchecked")
                 Set<Number> in = (Set<Number>) value;
                 Set<BigDecimal> out = new LinkedHashSet<BigDecimal>(set.size());
-                for (Number n : in)
+                for (Number n : in) {
                     out.add(InternalUtils.toBigDecimal(n));
+                }
                 return out;
             } else if (element instanceof byte[]) {
                 return value;
@@ -71,34 +74,39 @@ public class ItemValueConformer extends ValueTransformer {
                 @SuppressWarnings("unchecked")
                 Set<ByteBuffer> bs = (Set<ByteBuffer>) value;
                 Set<byte[]> out = new LinkedHashSet<byte[]>(bs.size());
-                for (ByteBuffer bb: bs)
+                for (ByteBuffer bb : bs) {
                     out.add(copyBytesFrom(bb));
+                }
                 return out;
             } else {
                 throw new UnsupportedOperationException("element type: "
-                        + element.getClass());
+                                                        + element.getClass());
             }
         } else if (value instanceof List) {
             @SuppressWarnings("unchecked")
             List<Object> in = (List<Object>) value;
-            if (in.size() == 0)
+            if (in.size() == 0) {
                 return in;
+            }
             List<Object> out = new ArrayList<Object>();
-            for (Object v : in)
+            for (Object v : in) {
                 out.add(transform(v));
+            }
             return out;
         } else if (value instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> in = (Map<String, Object>) value;
-            if (in.size() == 0)
+            if (in.size() == 0) {
                 return in;
+            }
             Map<String, Object> out = new LinkedHashMap<String, Object>(in.size());
-            for (Map.Entry<String, Object> e : in.entrySet())
+            for (Map.Entry<String, Object> e : in.entrySet()) {
                 out.put(e.getKey(), transform(e.getValue()));
+            }
             return out;
         } else {
             throw new UnsupportedOperationException("value type: "
-                    + value.getClass());
+                                                    + value.getClass());
         }
     }
 }

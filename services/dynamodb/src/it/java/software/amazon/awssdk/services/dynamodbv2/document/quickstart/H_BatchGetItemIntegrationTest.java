@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import static software.amazon.awssdk.services.dynamodbv2.document.quickstart.F_UpdateItemIntegrationTest.ADDRESS_TYPE_HOME;
@@ -43,7 +58,7 @@ public class H_BatchGetItemIntegrationTest extends QuickStartIntegrationTestBase
                                 "foo", 2,
                                 "foo", 3
                                 // etc.
-                        )
+                                                   )
                         // or you can take it slow and add one at a time
                         .addHashAndRangePrimaryKey(HASH_KEY_NAME, "foo", RANGE_KEY_NAME, 4)
                         .addHashAndRangePrimaryKey(HASH_KEY_NAME, "foo", RANGE_KEY_NAME, 5);
@@ -77,7 +92,7 @@ public class H_BatchGetItemIntegrationTest extends QuickStartIntegrationTestBase
                                 "foo", 4,
                                 "foo", 5
                                 // etc.
-                        );
+                                                   );
         BatchGetItemOutcome outcome = dynamo.batchGetItem(
                 ReturnConsumedCapacity.TOTAL, tableKeysAndAttributes);
         Map<String, List<Item>> tableItems = outcome.getTableItems();
@@ -105,7 +120,7 @@ public class H_BatchGetItemIntegrationTest extends QuickStartIntegrationTestBase
                                 "foo", 2,
                                 "foo", 3
                                 // etc.
-                        ),
+                                                   ),
                 // Second table
                 new TableKeysAndAttributes(F_UpdateItemIntegrationTest.TABLE_NAME)
                         .withAttributeNames(HASH_KEY, RANGE_KEY, "AddressLine1",
@@ -116,8 +131,8 @@ public class H_BatchGetItemIntegrationTest extends QuickStartIntegrationTestBase
                                 FIRST_CUSTOMER_ID, ADDRESS_TYPE_HOME,
                                 FIRST_CUSTOMER_ID, ADDRESS_TYPE_WORK
                                 // etc.
-                        )
-        );
+                                                   )
+                                                         );
         Map<String, List<Item>> tableItems = outcome.getTableItems();
         Assert.assertTrue(tableItems.size() == 2);
         for (Map.Entry<String, List<Item>> e : tableItems.entrySet()) {
@@ -149,7 +164,7 @@ public class H_BatchGetItemIntegrationTest extends QuickStartIntegrationTestBase
                                 "foo", 4,
                                 "foo", 5
                                 // etc.
-                        );
+                                                   );
         // unprocessed items from DynamoDB
         int attempts = 0;
         Map<String, KeysAndAttributes> unprocessed = null;

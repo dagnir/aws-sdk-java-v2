@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.auth;
@@ -40,20 +40,14 @@ import software.amazon.awssdk.internal.CredentialsEndpointProvider;
  * Tests for the ContainerCredentialsProvider.
  */
 public class ContainerCredentialsProviderTest {
-    @ClassRule
-    public static WireMockRule mockServer = new WireMockRule(0);
-
     /** Environment variable name for the AWS ECS Container credentials path */
     private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
-
     private static final String ACCESS_KEY_ID = "ACCESS_KEY_ID";
-
     private static final String SECRET_ACCESS_KEY = "SECRET_ACCESS_KEY";
-
     private static final String TOKEN = "TOKEN_TOKEN_TOKEN";
-
     private static final String EXPIRATION_DATE = "3000-05-03T04:55:54Z";
-
+    @ClassRule
+    public static WireMockRule mockServer = new WireMockRule(0);
     private static ContainerCredentialsProvider containerCredentialsProvider;
 
     @BeforeClass
@@ -70,7 +64,7 @@ public class ContainerCredentialsProviderTest {
      * Tests that when "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" is not set,
      * throws an AmazonClientException.
      */
-    @Test (expected = AmazonClientException.class)
+    @Test(expected = AmazonClientException.class)
     public void testEnvVariableNotSet() {
         ContainerCredentialsProvider credentialsProvider = new ContainerCredentialsProvider();
         credentialsProvider.getCredentials();
@@ -103,7 +97,7 @@ public class ContainerCredentialsProviderTest {
             containerCredentialsProvider.getCredentials();
             fail("The test should throw an exception");
         } catch (AmazonClientException exception) {
-             assertNotNull(exception.getMessage());
+            assertNotNull(exception.getMessage());
         }
     }
 
@@ -125,26 +119,25 @@ public class ContainerCredentialsProviderTest {
     }
 
 
-
     private void stubForSuccessResponse() {
         stubFor(
                 get(urlPathEqualTo(CREDENTIALS_PATH))
-                .willReturn(aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withHeader("charset", "utf-8")
-                                .withBody("{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\",\"Token\":\"TOKEN_TOKEN_TOKEN\","
-                                        + "\"Expiration\":\"3000-05-03T04:55:54Z\"}")));
+                        .willReturn(aResponse()
+                                            .withStatus(200)
+                                            .withHeader("Content-Type", "application/json")
+                                            .withHeader("charset", "utf-8")
+                                            .withBody("{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\",\"Token\":\"TOKEN_TOKEN_TOKEN\","
+                                                      + "\"Expiration\":\"3000-05-03T04:55:54Z\"}")));
     }
 
     private void stubForErrorResponse(int statusCode) {
         stubFor(
                 get(urlPathEqualTo(CREDENTIALS_PATH))
-                .willReturn(aResponse()
-                                .withStatus(statusCode)
-                                .withHeader("Content-Type", "application/json")
-                                .withHeader("charset", "utf-8")
-                                .withBody("{\"code\":\"" + statusCode + "\",\"message\":\"DetailedErrorMessage\"}")));
+                        .willReturn(aResponse()
+                                            .withStatus(statusCode)
+                                            .withHeader("Content-Type", "application/json")
+                                            .withHeader("charset", "utf-8")
+                                            .withBody("{\"code\":\"" + statusCode + "\",\"message\":\"DetailedErrorMessage\"}")));
     }
 
     /**

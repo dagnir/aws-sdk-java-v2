@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,12 +27,13 @@ import software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtil
 public class PrimaryKey {
     private final Map<String, KeyAttribute> components = new LinkedHashMap<String, KeyAttribute>();
 
-    public PrimaryKey() {}
+    public PrimaryKey() {
+    }
 
     /**
      * Constructs with the specified key components.
      */
-    public PrimaryKey(KeyAttribute ...components) {
+    public PrimaryKey(KeyAttribute... components) {
         addComponents(components);
     }
 
@@ -47,9 +48,10 @@ public class PrimaryKey {
      * Constructs with a hash key and a range key.
      */
     public PrimaryKey(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
-        if (hashKeyName.equals(rangeKeyName))
+                      String rangeKeyName, Object rangeKeyValue) {
+        if (hashKeyName.equals(rangeKeyName)) {
             throw new IllegalArgumentException("hashKyeName must not be the same as the rangeKeyName");
+        }
         addComponent(hashKeyName, hashKeyValue);
         addComponent(rangeKeyName, rangeKeyValue);
     }
@@ -82,9 +84,9 @@ public class PrimaryKey {
      * Note adding a key component with the same name as that of an existing
      * one would overwrite and become a single key component instead of two.
      */
-    public PrimaryKey addComponents(KeyAttribute ... components) {
+    public PrimaryKey addComponents(KeyAttribute... components) {
         if (components != null) {
-            for (KeyAttribute ka: components) {
+            for (KeyAttribute ka : components) {
                 InternalUtils.rejectNullInput(ka);
                 this.components.put(ka.getName(), ka);
             }
@@ -100,7 +102,7 @@ public class PrimaryKey {
      */
     public PrimaryKey addComponent(String keyAttributeName, Object keyAttributeValue) {
         components.put(keyAttributeName,
-            new KeyAttribute(keyAttributeName, keyAttributeValue));
+                       new KeyAttribute(keyAttributeName, keyAttributeValue));
         return this;
     }
 
@@ -117,7 +119,7 @@ public class PrimaryKey {
     @Override
     public boolean equals(Object in) {
         if (in instanceof PrimaryKey) {
-            PrimaryKey that = (PrimaryKey)in;
+            PrimaryKey that = (PrimaryKey) in;
             return this.components.equals(that.components);
         } else {
             return false;

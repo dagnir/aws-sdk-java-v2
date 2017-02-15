@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 /**
  * Utilities for working with Amazon EC2 such as generating policy
  * signatures for use with the bundling API.

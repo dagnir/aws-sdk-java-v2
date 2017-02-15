@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -57,11 +57,13 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
     @Override
     public void preprocess(ServiceModel serviceModel) {
 
-        if (shapeSubstitutions == null) return;
+        if (shapeSubstitutions == null) {
+            return;
+        }
 
         // Make sure the substituted shapes exist in the service model
         for (String substitutedShape : shapeSubstitutions.keySet()) {
-            if ( !serviceModel.getShapes().containsKey(substitutedShape) ) {
+            if (!serviceModel.getShapes().containsKey(substitutedShape)) {
                 throw new IllegalStateException(
                         "shapeSubstitution customization found for shape "
                         + substitutedShape + ", which does not exist in the service model.");
@@ -86,7 +88,9 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
     @Override
     public void postprocess(IntermediateModel intermediateModel) {
 
-        if (shapeSubstitutions == null) return;
+        if (shapeSubstitutions == null) {
+            return;
+        }
 
         for (ShapeModel shapeModel : intermediateModel.getShapes().values()) {
             postprocess_HandleEmitAsMember(shapeModel, intermediateModel);
@@ -145,7 +149,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                 String memberName = entry.getKey();
                 Member member = entry.getValue();
                 String memberShapeName = member.getShape();
-                Shape  memberShape = serviceModel.getShapes().get(memberShapeName);
+                Shape memberShape = serviceModel.getShapes().get(memberShapeName);
 
                 // First check if it's a list-type member and that the shape of
                 // its list element should be substituted
@@ -155,7 +159,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
 
                     ShapeSubstitution appliedSubstitutionOnListMember = substitueMemberShape(nestedListMember);
                     if (appliedSubstitutionOnListMember != null &&
-                            appliedSubstitutionOnListMember.getEmitFromMember() != null) {
+                        appliedSubstitutionOnListMember.getEmitFromMember() != null) {
                         // we will handle the emitFromMember customizations in post-process stage
                         trackListMemberSubstitution(shapeName, memberName, nestedListMemberOriginalShape);
                     }
@@ -239,9 +243,9 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                 ShapeModel originalShape = Utils.findShapeModelByC2jName(intermediateModel, originalShapeC2jName);
 
                 MemberModel emitFromMember =
-                    originalShape.findMemberModelByC2jName(
-                        shapeSubstitutions.get(originalShapeC2jName)
-                                          .getEmitFromMember());
+                        originalShape.findMemberModelByC2jName(
+                                shapeSubstitutions.get(originalShapeC2jName)
+                                                  .getEmitFromMember());
                 // Pass in the original member model's marshalling/unmarshalling location name
 
                 /**
@@ -289,7 +293,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                                 shapeSubstitutions
                                         .get(nestedListMemberOriginalShapeC2jName)
                                         .getEmitFromMember()
-                        );
+                                                                              );
 
                 /**
                  * This customization is specifically added for
@@ -313,7 +317,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
 
     private void trackShapeMemberSubstitution(String shapeName, String memberName, String originalShape) {
         System.out.println(String.format("%s -> {%s -> %s}", shapeName, memberName, originalShape));
-        if ( !substitutedShapeMemberReferences.containsKey(shapeName) ) {
+        if (!substitutedShapeMemberReferences.containsKey(shapeName)) {
             substitutedShapeMemberReferences.put(shapeName, new HashMap<String, String>());
         }
         substitutedShapeMemberReferences.get(shapeName).put(memberName, originalShape);
@@ -321,7 +325,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
 
     private void trackListMemberSubstitution(String shapeName, String listTypeMemberName, String nestedListMemberOriginalShape) {
         System.out.println(String.format("%s -> {%s -> %s}", shapeName, listTypeMemberName, nestedListMemberOriginalShape));
-        if ( !substitutedListMemberReferences.containsKey(shapeName) ) {
+        if (!substitutedListMemberReferences.containsKey(shapeName)) {
             substitutedListMemberReferences.put(shapeName, new HashMap<String, String>());
         }
         substitutedListMemberReferences.get(shapeName).put(listTypeMemberName, nestedListMemberOriginalShape);
@@ -330,8 +334,8 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
     private boolean shouldSkipAddingMarshallingPath(ShapeSubstitution substitutionConfig,
                                                     String parentShapeName) {
         return substitutionConfig.getSkipMarshallPathForShapes() == null
-                ? false
-                : substitutionConfig.getSkipMarshallPathForShapes().contains(parentShapeName);
+               ? false
+               : substitutionConfig.getSkipMarshallPathForShapes().contains(parentShapeName);
     }
 
 }

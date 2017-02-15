@@ -29,7 +29,8 @@ import org.junit.Test;
 public class ClientConnectionManagerFactoryTest {
     HttpClientConnectionManager noop = new HttpClientConnectionManager() {
         @Override
-        public void connect(HttpClientConnection conn, HttpRoute route, int connectTimeout, HttpContext context) throws IOException {
+        public void connect(HttpClientConnection conn, HttpRoute route, int connectTimeout, HttpContext context)
+                throws IOException {
 
         }
 

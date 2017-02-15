@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -50,53 +50,56 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  */
 public class CopyPartIntegrationTest extends S3IntegrationTestBase {
 
+    /**
+     * The key to our very large (>5GB) object
+     */
+    private static final String LARGE_FILE_KEY = CopyPartIntegrationTest.class.getName() + ".largeFile";
+    private static final String LARGE_BUCKET_NAME = "copy-part-integ-test-large-" + new Date().getTime();
     /** The S3 bucket created and used by these tests */
     private final String bucketName = "copy-part-integ-test-" + new Date().getTime();
-
     /** The key of the object being copied */
     private final String sourceKey = "source-key";
-
     /** The key of the copied object */
     private final String destinationKey = "destination-key";
-
     /** Length of the data uploaded to S3 */
     private final long contentLength = 345L;
-
     /** The file of random data uploaded to S3 */
     private File file;
-
     /** The ETag of the source object created by these tests */
     private String sourceEtag;
-
     /** A date before the last modified time of the source object used by these tests */
     private Date earlierDate;
-
     /** A date after the last modified time of the source object used by these tests */
     private Date laterDate;
-
     /**
      * The id of our multipart upload
      */
     private String multipartUploadId;
 
-    /**
-     * The key to our very large (>5GB) object
-     */
-    private static final String LARGE_FILE_KEY = CopyPartIntegrationTest.class.getName() + ".largeFile";
-
-    private static final String LARGE_BUCKET_NAME = "copy-part-integ-test-large-"+new Date().getTime();
-
     /** Releases resources used by tests */
     @After
     public void tearDown() {
-        try {s3.deleteObject(bucketName, sourceKey);} catch (Exception e) {}
-        try {s3.deleteObject(bucketName, destinationKey);} catch (Exception e) {}
-        try {s3.deleteBucket(bucketName);} catch (Exception e) {}
-        try {file.delete();} catch (Exception e) {}
+        try {
+            s3.deleteObject(bucketName, sourceKey);
+        } catch (Exception e) {
+        }
+        try {
+            s3.deleteObject(bucketName, destinationKey);
+        } catch (Exception e) {
+        }
+        try {
+            s3.deleteBucket(bucketName);
+        } catch (Exception e) {
+        }
+        try {
+            file.delete();
+        } catch (Exception e) {
+        }
         if (multipartUploadId != null) {
             try {
                 s3.abortMultipartUpload(new AbortMultipartUploadRequest(bucketName, destinationKey, multipartUploadId));
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -135,6 +138,7 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
     /*
      * Individual Tests
      */
+
     /**
      * Tests copying a range of data.  The minimum size is 5GB, which is too big
      */
@@ -144,7 +148,7 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
             waitForBucketCreation(LARGE_BUCKET_NAME);
         }
 
-        if ( !doesObjectExist(LARGE_BUCKET_NAME, LARGE_FILE_KEY) ) {
+        if (!doesObjectExist(LARGE_BUCKET_NAME, LARGE_FILE_KEY)) {
             File largeFile = new RandomTempFile("file1", 6 * GB);
             TransferManagerConfiguration transferManagerConfiguration = new TransferManagerConfiguration();
             transferManagerConfiguration.setMinimumUploadPartSize(10 * MB);
@@ -159,7 +163,7 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
         long firstByte = 0L;
         long lastByte = firstByte + (5 * MB);
         CopyPartRequest rq = newCopyPartRequest().withSourceKey(LARGE_FILE_KEY).withSourceBucketName(LARGE_BUCKET_NAME)
-                .withFirstByte(firstByte).withLastByte(lastByte);
+                                                 .withFirstByte(firstByte).withLastByte(lastByte);
         CopyPartResult copyPart = s3.copyPart(rq);
         assertCopyPartResultIsValid(copyPart);
 
@@ -175,7 +179,7 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      * an object.
      */
     private void gotestSuccessfulSimpleCopy() throws Exception {
-    	waitForBucketCreation(bucketName);
+        waitForBucketCreation(bucketName);
         CopyPartRequest rq = newCopyPartRequest();
         CopyPartResult copyPart = s3.copyPart(rq);
         assertCopyPartResultIsValid(copyPart);
@@ -193,10 +197,10 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      */
     private void gotestMatchingEtagConstraint() throws Exception {
         s3.copyPart(newCopyPartRequest()
-                .withMatchingETagConstraint(sourceEtag));
+                            .withMatchingETagConstraint(sourceEtag));
 
         assertNull(s3.copyPart(newCopyPartRequest()
-                .withMatchingETagConstraint("nonmatching-etag")));
+                                       .withMatchingETagConstraint("nonmatching-etag")));
     }
 
     /**
@@ -205,10 +209,10 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      */
     private void gotestNonmatchingEtagConstraint() throws Exception {
         s3.copyPart(newCopyPartRequest()
-            .withNonmatchingETagConstraint("nonmatching-etag"));
+                            .withNonmatchingETagConstraint("nonmatching-etag"));
 
         assertNull(s3.copyPart(newCopyPartRequest()
-                .withNonmatchingETagConstraint(sourceEtag)));
+                                       .withNonmatchingETagConstraint(sourceEtag)));
     }
 
     /**
@@ -217,10 +221,10 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      */
     private void gotestModifiedSinceConstraint() throws Exception {
         s3.copyPart(newCopyPartRequest()
-                .withModifiedSinceConstraint(earlierDate));
+                            .withModifiedSinceConstraint(earlierDate));
 
         assertNull(s3.copyPart(newCopyPartRequest()
-                .withModifiedSinceConstraint(laterDate)));
+                                       .withModifiedSinceConstraint(laterDate)));
     }
 
     /**
@@ -229,10 +233,10 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      */
     private void gotestUnmodifiedSinceConstraint() throws Exception {
         s3.copyPart(newCopyPartRequest()
-                .withUnmodifiedSinceConstraint(laterDate));
+                            .withUnmodifiedSinceConstraint(laterDate));
 
         assertNull(s3.copyPart(newCopyPartRequest()
-                .withUnmodifiedSinceConstraint(earlierDate)));
+                                       .withUnmodifiedSinceConstraint(earlierDate)));
     }
 
     /**
@@ -266,7 +270,7 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
     private void initializeTestData() throws Exception {
         s3.createBucket(bucketName);
         waitForBucketCreation(bucketName);
-        file = super.getRandomTempFile( "copy-part-integ-test-" + new Date().getTime(), contentLength );
+        file = super.getRandomTempFile("copy-part-integ-test-" + new Date().getTime(), contentLength);
         s3.putObject(bucketName, sourceKey, file);
 
         ObjectMetadata sourceObjectMetadata = s3.getObjectMetadata(bucketName, sourceKey);
@@ -283,13 +287,13 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
         laterDate = new Date(sourceLastModifiedDate.getTime() + 1000);
 
         InitiateMultipartUploadRequest initiateMultipartUploadRequest = new InitiateMultipartUploadRequest(bucketName,
-                destinationKey);
+                                                                                                           destinationKey);
         initiateMultipartUploadRequest.setObjectMetadata(new ObjectMetadata());
         initiateMultipartUploadRequest.getObjectMetadata().setSSEAlgorithm(
                 ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION);
         multipartUploadId = s3.initiateMultipartUpload(
                 initiateMultipartUploadRequest)
-                .getUploadId();
+                              .getUploadId();
     }
 
     /**
@@ -299,8 +303,8 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      */
     private CopyPartRequest newCopyPartRequest() {
         return new CopyPartRequest().withDestinationBucketName(bucketName).withSourceKey(sourceKey)
-                .withSourceBucketName(bucketName).withDestinationKey(destinationKey).withUploadId(multipartUploadId)
-                .withPartNumber(1);
+                                    .withSourceBucketName(bucketName).withDestinationKey(destinationKey).withUploadId(multipartUploadId)
+                                    .withPartNumber(1);
     }
 
     /**

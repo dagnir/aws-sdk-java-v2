@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -44,8 +59,8 @@ public class CryptoConfigurationTest {
         try {
             config.withCryptoMode(CryptoMode.AuthenticatedEncryption);
             fail();
-        } catch(UnsupportedOperationException expected) {
-            
+        } catch (UnsupportedOperationException expected) {
+
         }
         // property is set despite the exception
         assertEquals(CryptoMode.AuthenticatedEncryption, config.getCryptoMode());
@@ -53,7 +68,7 @@ public class CryptoConfigurationTest {
         try {
             config.setCryptoMode(CryptoMode.AuthenticatedEncryption);
             fail();
-        } catch(UnsupportedOperationException expected) {
+        } catch (UnsupportedOperationException expected) {
         }
         // property is set despite the exception
         assertEquals(CryptoMode.AuthenticatedEncryption, config.getCryptoMode());
@@ -107,7 +122,7 @@ public class CryptoConfigurationTest {
         c.setAwsKmsRegion(Region.getRegion(Regions.AP_NORTHEAST_1));
         // the cloned should now be false
         assertEquals(Regions.AP_NORTHEAST_1.getName(), c.clone().readOnly()
-                .getAwsKmsRegion().getName());
+                                                        .getAwsKmsRegion().getName());
 
         // change back to null
         c.setAwsKmsRegion(null);

@@ -39,11 +39,9 @@ import software.amazon.awssdk.util.StringUtils;
 @Immutable
 public class S3V4AuthErrorRetryStrategy implements AuthErrorRetryStrategy {
 
-    private static Log log = LogFactory.getLog(S3V4AuthErrorRetryStrategy.class);
-
     private static final String V4_REGION_WARNING = "please use region-specific endpoint to access "
-            + "buckets located in regions that require V4 signing.";
-
+                                                    + "buckets located in regions that require V4 signing.";
+    private static Log log = LogFactory.getLog(S3V4AuthErrorRetryStrategy.class);
     private final S3RequestEndpointResolver endpointResolver;
     private final SdkPredicate<AmazonServiceException> sigV4RetryPredicate;
 
@@ -55,9 +53,17 @@ public class S3V4AuthErrorRetryStrategy implements AuthErrorRetryStrategy {
      * Currently only used for testing
      */
     S3V4AuthErrorRetryStrategy(S3RequestEndpointResolver endpointResolver,
-            SdkPredicate<AmazonServiceException> isSigV4Retryable) {
+                               SdkPredicate<AmazonServiceException> isSigV4Retryable) {
         this.endpointResolver = endpointResolver;
         this.sigV4RetryPredicate = isSigV4Retryable;
+    }
+
+    private static boolean hasServingRegionHeader(HttpResponse response) {
+        return !StringUtils.isNullOrEmpty(getServingRegionHeader(response));
+    }
+
+    private static String getServingRegionHeader(HttpResponse response) {
+        return response.getHeaders().get(Headers.S3_SERVING_REGION);
     }
 
     @Override
@@ -114,15 +120,7 @@ public class S3V4AuthErrorRetryStrategy implements AuthErrorRetryStrategy {
 
     private AuthRetryParameters buildRetryParams(AWSS3V4Signer signer, URI endpoint) {
         log.warn("Attempting to re-send the request to " + endpoint.getHost() + " with AWS V4 authentication. "
-                + "To avoid this warning in the future, " + V4_REGION_WARNING);
+                 + "To avoid this warning in the future, " + V4_REGION_WARNING);
         return new AuthRetryParameters(signer, endpoint);
-    }
-
-    private static boolean hasServingRegionHeader(HttpResponse response) {
-        return !StringUtils.isNullOrEmpty(getServingRegionHeader(response));
-    }
-
-    private static String getServingRegionHeader(HttpResponse response) {
-        return response.getHeaders().get(Headers.S3_SERVING_REGION);
     }
 }

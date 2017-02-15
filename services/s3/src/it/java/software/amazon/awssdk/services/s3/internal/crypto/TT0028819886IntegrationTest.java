@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertTrue;
@@ -35,23 +50,6 @@ public class TT0028819886IntegrationTest extends S3IntegrationTestBase {
     private AmazonS3Client s3v1;
     private AmazonS3Client s3v2;
 
-    @Before
-    public void before() throws Exception {
-    	setUpCredentials();
-        s3v1 = new AmazonS3EncryptionClient(
-                credentials, kekMaterial);
-        s3v2 = new AmazonS3EncryptionClient(
-        		credentials, kekMaterial,
-                new CryptoConfiguration().withCryptoMode(CryptoMode.AuthenticatedEncryption));
-    }
-
-    @After
-    public void after() throws Exception {
-        AmazonS3Client[] s3s = { s3v1, s3v2 };
-        for (AmazonS3Client s3 : s3s)
-            s3.shutdown();
-    }
-
     @BeforeClass
     public static void setup() throws Exception {
         AmazonS3Client s3 = new AmazonS3Client(awsTestCredentials());
@@ -68,9 +66,27 @@ public class TT0028819886IntegrationTest extends S3IntegrationTestBase {
         }
     }
 
+    @Before
+    public void before() throws Exception {
+        setUpCredentials();
+        s3v1 = new AmazonS3EncryptionClient(
+                credentials, kekMaterial);
+        s3v2 = new AmazonS3EncryptionClient(
+                credentials, kekMaterial,
+                new CryptoConfiguration().withCryptoMode(CryptoMode.AuthenticatedEncryption));
+    }
+
+    @After
+    public void after() throws Exception {
+        AmazonS3Client[] s3s = {s3v1, s3v2};
+        for (AmazonS3Client s3 : s3s) {
+            s3.shutdown();
+        }
+    }
+
     @Test
     public void testLessThanClaimed() throws Exception {
-        AmazonS3Client[] s3s = { s3v1, s3v2 };
+        AmazonS3Client[] s3s = {s3v1, s3v2};
         for (AmazonS3Client s3 : s3s) {
             try {
                 doTestInconsistentLength(s3, 16, 17);
@@ -83,7 +99,7 @@ public class TT0028819886IntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testMoreThanClaimed() throws Exception {
-        AmazonS3Client[] s3s = { s3v1, s3v2 };
+        AmazonS3Client[] s3s = {s3v1, s3v2};
         for (AmazonS3Client s3 : s3s) {
             try {
                 doTestInconsistentLength(s3, 16, 15);
@@ -95,14 +111,14 @@ public class TT0028819886IntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testEqualToClaimed() throws Exception {
-        AmazonS3Client[] s3s = { s3v1, s3v2 };
+        AmazonS3Client[] s3s = {s3v1, s3v2};
         for (AmazonS3Client s3 : s3s) {
             doTestInconsistentLength(s3, 16, 16);
         }
     }
 
     public void doTestInconsistentLength(AmazonS3Client s3, int size,
-            int contentLength) throws Exception {
+                                         int contentLength) throws Exception {
         byte[] bytes = new byte[size];
         System.err.println("bytes.length: " + bytes.length);
         InputStream is = new ByteArrayInputStream(bytes);
@@ -116,10 +132,10 @@ public class TT0028819886IntegrationTest extends S3IntegrationTestBase {
         // Get it back
         S3Object s3obj = s3.getObject(TEST_BUCKET, key);
         String ucl = s3obj.getObjectMetadata().getUserMetadata()
-                .get(Headers.UNENCRYPTED_CONTENT_LENGTH);
+                          .get(Headers.UNENCRYPTED_CONTENT_LENGTH);
         long uclLen = Long.parseLong(ucl);
         System.err.println("size: " + size + ", uclLen: " + uclLen
-                + ", contentLength: " + contentLength);
+                           + ", contentLength: " + contentLength);
         byte[] ba = IOUtils.toByteArray(s3obj.getObjectContent());
         System.err.println("ba.length: " + ba.length + ", uclLen: " + uclLen);
         assertTrue(uclLen == ba.length);

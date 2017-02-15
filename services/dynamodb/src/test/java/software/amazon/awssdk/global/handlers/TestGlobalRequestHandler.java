@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,18 +22,17 @@ public class TestGlobalRequestHandler extends RequestHandler2 {
 
     private static boolean wasCalled = false;
 
-    @Override
-    public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {
-        wasCalled = true;
-        return super.beforeMarshalling(request);
-    }
-
-
     public static void reset() {
         wasCalled = false;
     }
 
     public static boolean wasCalled() {
         return wasCalled;
+    }
+
+    @Override
+    public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {
+        wasCalled = true;
+        return super.beforeMarshalling(request);
     }
 }

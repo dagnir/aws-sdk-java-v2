@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.simpledb;
 
 import static org.junit.Assert.fail;
@@ -26,9 +41,9 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest();
 
         ReplaceableItem item = new ReplaceableItem("foo",
-                newReplaceableAttributeList(new ReplaceableAttribute[] { new ReplaceableAttribute("foo", "bar",
-                        Boolean.TRUE) }));
-        request.setItems(newReplaceableItemList(new ReplaceableItem[] { item, item }));
+                                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "bar",
+                                                                                                                                    Boolean.TRUE)}));
+        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item, item}));
 
         try {
             sdb.batchPutAttributes(request);
@@ -46,9 +61,9 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
     public void testBatchPutAttributesMissingParameterException() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest();
         ReplaceableItem item = new ReplaceableItem("foo",
-                newReplaceableAttributeList(new ReplaceableAttribute[] { new ReplaceableAttribute("foo", "foo",
-                        Boolean.TRUE) }));
-        request.setItems(newReplaceableItemList(new ReplaceableItem[] { item }));
+                                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "foo",
+                                                                                                                                    Boolean.TRUE)}));
+        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         try {
             sdb.batchPutAttributes(request);
             fail("Expected MissingParameterException, but wasn't thrown");
@@ -58,9 +73,9 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
 
         request = new BatchPutAttributesRequest();
         item = new ReplaceableItem("foo",
-                newReplaceableAttributeList(new ReplaceableAttribute[] { new ReplaceableAttribute("foo", null,
-                        Boolean.TRUE) }));
-        request.setItems(newReplaceableItemList(new ReplaceableItem[] { item }));
+                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", null,
+                                                                                                                    Boolean.TRUE)}));
+        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         request.setDomainName("foo");
         try {
             sdb.batchPutAttributes(request);
@@ -71,9 +86,9 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
 
         request = new BatchPutAttributesRequest();
         item = new ReplaceableItem("foo",
-                newReplaceableAttributeList(new ReplaceableAttribute[] { new ReplaceableAttribute(null, "bar",
-                        Boolean.TRUE) }));
-        request.setItems(newReplaceableItemList(new ReplaceableItem[] { item }));
+                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute(null, "bar",
+                                                                                                                    Boolean.TRUE)}));
+        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         request.setDomainName("foo");
         try {
             sdb.batchPutAttributes(request);
@@ -84,9 +99,9 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
 
         request = new BatchPutAttributesRequest();
         item = new ReplaceableItem(null,
-                newReplaceableAttributeList(new ReplaceableAttribute[] { new ReplaceableAttribute("foo", "bar",
-                        Boolean.TRUE) }));
-        request.setItems(newReplaceableItemList(new ReplaceableItem[] { item }));
+                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "bar",
+                                                                                                                    Boolean.TRUE)}));
+        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         request.setDomainName("foo");
         try {
             sdb.batchPutAttributes(request);
@@ -104,10 +119,10 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
     public void testBatchPutAttributesNoSuchDomainException() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest();
         ReplaceableItem item = new ReplaceableItem("foo",
-                newReplaceableAttributeList(new ReplaceableAttribute[] { new ReplaceableAttribute("foo", "foo",
-                        Boolean.TRUE) }));
+                                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "foo",
+                                                                                                                                    Boolean.TRUE)}));
         request.setDomainName("ADomainNameThatDoesntExist");
-        request.setItems(newReplaceableItemList(new ReplaceableItem[] { item }));
+        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         try {
             sdb.batchPutAttributes(request);
             fail("Expected NoSuchDomainException, but wasn't thrown");

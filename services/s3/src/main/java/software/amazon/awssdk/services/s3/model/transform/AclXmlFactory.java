@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import software.amazon.awssdk.SdkClientException;
@@ -86,11 +87,11 @@ public class AclXmlFactory {
      */
     protected XmlWriter convertToXml(Grantee grantee, XmlWriter xml) throws SdkClientException {
         if (grantee instanceof CanonicalGrantee) {
-            return convertToXml((CanonicalGrantee)grantee, xml);
+            return convertToXml((CanonicalGrantee) grantee, xml);
         } else if (grantee instanceof EmailAddressGrantee) {
-            return convertToXml((EmailAddressGrantee)grantee, xml);
+            return convertToXml((EmailAddressGrantee) grantee, xml);
         } else if (grantee instanceof GroupGrantee) {
-            return convertToXml((GroupGrantee)grantee, xml);
+            return convertToXml((GroupGrantee) grantee, xml);
         } else {
             throw new SdkClientException("Unknown Grantee type: " + grantee.getClass().getName());
         }
@@ -108,8 +109,8 @@ public class AclXmlFactory {
      * @return The given XmlWriter containing the specified canonical grantee.
      */
     protected XmlWriter convertToXml(CanonicalGrantee grantee, XmlWriter xml) {
-        xml.start("Grantee", new String[] {"xmlns:xsi" , "xsi:type"},
-                new String[] {"http://www.w3.org/2001/XMLSchema-instance", "CanonicalUser"});
+        xml.start("Grantee", new String[] {"xmlns:xsi", "xsi:type"},
+                  new String[] {"http://www.w3.org/2001/XMLSchema-instance", "CanonicalUser"});
         xml.start("ID").value(grantee.getIdentifier()).end();
         xml.end();
 
@@ -128,8 +129,8 @@ public class AclXmlFactory {
      * @return The given XmlWriter containing the specified email address grantee
      */
     protected XmlWriter convertToXml(EmailAddressGrantee grantee, XmlWriter xml) {
-        xml.start("Grantee", new String[] {"xmlns:xsi" , "xsi:type"},
-                new String[] {"http://www.w3.org/2001/XMLSchema-instance", "AmazonCustomerByEmail"});
+        xml.start("Grantee", new String[] {"xmlns:xsi", "xsi:type"},
+                  new String[] {"http://www.w3.org/2001/XMLSchema-instance", "AmazonCustomerByEmail"});
         xml.start("EmailAddress").value(grantee.getIdentifier()).end();
         xml.end();
 
@@ -148,8 +149,8 @@ public class AclXmlFactory {
      * @return The given XmlWriter containing the specified group grantee.
      */
     protected XmlWriter convertToXml(GroupGrantee grantee, XmlWriter xml) {
-        xml.start("Grantee", new String[] {"xmlns:xsi" , "xsi:type"},
-                new String[] {"http://www.w3.org/2001/XMLSchema-instance", "Group"});
+        xml.start("Grantee", new String[] {"xmlns:xsi", "xsi:type"},
+                  new String[] {"http://www.w3.org/2001/XMLSchema-instance", "Group"});
         xml.start("URI").value(grantee.getIdentifier()).end();
         xml.end();
 

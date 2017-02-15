@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -34,9 +49,9 @@ import utils.test.util.DynamoDBTestBase;
  */
 public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase {
 
+    private static final ProvisionedThroughput DEFAULT_CAPACITY = new ProvisionedThroughput(5L, 5L);
     private static DynamoDBMapper mapper;
     private static Set<String> testedTableName = new HashSet<String>();
-    private static final ProvisionedThroughput DEFAULT_CAPACITY = new ProvisionedThroughput(5L, 5L);
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -49,6 +64,29 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
         for (String tableName : testedTableName) {
             dynamo.deleteTable(tableName);
         }
+    }
+
+    private static void setProvisionedThroughput(CreateTableRequest request, ProvisionedThroughput throughput) {
+        request.setProvisionedThroughput(throughput);
+        if (request.getGlobalSecondaryIndexes() != null) {
+            for (GlobalSecondaryIndex gsi : request.getGlobalSecondaryIndexes()) {
+                gsi.setProvisionedThroughput(throughput);
+            }
+        }
+    }
+
+    private static boolean equalLsi(Collection<LocalSecondaryIndex> a, Collection<LocalSecondaryIndexDescription> b) {
+        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new LocalSecondaryIndexDefinitionComparator());
+    }
+
+    private static boolean equalGsi(Collection<GlobalSecondaryIndex> a, Collection<GlobalSecondaryIndexDescription> b) {
+        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new GlobalSecondaryIndexDefinitionComparator());
+    }
+
+    private static String appendCurrentTimeToTableName(CreateTableRequest request) {
+        String appendedName = String.format("%s-%d", request.getTableName(), System.currentTimeMillis());
+        request.setTableName(appendedName);
+        return appendedName;
     }
 
     @Test
@@ -64,7 +102,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
         List<KeySchemaElement> expectedKeyElements = Arrays.asList(
                 new KeySchemaElement("key", KeyType.HASH),
                 new KeySchemaElement("rangeKey", KeyType.RANGE)
-        );
+                                                                  );
         assertEquals(expectedKeyElements, createdTableDescription.getKeySchema());
 
         List<AttributeDefinition> expectedAttrDefinitions = Arrays.asList(
@@ -73,7 +111,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
                 new AttributeDefinition("indexFooRangeKey", ScalarAttributeType.N),
                 new AttributeDefinition("indexBarRangeKey", ScalarAttributeType.N),
                 new AttributeDefinition("multipleIndexRangeKey", ScalarAttributeType.N)
-        );
+                                                                         );
         assertTrue(UnorderedCollectionComparator.equalUnorderedCollections(
                 expectedAttrDefinitions,
                 createdTableDescription.getAttributeDefinitions()));
@@ -121,7 +159,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
         List<KeySchemaElement> expectedKeyElements = Arrays.asList(
                 new KeySchemaElement("primaryHashKey", KeyType.HASH),
                 new KeySchemaElement("primaryRangeKey", KeyType.RANGE)
-        );
+                                                                  );
         assertEquals(expectedKeyElements, createdTableDescription.getKeySchema());
 
         List<AttributeDefinition> expectedAttrDefinitions = Arrays.asList(
@@ -130,7 +168,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
                 new AttributeDefinition("primaryRangeKey", ScalarAttributeType.S),
                 new AttributeDefinition("indexRangeKey", ScalarAttributeType.S),
                 new AttributeDefinition("anotherIndexRangeKey", ScalarAttributeType.S)
-        );
+                                                                         );
         assertTrue(UnorderedCollectionComparator.equalUnorderedCollections(
                 expectedAttrDefinitions,
                 createdTableDescription.getAttributeDefinitions()));
@@ -192,23 +230,6 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
         TableUtils.waitUntilActive(dynamo, createdTableName);
     }
 
-    private static void setProvisionedThroughput(CreateTableRequest request, ProvisionedThroughput throughput) {
-        request.setProvisionedThroughput(throughput);
-        if (request.getGlobalSecondaryIndexes() != null) {
-            for (GlobalSecondaryIndex gsi : request.getGlobalSecondaryIndexes()) {
-                gsi.setProvisionedThroughput(throughput);
-            }
-        }
-    }
-
-    private static boolean equalLsi(Collection<LocalSecondaryIndex> a, Collection<LocalSecondaryIndexDescription> b) {
-        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new LocalSecondaryIndexDefinitionComparator());
-    }
-
-    private static boolean equalGsi(Collection<GlobalSecondaryIndex> a, Collection<GlobalSecondaryIndexDescription> b) {
-        return UnorderedCollectionComparator.equalUnorderedCollections(a, b, new GlobalSecondaryIndexDefinitionComparator());
-    }
-
     private static class LocalSecondaryIndexDefinitionComparator
             implements
             UnorderedCollectionComparator.CrossTypeComparator<LocalSecondaryIndex, LocalSecondaryIndexDescription> {
@@ -230,11 +251,5 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
             return a.getIndexName().equals(b.getIndexName())
                    && a.getKeySchema().equals(b.getKeySchema());
         }
-    }
-
-    private static String appendCurrentTimeToTableName(CreateTableRequest request) {
-        String appendedName = String.format("%s-%d", request.getTableName(), System.currentTimeMillis());
-        request.setTableName(appendedName);
-        return appendedName;
     }
 }

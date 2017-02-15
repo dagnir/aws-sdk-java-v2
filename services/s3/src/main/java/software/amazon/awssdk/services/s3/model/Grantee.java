@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 /**
@@ -29,26 +27,26 @@ public interface Grantee {
      * specifying grants in the header of a request.
      */
     public String getTypeIdentifier();
-    
-    /**
-     * Sets the identifier for this grantee. The meaning of the identifier is
-     * specific to each implementation of the {@link Grantee}.
-     *
-     * @param id
-     *            The identifier for this grantee.
-     *            
-     * @see Grantee#getIdentifier()
-     */
-    public void setIdentifier(String id);
 
     /**
      * Gets the identifier for this grantee. The meaning of the grantee
      * identifier is specific to each implementation of the {@link Grantee}.
      *
      * @return The identifier for this grantee.
-     * 
+     *
      * @see Grantee#setIdentifier(String)
      */
     public String getIdentifier();
+
+    /**
+     * Sets the identifier for this grantee. The meaning of the identifier is
+     * specific to each implementation of the {@link Grantee}.
+     *
+     * @param id
+     *            The identifier for this grantee.
+     *
+     * @see Grantee#getIdentifier()
+     */
+    public void setIdentifier(String id);
 
 }

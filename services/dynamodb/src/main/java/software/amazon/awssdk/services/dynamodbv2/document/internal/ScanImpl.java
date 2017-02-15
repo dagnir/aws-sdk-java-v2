@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,29 +39,29 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
     @Override
     public ItemCollection<ScanOutcome> scan(ScanFilter... scanFilters) {
         return doScan(new ScanSpec()
-                .withScanFilters(scanFilters));
+                              .withScanFilters(scanFilters));
     }
 
 
     @Override
     public ItemCollection<ScanOutcome> scan(String filterExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                            Map<String, String> nameMap, Map<String, Object> valueMap) {
         return doScan(new ScanSpec()
-                .withFilterExpression(filterExpression)
-                .withNameMap(nameMap)
-                .withValueMap(valueMap));
+                              .withFilterExpression(filterExpression)
+                              .withNameMap(nameMap)
+                              .withValueMap(valueMap));
     }
 
 
     @Override
     public ItemCollection<ScanOutcome> scan(String filterExpression,
-            String projectionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                            String projectionExpression, Map<String, String> nameMap,
+                                            Map<String, Object> valueMap) {
         return doScan(new ScanSpec()
-                .withFilterExpression(filterExpression)
-                .withProjectionExpression(projectionExpression)
-                .withNameMap(nameMap)
-                .withValueMap(valueMap));
+                              .withFilterExpression(filterExpression)
+                              .withProjectionExpression(projectionExpression)
+                              .withNameMap(nameMap)
+                              .withValueMap(valueMap));
     }
 
     @Override
@@ -76,8 +76,9 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
 
         // set up the start key, if any
         Collection<KeyAttribute> startKey = spec.getExclusiveStartKey();
-        if (startKey != null)
+        if (startKey != null) {
             req.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
+        }
 
         // scan filters;
         Collection<ScanFilter> filters = spec.getScanFilters();
@@ -86,11 +87,11 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
         }
 
         // set up the value map, if any (when expression API is used)
-        final Map<String,AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
+        final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up expressions, if any
         req.withExpressionAttributeNames(spec.getNameMap())
            .withExpressionAttributeValues(attrValMap)
-           ;
+        ;
         return new ScanCollection(getClient(), spec);
     }
 }

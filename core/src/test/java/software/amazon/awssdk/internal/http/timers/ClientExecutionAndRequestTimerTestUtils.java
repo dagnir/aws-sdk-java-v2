@@ -1,6 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -68,7 +64,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     /**
      * Assert that the executor backing {@link ClientExecutionTimer} was never created or used
-     * 
+     *
      * @param requestTimer
      */
     public static void assertRequestTimerExecutorNotCreated(HttpRequestTimer requestTimer) {
@@ -77,7 +73,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     /**
      * Assert that the executor backing {@link ClientExecutionTimer} was never created or used
-     * 
+     *
      * @param clientExecutionTimer
      */
     public static void assertClientExecutionTimerExecutorNotCreated(ClientExecutionTimer clientExecutionTimer) {
@@ -87,7 +83,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
     /**
      * Assert response was buffered into memory to enforce the timeout on both connection
      * established and reading of content
-     * 
+     *
      * @param responseProxy
      *            Must by a spied {@link HttpResponseProxy}
      */
@@ -98,7 +94,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
     /**
      * Assert response was NOT buffered into memory as should be the case when client execution and
      * request timeouts are disabled or an operation is streaming and it's content must be left open
-     * 
+     *
      * @param responseProxy
      *            Must by a spied {@link HttpResponseProxy}
      */
@@ -108,7 +104,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     /**
      * Waits until a little after the thread pools keep alive time and then asserts that all thre
-     * 
+     *
      * @param timerExecutor
      *            Executor used by timer implementation
      * @throws InterruptedException
@@ -124,7 +120,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
     /**
      * If the request completes successfully then the timer task should be canceled and should be
      * removed from the thread pool to prevent build up of canceled tasks
-     * 
+     *
      * @param timerExecutor
      *            Executor used by timer implementation
      */
@@ -136,7 +132,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
     /**
      * Asserts the timer never went off (I.E. no timeout was exceeded and no timer task was
      * executed)
-     * 
+     *
      * @param timerExecutor
      *            Executor used by timer implementation
      */
@@ -161,7 +157,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     /**
      * Creates Apache {@link HttpClient} spy
-     * 
+     *
      * @param config
      *            {@link ClientConfiguration} for {@link HttpClientFactory}
      * @return Real implementation of {@link HttpClient} with ability to verify method calls or
@@ -174,7 +170,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     /**
      * Creates Apache {@link HttpResponseProxy} spy
-     * 
+     *
      * @return Real implementation of {@link HttpResponseProxy} with ability to verify method calls
      *         or partially mock
      */
@@ -215,15 +211,15 @@ public class ClientExecutionAndRequestTimerTestUtils {
      */
     public static void execute(AmazonHttpClient httpClient, Request<?> request) {
         httpClient.requestExecutionBuilder()
-                .request(request)
-                .errorResponseHandler(new NullErrorResponseHandler())
-                .execute(new ErrorDuringUnmarshallingResponseHandler());
+                  .request(request)
+                  .errorResponseHandler(new NullErrorResponseHandler())
+                  .execute(new ErrorDuringUnmarshallingResponseHandler());
     }
 
     public static void assertNumberOfRetries(HttpClient spyClient, int expectedNumberOfRequests) {
         try {
             verify(spyClient, times(expectedNumberOfRequests)).execute(any(HttpRequestBase.class),
-                    any(HttpContext.class));
+                                                                       any(HttpContext.class));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -246,7 +242,9 @@ public class ClientExecutionAndRequestTimerTestUtils {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            };
+            }
+
+            ;
         }.start();
     }
 

@@ -8,5 +8,5 @@ Feature: ElastiCache
 
   Scenario: Handling errors
     When I attempt to call the "DescribeCacheClusters" API with:
-    | CacheClusterId | fake_cluster |
+      | CacheClusterId | fake_cluster |
     Then I expect the response error code to be "InvalidParameterValue"

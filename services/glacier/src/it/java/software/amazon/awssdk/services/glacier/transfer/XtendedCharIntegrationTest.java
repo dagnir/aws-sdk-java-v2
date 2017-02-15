@@ -22,7 +22,7 @@ public class XtendedCharIntegrationTest extends GlacierIntegrationTestBase {
         tempFile = File.createTempFile("XtendedCharIntegrationTest", "bar");
         downloadFile = new File(tempFile.getParentFile(), ".download");
     }
-    
+
     @After
     public void after() {
         tempFile.delete();
@@ -44,13 +44,14 @@ public class XtendedCharIntegrationTest extends GlacierIntegrationTestBase {
         String archiveId = uploadResult.getArchiveId();
         assertNotNull(archiveId);
 
-        int retry = 0; 
+        int retry = 0;
         // Download
         try {
             archiveTx.download(vaultName, archiveId, downloadFile);
-        } catch(QueueDoesNotExistException ex) {
-            if (retry++ >= 3)
+        } catch (QueueDoesNotExistException ex) {
+            if (retry++ >= 3) {
                 throw ex;
+            }
             ex.printStackTrace(System.err);
             System.out.println("Retrying: " + retry);
         }

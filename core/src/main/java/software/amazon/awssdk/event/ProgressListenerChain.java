@@ -61,21 +61,26 @@ public class ProgressListenerChain implements ProgressListener, DeliveryMode {
             throw new IllegalArgumentException(
                     "Progress Listeners cannot be null.");
         }
-        for (ProgressListener listener : listeners)
+        for (ProgressListener listener : listeners) {
             addProgressListener(listener);
+        }
         this.progressEventFilter = progressEventFilter;
     }
 
     public synchronized void addProgressListener(ProgressListener listener) {
-        if (listener == null) 
+        if (listener == null) {
             return;
-        if (syncCallSafe)
+        }
+        if (syncCallSafe) {
             syncCallSafe = DeliveryMode.Check.isSyncCallSafe(listener);
+        }
         this.listeners.add(listener);
     }
 
     public synchronized void removeProgressListener(ProgressListener listener) {
-        if (listener == null) return;
+        if (listener == null) {
+            return;
+        }
         this.listeners.remove(listener);
     }
 
@@ -90,17 +95,22 @@ public class ProgressListenerChain implements ProgressListener, DeliveryMode {
         ProgressEvent filteredEvent = progressEvent;
         if (progressEventFilter != null) {
             filteredEvent = progressEventFilter.filter(progressEvent);
-            if (filteredEvent == null) return;
+            if (filteredEvent == null) {
+                return;
+            }
         }
 
-        for ( ProgressListener listener : listeners ) {
+        for (ProgressListener listener : listeners) {
             try {
                 listener.progressChanged(filteredEvent);
-            } catch ( RuntimeException e ) {
+            } catch (RuntimeException e) {
                 log.warn("Couldn't update progress listener", e);
             }
         }
     }
 
-    @Override public boolean isSyncCallSafe() { return syncCallSafe; }
+    @Override
+    public boolean isSyncCallSafe() {
+        return syncCallSafe;
+    }
 }

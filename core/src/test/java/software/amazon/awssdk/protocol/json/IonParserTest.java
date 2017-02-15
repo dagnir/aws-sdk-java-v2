@@ -1,14 +1,14 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"). You may not
- * use this file except in compliance with the License. A copy of the License is
- * located at
- * 
- * http://aws.amazon.com/apache2.0
- * 
- * or in the "license" file accompanying this file. This file is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
@@ -52,56 +52,30 @@ import software.amazon.ion.system.IonTextWriterBuilder;
  */
 @RunWith(Parameterized.class)
 public class IonParserTest {
-    
-    private enum WriteFormat {
-        TEXT {
-            @Override
-            public byte[] write(String data) throws IOException {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                write(data, IonTextWriterBuilder.standard().build(out));
-                return out.toByteArray();
-            }
-        },
-        BINARY {
-            @Override
-            public byte[] write(String data) throws IOException {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                write(data, IonBinaryWriterBuilder.standard().build(out));
-                return out.toByteArray();
-            }
-        };
-        
-        public static void write(String data, IonWriter writer) throws IOException {
-            IonReader reader = SYSTEM.newReader(data);
-            writer.writeValues(reader);
-            writer.close();
-        }
-        
-        public abstract byte[] write(String data) throws IOException;
+
+    private static IonSystem SYSTEM = IonSystemBuilder.standard().build();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+    private WriteFormat format;
+
+    public IonParserTest(WriteFormat format) {
+        this.format = format;
     }
-    
+
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> parameters = new ArrayList<Object[]>();
         for (WriteFormat format : WriteFormat.values()) {
-            parameters.add(new Object[]{ format });
+            parameters.add(new Object[] {format});
         }
         return parameters;
     }
-    
-    private static IonSystem SYSTEM = IonSystemBuilder.standard().build();
-    
-    private WriteFormat format;
-    
-    public IonParserTest(WriteFormat format) {
-        this.format = format;
-    }
-    
+
     private IonParser parse(String data) throws IOException {
         byte[] ion = format.write(data);
         return new IonParser(SYSTEM.newReader(ion), false);
     }
-    
+
     @Test
     public void testEmptySexp() throws IOException {
         IonParser parser = parse("()");
@@ -109,7 +83,7 @@ public class IonParserTest {
         assertEquals(JsonToken.END_ARRAY, parser.nextToken());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testSexp() throws IOException {
         IonParser parser = parse("(a+b)");
@@ -123,7 +97,7 @@ public class IonParserTest {
         assertEquals(JsonToken.END_ARRAY, parser.nextToken());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testNestedSexp() throws IOException {
         IonParser parser = parse("((a)+(b))");
@@ -141,7 +115,7 @@ public class IonParserTest {
         assertEquals(JsonToken.END_ARRAY, parser.nextToken());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testSexpSkip() throws IOException {
         IonParser parser = parse("(a+b)");
@@ -150,7 +124,7 @@ public class IonParserTest {
         assertEquals(JsonToken.END_ARRAY, parser.getCurrentToken());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testNestedSexpSkip() throws IOException {
         IonParser parser = parse("((a)+(b))");
@@ -166,7 +140,7 @@ public class IonParserTest {
         assertEquals(JsonToken.END_ARRAY, parser.nextToken());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testEmptyClob() throws IOException {
         IonParser parser = parse("{{}}");
@@ -174,7 +148,7 @@ public class IonParserTest {
         assertEquals(ByteBuffer.wrap(new byte[0]), parser.getEmbeddedObject());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testClob() throws IOException {
         IonParser parser = parse("{{\"abc123\"}}");
@@ -182,7 +156,7 @@ public class IonParserTest {
         assertEquals(ByteBuffer.wrap("abc123".getBytes(StringUtils.UTF8)), parser.getEmbeddedObject());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testSymbolValue() throws IOException {
         IonParser parser = parse("a1 _1 $foo '123' 'sp ace'");
@@ -198,7 +172,7 @@ public class IonParserTest {
         assertEquals("sp ace", parser.getText());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testSkipChildrenNotAtContainerStartDoesNothing() throws IOException {
         IonParser parser = parse("123 (a+b)");
@@ -212,7 +186,7 @@ public class IonParserTest {
         assertEquals(JsonToken.VALUE_STRING, parser.getCurrentToken());
         assertEquals("a", parser.getText());
     }
-    
+
     @Test
     public void testGetEmbeddedObjectOnBasicValueReturnsNull() throws IOException {
         IonParser parser = parse("123 (a+b) abc");
@@ -227,24 +201,24 @@ public class IonParserTest {
         assertEquals("abc", parser.getText());
         assertNull(parser.nextToken());
     }
-    
+
     @Test
     public void testNulls() throws IOException {
-        IonParser parser = parse(   "null "
-                                  + "null.null "
-                                  + "null.bool "
-                                  + "null.int "
-                                  + "null.float "
-                                  + "null.decimal "
-                                  + "null.timestamp "
-                                  + "null.string "
-                                  + "null.symbol "
-                                  + "null.blob "
-                                  + "null.clob "
-                                  + "null.struct "
-                                  + "null.list "
-                                  + "null.sexp"
-                                 );
+        IonParser parser = parse("null "
+                                 + "null.null "
+                                 + "null.bool "
+                                 + "null.int "
+                                 + "null.float "
+                                 + "null.decimal "
+                                 + "null.timestamp "
+                                 + "null.string "
+                                 + "null.symbol "
+                                 + "null.blob "
+                                 + "null.clob "
+                                 + "null.struct "
+                                 + "null.list "
+                                 + "null.sexp"
+                                );
         JsonToken token = null;
         int count = 0;
         while ((token = parser.nextToken()) != null) {
@@ -253,7 +227,7 @@ public class IonParserTest {
         }
         assertEquals(14, count);
     }
-    
+
     @Test
     public void testNextValue() throws IOException {
         IonParser parser = parse("{foo:{bar:\"abc\"}, baz:123} 42.0");
@@ -272,7 +246,7 @@ public class IonParserTest {
         assertEquals(42.0, parser.getFloatValue(), 1e-9);
         assertNull(parser.nextValue());
     }
-    
+
     @Test
     public void testGetCurrentNameNotAtFieldReturnsNull() throws IOException {
         IonParser parser = parse("{foo:\"abc\"} [a, b] {{}} \"bar\"");
@@ -295,7 +269,7 @@ public class IonParserTest {
         assertNull(parser.nextToken());
         assertNull(parser.getCurrentName());
     }
-    
+
     @Test
     public void testClearCurrentToken() throws IOException {
         IonParser parser = parse("{}");
@@ -305,7 +279,7 @@ public class IonParserTest {
         assertFalse(parser.hasCurrentToken());
         assertEquals(JsonToken.START_OBJECT, parser.getLastClearedToken());
     }
-    
+
     @Test
     public void testGetText() throws IOException {
         String defaultText = "default";
@@ -348,7 +322,7 @@ public class IonParserTest {
         assertNull(parser.getText());
         assertEquals(defaultText, parser.getValueAsString(defaultText));
     }
-    
+
     @Test
     public void testGetNumberValue() throws IOException {
         String integer = String.valueOf(Integer.MAX_VALUE);
@@ -358,14 +332,14 @@ public class IonParserTest {
         String dbl = String.valueOf(Double.MAX_VALUE);
         String inf = "1.7976931348623157E309"; // Double.MAX_VALUE * 10;
         String bigDecimal = new BigDecimal(inf).toString();
-        IonParser parser = parse(   integer + " " 
-                                  + lng + " "
-                                  + bigInteger + " "
-                                  + flt + " "
-                                  + dbl + " "
-                                  + inf + " "
-                                  + bigDecimal.toLowerCase().replace("e", "D")
-                                 );
+        IonParser parser = parse(integer + " "
+                                 + lng + " "
+                                 + bigInteger + " "
+                                 + flt + " "
+                                 + dbl + " "
+                                 + inf + " "
+                                 + bigDecimal.toLowerCase().replace("e", "D")
+                                );
         assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
         assertEquals(integer, parser.getNumberValue().toString());
         assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
@@ -382,10 +356,7 @@ public class IonParserTest {
         assertEquals(JsonToken.VALUE_NUMBER_FLOAT, parser.nextToken());
         assertEquals(bigDecimal, parser.getNumberValue().toString());
     }
-    
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-    
+
     @Test
     public void testGetNumberValueNotOnNumberFails() throws IOException {
         IonParser parser = parse("foo {{}} {abc:123}");
@@ -394,15 +365,15 @@ public class IonParserTest {
         thrown.expect(AmazonClientException.class);
         parser.getNumberValue();
     }
-    
+
     @Test
     public void testSpecialFloatValues() throws IOException {
-        IonParser parser = parse(   "1.7976931348623157E309 " // Double.MAX_VALUE * 10
-                                  + "-1.7976931348623157E309 "
-                                  + "+inf "
-                                  + "-inf "
-                                  + "nan"
-                                 );
+        IonParser parser = parse("1.7976931348623157E309 " // Double.MAX_VALUE * 10
+                                 + "-1.7976931348623157E309 "
+                                 + "+inf "
+                                 + "-inf "
+                                 + "nan"
+                                );
         assertEquals(JsonToken.VALUE_NUMBER_FLOAT, parser.nextToken());
         assertTrue(Double.isInfinite(parser.getDoubleValue()));
         assertTrue(Double.isInfinite(parser.getFloatValue()));
@@ -419,5 +390,32 @@ public class IonParserTest {
         assertTrue(Double.isNaN(parser.getDoubleValue()));
         assertTrue(Double.isNaN(parser.getFloatValue()));
     }
-    
+
+    private enum WriteFormat {
+        TEXT {
+            @Override
+            public byte[] write(String data) throws IOException {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                write(data, IonTextWriterBuilder.standard().build(out));
+                return out.toByteArray();
+            }
+        },
+        BINARY {
+            @Override
+            public byte[] write(String data) throws IOException {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                write(data, IonBinaryWriterBuilder.standard().build(out));
+                return out.toByteArray();
+            }
+        };
+
+        public static void write(String data, IonWriter writer) throws IOException {
+            IonReader reader = SYSTEM.newReader(data);
+            writer.writeValues(reader);
+            writer.close();
+        }
+
+        public abstract byte[] write(String data) throws IOException;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.util.concurrent.Future;
@@ -41,12 +42,12 @@ public class S3ProgressPublisher extends SDKProgressPublisher {
         if (persistableTransfer == null || !(listener instanceof S3ProgressListener)) {
             return null;
         }
-        final S3ProgressListener s3listener = (S3ProgressListener)listener;
+        final S3ProgressListener s3listener = (S3ProgressListener) listener;
         return deliverEvent(s3listener, persistableTransfer);
     }
 
     private static Future<?> deliverEvent(final S3ProgressListener listener,
-            final PersistableTransfer persistableTransfer) {
+                                          final PersistableTransfer persistableTransfer) {
         if (listener instanceof DeliveryMode) {
             DeliveryMode mode = (DeliveryMode) listener;
             if (mode.isSyncCallSafe()) {
@@ -60,7 +61,8 @@ public class S3ProgressPublisher extends SDKProgressPublisher {
         // place, but such task submission is necessary to remain backward
         // compatible.
         return setLatestFutureTask(getExecutorService().submit(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 listener.onPersistableTransfer(persistableTransfer);
             }
         }));
@@ -71,11 +73,11 @@ public class S3ProgressPublisher extends SDKProgressPublisher {
             final PersistableTransfer persistableTransfer) {
         try {
             listener.onPersistableTransfer(persistableTransfer);
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             // That's right, we need to suppress all errors so as to be on par
             // with the async mode where all failures will be ignored.
             LogFactory.getLog(S3ProgressPublisher.class)
-                .debug("Failure from the event listener", t);
+                      .debug("Failure from the event listener", t);
         }
         return null;
     }

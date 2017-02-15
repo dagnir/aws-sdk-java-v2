@@ -10,5 +10,5 @@ Feature: Amazon SimpleDB
 
   Scenario: Handling errors
     When I attempt to call the "CreateDomain" API with:
-    | DomainName  |   |
+      | DomainName |  |
     Then I expect the response error code to be "InvalidParameterValue"

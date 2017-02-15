@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -33,50 +48,81 @@ import software.amazon.awssdk.services.s3.model.S3Object;
  */
 public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
 
-    /** The S3 bucket created and used by these tests */
-    private final static String bucketName = "copy-object-integ-test-" + new Date().getTime();
-
-    /** The key of the object being copied */
-    private final static String sourceKey = "source-key";
-
-    /** The key of the copied object */
-    private final static String destinationKey = "destination-key";
-
-    /** Length of the data uploaded to S3 */
-    private final static long contentLength = 345L;
-
-    /** The file of random data uploaded to S3 */
-    private static File file;
-
-    /** The ETag of the source object created by these tests */
-    private static String sourceEtag;
-
-    /** A date before the last modified time of the source object used by these tests */
-    private static Date earlierDate;
-
-    /** A date after the last modified time of the source object used by these tests */
-    private static Date laterDate;
-
-    /** The http expiration date used by these tests */
-    private static Date expiresDate;
-
     /** The http expiration time (milliseconds) used by these tests  */
     final static long EXPIRES_TIME_IN_MILLIS = 1000 * 60 * 60;
+    /** The S3 bucket created and used by these tests */
+    private final static String bucketName = "copy-object-integ-test-" + new Date().getTime();
+    /** The key of the object being copied */
+    private final static String sourceKey = "source-key";
+    /** The key of the copied object */
+    private final static String destinationKey = "destination-key";
+    /** Length of the data uploaded to S3 */
+    private final static long contentLength = 345L;
+    /** The file of random data uploaded to S3 */
+    private static File file;
+    /** The ETag of the source object created by these tests */
+    private static String sourceEtag;
+    /** A date before the last modified time of the source object used by these tests */
+    private static Date earlierDate;
+    /** A date after the last modified time of the source object used by these tests */
+    private static Date laterDate;
+    /** The http expiration date used by these tests */
+    private static Date expiresDate;
 
     /** Releases resources used by tests */
     @AfterClass
     public static void tearDown() {
-        try {s3.deleteObject(bucketName, sourceKey);} catch (Exception e) {}
-        try {s3.deleteObject(bucketName, destinationKey);} catch (Exception e) {}
-        try {s3.deleteBucket(bucketName);} catch (Exception e) {}
-        try {file.delete();} catch (Exception e) {}
+        try {
+            s3.deleteObject(bucketName, sourceKey);
+        } catch (Exception e) {
+        }
+        try {
+            s3.deleteObject(bucketName, destinationKey);
+        } catch (Exception e) {
+        }
+        try {
+            s3.deleteBucket(bucketName);
+        } catch (Exception e) {
+        }
+        try {
+            file.delete();
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * Creates/populates all the test data needed for these tests (bucket,
+     * source object, file, source object ETag, etc).
+     */
+    @BeforeClass
+    public static void initializeTestData() throws Exception {
+        s3.createBucket(bucketName);
+        expiresDate = new Date(System.currentTimeMillis() + EXPIRES_TIME_IN_MILLIS);
+        file = getRandomTempFile("copy-object-integ-test-" + new Date().getTime(), contentLength);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setHttpExpiresDate(expiresDate);
+        s3.putObject(new PutObjectRequest(bucketName, sourceKey, file).withMetadata(metadata));
+
+        ObjectMetadata sourceObjectMetadata = s3.getObjectMetadata(bucketName, sourceKey);
+
+        sourceEtag = sourceObjectMetadata.getETag();
+        Date sourceLastModifiedDate = sourceObjectMetadata.getLastModified();
+
+        /*
+         *  TODO: This was causing problems when the date was in the future...
+         *        It was essentially being ignored by S3.
+         *        We should include a note about that in the docs
+         */
+        Thread.sleep(2000);
+        earlierDate = new Date(sourceLastModifiedDate.getTime() - 1000);
+        laterDate = new Date(sourceLastModifiedDate.getTime() + 1000);
     }
 
     @Test
     public void testApplyAcl() throws Exception {
         AccessControlList acl = new AccessControlList();
 
-        for ( Permission permission : Permission.values() ) {
+        for (Permission permission : Permission.values()) {
             acl.grantPermission(new CanonicalGrantee(AWS_DR_ECLIPSE_ACCT_ID), permission);
             acl.grantPermission(GroupGrantee.AuthenticatedUsers, permission);
             acl.grantPermission(new EmailAddressGrantee(AWS_DR_TOOLS_EMAIL_ADDRESS), permission);
@@ -92,7 +138,7 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
 
         Set<Grant> expectedGrants = translateEmailAclsIntoCanonical(acl);
 
-        for ( Grant expected : expectedGrants ) {
+        for (Grant expected : expectedGrants) {
             assertTrue("Didn't find expectd grant " + expected, aclRead.getGrantsAsList().contains(expected));
         }
 
@@ -181,10 +227,10 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testMatchingEtagConstraint() throws Exception {
         s3.copyObject(newCopyObjectRequest()
-                .withMatchingETagConstraint(sourceEtag));
+                              .withMatchingETagConstraint(sourceEtag));
 
         assertNull(s3.copyObject(newCopyObjectRequest()
-                .withMatchingETagConstraint("nonmatching-etag")));
+                                         .withMatchingETagConstraint("nonmatching-etag")));
     }
 
     /**
@@ -194,10 +240,10 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testNonmatchingEtagConstraint() throws Exception {
         s3.copyObject(newCopyObjectRequest()
-            .withNonmatchingETagConstraint("nonmatching-etag"));
+                              .withNonmatchingETagConstraint("nonmatching-etag"));
 
         assertNull(s3.copyObject(newCopyObjectRequest()
-                .withNonmatchingETagConstraint(sourceEtag)));
+                                         .withNonmatchingETagConstraint(sourceEtag)));
     }
 
     /**
@@ -207,10 +253,10 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testModifiedSinceConstraint() throws Exception {
         s3.copyObject(newCopyObjectRequest()
-                .withModifiedSinceConstraint(earlierDate));
+                              .withModifiedSinceConstraint(earlierDate));
 
         assertNull(s3.copyObject(newCopyObjectRequest()
-                .withModifiedSinceConstraint(laterDate)));
+                                         .withModifiedSinceConstraint(laterDate)));
     }
 
     /**
@@ -220,11 +266,16 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testUnmodifiedSinceConstraint() throws Exception {
         s3.copyObject(newCopyObjectRequest()
-                .withUnmodifiedSinceConstraint(laterDate));
+                              .withUnmodifiedSinceConstraint(laterDate));
 
         assertNull(s3.copyObject(newCopyObjectRequest()
-                .withUnmodifiedSinceConstraint(earlierDate)));
+                                         .withUnmodifiedSinceConstraint(earlierDate)));
     }
+
+
+    /*
+     * Private Test Helper Methods
+     */
 
     /**
      * Tests that error response are properly handled and unmarshalled as
@@ -244,39 +295,6 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
             assertEquals("Amazon S3", ase.getServiceName());
             assertEquals(404, ase.getStatusCode());
         }
-    }
-
-
-    /*
-     * Private Test Helper Methods
-     */
-
-    /**
-     * Creates/populates all the test data needed for these tests (bucket,
-     * source object, file, source object ETag, etc).
-     */
-    @BeforeClass
-    public static void initializeTestData() throws Exception {
-        s3.createBucket(bucketName);
-        expiresDate = new Date(System.currentTimeMillis() + EXPIRES_TIME_IN_MILLIS);
-        file = getRandomTempFile( "copy-object-integ-test-" + new Date().getTime(), contentLength );
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setHttpExpiresDate(expiresDate);
-        s3.putObject(new PutObjectRequest(bucketName, sourceKey, file).withMetadata(metadata));
-
-        ObjectMetadata sourceObjectMetadata = s3.getObjectMetadata(bucketName, sourceKey);
-
-        sourceEtag = sourceObjectMetadata.getETag();
-        Date sourceLastModifiedDate = sourceObjectMetadata.getLastModified();
-
-        /*
-         *  TODO: This was causing problems when the date was in the future...
-         *        It was essentially being ignored by S3.
-         *        We should include a note about that in the docs
-         */
-        Thread.sleep(2000);
-        earlierDate = new Date(sourceLastModifiedDate.getTime() - 1000);
-        laterDate = new Date(sourceLastModifiedDate.getTime() + 1000);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.junit.Test;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 
 public class CreateBucketLocationConstraintIntegrationTest extends
-        S3IntegrationTestBase{
+                                                           S3IntegrationTestBase {
 
     private static final String BUCKET_NAME = "loc-constraint-" + System
             .currentTimeMillis();

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +39,7 @@ public class EncryptTest {
         String expectedCipherText = StringUtils.upperCase("ff95730978565c563e7ef4e189c7a82e3322408e72e06d3c98e8bec238487ade8c18e27c181cb62318b23846246853912029a28bead7125e0e0c6c91d8784f69a7bcf609cd20e17b219ad1a3c4d384e4f7d12d75");
         // Encrypt with GCM
         CipherLite gcm = CryptoTestUtils.createTestCipher(AES_GCM,
-                AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
+                                                          AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
         byte[] ct_ctr = gcm.doFinal(pt);
         String ct_ctr_str = encodeHexString(ct_ctr);
         System.err.println("ct_ctr_str : " + ct_ctr_str);
@@ -32,30 +47,30 @@ public class EncryptTest {
         {
             // 1st 16 bytes
             CipherLite ctr1 = CryptoTestUtils.createTestCipherWithStartingBytePos(AES_CTR,
-                    AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 0);
-    ////        Cipher cipher_ctr_with_offset = AES_GCM.createAuxillaryCipher(cek, iv, cipherMode, securityProvider, startingBytePos)
+                                                                                  AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 0);
+            ////        Cipher cipher_ctr_with_offset = AES_GCM.createAuxillaryCipher(cek, iv, cipherMode, securityProvider, startingBytePos)
             byte[] ba1 = ctr1.doFinal(pt, 0, 16);
             String str1 = encodeHexString(ba1);
             System.err.println("ct_ctr_str1: " + str1);
-            assertEquals(ct_ctr_str.substring(0, 16*2), str1);
+            assertEquals(ct_ctr_str.substring(0, 16 * 2), str1);
         }
         {
             // 2nd 16 bytes
             CipherLite ctr2 = CryptoTestUtils.createTestCipherWithStartingBytePos(AES_CTR,
-                    AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 16);
+                                                                                  AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 16);
             byte[] ba2 = ctr2.doFinal(pt, 16, 16);
             String str2 = encodeHexString(ba2);
             System.err.println("ct_ctr_str2: " + str2);
-            assertEquals(ct_ctr_str.substring(16*2, 16*4), str2);
+            assertEquals(ct_ctr_str.substring(16 * 2, 16 * 4), str2);
         }
         {
             // 2nd 32 bytes
             CipherLite ctr2a = CryptoTestUtils.createTestCipherWithStartingBytePos(AES_CTR,
-                    AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 16);
+                                                                                   AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE, 16);
             byte[] ba2a = ctr2a.doFinal(pt, 16, 32);
             String str2a = encodeHexString(ba2a);
             System.err.println("      str2a: " + str2a);
-            assertEquals(ct_ctr_str.substring(16*2, 16*6), str2a);
+            assertEquals(ct_ctr_str.substring(16 * 2, 16 * 6), str2a);
         }
 
         {
@@ -64,7 +79,7 @@ public class EncryptTest {
             byte[] ba2 = ctr2.update(pt, 16, 20);
             String str2 = encodeHexString(ba2);
             System.err.println("ct_ctr_str2: " + str2);
-            assertEquals(ct_ctr_str.substring(16*2, 16*4), str2);
+            assertEquals(ct_ctr_str.substring(16 * 2, 16 * 4), str2);
         }
 
         {
@@ -73,20 +88,20 @@ public class EncryptTest {
             byte[] ba2a = ctr2a.update(pt, 16, 40);
             String str2a = encodeHexString(ba2a);
             System.err.println("      str2a: " + str2a);
-            assertEquals(ct_ctr_str.substring(16*2, 16*6), str2a);
+            assertEquals(ct_ctr_str.substring(16 * 2, 16 * 6), str2a);
         }
         {
             CipherLite gcm2 = CryptoTestUtils.createTestCipher(AES_GCM,
-                    AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
+                                                               AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
             gcm2.mark();
             byte[] ba = gcm2.update(pt, 0, 16);
-            String hex  = encodeHexString(ba);
+            String hex = encodeHexString(ba);
             System.err.println("  hex[0-15]: " + hex);
             assertEquals(ct_ctr_str.substring(0, 32), hex);
 
             gcm2.reset();
             ba = gcm2.update(pt, 0, 16);
-            hex  = encodeHexString(ba);
+            hex = encodeHexString(ba);
             System.err.println("  hex[0-15]: " + hex);
             assertEquals(ct_ctr_str.substring(0, 32), hex);
 
@@ -94,28 +109,28 @@ public class EncryptTest {
             int len = 16;
             gcm2.mark();
             ba = gcm2.update(pt, 16, len);
-            hex  = encodeHexString(ba);
+            hex = encodeHexString(ba);
             System.err.println(" hex[16-31]: " + hex);
-            assertEquals(ct_ctr_str.substring(32, 32+len*2), hex);
+            assertEquals(ct_ctr_str.substring(32, 32 + len * 2), hex);
 
             gcm2.reset();
             ba = gcm2.update(pt, 16, len);
-            hex  = encodeHexString(ba);
+            hex = encodeHexString(ba);
             System.err.println(" hex[16-31]: " + hex);
-            assertEquals(ct_ctr_str.substring(32, 32+len*2), hex);
+            assertEquals(ct_ctr_str.substring(32, 32 + len * 2), hex);
 
             // next 32-47 bytes
             gcm2.mark();
             ba = gcm2.update(pt, 32, len);
-            hex  = encodeHexString(ba);
+            hex = encodeHexString(ba);
             System.err.println(" hex[32-47]: " + hex);
-            assertEquals(ct_ctr_str.substring(64, 64+len*2), hex);
+            assertEquals(ct_ctr_str.substring(64, 64 + len * 2), hex);
 
             gcm2.reset();
             ba = gcm2.update(pt, 32, len);
-            hex  = encodeHexString(ba);
+            hex = encodeHexString(ba);
             System.err.println(" hex[32-47]: " + hex);
-            assertEquals(ct_ctr_str.substring(64, 64+len*2), hex);
+            assertEquals(ct_ctr_str.substring(64, 64 + len * 2), hex);
         }
     }
 }

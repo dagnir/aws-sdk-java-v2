@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -45,12 +45,12 @@ public class DynamoDBDeleteExpression {
      * One or more substitution variables for simplifying complex
      * expressions.
      */
-    private java.util.Map<String,String> expressionAttributeNames;
+    private java.util.Map<String, String> expressionAttributeNames;
 
     /**
      * One or more values that can be substituted in an expression.
      */
-    private java.util.Map<String,AttributeValue> expressionAttributeValues;
+    private java.util.Map<String, AttributeValue> expressionAttributeValues;
 
     /**
      * Gets the map of attribute names to expected attribute values to check on delete.
@@ -96,7 +96,7 @@ public class DynamoDBDeleteExpression {
      */
     public DynamoDBDeleteExpression withExpectedEntry(String attributeName, ExpectedAttributeValue expected) {
         if (expectedAttributes == null) {
-            expectedAttributes = new HashMap<String,ExpectedAttributeValue>();
+            expectedAttributes = new HashMap<String, ExpectedAttributeValue>();
         }
         expectedAttributes.put(attributeName, expected);
         return this;
@@ -108,6 +108,14 @@ public class DynamoDBDeleteExpression {
      */
     public String getConditionalOperator() {
         return conditionalOperator;
+    }
+
+    /**
+     * Sets the logical operator on the expected attribute conditions of this
+     * delete operation.
+     */
+    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
+        setConditionalOperator(conditionalOperator.toString());
     }
 
     /**
@@ -126,14 +134,6 @@ public class DynamoDBDeleteExpression {
     public DynamoDBDeleteExpression withConditionalOperator(String conditionalOperator) {
         setConditionalOperator(conditionalOperator);
         return this;
-    }
-
-    /**
-     * Sets the logical operator on the expected attribute conditions of this
-     * delete operation.
-     */
-    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
-        setConditionalOperator(conditionalOperator.toString());
     }
 
     /**
@@ -242,9 +242,10 @@ public class DynamoDBDeleteExpression {
         if (null == this.expressionAttributeNames) {
             this.expressionAttributeNames = new java.util.HashMap<String, String>();
         }
-        if (this.expressionAttributeNames.containsKey(key))
+        if (this.expressionAttributeNames.containsKey(key)) {
             throw new IllegalArgumentException("Duplicated keys ("
-                    + key.toString() + ") are provided.");
+                                               + key.toString() + ") are provided.");
+        }
         this.expressionAttributeNames.put(key, value);
         return this;
     }
@@ -320,9 +321,10 @@ public class DynamoDBDeleteExpression {
         if (null == this.expressionAttributeValues) {
             this.expressionAttributeValues = new java.util.HashMap<String, AttributeValue>();
         }
-        if (this.expressionAttributeValues.containsKey(key))
+        if (this.expressionAttributeValues.containsKey(key)) {
             throw new IllegalArgumentException("Duplicated keys ("
-                    + key.toString() + ") are provided.");
+                                               + key.toString() + ") are provided.");
+        }
         this.expressionAttributeValues.put(key, value);
         return this;
     }

@@ -8,5 +8,5 @@ Feature: AWS IoT
 
   Scenario: Handling errors
     When I attempt to call the "DescribeThing" API with:
-    | thingName | fake-thing |
+      | thingName | fake-thing |
     Then I expect the response error code to be "ResourceNotFoundException"

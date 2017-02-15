@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -33,10 +29,10 @@ import software.amazon.awssdk.AmazonClientException;
 public class LengthCheckInputStreamTest {
 
     String sampleData = "__________1234567890__________12345678901234567890"
-            + "12345678901234567890123456789012345678901234567890"
-            + "12345678901234567890123456789012345678901234567890"
-            + "12345678901234567890123456789012345678901234567890"
-            + "12345678901234567890123456789012345678909876543210";
+                        + "12345678901234567890123456789012345678901234567890"
+                        + "12345678901234567890123456789012345678901234567890"
+                        + "12345678901234567890123456789012345678901234567890"
+                        + "12345678901234567890123456789012345678909876543210";
 
     /**
      * Tests if the content length set in the stream equals the bytes read from
@@ -47,7 +43,7 @@ public class LengthCheckInputStreamTest {
         InputStream in = new ByteArrayInputStream(sampleData.getBytes());
 
         LengthCheckInputStream rvis = new LengthCheckInputStream(in,
-                sampleData.getBytes().length, INCLUDE_SKIPPED_BYTES);
+                                                                 sampleData.getBytes().length, INCLUDE_SKIPPED_BYTES);
         try {
             StreamUtils.consumeInputStream(rvis);
         } catch (Exception e) {
@@ -66,7 +62,7 @@ public class LengthCheckInputStreamTest {
     public void testMarkInitiallyAndReset() throws Exception {
         InputStream in = new ByteArrayInputStream(sampleData.getBytes());
         LengthCheckInputStream rvis = new LengthCheckInputStream(in,
-                sampleData.getBytes().length, INCLUDE_SKIPPED_BYTES);
+                                                                 sampleData.getBytes().length, INCLUDE_SKIPPED_BYTES);
         rvis.mark(100);
         rvis.read(new byte[100]);
         rvis.reset();
@@ -92,7 +88,7 @@ public class LengthCheckInputStreamTest {
     public void testMarkAndResetWithWrongExpectedLength() throws Exception {
         InputStream in = new ByteArrayInputStream(sampleData.getBytes());
         LengthCheckInputStream rvis = new LengthCheckInputStream(in,
-                sampleData.getBytes().length + 1, INCLUDE_SKIPPED_BYTES);
+                                                                 sampleData.getBytes().length + 1, INCLUDE_SKIPPED_BYTES);
 
         rvis.read(new byte[100]);
         rvis.mark(100);
@@ -119,7 +115,7 @@ public class LengthCheckInputStreamTest {
     public void testMarkAndResetAtEnd() throws Exception {
         InputStream in = new ByteArrayInputStream(sampleData.getBytes());
         LengthCheckInputStream rvis = new LengthCheckInputStream(in,
-                sampleData.getBytes().length, INCLUDE_SKIPPED_BYTES);
+                                                                 sampleData.getBytes().length, INCLUDE_SKIPPED_BYTES);
 
         rvis.mark(100);
         StreamUtils.consumeInputStream(rvis);
@@ -162,7 +158,7 @@ public class LengthCheckInputStreamTest {
         try {
             StreamUtils.consumeInputStream(is);
             fail();
-        } catch(AmazonClientException ex) {
+        } catch (AmazonClientException ex) {
             // expected
         }
         is.close();
@@ -195,7 +191,7 @@ public class LengthCheckInputStreamTest {
         try {
             StreamUtils.consumeInputStream(is);
             fail();
-        } catch(AmazonClientException ex) {
+        } catch (AmazonClientException ex) {
             // expected
         }
         is.close();
@@ -212,7 +208,7 @@ public class LengthCheckInputStreamTest {
         try {
             is.skip(100);
             fail();
-        } catch(AmazonClientException ex) {
+        } catch (AmazonClientException ex) {
             // expected
         }
         is.close();

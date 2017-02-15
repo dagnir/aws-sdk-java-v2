@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 /**
@@ -51,6 +52,38 @@ public enum GroupGrantee implements Grantee {
      */
     LogDelivery("http://acs.amazonaws.com/groups/s3/LogDelivery");
 
+    private String groupUri;
+
+    private GroupGrantee(String groupUri) {
+        this.groupUri = groupUri;
+    }
+
+    /**
+     * Gets the {@link GroupGrantee} enumeration value
+     * with the specified Amazon S3 group URI (eg.
+     * http://acs.amazonaws.com/groups/global/AllUsers).
+     * Returns <code>null</code> if an invalid
+     * Amazon S3 group URI is specified.
+     *
+     * @param groupUri
+     *            A string representation of an Amazon S3 group URI (eg.
+     *            http://acs.amazonaws.com/groups/global/AllUsers)
+     *
+     * @return The {@link GroupGrantee} object represented by the given Amazon S3 group
+     *         URI string. Returns <code>null</code>
+     *         if the string isn't a valid Amazon S3 group
+     *         URI.
+     */
+    public static GroupGrantee parseGroupGrantee(String groupUri) {
+        for (GroupGrantee grantee : GroupGrantee.values()) {
+            if (grantee.groupUri.equals(groupUri)) {
+                return grantee;
+            }
+        }
+
+        return null;
+    }
+
     /* (non-Javadoc)
      * @see software.amazon.awssdk.services.s3.model.Grantee#getTypeIdentifier()
      */
@@ -59,16 +92,10 @@ public enum GroupGrantee implements Grantee {
         return "uri";
     }
 
-    private String groupUri;
-    
-    private GroupGrantee(String groupUri) {
-        this.groupUri = groupUri;
-    }
-    
     /**
      * Gets the group grantee's URI.
-     * 
-     * @return The group grantee's URI. 
+     *
+     * @return The group grantee's URI.
      */
     public String getIdentifier() {
         return groupUri;
@@ -82,38 +109,12 @@ public enum GroupGrantee implements Grantee {
         throw new UnsupportedOperationException(
                 "Group grantees have preset identifiers that cannot be modified.");
     }
-    
+
     /**
      * @see java.lang.Enum#toString()
      */
     public String toString() {
         return "GroupGrantee [" + groupUri + "]";
-    }
-
-    /**
-     * Gets the {@link GroupGrantee} enumeration value
-     * with the specified Amazon S3 group URI (eg.
-     * http://acs.amazonaws.com/groups/global/AllUsers).
-     * Returns <code>null</code> if an invalid
-     * Amazon S3 group URI is specified.
-     * 
-     * @param groupUri
-     *            A string representation of an Amazon S3 group URI (eg.
-     *            http://acs.amazonaws.com/groups/global/AllUsers)
-     * 
-     * @return The {@link GroupGrantee} object represented by the given Amazon S3 group
-     *         URI string. Returns <code>null</code>
-     *         if the string isn't a valid Amazon S3 group
-     *         URI.
-     */
-    public static GroupGrantee parseGroupGrantee(String groupUri) {
-        for (GroupGrantee grantee : GroupGrantee.values()) {
-            if (grantee.groupUri.equals(groupUri)) {
-                return grantee;
-            }
-        }
-     
-        return null;
     }
 
 }

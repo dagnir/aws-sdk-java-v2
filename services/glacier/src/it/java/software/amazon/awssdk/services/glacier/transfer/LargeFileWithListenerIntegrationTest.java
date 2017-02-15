@@ -26,7 +26,7 @@ public class LargeFileWithListenerIntegrationTest extends GlacierIntegrationTest
         randomTempFile = new RandomTempFile("LargeFileWithListenerIntegrationTest", contentLength, true);
         assertEquals(contentLength, randomTempFile.length());
         downloadFile = new File(randomTempFile.getParentFile(),
-                randomTempFile.getName() + ".download");
+                                randomTempFile.getName() + ".download");
     }
 
     @After
@@ -42,6 +42,7 @@ public class LargeFileWithListenerIntegrationTest extends GlacierIntegrationTest
     }
 
     // hchar: this test took about 4 hours to finish last time
+
     /**
      * Tests that the progress listener can work correctly when doing multipart upload and download.
      */
@@ -52,14 +53,14 @@ public class LargeFileWithListenerIntegrationTest extends GlacierIntegrationTest
         ArchiveTransferManager manager = newArchiveTransferManager();
         // Upload
         UploadResult uploadResult = manager.upload(accountId, vaultName,
-                "archiveDescription", randomTempFile, progressListener);
+                                                   "archiveDescription", randomTempFile, progressListener);
         String archiveId = uploadResult.getArchiveId();
         assertNotNull(archiveId);
         assertEquals(contentLength, progressListener.getTotalRequestBytesTransferred());
         assertTrue(progressListener.transferStarted);
         assertTrue(progressListener.transferCompleted);
         progressListener.reset();
-        
+
         initializeUnreliableClient(true);
         manager = newArchiveTransferManager();
 

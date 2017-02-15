@@ -10,5 +10,5 @@ Feature: Amazon ECR
 
   Scenario: Handling errors
     When I attempt to call the "ListImages" API with:
-    | repositoryName  | not-a-real-repository  |
+      | repositoryName | not-a-real-repository |
     Then I expect the response error code to be "RepositoryNotFoundException"

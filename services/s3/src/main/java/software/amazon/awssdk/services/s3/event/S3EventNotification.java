@@ -1,16 +1,16 @@
 /*
- * Copyright 2014-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3.event;
@@ -26,17 +26,16 @@ import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**
-* A helper class that represents a strongly typed S3 EventNotification item sent
-* to SQS, SNS, or Lambda.
-*/
+ * A helper class that represents a strongly typed S3 EventNotification item sent
+ * to SQS, SNS, or Lambda.
+ */
 public class S3EventNotification {
 
     private final List<S3EventNotificationRecord> records;
 
     @JsonCreator
     public S3EventNotification(
-            @JsonProperty(value = "Records") List<S3EventNotificationRecord> records)
-    {
+            @JsonProperty(value = "Records") List<S3EventNotificationRecord> records) {
         this.records = records;
     }
 
@@ -100,8 +99,7 @@ public class S3EventNotification {
         public S3BucketEntity(
                 @JsonProperty(value = "name") String name,
                 @JsonProperty(value = "ownerIdentity") UserIdentityEntity ownerIdentity,
-                @JsonProperty(value = "arn") String arn)
-        {
+                @JsonProperty(value = "arn") String arn) {
             this.name = name;
             this.ownerIdentity = ownerIdentity;
             this.arn = arn;
@@ -132,8 +130,7 @@ public class S3EventNotification {
                 String key,
                 Integer size,
                 String eTag,
-                String versionId)
-        {
+                String versionId) {
             this.key = key;
             this.size = size == null ? null : size.longValue();
             this.eTag = eTag;
@@ -145,8 +142,7 @@ public class S3EventNotification {
                 @JsonProperty(value = "key") String key,
                 @JsonProperty(value = "size") Long size,
                 @JsonProperty(value = "eTag") String eTag,
-                @JsonProperty(value = "versionId") String versionId)
-        {
+                @JsonProperty(value = "versionId") String versionId) {
             this.key = key;
             this.size = size;
             this.eTag = eTag;
@@ -201,8 +197,7 @@ public class S3EventNotification {
                 @JsonProperty(value = "configurationId") String configurationId,
                 @JsonProperty(value = "bucket") S3BucketEntity bucket,
                 @JsonProperty(value = "object") S3ObjectEntity object,
-                @JsonProperty(value = "s3SchemaVersion") String s3SchemaVersion)
-        {
+                @JsonProperty(value = "s3SchemaVersion") String s3SchemaVersion) {
             this.configurationId = configurationId;
             this.bucket = bucket;
             this.object = object;
@@ -232,8 +227,7 @@ public class S3EventNotification {
 
         @JsonCreator
         public RequestParametersEntity(
-                @JsonProperty(value = "sourceIPAddress") String sourceIPAddress)
-        {
+                @JsonProperty(value = "sourceIPAddress") String sourceIPAddress) {
             this.sourceIPAddress = sourceIPAddress;
         }
 
@@ -250,8 +244,7 @@ public class S3EventNotification {
         @JsonCreator
         public ResponseElementsEntity(
                 @JsonProperty(value = "x-amz-id-2") String xAmzId2,
-                @JsonProperty(value = "x-amz-request-id") String xAmzRequestId)
-        {
+                @JsonProperty(value = "x-amz-request-id") String xAmzRequestId) {
             this.xAmzId2 = xAmzId2;
             this.xAmzRequestId = xAmzRequestId;
         }
@@ -272,12 +265,12 @@ public class S3EventNotification {
         private final String awsRegion;
         private final String eventName;
         private final String eventSource;
-        private DateTime eventTime;
         private final String eventVersion;
         private final RequestParametersEntity requestParameters;
         private final ResponseElementsEntity responseElements;
         private final S3Entity s3;
         private final UserIdentityEntity userIdentity;
+        private DateTime eventTime;
 
         @JsonCreator
         public S3EventNotificationRecord(
@@ -289,14 +282,12 @@ public class S3EventNotification {
                 @JsonProperty(value = "requestParameters") RequestParametersEntity requestParameters,
                 @JsonProperty(value = "responseElements") ResponseElementsEntity responseElements,
                 @JsonProperty(value = "s3") S3Entity s3,
-                @JsonProperty(value = "userIdentity") UserIdentityEntity userIdentity)
-        {
+                @JsonProperty(value = "userIdentity") UserIdentityEntity userIdentity) {
             this.awsRegion = awsRegion;
             this.eventName = eventName;
             this.eventSource = eventSource;
 
-            if (eventTime != null)
-            {
+            if (eventTime != null) {
                 this.eventTime = DateTime.parse(eventTime);
             }
 
@@ -319,7 +310,7 @@ public class S3EventNotification {
             return eventSource;
         }
 
-        @JsonSerialize(using=DateTimeJsonSerializer.class)
+        @JsonSerialize(using = DateTimeJsonSerializer.class)
         public DateTime getEventTime() {
             return eventTime;
         }

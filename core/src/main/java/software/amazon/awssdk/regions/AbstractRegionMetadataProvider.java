@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,7 +23,22 @@ import java.net.URI;
  */
 
 public abstract class AbstractRegionMetadataProvider implements
-        RegionMetadataProvider {
+                                                     RegionMetadataProvider {
+
+    /**
+     * Parse the host portion out of an endpoint (which may or may not
+     * contain a scheme).
+     *
+     * @param endpoint the endpoint to parse
+     * @return the host portion of the endpoint
+     */
+    private static String getHost(final String endpoint) {
+        String host = URI.create(endpoint).getHost();
+        if (host == null) {
+            host = URI.create("http://" + endpoint).getHost();
+        }
+        return host;
+    }
 
     @Override
     public Region getRegionByEndpoint(String endpoint) {
@@ -41,20 +56,5 @@ public abstract class AbstractRegionMetadataProvider implements
 
         throw new IllegalArgumentException(
                 "No region found with any service for endpoint " + endpoint);
-    }
-
-    /**
-     * Parse the host portion out of an endpoint (which may or may not
-     * contain a scheme).
-     *
-     * @param endpoint the endpoint to parse
-     * @return the host portion of the endpoint
-     */
-    private static String getHost(final String endpoint) {
-        String host = URI.create(endpoint).getHost();
-        if (host == null) {
-            host = URI.create("http://" + endpoint).getHost();
-        }
-        return host;
     }
 }

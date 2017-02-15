@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
@@ -42,7 +43,7 @@ public class CopyPartRequestFactory {
     private long remainingBytes;
 
     public CopyPartRequestFactory(CopyObjectRequest origReq,
-            String uploadId, long optimalPartSize, long contentLength) {
+                                  String uploadId, long optimalPartSize, long contentLength) {
         this.origReq = origReq;
         this.uploadId = uploadId;
         this.optimalPartSize = optimalPartSize;
@@ -62,28 +63,27 @@ public class CopyPartRequestFactory {
         final long partSize = Math.min(optimalPartSize, remainingBytes);
 
         CopyPartRequest req = new CopyPartRequest()
-            .withSourceBucketName(origReq.getSourceBucketName())
-            .withSourceKey(origReq.getSourceKey())
-            .withUploadId(uploadId)
-            .withPartNumber(partNumber++)
-            .withDestinationBucketName(origReq.getDestinationBucketName())
-            .withDestinationKey(origReq.getDestinationKey())
-            .withSourceVersionId(origReq.getSourceVersionId())
-            .withFirstByte(Long.valueOf(offset))
-            .withLastByte(Long.valueOf(offset + partSize - 1))
-            .withSourceSSECustomerKey(origReq.getSourceSSECustomerKey())
-            .withDestinationSSECustomerKey(origReq.getDestinationSSECustomerKey())
-            .withRequesterPays(origReq.isRequesterPays())
-            // other meta data
-            .withMatchingETagConstraints(origReq.getMatchingETagConstraints())
-            .withModifiedSinceConstraint(origReq.getModifiedSinceConstraint())
-            .withNonmatchingETagConstraints(origReq.getNonmatchingETagConstraints())
-            .withSourceVersionId(origReq.getSourceVersionId())
-            .withUnmodifiedSinceConstraint(origReq.getUnmodifiedSinceConstraint())
-            // general meta data
-            .withGeneralProgressListener(origReq.getGeneralProgressListener())
-            .withRequestMetricCollector(origReq.getRequestMetricCollector())
-            ;
+                .withSourceBucketName(origReq.getSourceBucketName())
+                .withSourceKey(origReq.getSourceKey())
+                .withUploadId(uploadId)
+                .withPartNumber(partNumber++)
+                .withDestinationBucketName(origReq.getDestinationBucketName())
+                .withDestinationKey(origReq.getDestinationKey())
+                .withSourceVersionId(origReq.getSourceVersionId())
+                .withFirstByte(Long.valueOf(offset))
+                .withLastByte(Long.valueOf(offset + partSize - 1))
+                .withSourceSSECustomerKey(origReq.getSourceSSECustomerKey())
+                .withDestinationSSECustomerKey(origReq.getDestinationSSECustomerKey())
+                .withRequesterPays(origReq.isRequesterPays())
+                // other meta data
+                .withMatchingETagConstraints(origReq.getMatchingETagConstraints())
+                .withModifiedSinceConstraint(origReq.getModifiedSinceConstraint())
+                .withNonmatchingETagConstraints(origReq.getNonmatchingETagConstraints())
+                .withSourceVersionId(origReq.getSourceVersionId())
+                .withUnmodifiedSinceConstraint(origReq.getUnmodifiedSinceConstraint())
+                // general meta data
+                .withGeneralProgressListener(origReq.getGeneralProgressListener())
+                .withRequestMetricCollector(origReq.getRequestMetricCollector());
         offset += partSize;
         remainingBytes -= partSize;
         return req;

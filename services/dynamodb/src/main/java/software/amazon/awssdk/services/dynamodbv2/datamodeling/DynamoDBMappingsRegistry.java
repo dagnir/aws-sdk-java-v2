@@ -1,16 +1,16 @@
 /*
- * Copyright 2015-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -37,6 +37,10 @@ final class DynamoDBMappingsRegistry {
      * The default instance.
      */
     private static final DynamoDBMappingsRegistry INSTANCE = new DynamoDBMappingsRegistry();
+    /**
+     * The cache of class to mapping definition.
+     */
+    private final ConcurrentMap<Class<?>, Mappings> mappings = new ConcurrentHashMap<Class<?>, Mappings>();
 
     /**
      * Gets the default instance.
@@ -45,11 +49,6 @@ final class DynamoDBMappingsRegistry {
     static final DynamoDBMappingsRegistry instance() {
         return INSTANCE;
     }
-
-    /**
-     * The cache of class to mapping definition.
-     */
-    private final ConcurrentMap<Class<?>, Mappings> mappings = new ConcurrentHashMap<Class<?>, Mappings>();
 
     /**
      * Gets the mapping definition for a given class.
@@ -68,12 +67,14 @@ final class DynamoDBMappingsRegistry {
      */
     static final class Mappings {
         private final Map<String, Mapping> byNames = new HashMap<String, Mapping>();
+
         private Mappings(final Class<?> clazz) {
-            for (final Map.Entry<String,Bean<Object,Object>> bean : StandardBeanProperties.of((Class<Object>)clazz).map().entrySet()) {
+            for (final Map.Entry<String, Bean<Object, Object>> bean : StandardBeanProperties.of((Class<Object>) clazz).map().entrySet()) {
                 final Mapping mapping = new Mapping(bean.getValue());
                 byNames.put(mapping.getAttributeName(), mapping);
             }
         }
+
         final Collection<Mapping> getMappings() {
             return byNames.values();
         }
@@ -83,19 +84,24 @@ final class DynamoDBMappingsRegistry {
      * Holds the properties for mapping an object attribute.
      */
     static final class Mapping {
-        private final Bean<Object,Object> bean;
-        private Mapping(final Bean<Object,Object> bean) {
+        private final Bean<Object, Object> bean;
+
+        private Mapping(final Bean<Object, Object> bean) {
             this.bean = bean;
         }
+
         final Method getter() {
             return bean.type().getter();
         }
+
         final boolean isPrimaryKey() {
             return bean.properties().keyType() != null;
         }
+
         final boolean isVersion() {
             return bean.properties().versioned();
         }
+
         final String getAttributeName() {
             return bean.properties().attributeName();
         }

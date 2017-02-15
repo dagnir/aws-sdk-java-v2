@@ -70,8 +70,8 @@ public class Principal {
         if (service == null) {
             throw new IllegalArgumentException("Null AWS service name specified");
         }
-       id = service.getServiceId();
-       provider = "Service";
+        id = service.getServiceId();
+        provider = "Service";
     }
 
 
@@ -106,7 +106,7 @@ public class Principal {
     public Principal(String provider, String id, boolean stripHyphen) {
         this.provider = provider;
         this.id = stripHyphen ?
-                id.replace("-", "") : id;
+                  id.replace("-", "") : id;
     }
 
     /**
@@ -130,7 +130,7 @@ public class Principal {
      * @return The provider for this principal.
      */
     public String getProvider() {
-       return provider;
+        return provider;
     }
 
     /**
@@ -139,94 +139,7 @@ public class Principal {
      * @return The unique ID for this principal.
      */
     public String getId() {
-            return id;
-    }
-
-    /**
-     * The services who have the right to do the assume the role
-     * action. The AssumeRole action returns a set of temporary security
-     * credentials that you can use to access resources that are defined in the
-     * role's policy. The returned credentials consist of an Access Key ID, a
-     * Secret Access Key, and a security token.
-     */
-    static public enum Services {
-
-        AWSDataPipeline("datapipeline.amazonaws.com"),
-        AmazonElasticTranscoder("elastictranscoder.amazonaws.com"),
-        AmazonEC2("ec2.amazonaws.com"),
-        AWSOpsWorks("opsworks.amazonaws.com"),
-        AWSCloudHSM("cloudhsm.amazonaws.com"),
-        AllServices("*");
-        private String serviceId;
-
-        /**
-         * The service which has the right to assume the role.
-         */
-        private Services(String serviceId) {
-            this.serviceId = serviceId;
-        }
-
-        public String getServiceId() {
-            return serviceId;
-        }
-
-        /**
-         * Construct the Services object from a string representing the service id.
-         */
-        public static Services fromString(String serviceId) {
-            if (serviceId != null) {
-                for (Services s : Services.values()) {
-                    if (s.getServiceId().equalsIgnoreCase(serviceId)) {
-                        return s;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-
-    }
-
-    /**
-     * Web identity providers, such as Login with Amazon, Facebook, or Google.
-     */
-    static public enum WebIdentityProviders {
-
-        Facebook("graph.facebook.com"),
-        Google("accounts.google.com"),
-        Amazon("www.amazon.com"),
-        AllProviders("*");
-
-        private String webIdentityProvider;
-
-        /**
-         * The web identity provider which has the right to assume the role.
-         */
-        private WebIdentityProviders(String webIdentityProvider) {
-            this.webIdentityProvider = webIdentityProvider;
-        }
-
-        public String getWebIdentityProvider() {
-            return webIdentityProvider;
-        }
-
-        /**
-         * Construct the Services object from a string representing web identity provider.
-         */
-        public static WebIdentityProviders fromString(String webIdentityProvider) {
-            if (webIdentityProvider != null) {
-                for (WebIdentityProviders provider : WebIdentityProviders.values()) {
-                    if (provider.getWebIdentityProvider().equalsIgnoreCase(webIdentityProvider)) {
-                        return provider;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-
+        return id;
     }
 
     @Override
@@ -256,13 +169,99 @@ public class Principal {
         Principal other = (Principal) principal;
 
         if (this.getProvider().equals(other.getProvider())
-                && this.getId().equals(other.getId())) {
+            && this.getId().equals(other.getId())) {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * The services who have the right to do the assume the role
+     * action. The AssumeRole action returns a set of temporary security
+     * credentials that you can use to access resources that are defined in the
+     * role's policy. The returned credentials consist of an Access Key ID, a
+     * Secret Access Key, and a security token.
+     */
+    static public enum Services {
+
+        AWSDataPipeline("datapipeline.amazonaws.com"),
+        AmazonElasticTranscoder("elastictranscoder.amazonaws.com"),
+        AmazonEC2("ec2.amazonaws.com"),
+        AWSOpsWorks("opsworks.amazonaws.com"),
+        AWSCloudHSM("cloudhsm.amazonaws.com"),
+        AllServices("*");
+        private String serviceId;
+
+        /**
+         * The service which has the right to assume the role.
+         */
+        private Services(String serviceId) {
+            this.serviceId = serviceId;
+        }
+
+        /**
+         * Construct the Services object from a string representing the service id.
+         */
+        public static Services fromString(String serviceId) {
+            if (serviceId != null) {
+                for (Services s : Services.values()) {
+                    if (s.getServiceId().equalsIgnoreCase(serviceId)) {
+                        return s;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public String getServiceId() {
+            return serviceId;
+        }
+
+
+    }
+
+    /**
+     * Web identity providers, such as Login with Amazon, Facebook, or Google.
+     */
+    static public enum WebIdentityProviders {
+
+        Facebook("graph.facebook.com"),
+        Google("accounts.google.com"),
+        Amazon("www.amazon.com"),
+        AllProviders("*");
+
+        private String webIdentityProvider;
+
+        /**
+         * The web identity provider which has the right to assume the role.
+         */
+        private WebIdentityProviders(String webIdentityProvider) {
+            this.webIdentityProvider = webIdentityProvider;
+        }
+
+        /**
+         * Construct the Services object from a string representing web identity provider.
+         */
+        public static WebIdentityProviders fromString(String webIdentityProvider) {
+            if (webIdentityProvider != null) {
+                for (WebIdentityProviders provider : WebIdentityProviders.values()) {
+                    if (provider.getWebIdentityProvider().equalsIgnoreCase(webIdentityProvider)) {
+                        return provider;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public String getWebIdentityProvider() {
+            return webIdentityProvider;
+        }
+
+
+    }
 
 
 }

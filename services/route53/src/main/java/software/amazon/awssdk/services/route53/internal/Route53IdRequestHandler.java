@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -49,37 +49,43 @@ public class Route53IdRequestHandler extends AbstractRequestHandler {
     @Override
     public void afterResponse(Request<?> request, Object obj, TimingInfo timingInfo) {
         if (obj instanceof ChangeResourceRecordSetsResult) {
-            ChangeResourceRecordSetsResult result = (ChangeResourceRecordSetsResult)obj;
+            ChangeResourceRecordSetsResult result = (ChangeResourceRecordSetsResult) obj;
             removePrefix(result.getChangeInfo());
         } else if (obj instanceof CreateHostedZoneResult) {
-            CreateHostedZoneResult result = (CreateHostedZoneResult)obj;
+            CreateHostedZoneResult result = (CreateHostedZoneResult) obj;
             removePrefix(result.getChangeInfo());
             removePrefix(result.getHostedZone());
             removePrefix(result.getDelegationSet());
         } else if (obj instanceof DeleteHostedZoneResult) {
-            DeleteHostedZoneResult result = (DeleteHostedZoneResult)obj;
+            DeleteHostedZoneResult result = (DeleteHostedZoneResult) obj;
             removePrefix(result.getChangeInfo());
         } else if (obj instanceof GetChangeResult) {
-            GetChangeResult result = (GetChangeResult)obj;
+            GetChangeResult result = (GetChangeResult) obj;
             removePrefix(result.getChangeInfo());
         } else if (obj instanceof GetHostedZoneResult) {
-            GetHostedZoneResult result = (GetHostedZoneResult)obj;
+            GetHostedZoneResult result = (GetHostedZoneResult) obj;
             removePrefix(result.getHostedZone());
         } else if (obj instanceof ListHostedZonesResult) {
-            ListHostedZonesResult result = (ListHostedZonesResult)obj;
-            for (HostedZone zone : result.getHostedZones()) removePrefix(zone);
+            ListHostedZonesResult result = (ListHostedZonesResult) obj;
+            for (HostedZone zone : result.getHostedZones()) {
+                removePrefix(zone);
+            }
         } else if (obj instanceof ListResourceRecordSetsResult) {
-            ListResourceRecordSetsResult result = (ListResourceRecordSetsResult)obj;
-            for (ResourceRecordSet rrset : result.getResourceRecordSets()) removePrefix(rrset);
+            ListResourceRecordSetsResult result = (ListResourceRecordSetsResult) obj;
+            for (ResourceRecordSet rrset : result.getResourceRecordSets()) {
+                removePrefix(rrset);
+            }
         } else if (obj instanceof CreateHealthCheckResult) {
-            CreateHealthCheckResult result = (CreateHealthCheckResult)obj;
+            CreateHealthCheckResult result = (CreateHealthCheckResult) obj;
             removePrefix(result.getHealthCheck());
         } else if (obj instanceof GetHealthCheckResult) {
-            GetHealthCheckResult result = (GetHealthCheckResult)obj;
+            GetHealthCheckResult result = (GetHealthCheckResult) obj;
             removePrefix(result.getHealthCheck());
         } else if (obj instanceof ListHealthChecksResult) {
-            ListHealthChecksResult result = (ListHealthChecksResult)obj;
-            for (HealthCheck check : result.getHealthChecks()) removePrefix(check);
+            ListHealthChecksResult result = (ListHealthChecksResult) obj;
+            for (HealthCheck check : result.getHealthChecks()) {
+                removePrefix(check);
+            }
         } else if (obj instanceof CreateReusableDelegationSetResult) {
             CreateReusableDelegationSetResult result = (CreateReusableDelegationSetResult) obj;
             removePrefix(result.getDelegationSet());
@@ -91,13 +97,16 @@ public class Route53IdRequestHandler extends AbstractRequestHandler {
             removePrefix(result.getDelegationSet());
         } else if (obj instanceof ListReusableDelegationSetsResult) {
             ListReusableDelegationSetsResult result = (ListReusableDelegationSetsResult) obj;
-            for (DelegationSet delegationSet : result.getDelegationSets())
+            for (DelegationSet delegationSet : result.getDelegationSets()) {
                 removePrefix(delegationSet);
+            }
         }
     }
 
     private void removePrefix(ResourceRecordSet rrset) {
-        if (rrset == null) return;
+        if (rrset == null) {
+            return;
+        }
 
         removePrefix(rrset.getAliasTarget());
         rrset.setHealthCheckId(removePrefix(rrset.getHealthCheckId()));
@@ -105,13 +114,17 @@ public class Route53IdRequestHandler extends AbstractRequestHandler {
     }
 
     private void removePrefix(AliasTarget aliasTarget) {
-        if (aliasTarget == null) return;
+        if (aliasTarget == null) {
+            return;
+        }
 
         aliasTarget.setHostedZoneId(removePrefix(aliasTarget.getHostedZoneId()));
     }
 
     private void removePrefix(ChangeInfo changeInfo) {
-        if (changeInfo == null) return;
+        if (changeInfo == null) {
+            return;
+        }
 
         if (changeInfo.getId() != null) {
             changeInfo.setId(removePrefix(changeInfo.getId()));
@@ -119,7 +132,9 @@ public class Route53IdRequestHandler extends AbstractRequestHandler {
     }
 
     private void removePrefix(HostedZone hostedZone) {
-        if (hostedZone == null) return;
+        if (hostedZone == null) {
+            return;
+        }
 
         if (hostedZone.getId() != null) {
             hostedZone.setId(removePrefix(hostedZone.getId()));
@@ -127,7 +142,9 @@ public class Route53IdRequestHandler extends AbstractRequestHandler {
     }
 
     private void removePrefix(HealthCheck healthCheck) {
-        if (healthCheck == null) return;
+        if (healthCheck == null) {
+            return;
+        }
 
         if (healthCheck.getId() != null) {
             healthCheck.setId(removePrefix(healthCheck.getId()));
@@ -135,7 +152,9 @@ public class Route53IdRequestHandler extends AbstractRequestHandler {
     }
 
     private void removePrefix(DelegationSet delegationSet) {
-        if (delegationSet == null) return;
+        if (delegationSet == null) {
+            return;
+        }
 
         if (delegationSet.getId() != null) {
             delegationSet.setId(removePrefix(delegationSet.getId()));
@@ -143,7 +162,9 @@ public class Route53IdRequestHandler extends AbstractRequestHandler {
     }
 
     private String removePrefix(String s) {
-        if (s == null) return null;
+        if (s == null) {
+            return null;
+        }
 
         int lastIndex = s.lastIndexOf("/");
         if (lastIndex > 0) {

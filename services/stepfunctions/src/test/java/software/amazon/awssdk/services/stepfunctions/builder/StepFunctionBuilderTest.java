@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -309,7 +309,7 @@ public class StepFunctionBuilderTest {
                                         .condition(
                                                 and(eq("$.var", "value"),
                                                     eq("$.other-var", 10)
-                                                ))))
+                                                   ))))
                 .state("NextState", succeedState())
                 .state("DefaultState", succeedState())
                 .build();
@@ -327,7 +327,7 @@ public class StepFunctionBuilderTest {
                                         .condition(
                                                 or(gt("$.var", "value"),
                                                    lte("$.other-var", 10)
-                                                ))))
+                                                  ))))
                 .state("NextState", succeedState())
                 .state("DefaultState", succeedState())
                 .build();
@@ -363,8 +363,8 @@ public class StepFunctionBuilderTest {
                                                 or(
                                                         lt("$.numeric", 9000.1),
                                                         not(gte("$.numeric", 42))
-                                                )
-                                        ))))
+                                                  )
+                                                      ))))
                 .state("NextState", succeedState())
                 .state("DefaultState", succeedState())
                 .build();
@@ -403,7 +403,7 @@ public class StepFunctionBuilderTest {
                                                 lte("$.timestamp", date),
                                                 eq("$.boolean", true),
                                                 eq("$.boolean", false)
-                                        ))))
+                                                      ))))
                 .state("NextState", succeedState())
                 .state("DefaultState", succeedState())
                 .build();
@@ -430,7 +430,7 @@ public class StepFunctionBuilderTest {
                                         .comment("Branch two")
                                         .startAt("BranchTwoInitial")
                                         .state("BranchTwoInitial", succeedState())
-                        ))
+                                 ))
                 .state("NextState", succeedState())
                 .build();
 
@@ -452,7 +452,7 @@ public class StepFunctionBuilderTest {
                                         .comment("Branch two")
                                         .startAt("BranchTwoInitial")
                                         .state("BranchTwoInitial", succeedState())
-                        )
+                                 )
                         .retriers(retrier()
                                           .errorEquals("Foo", "Bar")
                                           .intervalSeconds(10)
@@ -463,7 +463,7 @@ public class StepFunctionBuilderTest {
                                           .intervalSeconds(10)
                                           .backoffRate(1.0)
                                           .maxAttempts(3)
-                        ))
+                                 ))
                 .build();
 
         assertStateMachine(stateMachine, "ParallelStateWithRetriers.json");
@@ -484,7 +484,7 @@ public class StepFunctionBuilderTest {
                                         .comment("Branch two")
                                         .startAt("BranchTwoInitial")
                                         .state("BranchTwoInitial", succeedState())
-                        )
+                                 )
                         .catchers(catcher()
                                           .errorEquals("Foo", "Bar")
                                           .transition(next("RecoveryState"))
@@ -493,7 +493,7 @@ public class StepFunctionBuilderTest {
                                           .catchAll()
                                           .transition(next("OtherRecoveryState"))
                                           .resultPath("$.result")
-                        ))
+                                 ))
                 .state("RecoveryState", succeedState())
                 .state("OtherRecoveryState", succeedState())
                 .build();

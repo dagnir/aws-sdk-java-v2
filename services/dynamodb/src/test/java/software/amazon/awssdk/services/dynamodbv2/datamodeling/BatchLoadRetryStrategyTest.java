@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,6 +20,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -53,14 +53,6 @@ public class BatchLoadRetryStrategyTest {
     // private static BatchGetItemResult batchGetItemResult;
     private static List<Object> itemsToGet;
 
-    private AmazonDynamoDB ddbMock;
-    private DynamoDBMapper mapper;
-    private BatchGetItemRequest mockItemRequest;
-    private BatchGetItemResult mockItemResult;
-
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
-
     static {
 
         itemsToGet = new ArrayList<Object>();
@@ -68,6 +60,13 @@ public class BatchLoadRetryStrategyTest {
         itemsToGet.add(new Item2("Is"));
         itemsToGet.add(new Item("Batman"));
     }
+
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
+    private AmazonDynamoDB ddbMock;
+    private DynamoDBMapper mapper;
+    private BatchGetItemRequest mockItemRequest;
+    private BatchGetItemResult mockItemResult;
 
     @Before
     public void setup() {
@@ -79,7 +78,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_NoRetry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(1)))
-                .times(1);
+                                                                       .times(1);
         mapper = new DynamoDBMapper(ddbMock, getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.NoRetryBatchLoadRetryStrategy()));
 
         replay(ddbMock);
@@ -91,7 +90,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(1)))
-                .times(4);
+                                                                       .times(4);
         mapper = new DynamoDBMapper(ddbMock, getConfigWithCustomBatchLoadRetryStrategy(new BatchLoadRetryStrategyWithNoDelay(3)));
 
         replay(ddbMock);
@@ -114,7 +113,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(3)))
-                .times(6);
+                                                                       .times(6);
         mapper = new DynamoDBMapper(ddbMock, getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy()));
 
         replay(ddbMock);
@@ -126,7 +125,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_NoRetry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(3)))
-                .times(1);
+                                                                       .times(1);
         mapper = new DynamoDBMapper(ddbMock, getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.NoRetryBatchLoadRetryStrategy()));
 
         replay(ddbMock);
@@ -184,7 +183,7 @@ public class BatchLoadRetryStrategyTest {
     static class BatchLoadRetryStrategyWithNoDelay implements BatchLoadRetryStrategy {
 
         private final int maxRetry;
-        
+
         /**
          * @param maxRetry
          */
@@ -208,7 +207,6 @@ public class BatchLoadRetryStrategyTest {
             return 0;
         }
 
-        
 
     }
 

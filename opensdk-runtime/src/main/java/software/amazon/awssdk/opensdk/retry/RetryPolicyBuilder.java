@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,14 +40,14 @@ public final class RetryPolicyBuilder {
     private BackoffStrategy backoffStrategy = PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY_V2;
     private int maxNumberOfRetries = PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY;
 
+    private RetryPolicyBuilder() {
+    }
+
     /**
      * @return Builder with standard defaults.
      */
     public static RetryPolicyBuilder standard() {
         return new RetryPolicyBuilder();
-    }
-
-    private RetryPolicyBuilder() {
     }
 
     /**

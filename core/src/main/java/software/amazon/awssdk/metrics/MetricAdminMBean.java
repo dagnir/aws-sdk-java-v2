@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.metrics;
@@ -44,7 +44,7 @@ public interface MetricAdminMBean {
     /**
      * Starts the default AWS SDK metric collector, but only if no metric
      * collector is currently in use at the AWS SDK level.
-     * 
+     *
      * @return true if the default AWS SDK metric collector has been
      *         successfully started by this call; false otherwise.
      */
@@ -62,7 +62,7 @@ public interface MetricAdminMBean {
 
     /**
      * Used to set whether the JVM metrics is to be excluded.
-     * 
+     *
      * @param excludeMachineMetrics
      *            true if JVM metrics is to be excluded; false otherwise.
      */
@@ -75,7 +75,7 @@ public interface MetricAdminMBean {
 
     /**
      * Used to set whether the per-host metrics is to be included.
-     * 
+     *
      * @param includePerHostMetrics
      *            true if per-host metrics is to be included; false otherwise.
      */
@@ -101,12 +101,12 @@ public interface MetricAdminMBean {
     /**
      * Sets the AWS credential file used by the default AWS SDK metric collector
      * for accessing CloudWatch.
-     * 
+     *
      * @param filepath
      *            must be a valid path to an AWS credential property file.
      */
     public void setCredentialFile(String filepath)
-        throws FileNotFoundException, IOException;
+            throws FileNotFoundException, IOException;
 
     /**
      * Returns the internal metric queue size to be used for the default AWS SDK
@@ -142,7 +142,7 @@ public interface MetricAdminMBean {
 
     /**
      * Sets the metric name space.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if the given name space is either null or blank.
      */

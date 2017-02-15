@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -31,13 +31,13 @@ public class ScanExpressionTest {
     @Test
     public void test() {
         ScanExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addProjections("attr1", "attr2")
-            .withCondition(attribute("status").exists().and(S("status").eq("inactive")))
-            .buildForScan();
+                .addProjections("attr1", "attr2")
+                .withCondition(attribute("status").exists().and(S("status").eq("inactive")))
+                .buildForScan();
         String projectionExpr = xspec.getProjectionExpression();
         String filterExpr = xspec.getFilterExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(projectionExpr);
         System.out.println(filterExpr);
@@ -57,13 +57,13 @@ public class ScanExpressionTest {
     @Test
     public void testContains() {
         ScanExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addProjections("attr1", "attr2")
-            .withCondition(S("status").contains("active").or(SS("ss").contains("a")).or(NS("ns").contains(123).or(BS("bs").contains(new byte[0]))))
-            .buildForScan();
+                .addProjections("attr1", "attr2")
+                .withCondition(S("status").contains("active").or(SS("ss").contains("a")).or(NS("ns").contains(123).or(BS("bs").contains(new byte[0]))))
+                .buildForScan();
         String projectionExpr = xspec.getProjectionExpression();
         String filterExpr = xspec.getFilterExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
 
         System.out.println(projectionExpr);
         System.out.println(filterExpr);

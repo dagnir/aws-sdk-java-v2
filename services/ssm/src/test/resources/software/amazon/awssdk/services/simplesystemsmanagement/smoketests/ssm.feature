@@ -8,5 +8,5 @@ Feature: Amazon SSM
 
   Scenario: Handling errors
     When I attempt to call the "GetDocument" API with:
-    | Name | 'fake-name' |
+      | Name | 'fake-name' |
     Then I expect the response error code to be "ValidationException"

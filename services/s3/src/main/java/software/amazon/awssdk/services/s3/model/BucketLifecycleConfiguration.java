@@ -1,17 +1,18 @@
 /*
- * Copyright 2011-2012 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -43,6 +44,20 @@ public class BucketLifecycleConfiguration implements Serializable {
     private List<Rule> rules;
 
     /**
+     * Constructs a new {@link BucketLifecycleConfiguration} object with the
+     * rules given.
+     *
+     * @param rules
+     */
+    public BucketLifecycleConfiguration(List<Rule> rules) {
+        this.rules = rules;
+    }
+
+    public BucketLifecycleConfiguration() {
+        super();
+    }
+
+    /**
      * Returns the list of rules that comprise this configuration.
      */
     public List<Rule> getRules() {
@@ -72,20 +87,6 @@ public class BucketLifecycleConfiguration implements Serializable {
     public BucketLifecycleConfiguration withRules(Rule... rules) {
         setRules(Arrays.asList(rules));
         return this;
-    }
-
-    /**
-     * Constructs a new {@link BucketLifecycleConfiguration} object with the
-     * rules given.
-     *
-     * @param rules
-     */
-    public BucketLifecycleConfiguration(List<Rule> rules) {
-        this.rules = rules;
-    }
-
-    public BucketLifecycleConfiguration() {
-        super();
     }
 
     public static class Rule implements Serializable {
@@ -133,45 +134,19 @@ public class BucketLifecycleConfiguration implements Serializable {
         private AbortIncompleteMultipartUpload abortIncompleteMultipartUpload;
 
         /**
+         * Returns the ID of this rule.
+         */
+        public String getId() {
+            return id;
+        }
+
+        /**
          * Sets the ID of this rule. Rules must be less than 255 alphanumeric
          * characters, and must be unique for a bucket. If you do not assign an
          * ID, one will be generated.
          */
         public void setId(String id) {
             this.id = id;
-        }
-
-        /**
-         * Sets the key prefix for which this rule will apply.
-         *
-         * @deprecated Use {@link LifecycleFilter} instead.
-         */
-        @Deprecated
-        public void setPrefix(String prefix) {
-            this.prefix = prefix;
-        }
-
-        /**
-         * Sets the time, in days, between when an object is uploaded to the
-         * bucket and when it expires.
-         */
-        public void setExpirationInDays(int expirationInDays) {
-            this.expirationInDays = expirationInDays;
-        }
-
-        /**
-         * Sets the time, in days, between when a new version of the object is
-         * uploaded to the bucket and when older versions of the object expire.
-         */
-        public void setNoncurrentVersionExpirationInDays(int value) {
-            this.noncurrentVersionExpirationInDays = value;
-        }
-
-        /**
-         * Returns the ID of this rule.
-         */
-        public String getId() {
-            return id;
         }
 
         /**
@@ -200,6 +175,16 @@ public class BucketLifecycleConfiguration implements Serializable {
         }
 
         /**
+         * Sets the key prefix for which this rule will apply.
+         *
+         * @deprecated Use {@link LifecycleFilter} instead.
+         */
+        @Deprecated
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        /**
          * Sets the key prefix for this rule and returns a reference to this
          * object for method chaining.
          *
@@ -221,6 +206,14 @@ public class BucketLifecycleConfiguration implements Serializable {
 
         /**
          * Sets the time, in days, between when an object is uploaded to the
+         * bucket and when it expires.
+         */
+        public void setExpirationInDays(int expirationInDays) {
+            this.expirationInDays = expirationInDays;
+        }
+
+        /**
+         * Sets the time, in days, between when an object is uploaded to the
          * bucket and when it expires, and returns a reference to this object
          * for method chaining.
          *
@@ -238,6 +231,14 @@ public class BucketLifecycleConfiguration implements Serializable {
          */
         public int getNoncurrentVersionExpirationInDays() {
             return noncurrentVersionExpirationInDays;
+        }
+
+        /**
+         * Sets the time, in days, between when a new version of the object is
+         * uploaded to the bucket and when older versions of the object expire.
+         */
+        public void setNoncurrentVersionExpirationInDays(int value) {
+            this.noncurrentVersionExpirationInDays = value;
         }
 
         /**
@@ -284,17 +285,17 @@ public class BucketLifecycleConfiguration implements Serializable {
         }
 
         /**
-         * Sets the expiration date of the object.
-         */
-        public void setExpirationDate(Date expirationDate) {
-            this.expirationDate = expirationDate;
-        }
-
-        /**
          * Returns the expiration date of the object.
          */
         public Date getExpirationDate() {
             return this.expirationDate;
+        }
+
+        /**
+         * Sets the expiration date of the object.
+         */
+        public void setExpirationDate(Date expirationDate) {
+            this.expirationDate = expirationDate;
         }
 
         /**
@@ -307,18 +308,6 @@ public class BucketLifecycleConfiguration implements Serializable {
         }
 
         /**
-         * Sets the transition describing how this object will move between
-         * different storage classes in Amazon S3. Bucket Life cycle
-         * configuration can now accept multiple transitions in a rule. Note :
-         * This method overwrites all the existing transitions with given
-         * transition. @Deprecated in favor of {@link #setTransitions(List)}
-         */
-        @Deprecated
-        public void setTransition(Transition transition) {
-            setTransitions(Arrays.asList(transition));
-        }
-
-        /**
          * Returns the transition associated with the rule. If there are more
          * than one transition associated with a given rule, this method returns
          * the last transition rule.
@@ -328,8 +317,20 @@ public class BucketLifecycleConfiguration implements Serializable {
         public Transition getTransition() {
             final List<Transition> transitions = getTransitions();
             return (transitions != null && !transitions.isEmpty())
-                    ? transitions.get(transitions.size() - 1)
-                    : null;
+                   ? transitions.get(transitions.size() - 1)
+                   : null;
+        }
+
+        /**
+         * Sets the transition describing how this object will move between
+         * different storage classes in Amazon S3. Bucket Life cycle
+         * configuration can now accept multiple transitions in a rule. Note :
+         * This method overwrites all the existing transitions with given
+         * transition. @Deprecated in favor of {@link #setTransitions(List)}
+         */
+        @Deprecated
+        public void setTransition(Transition transition) {
+            setTransitions(Arrays.asList(transition));
         }
 
         /**
@@ -346,6 +347,20 @@ public class BucketLifecycleConfiguration implements Serializable {
         }
 
         /**
+         * Returns the non-current transition associated with the life cycle
+         * configuration rule. If there are more than one transitions associated
+         * with a rule, this method returns the last transition in the rule. @Deprecated
+         * in favor of {@link #getNoncurrentVersionTransitions()}
+         */
+        @Deprecated
+        public NoncurrentVersionTransition getNoncurrentVersionTransition() {
+            final List<NoncurrentVersionTransition> transitions = getNoncurrentVersionTransitions();
+            return (transitions != null && !transitions.isEmpty())
+                   ? transitions.get(transitions.size() - 1)
+                   : null;
+        }
+
+        /**
          * Sets the transition describing how non-current versions of objects
          * will move between different storage classes in Amazon S3. Bucket Life
          * cycle configuration can now accept multiple non current transitions
@@ -358,21 +373,7 @@ public class BucketLifecycleConfiguration implements Serializable {
                 NoncurrentVersionTransition nonCurrentVersionTransition) {
 
             setNoncurrentVersionTransitions(Arrays
-                    .asList(nonCurrentVersionTransition));
-        }
-
-        /**
-         * Returns the non-current transition associated with the life cycle
-         * configuration rule. If there are more than one transitions associated
-         * with a rule, this method returns the last transition in the rule. @Deprecated
-         * in favor of {@link #getNoncurrentVersionTransitions()}
-         */
-        @Deprecated
-        public NoncurrentVersionTransition getNoncurrentVersionTransition() {
-            final List<NoncurrentVersionTransition> transitions = getNoncurrentVersionTransitions();
-            return (transitions != null && !transitions.isEmpty())
-                    ? transitions.get(transitions.size() - 1)
-                    : null;
+                                                    .asList(nonCurrentVersionTransition));
         }
 
         /**
@@ -388,7 +389,7 @@ public class BucketLifecycleConfiguration implements Serializable {
                 NoncurrentVersionTransition nonCurrentVersionTransition) {
 
             setNoncurrentVersionTransitions(Arrays
-                    .asList(nonCurrentVersionTransition));
+                                                    .asList(nonCurrentVersionTransition));
             return this;
         }
 
@@ -586,18 +587,18 @@ public class BucketLifecycleConfiguration implements Serializable {
         private String storageClass;
 
         /**
+         * Returns the time in days from an object's creation to its expiration.
+         */
+        public int getDays() {
+            return days;
+        }
+
+        /**
          * Sets the time, in days, between when an object is uploaded to the bucket and when it
          * expires.
          */
         public void setDays(int expirationInDays) {
             this.days = expirationInDays;
-        }
-
-        /**
-         * Returns the time in days from an object's creation to its expiration.
-         */
-        public int getDays() {
-            return days;
         }
 
         /**
@@ -624,13 +625,6 @@ public class BucketLifecycleConfiguration implements Serializable {
         }
 
         /**
-         * Sets the storage class of this object.
-         */
-        public void setStorageClass(String storageClass) {
-            this.storageClass = storageClass;
-        }
-
-        /**
          * Returns the storage class of this object.
          *
          * @deprecated This method should not be used. Use {@link #getStorageClassAsString()}
@@ -643,6 +637,13 @@ public class BucketLifecycleConfiguration implements Serializable {
             } catch (IllegalArgumentException ignored) {
                 return null;
             }
+        }
+
+        /**
+         * Sets the storage class of this object.
+         */
+        public void setStorageClass(String storageClass) {
+            this.storageClass = storageClass;
         }
 
         /**
@@ -671,17 +672,17 @@ public class BucketLifecycleConfiguration implements Serializable {
         }
 
         /**
-         * Set the expiration date of this object.
-         */
-        public void setDate(Date expirationDate) {
-            this.date = expirationDate;
-        }
-
-        /**
          * Returns the expiration date of this object.
          */
         public Date getDate() {
             return this.date;
+        }
+
+        /**
+         * Set the expiration date of this object.
+         */
+        public void setDate(Date expirationDate) {
+            this.date = expirationDate;
         }
 
         /**
@@ -711,19 +712,19 @@ public class BucketLifecycleConfiguration implements Serializable {
         private String storageClass;
 
         /**
-         * Sets the time, in days, between when a new version of the object
-         * is uploaded to the bucket and when older versions are archived.
-         */
-        public void setDays(int expirationInDays) {
-            this.days = expirationInDays;
-        }
-
-        /**
          * Returns the time in days from when a new version of the object
          * is uploaded to the bucket and when older versions are archived.
          */
         public int getDays() {
             return days;
+        }
+
+        /**
+         * Sets the time, in days, between when a new version of the object
+         * is uploaded to the bucket and when older versions are archived.
+         */
+        public void setDays(int expirationInDays) {
+            this.days = expirationInDays;
         }
 
         /**
@@ -748,13 +749,6 @@ public class BucketLifecycleConfiguration implements Serializable {
         }
 
         /**
-         * Sets the storage class of this object.
-         */
-        public void setStorageClass(String storageClass) {
-            this.storageClass = storageClass;
-        }
-
-        /**
          * Returns the storage class of this object.
          *
          * @deprecated This method should not be used. Use {@link #getStorageClassAsString()}
@@ -767,6 +761,13 @@ public class BucketLifecycleConfiguration implements Serializable {
             } catch (IllegalArgumentException ignored) {
                 return null;
             }
+        }
+
+        /**
+         * Sets the storage class of this object.
+         */
+        public void setStorageClass(String storageClass) {
+            this.storageClass = storageClass;
         }
 
         /**

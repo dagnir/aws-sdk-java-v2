@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.autoscaling;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -13,11 +28,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.codec.binary.Base64;
 import org.junit.After;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.SDKGlobalTime;
 import software.amazon.awssdk.services.autoscaling.model.AlreadyExistsException;
@@ -90,27 +103,6 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
 
     protected static final Date TEST_ACTION_TIME = new Date(new Date().getTime() + 100000);
 
-
-    /**
-     * The name of the launch configuration created by these tests
-     */
-
-    protected String launchConfigurationName;
-
-
-    /**
-     * The name of the autoscaling group created by these tests
-     */
-
-    protected String autoScalingGroupName;
-
-
-    /**
-     * The name of the SNS topic created by the notification operation tests
-     */
-
-    private String topicARN;
-
     static {
         TERMINATION_POLICIES = new LinkedList<String>();
         TERMINATION_POLICIES.add("ClosestToNextInstanceHour");
@@ -120,6 +112,21 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
         TERMINATION_POLICIES.add("OldestLaunchConfiguration");
     }
 
+    /**
+     * The name of the launch configuration created by these tests
+     */
+
+    protected String launchConfigurationName;
+    /**
+     * The name of the autoscaling group created by these tests
+     */
+
+    protected String autoScalingGroupName;
+    /**
+     * The name of the SNS topic created by the notification operation tests
+     */
+
+    private String topicARN;
 
     /**
      * Releases any resources created by these tests
@@ -137,7 +144,7 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
         if (launchConfigurationName != null) {
             try {
                 autoscaling.deleteLaunchConfiguration(new DeleteLaunchConfigurationRequest()
-                        .withLaunchConfigurationName(launchConfigurationName));
+                                                              .withLaunchConfigurationName(launchConfigurationName));
             } catch (Exception e) {
             }
         }
@@ -185,8 +192,8 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
     public void testLaunchConfigurationOperations() throws Exception {
         launchConfigurationName = "java-integ-test-config-" + new Date().getTime();
         String userData = "12345678901234567890123456789012345678901234567890"
-                + "12345678901234567890123456789012345678901234567890"
-                + "12345678901234567890123456789012345678901234567890";
+                          + "12345678901234567890123456789012345678901234567890"
+                          + "12345678901234567890123456789012345678901234567890";
 
         String encodedUserData = new String(Base64.encodeBase64(userData.getBytes()));
 
@@ -229,11 +236,11 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
         assertEquals(encodedUserData, launchConfiguration.getUserData());
         assertEquals(false, launchConfiguration.getAssociatePublicIpAddress());
         assertThat(result.getLaunchConfigurations().get(0).getBlockDeviceMappings(),
-                containsInAnyOrder(blockDeviceMapping1, blockDeviceMapping2));
+                   containsInAnyOrder(blockDeviceMapping1, blockDeviceMapping2));
 
         // Delete it
         autoscaling.deleteLaunchConfiguration(new DeleteLaunchConfigurationRequest()
-                .withLaunchConfigurationName(launchConfigurationName));
+                                                      .withLaunchConfigurationName(launchConfigurationName));
     }
 
 
@@ -255,12 +262,12 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
 
         // Set desired capacity
         autoscaling.setDesiredCapacity(new SetDesiredCapacityRequest().withAutoScalingGroupName(autoScalingGroupName)
-                .withDesiredCapacity(1));
+                                                                      .withDesiredCapacity(1));
 
         // Describe
         DescribeAutoScalingGroupsResult result = autoscaling
                 .describeAutoScalingGroups(new DescribeAutoScalingGroupsRequest()
-                        .withAutoScalingGroupNames(autoScalingGroupName));
+                                                   .withAutoScalingGroupNames(autoScalingGroupName));
         List<AutoScalingGroup> autoScalingGroups = result.getAutoScalingGroups();
         assertEquals(1, autoScalingGroups.size());
         AutoScalingGroup group = autoScalingGroups.get(0);
@@ -287,7 +294,7 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
 
         // Check our updates
         result = autoscaling.describeAutoScalingGroups(new DescribeAutoScalingGroupsRequest()
-                .withAutoScalingGroupNames(autoScalingGroupName));
+                                                               .withAutoScalingGroupNames(autoScalingGroupName));
         autoScalingGroups = result.getAutoScalingGroups();
         assertEquals(1, autoScalingGroups.size());
         group = autoScalingGroups.get(0);
@@ -489,7 +496,7 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
 
         // Describe Notification Types
         List<String> notificationTypes = autoscaling.describeAutoScalingNotificationTypes()
-                .getAutoScalingNotificationTypes();
+                                                    .getAutoScalingNotificationTypes();
         assertTrue(notificationTypes.size() > 1);
         String notificationType = notificationTypes.get(0);
         assertNotEmpty(notificationType);
@@ -514,9 +521,9 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
 
         // DeleteNotificationConfiguration
         autoscaling.deleteNotificationConfiguration(new DeleteNotificationConfigurationRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withTopicARN(topicARN));
+                                                            .withAutoScalingGroupName(autoScalingGroupName).withTopicARN(topicARN));
         assertEquals(0, autoscaling.describeNotificationConfigurations(describeRequest).getNotificationConfigurations()
-                .size());
+                                   .size());
     }
 
 
@@ -545,9 +552,9 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
         // request). So if we do `tags.put("tag3", null)`, the test would fail.
         tags.put("tag3", "");
         autoscaling.createOrUpdateTags(new CreateOrUpdateTagsRequest().withTags(convertTagList(tags,
-                autoScalingGroupName)));
+                                                                                               autoScalingGroupName)));
         DescribeTagsResult describeTags = autoscaling.describeTags(new DescribeTagsRequest().withFilters(new Filter()
-                .withName("auto-scaling-group").withValues(autoScalingGroupName)));
+                                                                                                                 .withName("auto-scaling-group").withValues(autoScalingGroupName)));
         assertEquals(3, describeTags.getTags().size());
         for (TagDescription tag : describeTags.getTags()) {
             assertEquals(autoScalingGroupName, tag.getResourceId());
@@ -568,14 +575,14 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
         DescribeTerminationPolicyTypesResult describeAdjustmentTypesResult = autoscaling
                 .describeTerminationPolicyTypes(new DescribeTerminationPolicyTypesRequest());
         assertEquals(TERMINATION_POLICIES.toArray(), describeAdjustmentTypesResult.getTerminationPolicyTypes()
-                .toArray());
+                                                                                  .toArray());
     }
 
     private Collection<Tag> convertTagList(Map<String, String> tags, String groupName) {
         Collection<Tag> converted = new LinkedList<Tag>();
         for (String key : tags.keySet()) {
             Tag tag = new Tag().withKey(key).withValue(tags.get(key)).withResourceType("auto-scaling-group")
-                    .withResourceId(groupName).withPropagateAtLaunch(true);
+                               .withResourceId(groupName).withPropagateAtLaunch(true);
             converted.add(tag);
         }
         return converted;

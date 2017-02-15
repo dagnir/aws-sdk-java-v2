@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,29 +41,24 @@ public class ProfileCredentialsProvider implements AWSCredentialsProvider {
      */
     private static final long DEFAULT_FORCE_RELOAD_INTERVAL_NANOS =
             2 * DEFAULT_REFRESH_INTERVAL_NANOS;
-
-    /**
-     * The credential profiles file from which this provider loads the security credentials. Lazily
-     * loaded by the double-check idiom.
-     */
-    private volatile ProfilesConfigFile profilesConfigFile;
-
-    /**
-     * When the profiles file was last refreshed.
-     */
-    private volatile long lastRefreshed;
-
     /**
      * The name of the credential profile
      */
     private final String profileName;
-
     /**
      * Used to have only one thread block on refresh, for applications making at least one call
      * every REFRESH_INTERVAL_NANOS.
      */
     private final Semaphore refreshSemaphore = new Semaphore(1);
-
+    /**
+     * The credential profiles file from which this provider loads the security credentials. Lazily
+     * loaded by the double-check idiom.
+     */
+    private volatile ProfilesConfigFile profilesConfigFile;
+    /**
+     * When the profiles file was last refreshed.
+     */
+    private volatile long lastRefreshed;
     /**
      * Refresh interval. Defaults to {@link #DEFAULT_REFRESH_INTERVAL_NANOS}
      */

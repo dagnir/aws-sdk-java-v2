@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import static org.junit.Assert.assertEquals;
@@ -37,21 +52,15 @@ import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
  * Sample code to update items to a dynamo table.
  */
 public class F_UpdateItemIntegrationTest {
-    private static DynamoDB dynamo;
-
     public static final String TABLE_NAME = "F_UpdateItemTest";
-
     public static final String HASH_KEY = "customer_id";
     public static final String RANGE_KEY = "address_type";
-
-    private static final long READ_CAPACITY = 1;
-
-    private static final long WRITE_CAPACITY = 1;
-
     public static final long FIRST_CUSTOMER_ID = 1000L;
-
     public static final String ADDRESS_TYPE_HOME = "home";
     public static final String ADDRESS_TYPE_WORK = "work";
+    private static final long READ_CAPACITY = 1;
+    private static final long WRITE_CAPACITY = 1;
+    private static DynamoDB dynamo;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -106,17 +115,17 @@ public class F_UpdateItemIntegrationTest {
     private static void fillInData(DynamoDB dynamo) {
         Table table = dynamo.getTable(TABLE_NAME);
         table.putItem(new Item().withLong(HASH_KEY, FIRST_CUSTOMER_ID)
-                              .withString(RANGE_KEY, ADDRESS_TYPE_WORK)
-                              .withString("AddressLine1", "1918 8th Aven")
-                              .withString("city", "seattle")
-                              .withString("state", "WA")
-                              .withInt("zipcode", 98104));
+                                .withString(RANGE_KEY, ADDRESS_TYPE_WORK)
+                                .withString("AddressLine1", "1918 8th Aven")
+                                .withString("city", "seattle")
+                                .withString("state", "WA")
+                                .withInt("zipcode", 98104));
         table.putItem(new Item().withLong(HASH_KEY, FIRST_CUSTOMER_ID)
-                              .withString(RANGE_KEY, ADDRESS_TYPE_HOME)
-                              .withString("AddressLine1", "15606 NE 40th ST")
-                              .withString("city", "redmond")
-                              .withString("state", "WA")
-                              .withInt("zipcode", 98052));
+                                .withString(RANGE_KEY, ADDRESS_TYPE_HOME)
+                                .withString("AddressLine1", "15606 NE 40th ST")
+                                .withString("city", "redmond")
+                                .withString("state", "WA")
+                                .withInt("zipcode", 98052));
     }
 
     @Test
@@ -130,7 +139,7 @@ public class F_UpdateItemIntegrationTest {
                                                               .withPrimaryKey(HASH_KEY, FIRST_CUSTOMER_ID, RANGE_KEY,
                                                                               ADDRESS_TYPE_WORK)
                                                               .withConsistentRead(true)
-        );
+                                                     );
         Item item = outcome.getItem();
         Set<String> phoneNumbers = item.getStringSet("phone");
         assertTrue(1 == phoneNumbers.size());
@@ -177,7 +186,7 @@ public class F_UpdateItemIntegrationTest {
                                                               .withPrimaryKey(HASH_KEY, FIRST_CUSTOMER_ID, RANGE_KEY,
                                                                               ADDRESS_TYPE_WORK)
                                                               .withConsistentRead(true)
-        );
+                                                     );
         Item item = outcome.getItem();
         final int oldZipCode = item.getInt("zipcode");
 
@@ -229,7 +238,7 @@ public class F_UpdateItemIntegrationTest {
                          new NameMap().with("#phoneAttributeName", "phone"),
                          new ValueMap().withStringSet(":phoneAtributeValue",
                                                       "123-456-7890", "987-654-3210")
-        );
+                        );
         GetItemOutcome outcome = table.getItemOutcome(new GetItemSpec()
                                                               .withPrimaryKey(HASH_KEY, FIRST_CUSTOMER_ID, RANGE_KEY,
                                                                               ADDRESS_TYPE_WORK)
@@ -259,7 +268,7 @@ public class F_UpdateItemIntegrationTest {
                                  .withInt(":zipcode", 98104)
                                  .withList(":a", "phone-1", "phone-2")
                                  .withList(":b", "phone-3", "phone-4")
-        );
+                        );
         outcome = table.getItemOutcome(new GetItemSpec()
                                                .withPrimaryKey(HASH_KEY, FIRST_CUSTOMER_ID, RANGE_KEY, ADDRESS_TYPE_WORK)
                                                .withConsistentRead(true));
@@ -274,7 +283,7 @@ public class F_UpdateItemIntegrationTest {
                          // update expression (list_append: concatenate two lists.)
                          "set phone = zipcode",
                          null, null, null
-        );
+                        );
         GetItemOutcome outcome = table.getItemOutcome(new GetItemSpec()
                                                               .withPrimaryKey(HASH_KEY, FIRST_CUSTOMER_ID, RANGE_KEY,
                                                                               ADDRESS_TYPE_WORK)

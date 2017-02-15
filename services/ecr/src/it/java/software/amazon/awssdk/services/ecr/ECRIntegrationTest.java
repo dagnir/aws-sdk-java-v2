@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ecr;
 
 import junit.framework.Assert;
@@ -26,7 +41,7 @@ public class ECRIntegrationTest extends AWSIntegrationTestBase {
     public static void tearDownAfterClass() throws Exception {
         if (ecr != null) {
             ecr.deleteRepository(new DeleteRepositoryRequest()
-                    .withRepositoryName(REPO_NAME));
+                                         .withRepositoryName(REPO_NAME));
         }
     }
 
@@ -44,7 +59,7 @@ public class ECRIntegrationTest extends AWSIntegrationTestBase {
         String registryId = result.getRepository().getRegistryId();
 
         Repository repo = ecr.describeRepositories(new DescribeRepositoriesRequest()
-                .withRepositoryNames(REPO_NAME)).getRepositories().get(0);
+                                                           .withRepositoryNames(REPO_NAME)).getRepositories().get(0);
 
         Assert.assertEquals(repo.getRegistryId(), registryId);
         Assert.assertEquals(repo.getRepositoryName(), REPO_NAME);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
      */
     private boolean logHeaderRequestId(final HttpResponse response) {
         final String reqIdHeader = response.getHeaders()
-                .get(HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER);
+                                           .get(HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER);
         final boolean isHeaderReqIdAvail = reqIdHeader != null;
 
         if (requestIdLog.isDebugEnabled() || requestLog.isDebugEnabled()) {

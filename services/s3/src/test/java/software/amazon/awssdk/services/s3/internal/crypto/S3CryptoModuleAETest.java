@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -23,18 +38,18 @@ import software.amazon.awssdk.util.json.Jackson;
 public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
     @Override
     protected S3CryptoModuleBase<?> createS3CryptoModule(S3Direct s3,
-            EncryptionMaterialsProvider provider,
-            CryptoConfiguration cryptoConfig) {
-        return new S3CryptoModuleAE(s3, provider, 
-                cryptoConfig.clone()
-                    .withCryptoMode(AuthenticatedEncryption)
-                    .readOnly());
+                                                         EncryptionMaterialsProvider provider,
+                                                         CryptoConfiguration cryptoConfig) {
+        return new S3CryptoModuleAE(s3, provider,
+                                    cryptoConfig.clone()
+                                                .withCryptoMode(AuthenticatedEncryption)
+                                                .readOnly());
     }
 
     protected int getExpectedCipherTextByteLength(int plaintextByteLength) {
         return plaintextByteLength + 16;
     }
-    
+
     protected S3Direct mockS3Direct_putObjectSecurely() {
         // A mocked S3Direct object to verify the put request
         return new S3DirectMock() {
@@ -47,15 +62,15 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
             private void verifyRequest(PutObjectRequest req) {
                 ObjectMetadata md = req.getMetadata();
                 // plaintext 100 + 16 bytes tag
-                assertTrue(100+16 == md.getContentLength());
-                Map<String,String> userMD = md.getUserMetadata();
+                assertTrue(100 + 16 == md.getContentLength());
+                Map<String, String> userMD = md.getUserMetadata();
                 String plaintextLen = userMD.get(Headers.UNENCRYPTED_CONTENT_LENGTH);
                 assertEquals("100", plaintextLen);
-                String b64cekWrapped = userMD.get(Headers.CRYPTO_KEY_V2); 
+                String b64cekWrapped = userMD.get(Headers.CRYPTO_KEY_V2);
                 assertNotNull(b64cekWrapped);
                 byte[] cekWrapped = decodeBase64(b64cekWrapped);
                 assertTrue(40 == cekWrapped.length);
-                String b64iv = userMD.get(Headers.CRYPTO_IV); 
+                String b64iv = userMD.get(Headers.CRYPTO_IV);
                 assertNotNull(b64iv);
                 byte[] iv = decodeBase64(b64iv);
                 assertTrue(AES_GCM.getIVLengthInBytes() == iv.length);
@@ -71,6 +86,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
         // A mocked S3Direct object to verify the put request
         return new S3DirectMock() {
             private int count;
+
             @Override
             public PutObjectResult putObject(PutObjectRequest req) {
                 try {
@@ -86,7 +102,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
                 count++;
                 System.out.println("count: " + count);
                 ObjectMetadata md = req.getMetadata();
-                Map<String,String> userMD = md.getUserMetadata();
+                Map<String, String> userMD = md.getUserMetadata();
                 // hchar: not sure why the x-amz-unencrypted-content-length is
                 // repeated in the user meta data of the instruction file
                 // but that's how it is currently
@@ -106,7 +122,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
                     assertTrue(userMD.size() == 1);
                     String json = IOUtils.toString(req.getInputStream(), "UTF-8");
                     @SuppressWarnings("unchecked")
-                    Map<String,String> map = Jackson.fromJsonString(json, Map.class);
+                    Map<String, String> map = Jackson.fromJsonString(json, Map.class);
                     String b64cekWrapped = map.get(Headers.CRYPTO_KEY_V2);
                     assertNotNull(b64cekWrapped);
                     byte[] cekWrapped = decodeBase64(b64cekWrapped);
@@ -117,11 +133,11 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
                     assertTrue(AES_GCM.getIVLengthInBytes() == iv.length);
                     assertEquals("{}", map.get(Headers.MATERIALS_DESCRIPTION));
                     assertEquals(AES_GCM.getCipherAlgorithm(),
-                            map.get(Headers.CRYPTO_CEK_ALGORITHM));
+                                 map.get(Headers.CRYPTO_CEK_ALGORITHM));
                     assertEquals(S3KeyWrapScheme.AESWrap,
-                            map.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
+                                 map.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
                     assertEquals(String.valueOf(AES_GCM.getTagLengthInBits()),
-                            map.get(Headers.CRYPTO_TAG_LENGTH));
+                                 map.get(Headers.CRYPTO_TAG_LENGTH));
                 } else {
                     fail();
                 }

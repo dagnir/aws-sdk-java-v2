@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -46,16 +46,12 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 public class STSIntegrationTest extends S3IntegrationTestBase {
 
     private static final boolean ANDROID_TESTING = false;
-
-    // Override parent s3 to not impact other tests
-    private static AmazonS3Client s3;
-
     /** The bucket created and used by these tests */
     private static final String bucketName = "java-sts-integ-test-" + new Date().getTime();
-
     /** The key used in these tests */
     private static final String key = "key";
-
+    // Override parent s3 to not impact other tests
+    private static AmazonS3Client s3;
     /** The file containing the test data uploaded to S3 */
     private static File file = null;
 
@@ -66,7 +62,7 @@ public class STSIntegrationTest extends S3IntegrationTestBase {
     public static void tearDown() throws Exception {
         deleteBucketAndAllContents(bucketName);
 
-        if ( file != null ) {
+        if (file != null) {
             file.delete();
         }
     }
@@ -78,7 +74,7 @@ public class STSIntegrationTest extends S3IntegrationTestBase {
     public static void setUp() throws Exception {
         S3IntegrationTestBase.setUp();
 
-        if ( !ANDROID_TESTING ) {
+        if (!ANDROID_TESTING) {
             setUpCredentials();
         }
 
@@ -89,7 +85,7 @@ public class STSIntegrationTest extends S3IntegrationTestBase {
         s3.createBucket(bucketName);
 
         ObjectMetadata metadata = null;
-        if ( !ANDROID_TESTING ) {
+        if (!ANDROID_TESTING) {
             file = new RandomTempFile("get-object-integ-test", 1000L);
             s3.putObject(bucketName, key, file);
         } else {
@@ -135,7 +131,7 @@ public class STSIntegrationTest extends S3IntegrationTestBase {
     public void testPresignedUrlPut() throws Exception {
         String newKey = key + 2;
         URL presignedUrl = s3.generatePresignedUrl(new GeneratePresignedUrlRequest(bucketName, newKey)
-                .withMethod(HttpMethod.PUT));
+                                                           .withMethod(HttpMethod.PUT));
 
         HttpClient client = new DefaultHttpClient();
         HttpPut rq = new HttpPut(presignedUrl.toURI());

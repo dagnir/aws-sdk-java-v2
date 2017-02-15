@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -27,6 +27,15 @@ import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.ExpectedAttributeValue;
 
 public class ExpectedTest {
+
+    private static Entry<String, ExpectedAttributeValue> toExpectedAttributeValue(Expected expected) {
+        Map<String, ExpectedAttributeValue> map = InternalUtils
+                .toExpectedAttributeValueMap(Arrays.asList(expected));
+        Assert.assertEquals(1, map.size());
+
+        Iterator<Entry<String, ExpectedAttributeValue>> iter = map.entrySet().iterator();
+        return iter.next();
+    }
 
     @Test
     public void testExpected_EQ() {
@@ -175,15 +184,17 @@ public class ExpectedTest {
 
         // Null values
         try {
-            expected = new Expected("foo").in((Object[])null);
+            expected = new Expected("foo").in((Object[]) null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+        }
 
         // Empty values
         try {
             expected = new Expected("foo").in();
             Assert.fail();
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     @Test
@@ -267,12 +278,14 @@ public class ExpectedTest {
         try {
             new Expected(null);
             Assert.fail();
-        } catch (IllegalArgumentException expected) {}
+        } catch (IllegalArgumentException expected) {
+        }
 
         try {
             new Expected("");
             Assert.fail();
-        } catch (IllegalArgumentException expected) {}
+        } catch (IllegalArgumentException expected) {
+        }
     }
 
     @Test
@@ -280,18 +293,10 @@ public class ExpectedTest {
         Table fakeTable = new Table(new AmazonDynamoDBClient(), "fake-table");
         try {
             fakeTable.putItem(new Item(),
-                    new Expected("foo").eq("bar"),
-                    new Expected("foo").eq("charlie"));
+                              new Expected("foo").eq("bar"),
+                              new Expected("foo").eq("charlie"));
             Assert.fail();
-        } catch (IllegalArgumentException expected) {}
-    }
-
-    private static Entry<String, ExpectedAttributeValue> toExpectedAttributeValue(Expected expected) {
-        Map<String, ExpectedAttributeValue> map = InternalUtils
-                .toExpectedAttributeValueMap(Arrays.asList(expected));
-        Assert.assertEquals(1, map.size());
-
-        Iterator<Entry<String, ExpectedAttributeValue>> iter = map.entrySet().iterator();
-        return iter.next();
+        } catch (IllegalArgumentException expected) {
+        }
     }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -46,6 +46,19 @@ public class CodeGenerator {
         this.sourcesDirectory = builder.sourcesDirectory;
         this.testsDirectory = builder.testsDirectory;
         this.fileNamePrefix = builder.fileNamePrefix;
+    }
+
+    public static File getModelDirectory(String outputDirectory) {
+        File dir = new File(outputDirectory, MODEL_DIR_NAME);
+        Utils.createDirectory(dir);
+        return dir;
+    }
+
+    /**
+     * @return Builder instance to construct a {@link CodeGenerator}.
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -116,19 +129,6 @@ public class CodeGenerator {
         } else {
             return new AwsGeneratorTasks(params);
         }
-    }
-
-    public static File getModelDirectory(String outputDirectory) {
-        File dir = new File(outputDirectory, MODEL_DIR_NAME);
-        Utils.createDirectory(dir);
-        return dir;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link CodeGenerator}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

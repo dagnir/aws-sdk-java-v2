@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
@@ -46,7 +47,7 @@ import software.amazon.awssdk.services.s3.model.UploadPartResult;
  * This observer is designed for extension so that custom behavior can be
  * provided. A customer observer can be configured via
  * {@link UploadObjectRequest#withUploadObjectObserver(UploadObjectObserver)}.
- * 
+ *
  * @see UploadObjectRequest
  */
 public class UploadObjectObserver {
@@ -76,7 +77,7 @@ public class UploadObjectObserver {
      * @return this object
      */
     public UploadObjectObserver init(UploadObjectRequest req,
-            S3DirectSpi s3direct, AmazonS3 s3, ExecutorService es) {
+                                     S3DirectSpi s3direct, AmazonS3 s3, ExecutorService es) {
         this.req = req;
         this.s3direct = s3direct;
         this.s3 = s3;
@@ -88,16 +89,16 @@ public class UploadObjectObserver {
             UploadObjectRequest req) {
         return new EncryptedInitiateMultipartUploadRequest(
                 req.getBucketName(), req.getKey(), req.getMetadata())
-            .withMaterialsDescription(req.getMaterialsDescription())
-            .withRedirectLocation(req.getRedirectLocation())
-            .withSSEAwsKeyManagementParams(req.getSSEAwsKeyManagementParams())
-            .withSSECustomerKey(req.getSSECustomerKey())
-            .withStorageClass(req.getStorageClass())
-            .withAccessControlList(req.getAccessControlList())
-            .withCannedACL(req.getCannedAcl())
-            .withGeneralProgressListener(req.getGeneralProgressListener())
-            .withRequestMetricCollector(req.getRequestMetricCollector())
-            ;
+                .withMaterialsDescription(req.getMaterialsDescription())
+                .withRedirectLocation(req.getRedirectLocation())
+                .withSSEAwsKeyManagementParams(req.getSSEAwsKeyManagementParams())
+                .withSSECustomerKey(req.getSSECustomerKey())
+                .withStorageClass(req.getStorageClass())
+                .withAccessControlList(req.getAccessControlList())
+                .withCannedACL(req.getCannedAcl())
+                .withGeneralProgressListener(req.getGeneralProgressListener())
+                .withRequestMetricCollector(req.getRequestMetricCollector())
+                ;
     }
 
     /**
@@ -111,7 +112,7 @@ public class UploadObjectObserver {
      */
     public String onUploadInitiation(UploadObjectRequest req) {
         InitiateMultipartUploadResult res =
-            s3.initiateMultipartUpload(newInitiateMultipartUploadRequest(req));
+                s3.initiateMultipartUpload(newInitiateMultipartUploadRequest(req));
         return this.uploadId = res.getUploadId();
     }
 
@@ -130,7 +131,7 @@ public class UploadObjectObserver {
      * <p>
      * To enable parallel uploads, implementation of this method should never
      * block.
-     * 
+     *
      * @param event
      *            to represent the completion of a ciphertext file creation
      *            which is ready for multipart upload to S3.
@@ -138,11 +139,12 @@ public class UploadObjectObserver {
     public void onPartCreate(PartCreationEvent event) {
         final File part = event.getPart();
         final UploadPartRequest reqUploadPart =
-            newUploadPartRequest(event, part);
+                newUploadPartRequest(event, part);
         final OnFileDelete fileDeleteObserver = event.getFileDeleteObserver();
         appendUserAgent(reqUploadPart, AmazonS3EncryptionClient.USER_AGENT);
         futures.add(es.submit(new Callable<UploadPartResult>() {
-            @Override public UploadPartResult call() {
+            @Override
+            public UploadPartResult call() {
                 // Upload the ciphertext directly via the non-encrypting
                 // s3 client
                 try {
@@ -152,10 +154,11 @@ public class UploadObjectObserver {
                     if (!part.delete()) {
                         LogFactory.getLog(getClass()).debug(
                                 "Ignoring failure to delete file " + part
-                                        + " which has already been uploaded");
+                                + " which has already been uploaded");
                     } else {
-                        if (fileDeleteObserver != null)
+                        if (fileDeleteObserver != null) {
                             fileDeleteObserver.onFileDelete(null);
+                        }
                     }
                 }
             }
@@ -168,16 +171,16 @@ public class UploadObjectObserver {
      * all parts have been successfully uploaded to S3. This method is
      * responsible for finishing off the upload by making a complete multi-part
      * upload request to S3 with the given list of etags.
-     * 
+     *
      * @param partETags
      *            all the etags returned from S3 for the previous part uploads.
-     * 
+     *
      * @return the completed multi-part upload result
      */
     public CompleteMultipartUploadResult onCompletion(List<PartETag> partETags) {
         return s3.completeMultipartUpload(
-            new CompleteMultipartUploadRequest(
-                    req.getBucketName(), req.getKey(), uploadId, partETags));
+                new CompleteMultipartUploadRequest(
+                        req.getBucketName(), req.getKey(), uploadId, partETags));
     }
 
     /**
@@ -193,34 +196,34 @@ public class UploadObjectObserver {
         if (uploadId != null) {
             try {
                 s3.abortMultipartUpload(new AbortMultipartUploadRequest(
-                    req.getBucketName(), req.getKey(), uploadId));
+                        req.getBucketName(), req.getKey(), uploadId));
             } catch (Exception e) {
                 LogFactory.getLog(getClass())
-                    .debug("Failed to abort multi-part upload: " + uploadId, e);
+                          .debug("Failed to abort multi-part upload: " + uploadId, e);
             }
         }
     }
+
     /**
      * Creates and returns an upload-part request corresponding to a ciphertext
      * file upon a part-creation event.
-     * 
+     *
      * @param event
      *            the part-creation event of the ciphertxt file.
      * @param part
      *            the created ciphertext file corresponding to the upload-part
      */
     protected UploadPartRequest newUploadPartRequest(PartCreationEvent event,
-            final File part) {
+                                                     final File part) {
         final UploadPartRequest reqUploadPart = new UploadPartRequest()
-            .withBucketName(req.getBucketName())
-            .withFile(part)
-            .withKey(req.getKey())
-            .withPartNumber(event.getPartNumber())
-            .withPartSize(part.length())
-            .withLastPart(event.isLastPart())
-            .withUploadId(uploadId)
-            .withObjectMetadata(req.getUploadPartMetadata())
-            ;
+                .withBucketName(req.getBucketName())
+                .withFile(part)
+                .withKey(req.getKey())
+                .withPartNumber(event.getPartNumber())
+                .withPartSize(part.length())
+                .withLastPart(event.isLastPart())
+                .withUploadId(uploadId)
+                .withObjectMetadata(req.getUploadPartMetadata());
         return reqUploadPart;
     }
 

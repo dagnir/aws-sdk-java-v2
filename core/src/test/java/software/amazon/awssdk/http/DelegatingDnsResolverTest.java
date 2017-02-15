@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ public class DelegatingDnsResolverTest {
         clientConfiguration.withMaxErrorRetry(0);
         clientConfiguration.withDnsResolver(new DnsResolver() {
             DnsResolver system = new SystemDefaultDnsResolver();
+
             @Override
             public InetAddress[] resolve(String host) throws UnknownHostException {
                 dnsResolutionCounter.incrementAndGet();
@@ -67,7 +68,8 @@ public class DelegatingDnsResolverTest {
     public void tearDown() {
         try {
             testedClient.shutdown();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     @Test
@@ -75,8 +77,9 @@ public class DelegatingDnsResolverTest {
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
         String randomHost = UUID.randomUUID().toString();
-        final Request<String> request = new DefaultRequest<String>("bob") {};
-        request.setEndpoint(URI.create("http://" + randomHost+"/"));
+        final Request<String> request = new DefaultRequest<String>("bob") {
+        };
+        request.setEndpoint(URI.create("http://" + randomHost + "/"));
         request.setHttpMethod(HttpMethodName.GET);
 
         try {
@@ -86,10 +89,10 @@ public class DelegatingDnsResolverTest {
         }
 
         assertTrue("dnsResolver should have been called at least once",
-                dnsResolutionCounter.get() > 0);
+                   dnsResolutionCounter.get() > 0);
 
         assertTrue("An attempt to resolve host " + randomHost + " should have been made",
-                requestedHosts.contains(randomHost));
+                   requestedHosts.contains(randomHost));
     }
 
     @Test

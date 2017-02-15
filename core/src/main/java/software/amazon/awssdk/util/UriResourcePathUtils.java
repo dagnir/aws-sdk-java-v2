@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public final class UriResourcePathUtils {
      * Returns the updated uriResourcePath.
      */
     public static String addStaticQueryParamtersToRequest(final Request<?> request,
-                                                        final String uriResourcePath) {
+                                                          final String uriResourcePath) {
 
         if (request == null || uriResourcePath == null) {
             return null;
@@ -44,7 +44,7 @@ public final class UriResourcePathUtils {
                 if (index != -1) {
                     request.addParameter(s.substring(0, index), s.substring(index + 1));
                 } else {
-                    request.addParameter(s, (String)null);
+                    request.addParameter(s, (String) null);
                 }
             }
         }

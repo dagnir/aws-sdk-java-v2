@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -34,7 +34,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  */
 @SdkInternalApi
 public class SdkHttpClient implements
-        ConnectionManagerAwareHttpClient {
+                           ConnectionManagerAwareHttpClient {
 
     private final HttpClient delegate;
 
@@ -44,11 +44,11 @@ public class SdkHttpClient implements
                          final HttpClientConnectionManager cm) {
         if (delegate == null) {
             throw new IllegalArgumentException("delegate " +
-                    "cannot be null");
+                                               "cannot be null");
         }
         if (cm == null) {
             throw new IllegalArgumentException("connection manager " +
-                    "cannot be null");
+                                               "cannot be null");
         }
         this.delegate = delegate;
         this.cm = cm;
@@ -80,27 +80,32 @@ public class SdkHttpClient implements
     }
 
     @Override
-    public HttpResponse execute(HttpHost target, HttpRequest request, HttpContext context) throws IOException, ClientProtocolException {
+    public HttpResponse execute(HttpHost target, HttpRequest request, HttpContext context)
+            throws IOException, ClientProtocolException {
         return delegate.execute(target, request, context);
     }
 
     @Override
-    public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler) throws IOException, ClientProtocolException {
+    public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler)
+            throws IOException, ClientProtocolException {
         return delegate.execute(request, responseHandler);
     }
 
     @Override
-    public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException, ClientProtocolException {
+    public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context)
+            throws IOException, ClientProtocolException {
         return delegate.execute(request, responseHandler, context);
     }
 
     @Override
-    public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler) throws IOException, ClientProtocolException {
+    public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler)
+            throws IOException, ClientProtocolException {
         return delegate.execute(target, request, responseHandler);
     }
 
     @Override
-    public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException, ClientProtocolException {
+    public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context)
+            throws IOException, ClientProtocolException {
         return delegate.execute(target, request, responseHandler, context);
     }
 

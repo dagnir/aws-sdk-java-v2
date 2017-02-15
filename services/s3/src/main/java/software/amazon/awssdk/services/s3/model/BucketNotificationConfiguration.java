@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -47,7 +45,7 @@ import software.amazon.awssdk.util.json.Jackson;
  * specified bucket, the new notification configuration will replace the existing
  * notification configuration.  To remove a notification configuration, pass an
  * an empty configuration directly to
- * {@link AmazonS3#setBucketNotificationConfiguration(String,BucketNotificationConfiguration)}.
+ * {@link AmazonS3#setBucketNotificationConfiguration(String, BucketNotificationConfiguration)}.
  * </p>
  * <p>
  * Note: Currently buckets may only have a single event and topic
@@ -68,7 +66,7 @@ public class BucketNotificationConfiguration implements Serializable {
      * </p>
      * <p>
      * Passing the new configuration directly to
-     * {@link AmazonS3#setBucketNotificationConfiguration(String,BucketNotificationConfiguration)}
+     * {@link AmazonS3#setBucketNotificationConfiguration(String, BucketNotificationConfiguration)}
      * will remove any existing bucket notification configuration.
      * </p>
      *
@@ -87,9 +85,31 @@ public class BucketNotificationConfiguration implements Serializable {
      * @param notificationConfiguration the notification configuration for the Amazon S3 bucket.
      */
     public BucketNotificationConfiguration(String name,
-            NotificationConfiguration notificationConfiguration) {
+                                           NotificationConfiguration notificationConfiguration) {
         this.configurations = new HashMap<String, NotificationConfiguration>();
         addConfiguration(name, notificationConfiguration);
+    }
+
+    /**
+     * <p>
+     * Creates a new bucket notification configuration containing the specified
+     * <code>TopicConfigurations</code>.
+     * </p>
+     * <p>
+     * Passing the new configuration directly to
+     * {@link AmazonS3#setBucketNotificationConfiguration(String, BucketNotificationConfiguration)}
+     * will set the bucket's notification configuration and overwrite any existing configuration.
+     * </p>
+     * @deprecated
+     * @see BucketNotificationConfiguration#BucketNotificationConfiguration(String, NotificationConfiguration)
+     */
+    public BucketNotificationConfiguration(Collection<TopicConfiguration> topicConfigurations) {
+        this.configurations = new HashMap<String, NotificationConfiguration>();
+        if (topicConfigurations != null) {
+            for (TopicConfiguration config : topicConfigurations) {
+                addConfiguration(UUID.randomUUID().toString(), config);
+            }
+        }
     }
 
     /**
@@ -117,7 +137,7 @@ public class BucketNotificationConfiguration implements Serializable {
      * @return The updated {@link BucketNotificationConfiguration} object.
      */
     public BucketNotificationConfiguration addConfiguration(String name,
-            NotificationConfiguration notificationConfiguration) {
+                                                            NotificationConfiguration notificationConfiguration) {
         configurations.put(name, notificationConfiguration);
         return this;
     }
@@ -160,7 +180,7 @@ public class BucketNotificationConfiguration implements Serializable {
      * </p>
      * <p>
      * Pass the updated {@link BucketNotificationConfiguration} to
-     * {@link AmazonS3#setBucketNotificationConfiguration(String,BucketNotificationConfiguration)}
+     * {@link AmazonS3#setBucketNotificationConfiguration(String, BucketNotificationConfiguration)}
      * to update the configuration in Amazon S3 for the bucket.
      * </p>
      *
@@ -170,28 +190,6 @@ public class BucketNotificationConfiguration implements Serializable {
      */
     public NotificationConfiguration removeConfiguration(String name) {
         return configurations.remove(name);
-    }
-
-    /**
-     * <p>
-     * Creates a new bucket notification configuration containing the specified
-     * <code>TopicConfigurations</code>.
-     * </p>
-     * <p>
-     * Passing the new configuration directly to
-     * {@link AmazonS3#setBucketNotificationConfiguration(String,BucketNotificationConfiguration)}
-     * will set the bucket's notification configuration and overwrite any existing configuration.
-     * </p>
-     * @deprecated
-     * @see BucketNotificationConfiguration#BucketNotificationConfiguration(String, NotificationConfiguration)
-     */
-    public BucketNotificationConfiguration( Collection<TopicConfiguration> topicConfigurations ) {
-        this.configurations = new HashMap<String, NotificationConfiguration>();
-        if (topicConfigurations != null){
-            for(TopicConfiguration config : topicConfigurations) {
-                addConfiguration(UUID.randomUUID().toString(), config);
-            }
-        }
     }
 
     /**
@@ -214,35 +212,9 @@ public class BucketNotificationConfiguration implements Serializable {
      * @deprecated
      * @see BucketNotificationConfiguration#withNotificationConfiguration(Map)
      */
-    public BucketNotificationConfiguration withTopicConfigurations( TopicConfiguration... topicConfigurations ) {
+    public BucketNotificationConfiguration withTopicConfigurations(TopicConfiguration... topicConfigurations) {
         setTopicConfigurations(Arrays.asList(topicConfigurations));
         return this;
-    }
-
-    /**
-     * <p>
-     * Sets the {@link BucketNotificationConfiguration.TopicConfiguration}.
-     * </p>
-     * <p>
-     * Calling this method will overwrite any
-     * previously set <code>TopicConfigurations</code> for this object.
-     * </p>
-     *
-     * @param topicConfigurations
-     *            A collection of topic configurations.
-     *
-     * @deprecated
-     * @see BucketNotificationConfiguration#setConfigurations(Map)
-     */
-    public void setTopicConfigurations( Collection<TopicConfiguration> topicConfigurations ) {
-        this.configurations.clear();
-
-        if (topicConfigurations != null) {
-            for (TopicConfiguration topicConfiguration : topicConfigurations) {
-                addConfiguration(UUID.randomUUID().toString(),
-                        topicConfiguration);
-            }
-        }
     }
 
     /**
@@ -275,6 +247,32 @@ public class BucketNotificationConfiguration implements Serializable {
         return topicConfigs;
     }
 
+    /**
+     * <p>
+     * Sets the {@link BucketNotificationConfiguration.TopicConfiguration}.
+     * </p>
+     * <p>
+     * Calling this method will overwrite any
+     * previously set <code>TopicConfigurations</code> for this object.
+     * </p>
+     *
+     * @param topicConfigurations
+     *            A collection of topic configurations.
+     *
+     * @deprecated
+     * @see BucketNotificationConfiguration#setConfigurations(Map)
+     */
+    public void setTopicConfigurations(Collection<TopicConfiguration> topicConfigurations) {
+        this.configurations.clear();
+
+        if (topicConfigurations != null) {
+            for (TopicConfiguration topicConfiguration : topicConfigurations) {
+                addConfiguration(UUID.randomUUID().toString(),
+                                 topicConfiguration);
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return Jackson.toJsonString(this.getConfigurations());
@@ -291,7 +289,7 @@ public class BucketNotificationConfiguration implements Serializable {
      *             instead
      */
     @Deprecated
-    public static class TopicConfiguration extends software.amazon.awssdk.services.s3.model.TopicConfiguration{
+    public static class TopicConfiguration extends software.amazon.awssdk.services.s3.model.TopicConfiguration {
 
         /**
          * <p>
@@ -303,7 +301,7 @@ public class BucketNotificationConfiguration implements Serializable {
          * @param event
          *           The event that must occur to trigger the notification publication.
          */
-        public TopicConfiguration( final String topic, final String event ) {
+        public TopicConfiguration(final String topic, final String event) {
             super(topic, event);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -170,26 +170,26 @@ public class XMLWriter {
             throw new SdkClientException("Unable to write XML document", e);
         }
     }
-    
+
     private String escapeXMLEntities(String s) {
-    	/** 
-    	 * Unescape any escaped characters.
-    	 */
-    	if (s.contains("&")) {
-        	s = s.replace("&quot;", "\"");
-        	s = s.replace("&apos;", "'");
-        	s = s.replace("&lt;", "<");
-        	s = s.replace("&gt;", ">");
-        	// Ampersands should always be the last to unescape
-        	s = s.replace("&amp;", "&");
-    	}
-    	// Ampersands should always be the first to escape
-    	s = s.replace("&", "&amp;");
-    	s = s.replace("\"", "&quot;");
-    	s = s.replace("'", "&apos;");
-    	s = s.replace("<", "&lt;");
-    	s = s.replace(">", "&gt;");
-    	return s;
+        /**
+         * Unescape any escaped characters.
+         */
+        if (s.contains("&")) {
+            s = s.replace("&quot;", "\"");
+            s = s.replace("&apos;", "'");
+            s = s.replace("&lt;", "<");
+            s = s.replace("&gt;", ">");
+            // Ampersands should always be the last to unescape
+            s = s.replace("&amp;", "&");
+        }
+        // Ampersands should always be the first to escape
+        s = s.replace("&", "&amp;");
+        s = s.replace("\"", "&quot;");
+        s = s.replace("'", "&apos;");
+        s = s.replace("<", "&lt;");
+        s = s.replace(">", "&gt;");
+        return s;
     }
 
 }

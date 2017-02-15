@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,25 +29,40 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 /**
  * This is the default implementation of an AWS SDK request metric collection
  * system.
- * 
+ *
  * @see RequestMetricCollector
  */
 @ThreadSafe
 public class MetricCollectorSupport extends MetricCollector {
     protected final static Log log = LogFactory.getLog(MetricCollectorSupport.class);
     private static volatile MetricCollectorSupport singleton;
-    
+    private final RequestMetricCollectorSupport requestMetricCollector;
+    private final ServiceMetricCollectorSupport serviceMetricCollector;
+    private final BlockingQueue<MetricDatum> queue;
+    //    private final PredefinedMetricTransformer transformer = new PredefinedMetricTransformer();
+    private final CloudWatchMetricConfig config;
+    private MetricUploaderThread uploaderThread;
+    protected MetricCollectorSupport(CloudWatchMetricConfig config) {
+        if (config == null) {
+            throw new IllegalArgumentException();
+        }
+        this.config = config;
+        this.queue = new LinkedBlockingQueue<MetricDatum>(config.getMetricQueueSize());
+        this.requestMetricCollector = new RequestMetricCollectorSupport(queue);
+        this.serviceMetricCollector = new ServiceMetricCollectorSupport(queue);
+    }
+
     /** Returns the singleton instance; or null if there isn't one. */
     static MetricCollectorSupport getInstance() {
         return singleton;
     }
 
-    /** 
+    /**
      * Starts a new CloudWatch collector if it's not already started.
      *
      * @return true if it is successfully started by this call; false if the
      * collector is already running or if there is failure in trying to start
-     * the collector for the first time. 
+     * the collector for the first time.
      */
     static synchronized boolean startSingleton(CloudWatchMetricConfig config) {
         if (singleton != null) {
@@ -61,7 +76,7 @@ public class MetricCollectorSupport extends MetricCollector {
     static synchronized boolean restartSingleton(CloudWatchMetricConfig config) {
         if (singleton == null) {
             throw new IllegalStateException(MetricCollectorSupport.class.getSimpleName()
-                + " has neven been initialized");
+                                            + " has neven been initialized");
         }
         log.info("Re-initializing " + MetricCollectorSupport.class.getSimpleName());
         singleton.stop();
@@ -82,27 +97,9 @@ public class MetricCollectorSupport extends MetricCollector {
         return false;
     }
 
-    private final RequestMetricCollectorSupport requestMetricCollector;
-    private final ServiceMetricCollectorSupport serviceMetricCollector;
-
-    private final BlockingQueue<MetricDatum> queue;
-//    private final PredefinedMetricTransformer transformer = new PredefinedMetricTransformer();
-    private final CloudWatchMetricConfig config;
-    private MetricUploaderThread uploaderThread;
-
-    protected MetricCollectorSupport(CloudWatchMetricConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException();
-        }
-        this.config = config;
-        this.queue = new LinkedBlockingQueue<MetricDatum>(config.getMetricQueueSize());
-        this.requestMetricCollector = new RequestMetricCollectorSupport(queue);
-        this.serviceMetricCollector = new ServiceMetricCollectorSupport(queue);
-    }
-
     @Override
     public boolean start() {
-        synchronized(MetricCollectorSupport.class) {
+        synchronized (MetricCollectorSupport.class) {
             if (uploaderThread != null) {
                 return false;   // already started
             }
@@ -117,7 +114,7 @@ public class MetricCollectorSupport extends MetricCollector {
      */
     @Override
     public boolean stop() {
-        synchronized(MetricCollectorSupport.class) {
+        synchronized (MetricCollectorSupport.class) {
             if (uploaderThread != null) {
                 uploaderThread.cancel();
                 uploaderThread.interrupt();
@@ -132,20 +129,26 @@ public class MetricCollectorSupport extends MetricCollector {
     }
 
     /** Returns the configuration. */
-    public CloudWatchMetricConfig getConfig() { return config; }
+    public CloudWatchMetricConfig getConfig() {
+        return config;
+    }
 
     public AmazonCloudWatchClient getCloudwatchClient() {
         return uploaderThread == null ? null : uploaderThread.getCloudwatchClient();
     }
+
     /** Always returns true. */
-    @Override public final boolean isEnabled() { return true; }
+    @Override
+    public final boolean isEnabled() {
+        return true;
+    }
 
     @Override
     public RequestMetricCollector getRequestMetricCollector() {
         return requestMetricCollector;
     }
 
-    @Override 
+    @Override
     public ServiceMetricCollector getServiceMetricCollector() {
         return serviceMetricCollector;
     }

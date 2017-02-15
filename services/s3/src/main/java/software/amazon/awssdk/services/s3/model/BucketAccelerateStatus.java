@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 /**
@@ -23,6 +24,12 @@ public enum BucketAccelerateStatus {
     Enabled("Enabled"),
     Suspended("Suspended");
 
+    private final String accelerateStatus;
+
+    private BucketAccelerateStatus(String status) {
+        this.accelerateStatus = status;
+    }
+
     public static BucketAccelerateStatus fromValue(String statusString) throws IllegalArgumentException {
         for (BucketAccelerateStatus accelerateStatus : BucketAccelerateStatus.values()) {
             if (accelerateStatus.toString().equals(statusString)) {
@@ -31,12 +38,6 @@ public enum BucketAccelerateStatus {
         }
 
         throw new IllegalArgumentException("Cannot create enum from " + statusString + " value!");
-    }
-
-    private final String accelerateStatus;
-
-    private BucketAccelerateStatus(String status) {
-        this.accelerateStatus = status;
     }
 
     @Override

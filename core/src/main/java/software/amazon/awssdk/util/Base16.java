@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,26 +29,31 @@ public enum Base16 {
     /**
      * Returns a base 16 encoded string (in upper case) of the given bytes.
      */
-    public static String encodeAsString(byte ... bytes) {
-        if (bytes == null)
+    public static String encodeAsString(byte... bytes) {
+        if (bytes == null) {
             return null;
+        }
         return bytes.length == 0 ? "" : CodecUtils.toStringDirect(codec.encode(bytes));
     }
 
     /**
      * Returns a base 16 encoded byte array of the given bytes.
      */
-    public static byte[] encode(byte[] bytes) { return bytes == null || bytes.length == 0 ? bytes : codec.encode(bytes); }
+    public static byte[] encode(byte[] bytes) {
+        return bytes == null || bytes.length == 0 ? bytes : codec.encode(bytes);
+    }
 
     /**
      * Decodes the given base 16 encoded string,
      * skipping carriage returns, line feeds and spaces as needed.
      */
     public static byte[] decode(String b16) {
-        if (b16 == null)
+        if (b16 == null) {
             return null;
-        if (b16.length() == 0)
+        }
+        if (b16.length() == 0) {
             return new byte[0];
+        }
         byte[] buf = new byte[b16.length()];
         int len = CodecUtils.sanitize(b16, buf);
         return codec.decode(buf, len);
@@ -57,5 +62,7 @@ public enum Base16 {
     /**
      * Decodes the given base 16 encoded bytes.
      */
-    public static byte[] decode(byte[] b16) { return b16 == null || b16.length == 0 ? b16 :  codec.decode(b16, b16.length); }
+    public static byte[] decode(byte[] b16) {
+        return b16 == null || b16.length == 0 ? b16 : codec.decode(b16, b16.length);
+    }
 }

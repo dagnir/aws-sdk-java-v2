@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -35,6 +35,13 @@ public class ShouldClearSslSessionsPredicateTest {
             "This message should not clear the session cache");
     private static final SSLException AFFECTED_SSL_EXCEPTION = new SSLException(
             "server certificate change is restricted blah");
+
+    /**
+     * Convenience factory method for a {@link JavaVersion}
+     */
+    private static JavaVersion jv(int majorVersionFamily, int majorVersion, int maintenanceNumber, int updateNumber) {
+        return new JavaVersion(majorVersionFamily, majorVersion, maintenanceNumber, updateNumber);
+    }
 
     @Test
     public void exceptionContainsWhitelistedMessage_JvmIsAffected_ReturnsTrue() {
@@ -120,12 +127,5 @@ public class ShouldClearSslSessionsPredicateTest {
     public void exceptionContainsWhitelistedMessage_WithUnknownJavaVersion_ReturnsTrue() {
         ShouldClearSslSessionPredicate predicate = new ShouldClearSslSessionPredicate(JavaVersion.UNKNOWN);
         assertTrue(predicate.test(AFFECTED_SSL_EXCEPTION));
-    }
-
-    /**
-     * Convenience factory method for a {@link JavaVersion}
-     */
-    private static JavaVersion jv(int majorVersionFamily, int majorVersion, int maintenanceNumber, int updateNumber) {
-        return new JavaVersion(majorVersionFamily, majorVersion, maintenanceNumber, updateNumber);
     }
 }

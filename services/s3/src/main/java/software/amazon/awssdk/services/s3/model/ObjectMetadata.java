@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import static software.amazon.awssdk.util.DateUtils.cloneDate;
@@ -35,8 +36,7 @@ import software.amazon.awssdk.services.s3.internal.ServerSideEncryptionResult;
  * sends and receives (Content-Length, ETag, Content-MD5, etc.).
  */
 public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterChargedResult,
-        ObjectExpirationResult, ObjectRestoreResult, Cloneable, Serializable
-{
+                                       ObjectExpirationResult, ObjectRestoreResult, Cloneable, Serializable {
     /*
      * TODO: Might be nice to get as many of the internal use only methods out
      *       of here so users never even see them.
@@ -44,21 +44,18 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      *                metadata map instead of having a setter for it.
      */
 
+    public static final String AES_256_SERVER_SIDE_ENCRYPTION =
+            SSEAlgorithm.AES256.getAlgorithm();
     /**
      * Custom user metadata, represented in responses with the x-amz-meta-
      * header prefix
      */
     private Map<String, String> userMetadata = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-
     /**
      * All other (non user custom) headers such as Content-Length, Content-Type,
      * etc.
      */
     private Map<String, Object> metadata = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
-
-    public static final String AES_256_SERVER_SIDE_ENCRYPTION =
-            SSEAlgorithm.AES256.getAlgorithm();
-
     /**
      * The date when the object is no longer cacheable.
      */
@@ -91,16 +88,17 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      */
     private Date restoreExpirationTime;
 
-    public ObjectMetadata() {}
+    public ObjectMetadata() {
+    }
 
     private ObjectMetadata(ObjectMetadata from) {
         this.userMetadata = from.userMetadata == null
-            ? null
-            : new TreeMap<String,String>(from.userMetadata);
+                            ? null
+                            : new TreeMap<String, String>(from.userMetadata);
         // shallow clone the meata data
         this.metadata = from.metadata == null
-            ? null
-            : new TreeMap<String, Object>(from.metadata);
+                        ? null
+                        : new TreeMap<String, Object>(from.metadata);
         this.expirationTime = cloneDate(from.expirationTime);
         this.expirationTimeRuleId = from.expirationTimeRuleId;
         this.httpExpiresDate = cloneDate(from.httpExpiresDate);
@@ -229,7 +227,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @return A map of the raw metadata/headers for the associated object.
      */
     public Map<String, Object> getRawMetadata() {
-        Map<String,Object> copy = new TreeMap<String,Object>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, Object> copy = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         copy.putAll(metadata);
         return Collections.unmodifiableMap(copy);
     }
@@ -250,7 +248,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      *         to the associated object.
      */
     public Date getLastModified() {
-        return cloneDate((Date)metadata.get(Headers.LAST_MODIFIED));
+        return cloneDate((Date) metadata.get(Headers.LAST_MODIFIED));
     }
 
     /**
@@ -292,26 +290,12 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @see ObjectMetadata#setContentLength(long)
      */
     public long getContentLength() {
-        Long contentLength = (Long)metadata.get(Headers.CONTENT_LENGTH);
+        Long contentLength = (Long) metadata.get(Headers.CONTENT_LENGTH);
 
-        if (contentLength == null) return 0;
-        return contentLength.longValue();
-    }
-
-    /**
-     * Returns the physical length of the entire object stored in S3.
-     * This is useful during, for example, a range get operation.
-     */
-    public long getInstanceLength() {
-        // See Content-Range in
-        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-        String contentRange = (String)metadata.get(Headers.CONTENT_RANGE);
-        if (contentRange != null) {
-            int pos = contentRange.lastIndexOf("/");
-            if (pos >= 0)
-                return Long.parseLong(contentRange.substring(pos+1));
+        if (contentLength == null) {
+            return 0;
         }
-        return getContentLength();
+        return contentLength.longValue();
     }
 
     /**
@@ -344,6 +328,23 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
     }
 
     /**
+     * Returns the physical length of the entire object stored in S3.
+     * This is useful during, for example, a range get operation.
+     */
+    public long getInstanceLength() {
+        // See Content-Range in
+        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+        String contentRange = (String) metadata.get(Headers.CONTENT_RANGE);
+        if (contentRange != null) {
+            int pos = contentRange.lastIndexOf("/");
+            if (pos >= 0) {
+                return Long.parseLong(contentRange.substring(pos + 1));
+            }
+        }
+        return getContentLength();
+    }
+
+    /**
      * <p>
      * Gets the Content-Type HTTP header, which indicates the type of content
      * stored in the associated object. The value of this header is a standard
@@ -371,7 +372,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @see ObjectMetadata#setContentType(String)
      */
     public String getContentType() {
-        return (String)metadata.get(Headers.CONTENT_TYPE);
+        return (String) metadata.get(Headers.CONTENT_TYPE);
     }
 
     /**
@@ -422,7 +423,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @see ObjectMetadata#setContentLanguage(String)
      */
     public String getContentLanguage() {
-        return (String)metadata.get(Headers.CONTENT_LANGUAGE);
+        return (String) metadata.get(Headers.CONTENT_LANGUAGE);
     }
 
     /**
@@ -466,7 +467,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @see ObjectMetadata#setContentType(String)
      */
     public String getContentEncoding() {
-        return (String)metadata.get(Headers.CONTENT_ENCODING);
+        return (String) metadata.get(Headers.CONTENT_ENCODING);
     }
 
     /**
@@ -515,7 +516,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @see ObjectMetadata#setCacheControl(String)
      */
     public String getCacheControl() {
-        return (String)metadata.get(Headers.CACHE_CONTROL);
+        return (String) metadata.get(Headers.CACHE_CONTROL);
     }
 
     /**
@@ -537,6 +538,34 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      */
     public void setCacheControl(String cacheControl) {
         metadata.put(Headers.CACHE_CONTROL, cacheControl);
+    }
+
+    /**
+     * <p>
+     * Gets the base64 encoded 128-bit MD5 digest of the associated object
+     * (content - not including headers) according to RFC 1864. This data is
+     * used as a message integrity check to verify that the data received by
+     * Amazon S3 is the same data that the caller sent.
+     * </p>
+     * <p>
+     * This field represents the base64 encoded 128-bit MD5 digest digest of an
+     * object's content as calculated on the caller's side. The ETag metadata
+     * field represents the hex encoded 128-bit MD5 digest as computed by Amazon
+     * S3.
+     * </p>
+     * <p>
+     * The AWS S3 Java client will attempt to calculate this field automatically
+     * when uploading files to Amazon S3.
+     * </p>
+     *
+     * @return The base64 encoded MD5 hash of the content for the associated
+     *         object.  Returns <code>null</code> if the MD5 hash of the content
+     *         hasn't been set.
+     *
+     * @see ObjectMetadata#setContentMD5(String)
+     */
+    public String getContentMD5() {
+        return (String) metadata.get(Headers.CONTENT_MD5);
     }
 
     /**
@@ -565,62 +594,12 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @see ObjectMetadata#getContentMD5()
      */
     public void setContentMD5(String md5Base64) {
-        if(md5Base64 == null){
+        if (md5Base64 == null) {
             metadata.remove(Headers.CONTENT_MD5);
-        }else{
+        } else {
             metadata.put(Headers.CONTENT_MD5, md5Base64);
         }
 
-    }
-
-    /**
-     * <p>
-     * Gets the base64 encoded 128-bit MD5 digest of the associated object
-     * (content - not including headers) according to RFC 1864. This data is
-     * used as a message integrity check to verify that the data received by
-     * Amazon S3 is the same data that the caller sent.
-     * </p>
-     * <p>
-     * This field represents the base64 encoded 128-bit MD5 digest digest of an
-     * object's content as calculated on the caller's side. The ETag metadata
-     * field represents the hex encoded 128-bit MD5 digest as computed by Amazon
-     * S3.
-     * </p>
-     * <p>
-     * The AWS S3 Java client will attempt to calculate this field automatically
-     * when uploading files to Amazon S3.
-     * </p>
-     *
-     * @return The base64 encoded MD5 hash of the content for the associated
-     *         object.  Returns <code>null</code> if the MD5 hash of the content
-     *         hasn't been set.
-     *
-     * @see ObjectMetadata#setContentMD5(String)
-     */
-    public String getContentMD5() {
-        return (String)metadata.get(Headers.CONTENT_MD5);
-    }
-
-    /**
-     * <p>
-     * Sets the optional Content-Disposition HTTP header, which specifies
-     * presentational information such as the recommended filename for the
-     * object to be saved as.
-     * </p>
-     * <p>
-     * For more information on how the Content-Disposition header affects HTTP
-     * client behavior, see <a
-     * href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1">
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1</a>
-     * </p>
-     *
-     * @param disposition
-     *            The value for the Content-Disposition header.
-     *
-     * @see ObjectMetadata#getContentDisposition()
-     */
-    public void setContentDisposition(String disposition) {
-        metadata.put(Headers.CONTENT_DISPOSITION, disposition);
     }
 
     /**
@@ -647,7 +626,29 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @see ObjectMetadata#setCacheControl(String)
      */
     public String getContentDisposition() {
-        return (String)metadata.get(Headers.CONTENT_DISPOSITION);
+        return (String) metadata.get(Headers.CONTENT_DISPOSITION);
+    }
+
+    /**
+     * <p>
+     * Sets the optional Content-Disposition HTTP header, which specifies
+     * presentational information such as the recommended filename for the
+     * object to be saved as.
+     * </p>
+     * <p>
+     * For more information on how the Content-Disposition header affects HTTP
+     * client behavior, see <a
+     * href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1">
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1</a>
+     * </p>
+     *
+     * @param disposition
+     *            The value for the Content-Disposition header.
+     *
+     * @see ObjectMetadata#getContentDisposition()
+     */
+    public void setContentDisposition(String disposition) {
+        metadata.put(Headers.CONTENT_DISPOSITION, disposition);
     }
 
     /**
@@ -666,7 +667,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      *         Returns <code>null</code> if it hasn't been set yet.
      */
     public String getETag() {
-        return (String)metadata.get(Headers.ETAG);
+        return (String) metadata.get(Headers.ETAG);
     }
 
     /**
@@ -677,7 +678,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * @return The version ID of the associated Amazon S3 object if available.
      */
     public String getVersionId() {
-        return (String)metadata.get(Headers.S3_VERSION_ID);
+        return (String) metadata.get(Headers.S3_VERSION_ID);
     }
 
     /**
@@ -686,15 +687,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      */
     @Override
     public String getSSEAlgorithm() {
-        return (String)metadata.get(Headers.SERVER_SIDE_ENCRYPTION);
-    }
-
-    /**
-     * @deprecated Replaced by {@link #getSSEAlgorithm()}
-     */
-    @Deprecated
-    public String getServerSideEncryption() {
-        return (String)metadata.get(Headers.SERVER_SIDE_ENCRYPTION);
+        return (String) metadata.get(Headers.SERVER_SIDE_ENCRYPTION);
     }
 
     /**
@@ -710,6 +703,13 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
         metadata.put(Headers.SERVER_SIDE_ENCRYPTION, algorithm);
     }
 
+    /**
+     * @deprecated Replaced by {@link #getSSEAlgorithm()}
+     */
+    @Deprecated
+    public String getServerSideEncryption() {
+        return (String) metadata.get(Headers.SERVER_SIDE_ENCRYPTION);
+    }
 
     /**
      * @deprecated Replaced by {@link #setSSEAlgorithm(String)}
@@ -742,7 +742,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      */
     @Override
     public String getSSECustomerKeyMd5() {
-        return (String)metadata.get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5);
+        return (String) metadata.get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5);
     }
 
     /**
@@ -817,6 +817,13 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
     }
 
     /**
+     *  Returns the boolean value which indicates whether there is ongoing restore request.
+     */
+    public Boolean getOngoingRestore() {
+        return this.ongoingRestore;
+    }
+
+    /**
      * For internal use only. Sets the boolean value which indicates whether
      * there is ongoing restore request. Not intended to be called by external
      * code.
@@ -825,12 +832,11 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
         this.ongoingRestore = Boolean.valueOf(ongoingRestore);
     }
 
-
     /**
-     *  Returns the boolean value which indicates whether there is ongoing restore request.
+     * Returns the date when the object is no longer cacheable.
      */
-    public Boolean getOngoingRestore() {
-        return this.ongoingRestore;
+    public Date getHttpExpiresDate() {
+        return cloneDate(httpExpiresDate);
     }
 
     /**
@@ -838,13 +844,6 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      */
     public void setHttpExpiresDate(Date httpExpiresDate) {
         this.httpExpiresDate = httpExpiresDate;
-    }
-
-    /**
-     * Returns the date when the object is no longer cacheable.
-     */
-    public Date getHttpExpiresDate() {
-        return cloneDate(httpExpiresDate);
     }
 
     /**
@@ -933,7 +932,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
         if (contentRange != null) {
             String[] tokens = contentRange.split("[ -/]+");
             try {
-                range = new Long[] { Long.parseLong(tokens[1]), Long.parseLong(tokens[2]) };
+                range = new Long[] {Long.parseLong(tokens[1]), Long.parseLong(tokens[2])};
             } catch (NumberFormatException nfe) {
                 throw new SdkClientException(
                         "Unable to parse content range. Header 'Content-Range' has corrupted data" + nfe.getMessage(),

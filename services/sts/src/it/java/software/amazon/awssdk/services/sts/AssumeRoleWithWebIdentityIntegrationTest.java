@@ -14,7 +14,6 @@ import software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIden
 import software.amazon.awssdk.services.securitytoken.model.InvalidIdentityTokenException;
 
 
-
 public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBase {
 
     private static final String GOOGLE_OPENID_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImRlMmYxYjQ0NTAwOGIyYTBlZjBmNTk5OWVjYTdkOGYzMDQyNDczYzQifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXRfaGFzaCI6IjJBaUJVS29lc1VoM1VDTGpCRzZaQ2ciLCJzdWIiOiIxMDUyNjUwOTAyNzk1NDY0MjAzMzgiLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJpYXQiOjEzNjY4NDIxMjYsImV4cCI6MTM2Njg0NjAyNn0.O30jakLkK3vOo5cfn2z2gl0MvzFALORmp5XfPMCVMeW9-Zc8R9ipm5VT5pUhzZ7EapY3K_ctEAYMKv_cXU6TWfjFSDT8IHQrD1M6iIXeATkZRivTPKddWY6UHQUVe3_qbHNEUYWbQwdEBBZzxPPG-ULzmDOqN9WE4wDf5JiHwrE";
@@ -22,7 +21,7 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
     private static final String FACEBOOK_APP_ID = "402452589861745";
     private static final String FACEBOOK_APP_SECRET = "7cbfb4cfaabda54b47e96135f122616d";
     private static final String FACEBOOK_URI = "https://graph.facebook.com/oauth/access_token?client_id=" + FACEBOOK_APP_ID +
-                        "&client_secret=" + FACEBOOK_APP_SECRET + "&grant_type=client_credentials";
+                                               "&client_secret=" + FACEBOOK_APP_SECRET + "&grant_type=client_credentials";
 
     private static final String FACEBOOK_PROVIDER = "graph.facebook.com";
 
@@ -30,18 +29,16 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
     private static final String SESSION_NAME = "javatest";
 
 
-
     @Test
     public void testGoogleOAuth() throws Exception {
         AssumeRoleWithWebIdentityRequest request = new AssumeRoleWithWebIdentityRequest().withWebIdentityToken(GOOGLE_OPENID_TOKEN)
-            .withRoleArn(ROLE_ARN)
-            .withRoleSessionName(SESSION_NAME);
+                                                                                         .withRoleArn(ROLE_ARN)
+                                                                                         .withRoleSessionName(SESSION_NAME);
 
         try {
-            AssumeRoleWithWebIdentityResult result =  sts.assumeRoleWithWebIdentity(request);
+            AssumeRoleWithWebIdentityResult result = sts.assumeRoleWithWebIdentity(request);
             fail("Expected Expired token error");
-        }
-        catch (InvalidIdentityTokenException e) {
+        } catch (InvalidIdentityTokenException e) {
             // expected error
             return;
         }
@@ -50,25 +47,25 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
     @Test
     public void testFacebookOAuth() throws Exception {
         URL accessTokenURL = new URL(FACEBOOK_URI);
-        HttpURLConnection connection = (HttpURLConnection)accessTokenURL.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) accessTokenURL.openConnection();
         connection.setDoOutput(true);
         connection.connect();
         String rawResponse = IOUtils.toString(connection.getInputStream());
 
         URL newUserURL = new URL("https://graph.facebook.com/" + FACEBOOK_APP_ID +
-                                "/accounts/test-users?installed=true&name=Foo%20Bar&locale=en_US&permissions=read_stream&method=post&" +
-                                rawResponse);
+                                 "/accounts/test-users?installed=true&name=Foo%20Bar&locale=en_US&permissions=read_stream&method=post&" +
+                                 rawResponse);
 
         JsonNode json = new ObjectMapper().readTree(newUserURL);
-        assert(json.has("access_token"));
+        assert (json.has("access_token"));
 
         try {
             AssumeRoleWithWebIdentityRequest request = new AssumeRoleWithWebIdentityRequest().withWebIdentityToken(json.get("access_token").asText())
-                .withProviderId(FACEBOOK_PROVIDER)
-                .withRoleArn(ROLE_ARN)
-                .withRoleSessionName(SESSION_NAME);
+                                                                                             .withProviderId(FACEBOOK_PROVIDER)
+                                                                                             .withRoleArn(ROLE_ARN)
+                                                                                             .withRoleSessionName(SESSION_NAME);
 
-            AssumeRoleWithWebIdentityResult result =  sts.assumeRoleWithWebIdentity(request);
+            AssumeRoleWithWebIdentityResult result = sts.assumeRoleWithWebIdentity(request);
 
             System.out.println(result.getCredentials().getAccessKeyId());
             System.out.println(result.getCredentials().getSecretAccessKey());
@@ -78,10 +75,9 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
             assertNotNull(result.getCredentials().getAccessKeyId());
             assertNotNull(result.getCredentials().getSecretAccessKey());
             assertNotNull(result.getCredentials().getSessionToken());
-        }
-        finally {
+        } finally {
             URL deleteURL = new URL("https://graph.facebook.com/" + json.get("id").asText() + "?method=delete&access_token=" + json.get("access_token").asText());
-            connection = (HttpURLConnection)deleteURL.openConnection();
+            connection = (HttpURLConnection) deleteURL.openConnection();
             connection.setDoOutput(true);
             connection.connect();
         }

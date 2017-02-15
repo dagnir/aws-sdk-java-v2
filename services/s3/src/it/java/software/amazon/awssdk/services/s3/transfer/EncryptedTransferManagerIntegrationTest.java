@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static org.junit.Assert.assertFalse;
@@ -20,24 +35,24 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  */
 public class EncryptedTransferManagerIntegrationTest extends TransferManagerTestBase {
 
-	/**
-	 * Tests that we can use the S3 encryption client to upload multipart
-	 * uploads to S3 using TransferManager and then download them correctly.
-	 */
-	@Test
-	public void testEncryptedMultipartUpload() throws Exception {
-		AmazonS3EncryptionClient s3EncryptionClient = new AmazonS3EncryptionClient(credentials, new EncryptionMaterials(generateAsymmetricKeyPair()));
+    /**
+     * Tests that we can use the S3 encryption client to upload multipart
+     * uploads to S3 using TransferManager and then download them correctly.
+     */
+    @Test
+    public void testEncryptedMultipartUpload() throws Exception {
+        AmazonS3EncryptionClient s3EncryptionClient = new AmazonS3EncryptionClient(credentials, new EncryptionMaterials(generateAsymmetricKeyPair()));
         tm = new TransferManager(s3EncryptionClient);
         TransferManagerConfiguration configuration = new TransferManagerConfiguration();
-        configuration.setMinimumUploadPartSize(10*MB);
-        configuration.setMultipartUploadThreshold(20*MB);
+        configuration.setMinimumUploadPartSize(10 * MB);
+        configuration.setMultipartUploadThreshold(20 * MB);
         tm.setConfiguration(configuration);
 
         s3.createBucket(bucketName);
         String smallFileKey = "small";
         String largeFileKey = "large";
-        RandomTempFile smallFile = new RandomTempFile(smallFileKey,  2*MB);
-        RandomTempFile largeFile = new RandomTempFile(largeFileKey, 25*MB);
+        RandomTempFile smallFile = new RandomTempFile(smallFileKey, 2 * MB);
+        RandomTempFile largeFile = new RandomTempFile(largeFileKey, 25 * MB);
         tm.upload(new PutObjectRequest(bucketName, smallFileKey, smallFile)).waitForCompletion();
         tm.upload(new PutObjectRequest(bucketName, largeFileKey, largeFile)).waitForCompletion();
 
@@ -52,7 +67,7 @@ public class EncryptedTransferManagerIntegrationTest extends TransferManagerTest
         S3Object decryptedLargeObject = s3EncryptionClient.getObject(bucketName, largeFileKey);
         assertFileEqualsStream(smallFile, decryptedSmallObject.getObjectContent());
         assertFileEqualsStream(largeFile, decryptedLargeObject.getObjectContent());
-        
+
         // Make sure we can download the data to a file with TransferManager
         File tempFile = File.createTempFile("s3-tran-man-integ-test-", ".tmp");
         tempFile.deleteOnExit();
@@ -60,7 +75,7 @@ public class EncryptedTransferManagerIntegrationTest extends TransferManagerTest
         assertFileEqualsFile(largeFile, tempFile);
         tm.download(bucketName, smallFileKey, tempFile).waitForCompletion();
         assertFileEqualsFile(smallFile, tempFile);
-	}
+    }
 
     private KeyPair generateAsymmetricKeyPair() {
         try {

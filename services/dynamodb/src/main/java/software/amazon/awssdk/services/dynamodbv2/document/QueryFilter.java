@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.dynamodbv2.document.internal.Filter;
  * A <a href=
  * "http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-QueryFilter"
  * >query filter</a>.
- * 
+ *
  * Typical usages:
  * <blockquote>
  * <code>new QueryFilter("strAttr").eq("attrValue");</code>
@@ -37,7 +37,7 @@ public class QueryFilter extends Filter<QueryFilter> {
      * A <a href=
      * "http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#DDB-Query-request-QueryFilter"
      * >query filter</a>.
-     * 
+     *
      * Typical usages:
      * <blockquote>
      * <code>new QueryFilter("strAttr").eq("attrValue");</code>

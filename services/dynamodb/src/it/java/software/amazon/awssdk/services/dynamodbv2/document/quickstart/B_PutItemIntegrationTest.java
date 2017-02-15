@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import org.junit.Test;
@@ -19,10 +34,10 @@ public class B_PutItemIntegrationTest extends QuickStartIntegrationTestBase {
         for (int i = 1; i <= 10; i++) {
             PutItemOutcome result = table.putItem(
                     item.withInt(RANGE_KEY_NAME, i)
-                            .withInt("intAttr", intAttrVal + i)
+                        .withInt("intAttr", intAttrVal + i)
                     // Input value must not be null, since an S will get mutated to NULL
                     //                .withString("strAttr", null)
-            );
+                                                 );
             System.out.println(result);
             Item item2 = table.getItem(HASH_KEY_NAME, "foo", RANGE_KEY_NAME, i);
             System.out.println(item2);
@@ -32,8 +47,8 @@ public class B_PutItemIntegrationTest extends QuickStartIntegrationTestBase {
     private Item newItem() {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "foo")
-                .withBinary("binary", new byte[]{1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[]{5, 6}, new byte[]{7, 8})
+                .withBinary("binary", new byte[] {1, 2, 3, 4})
+                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
                 .withBoolean("booleanTrue", true)
                 .withBoolean("booleanFalse", false)
                 .withInt("intAttr", 1234)

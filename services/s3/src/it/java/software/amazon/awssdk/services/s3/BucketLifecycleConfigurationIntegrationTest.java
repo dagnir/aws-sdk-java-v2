@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.hamcrest.Matchers.isEmptyString;
@@ -48,24 +63,18 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
 
     /** The key used in these tests */
     private static final String key = "key";
-
-    /** The file containing the test data uploaded to S3 */
-    private static File file = null;
-
-    /** The inputStream containing the test data uploaded to S3 */
-    private static byte[] tempData;
-
     /** The expiration date of an object in Java Date format for the tests */
     private static final String EXPIRATION_DATE = "2012-06-01T00:00:00.000Z";
-
     /** The transition date of an object (change the storage class) in Java Date format for the tests */
     private static final String TRANSITION_DATE = "2012-05-31T00:00:00.000Z";
-
     /** The time in days from  object's creation to its expiration used in the tests */
     private static final int EXPIRATION_IN_DAYS = 10;
-
     /** The time in days from an object's creation to the transition time(change the storage class) used in the tests */
     private static final int TRANSITION_TIME_IN_DAYS = 5;
+    /** The file containing the test data uploaded to S3 */
+    private static File file = null;
+    /** The inputStream containing the test data uploaded to S3 */
+    private static byte[] tempData;
 
     @AfterClass
     public static void tearDownFixture() throws Exception {
@@ -133,20 +142,20 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         transition.setStorageClass(StorageClass.Glacier);
         final int daysAfterInitiation = 10;
         Rule rule1 = new Rule()
-                    .withExpirationInDays(EXPIRATION_IN_DAYS)
-                    .withId(ruleId).withPrefix("prefix")
-                    .withStatus(BucketLifecycleConfiguration.ENABLED)
-                    .withTransition(transition)
-                    .withAbortIncompleteMultipartUpload(new
-                            AbortIncompleteMultipartUpload()
-                            .withDaysAfterInitiation(daysAfterInitiation));
+                .withExpirationInDays(EXPIRATION_IN_DAYS)
+                .withId(ruleId).withPrefix("prefix")
+                .withStatus(BucketLifecycleConfiguration.ENABLED)
+                .withTransition(transition)
+                .withAbortIncompleteMultipartUpload(new
+                                                            AbortIncompleteMultipartUpload()
+                                                            .withDaysAfterInitiation(daysAfterInitiation));
         transition = new Transition();
         transition.setDate(ServiceUtils.parseIso8601Date(TRANSITION_DATE));
         transition.setStorageClass(StorageClass.Glacier);
         Rule rule2 = new Rule()
-                    .withExpirationDate(ServiceUtils.parseIso8601Date(EXPIRATION_DATE))
-                    .withTransition(transition).withPrefix("another")
-                    .withStatus(BucketLifecycleConfiguration.DISABLED);
+                .withExpirationDate(ServiceUtils.parseIso8601Date(EXPIRATION_DATE))
+                .withTransition(transition).withPrefix("another")
+                .withStatus(BucketLifecycleConfiguration.DISABLED);
 
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule1, rule2);
@@ -183,11 +192,11 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         // Now put some objects and see if they have the right headers returned
         String expiringKey = "prefixKey";
         s3.putObject(bucketName, expiringKey, file);
-        ObjectMetadata metadataExpriringKey= waitForObjectWithExpirationKeyExist(bucketName, expiringKey);
+        ObjectMetadata metadataExpriringKey = waitForObjectWithExpirationKeyExist(bucketName, expiringKey);
 
         String nonExpiringKey = "anotherKey";
         s3.putObject(bucketName, nonExpiringKey, file);
-        ObjectMetadata metadataNonExpriringKey= waitForObjectWithNonExpirationKeyExist(bucketName, nonExpiringKey);
+        ObjectMetadata metadataNonExpriringKey = waitForObjectWithNonExpirationKeyExist(bucketName, nonExpiringKey);
 
         assertNotNull(metadataExpriringKey.getExpirationTime());
         assertEquals(ruleId, metadataExpriringKey.getExpirationTimeRuleId());
@@ -197,21 +206,21 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
 
 
         // There are several APIs that are affected by this header; test them
-        ObjectMetadata copyObjectMetadata=null;
+        ObjectMetadata copyObjectMetadata = null;
         s3.copyObject(new CopyObjectRequest(bucketName, expiringKey, bucketName, expiringKey + "2"));
-        copyObjectMetadata= waitForObjectWithExpirationKeyExist(bucketName, expiringKey + "2");
+        copyObjectMetadata = waitForObjectWithExpirationKeyExist(bucketName, expiringKey + "2");
 
         assertNotNull(copyObjectMetadata.getExpirationTime());
         assertEquals(ruleId, copyObjectMetadata.getExpirationTimeRuleId());
 
         s3.copyObject(new CopyObjectRequest(bucketName, nonExpiringKey, bucketName, nonExpiringKey + "2"));
-        copyObjectMetadata= waitForObjectWithNonExpirationKeyExist(bucketName, nonExpiringKey + "2");
+        copyObjectMetadata = waitForObjectWithNonExpirationKeyExist(bucketName, nonExpiringKey + "2");
 
         assertNull(copyObjectMetadata.getExpirationTime());
         assertNull(copyObjectMetadata.getExpirationTimeRuleId());
 
 
-        metadataExpriringKey= waitForObjectWithExpirationKeyExist(bucketName, expiringKey);
+        metadataExpriringKey = waitForObjectWithExpirationKeyExist(bucketName, expiringKey);
         assertNotNull(metadataExpriringKey.getExpirationTime());
         assertEquals(ruleId, metadataExpriringKey.getExpirationTimeRuleId());
 
@@ -322,7 +331,7 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         assertEquals("", predicate.getPrefix());
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testBucketLifecycle_With_DeprecatedPrefix_And_PrefixInFilter() throws Exception {
         Rule rule = getRuleWithoutPrefixAndFilter();
         rule.setPrefix("prefix1");
@@ -335,7 +344,7 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
     /**
      * The And operator should have atleast 2 values in it.
      */
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testBucketLifecycle_With_OnlyOneValueInAndOperator_InFilter() throws Exception {
         List<LifecycleFilterPredicate> andOperands = new ArrayList<LifecycleFilterPredicate>();
         andOperands.add(new LifecycleTagPredicate(new Tag("key1", "value1")));
@@ -370,7 +379,7 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
     /**
      * Can't combine v1 Rule and v2 Rule
      */
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testBucketLifecycle_With_MultipleRules_Using_BothOldAndNewLifeCycleConfigFormat() throws Exception {
         Rule rule1 = getRuleWithoutPrefixAndFilter().withPrefix("prefix1");
         Rule rule2 = getRuleWithoutPrefixAndFilter().withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
@@ -417,8 +426,9 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
                 Thread.sleep(1000);
                 hits = 0;
             }
-            if (hits++ == 10)
+            if (hits++ == 10) {
                 return bucketLifecycleConfiguration;
+            }
         }
         maxPollTimeExceeded();
         return null;
@@ -433,14 +443,15 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         long endTime = startTime + (10 * 60 * 1000);
         int hits = 0;
         while (System.currentTimeMillis() < endTime) {
-            BucketLifecycleConfiguration bucketLifecycleConfiguration=null;
+            BucketLifecycleConfiguration bucketLifecycleConfiguration = null;
 
-            if ((bucketLifecycleConfiguration=s3.getBucketLifecycleConfiguration(bucketName))!=null) {
+            if ((bucketLifecycleConfiguration = s3.getBucketLifecycleConfiguration(bucketName)) != null) {
                 Thread.sleep(1000);
                 hits = 0;
             }
-            if (hits++ == 10)
+            if (hits++ == 10) {
                 return bucketLifecycleConfiguration;
+            }
         }
         maxPollTimeExceeded();
         return null;
@@ -451,19 +462,20 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
      * waiting a object with expiring key exist
      * When exceed the poll time, will throw Max poll time exceeded exception
      */
-    private  ObjectMetadata waitForObjectWithExpirationKeyExist(String bucketName, String key) throws Exception {
+    private ObjectMetadata waitForObjectWithExpirationKeyExist(String bucketName, String key) throws Exception {
         long startTime = System.currentTimeMillis();
-        ObjectMetadata metadata=null;
+        ObjectMetadata metadata = null;
         long endTime = startTime + (10 * 60 * 1000);
         int hits = 0;
         while (System.currentTimeMillis() < endTime) {
             if (!doesObjectExist(bucketName, key)
-                || (metadata=s3.getObjectMetadata(bucketName,key)).getExpirationTime()==null) {
+                || (metadata = s3.getObjectMetadata(bucketName, key)).getExpirationTime() == null) {
                 Thread.sleep(1000);
                 hits = 0;
             }
-            if (hits++ == 10)
+            if (hits++ == 10) {
                 return metadata;
+            }
         }
         maxPollTimeExceeded();
         return null;
@@ -473,19 +485,20 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
      * waiting a object without expiring key exist
      * When exceed the poll time, will throw Max poll time exceeded exception
      */
-    private  ObjectMetadata waitForObjectWithNonExpirationKeyExist(String bucketName, String key) throws Exception {
+    private ObjectMetadata waitForObjectWithNonExpirationKeyExist(String bucketName, String key) throws Exception {
         long startTime = System.currentTimeMillis();
         long endTime = startTime + (10 * 60 * 1000);
-        ObjectMetadata metadata=null;
+        ObjectMetadata metadata = null;
         int hits = 0;
         while (System.currentTimeMillis() < endTime) {
             if (!doesObjectExist(bucketName, key)
-                || (metadata=s3.getObjectMetadata(bucketName,key)).getExpirationTime()!=null) {
+                || (metadata = s3.getObjectMetadata(bucketName, key)).getExpirationTime() != null) {
                 Thread.sleep(1000);
                 hits = 0;
             }
-            if (hits++ == 10)
+            if (hits++ == 10) {
                 return metadata;
+            }
         }
         maxPollTimeExceeded();
         return null;

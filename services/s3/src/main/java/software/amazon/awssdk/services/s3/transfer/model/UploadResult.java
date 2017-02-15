@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.model;
 
 import software.amazon.awssdk.services.s3.transfer.TransferManager;
@@ -20,12 +21,12 @@ import software.amazon.awssdk.services.s3.transfer.TransferManager;
  * Contains information returned by Amazon S3 for a completed upload. 
  * <p>
  * See {@link TransferManager} for more information about creating transfers.
- * 
+ *
  * @see TransferManager#upload(String, String, java.io.File)
  * @see TransferManager#upload(software.amazon.awssdk.services.s3.model.PutObjectRequest)
  */
 public class UploadResult {
-    
+
     /** The name of the bucket containing the completed upload. */
     private String bucketName;
 
@@ -55,7 +56,7 @@ public class UploadResult {
 
     /**
      * Sets the name of the bucket containing the uploaded object.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket containing the uploaded object.
      */

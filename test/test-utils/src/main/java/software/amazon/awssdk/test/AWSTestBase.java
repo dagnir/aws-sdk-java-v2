@@ -31,25 +31,22 @@ import software.amazon.awssdk.util.IOUtils;
 
 public abstract class AWSTestBase {
 
-    /**
-     * Shared AWS credentials, loaded from a properties file. Direct access to this field is
-     * deprecated
-     * 
-     * @deprecated Extend from {@link AWSIntegrationTestBase} to access credentials
-     */
-    @Deprecated
-    public static AWSCredentials credentials;
-
     /** Default Properties Credentials file path */
     private static final String propertiesFilePath = System.getProperty("user.home")
-            + "/.aws/awsTestAccount.properties";
-
+                                                     + "/.aws/awsTestAccount.properties";
     private static final String TEST_CREDENTIALS_PROFILE_NAME = "aws-java-sdk-test";
-
     private static final AWSCredentialsProviderChain chain = new AWSCredentialsProviderChain(
             new PropertiesFileCredentialsProvider(propertiesFilePath),
             new ProfileCredentialsProvider(TEST_CREDENTIALS_PROFILE_NAME), new EnvironmentVariableCredentialsProvider(),
             new SystemPropertiesCredentialsProvider());
+    /**
+     * Shared AWS credentials, loaded from a properties file. Direct access to this field is
+     * deprecated
+     *
+     * @deprecated Extend from {@link AWSIntegrationTestBase} to access credentials
+     */
+    @Deprecated
+    public static AWSCredentials credentials;
 
     /**
      * @deprecated Extend from {@link AWSIntegrationTestBase} to access credentials
@@ -66,7 +63,7 @@ public abstract class AWSTestBase {
 
     /**
      * Reads a system resource fully into a String
-     * 
+     *
      * @param location
      *            Relative or absolute location of system resource.
      * @return String contents of resource file

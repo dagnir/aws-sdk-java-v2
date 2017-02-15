@@ -8,6 +8,6 @@ Feature: API Gateway
 
   Scenario: Handing errors
     When I attempt to call the "DeleteResource" API with:
-      | resourceId  | example |
-      | restApiId   | foo     |
+      | resourceId | example |
+      | restApiId  | foo     |
     Then I expect the response error code to be "NotFoundException"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -84,15 +84,15 @@ public interface State {
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
             property = PropertyNames.TYPE)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(value = ChoiceState.Builder.class, name = CHOICE),
-            @JsonSubTypes.Type(value = FailState.Builder.class, name = FAIL),
-            @JsonSubTypes.Type(value = ParallelState.Builder.class, name = PARALLEL),
-            @JsonSubTypes.Type(value = PassState.Builder.class, name = PASS),
-            @JsonSubTypes.Type(value = SucceedState.Builder.class, name = SUCCEED),
-            @JsonSubTypes.Type(value = TaskState.Builder.class, name = TASK),
-            @JsonSubTypes.Type(value = WaitState.Builder.class, name = WAIT)
-    })
+    @JsonSubTypes( {
+                           @JsonSubTypes.Type(value = ChoiceState.Builder.class, name = CHOICE),
+                           @JsonSubTypes.Type(value = FailState.Builder.class, name = FAIL),
+                           @JsonSubTypes.Type(value = ParallelState.Builder.class, name = PARALLEL),
+                           @JsonSubTypes.Type(value = PassState.Builder.class, name = PASS),
+                           @JsonSubTypes.Type(value = SucceedState.Builder.class, name = SUCCEED),
+                           @JsonSubTypes.Type(value = TaskState.Builder.class, name = TASK),
+                           @JsonSubTypes.Type(value = WaitState.Builder.class, name = WAIT)
+                   })
     @JsonIgnoreProperties(value = {PropertyNames.TYPE}, allowGetters = true)
     interface Builder extends Buildable<State> {
     }

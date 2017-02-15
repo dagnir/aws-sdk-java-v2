@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static org.junit.Assert.assertEquals;
@@ -55,10 +70,11 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         initializeTransferManager(2);
         Upload upload = uploadRandomInputStream(contentLength, objectMetadata);
         tm.shutdownNow();
-        try{
+        try {
             upload.waitForCompletion();
             fail("Should get an Aborted Exception here.");
-        }catch(AbortedException ae) { }
+        } catch (AbortedException ae) {
+        }
 
         assertEquals(TransferState.Failed, upload.getState());
 
@@ -86,7 +102,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     @Test
     public void testMultipleTransferManagerObjects() throws Exception {
         initializeTransferManager(3);
-        long contentLength = 50*MB;
+        long contentLength = 50 * MB;
 
         createTempFile(contentLength);
         Upload upload = tm.upload(bucketName, KEY, tempFile);
@@ -96,7 +112,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         // Create a second TransferManager instance
         s3 = new AmazonS3Client(credentials);
         initializeTransferManager(3);
-        upload = tm.upload(bucketName, KEY,tempFile);
+        upload = tm.upload(bucketName, KEY, tempFile);
         upload.waitForCompletion();
         assertEquals(TransferState.Completed, upload.getState());
     }
@@ -108,9 +124,9 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     @Test
     public void testUploadPartCorruption() throws Exception {
         initializeTransferManager(DEFAULT_THREAD_POOL_SIZE, 5 * MB, 5 * MB,
-                DEFAULT_MULTIPART_COPY_THRESHOLD);
+                                  DEFAULT_MULTIPART_COPY_THRESHOLD);
 
-        long contentLength = 10*MB;
+        long contentLength = 10 * MB;
         createTempFile(contentLength);
 
         byte[] byteArray = FileUtils.readFileToByteArray(tempFile);
@@ -130,11 +146,13 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         initializeTransferManager();
 
         // Test a stream using multipart upload
-        long contentLength = 500*MB;
+        long contentLength = 500 * MB;
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(contentLength);
         Upload upload = uploadRandomInputStream(contentLength, objectMetadata);
-        while (upload.isDone() == false) Thread.sleep(100);
+        while (upload.isDone() == false) {
+            Thread.sleep(100);
+        }
 
         assertEquals(TransferState.Completed, upload.getState());
         assertEquals((Long) contentLength, (Long) upload.getProgress().getBytesTransferred());
@@ -150,7 +168,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     public void testWaitForExceptionForMultiPartUploads() throws Exception {
         initializeTransferManager();
 
-        long fileSize = 70*MB;
+        long fileSize = 70 * MB;
         Upload upload = tm.upload(bucketName, KEY, new RandomTempFile("multipartUpload", fileSize));
         upload.waitForException();
 
@@ -169,7 +187,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         SSECustomerKey sseCustomerKey = new SSECustomerKey(generateSecretKey());
 
         // 50MB upload will trigger the multipart upload process
-        uploadObjectWithSSECustomerKey(50*MB, sseCustomerKey);
+        uploadObjectWithSSECustomerKey(50 * MB, sseCustomerKey);
 
         // Retrive the file using the same SSECustomerKey to decrypt it server-side
         File destinationFile = File.createTempFile(this.getClass().getName(), "" + System.currentTimeMillis());
@@ -190,7 +208,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         SSECustomerKey sseCustomerKey = new SSECustomerKey(generateSecretKey());
 
         // 5MB upload will result in a single part upload
-        uploadObjectWithSSECustomerKey(5*MB, sseCustomerKey);
+        uploadObjectWithSSECustomerKey(5 * MB, sseCustomerKey);
 
         // Retrive the file using the same SSECustomerKey to decrypt it server-side
         File destinationFile = File.createTempFile(this.getClass().getName(), "" + System.currentTimeMillis());
@@ -217,7 +235,9 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
                 .withSSECustomerKey(sseCustomerKey);
 
         Upload multipartStreamUpload = tm.upload(request);
-        while (multipartStreamUpload.isDone() == false) Thread.sleep(100);
+        while (multipartStreamUpload.isDone() == false) {
+            Thread.sleep(100);
+        }
 
         assertEquals(TransferState.Completed, multipartStreamUpload.getState());
         assertEquals((Long) contentLength, (Long) multipartStreamUpload.getProgress().getBytesTransferred());
@@ -230,7 +250,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         initializeTransferManager();
 
         // Test a stream using PutObject when we don't specify the content length
-        long undeclaredContentLength = 25*MB;
+        long undeclaredContentLength = 25 * MB;
         Upload singlePartStreamUpload = uploadRandomInputStream(undeclaredContentLength, new ObjectMetadata());
         singlePartStreamUpload.waitForCompletion();
 
@@ -256,8 +276,9 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         download.addProgressListener(testListener);
 
         assertFalse(download.isDone());
-        while (download.getState() == TransferState.Waiting)
+        while (download.getState() == TransferState.Waiting) {
             Thread.sleep(100);
+        }
         // sometimes download completes before the below line is executed.
         // So you might see the assertion failing with actual state Completed
         assertEquals(TransferState.InProgress, download.getState());
@@ -286,7 +307,9 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         TestProgressListener testListener = new TestProgressListener();
         download.addProgressListener(testListener);
 
-        while (download.getProgress().getBytesTransferred() == 0L);
+        while (download.getProgress().getBytesTransferred() == 0L) {
+            ;
+        }
         download.abort();
         Thread.sleep(1000 * 10);
         assertTrue(tempFile.length() > 0);
@@ -309,7 +332,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         tempFile = File.createTempFile("java-tran-man-test-", "-download");
         tempFile.deleteOnExit();
         Download download = tm.download(
-                new GetObjectRequest(bucketName, KEY).withRange(1024, DEFAULT_TEST_OBJECT_CONTENT_LENTH-1024 ), tempFile);
+                new GetObjectRequest(bucketName, KEY).withRange(1024, DEFAULT_TEST_OBJECT_CONTENT_LENTH - 1024), tempFile);
 
         download.waitForCompletion();
         System.out.println("Download Status: " + download.getState());
@@ -318,7 +341,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         long expectedLength = DEFAULT_TEST_OBJECT_CONTENT_LENTH - 2048 + 1;
         assertEquals((Long) expectedLength, (Long) tempFile.length());
         assertEquals(100.00, download.getProgress().getPercentTransferred(), .001);
-        assertEquals(expectedLength,download.getProgress().getBytesTransferred());
+        assertEquals(expectedLength, download.getProgress().getBytesTransferred());
     }
 
     /**
@@ -352,7 +375,8 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         try {
             download.waitForCompletion();
             Assert.fail("Download should have timed out");
-        } catch (CancellationException e) {}
+        } catch (CancellationException e) {
+        }
     }
 
     @Test
@@ -389,7 +413,8 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         try {
             download.waitForCompletion();
             fail("Expected an exception");
-        } catch ( AmazonClientException expected ) { }
+        } catch (AmazonClientException expected) {
+        }
 
         AmazonClientException ex = download.waitForException();
         assertNotNull(ex);
@@ -408,7 +433,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
      * This test should typically be done is less than a minute. Giving a grace
      * timeout value of 2 minutes in case of slow network.
      */
-    @Test (timeout = 2 * 60 * 1000)
+    @Test(timeout = 2 * 60 * 1000)
     public void testParallelDownloadsWithSingleThreadDoNotCauseDeadlock() throws Exception {
         initializeTransferManager(1);
 
@@ -436,16 +461,16 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 1024 * 1024;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] { "a",
-                    "b/c",
-                    "b/d",
-                    "b/e/f",
-                    "b/e/g",
-                    "b/e/h/i",
-                    "b/e/h/j",
-                    "b/e/h/k/l",
-                    "b/e/h/k/m",
-                    };
+        String[] keys = new String[] {"a",
+                                      "b/c",
+                                      "b/d",
+                                      "b/e/f",
+                                      "b/e/g",
+                                      "b/e/h/i",
+                                      "b/e/h/j",
+                                      "b/e/h/k/l",
+                                      "b/e/h/k/m",
+                                      };
 
         for (String key : keys) {
             s3.putObject(bucketName, key, tempFile);
@@ -455,11 +480,13 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         TestProgressListener testListener = new TestProgressListener();
         download.addProgressListener(testListener);
 
-        while(TransferState.Waiting == download.getState()) Thread.sleep(100);
+        while (TransferState.Waiting == download.getState()) {
+            Thread.sleep(100);
+        }
         assertEquals(TransferState.InProgress, download.getState());
 
         long bytesTransferred = 0;
-        while ( !download.isDone() ) {
+        while (!download.isDone()) {
             long newBytesTransferred = download.getProgress().getBytesTransferred();
             assertTrue(newBytesTransferred >= bytesTransferred);
             bytesTransferred = newBytesTransferred;
@@ -490,7 +517,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         download = tm.downloadDirectory(bucketName, prefix, directory);
         download.waitForCompletion();
         assertKeysToDirectory(directory,
-                Arrays.copyOfRange(keys, 3, keys.length), contentLength);
+                              Arrays.copyOfRange(keys, 3, keys.length), contentLength);
         int sublistLength = keys.length - startKey;
         assertEquals(TransferState.Completed, download.getState());
         assertEquals((Long) (sublistLength * contentLength), (Long) download.getProgress().getBytesTransferred());
@@ -506,17 +533,17 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     public void testDownloadEmptyDirectory() throws Exception {
         initializeTransferManager();
 
-         assertTrue(s3.listObjects(bucketName).getObjectSummaries().isEmpty());
+        assertTrue(s3.listObjects(bucketName).getObjectSummaries().isEmpty());
 
-         MultipleFileDownload download = tm.downloadDirectory(bucketName, "", directory);
-         download.waitForCompletion();
-         assertEquals(TransferState.Completed, download.getState());
-         assertEquals((Integer) directory.listFiles().length, (Integer) 0);
+        MultipleFileDownload download = tm.downloadDirectory(bucketName, "", directory);
+        download.waitForCompletion();
+        assertEquals(TransferState.Completed, download.getState());
+        assertEquals((Integer) directory.listFiles().length, (Integer) 0);
 
-         download = tm.downloadDirectory(bucketName, "", directory);
-         download.waitForCompletion();
-         assertEquals(TransferState.Completed, download.getState());
-         assertEquals((Integer) directory.listFiles().length, (Integer) 0);
+        download = tm.downloadDirectory(bucketName, "", directory);
+        download.waitForCompletion();
+        assertEquals(TransferState.Completed, download.getState());
+        assertEquals((Integer) directory.listFiles().length, (Integer) 0);
     }
 
     @Test
@@ -545,7 +572,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         final int numOfObjects = 1000;
         tempFile = new RandomTempFile(fileName, contentLength);
         String[] keys = new String[numOfObjects];
-        for(int i = 0; i < numOfObjects; i++) {
+        for (int i = 0; i < numOfObjects; i++) {
             keys[i] = "keys" + i;
         }
 
@@ -555,16 +582,18 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         MultipleFileDownload download = tm.downloadDirectory(bucketName, "", directory);
 
-        while(TransferState.Waiting == download.getState()) Thread.sleep(100);
+        while (TransferState.Waiting == download.getState()) {
+            Thread.sleep(100);
+        }
         assertEquals(TransferState.InProgress, download.getState());
 
         long bytesTransferred = 0;
-        while ( !download.isDone() ) {
+        while (!download.isDone()) {
             long newBytesTransferred = download.getProgress().getBytesTransferred();
             assertTrue(newBytesTransferred >= bytesTransferred);
             bytesTransferred = newBytesTransferred;
             Thread.sleep(100);
-         }
+        }
         assertKeysToDirectory(directory, keys, contentLength);
         assertEquals(TransferState.Completed, download.getState());
         assertEquals((Long) (keys.length * contentLength), (Long) download.getProgress().getBytesTransferred());
@@ -585,7 +614,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         final int numOfObjects = 20;
         tempFile = new RandomTempFile(fileName, contentLength);
         String[] keys = new String[numOfObjects];
-        for(int i = 0; i < numOfObjects; i++) {
+        for (int i = 0; i < numOfObjects; i++) {
             keys[i] = "keys" + i;
         }
 
@@ -597,7 +626,9 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         TestProgressListener testListener = new TestProgressListener();
         download.addProgressListener(testListener);
-        while (download.getProgress().getBytesTransferred() == 0L);
+        while (download.getProgress().getBytesTransferred() == 0L) {
+            ;
+        }
         System.out.println("here");
         download.abort();
         Thread.sleep(1000 * 5);
@@ -624,17 +655,17 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         initializeTransferManager();
 
         long contentLength = 1L;
-        tempFile= getRandomTempFile("oneByte", contentLength);
-        String[] keys = new String[] { "a",
-                    "b/c",
-                    "b/d",
-                    "b/d/f",
-                    "b/d/g",
-                    "b/d/g/i",
-                    "b/d/g/j",
-                    "b/d/g/j/l",
-                    "b/d/g/j/m",
-                    };
+        tempFile = getRandomTempFile("oneByte", contentLength);
+        String[] keys = new String[] {"a",
+                                      "b/c",
+                                      "b/d",
+                                      "b/d/f",
+                                      "b/d/g",
+                                      "b/d/g/i",
+                                      "b/d/g/j",
+                                      "b/d/g/j/l",
+                                      "b/d/g/j/m",
+                                      };
         for (String key : keys) {
             s3.putObject(bucketName, key, tempFile);
         }
@@ -642,13 +673,13 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         MultipleFileDownload download = tm.downloadDirectory(bucketName, "", directory);
         download.waitForCompletion();
 
-        String[] expectedDownloadedKeys = new String[] { "a",
-                "b/c",
-                "b/d/f",
-                "b/d/g/i",
-                "b/d/g/j/l",
-                "b/d/g/j/m",
-                };
+        String[] expectedDownloadedKeys = new String[] {"a",
+                                                        "b/c",
+                                                        "b/d/f",
+                                                        "b/d/g/i",
+                                                        "b/d/g/j/l",
+                                                        "b/d/g/j/m",
+                                                        };
 
         assertKeysToDirectory(directory, expectedDownloadedKeys, contentLength);
         int expectedNumDownloaded = expectedDownloadedKeys.length;
@@ -664,13 +695,13 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 1L;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] { "a",
-                    "b/c",
-                    "b/d",
-                    "b/e/f",
-                    "b/e/g",
-                    "b/e/h/i",
-                    };
+        String[] keys = new String[] {"a",
+                                      "b/c",
+                                      "b/d",
+                                      "b/e/f",
+                                      "b/e/g",
+                                      "b/e/h/i",
+                                      };
         for (String key : keys) {
             s3.putObject(bucketName, key, tempFile);
         }
@@ -689,11 +720,11 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         try {
             download.waitForCompletion();
             fail("Expected an exception");
-        } catch ( AmazonClientException expected ) {
+        } catch (AmazonClientException expected) {
         }
 
         assertKeysToDirectory(directory,
-                Arrays.copyOfRange(keys, 0, numExpectedFiles), contentLength);
+                              Arrays.copyOfRange(keys, 0, numExpectedFiles), contentLength);
         assertTrue(download.isDone());
         assertEquals(TransferState.Failed, download.getState());
         assertEquals((Long) (numExpectedFiles * contentLength), (Long) download.getProgress().getBytesTransferred());
@@ -710,7 +741,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         File[] tempFiles = new File[2];
         for (int i = 0; i < tempFiles.length; i++) {
-            tempFiles[i] = getRandomTempFile(fileName + i, 1024*1024);
+            tempFiles[i] = getRandomTempFile(fileName + i, 1024 * 1024);
         }
 
         File rootDirectory = new File("/");
@@ -721,7 +752,9 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         for (File tempFile : tempFiles) {
             String keyPath = tempFile.getAbsolutePath();
-            if (keyPath.startsWith("/")) keyPath = keyPath.substring(1);
+            if (keyPath.startsWith("/")) {
+                keyPath = keyPath.substring(1);
+            }
 
             // If the object doesn't exist, this will throw
             // an exception and fail this test
@@ -739,16 +772,16 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 1024 * 1024;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] { "a",
-                    "b/c",
-                    "b/d",
-                    "b/e/f",
-                    "b/e/g",
-                    "b/e/h/i",
-                    "b/e/h/j",
-                    "b/e/h/k/l",
-                    "b/e/h/k/m",
-                    };
+        String[] keys = new String[] {"a",
+                                      "b/c",
+                                      "b/d",
+                                      "b/e/f",
+                                      "b/e/g",
+                                      "b/e/h/i",
+                                      "b/e/h/j",
+                                      "b/e/h/k/l",
+                                      "b/e/h/k/m",
+                                      };
         for (String key : keys) {
             FileUtils.copyFile(tempFile, new File(directory, key));
         }
@@ -758,13 +791,14 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         TestProgressListener testListener = new TestProgressListener();
         upload.addProgressListener(testListener);
 
-        while (TransferState.Waiting == upload.getState())
+        while (TransferState.Waiting == upload.getState()) {
             Thread.sleep(100);
+        }
         assertEquals(TransferState.InProgress, upload.getState());
         // Checks if the list of sub transfers is equal to the number of files being uploaded.
-        assertEquals((Integer)upload.getSubTransfers().size(),(Integer)keys.length);
+        assertEquals((Integer) upload.getSubTransfers().size(), (Integer) keys.length);
         long bytesTransferred = 0;
-        while ( !upload.isDone() ) {
+        while (!upload.isDone()) {
             long newBytesTransferred = upload.getProgress().getBytesTransferred();
             assertTrue(newBytesTransferred >= bytesTransferred);
             bytesTransferred = newBytesTransferred;
@@ -780,7 +814,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         ObjectListing listObjects = s3.listObjects(bucketName);
         int i = 0;
-        for ( S3ObjectSummary summary : listObjects.getObjectSummaries() ) {
+        for (S3ObjectSummary summary : listObjects.getObjectSummaries()) {
             assertEquals(keys[i++], summary.getKey());
             assertEquals((Long) contentLength, (Long) summary.getSize());
         }
@@ -801,27 +835,29 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 1024 * 1024;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] { "a",
-                    "b/c",
-                    "b/d",
-                    "b/e/f",
-                    "b/e/g",
-                    "b/e/h/i",
-                    "b/e/h/j",
-                    "b/e/h/k/l",
-                    "b/e/h/k/m",
-                    };
+        String[] keys = new String[] {"a",
+                                      "b/c",
+                                      "b/d",
+                                      "b/e/f",
+                                      "b/e/g",
+                                      "b/e/h/i",
+                                      "b/e/h/j",
+                                      "b/e/h/k/l",
+                                      "b/e/h/k/m",
+                                      };
         for (String key : keys) {
             FileUtils.copyFile(tempFile, new File(directory, key));
         }
 
-        MultipleFileUpload upload = tm.uploadDirectory(bucketName, "", directory, true,this);
+        MultipleFileUpload upload = tm.uploadDirectory(bucketName, "", directory, true, this);
 
-        while(TransferState.Waiting == upload.getState()) Thread.sleep(100);
+        while (TransferState.Waiting == upload.getState()) {
+            Thread.sleep(100);
+        }
         assertEquals(TransferState.InProgress, upload.getState());
 
         long bytesTransferred = 0;
-        while ( !upload.isDone() ) {
+        while (!upload.isDone()) {
             long newBytesTransferred = upload.getProgress().getBytesTransferred();
             assertTrue(newBytesTransferred >= bytesTransferred);
             bytesTransferred = newBytesTransferred;
@@ -830,13 +866,13 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         ObjectListing listObjects = s3.listObjects(bucketName);
         int i = 0;
-        for ( S3ObjectSummary summary : listObjects.getObjectSummaries() ) {
+        for (S3ObjectSummary summary : listObjects.getObjectSummaries()) {
             assertEquals(keys[i++], summary.getKey());
             assertEquals((Long) contentLength, (Long) summary.getSize());
 
             // Check if object metadata for server side encryption is set
-            ObjectMetadata metadata=s3.getObjectMetadata(bucketName, summary.getKey());
-            assertEquals(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION,metadata.getSSEAlgorithm());
+            ObjectMetadata metadata = s3.getObjectMetadata(bucketName, summary.getKey());
+            assertEquals(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION, metadata.getSSEAlgorithm());
         }
         assertEquals((Integer) keys.length, (Integer) i);
 
@@ -852,18 +888,18 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
      */
     @Test(timeout = 1000 * 4)
     public void testUploadEmptyDirectory() throws Exception {
-         initializeTransferManager();
+        initializeTransferManager();
 
-         MultipleFileUpload upload = tm.uploadDirectory(bucketName, "", directory, true);
-         upload.waitForCompletion();
-         assertEquals(TransferState.Completed, upload.getState());
+        MultipleFileUpload upload = tm.uploadDirectory(bucketName, "", directory, true);
+        upload.waitForCompletion();
+        assertEquals(TransferState.Completed, upload.getState());
 
-         File subDir = new File(directory, directory.getName() + "-subDirectoryDownload");
-         assertTrue(subDir.mkdir());
+        File subDir = new File(directory, directory.getName() + "-subDirectoryDownload");
+        assertTrue(subDir.mkdir());
 
-         upload = tm.uploadDirectory(bucketName, "", directory, true);
-         upload.waitForCompletion();
-         assertEquals(TransferState.Completed, upload.getState());
+        upload = tm.uploadDirectory(bucketName, "", directory, true);
+        upload.waitForCompletion();
+        assertEquals(TransferState.Completed, upload.getState());
     }
 
     /**
@@ -875,16 +911,16 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 1024 * 1024;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] { "a",
-                    "b/c",
-                    "b/d",
-                    "b/e/f",
-                    "b/e/g",
-                    "b/e/h/i",
-                    "b/e/h/j",
-                    "b/e/h/k/l",
-                    "b/e/h/k/m",
-                    };
+        String[] keys = new String[] {"a",
+                                      "b/c",
+                                      "b/d",
+                                      "b/e/f",
+                                      "b/e/g",
+                                      "b/e/h/i",
+                                      "b/e/h/j",
+                                      "b/e/h/k/l",
+                                      "b/e/h/k/m",
+                                      };
         for (String key : keys) {
             FileUtils.copyFile(tempFile, new File(directory, key));
         }
@@ -892,12 +928,13 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         String directoryPrefix = "virtualDir/foo";
         MultipleFileUpload upload = tm.uploadDirectory(bucketName, directoryPrefix, directory, true);
 
-        while (TransferState.Waiting == upload.getState())
+        while (TransferState.Waiting == upload.getState()) {
             Thread.sleep(100);
+        }
         assertEquals(TransferState.InProgress, upload.getState());
 
         long bytesTransferred = 0;
-        while ( !upload.isDone() ) {
+        while (!upload.isDone()) {
             long newBytesTransferred = upload.getProgress().getBytesTransferred();
             assertTrue(newBytesTransferred >= bytesTransferred);
             bytesTransferred = newBytesTransferred;
@@ -906,7 +943,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         ObjectListing listObjects = s3.listObjects(bucketName);
         int i = 0;
-        for ( S3ObjectSummary summary : listObjects.getObjectSummaries() ) {
+        for (S3ObjectSummary summary : listObjects.getObjectSummaries()) {
             assertEquals(directoryPrefix + "/" + keys[i++], summary.getKey());
             assertEquals((Long) contentLength, (Long) summary.getSize());
         }
@@ -927,16 +964,16 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 1024 * 1024;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] { "a",
-                    "b/c",
-                    "b/d",
-                    "b/e/f",
-                    "b/e/g",
-                    "b/e/h/i",
-                    "b/e/h/j",
-                    "b/e/h/k/l",
-                    "b/e/h/k/m",
-                    };
+        String[] keys = new String[] {"a",
+                                      "b/c",
+                                      "b/d",
+                                      "b/e/f",
+                                      "b/e/g",
+                                      "b/e/h/i",
+                                      "b/e/h/j",
+                                      "b/e/h/k/l",
+                                      "b/e/h/k/m",
+                                      };
         for (String key : keys) {
             FileUtils.copyFile(tempFile, new File(directory, key));
         }
@@ -945,7 +982,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         MultipleFileUpload upload = tm.uploadDirectory(bucketName, directoryPrefix, directory, false);
 
         long bytesTransferred = 0;
-        while ( !upload.isDone() ) {
+        while (!upload.isDone()) {
             long newBytesTransferred = upload.getProgress().getBytesTransferred();
             assertTrue(newBytesTransferred >= bytesTransferred);
             bytesTransferred = newBytesTransferred;
@@ -954,7 +991,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         ObjectListing listObjects = s3.listObjects(bucketName);
         int i = 0;
-        for ( S3ObjectSummary summary : listObjects.getObjectSummaries() ) {
+        for (S3ObjectSummary summary : listObjects.getObjectSummaries()) {
             assertEquals(directoryPrefix + "/" + keys[i++], summary.getKey());
             assertEquals((Long) contentLength, (Long) summary.getSize());
         }
@@ -970,9 +1007,9 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     @Test
     public void testAbortUpload() throws Exception {
         initializeTransferManager();
-        Date beforeUpload = new Date(System.currentTimeMillis() - 10*60*MINUTES);
+        Date beforeUpload = new Date(System.currentTimeMillis() - 10 * 60 * MINUTES);
         String uploadId = s3.initiateMultipartUpload(new InitiateMultipartUploadRequest(bucketName, KEY)).getUploadId();
-        Date afterUpload = new Date(System.currentTimeMillis() + 60*MINUTES);
+        Date afterUpload = new Date(System.currentTimeMillis() + 60 * MINUTES);
 
         // Make sure our upload exists
         Thread.sleep(1000);
@@ -1000,7 +1037,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 25 * MB;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] { "a", "b/c", "b/d" };
+        String[] keys = new String[] {"a", "b/c", "b/d"};
         for (String key : keys) {
             FileUtils.copyFile(tempFile, new File(directory, key));
         }
@@ -1010,13 +1047,14 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
         TestProgressListener testListener = new TestProgressListener();
         upload.addProgressListener(testListener);
 
-        while (TransferState.Waiting == upload.getState())
+        while (TransferState.Waiting == upload.getState()) {
             Thread.sleep(100);
+        }
         assertEquals(TransferState.InProgress, upload.getState());
         // Checks if the list of sub transfers is equal to the number of files being uploaded.
-        assertEquals((Integer)upload.getSubTransfers().size(),(Integer)keys.length);
+        assertEquals((Integer) upload.getSubTransfers().size(), (Integer) keys.length);
         long bytesTransferred = 0;
-        while ( !upload.isDone() ) {
+        while (!upload.isDone()) {
             long newBytesTransferred = upload.getProgress().getBytesTransferred();
             assertTrue(newBytesTransferred >= bytesTransferred);
             bytesTransferred = newBytesTransferred;
@@ -1030,7 +1068,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         ObjectListing listObjects = s3.listObjects(bucketName);
         int i = 0;
-        for ( S3ObjectSummary summary : listObjects.getObjectSummaries() ) {
+        for (S3ObjectSummary summary : listObjects.getObjectSummaries()) {
             assertEquals(keys[i++], summary.getKey());
             assertEquals((Long) contentLength, (Long) summary.getSize());
         }
@@ -1055,17 +1093,18 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     private void createTestObject(long testObjectSize) throws Exception {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(testObjectSize);
-        Upload upload = tm.upload(bucketName, KEY,new RandomInputStream(testObjectSize) , objectMetadata);
+        Upload upload = tm.upload(bucketName, KEY, new RandomInputStream(testObjectSize), objectMetadata);
         upload.waitForUploadResult();
     }
 
     private long folderSize(File directory) {
         long totalLen = 0;
         for (File file : directory.listFiles()) {
-            if ( file.isFile() )
+            if (file.isFile()) {
                 totalLen += file.length();
-            else
+            } else {
                 totalLen += folderSize(file);
+            }
         }
         return totalLen;
     }

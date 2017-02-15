@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     }
 
     @Override
-    public DeleteItemSpec withPrimaryKey(KeyAttribute ... components) {
+    public DeleteItemSpec withPrimaryKey(KeyAttribute... components) {
         super.withPrimaryKey(components);
         return this;
     }
@@ -68,7 +68,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
 
     @Override
     public DeleteItemSpec withPrimaryKey(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
+                                         String rangeKeyName, Object rangeKeyValue) {
         super.withPrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue);
         return this;
     }
@@ -77,7 +77,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
         return expected;
     }
 
-    public DeleteItemSpec withExpected(Expected ... expected) {
+    public DeleteItemSpec withExpected(Expected... expected) {
         if (expected == null) {
             this.expected = null;
             return this;
@@ -91,11 +91,12 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
             return this;
         }
         Set<String> names = new LinkedHashSet<String>();
-        for (Expected e: expected)
+        for (Expected e : expected) {
             names.add(e.getAttribute());
+        }
         if (names.size() != expected.size()) {
             throw new IllegalArgumentException(
-                "attribute names must not duplicate in the list of expected");
+                    "attribute names must not duplicate in the list of expected");
         }
         this.expected = Collections.unmodifiableCollection(expected);
         return this;
@@ -125,10 +126,11 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
             this.nameMap = null;
         } else {
             this.nameMap = Collections.unmodifiableMap(
-                new LinkedHashMap<String, String>(nameMap));
+                    new LinkedHashMap<String, String>(nameMap));
         }
         return this;
     }
+
     public Map<String, Object> getValueMap() {
         return valueMap;
     }
@@ -142,7 +144,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
             this.valueMap = null;
         } else {
             this.valueMap = Collections.unmodifiableMap(
-                new LinkedHashMap<String, Object>(valueMap));
+                    new LinkedHashMap<String, Object>(valueMap));
         }
         return this;
     }
@@ -155,6 +157,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
         getRequest().setConditionalOperator(conditionalOperator);
         return this;
     }
+
     public String getReturnConsumedCapacity() {
         return getRequest().getReturnConsumedCapacity();
     }
@@ -164,6 +167,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
         getRequest().setReturnConsumedCapacity(returnConsumedCapacity);
         return this;
     }
+
     public String getReturnItemCollectionMetrics() {
         return getRequest().getReturnItemCollectionMetrics();
     }
@@ -173,6 +177,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
         getRequest().setReturnItemCollectionMetrics(returnItemCollectionMetrics);
         return this;
     }
+
     public String getReturnValues() {
         return getRequest().getReturnValues();
     }
@@ -202,8 +207,8 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     @Beta
     public DeleteItemSpec withExpressionSpec(DeleteItemExpressionSpec xspec) {
         return withConditionExpression(xspec.getConditionExpression())
-              .withNameMap(xspec.getNameMap())
-              .withValueMap(xspec.getValueMap())
-              ;
+                .withNameMap(xspec.getNameMap())
+                .withValueMap(xspec.getValueMap())
+                ;
     }
 }

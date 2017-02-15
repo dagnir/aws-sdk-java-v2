@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sqs;
 
 import static org.junit.Assert.assertNotNull;
@@ -50,14 +65,14 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
     public void testSendSuccessCallback() throws InterruptedException, ExecutionException {
         String body = "test message_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString();
         SendMessageRequest request = new SendMessageRequest().withMessageBody(body).withQueueUrl(queueUrl)
-                .withMessageAttributes(createRandomAttributeValues(10));
+                                                             .withMessageAttributes(createRandomAttributeValues(10));
 
         AsyncHandler<SendMessageRequest, SendMessageResult> sendCallback = mock(SendAsyncCallback.class);
         Future<SendMessageResult> sendMessageResultFuture = buffSqs.sendMessageAsync(request, sendCallback);
 
         SendMessageResult sendMessageResult = sendMessageResultFuture.get();
         verify(sendCallback, timeout(CALLBACK_TIMEOUT_IN_MILLIS)).onSuccess(Mockito.any(SendMessageRequest.class),
-                Mockito.any(SendMessageResult.class));
+                                                                            Mockito.any(SendMessageResult.class));
         assertNotNull(sendMessageResult.getMD5OfMessageAttributes());
     }
 
@@ -83,7 +98,7 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
         // client to go back to SQS rather then fulfill from the buffer. Regardless the onSuccess
         // callback should be invoked
         ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().withMaxNumberOfMessages(1).withQueueUrl(queueUrl)
-                .withMessageAttributeNames("All").withVisibilityTimeout(20);
+                                                                     .withMessageAttributeNames("All").withVisibilityTimeout(20);
         buffSqs.receiveMessageAsync(receiveRq, receiveCallback).get();
 
         verify(receiveCallback, timeout(CALLBACK_TIMEOUT_IN_MILLIS)).onSuccess(

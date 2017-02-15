@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -39,13 +35,11 @@ import software.amazon.awssdk.util.EC2MetadataUtils;
  */
 public class EC2MetadataServiceMock {
 
-    private EC2MockMetadataServiceListenerThread hosmMockServerThread;
-
     private static final String OUTPUT_HEADERS = "HTTP/1.1 200 OK\r\n" +
-            "Content-Type: text/html\r\n" +
-            "Content-Length: ";
-
+                                                 "Content-Type: text/html\r\n" +
+                                                 "Content-Length: ";
     private static final String OUTPUT_END_OF_HEADERS = "\r\n\r\n";
+    private EC2MockMetadataServiceListenerThread hosmMockServerThread;
 
     /**
      * Sets the name of the file that should be sent back as the response from
@@ -154,11 +148,12 @@ public class EC2MetadataServiceMock {
 
                         StringBuilder credentialsString = new StringBuilder();
 
-                        for(String line : dataFromFile)
+                        for (String line : dataFromFile) {
                             credentialsString.append(line);
+                        }
 
                         httpResponse = formHttpResponse(credentialsString
-                                .toString());
+                                                                .toString());
                         outputStream.write(httpResponse.getBytes());
 
                     } else {
@@ -167,12 +162,15 @@ public class EC2MetadataServiceMock {
                 } catch (IOException e) {
                     throw new RuntimeException("Unable to respond to request", e);
                 } finally {
-                    try {outputStream.close();} catch (Exception e) {}
+                    try {
+                        outputStream.close();
+                    } catch (Exception e) {
+                    }
                 }
             }
         }
 
-        private String formHttpResponse(String content){
+        private String formHttpResponse(String content) {
 
             StringBuilder outputStringToWrite = new StringBuilder(
                     OUTPUT_HEADERS);

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -73,13 +88,13 @@ public class AmazonS3ClientTest {
         assertThat(s3.getRegionName(), equalTo("us-east-2"));
     }
 
-    @Test (expected = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void getRegionName_ThrowsIllegalStateException_When_InvalidRegion() {
         s3.setEndpoint("s3-mordor.amazonaws.com");
         s3.getRegionName();
     }
 
-    @Test (expected = IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void getRegionName_ThrowsIllegalStateException_When_InvalidRegionWithStandardFormat() {
         s3.setEndpoint("s3.mordor.amazonaws.com");
         s3.getRegionName();
@@ -90,8 +105,7 @@ public class AmazonS3ClientTest {
         try {
             System.setProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY, "true");
             s3.deleteBucket("test-bucket");
-        }
-        finally {
+        } finally {
             System.clearProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
         }
     }
@@ -101,8 +115,7 @@ public class AmazonS3ClientTest {
         try {
             System.setProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY, "true");
             s3.createBucket("test-bucket", Region.US_West);
-        }
-        finally {
+        } finally {
             System.clearProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
         }
     }

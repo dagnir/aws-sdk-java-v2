@@ -1,17 +1,18 @@
 /*
- * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -179,8 +180,8 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
         assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
-                                                         .beginsWith(object.getQueryDate()))
-        ).getResults().size());
+                                                                                          .beginsWith(object.getQueryDate()))
+                                        ).getResults().size());
     }
 
     /**
@@ -198,8 +199,8 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
         assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
-                                                         .between(object.getQueryDate(), object.getQueryDate()))
-        ).getResults().size());
+                                                                                          .between(object.getQueryDate(), object.getQueryDate()))
+                                        ).getResults().size());
     }
 
     /**
@@ -218,7 +219,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").ge(object.getQueryDate()))
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -237,7 +238,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").gt(object.getQueryDate()))
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -256,7 +257,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").eq(object.getQueryDate()))
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -275,7 +276,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").in(object.getQueryDate()))
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -293,7 +294,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
         assertEquals(0, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate").isNull())
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -312,7 +313,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").le(object.getQueryDate()))
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -331,7 +332,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").lt(object.getQueryDate()))
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -350,7 +351,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").ne(object.getQueryDate()))
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -368,7 +369,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
         assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate").notNull())
-        ).getResults().size());
+                                        ).getResults().size());
     }
 
     /**
@@ -386,8 +387,8 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
         assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
-                                                         .betweenAny(object.getQueryDate(), object.getQueryDate()))
-        ).getResults().size());
+                                                                                          .betweenAny(object.getQueryDate(), object.getQueryDate()))
+                                        ).getResults().size());
     }
 
     /**
@@ -405,8 +406,8 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
         assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
-                                                         .betweenAny(null, object.getQueryDate()))
-        ).getResults().size());
+                                                                                          .betweenAny(null, object.getQueryDate()))
+                                        ).getResults().size());
     }
 
     /**
@@ -424,8 +425,8 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
         assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
-                                                         .betweenAny(object.getQueryDate(), null))
-        ).getResults().size());
+                                                                                          .betweenAny(object.getQueryDate(), null))
+                                        ).getResults().size());
     }
 
     /**

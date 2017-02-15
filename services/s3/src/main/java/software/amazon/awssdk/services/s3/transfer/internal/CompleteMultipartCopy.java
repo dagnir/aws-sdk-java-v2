@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
@@ -77,8 +78,7 @@ public class CompleteMultipartCopy implements Callable<CopyResult> {
                     origReq.getDestinationBucketName(), origReq.getDestinationKey(), uploadId,
                     collectPartETags())
                     .withGeneralProgressListener(origReq.getGeneralProgressListener())
-                    .withRequestMetricCollector(origReq.getRequestMetricCollector())
-                    ;
+                    .withRequestMetricCollector(origReq.getRequestMetricCollector());
             res = s3.completeMultipartUpload(req);
         } catch (Exception e) {
             publishProgress(listener, ProgressEventType.TRANSFER_FAILED_EVENT);
@@ -89,7 +89,7 @@ public class CompleteMultipartCopy implements Callable<CopyResult> {
         copyResult.setSourceBucketName(origReq.getSourceBucketName());
         copyResult.setSourceKey(origReq.getSourceKey());
         copyResult.setDestinationBucketName(res
-                .getBucketName());
+                                                    .getBucketName());
         copyResult.setDestinationKey(res.getKey());
         copyResult.setETag(res.getETag());
         copyResult.setVersionId(res.getVersionId());
@@ -112,7 +112,7 @@ public class CompleteMultipartCopy implements Callable<CopyResult> {
                 partETags.add(future.get());
             } catch (Exception e) {
                 throw new SdkClientException("Unable to copy part: "
-                        + e.getCause().getMessage(), e.getCause());
+                                             + e.getCause().getMessage(), e.getCause());
             }
         }
         return partETags;

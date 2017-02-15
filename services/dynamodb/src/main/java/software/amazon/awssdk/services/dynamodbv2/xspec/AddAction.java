@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import software.amazon.awssdk.annotation.Beta;
  * <ul>
  * <li>If the attribute does not already exist, add the new attribute and its
  * value(s) to the item.</li>
- * 
+ *
  * <li>If the attribute already exists, then the behavior of ADD depends on the
  * attribute's data type:
  * <ul>
@@ -39,7 +39,7 @@ import software.amazon.awssdk.annotation.Beta;
  * then the value is mathematically added to the existing attribute. (If the
  * value is a negative number, then it is subtracted from the existing
  * attribute.)</li>
- * 
+ *
  * <li>If the attribute is a set, and the value you are adding is also a set, then
  * the value is appended to the existing set.</li>
  * <ul>

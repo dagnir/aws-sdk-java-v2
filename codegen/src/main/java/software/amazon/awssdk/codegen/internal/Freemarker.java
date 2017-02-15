@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -35,6 +35,10 @@ public class Freemarker {
 
     private final CodeGenTemplatesConfig templateConfig;
 
+    private Freemarker(CodeGenTemplatesConfig templateConfig) {
+        this.templateConfig = templateConfig;
+    }
+
     public static Freemarker create(IntermediateModel model) {
         return new Freemarker(loadProtocolTemplatesConfig(model));
     }
@@ -58,8 +62,18 @@ public class Freemarker {
         return CodeGenTemplatesConfig.merge(protocolDefaultConfig, customConfig.getCustomCodeTemplates());
     }
 
-    private Freemarker(CodeGenTemplatesConfig templateConfig) {
-        this.templateConfig = templateConfig;
+    private static void importChildTemplates(
+            Configuration freeMarkerConfig,
+            List<ChildTemplate> childTemplates) {
+
+        if (childTemplates == null) {
+            return;
+        }
+
+        for (ChildTemplate template : childTemplates) {
+            freeMarkerConfig.addAutoImport(template.getImportAsNamespace(),
+                                           template.getLocation());
+        }
     }
 
     private Configuration newFreeMarkerConfig() {
@@ -84,19 +98,6 @@ public class Freemarker {
         importChildTemplates(fmConfig, template.getChildTemplates());
 
         return fmConfig.getTemplate(template.getMainTemplate());
-    }
-
-    private static void importChildTemplates(
-            Configuration freeMarkerConfig,
-            List<ChildTemplate> childTemplates) {
-
-        if (childTemplates == null)
-            return;
-
-        for (ChildTemplate template : childTemplates) {
-            freeMarkerConfig.addAutoImport(template.getImportAsNamespace(),
-                    template.getLocation());
-        }
     }
 
     public Template getSyncClientTemplate() throws IOException {
@@ -197,20 +198,20 @@ public class Freemarker {
 
     public Template getShapeTemplate(ShapeModel shape) throws IOException {
         switch (shape.getShapeType()) {
-        case Request:
-            return getRequestClassTemplate();
-        case Response:
-            return getResponseClassTemplate();
-        case Model:
-            return getModelClassTemplate();
-        case Enum:
-            return getModelEnumTemplate();
-        case Exception:
-            return getExceptionClassTemplate();
-        default:
-            throw new RuntimeException(
-                    "Unable to determine template for shape "
-                            + shape.getShapeName());
+            case Request:
+                return getRequestClassTemplate();
+            case Response:
+                return getResponseClassTemplate();
+            case Model:
+                return getModelClassTemplate();
+            case Enum:
+                return getModelEnumTemplate();
+            case Exception:
+                return getExceptionClassTemplate();
+            default:
+                throw new RuntimeException(
+                        "Unable to determine template for shape "
+                        + shape.getShapeName());
         }
     }
 
@@ -222,19 +223,19 @@ public class Freemarker {
         return getTemplate(templateConfig.getBaseExceptionClass());
     }
 
-    public Template getWaiterSDKFunctionTemplate() throws IOException{
+    public Template getWaiterSDKFunctionTemplate() throws IOException {
         return getTemplate(templateConfig.getSdkFunctionClass());
     }
 
-    public Template getWaiterAcceptorTemplate() throws IOException{
+    public Template getWaiterAcceptorTemplate() throws IOException {
         return getTemplate(templateConfig.getAcceptorClass());
     }
 
-    public Template getWaiterTemplate() throws IOException{
+    public Template getWaiterTemplate() throws IOException {
         return getTemplate(templateConfig.getWaiterClass());
     }
 
-    public Template getCustomAuthorizerTemplate() throws IOException{
+    public Template getCustomAuthorizerTemplate() throws IOException {
         return getTemplate(templateConfig.getCustomRequestSignerClass());
     }
 }

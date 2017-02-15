@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.notif;
 
 import static org.junit.Assert.assertEquals;
@@ -54,22 +69,22 @@ public class BucketNotificationPrefixIntegrationTest extends S3IntegrationTestBa
     public void putBucketConfiguration_WithFilterButNoFilterCriteria_ThrowsAmazonClientException() {
         NotificationConfiguration notifConfig = createNotificationConfiguration(null);
         s3.setBucketNotificationConfiguration(BUCKET_NAME,
-                new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
+                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
     }
 
     @Test(expected = AmazonClientException.class)
     public void putBucketConfiguration_WithFilterCriteriaButNullFilterRules_ThrowsAmazonClientException() {
         NotificationConfiguration notifConfig = createNotificationConfiguration(new S3KeyFilter());
         s3.setBucketNotificationConfiguration(BUCKET_NAME,
-                new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
+                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
     }
 
     @Test(expected = AmazonClientException.class)
     public void putBucketConfiguration_WithFilterCriteriaButEmptyFilterRules_ThrowsAmazonClientException() {
         NotificationConfiguration notifConfig = createNotificationConfiguration(new S3KeyFilter()
-                .withFilterRules(new ArrayList<FilterRule>()));
+                                                                                        .withFilterRules(new ArrayList<FilterRule>()));
         s3.setBucketNotificationConfiguration(BUCKET_NAME,
-                new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
+                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
     }
 
     @Test
@@ -160,7 +175,7 @@ public class BucketNotificationPrefixIntegrationTest extends S3IntegrationTestBa
     /**
      * Create multiple {@link NotificationConfiguration}'s, each with a set of {@link Filter}
      * criteria
-     * 
+     *
      * @param suffix
      *            Value to use for {@link FilterRuleName#Suffix} rules
      * @param prefix
@@ -171,7 +186,7 @@ public class BucketNotificationPrefixIntegrationTest extends S3IntegrationTestBa
         NotificationConfiguration notif1 = createNotificationConfiguration(new S3KeyFilter().withFilterRules(
                 newPrefixRule(PREFIX_VALUE), newSuffixRule(OTHER_SUFFIX_VALUE)));
         NotificationConfiguration notif2 = createNotificationConfiguration(new S3KeyFilter()
-                .withFilterRules(newSuffixRule(SUFFIX_VALUE)));
+                                                                                   .withFilterRules(newSuffixRule(SUFFIX_VALUE)));
 
         Map<String, NotificationConfiguration> configs = new HashMap<String, NotificationConfiguration>();
         configs.put(NOTIFICATION_CONFIG_NAME, notif1);

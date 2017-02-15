@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,6 +26,32 @@ import java.util.Scanner;
  * are detected.
  */
 public abstract class AbstractProfilesConfigFileScanner {
+
+    /**
+     * Returns the profile name if this line indicates the beginning of a new
+     * profile section. Otherwise, returns null.
+     */
+    private static String parseProfileName(String trimmedLine) {
+        if (trimmedLine.startsWith("[") && trimmedLine.endsWith("]")) {
+            String profileName = trimmedLine.substring(1, trimmedLine.length() - 1);
+            return profileName.trim();
+        }
+        return null;
+    }
+
+    private static Entry<String, String> parsePropertyLine(String propertyLine) {
+        String[] pair = propertyLine.split("=", 2);
+        if (pair.length != 2) {
+            throw new IllegalArgumentException(
+                    "Invalid property format: no '=' character is found in the line ["
+                    + propertyLine + "].");
+        }
+
+        String propertyKey = pair[0].trim();
+        String propertyValue = pair[1].trim();
+
+        return new AbstractMap.SimpleImmutableEntry<String, String>(propertyKey, propertyValue);
+    }
 
     /**
      * Action to be performed when an empty or comment line is detected
@@ -91,7 +117,7 @@ public abstract class AbstractProfilesConfigFileScanner {
         String currentProfileName = null;
 
         try {
-            while(scanner.hasNextLine()) {
+            while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
 
                 // Empty or comment lines
@@ -141,33 +167,6 @@ public abstract class AbstractProfilesConfigFileScanner {
         } finally {
             scanner.close();
         }
-    }
-
-
-    /**
-     * Returns the profile name if this line indicates the beginning of a new
-     * profile section. Otherwise, returns null.
-     */
-    private static String parseProfileName(String trimmedLine) {
-        if (trimmedLine.startsWith("[") && trimmedLine.endsWith("]")) {
-            String profileName = trimmedLine.substring(1, trimmedLine.length() - 1);
-            return profileName.trim();
-        }
-        return null;
-    }
-
-    private static Entry<String, String> parsePropertyLine(String propertyLine) {
-        String[] pair = propertyLine.split("=", 2);
-        if (pair.length != 2) {
-            throw new IllegalArgumentException(
-                    "Invalid property format: no '=' character is found in the line ["
-                    + propertyLine + "].");
-        }
-
-        String propertyKey   = pair[0].trim();
-        String propertyValue = pair[1].trim();
-
-        return new AbstractMap.SimpleImmutableEntry<String, String>(propertyKey, propertyValue);
     }
 
 }

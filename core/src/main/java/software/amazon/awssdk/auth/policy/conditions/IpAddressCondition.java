@@ -30,25 +30,6 @@ import software.amazon.awssdk.auth.policy.Condition;
 public class IpAddressCondition extends Condition {
 
     /**
-     * Enumeration of the supported ways an IP address comparison can be evaluated.
-     */
-    public static enum IpAddressComparisonType {
-        /**
-         * Matches an IP address against a CIDR IP range, evaluating to true if
-         * the IP address being tested is in the condition's specified CIDR IP
-         * range.
-         * <p>
-         * For more information about CIDR IP ranges, see <a
-         * href="http://en.wikipedia.org/wiki/CIDR_notation">
-         * http://en.wikipedia.org/wiki/CIDR_notation</a>
-         */
-        IpAddress,
-
-        /** Negated form of {@link #IpAddress} */
-        NotIpAddress,
-    }
-
-    /**
      * Constructs a new access policy condition that compares the source IP
      * address of the incoming request to an AWS service against the specified
      * CIDR range. The condition evaluates to true (meaning the policy statement
@@ -91,6 +72,25 @@ public class IpAddressCondition extends Condition {
         super.type = type.toString();
         super.conditionKey = ConditionFactory.SOURCE_IP_CONDITION_KEY;
         super.values = Arrays.asList(new String[] {ipAddressRange});
+    }
+
+    /**
+     * Enumeration of the supported ways an IP address comparison can be evaluated.
+     */
+    public static enum IpAddressComparisonType {
+        /**
+         * Matches an IP address against a CIDR IP range, evaluating to true if
+         * the IP address being tested is in the condition's specified CIDR IP
+         * range.
+         * <p>
+         * For more information about CIDR IP ranges, see <a
+         * href="http://en.wikipedia.org/wiki/CIDR_notation">
+         * http://en.wikipedia.org/wiki/CIDR_notation</a>
+         */
+        IpAddress,
+
+        /** Negated form of {@link #IpAddress} */
+        NotIpAddress,
     }
 
 }

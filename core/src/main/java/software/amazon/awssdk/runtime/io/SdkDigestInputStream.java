@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ import software.amazon.awssdk.runtime.MetricAware;
 @SdkProtectedApi
 public class SdkDigestInputStream extends DigestInputStream implements
                                                             MetricAware, Releasable {
-    private static final int SKIP_BUF_SIZE = 2*1024;
+    private static final int SKIP_BUF_SIZE = 2 * 1024;
+
     public SdkDigestInputStream(InputStream stream, MessageDigest digest) {
         super(stream, digest);
     }
@@ -38,13 +39,14 @@ public class SdkDigestInputStream extends DigestInputStream implements
     @Override
     public final boolean isMetricActivated() {
         if (in instanceof MetricAware) {
-            MetricAware metricAware = (MetricAware)in;
+            MetricAware metricAware = (MetricAware) in;
             return metricAware.isMetricActivated();
         }
         return false;
     }
 
     // https://github.com/aws/aws-sdk-java/issues/232
+
     /**
      * Skips over and discards <code>n</code> bytes of data from this input
      * stream, while taking the skipped bytes into account for digest
@@ -71,14 +73,16 @@ public class SdkDigestInputStream extends DigestInputStream implements
      */
     @Override
     public final long skip(final long n) throws IOException {
-        if (n <= 0)
+        if (n <= 0) {
             return n;
-        byte[] b = new byte[(int)Math.min(SKIP_BUF_SIZE, n)];
+        }
+        byte[] b = new byte[(int) Math.min(SKIP_BUF_SIZE, n)];
         long m = n; // remaining number of bytes to read
         while (m > 0) {
-            int len = read(b, 0, (int)Math.min(m, b.length));
-            if (len == -1)
+            int len = read(b, 0, (int) Math.min(m, b.length));
+            if (len == -1) {
                 return n - m;
+            }
             m -= len;
         }
         assert (m == 0);
@@ -92,7 +96,7 @@ public class SdkDigestInputStream extends DigestInputStream implements
         if (in instanceof Releasable) {
             // This allows any underlying stream that has the close operation
             // disabled to be truly released
-            Releasable r = (Releasable)in;
+            Releasable r = (Releasable) in;
             r.release();
         }
     }

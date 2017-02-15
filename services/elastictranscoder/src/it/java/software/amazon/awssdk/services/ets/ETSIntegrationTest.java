@@ -59,20 +59,6 @@ import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 public class ETSIntegrationTest extends IntegrationTestBase {
 
     private final static String PIPE_NAME = "java-sdk-pipeline" + System.currentTimeMillis();
-    private String pipelineId;
-    private String jobId;
-    private PipelineOutputConfig contentConfig;
-    private PipelineOutputConfig thumbnailConfig;
-    private String presetId;
-    private AudioParameters audio;
-    private VideoParameters video;
-    private Thumbnails thumbnail;
-    private String presetName;
-    private String presetDescription;
-    private CreateJobPlaylist createJobPlayList;
-    private JobWatermark jobWatermark;
-    private static String topicArn;
-
     private final static String INPUT_BUCKET_NAME = "java-integration-test-input-bucket" + System.currentTimeMillis();
     private final static String OUTPUT_BUCKET_NAME = "java-integration-test-output-bucket";
     private final static String INPUT_KEY = "123";
@@ -87,10 +73,21 @@ public class ETSIntegrationTest extends IntegrationTestBase {
     private final static String PLAY_LIST_NAME = "my-playlist";
     private final static String FORMAT = "HLSv3";
     private final static String WATERMARK_ID = "my-watermark";
-
-
+    private static String topicArn;
     private final String STORAGE_CLASS = "ReducedRedundancy";
     private final String ROLE = "arn:aws:iam::369666460722:role/data-pipeline-test";
+    private String pipelineId;
+    private String jobId;
+    private PipelineOutputConfig contentConfig;
+    private PipelineOutputConfig thumbnailConfig;
+    private String presetId;
+    private AudioParameters audio;
+    private VideoParameters video;
+    private Thumbnails thumbnail;
+    private String presetName;
+    private String presetDescription;
+    private CreateJobPlaylist createJobPlayList;
+    private JobWatermark jobWatermark;
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
@@ -114,9 +111,15 @@ public class ETSIntegrationTest extends IntegrationTestBase {
             }
         }
 
-        try {s3.deleteBucket(INPUT_BUCKET_NAME);} catch (Exception e) {}
+        try {
+            s3.deleteBucket(INPUT_BUCKET_NAME);
+        } catch (Exception e) {
+        }
 
-        try {s3.deleteBucket(OUTPUT_BUCKET_NAME);} catch (Exception e) {}
+        try {
+            s3.deleteBucket(OUTPUT_BUCKET_NAME);
+        } catch (Exception e) {
+        }
 
         try {
             sns.deleteTopic(new DeleteTopicRequest().withTopicArn(topicArn));
@@ -126,9 +129,8 @@ public class ETSIntegrationTest extends IntegrationTestBase {
     }
 
 
-
-   @Test
-   public void pipelineOperationIntegrationTest() throws InterruptedException {
+    @Test
+    public void pipelineOperationIntegrationTest() throws InterruptedException {
         // Create Pipeline
         Notifications notifications = new Notifications();
         notifications.setCompleted("");
@@ -136,107 +138,107 @@ public class ETSIntegrationTest extends IntegrationTestBase {
         notifications.setProgressing("");
         notifications.setWarning("");
 
-       Permission permission = new Permission()
-                                    .withGrantee("AllUsers")
-                                    .withGranteeType("Group")
-                                    .withAccess("Read");
+        Permission permission = new Permission()
+                .withGrantee("AllUsers")
+                .withGranteeType("Group")
+                .withAccess("Read");
 
-       contentConfig = new PipelineOutputConfig()
-                              .withBucket(OUTPUT_BUCKET_NAME)
-                              .withStorageClass(STORAGE_CLASS)
-                              .withPermissions(permission);
+        contentConfig = new PipelineOutputConfig()
+                .withBucket(OUTPUT_BUCKET_NAME)
+                .withStorageClass(STORAGE_CLASS)
+                .withPermissions(permission);
 
-       thumbnailConfig = new PipelineOutputConfig()
-                              .withBucket(OUTPUT_BUCKET_NAME)
-                              .withStorageClass(STORAGE_CLASS)
-                              .withPermissions(permission);
+        thumbnailConfig = new PipelineOutputConfig()
+                .withBucket(OUTPUT_BUCKET_NAME)
+                .withStorageClass(STORAGE_CLASS)
+                .withPermissions(permission);
 
-       CreatePipelineResult createPipelienResult = ets.createPipeline(
-                                               new CreatePipelineRequest()
-                                                    .withName(PIPE_NAME)
-                                                    .withInputBucket(INPUT_BUCKET_NAME)
-                                                    .withNotifications(notifications)
-                                                    .withRole(ROLE)
-                                                    .withThumbnailConfig(thumbnailConfig)
-                                                    .withContentConfig(contentConfig));
+        CreatePipelineResult createPipelienResult = ets.createPipeline(
+                new CreatePipelineRequest()
+                        .withName(PIPE_NAME)
+                        .withInputBucket(INPUT_BUCKET_NAME)
+                        .withNotifications(notifications)
+                        .withRole(ROLE)
+                        .withThumbnailConfig(thumbnailConfig)
+                        .withContentConfig(contentConfig));
 
-       Pipeline pipeline = createPipelienResult.getPipeline();
-       pipelineId = pipeline.getId();
-       isValidPipeline(pipeline);
+        Pipeline pipeline = createPipelienResult.getPipeline();
+        pipelineId = pipeline.getId();
+        isValidPipeline(pipeline);
 
-       Thread.sleep(1000 * 5);
+        Thread.sleep(1000 * 5);
 
-       // List Pipeline
-       ListPipelinesResult listPipelineResult =  ets.listPipelines();
-       assertTrue(listPipelineResult.getPipelines().size() > 0);
-       listPipelineResult.getPipelines().contains(pipeline);
+        // List Pipeline
+        ListPipelinesResult listPipelineResult = ets.listPipelines();
+        assertTrue(listPipelineResult.getPipelines().size() > 0);
+        listPipelineResult.getPipelines().contains(pipeline);
 
-       // Get Pipeline
-       ReadPipelineResult readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
-       assertEquals(readPipelineResult.getPipeline(), pipeline);
+        // Get Pipeline
+        ReadPipelineResult readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
+        assertEquals(readPipelineResult.getPipeline(), pipeline);
 
-       // Update pipleline, this should not remove the permissions in content
-       // config since permission field is null instead of an empty array.
-       PipelineOutputConfig newContentConfig = new PipelineOutputConfig()
-                         .withBucket(OUTPUT_BUCKET_NAME)
-                         .withStorageClass(STORAGE_CLASS);
+        // Update pipleline, this should not remove the permissions in content
+        // config since permission field is null instead of an empty array.
+        PipelineOutputConfig newContentConfig = new PipelineOutputConfig()
+                .withBucket(OUTPUT_BUCKET_NAME)
+                .withStorageClass(STORAGE_CLASS);
 
-       UpdatePipelineResult updatePipelineResult = ets.updatePipeline(new UpdatePipelineRequest()
-                                                        .withId(pipelineId)
-                                                        .withContentConfig(newContentConfig));
+        UpdatePipelineResult updatePipelineResult = ets.updatePipeline(new UpdatePipelineRequest()
+                                                                               .withId(pipelineId)
+                                                                               .withContentConfig(newContentConfig));
 
-       isValidPipeline(updatePipelineResult.getPipeline());
+        isValidPipeline(updatePipelineResult.getPipeline());
 
 
         // Update pipleline, this should remove the permissions in content
         // config since permission field is null instead of an empty array.
-       contentConfig.setPermissions(new ArrayList<Permission>());
+        contentConfig.setPermissions(new ArrayList<Permission>());
 
-       updatePipelineResult = ets.updatePipeline(new UpdatePipelineRequest()
-                                      .withId(pipelineId)
-                                      .withContentConfig(contentConfig));
+        updatePipelineResult = ets.updatePipeline(new UpdatePipelineRequest()
+                                                          .withId(pipelineId)
+                                                          .withContentConfig(contentConfig));
 
-       isValidPipeline(updatePipelineResult.getPipeline());
+        isValidPipeline(updatePipelineResult.getPipeline());
 
-       // Get the pipeline back
-       readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
-       isValidPipeline(readPipelineResult.getPipeline());
-
-
-       // Get a invalid pipeline to check the exception handling.
-       try {
-        readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId("fake"));
-       } catch(AmazonServiceException e) {
-           // The error type problem has not been fixed on the server side yet.
-          assertNotNull(e.getErrorType());
-          assertNotNull(e.getMessage());
-       }
-
-       // Update pipeline status
-       ets.updatePipelineStatus(new UpdatePipelineStatusRequest().withId(pipelineId).withStatus("Paused"));
-
-       // Get pipeline back
-       readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
-       isValidPipeline(readPipelineResult.getPipeline());
-       assertEquals("Paused".toLowerCase(), readPipelineResult.getPipeline().getStatus().toLowerCase());
+        // Get the pipeline back
+        readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
+        isValidPipeline(readPipelineResult.getPipeline());
 
 
-       // update pipeline notification
-       notifications.setCompleted(topicArn);
-       ets.updatePipelineNotifications(new UpdatePipelineNotificationsRequest().withId(pipelineId).withNotifications(notifications));
+        // Get a invalid pipeline to check the exception handling.
+        try {
+            readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId("fake"));
+        } catch (AmazonServiceException e) {
+            // The error type problem has not been fixed on the server side yet.
+            assertNotNull(e.getErrorType());
+            assertNotNull(e.getMessage());
+        }
 
-       // Get pipeline back
-       readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
-       isValidPipeline(readPipelineResult.getPipeline());
-       assertEquals(topicArn, readPipelineResult.getPipeline().getNotifications().getCompleted());
+        // Update pipeline status
+        ets.updatePipelineStatus(new UpdatePipelineStatusRequest().withId(pipelineId).withStatus("Paused"));
+
+        // Get pipeline back
+        readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
+        isValidPipeline(readPipelineResult.getPipeline());
+        assertEquals("Paused".toLowerCase(), readPipelineResult.getPipeline().getStatus().toLowerCase());
+
+
+        // update pipeline notification
+        notifications.setCompleted(topicArn);
+        ets.updatePipelineNotifications(new UpdatePipelineNotificationsRequest().withId(pipelineId).withNotifications(notifications));
+
+        // Get pipeline back
+        readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
+        isValidPipeline(readPipelineResult.getPipeline());
+        assertEquals(topicArn, readPipelineResult.getPipeline().getNotifications().getCompleted());
 
         JobInput input = new JobInput()
-                              .withKey(INPUT_KEY)
-                              .withAspectRatio(RATIO)
-                              .withContainer(CONTAINER)
-                              .withFrameRate(RATE)
-                              .withResolution(RESOLUTION)
-                              .withInterlaced(INTERLACED);
+                .withKey(INPUT_KEY)
+                .withAspectRatio(RATIO)
+                .withContainer(CONTAINER)
+                .withFrameRate(RATE)
+                .withResolution(RESOLUTION)
+                .withInterlaced(INTERLACED);
 
         ets.listJobsByPipeline(new ListJobsByPipelineRequest().withPipelineId(pipelineId));
 
@@ -244,12 +246,12 @@ public class ETSIntegrationTest extends IntegrationTestBase {
 
         // Create preset
         CreatePresetResult createPresetResult = ets.createPreset(new CreatePresetRequest()
-                                        .withContainer("ts")
-                                        .withAudio(audio)
-                                        .withDescription(presetDescription)
-                                        .withVideo(video)
-                                        .withName(presetName)
-                                         .withThumbnails(thumbnail));
+                                                                         .withContainer("ts")
+                                                                         .withAudio(audio)
+                                                                         .withDescription(presetDescription)
+                                                                         .withVideo(video)
+                                                                         .withName(presetName)
+                                                                         .withThumbnails(thumbnail));
 
         isValidPreset(createPresetResult.getPreset());
         presetId = createPresetResult.getPreset().getId();
@@ -260,40 +262,40 @@ public class ETSIntegrationTest extends IntegrationTestBase {
 
         // Specify a waterwark for output1
         jobWatermark = new JobWatermark()
-                            .withInputKey("watermark.jpg")
-                            .withPresetWatermarkId(WATERMARK_ID);
+                .withInputKey("watermark.jpg")
+                .withPresetWatermarkId(WATERMARK_ID);
 
         CreateJobOutput output1 = new CreateJobOutput()
-                                      .withKey(OUTPUT_KEY)
-                                      .withThumbnailPattern("")
-                                      .withPresetId(presetId)
-                                      .withRotate(ROTATION)
-                                      .withSegmentDuration("10")
-                                      .withSegmentDuration(SEGMENT_DURATION)
-                                      .withWatermarks(jobWatermark);
+                .withKey(OUTPUT_KEY)
+                .withThumbnailPattern("")
+                .withPresetId(presetId)
+                .withRotate(ROTATION)
+                .withSegmentDuration("10")
+                .withSegmentDuration(SEGMENT_DURATION)
+                .withWatermarks(jobWatermark);
 
         CreateJobOutput output2 = new CreateJobOutput()
-                                       .withKey(OUTPUT_KEY + "new")
-                                       .withThumbnailPattern("")
-                                       .withPresetId(presetId)
-                                       .withRotate(ROTATION)
-                                       .withSegmentDuration(SEGMENT_DURATION);
+                .withKey(OUTPUT_KEY + "new")
+                .withThumbnailPattern("")
+                .withPresetId(presetId)
+                .withRotate(ROTATION)
+                .withSegmentDuration(SEGMENT_DURATION);
 
         List<CreateJobOutput> outputs = new LinkedList<CreateJobOutput>();
         outputs.add(output1);
         outputs.add(output2);
 
         createJobPlayList = new CreateJobPlaylist()
-                                 .withName(PLAY_LIST_NAME)
-                                 .withFormat(FORMAT)
-                                 .withOutputKeys(OUTPUT_KEY);
+                .withName(PLAY_LIST_NAME)
+                .withFormat(FORMAT)
+                .withOutputKeys(OUTPUT_KEY);
 
         // Create job
         CreateJobResult createJobResult = ets.createJob(new CreateJobRequest()
-                                             .withPipelineId(pipelineId)
-                                             .withInput(input)
-                                             .withOutputs(outputs)
-                                             .withPlaylists(createJobPlayList));
+                                                                .withPipelineId(pipelineId)
+                                                                .withInput(input)
+                                                                .withOutputs(outputs)
+                                                                .withPlaylists(createJobPlayList));
 
         jobId = createJobResult.getJob().getId();
         assertNotNull(jobId);
@@ -316,8 +318,8 @@ public class ETSIntegrationTest extends IntegrationTestBase {
         readJobResult = ets.readJob(new ReadJobRequest().withId(jobId));
         assertEquals(readJobResult.getJob().getOutput().getStatus().toLowerCase(), "canceled");
 
-       // Remove pipeline
-       ets.deletePipeline(new DeletePipelineRequest().withId(pipelineId));
+        // Remove pipeline
+        ets.deletePipeline(new DeletePipelineRequest().withId(pipelineId));
 
         // Get the pipeline again
         try {
@@ -359,41 +361,41 @@ public class ETSIntegrationTest extends IntegrationTestBase {
         codecOptions.put("BufferSize", "100000");
 
         PresetWatermark watermark = new PresetWatermark()
-                                            .withId(WATERMARK_ID)
-                                            .withMaxHeight("20%")
-                                            .withMaxWidth("20%")
-                                            .withSizingPolicy("ShrinkToFit")
-                                            .withHorizontalAlign("Left")
-                                            .withHorizontalOffset("10%")
-                                            .withVerticalAlign("Top")
-                                            .withVerticalOffset("10%")
-                                            .withOpacity("50")
-                                            .withTarget("Content");
+                .withId(WATERMARK_ID)
+                .withMaxHeight("20%")
+                .withMaxWidth("20%")
+                .withSizingPolicy("ShrinkToFit")
+                .withHorizontalAlign("Left")
+                .withHorizontalOffset("10%")
+                .withVerticalAlign("Top")
+                .withVerticalOffset("10%")
+                .withOpacity("50")
+                .withTarget("Content");
 
         video = new VideoParameters()
-                     .withCodecOptions(codecOptions)
-                     .withCodec("H.264")
-                     .withBitRate("auto")
-                     .withFrameRate("auto")
-                     .withMaxFrameRate("60")
-                     .withMaxHeight("auto")
-                     .withMaxWidth("auto")
-                     .withKeyframesMaxDist("1")
-                     .withSizingPolicy("Fit")
-                     .withPaddingPolicy("Pad")
-                     .withDisplayAspectRatio("auto")
-                     .withFixedGOP("true")
-                     .withCodecOptions(codecOptions)
-                     .withWatermarks(watermark);
+                .withCodecOptions(codecOptions)
+                .withCodec("H.264")
+                .withBitRate("auto")
+                .withFrameRate("auto")
+                .withMaxFrameRate("60")
+                .withMaxHeight("auto")
+                .withMaxWidth("auto")
+                .withKeyframesMaxDist("1")
+                .withSizingPolicy("Fit")
+                .withPaddingPolicy("Pad")
+                .withDisplayAspectRatio("auto")
+                .withFixedGOP("true")
+                .withCodecOptions(codecOptions)
+                .withWatermarks(watermark);
 
 
         thumbnail = new Thumbnails()
-                         .withFormat("png")
-                         .withInterval("1")
-                         .withMaxHeight("auto")
-                         .withMaxWidth("auto")
-                         .withPaddingPolicy("Pad")
-                         .withSizingPolicy("Fit");
+                .withFormat("png")
+                .withInterval("1")
+                .withMaxHeight("auto")
+                .withMaxWidth("auto")
+                .withPaddingPolicy("Pad")
+                .withSizingPolicy("Fit");
     }
 
     private void isValidJob(Job job) {

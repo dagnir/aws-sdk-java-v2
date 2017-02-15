@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
                 .buildRequestHandlerList(new SlowRequestHandler().withAfterResponseWaitInSeconds(10));
         try {
             requestBuilder().executionContext(withHandlers(requestHandlers))
-                    .execute(new DummyResponseHandler().leaveConnectionOpen());
+                            .execute(new DummyResponseHandler().leaveConnectionOpen());
             fail("Expected exception");
         } catch (AmazonClientException e) {
             assertThat(e.getCause(), instanceOf(InterruptedException.class));

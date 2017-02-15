@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,15 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleMaterialProvider implements EncryptionMaterialsProvider,Serializable {
+public class SimpleMaterialProvider implements EncryptionMaterialsProvider, Serializable {
     private final Map<Map<String, String>, EncryptionMaterials> map =
-        new HashMap<Map<String, String>, EncryptionMaterials>();
+            new HashMap<Map<String, String>, EncryptionMaterials>();
     private EncryptionMaterials latest;
 
     @Override
@@ -38,7 +39,7 @@ public class SimpleMaterialProvider implements EncryptionMaterialsProvider,Seria
         map.put(m.getMaterialsDescription(), m);
         return this;
     }
-    
+
     public SimpleMaterialProvider withLatest(EncryptionMaterials m) {
         return addMaterial(this.latest = m);
     }
@@ -47,7 +48,7 @@ public class SimpleMaterialProvider implements EncryptionMaterialsProvider,Seria
         map.remove(md);
         return this;
     }
-    
+
     public int size() {
         return map.size();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,11 +40,11 @@ public class RetryComponentTest {
     private static final UrlMatchingStrategy URI = urlMatching(".*");
 
     private static final RetryPolicy CUSTOM_RETRY_POLICY = RetryPolicyBuilder.standard()
-            .retryOnStatusCodes(404, 429)
-            .retryOnExceptions(InternalServerErrorException.class)
-            .fixedBackoff(10)
-            .maxNumberOfRetries(3)
-            .build();
+                                                                             .retryOnStatusCodes(404, 429)
+                                                                             .retryOnExceptions(InternalServerErrorException.class)
+                                                                             .fixedBackoff(10)
+                                                                             .maxNumberOfRetries(3)
+                                                                             .build();
     @Rule
     public WireMockRule mockServer = new WireMockRule(wireMockConfig().dynamicPort());
 

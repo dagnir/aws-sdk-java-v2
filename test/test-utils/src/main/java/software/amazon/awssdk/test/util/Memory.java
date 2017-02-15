@@ -26,6 +26,7 @@ import java.util.Iterator;
  */
 public enum Memory {
     ;
+
     /**
      * Returns a summary information about the heap memory.
      */
@@ -49,7 +50,7 @@ public enum Memory {
         //       http://stackoverflow.com/questions/8356416/xxmaxpermsize-with-or-without-xxpermsize
         StringBuilder sb = new StringBuilder();
         Iterator<MemoryPoolMXBean> iter =
-            ManagementFactory.getMemoryPoolMXBeans().iterator();
+                ManagementFactory.getMemoryPoolMXBeans().iterator();
         while (iter.hasNext()) {
             MemoryPoolMXBean item = iter.next();
             String name = item.getName();
@@ -58,11 +59,11 @@ public enum Memory {
             MemoryUsage peak = item.getPeakUsage();
             MemoryUsage collections = item.getCollectionUsage();
             sb.append(String.format("Memory pool name: " + name
-                + ", type: " + type
-                + ", usage: " + usage
-                + ", peak: " + peak
-                + ", collections: " + collections
-                + "\n"));
+                                    + ", type: " + type
+                                    + ", usage: " + usage
+                                    + ", peak: " + peak
+                                    + ", collections: " + collections
+                                    + "\n"));
         }
         return sb.toString();
     }

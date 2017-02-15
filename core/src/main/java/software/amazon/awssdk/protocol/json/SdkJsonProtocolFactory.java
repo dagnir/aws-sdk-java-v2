@@ -1,18 +1,16 @@
 /*
- *
- * Copyright (c) 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
- *
  */
 
 package software.amazon.awssdk.protocol.json;
@@ -97,8 +95,8 @@ public class SdkJsonProtocolFactory implements SdkJsonMarshallerFactory {
             return SdkStructuredCborFactory.SDK_CBOR_FACTORY;
         } else if (isIonEnabled()) {
             return isIonBinaryEnabled()
-                    ? SdkStructuredIonFactory.SDK_ION_BINARY_FACTORY
-                    : SdkStructuredIonFactory.SDK_ION_TEXT_FACTORY;
+                   ? SdkStructuredIonFactory.SDK_ION_BINARY_FACTORY
+                   : SdkStructuredIonFactory.SDK_ION_TEXT_FACTORY;
         } else {
             return SdkStructuredPlainJsonFactory.SDK_JSON_FACTORY;
         }
@@ -112,8 +110,8 @@ public class SdkJsonProtocolFactory implements SdkJsonMarshallerFactory {
             return JsonContentTypeResolver.CBOR;
         } else if (isIonEnabled()) {
             return isIonBinaryEnabled()
-                    ? JsonContentTypeResolver.ION_BINARY
-                    : JsonContentTypeResolver.ION_TEXT;
+                   ? JsonContentTypeResolver.ION_BINARY
+                   : JsonContentTypeResolver.ION_TEXT;
         } else {
             return JsonContentTypeResolver.JSON;
         }

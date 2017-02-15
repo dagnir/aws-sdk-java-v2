@@ -1,16 +1,16 @@
 /*
- * Copyright 2012-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3.model;
@@ -49,8 +49,8 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
             boolean collectMetrics) {
 
         super(collectMetrics
-                ? new MetricFilterInputStream(S3ServiceMetric.S3DownloadThroughput, in)
-                : in);
+              ? new MetricFilterInputStream(S3ServiceMetric.S3DownloadThroughput, in)
+              : in);
 
         this.httpRequest = httpRequest;
     }
@@ -60,10 +60,11 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
      * counting wrapper; false otherwise.
      */
     private static boolean wrapWithByteCounting(InputStream in) {
-        if (!AwsSdkMetrics.isMetricsEnabled())
+        if (!AwsSdkMetrics.isMetricsEnabled()) {
             return false;   // metrics is disabled
+        }
         if (in instanceof MetricAware) {
-            MetricAware aware = (MetricAware)in;
+            MetricAware aware = (MetricAware) in;
             // wrap only if not already wrapped in one of it's inner chain of input stream
             return !aware.isMetricActivated();
         }

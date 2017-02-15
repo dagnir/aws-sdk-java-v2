@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ public class CredentialProfilesTest {
                 ProfileResourceLoader.basicProfile().asFile());
         File modifiable = File.createTempFile("UpdatableProfile", ".tst");
         ProfilesConfigFileWriter.dumpToFile(modifiable, true, fixture.getAllProfiles().values()
-                .toArray(new Profile[1]));
+                                                                     .toArray(new Profile[1]));
 
         ProfilesConfigFile test = new ProfilesConfigFile(modifiable);
         AWSCredentials orig = test.getCredentials(DEFAULT_PROFILE_NAME);

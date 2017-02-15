@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,22 +24,20 @@ import software.amazon.awssdk.services.s3.internal.Constants;
 
 public class UrlEncodingIntegrationTest extends S3IntegrationTestBase {
 
+    public static final String COMMON_PREFIX = "foo/bar=baz&";
     private static final String BUCKET_WITH_NORMAL_KEYS = "normal-key-bucket-" + System.currentTimeMillis();
     private static final String BUCKET_WITH_SPECIAL_KEYS = "special-key-bucket-" + System.currentTimeMillis();
-
     /*
      * The normal keys. Url-encoding will not change their values.
      */
     private static final String[] NORMAL_KEY_NAMES = {
-        "normal-object", "/slash/object", "star*object"
+            "normal-object", "/slash/object", "star*object"
     };
-
-    public static final String COMMON_PREFIX = "foo/bar=baz&";
     /*
      * The keys with special characters. Url-encoding will change their values.
      */
     private static final String[] SPECIAL_KEY_NAMES = {
-        "<test>-object", "plus+object", "wave~object", "%20object",
+            "<test>-object", "plus+object", "wave~object", "%20object",
             "%2Aobject", "%7Eobject", "%2Fobject", "\1object",
             COMMON_PREFIX + "foo", COMMON_PREFIX + "bar"
     };
@@ -74,12 +72,12 @@ public class UrlEncodingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testListObjects_normalKeys() {
         ObjectListing implicitUrlEncodingListing = s3.listObjects(new ListObjectsRequest()
-            .withBucketName(BUCKET_WITH_NORMAL_KEYS));
+                                                                          .withBucketName(BUCKET_WITH_NORMAL_KEYS));
         testObjectListingKeyNameIdentical(NORMAL_KEY_NAMES, implicitUrlEncodingListing, true);
 
         ObjectListing explicitUrlEncodingListing = s3.listObjects(
                 new ListObjectsRequest().withBucketName(BUCKET_WITH_NORMAL_KEYS)
-                    .withEncodingType(Constants.URL_ENCODING));
+                                        .withEncodingType(Constants.URL_ENCODING));
         testObjectListingKeyNameIdentical(NORMAL_KEY_NAMES, explicitUrlEncodingListing, true);
     }
 
@@ -87,7 +85,7 @@ public class UrlEncodingIntegrationTest extends S3IntegrationTestBase {
     public void testListObjects_specialKeys() {
         ObjectListing implicitUrlEncodingListing = s3
                 .listObjects(new ListObjectsRequest()
-                        .withBucketName(BUCKET_WITH_SPECIAL_KEYS));
+                                     .withBucketName(BUCKET_WITH_SPECIAL_KEYS));
         testObjectListingKeyNameIdentical(SPECIAL_KEY_NAMES, implicitUrlEncodingListing, true);
 
         ObjectListing explicitUrlEncodingListing = s3
@@ -101,13 +99,13 @@ public class UrlEncodingIntegrationTest extends S3IntegrationTestBase {
     public void testListVersions_normalKeys() {
         VersionListing implicitUrlEncodingListing = s3
                 .listVersions(new ListVersionsRequest()
-                        .withBucketName(BUCKET_WITH_NORMAL_KEYS));
+                                      .withBucketName(BUCKET_WITH_NORMAL_KEYS));
         testVersionListingKeyNameIdentical(NORMAL_KEY_NAMES, implicitUrlEncodingListing, true);
 
         VersionListing explicitUrlEncodingListing = s3
                 .listVersions(new ListVersionsRequest()
-                        .withBucketName(BUCKET_WITH_NORMAL_KEYS)
-                        .withEncodingType(Constants.URL_ENCODING));
+                                      .withBucketName(BUCKET_WITH_NORMAL_KEYS)
+                                      .withEncodingType(Constants.URL_ENCODING));
         testVersionListingKeyNameIdentical(NORMAL_KEY_NAMES, explicitUrlEncodingListing, true);
     }
 
@@ -115,37 +113,37 @@ public class UrlEncodingIntegrationTest extends S3IntegrationTestBase {
     public void testListVersions_specialKeys() {
         VersionListing implicitUrlEncodingListing = s3
                 .listVersions(new ListVersionsRequest()
-                        .withBucketName(BUCKET_WITH_SPECIAL_KEYS));
+                                      .withBucketName(BUCKET_WITH_SPECIAL_KEYS));
         testVersionListingKeyNameIdentical(SPECIAL_KEY_NAMES, implicitUrlEncodingListing, true);
 
         VersionListing explicitUrlEncodingListing = s3
                 .listVersions(new ListVersionsRequest()
-                        .withBucketName(BUCKET_WITH_SPECIAL_KEYS)
-                        .withEncodingType(Constants.URL_ENCODING));
+                                      .withBucketName(BUCKET_WITH_SPECIAL_KEYS)
+                                      .withEncodingType(Constants.URL_ENCODING));
         testVersionListingKeyNameIdentical(SPECIAL_KEY_NAMES, explicitUrlEncodingListing, false);
     }
 
     @Test
     public void listObjects_WithSpecialCharsInCommonPrefix_DecodesCommonPrefix() {
         ObjectListing objectListing = s3.listObjects(new ListObjectsRequest()
-                .withBucketName(BUCKET_WITH_SPECIAL_KEYS).withDelimiter("&"));
+                                                             .withBucketName(BUCKET_WITH_SPECIAL_KEYS).withDelimiter("&"));
 
         Assert.assertEquals(1, objectListing.getCommonPrefixes().size());
         Assert.assertEquals(COMMON_PREFIX, objectListing.getCommonPrefixes()
-                .get(0));
+                                                        .get(0));
     }
 
     @Test
     public void listVersions_WithSpecialCharsInCommonPrefix_DecodesCommonPrefix() {
 
         VersionListing versionListing = s3.listVersions(new
-                ListVersionsRequest()
-                .withBucketName
-                        (BUCKET_WITH_SPECIAL_KEYS).withDelimiter("&"));
+                                                                ListVersionsRequest()
+                                                                .withBucketName
+                                                                        (BUCKET_WITH_SPECIAL_KEYS).withDelimiter("&"));
 
         Assert.assertEquals(1, versionListing.getCommonPrefixes().size());
         Assert.assertEquals(COMMON_PREFIX, versionListing.getCommonPrefixes()
-                .get(0));
+                                                         .get(0));
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtil
 import software.amazon.awssdk.services.dynamodbv2.document.internal.ItemValueConformer;
 import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.json.Jackson;
+
 /**
  * An <a href=
  * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithItems.html"
@@ -66,8 +67,43 @@ import software.amazon.awssdk.util.json.Jackson;
  */
 public class Item {
     private static final String DUPLICATE_VALUES_FOUND_IN_INPUT = "Duplicate values found in input";
-    private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
     private static final ItemValueConformer valueConformer = new ItemValueConformer();
+    private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
+
+    /**
+     * Convenient factory method - instantiates an <code>Item</code> from the
+     * given map.
+     *
+     * @param attributes
+     *            simple Java types; not the DyanmoDB types
+     */
+    public static Item fromMap(Map<String, Object> attributes) {
+        if (attributes == null) {
+            return null;
+        }
+        Item item = new Item();
+        for (Map.Entry<String, Object> e : attributes.entrySet()) {
+            item.with(e.getKey(), e.getValue());
+        }
+        return item;
+    }
+
+    /**
+     * Convenient factory method - instantiates an <code>Item</code> from the
+     * given JSON string.
+     *
+     * @return an <code>Item</code> initialized from the given JSON document;
+     * or null if the input is null.
+     */
+    public static Item fromJSON(String json) {
+        if (json == null) {
+            return null;
+        }
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>)
+                valueConformer.transform(Jackson.fromJsonString(json, Map.class));
+        return fromMap(map);
+    }
 
     /**
      * Returns true if the specified attribute exists with a null value; false
@@ -75,7 +111,7 @@ public class Item {
      */
     public boolean isNull(String attrName) {
         return attributes.containsKey(attrName)
-                && attributes.get(attrName) == null;
+               && attributes.get(attrName) == null;
     }
 
     /**
@@ -130,12 +166,13 @@ public class Item {
     }
 
     private BigDecimal toBigDecimal(Object val) {
-        if (val == null)
+        if (val == null) {
             return null;
+        }
         return val instanceof BigDecimal
-             ?  (BigDecimal) val
-             : new BigDecimal(val.toString())
-             ;
+               ? (BigDecimal) val
+               : new BigDecimal(val.toString())
+                ;
     }
 
     /**
@@ -171,9 +208,10 @@ public class Item {
      */
     public short getShort(String attrName) {
         BigDecimal bd = getNumber(attrName);
-        if (bd == null)
+        if (bd == null) {
             throw new NumberFormatException
-                ("value of " + attrName + " is null");
+                    ("value of " + attrName + " is null");
+        }
         return bd.shortValue();
     }
 
@@ -192,9 +230,10 @@ public class Item {
      */
     public int getInt(String attrName) {
         BigDecimal bd = getNumber(attrName);
-        if (bd == null)
+        if (bd == null) {
             throw new NumberFormatException
-                ("value of " + attrName + " is null");
+                    ("value of " + attrName + " is null");
+        }
         return bd.intValue();
     }
 
@@ -213,9 +252,10 @@ public class Item {
      */
     public long getLong(String attrName) {
         BigDecimal bd = getNumber(attrName);
-        if (bd == null)
+        if (bd == null) {
             throw new NumberFormatException
-                ("value of " + attrName + " is null");
+                    ("value of " + attrName + " is null");
+        }
         return bd.longValue();
     }
 
@@ -234,9 +274,10 @@ public class Item {
      */
     public float getFloat(String attrName) {
         BigDecimal bd = getNumber(attrName);
-        if (bd == null)
+        if (bd == null) {
             throw new NumberFormatException
-                ("value of " + attrName + " is null");
+                    ("value of " + attrName + " is null");
+        }
         return bd.floatValue();
     }
 
@@ -255,9 +296,10 @@ public class Item {
      */
     public double getDouble(String attrName) {
         BigDecimal bd = getNumber(attrName);
-        if (bd == null)
+        if (bd == null) {
             throw new NumberFormatException
-                ("value of " + attrName + " is null");
+                    ("value of " + attrName + " is null");
+        }
         return bd.doubleValue();
     }
 
@@ -380,35 +422,39 @@ public class Item {
      * from a setter method.
      */
     private byte[] toByteArray(Object val) {
-        if (val == null)
+        if (val == null) {
             return null;
-        if (val instanceof byte[])
+        }
+        if (val instanceof byte[]) {
             return (byte[]) val;
+        }
         if (val instanceof ByteBuffer) {
             // Defensive code but execution should never get here. The internal
             // representation of binary should always be
             // byte[], not ByteBuffer. This allows Item to be converted into
             // a JSON string via Jackson without causing trouble.
-            return copyAllBytesFrom((ByteBuffer)val);
+            return copyAllBytesFrom((ByteBuffer) val);
         }
         throw new IncompatibleTypeException(val.getClass()
-                + " cannot be converted into a byte array");
+                                            + " cannot be converted into a byte array");
     }
 
     private ByteBuffer toByteBuffer(Object val) {
-        if (val == null)
+        if (val == null) {
             return null;
-        if (val instanceof byte[])
-            return ByteBuffer.wrap((byte[])val);
+        }
+        if (val instanceof byte[]) {
+            return ByteBuffer.wrap((byte[]) val);
+        }
         if (val instanceof ByteBuffer) {
             // Defensive code but execution should never get here. The internal
             // representation of binary should always be
             // byte[], not ByteBuffer. This allows Item to be converted into
             // a JSON string via Jackson without causing trouble.
-            return (ByteBuffer)val;
+            return (ByteBuffer) val;
         }
         throw new IncompatibleTypeException(val.getClass()
-                + " cannot be converted into a ByteBuffer");
+                                            + " cannot be converted into a ByteBuffer");
     }
 
     /**
@@ -448,18 +494,21 @@ public class Item {
      */
     public Set<String> getStringSet(String attrName) {
         Object val = attributes.get(attrName);
-        if (val == null)
+        if (val == null) {
             return null;
+        }
         Set<String> stringSet = new LinkedHashSet<String>();
         if (val instanceof Collection) {
             Collection<?> col = (Collection<?>) val;
-            if (col.size() == 0)
+            if (col.size() == 0) {
                 return stringSet;
-            for (Object element: col) {
+            }
+            for (Object element : col) {
                 String s = element == null ? null : valToString(element);
-                if (!stringSet.add(s))
+                if (!stringSet.add(s)) {
                     throw new IncompatibleTypeException(val.getClass()
-                        + " cannot be converted into a set of strings because of duplicate elements");
+                                                        + " cannot be converted into a set of strings because of duplicate elements");
+                }
             }
             return stringSet;
         }
@@ -481,11 +530,12 @@ public class Item {
      * Sets the value of the specified attribute in the current item to the
      * given value.
      */
-    public Item withStringSet(String attrName, String ...val) {
+    public Item withStringSet(String attrName, String... val) {
         checkInvalidAttribute(attrName, val);
         Set<String> strSet = new LinkedHashSet<String>(Arrays.asList(val));
-        if (strSet.size() != val.length)
+        if (strSet.size() != val.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
+        }
         attributes.put(attrName, strSet);
         return this;
     }
@@ -510,22 +560,25 @@ public class Item {
      */
     public Set<BigDecimal> getNumberSet(String attrName) {
         Object val = attributes.get(attrName);
-        if (val == null)
+        if (val == null) {
             return null;
+        }
         Set<BigDecimal> numSet = new LinkedHashSet<BigDecimal>();
         if (val instanceof Collection) {
             Collection<?> col = (Collection<?>) val;
-            if (col.size() == 0)
+            if (col.size() == 0) {
                 return numSet;
-            for (Object element: col) {
+            }
+            for (Object element : col) {
                 BigDecimal bd = toBigDecimal(element);
-                if (!numSet.add(bd))
+                if (!numSet.add(bd)) {
                     throw new IncompatibleTypeException(val.getClass()
-                        + " cannot be converted into a set of BigDecimal's because of duplicate elements");
+                                                        + " cannot be converted into a set of BigDecimal's because of duplicate elements");
+                }
             }
             return numSet;
         } else if (val instanceof BigDecimal) {
-            numSet.add((BigDecimal)val);
+            numSet.add((BigDecimal) val);
             return numSet;
         } else {
             numSet.add(new BigDecimal(val.toString()));
@@ -542,15 +595,17 @@ public class Item {
         attributes.put(attrName, val);
         return this;
     }
+
     /**
      * Sets the value of the specified attribute in the current item to the
      * given value.
      */
-    public Item withBigDecimalSet(String attrName, BigDecimal ... vals) {
+    public Item withBigDecimalSet(String attrName, BigDecimal... vals) {
         checkInvalidAttribute(attrName, vals);
         Set<BigDecimal> set = new LinkedHashSet<BigDecimal>(Arrays.asList(vals));
-        if (set.size() != vals.length)
+        if (set.size() != vals.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
+        }
         attributes.put(attrName, set);
         return this;
     }
@@ -559,11 +614,12 @@ public class Item {
      * Sets the value of the specified attribute in the current item to the
      * given value.
      */
-    public Item withNumberSet(String attrName, Number ... vals) {
+    public Item withNumberSet(String attrName, Number... vals) {
         checkInvalidAttribute(attrName, vals);
         Set<BigDecimal> set = InternalUtils.toBigDecimalSet(vals);
-        if (set.size() != vals.length)
+        if (set.size() != vals.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
+        }
         return withBigDecimalSet(attrName, set);
     }
 
@@ -574,8 +630,9 @@ public class Item {
     public Item withNumberSet(String attrName, Set<Number> vals) {
         checkInvalidAttribute(attrName, vals);
         Set<BigDecimal> set = InternalUtils.toBigDecimalSet(vals);
-        if (set.size() != vals.size())
+        if (set.size() != vals.size()) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
+        }
         return withBigDecimalSet(attrName, set);
     }
 
@@ -595,22 +652,25 @@ public class Item {
      */
     public Set<byte[]> getBinarySet(String attrName) {
         Object val = attributes.get(attrName);
-        if (val == null)
+        if (val == null) {
             return null;
+        }
         Set<byte[]> binarySet = new LinkedHashSet<byte[]>();
         if (val instanceof Collection) {
             Collection<?> col = (Collection<?>) val;
-            if (col.size() == 0)
+            if (col.size() == 0) {
                 return binarySet;
-            for (Object element: col) {
+            }
+            for (Object element : col) {
                 byte[] ba = toByteArray(element);
-                if (!binarySet.add(ba))
+                if (!binarySet.add(ba)) {
                     throw new IncompatibleTypeException(val.getClass()
-                        + " cannot be converted into a set of byte arrays because of duplicate elements");
+                                                        + " cannot be converted into a set of byte arrays because of duplicate elements");
+                }
             }
             return binarySet;
         } else if (val instanceof byte[]) {
-            binarySet.add((byte[])val);
+            binarySet.add((byte[]) val);
             return binarySet;
         } else if (val instanceof ByteBuffer) {
             // Defensive code but execution should never get here. The internal
@@ -622,7 +682,7 @@ public class Item {
             return binarySet;
         }
         throw new IncompatibleTypeException(val.getClass()
-                + " cannot be converted into a set of byte arrays");
+                                            + " cannot be converted into a set of byte arrays");
     }
 
     /**
@@ -641,18 +701,21 @@ public class Item {
      */
     public Set<ByteBuffer> getByteBufferSet(String attrName) {
         Object val = attributes.get(attrName);
-        if (val == null)
+        if (val == null) {
             return null;
+        }
         Set<ByteBuffer> binarySet = new LinkedHashSet<ByteBuffer>();
         if (val instanceof Collection) {
             Collection<?> col = (Collection<?>) val;
-            if (col.size() == 0)
+            if (col.size() == 0) {
                 return binarySet;
-            for (Object element: col) {
+            }
+            for (Object element : col) {
                 ByteBuffer ba = toByteBuffer(element);
-                if (!binarySet.add(ba))
+                if (!binarySet.add(ba)) {
                     throw new IncompatibleTypeException(val.getClass()
-                        + " cannot be converted into a set of ByteBuffer because of duplicate elements");
+                                                        + " cannot be converted into a set of ByteBuffer because of duplicate elements");
+                }
             }
             return binarySet;
         } else if (val instanceof ByteBuffer) {
@@ -660,14 +723,14 @@ public class Item {
             // representation of binary should always be
             // byte[], not ByteBuffer. This allows Item to be converted into
             // a JSON string via Jackson without causing trouble.
-            binarySet.add((ByteBuffer)val);
+            binarySet.add((ByteBuffer) val);
             return binarySet;
         } else if (val instanceof byte[]) {
-            binarySet.add(ByteBuffer.wrap((byte[])val));
+            binarySet.add(ByteBuffer.wrap((byte[]) val));
             return binarySet;
         }
         throw new IncompatibleTypeException(val.getClass()
-                + " cannot be converted into a set of ByteBuffer");
+                                            + " cannot be converted into a set of ByteBuffer");
     }
 
     /**
@@ -688,8 +751,9 @@ public class Item {
         checkInvalidAttribute(attrName, val);
         // convert ByteBuffer to bytes to keep Jackson happy
         Set<byte[]> set = new LinkedHashSet<byte[]>(val.size());
-        for (ByteBuffer bb: val)
+        for (ByteBuffer bb : val) {
             set.add(copyBytesFrom(bb));
+        }
         attributes.put(attrName, set);
         return this;
     }
@@ -698,11 +762,12 @@ public class Item {
      * Sets the value of the specified attribute in the current item to the
      * given value.
      */
-    public Item withBinarySet(String attrName, byte[] ... vals) {
+    public Item withBinarySet(String attrName, byte[]... vals) {
         checkInvalidAttribute(attrName, vals);
         Set<byte[]> set = new LinkedHashSet<byte[]>(Arrays.asList(vals));
-        if (set.size() != vals.length)
+        if (set.size() != vals.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
+        }
         attributes.put(attrName, set);
         return this;
     }
@@ -711,14 +776,16 @@ public class Item {
      * Sets the value of the specified attribute in the current item to the
      * given value.
      */
-    public Item withBinarySet(String attrName, ByteBuffer ... vals) {
+    public Item withBinarySet(String attrName, ByteBuffer... vals) {
         checkInvalidAttribute(attrName, vals);
         // convert ByteBuffer to bytes to keep Jackson happy
         Set<byte[]> set = new LinkedHashSet<byte[]>(vals.length);
-        for (ByteBuffer bb: vals)
+        for (ByteBuffer bb : vals) {
             set.add(copyBytesFrom(bb));
-        if (set.size() != vals.length)
+        }
+        if (set.size() != vals.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
+        }
         attributes.put(attrName, set);
         return this;
     }
@@ -739,25 +806,26 @@ public class Item {
      */
     public <T> List<T> getList(String attrName) {
         Object val = attributes.get(attrName);
-        if (val == null)
+        if (val == null) {
             return null;
+        }
         if (val instanceof List) {
             @SuppressWarnings("unchecked")
-            List<T> ret = (List<T>)val;
+            List<T> ret = (List<T>) val;
             return ret;
         }
         List<T> list = new ArrayList<T>();
         if (val instanceof Collection) {
-            Collection<?> col = (Collection<?>)val;
-            for (Object element: col) {
+            Collection<?> col = (Collection<?>) val;
+            for (Object element : col) {
                 @SuppressWarnings("unchecked")
-                T t = (T)element;
+                T t = (T) element;
                 list.add(t);
             }
             return list;
         }
         @SuppressWarnings("unchecked")
-        T t = (T)val;
+        T t = (T) val;
         list.add(t);
         return list;
     }
@@ -776,7 +844,7 @@ public class Item {
      * Sets the value of the specified attribute in the current item to the
      * given values as a list.
      */
-    public Item withList(String attrName, Object ... vals) {
+    public Item withList(String attrName, Object... vals) {
         checkInvalidAttribute(attrName, vals);
         List<Object> list_in = Arrays.asList(vals);
         attributes.put(attrName, valueConformer.transform(list_in));
@@ -801,7 +869,7 @@ public class Item {
      */
     @SuppressWarnings("unchecked")
     public <T> Map<String, T> getMap(String attrName) {
-        return (Map<String, T>)attributes.get(attrName);
+        return (Map<String, T>) attributes.get(attrName);
     }
 
     /**
@@ -832,45 +900,46 @@ public class Item {
      */
     @SuppressWarnings("unchecked")
     public <T extends Number> Map<String, T> getMapOfNumbers(String attrName,
-            Class<T> valueType) {
+                                                             Class<T> valueType) {
         if (valueType == Short.class
-        ||  valueType == Integer.class
-        ||  valueType == Long.class
-        ||  valueType == Float.class
-        ||  valueType == Double.class
-        ||  valueType == Number.class
-        ||  valueType == BigDecimal.class
-        ||  valueType == BigInteger.class) {
+            || valueType == Integer.class
+            || valueType == Long.class
+            || valueType == Float.class
+            || valueType == Double.class
+            || valueType == Number.class
+            || valueType == BigDecimal.class
+            || valueType == BigInteger.class) {
             final Map<String, BigDecimal> src =
-                (Map<String, BigDecimal>)attributes.get(attrName);
-            if (src == null)
+                    (Map<String, BigDecimal>) attributes.get(attrName);
+            if (src == null) {
                 return null;
+            }
             final Map<String, T> dst = new LinkedHashMap<String, T>(src.size());
-            for (Map.Entry<String,BigDecimal> e: src.entrySet()) {
+            for (Map.Entry<String, BigDecimal> e : src.entrySet()) {
                 final String key = e.getKey();
                 final BigDecimal val = e.getValue();
                 if (val == null) {
                     dst.put(key, null);
                 } else if (valueType == Short.class) {
-                    dst.put(key, (T)Short.valueOf(val.shortValue()));
+                    dst.put(key, (T) Short.valueOf(val.shortValue()));
                 } else if (valueType == Integer.class) {
-                    dst.put(key, (T)Integer.valueOf(val.intValue()));
+                    dst.put(key, (T) Integer.valueOf(val.intValue()));
                 } else if (valueType == Long.class) {
-                    dst.put(key, (T)Long.valueOf(val.longValue()));
+                    dst.put(key, (T) Long.valueOf(val.longValue()));
                 } else if (valueType == Float.class) {
-                    dst.put(key, (T)Float.valueOf(val.floatValue()));
+                    dst.put(key, (T) Float.valueOf(val.floatValue()));
                 } else if (valueType == Double.class) {
-                    dst.put(key, (T)Double.valueOf(val.doubleValue()));
+                    dst.put(key, (T) Double.valueOf(val.doubleValue()));
                 } else if (valueType == BigDecimal.class || valueType == Number.class) {
-                    dst.put(key, (T)val);
+                    dst.put(key, (T) val);
                 } else if (valueType == BigInteger.class) {
-                    dst.put(key, (T)val.toBigInteger());
+                    dst.put(key, (T) val.toBigInteger());
                 }
             }
             return dst;
         } else {
             throw new UnsupportedOperationException("Value type " + valueType
-                    + " is not currently supported");
+                                                    + " is not currently supported");
         }
     }
 
@@ -889,7 +958,7 @@ public class Item {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getRawMap(String attrName) {
-        return (Map<String, Object>)attributes.get(attrName);
+        return (Map<String, Object>) attributes.get(attrName);
     }
 
     /**
@@ -909,7 +978,7 @@ public class Item {
     public Item withJSON(String attrName, String json) {
         checkInvalidAttribute(attrName, json);
         attributes.put(attrName,
-            valueConformer.transform(Jackson.fromJsonString(json, Object.class)));
+                       valueConformer.transform(Jackson.fromJsonString(json, Object.class)));
         return this;
     }
 
@@ -960,18 +1029,21 @@ public class Item {
      */
     public Boolean getBOOL(String attrName) {
         final Object val = attributes.get(attrName);
-        if (val instanceof Boolean)
-            return (Boolean)val;
+        if (val instanceof Boolean) {
+            return (Boolean) val;
+        }
         if (val instanceof String) {
-            if ("1".equals(val))
+            if ("1".equals(val)) {
                 return true;
-            if ("0".equals(val))
+            }
+            if ("0".equals(val)) {
                 return false;
-            return Boolean.valueOf((String)val);
+            }
+            return Boolean.valueOf((String) val);
         }
         throw new IncompatibleTypeException("Value of attribute " + attrName
-                + " of type " + getTypeOf(attrName)
-                + " cannot be converted into a boolean value");
+                                            + " of type " + getTypeOf(attrName)
+                                            + " cannot be converted into a boolean value");
     }
 
     /**
@@ -1005,6 +1077,7 @@ public class Item {
         attributes.put(attrName, null);
         return this;
     }
+
     /**
      * Sets the value of the specified attribute to the given value. An
      * attribute value can be a
@@ -1020,66 +1093,74 @@ public class Item {
      * </ul>
      */
     public Item with(String attrName, Object val) {
-        if (val == null)
+        if (val == null) {
             return withNull(attrName);
-        if (val instanceof String)
-            return withString(attrName, (String)val);
-        if (val instanceof Number)
-            return withNumber(attrName, (Number)val);
-        if (val instanceof byte[])
-            return withBinary(attrName, (byte[])val);
-        if (val instanceof ByteBuffer)
-            return withBinary(attrName, (ByteBuffer)val);
-        if (val instanceof Boolean)
-            return withBoolean(attrName, (Boolean)val);
-        if (val instanceof List)
-            return withList(attrName, (List<?>)val);
+        }
+        if (val instanceof String) {
+            return withString(attrName, (String) val);
+        }
+        if (val instanceof Number) {
+            return withNumber(attrName, (Number) val);
+        }
+        if (val instanceof byte[]) {
+            return withBinary(attrName, (byte[]) val);
+        }
+        if (val instanceof ByteBuffer) {
+            return withBinary(attrName, (ByteBuffer) val);
+        }
+        if (val instanceof Boolean) {
+            return withBoolean(attrName, (Boolean) val);
+        }
+        if (val instanceof List) {
+            return withList(attrName, (List<?>) val);
+        }
         if (val instanceof Map) {
             @SuppressWarnings("unchecked")
-            Map<String,?> map = (Map<String,?>)val;
+            Map<String, ?> map = (Map<String, ?>) val;
             return withMap(attrName, map);
         }
         if (val instanceof Set) {
-            Set<?> set = (Set<?>)val;
+            Set<?> set = (Set<?>) val;
             // Treat an empty set as a set of String
             if (set.size() == 0) {
                 @SuppressWarnings("unchecked")
-                Set<String> ss = (Set<String>)val;
+                Set<String> ss = (Set<String>) val;
                 return withStringSet(attrName, ss);
             }
             // Try to locate the first non-null element and use that as the
             // representative type
             Object representative = null;
-            for (Object o: set) {
-                if (o != null)
+            for (Object o : set) {
+                if (o != null) {
                     representative = o;
+                }
             }
             // If all elements are null, treat the element type as String
             if (representative == null || representative instanceof String) {
                 @SuppressWarnings("unchecked")
-                Set<String> ss = (Set<String>)val;
+                Set<String> ss = (Set<String>) val;
                 return withStringSet(attrName, ss);
             }
             if (representative instanceof Number) {
                 @SuppressWarnings("unchecked")
-                Set<Number> ns = (Set<Number>)val;
+                Set<Number> ns = (Set<Number>) val;
                 return withNumberSet(attrName, ns);
             }
             if (representative instanceof byte[]) {
                 @SuppressWarnings("unchecked")
-                Set<byte[]> bs = (Set<byte[]>)val;
+                Set<byte[]> bs = (Set<byte[]>) val;
                 return withBinarySet(attrName, bs);
             }
             if (representative instanceof ByteBuffer) {
                 @SuppressWarnings("unchecked")
-                Set<ByteBuffer> bs = (Set<ByteBuffer>)val;
+                Set<ByteBuffer> bs = (Set<ByteBuffer>) val;
                 return withByteBufferSet(attrName, bs);
             }
             throw new UnsupportedOperationException("Set of "
-                    + representative.getClass() + " is not currently supported");
+                                                    + representative.getClass() + " is not currently supported");
         }
         throw new UnsupportedOperationException("Input type "
-                + val.getClass() + " is not currently supported");
+                                                + val.getClass() + " is not currently supported");
     }
 
     /**
@@ -1088,10 +1169,12 @@ public class Item {
      */
     public Item withPrimaryKey(PrimaryKey primaryKey) {
         rejectNullValue(primaryKey);
-        if (primaryKey.getComponents().size() == 0)
+        if (primaryKey.getComponents().size() == 0) {
             throw new IllegalArgumentException("primary key must not be empty");
-        for (KeyAttribute ka: primaryKey.getComponents())
+        }
+        for (KeyAttribute ka : primaryKey.getComponents()) {
             this.with(ka.getName(), ka.getValue());
+        }
         return this;
     }
 
@@ -1108,18 +1191,18 @@ public class Item {
      * hash and range primary key.
      */
     public Item withPrimaryKey(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
+                               String rangeKeyName, Object rangeKeyValue) {
         return withKeyComponent(hashKeyName, hashKeyValue)
-              .withKeyComponent(rangeKeyName, rangeKeyValue);
+                .withKeyComponent(rangeKeyName, rangeKeyValue);
     }
 
     /**
      * Convenient methods - sets the attributes of this item from the specified
      * key components.
      */
-    public Item withKeyComponents(KeyAttribute ...components) {
+    public Item withKeyComponents(KeyAttribute... components) {
         rejectNullOrEmptyInput(components);
-        for (KeyAttribute ka: components) {
+        for (KeyAttribute ka : components) {
             rejectNullValue(ka);
             this.with(ka.getName(), ka.getValue());
         }
@@ -1201,7 +1284,7 @@ public class Item {
      * Returns all attributes of the current item as a map.
      */
     public Map<String, Object> asMap() {
-        return new LinkedHashMap<String,Object>(attributes);
+        return new LinkedHashMap<String, Object>(attributes);
     }
 
     /**
@@ -1209,38 +1292,6 @@ public class Item {
      */
     public int numberOfAttributes() {
         return attributes.size();
-    }
-
-    /**
-     * Convenient factory method - instantiates an <code>Item</code> from the
-     * given map.
-     *
-     * @param attributes
-     *            simple Java types; not the DyanmoDB types
-     */
-    public static Item fromMap(Map<String, Object> attributes) {
-        if (attributes == null)
-            return null;
-        Item item = new Item();
-        for (Map.Entry<String, Object> e : attributes.entrySet())
-            item.with(e.getKey(), e.getValue());
-        return item;
-    }
-
-    /**
-     * Convenient factory method - instantiates an <code>Item</code> from the
-     * given JSON string.
-     *
-     * @return an <code>Item</code> initialized from the given JSON document;
-     * or null if the input is null.
-     */
-    public static Item fromJSON(String json) {
-        if (json == null)
-            return null;
-        @SuppressWarnings("unchecked")
-        Map<String, Object> map = (Map<String, Object>)
-            valueConformer.transform(Jackson.fromJsonString(json, Map.class));
-        return fromMap(map);
     }
 
     /**
@@ -1261,22 +1312,23 @@ public class Item {
      *
      * @see #fromJSON(String)
      */
-    public Item base64Decode(String ... binaryAttrNames) {
+    public Item base64Decode(String... binaryAttrNames) {
         rejectNullInput(binaryAttrNames);
         // Verify all attributes are good
-        for (String attrName: binaryAttrNames) {
+        for (String attrName : binaryAttrNames) {
             checkInvalidAttrName(attrName);
             if (String.class == getTypeOf(attrName)) {
                 String b64 = getString(attrName);
                 Base64.decode(b64);
             } else {
                 Set<String> b64s = getStringSet(attrName);
-                for (String b64: b64s)
+                for (String b64 : b64s) {
                     Base64.decode(b64);
+                }
             }
         }
         // Decodes b64 into binary
-        for (String attrName: binaryAttrNames) {
+        for (String attrName : binaryAttrNames) {
             if (String.class == getTypeOf(attrName)) {
                 String b64 = getString(attrName);
                 byte[] bytes = Base64.decode(b64);
@@ -1284,8 +1336,9 @@ public class Item {
             } else {
                 Set<String> b64s = getStringSet(attrName);
                 Set<byte[]> binarySet = new LinkedHashSet<byte[]>(b64s.size());
-                for (String b64: b64s)
+                for (String b64 : b64s) {
                     binarySet.add(Base64.decode(b64));
+                }
                 withBinarySet(attrName, binarySet);
             }
         }
@@ -1302,27 +1355,30 @@ public class Item {
      *
      * @see #fromJSON(String)
      */
-    public Item convertListsToSets(String ... listAttrNames) {
+    public Item convertListsToSets(String... listAttrNames) {
         rejectNullInput(listAttrNames);
         // Verify all attributes are good
-        for (String attrName: listAttrNames) {
+        for (String attrName : listAttrNames) {
             checkInvalidAttrName(attrName);
             if (List.class.isAssignableFrom(getTypeOf(attrName))) {
                 List<?> list = getList(attrName);
                 if (list != null) {
-                    for (Object e: list) {
+                    for (Object e : list) {
                         if (e instanceof String) {
                             Set<String> ss = getStringSet(attrName);
-                            if (list.size() != ss.size())
+                            if (list.size() != ss.size()) {
                                 throw new IllegalArgumentException("List cannot be converted to Set due to duplicate elements");
+                            }
                         } else if (e instanceof Number) {
                             Set<BigDecimal> ss = getNumberSet(attrName);
-                            if (list.size() != ss.size())
+                            if (list.size() != ss.size()) {
                                 throw new IllegalArgumentException("List cannot be converted to Set due to duplicate elements");
+                            }
                         } else if (e instanceof byte[]) {
                             Set<byte[]> ss = getBinarySet(attrName);
-                            if (list.size() != ss.size())
+                            if (list.size() != ss.size()) {
                                 throw new IllegalArgumentException("List cannot be converted to Set due to duplicate elements");
+                            }
                         }
                     }
                 }
@@ -1331,12 +1387,12 @@ public class Item {
             }
         }
         // Do the conversion
-        for (String attrName: listAttrNames) {
+        for (String attrName : listAttrNames) {
             checkInvalidAttrName(attrName);
             List<?> list = getList(attrName);
             if (list != null) {
                 boolean converted = false;
-                for (Object e: list) {
+                for (Object e : list) {
                     if (e instanceof String) {
                         Set<String> set = getStringSet(attrName);
                         withStringSet(attrName, set);
@@ -1385,7 +1441,7 @@ public class Item {
     @Override
     public boolean equals(Object in) {
         if (in instanceof Item) {
-            Item that = (Item)in;
+            Item that = (Item) in;
             return this.attributes.equals(that.attributes);
         } else {
             return false;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,15 +22,13 @@ import software.amazon.awssdk.annotation.ThreadSafe;
  */
 @ThreadSafe
 public class ProgressSupport extends Progress {
+    private static final Object lock = new Object();
     /* Request transfer progress */
     private volatile long requestContentLength = -1;
     private volatile long requestBytesTransferred;
-
     /* Response transfer progress */
     private volatile long responseContentLength = -1;
     private volatile long responseBytesTransferred;
-
-    private static final Object lock = new Object();
 
     /**
      * Returns the number of bytes to be expected in the request, or -1 if the
@@ -48,13 +46,15 @@ public class ProgressSupport extends Progress {
      */
     @Override
     public void addRequestContentLength(long contentLength) {
-        if (contentLength < 0)
+        if (contentLength < 0) {
             throw new IllegalArgumentException();
-        synchronized(lock) {
-            if (this.requestContentLength == -1)
+        }
+        synchronized (lock) {
+            if (this.requestContentLength == -1) {
                 this.requestContentLength = contentLength;
-            else
+            } else {
                 this.requestContentLength += contentLength;
+            }
         }
     }
 
@@ -81,13 +81,15 @@ public class ProgressSupport extends Progress {
      */
     @Override
     public void addResponseContentLength(long contentLength) {
-        if (contentLength < 0)
+        if (contentLength < 0) {
             throw new IllegalArgumentException();
-        synchronized(lock) {
-            if (this.responseContentLength == -1)
+        }
+        synchronized (lock) {
+            if (this.responseContentLength == -1) {
                 this.responseContentLength = contentLength;
-            else
+            } else {
                 this.responseContentLength += contentLength;
+            }
         }
     }
 
@@ -108,7 +110,7 @@ public class ProgressSupport extends Progress {
 
     @Override
     public void addResponseBytesTransferred(long bytes) {
-        synchronized(lock) {
+        synchronized (lock) {
             responseBytesTransferred += bytes;
         }
     }
@@ -116,10 +118,12 @@ public class ProgressSupport extends Progress {
     @Override
     public String toString() {
         return String.format("Request: %d/%d, Response: %d/%d",
-                requestBytesTransferred, requestContentLength,
-                responseBytesTransferred, responseContentLength);
+                             requestBytesTransferred, requestContentLength,
+                             responseBytesTransferred, responseContentLength);
     }
 
     @Override
-    public final boolean isEnabled() { return true; }
+    public final boolean isEnabled() {
+        return true;
+    }
 }

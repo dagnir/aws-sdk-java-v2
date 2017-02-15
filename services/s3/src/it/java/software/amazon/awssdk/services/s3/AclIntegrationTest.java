@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -64,7 +79,7 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
 
 
         AccessControlList[] accessControls = new AccessControlList[] {bucketAcl, objectAcl};
-        for (int index = 0; index < accessControls.length; index++ ) {
+        for (int index = 0; index < accessControls.length; index++) {
             AccessControlList acl = accessControls[index];
 
             // S3 converts email grantees to canonical grantees, so we have to do a little more work to validate them
@@ -79,7 +94,7 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
     public void testCreateBucketWithAcl() {
         AccessControlList acl = new AccessControlList();
 
-        for ( Permission permission : Permission.values() ) {
+        for (Permission permission : Permission.values()) {
             acl.grantPermission(new CanonicalGrantee(AWS_DR_ECLIPSE_ACCT_ID), permission);
             acl.grantPermission(GroupGrantee.AuthenticatedUsers, permission);
             acl.grantPermission(new EmailAddressGrantee(AWS_DR_TOOLS_EMAIL_ADDRESS), permission);
@@ -94,7 +109,7 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
 
         Set<Grant> expectedGrants = translateEmailAclsIntoCanonical(acl);
 
-        for ( Grant expected : expectedGrants ) {
+        for (Grant expected : expectedGrants) {
             assertTrue("Didn't find expectd grant " + expected, aclRead.getGrantsAsList().contains(expected));
         }
     }
@@ -112,12 +127,12 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
         // Public Read Canned ACL
         s3.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
         s3.setObjectAcl(bucketName, key, CannedAccessControlList.PublicRead);
-        for (int i=0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             try {
                 AccessControlList bucketAcl = s3.getBucketAcl(bucketName);
                 AccessControlList objectAcl = s3.getObjectAcl(bucketName, key);
                 AccessControlList[] accessControls = new AccessControlList[] {
-                        bucketAcl, objectAcl };
+                        bucketAcl, objectAcl};
                 for (int index = 0; index < accessControls.length; index++) {
                     AccessControlList acl = accessControls[index];
                     assertEquals(bucketOwner, acl.getOwner());
@@ -146,12 +161,12 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
                 objectAcl = s3.getObjectAcl(bucketName, key);
 
                 accessControls = new AccessControlList[] {bucketAcl, objectAcl};
-                for (int index = 0; index < accessControls.length; index++ ) {
+                for (int index = 0; index < accessControls.length; index++) {
                     AccessControlList acl = accessControls[index];
                     assertEquals(bucketOwner, acl.getOwner());
                     assertEquals(1, acl.getGrantsAsList().size());
                 }
-            } catch(AssertionFailedError e) {
+            } catch (AssertionFailedError e) {
                 assertionFailure = e;
                 // eventual consistency?
                 // Let's suspend for a sec, then retry
@@ -183,9 +198,9 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
      *         specified display name and permission, otherwise false.
      */
     private boolean doesAclContainsCanonicalGrant(AccessControlList acl,
-            String expectedDisplayName, Permission expectedPermission) {
+                                                  String expectedDisplayName, Permission expectedPermission) {
 
-        for (Grant grant: acl.getGrantsAsList()) {
+        for (Grant grant : acl.getGrantsAsList()) {
             Grantee grantee = grant.getGrantee();
             Permission permission = grant.getPermission();
 
@@ -193,7 +208,7 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
                 CanonicalGrantee canonicalGrantee = (CanonicalGrantee) grantee;
                 if (canonicalGrantee.getDisplayName().equals(
                         expectedDisplayName)
-                        && permission.equals(expectedPermission)) {
+                    && permission.equals(expectedPermission)) {
                     return true;
                 }
             }

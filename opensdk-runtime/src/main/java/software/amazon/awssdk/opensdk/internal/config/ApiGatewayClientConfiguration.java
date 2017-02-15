@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -77,7 +77,8 @@ public class ApiGatewayClientConfiguration {
      * the customizations for the http connections.
      *
      * @return An {@link Optional} object of type {@link ConnectionConfiguration}.
-     *//**
+     */
+    /**
      * Sets the various timeouts used by the client.
      *
      * @param timeoutConfiguration The {@link TimeoutConfiguration} object with the custom timeouts.

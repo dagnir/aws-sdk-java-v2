@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -51,7 +51,7 @@ public class InternalUtilsTest {
     @Test
     public void nullInput() {
         assertTrue(toItemList(null).size() == 0);
-        assertNull(toAttributeValues((Item)null));
+        assertNull(toAttributeValues((Item) null));
         assertNull(toSimpleList(null));
         assertNull(toSimpleValue(null));
         assertNull(valToString(null));
@@ -67,7 +67,7 @@ public class InternalUtilsTest {
 
     @Test
     public void toAttributeValue_byteArray() {
-        byte[] bytesFrom = {1,2,3,4};
+        byte[] bytesFrom = {1, 2, 3, 4};
         AttributeValue av = InternalUtils.toAttributeValue(bytesFrom);
         ByteBuffer bbTo = av.getB();
         assertTrue(Arrays.equals(bytesFrom, bbTo.array()));
@@ -93,7 +93,7 @@ public class InternalUtilsTest {
         {
             String numFrom = "0.99999999999999999999999999999999999999";
             AttributeValue av = InternalUtils.toAttributeValue(
-                new BigDecimal(numFrom));
+                    new BigDecimal(numFrom));
             String numTo = av.getN();
             assertEquals(numFrom, numTo);
         }
@@ -102,7 +102,7 @@ public class InternalUtilsTest {
     @Test
     public void toAttributeValue_emptySet() {
         AttributeValue av = InternalUtils.toAttributeValue(new HashSet<Object>());
-        List<String> ss= av.getSS();
+        List<String> ss = av.getSS();
         assertTrue(ss.size() == 0);
         assertNull(av.getNS());
     }
@@ -114,8 +114,7 @@ public class InternalUtilsTest {
                 .with(123.45)
                 .with(Integer.valueOf(678))
                 .with(new BigInteger("1234567890123456789012345678901234567890"))
-                .with(new BigDecimal("0.99999999999999999999999999999999999999"))
-                ;
+                .with(new BigDecimal("0.99999999999999999999999999999999999999"));
         AttributeValue av = InternalUtils.toAttributeValue(nsFrom);
         assertNull(av.getSS());
         List<String> ns = av.getNS();
@@ -129,23 +128,23 @@ public class InternalUtilsTest {
 
     @Test
     public void toAttributeValue_ByteArraySet() {
-        byte[] ba1From = new byte[]{1,2,3};
-        byte[] ba2From = new byte[]{4,5,6};
+        byte[] ba1From = new byte[] {1, 2, 3};
+        byte[] ba2From = new byte[] {4, 5, 6};
         Set<byte[]> nsFrom = new FluentHashSet<byte[]>()
                 .with(ba1From)
-                .with(ba2From)
-                ;
+                .with(ba2From);
         AttributeValue av = InternalUtils.toAttributeValue(nsFrom);
         assertNull(av.getSS());
         List<ByteBuffer> bs = av.getBS();
         assertTrue(bs.size() == 2);
         boolean bool1 = false;
         boolean bool2 = false;
-        for (ByteBuffer b: bs) {
-            if (Arrays.equals(ba1From, b.array()))
+        for (ByteBuffer b : bs) {
+            if (Arrays.equals(ba1From, b.array())) {
                 bool1 = true;
-            else if (Arrays.equals(ba2From, b.array()))
+            } else if (Arrays.equals(ba2From, b.array())) {
                 bool2 = true;
+            }
         }
         assertTrue(bool1);
         assertTrue(bool2);
@@ -153,23 +152,23 @@ public class InternalUtilsTest {
 
     @Test
     public void toAttributeValue_ByteBufferSet() {
-        byte[] ba1From = new byte[]{1,2,3};
-        byte[] ba2From = new byte[]{4,5,6};
+        byte[] ba1From = new byte[] {1, 2, 3};
+        byte[] ba2From = new byte[] {4, 5, 6};
         Set<ByteBuffer> nsFrom = new FluentHashSet<ByteBuffer>()
                 .with(ByteBuffer.wrap(ba1From))
-                .with(ByteBuffer.wrap(ba2From))
-                ;
+                .with(ByteBuffer.wrap(ba2From));
         AttributeValue av = InternalUtils.toAttributeValue(nsFrom);
         assertNull(av.getSS());
         List<ByteBuffer> bs = av.getBS();
         assertTrue(bs.size() == 2);
         boolean bool1 = false;
         boolean bool2 = false;
-        for (ByteBuffer b: bs) {
-            if (Arrays.equals(ba1From, b.array()))
+        for (ByteBuffer b : bs) {
+            if (Arrays.equals(ba1From, b.array())) {
                 bool1 = true;
-            else if (Arrays.equals(ba2From, b.array()))
+            } else if (Arrays.equals(ba2From, b.array())) {
                 bool2 = true;
+            }
         }
         assertTrue(bool1);
         assertTrue(bool2);
@@ -181,14 +180,14 @@ public class InternalUtilsTest {
         assertEquals(Boolean.TRUE, av.getNULL());
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void toAttributeValue_UnsupportedOperationException() {
         InternalUtils.toAttributeValue(new Object());
     }
 
     @Test
     public void toAttributeValue_emptyMap() {
-        AttributeValue av = InternalUtils.toAttributeValue(new HashMap<String,String>());
+        AttributeValue av = InternalUtils.toAttributeValue(new HashMap<String, String>());
         Map<String, AttributeValue> m = av.getM();
         assertTrue(m.size() == 0);
     }
@@ -203,7 +202,7 @@ public class InternalUtilsTest {
     @Test
     public void toAttributeValue_MapOfMap() {
         AttributeValue av = InternalUtils.toAttributeValue(new ValueMap()
-            .with("emptyMap", new ValueMap()));
+                                                                   .with("emptyMap", new ValueMap()));
         Map<String, AttributeValue> m = av.getM();
         assertTrue(m.size() == 1);
         AttributeValue emptyMap = m.get("emptyMap");
@@ -240,12 +239,12 @@ public class InternalUtilsTest {
         assertNull(InternalUtils.toSimpleValue(new AttributeValue().withNULL(Boolean.TRUE)));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void toSimpleValue_empty() {
         InternalUtils.toSimpleValue(new AttributeValue());
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void toSimpleValue_FalseNull() {
         InternalUtils.toSimpleValue(new AttributeValue().withNULL(Boolean.FALSE));
     }
@@ -268,7 +267,7 @@ public class InternalUtilsTest {
 
     @Test
     public void toSimpleValue_M() {
-        Map<String,AttributeValue> mapFrom = new HashMap<String,AttributeValue>();
+        Map<String, AttributeValue> mapFrom = new HashMap<String, AttributeValue>();
         mapFrom.put("fooBOOL", new AttributeValue().withBOOL(Boolean.TRUE));
         mapFrom.put("fooString", new AttributeValue().withS("bar"));
         Map<String, Object> mapTo = InternalUtils.toSimpleValue(
@@ -280,7 +279,7 @@ public class InternalUtilsTest {
 
     @Test
     public void toSimpleValue_emptyM() {
-        Map<String,AttributeValue> mapFrom = new HashMap<String,AttributeValue>();
+        Map<String, AttributeValue> mapFrom = new HashMap<String, AttributeValue>();
         Map<String, Object> mapTo = InternalUtils.toSimpleValue(
                 new AttributeValue().withM(mapFrom));
         assertTrue(mapTo.size() == 0);
@@ -288,7 +287,7 @@ public class InternalUtilsTest {
 
     @Test
     public void toSimpleValue_ByteArray() {
-        byte[] bytesFrom = new byte[]{1,2,3};
+        byte[] bytesFrom = new byte[] {1, 2, 3};
         byte[] bytesTo = InternalUtils.toSimpleValue(
                 new AttributeValue().withB(
                         ByteBuffer.allocate(3).put(bytesFrom)));
@@ -297,14 +296,14 @@ public class InternalUtilsTest {
 
     @Test
     public void toSimpleValue_DirectByteBuffer() {
-        byte[] bytesFrom = new byte[]{1,2,3};
+        byte[] bytesFrom = new byte[] {1, 2, 3};
         byte[] bytesTo = InternalUtils.toSimpleValue(
                 new AttributeValue().withB(
                         ByteBuffer.allocateDirect(3).put(bytesFrom)));
         assertTrue(Arrays.equals(bytesTo, bytesFrom));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void toExpectedAttributeValueMap_missingComparisonOperator() {
         InternalUtils.toExpectedAttributeValueMap(Arrays.asList(new Expected("attrName")));
     }
@@ -312,29 +311,29 @@ public class InternalUtilsTest {
     @Test
     public void toExpectedAttributeValueMap() {
         Map<String, ExpectedAttributeValue> to =
-            InternalUtils.toExpectedAttributeValueMap(Arrays.asList(
-                new Expected("attr1").exists(),
-                new Expected("attr2").exists()
-            ));
+                InternalUtils.toExpectedAttributeValueMap(Arrays.asList(
+                        new Expected("attr1").exists(),
+                        new Expected("attr2").exists()
+                                                                       ));
         assertTrue(to.size() == 2);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void toExpectedAttributeValueMap_duplicateAttributeNames() {
         InternalUtils.toExpectedAttributeValueMap(Arrays.asList(
                 new Expected("attr1").exists(),
                 new Expected("attr1").ge(1)
-            ));
+                                                               ));
     }
 
     @Test
     public void toAttributeValueMap_nullKeyAttributeCollection() {
-        assertNull(InternalUtils.toAttributeValueMap((Collection<KeyAttribute>)null));
+        assertNull(InternalUtils.toAttributeValueMap((Collection<KeyAttribute>) null));
     }
 
     @Test
     public void toAttributeValueMap_nullPrimaryKey() {
-        assertNull(InternalUtils.toAttributeValueMap((PrimaryKey)null));
+        assertNull(InternalUtils.toAttributeValueMap((PrimaryKey) null));
     }
 
     @Test

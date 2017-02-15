@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.lambda.invoke;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -72,6 +73,9 @@ public final class LambdaInvokerFactory {
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
+    private LambdaInvokerFactory() {
+    }
+
     /**
      * Creates a new Lambda invoker implementing the given interface and wrapping the given {@code AWSLambda} client.
      *
@@ -95,7 +99,7 @@ public final class LambdaInvokerFactory {
     @Deprecated
     public static <T> T build(Class<T> interfaceClass, AWSLambda awsLambda, LambdaInvokerFactoryConfig config) {
         final Object proxy = Proxy.newProxyInstance(interfaceClass.getClassLoader(),
-                                                    new Class<?>[]{interfaceClass},
+                                                    new Class<?>[] {interfaceClass},
                                                     new LambdaInvocationHandler(interfaceClass, awsLambda, config));
 
         return interfaceClass.cast(proxy);
@@ -130,7 +134,7 @@ public final class LambdaInvokerFactory {
 
         private LambdaFunctionNameResolver resolveFunctionNameResolver() {
             return functionNameResolver == null ? new DefaultLambdaFunctionNameResolver() :
-                    functionNameResolver;
+                   functionNameResolver;
         }
 
         /**
@@ -185,9 +189,6 @@ public final class LambdaInvokerFactory {
         private LambdaInvokerFactoryConfig getConfiguration() {
             return new LambdaInvokerFactoryConfig(resolveFunctionNameResolver(), functionAlias, functionVersion);
         }
-    }
-
-    private LambdaInvokerFactory() {
     }
 
     private static class LambdaInvocationHandler implements InvocationHandler {
@@ -276,7 +277,7 @@ public final class LambdaInvokerFactory {
 
         private String getQualifier() {
             return config.getFunctionAlias() == null ? config.getFunctionVersion() :
-                    config.getFunctionAlias();
+                   config.getFunctionAlias();
         }
 
 

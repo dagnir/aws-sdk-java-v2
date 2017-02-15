@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServic
     private final AWSRequestMetrics awsRequestMetrics;
 
     public AwsErrorResponseHandler(HttpResponseHandler<AmazonServiceException> errorResponseHandler,
-                            AWSRequestMetrics awsRequestMetrics) {
+                                   AWSRequestMetrics awsRequestMetrics) {
         this.delegate = errorResponseHandler;
         this.awsRequestMetrics = awsRequestMetrics;
     }
@@ -42,8 +42,8 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServic
         ase.setStatusCode(response.getStatusCode());
         ase.setServiceName(response.getRequest().getServiceName());
         awsRequestMetrics.addPropertyWith(AWSRequestMetrics.Field.AWSRequestID, ase.getRequestId())
-                .addPropertyWith(AWSRequestMetrics.Field.AWSErrorCode, ase.getErrorCode())
-                .addPropertyWith(AWSRequestMetrics.Field.StatusCode, ase.getStatusCode());
+                         .addPropertyWith(AWSRequestMetrics.Field.AWSErrorCode, ase.getErrorCode())
+                         .addPropertyWith(AWSRequestMetrics.Field.StatusCode, ase.getStatusCode());
         return ase;
     }
 
@@ -51,7 +51,7 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServic
         final int statusCode = response.getStatusCode();
         try {
             return delegate.handle(response);
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
             // If the errorResponseHandler doesn't work, then check for error responses that don't have any content

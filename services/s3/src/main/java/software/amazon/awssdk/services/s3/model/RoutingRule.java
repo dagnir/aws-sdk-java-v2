@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
 
 /**
@@ -37,18 +39,18 @@ public class RoutingRule implements Serializable {
     RedirectRule redirect;
 
     /**
-     * Set the condition that must be met for the specified redirect to apply.
-     */
-    public void setCondition(RoutingRuleCondition condition) {
-        this.condition = condition;
-    }
-
-    /**
      * Return the condition that must be met for the specified redirect to
      * apply.
      */
     public RoutingRuleCondition getCondition() {
         return condition;
+    }
+
+    /**
+     * Set the condition that must be met for the specified redirect to apply.
+     */
+    public void setCondition(RoutingRuleCondition condition) {
+        this.condition = condition;
     }
 
     /**
@@ -61,17 +63,17 @@ public class RoutingRule implements Serializable {
     }
 
     /**
-     * Set the redirect information.
-     */
-    public void setRedirect(RedirectRule redirect) {
-        this.redirect = redirect;
-    }
-
-    /**
      * Return the redirect information.
      */
     public RedirectRule getRedirect() {
         return redirect;
+    }
+
+    /**
+     * Set the redirect information.
+     */
+    public void setRedirect(RedirectRule redirect) {
+        this.redirect = redirect;
     }
 
     /**

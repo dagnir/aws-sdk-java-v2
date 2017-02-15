@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@
  * {@link software.amazon.awssdk.services.dynamodbv2.document.xspec.ExpressionSpecBuilder}
  * is the API entry point to this library.
  * <h3>Sample Usage 1: Conditional Updates with Expressions</h3>
- * 
+ *
  * <pre class="brush: java">
  * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
  * ...
  * Table table = dynamo.getTable(TABLE_NAME);
- * 
+ *
  * UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
  *      // SET num1 = num1 + 20
  *      .addUpdate(
@@ -38,29 +38,29 @@
  *      .withCondition(
  *          N("num2").between(0, 100)
  *      ).buildForUpdate();
- * 
+ *
  * table.updateItem(HASH_KEY_NAME, "hashKeyValue", RANGE_KEY_NAME, 0, xspec);
  * </pre>
- * 
+ *
  * <h3>Sample Usage 2: Conditional Updates with complex Condition Expression</h3>
  * <p>
  * Let's say you want to include a complex condition expression such as:
- * 
+ *
  * <pre>
  *   (attribute_not_exists(item_version) AND attribute_not_exists(config_id) AND attribute_not_exists(config_version)) OR
  *   (item_version < 123) OR
  *   (item_version = 123 AND config_id < 456) OR
  *   (item_version = 123 AND config_id = 456 AND config_version < 999)
  * </pre>
- * 
+ *
  * Here is how:
  * <p>
- * 
+ *
  * <pre class="brush: java">
  * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
  * ...
  * Table table = dynamo.getTable(TABLE_NAME);
- * 
+ *
  * UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
  *      // SET num1 = num1 + 20
  *      .addUpdate(
@@ -82,15 +82,15 @@
  *              .and( N("config_id").eq(456) )
  *              .and( N("config_version").lt(999) ))
  *      ).buildForUpdate();
- * 
+ *
  * table.updateItem(HASH_KEY_NAME, "hashKeyValue", RANGE_KEY_NAME, 0, xspec);
  * </pre>
- * 
+ *
  * <h3>Sample Usage 3: Scan with Filter Expression</h3>
  * <p>
  * Without ExpressionSpecBuilder, the code (using the DynamoDB Document API) could
  * be something like:
- * 
+ *
  * <pre class="brush: java">
  * ItemCollection&lt;?&gt; col = table.scan(
  *         &quot;(#hk = :hashkeyAttrValue) AND (#rk BETWEEN :lo AND :hi)&quot;,
@@ -108,17 +108,17 @@
  *         S(HASH_KEY_NAME).eq("allDataTypes")
  *             .and(N(RANGE_KEY_NAME).between(1, 10))
  * ).buildForScan();
- * 
+ *
  * ItemCollection<?> col = table.scan(xspec);
  * </pre>
- * 
+ *
  * <h3>Sample Usage 4: Updates with SET, ADD, DELETE and REMOVE</h3>
- * 
+ *
  * <pre class="brush: java">
  * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
  * ...
  * Table table = dynamo.getTable(TABLE_NAME);
- * 
+ *
  * UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
  *     .addUpdate(S("mapAttr.colors[0]").set("red"))
  *     .addUpdate(S("mapAttr.colors[1]").set("blue"))
@@ -131,11 +131,11 @@
  *
  * assertEquals("SET #0.#1[0] = :0, #0.#1[1] = :1, #0.#2 = list_append(#0.#2, :2) ADD #0.#3 :3 DELETE #0.#4 :4 REMOVE #0.#5",
  *     xspec.getUpdateExpression());
- *     
+ *
  * final String hashkey = "addRemoveDeleteColors";
  * table.updateItem(HASH_KEY_NAME, hashkey, RANGE_KEY_NAME, 0, xspec);
  * </pre>
- * 
+ *
  * <h4>Notes on Design, Scope and Purposes</h4>
  * <ol>
  * <li>
@@ -153,7 +153,7 @@
  * Document API. In other words, the expression builder
  * library should be as independent as possible (ie with as little or no
  * dependency on other libraries as possible.)</li>
- * 
+ *
  * <li>A dot (".") character in
  * a user specified document path, such as "Product.Reviews", is always assumed
  * by the builder in this proposed library to mean the dereference of a DynamoDB
@@ -162,14 +162,14 @@
  * >Reading and Writing Items Using Expressions</a>. The idea is to handle the
  * majority of cases when the dot (".") character, and sequence (of regex
  * pattern) "\[0-9]+\]" are not literally part of an attribute name.</li> 
- * 
+ *
  * <li>An
  * integer enclosed in square bracket in a user specified document path, such as
  * "[2]", is always assumed by the builder in this proposed library to mean the
  * dereference of a DynamoDB List element. The idea is to handle the majority of
  * cases when character sequence such as "[0]" are not literally part of an
  * attribute name.</li> 
- * 
+ *
  * <li>To avoid attribute names that may conflict with the
  * DynamoDB reserved words, this library will automatically transform every
  * component of a document path into the use of an "expression attribute name"

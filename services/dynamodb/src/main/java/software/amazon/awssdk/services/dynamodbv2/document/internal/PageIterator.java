@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -22,25 +22,26 @@ import software.amazon.awssdk.services.dynamodbv2.document.Page;
  * @param <T> resource type
  * @param <R> low level result type
  */
-class PageIterator<T,R> implements Iterator<Page<T,R>> {
+class PageIterator<T, R> implements Iterator<Page<T, R>> {
 
-    private Page<T,R> page;
-    private final PageBasedCollection<T,R> col;
+    private final PageBasedCollection<T, R> col;
+    private Page<T, R> page;
 
-    PageIterator(PageBasedCollection<T,R> col) {
+    PageIterator(PageBasedCollection<T, R> col) {
         this.col = col;
     }
 
     @Override
     public boolean hasNext() {
         Integer max = col.getMaxResultSize();
-        if (max != null && max.intValue() <= 0)
+        if (max != null && max.intValue() <= 0) {
             return false;
+        }
         return page == null || page.hasNextPage();
     }
 
     @Override
-    public Page<T,R> next() {
+    public Page<T, R> next() {
         if (page == null) {
             page = col.firstPage();
         } else {

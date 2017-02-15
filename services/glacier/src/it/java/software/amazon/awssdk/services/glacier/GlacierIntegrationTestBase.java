@@ -16,8 +16,8 @@ public class GlacierIntegrationTestBase extends AWSTestBase {
 
     protected static String accountId = "599169622985";
     protected static String vaultName = "java-sdk-1332366353936";
-//    protected static String accountId = "-";
-//    protected static String vaultName = "java-sdk-140703";
+    //    protected static String accountId = "-";
+    //    protected static String vaultName = "java-sdk-140703";
 
     /** Release any resources created by the tests */
     @AfterClass

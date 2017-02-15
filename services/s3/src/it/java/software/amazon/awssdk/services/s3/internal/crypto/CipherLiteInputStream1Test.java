@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertTrue;
@@ -35,7 +50,7 @@ public class CipherLiteInputStream1Test {
 
     @Test
     public void markAndReset() throws Exception {
-        int[] bufsizes = { 512, 1024, 1024 * 4, 1024 * 8, 1024 * 1024 };
+        int[] bufsizes = {512, 1024, 1024 * 4, 1024 * 8, 1024 * 1024};
         int filesize = 10 * rand.nextInt(1 << 20);
         for (int i = 0; i < 16; i++) {
             int fileSize = filesize + i;
@@ -43,15 +58,15 @@ public class CipherLiteInputStream1Test {
                 final long start = System.nanoTime();
                 testMarkAndReset(fileSize, bufsize);
                 System.err.println("took "
-                        + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()
-                                - start) + " ms");
+                                   + TimeUnit.NANOSECONDS.toMillis(System.nanoTime()
+                                                                   - start) + " ms");
             }
         }
     }
 
     public void testMarkAndReset(int fileSize, int bufSize) throws Exception {
         System.err.print("Testing fileSize=" + fileSize + ", bufSize="
-                + bufSize + "\t");
+                         + bufSize + "\t");
         File f1 = CryptoTestUtils.generateRandomAsciiFile(fileSize);
         File f2 = new File(f1.getPath());
         CipherLite w1 = ContentCryptoScheme.AES_GCM.createCipherLite(
@@ -74,12 +89,14 @@ public class CipherLiteInputStream1Test {
             int read2 = refStream.read(buf2);
             assertTrue(read1 == read2);
             assertTrue(Arrays.equals(buf1, buf2));
-            if (read1 == -1)
+            if (read1 == -1) {
                 break;
+            }
             testStream.reset();
             read1 = testStream.read(buf1);
-            if (debug)
+            if (debug) {
                 System.err.println("read1=" + read1 + ", read2=" + read2);
+            }
             assertTrue(read1 == read2);
             assertTrue(Arrays.equals(buf1, buf2));
         }

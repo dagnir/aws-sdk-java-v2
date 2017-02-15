@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import java.util.concurrent.ExecutorService;
@@ -55,6 +56,16 @@ public final class TransferManagerBuilder {
 
     private Boolean disableParallelDownloads;
 
+    private TransferManagerBuilder() {
+        this(DEFAULT_TRANSFER_MANAGER_FACTORY);
+    }
+
+    @SdkTestInternalApi
+    TransferManagerBuilder(
+            SdkFunction<TransferManagerParams, TransferManager> transferManagerFactory) {
+        this.transferManagerFactory = transferManagerFactory;
+    }
+
     /**
      * @return Create new instance of builder with all defaults set.
      */
@@ -68,16 +79,6 @@ public final class TransferManagerBuilder {
      */
     public static TransferManager defaultTransferManager() {
         return standard().build();
-    }
-
-    private TransferManagerBuilder() {
-        this(DEFAULT_TRANSFER_MANAGER_FACTORY);
-    }
-
-    @SdkTestInternalApi
-    TransferManagerBuilder(
-            SdkFunction<TransferManagerParams, TransferManager> transferManagerFactory) {
-        this.transferManagerFactory = transferManagerFactory;
     }
 
     /**
@@ -142,7 +143,7 @@ public final class TransferManagerBuilder {
 
     private ExecutorService resolveExecutorService() {
         return executorFactory == null ? TransferManagerUtils.createDefaultExecutorService() :
-                executorFactory.newExecutor();
+               executorFactory.newExecutor();
     }
 
     /**
@@ -429,9 +430,9 @@ public final class TransferManagerBuilder {
     public final TransferManager build() {
         return transferManagerFactory
                 .apply(new TransferManagerParams().withS3Client(resolveS3Client())
-                               .withExecutorService(resolveExecutorService())
-                               .withShutDownThreadPools(resolveShutDownThreadPools())
-                               .withTransferManagerConfiguration(resolveConfiguration()));
+                                                  .withExecutorService(resolveExecutorService())
+                                                  .withShutDownThreadPools(resolveShutDownThreadPools())
+                                                  .withTransferManagerConfiguration(resolveConfiguration()));
     }
 
 }

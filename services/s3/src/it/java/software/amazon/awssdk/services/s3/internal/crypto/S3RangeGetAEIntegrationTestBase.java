@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -29,20 +44,13 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
 public abstract class S3RangeGetAEIntegrationTestBase {
+    private static final String TEST_BUCKET = tempBucketName(S3RangeGetAEIntegrationTestBase.class);
     /**
      * True to clean up the temp S3 objects created during test; false
      * otherwise.
      */
     private static boolean cleanup = true;
     private static boolean get_only = false;
-
-    private static final String TEST_BUCKET = tempBucketName(S3RangeGetAEIntegrationTestBase.class);
-
-    protected abstract CryptoMode cryptoMode();
-
-    private CryptoConfiguration newCryptoConfiguration() {
-        return new CryptoConfiguration().withCryptoMode(cryptoMode());
-    }
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -59,7 +67,13 @@ public abstract class S3RangeGetAEIntegrationTestBase {
             s3.shutdown();
         }
     }
-    
+
+    protected abstract CryptoMode cryptoMode();
+
+    private CryptoConfiguration newCryptoConfiguration() {
+        return new CryptoConfiguration().withCryptoMode(cryptoMode());
+    }
+
     /**
      * Test range-get S3 object with metadata in v2 format using RSA kek.
      */
@@ -83,9 +97,10 @@ public abstract class S3RangeGetAEIntegrationTestBase {
     private void doTestWithKekMaterial(EncryptionMaterials kekMaterial, boolean instructionFile) throws Exception {
         // s3v2 will put using v2 format but is able to read either v1 or v2 formats
         CryptoConfiguration config = newCryptoConfiguration();
-        if (instructionFile)
+        if (instructionFile) {
             config.setStorageMode(CryptoStorageMode.InstructionFile);
-        
+        }
+
         AmazonS3EncryptionClient s3v2 = new AmazonS3EncryptionClient(
                 awsTestCredentials(),
                 kekMaterial,
@@ -94,10 +109,10 @@ public abstract class S3RangeGetAEIntegrationTestBase {
         final int pt_size = 100;
         final String bucketName = TEST_BUCKET;
         String v2key;
-        
+
         String plaintext = null;
         if (get_only) {
-            v2key = "encrypted-140325-012844-v2.txt";    
+            v2key = "encrypted-140325-012844-v2.txt";
         } else {
             String yymmdd_hhmmss = new SimpleDateFormat("yyMMdd-hhmmss").format(new Date());
             String key = "encrypted-" + yymmdd_hhmmss;
@@ -121,24 +136,26 @@ public abstract class S3RangeGetAEIntegrationTestBase {
                 {90, 116},  // last 10 bytes
                 {90, 120},  // last 10 bytes
         };
-        for (int[] test_range: test_ranges) {
+        for (int[] test_range : test_ranges) {
             int beginIndex = test_range[0];
             int endIndex = test_range[1];
             GetObjectRequest req = new GetObjectRequest(bucketName, v2key).withRange(beginIndex, endIndex);
             S3Object s3object;
             try {
                 s3object = s3v2.getObject(req);
-                if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode()))
+                if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode())) {
                     fail();
-            } catch(SecurityException ex) {
-                if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode()))
+                }
+            } catch (SecurityException ex) {
+                if (CryptoMode.StrictAuthenticatedEncryption.equals(cryptoMode())) {
                     continue;
+                }
                 throw ex;
             }
             long instanceLen = s3object.getObjectMetadata().getInstanceLength();
             if (cryptoMode() == CryptoMode.AuthenticatedEncryption) {
                 // Length of ciphertext = plaintext length + tag size 
-                long physicalLen = pt_size + ContentCryptoScheme.AES_GCM.getTagLengthInBits()/8;
+                long physicalLen = pt_size + ContentCryptoScheme.AES_GCM.getTagLengthInBits() / 8;
                 assertTrue(physicalLen == instanceLen);
             } else {
                 long cipherBlockSize = ContentCryptoScheme.AES_CBC.getBlockSizeInBytes();
@@ -148,21 +165,21 @@ public abstract class S3RangeGetAEIntegrationTestBase {
             }
             byte[] retrieved = IOUtils.toByteArray(s3object.getObjectContent());
             int expectedLen;
-            
+
             if (endIndex < beginIndex) {
                 expectedLen = plaintext.length();
                 beginIndex = 0;
             } else {
                 expectedLen = Math.min(plaintext.length() - beginIndex,
-                    Math.max(0, endIndex - beginIndex + 1));
+                                       Math.max(0, endIndex - beginIndex + 1));
             }
-//            System.out.println("retrieved.length=" + retrieved.length);
+            //            System.out.println("retrieved.length=" + retrieved.length);
             assertTrue(expectedLen == retrieved.length);
             if (retrieved.length > 0) {
                 String result = new String(retrieved, UTF8);
                 System.out.println(result);
                 if (!get_only) {
-                    String expected = plaintext.substring(beginIndex, beginIndex+expectedLen); 
+                    String expected = plaintext.substring(beginIndex, beginIndex + expectedLen);
                     assertEquals(expected, result);
                 }
             }
@@ -171,8 +188,9 @@ public abstract class S3RangeGetAEIntegrationTestBase {
             // A S3 raw client used to inspect the raw data
             AmazonS3Client s3 = new AmazonS3Client(awsTestCredentials());
             s3.deleteObject(bucketName, v2key);
-            if (instructionFile)
+            if (instructionFile) {
                 s3.deleteObject(bucketName, v2key + ".instruction");
+            }
         }
     }
 

@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -85,7 +85,7 @@ public class DynamoDBScanExpression {
      * <p>The expression can now be simplified as follows:
      * <ul><li><p><code>#n = "Smith" OR #n = "Jones"</code></li></ul>
      */
-    private java.util.Map<String,String> expressionAttributeNames;
+    private java.util.Map<String, String> expressionAttributeNames;
 
     /**
      * One or more values that can be substituted in an expression. <p>Use
@@ -100,7 +100,7 @@ public class DynamoDBScanExpression {
      * be simplified as follows: <ul><li> <p><code>ProductStatus IN
      * (:a,:b,:c)</code></li></ul>
      */
-    private java.util.Map<String,AttributeValue> expressionAttributeValues;
+    private java.util.Map<String, AttributeValue> expressionAttributeValues;
 
     /**
      * The attributes to be returned in the result. You can retrieve all item
@@ -251,8 +251,9 @@ public class DynamoDBScanExpression {
      *            returned by the scan operation.
      */
     public void addFilterCondition(String attributeName, Condition condition) {
-        if ( scanFilter == null )
+        if (scanFilter == null) {
             scanFilter = new HashMap<String, Condition>();
+        }
 
         scanFilter.put(attributeName, condition);
     }
@@ -270,8 +271,9 @@ public class DynamoDBScanExpression {
      *            returned by the scan operation.
      */
     public DynamoDBScanExpression withFilterConditionEntry(String attributeName, Condition condition) {
-        if ( scanFilter == null )
+        if (scanFilter == null) {
             scanFilter = new HashMap<String, Condition>();
+        }
 
         scanFilter.put(attributeName, condition);
         return this;
@@ -402,6 +404,13 @@ public class DynamoDBScanExpression {
     /**
      * Sets the logical operator on the filter conditions of this scan.
      */
+    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
+        setConditionalOperator(conditionalOperator.toString());
+    }
+
+    /**
+     * Sets the logical operator on the filter conditions of this scan.
+     */
     public void setConditionalOperator(String conditionalOperator) {
         this.conditionalOperator = conditionalOperator;
     }
@@ -413,13 +422,6 @@ public class DynamoDBScanExpression {
     public DynamoDBScanExpression withConditionalOperator(String conditionalOperator) {
         setConditionalOperator(conditionalOperator);
         return this;
-    }
-
-    /**
-     * Sets the logical operator on the filter conditions of this scan.
-     */
-    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
-        setConditionalOperator(conditionalOperator.toString());
     }
 
     /**
@@ -547,13 +549,14 @@ public class DynamoDBScanExpression {
      * @see ScanRequest#addExpressionAttributeNamesEntry(String, String)
      */
     public DynamoDBScanExpression addExpressionAttributeNamesEntry(String key,
-            String value) {
+                                                                   String value) {
         if (null == this.expressionAttributeNames) {
             this.expressionAttributeNames = new java.util.HashMap<String, String>();
         }
-        if (this.expressionAttributeNames.containsKey(key))
+        if (this.expressionAttributeNames.containsKey(key)) {
             throw new IllegalArgumentException("Duplicated keys ("
-                    + key.toString() + ") are provided.");
+                                               + key.toString() + ") are provided.");
+        }
         this.expressionAttributeNames.put(key, value);
         return this;
     }
@@ -627,13 +630,14 @@ public class DynamoDBScanExpression {
      *      AttributeValue)
      */
     public DynamoDBScanExpression addExpressionAttributeValuesEntry(String key,
-            AttributeValue value) {
+                                                                    AttributeValue value) {
         if (null == this.expressionAttributeValues) {
             this.expressionAttributeValues = new java.util.HashMap<String, AttributeValue>();
         }
-        if (this.expressionAttributeValues.containsKey(key))
+        if (this.expressionAttributeValues.containsKey(key)) {
             throw new IllegalArgumentException("Duplicated keys ("
-                    + key.toString() + ") are provided.");
+                                               + key.toString() + ") are provided.");
+        }
         this.expressionAttributeValues.put(key, value);
         return this;
     }
@@ -685,6 +689,26 @@ public class DynamoDBScanExpression {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.Select
      */
+    public void setSelect(Select select) {
+        this.select = select.toString();
+    }
+
+    /**
+     * The attributes to be returned in the result. You can retrieve all item
+     * attributes, specific item attributes, the count of matching items, or
+     * in the case of an index, some or all of the attributes projected into
+     * the index.
+     * <p>
+     * <b>Constraints:</b><br/>
+     * <b>Allowed Values: </b>ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT
+     *
+     * @param select The attributes to be returned in the result. You can retrieve all item
+     *         attributes, specific item attributes, the count of matching items, or
+     *         in the case of an index, some or all of the attributes projected into
+     *         the index.
+     *
+     * @see software.amazon.awssdk.services.dynamodbv2.model.Select
+     */
     public void setSelect(String select) {
         this.select = select;
     }
@@ -713,26 +737,6 @@ public class DynamoDBScanExpression {
     public DynamoDBScanExpression withSelect(String select) {
         this.select = select;
         return this;
-    }
-
-    /**
-     * The attributes to be returned in the result. You can retrieve all item
-     * attributes, specific item attributes, the count of matching items, or
-     * in the case of an index, some or all of the attributes projected into
-     * the index.
-     * <p>
-     * <b>Constraints:</b><br/>
-     * <b>Allowed Values: </b>ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT
-     *
-     * @param select The attributes to be returned in the result. You can retrieve all item
-     *         attributes, specific item attributes, the count of matching items, or
-     *         in the case of an index, some or all of the attributes projected into
-     *         the index.
-     *
-     * @see software.amazon.awssdk.services.dynamodbv2.model.Select
-     */
-    public void setSelect(Select select) {
-        this.select = select.toString();
     }
 
     /**
@@ -888,6 +892,34 @@ public class DynamoDBScanExpression {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity
      */
+    public void setReturnConsumedCapacity(ReturnConsumedCapacity returnConsumedCapacity) {
+        this.returnConsumedCapacity = returnConsumedCapacity.toString();
+    }
+
+    /**
+     * A value that if set to <code>TOTAL</code>, the response includes
+     * <i>ConsumedCapacity</i> data for tables and indexes. If set to
+     * <code>INDEXES</code>, the response includes <i>ConsumedCapacity</i>
+     * for indexes. If set to <code>NONE</code> (the default),
+     * <i>ConsumedCapacity</i> is not included in the response.
+     * <p>
+     * <b>Constraints:</b><br/>
+     * <b>Allowed Values: </b>INDEXES, TOTAL, NONE
+     * <p>
+     * If enabled, the underlying request to DynamoDB will include the
+     * configured parameter value and the low-level response from DynamoDB will
+     * include the amount of capacity consumed by the scan. Currently, the
+     * consumed capacity is only exposed through the DynamoDBMapper when you
+     * call {@code DynamoDBMapper.scanPage}, not {@code DynamoDBMapper.scan}.
+     *
+     * @param returnConsumedCapacity A value that if set to <code>TOTAL</code>, the response includes
+     *         <i>ConsumedCapacity</i> data for tables and indexes. If set to
+     *         <code>INDEXES</code>, the response includes <i>ConsumedCapacity</i>
+     *         for indexes. If set to <code>NONE</code> (the default),
+     *         <i>ConsumedCapacity</i> is not included in the response.
+     *
+     * @see software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity
+     */
     public void setReturnConsumedCapacity(String returnConsumedCapacity) {
         this.returnConsumedCapacity = returnConsumedCapacity;
     }
@@ -924,34 +956,6 @@ public class DynamoDBScanExpression {
     public DynamoDBScanExpression withReturnConsumedCapacity(String returnConsumedCapacity) {
         this.returnConsumedCapacity = returnConsumedCapacity;
         return this;
-    }
-
-    /**
-     * A value that if set to <code>TOTAL</code>, the response includes
-     * <i>ConsumedCapacity</i> data for tables and indexes. If set to
-     * <code>INDEXES</code>, the response includes <i>ConsumedCapacity</i>
-     * for indexes. If set to <code>NONE</code> (the default),
-     * <i>ConsumedCapacity</i> is not included in the response.
-     * <p>
-     * <b>Constraints:</b><br/>
-     * <b>Allowed Values: </b>INDEXES, TOTAL, NONE
-     * <p>
-     * If enabled, the underlying request to DynamoDB will include the
-     * configured parameter value and the low-level response from DynamoDB will
-     * include the amount of capacity consumed by the scan. Currently, the
-     * consumed capacity is only exposed through the DynamoDBMapper when you
-     * call {@code DynamoDBMapper.scanPage}, not {@code DynamoDBMapper.scan}.
-     *
-     * @param returnConsumedCapacity A value that if set to <code>TOTAL</code>, the response includes
-     *         <i>ConsumedCapacity</i> data for tables and indexes. If set to
-     *         <code>INDEXES</code>, the response includes <i>ConsumedCapacity</i>
-     *         for indexes. If set to <code>NONE</code> (the default),
-     *         <i>ConsumedCapacity</i> is not included in the response.
-     *
-     * @see software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity
-     */
-    public void setReturnConsumedCapacity(ReturnConsumedCapacity returnConsumedCapacity) {
-        this.returnConsumedCapacity = returnConsumedCapacity.toString();
     }
 
     /**

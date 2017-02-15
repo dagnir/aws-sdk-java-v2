@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -28,32 +29,7 @@ import software.amazon.awssdk.regions.Regions;
 
 public class AmazonS3ClientBuilderTest {
 
-    private static class MockClientFactory implements
-                                           SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> {
-        private AmazonS3ClientParamsWrapper capturedParams;
-
-        @Override
-        public AmazonS3 apply(AmazonS3ClientParamsWrapper params) {
-            this.capturedParams = params;
-            return new AmazonS3Client(params);
-        }
-
-        public AmazonS3ClientParamsWrapper getCapturedParams() {
-            return capturedParams;
-        }
-    }
-
-    private static class FindNothingAwsRegionProvider extends AwsRegionProvider {
-        @Override
-        public String getRegion() throws AmazonClientException {
-            // Imitates the buggy region provider chain that throws an exception instead of returning null when no
-            // region is found.
-            throw new SdkClientException("No region will ever be found.");
-        }
-    }
-
     private MockClientFactory mockClientFactory;
-
     private AmazonS3ClientBuilder builder;
 
     @Before
@@ -216,5 +192,29 @@ public class AmazonS3ClientBuilderTest {
     private S3ClientOptions buildAndCaptureClientOptions() {
         builder.build();
         return mockClientFactory.getCapturedParams().getS3ClientOptions();
+    }
+
+    private static class MockClientFactory implements
+                                           SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> {
+        private AmazonS3ClientParamsWrapper capturedParams;
+
+        @Override
+        public AmazonS3 apply(AmazonS3ClientParamsWrapper params) {
+            this.capturedParams = params;
+            return new AmazonS3Client(params);
+        }
+
+        public AmazonS3ClientParamsWrapper getCapturedParams() {
+            return capturedParams;
+        }
+    }
+
+    private static class FindNothingAwsRegionProvider extends AwsRegionProvider {
+        @Override
+        public String getRegion() throws AmazonClientException {
+            // Imitates the buggy region provider chain that throws an exception instead of returning null when no
+            // region is found.
+            throw new SdkClientException("No region will ever be found.");
+        }
     }
 }

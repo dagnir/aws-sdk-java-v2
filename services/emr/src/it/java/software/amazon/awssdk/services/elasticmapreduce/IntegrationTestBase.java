@@ -12,7 +12,7 @@ import software.amazon.awssdk.test.AWSTestBase;
  */
 public class IntegrationTestBase extends AWSTestBase {
 
-	/** The EMR client for all tests to use */
+    /** The EMR client for all tests to use */
     protected static AmazonElasticMapReduce emr;
 
     /**

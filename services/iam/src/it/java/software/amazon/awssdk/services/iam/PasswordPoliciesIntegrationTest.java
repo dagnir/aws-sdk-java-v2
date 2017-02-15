@@ -17,11 +17,11 @@ public class PasswordPoliciesIntegrationTest extends IntegrationTestBase {
     public void testAccountAliases() throws Exception {
         int minimumPasswordLength = 8;
         iam.updateAccountPasswordPolicy(new UpdateAccountPasswordPolicyRequest()
-                .withMinimumPasswordLength(minimumPasswordLength)
-                .withRequireLowercaseCharacters(true)
-                .withRequireNumbers(true)
-                .withRequireSymbols(true)
-                .withRequireUppercaseCharacters(true));
+                                                .withMinimumPasswordLength(minimumPasswordLength)
+                                                .withRequireLowercaseCharacters(true)
+                                                .withRequireNumbers(true)
+                                                .withRequireSymbols(true)
+                                                .withRequireUppercaseCharacters(true));
 
         GetAccountPasswordPolicyResult accountPasswordPolicy = iam.getAccountPasswordPolicy();
         assertEquals(minimumPasswordLength, accountPasswordPolicy.getPasswordPolicy().getMinimumPasswordLength().intValue());
@@ -32,11 +32,11 @@ public class PasswordPoliciesIntegrationTest extends IntegrationTestBase {
 
         minimumPasswordLength = 6;
         iam.updateAccountPasswordPolicy(new UpdateAccountPasswordPolicyRequest()
-                .withMinimumPasswordLength(minimumPasswordLength)
-                .withRequireLowercaseCharacters(false)
-                .withRequireNumbers(false)
-                .withRequireSymbols(false)
-                .withRequireUppercaseCharacters(false));
+                                                .withMinimumPasswordLength(minimumPasswordLength)
+                                                .withRequireLowercaseCharacters(false)
+                                                .withRequireNumbers(false)
+                                                .withRequireSymbols(false)
+                                                .withRequireUppercaseCharacters(false));
 
         accountPasswordPolicy = iam.getAccountPasswordPolicy();
         assertEquals(minimumPasswordLength, accountPasswordPolicy.getPasswordPolicy().getMinimumPasswordLength().intValue());

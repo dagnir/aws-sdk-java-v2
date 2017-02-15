@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,33 +41,33 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
     @Override
     public DeleteItemOutcome deleteItem(KeyAttribute... primaryKeyComponents) {
         return doDeleteItem(new DeleteItemSpec()
-            .withPrimaryKey(primaryKeyComponents));
+                                    .withPrimaryKey(primaryKeyComponents));
     }
 
     @Override
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKey) {
         return doDeleteItem(new DeleteItemSpec()
-                .withPrimaryKey(primaryKey));
+                                    .withPrimaryKey(primaryKey));
     }
 
     @Override
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKeys,
-            Expected... expected) {
+                                        Expected... expected) {
         return doDeleteItem(new DeleteItemSpec()
-                .withPrimaryKey(primaryKeys)
-                .withExpected(expected));
+                                    .withPrimaryKey(primaryKeys)
+                                    .withExpected(expected));
     }
 
     @Override
     public DeleteItemOutcome deleteItem(PrimaryKey primaryKeys,
-            String conditionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        String conditionExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return doDeleteItem(new DeleteItemSpec()
-            .withPrimaryKey(primaryKeys)
-            .withConditionExpression(conditionExpression)
-            .withNameMap(nameMap)
-            .withValueMap(valueMap))
-            ;
+                                    .withPrimaryKey(primaryKeys)
+                                    .withConditionExpression(conditionExpression)
+                                    .withNameMap(nameMap)
+                                    .withValueMap(valueMap))
+                ;
     }
 
     @Override
@@ -80,19 +80,19 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
         final String tableName = getTable().getTableName();
         // set up the keys
         DeleteItemRequest req = spec.getRequest().withTableName(tableName)
-            .withKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()));
+                                    .withKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()));
         // set up the expected attribute map, if any
         final Collection<Expected> expected = spec.getExpected();
         final Map<String, ExpectedAttributeValue> expectedMap =
-            InternalUtils.toExpectedAttributeValueMap(expected);
+                InternalUtils.toExpectedAttributeValueMap(expected);
         // set up the value map, if any (when expression API is used)
-        final Map<String,AttributeValue> attrValMap =
-            InternalUtils.fromSimpleMap(spec.getValueMap());
+        final Map<String, AttributeValue> attrValMap =
+                InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up the request
         req.withExpected(expectedMap)
            .withExpressionAttributeNames(spec.getNameMap())
            .withExpressionAttributeValues(attrValMap)
-           ;
+        ;
         DeleteItemResult result = getClient().deleteItem(req);
         return new DeleteItemOutcome(result);
     }
@@ -104,41 +104,41 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue) {
         return deleteItem(
-            new PrimaryKey(hashKeyName, hashKeyValue,  rangeKeyName, rangeKeyValue));
+                new PrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue));
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, Expected... expected) {
+                                        Object hashKeyValue, Expected... expected) {
         return deleteItem(new PrimaryKey(hashKeyName, hashKeyValue), expected);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            Expected... expected) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        Expected... expected) {
         return deleteItem(
-                new PrimaryKey(hashKeyName, hashKeyValue,  rangeKeyName, rangeKeyValue),
-                    expected);
+                new PrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue),
+                expected);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String conditionExpression,
-            Map<String, String> nameMap, Map<String, Object> valueMap) {
+                                        Object hashKeyValue, String conditionExpression,
+                                        Map<String, String> nameMap, Map<String, Object> valueMap) {
         return deleteItem(new PrimaryKey(hashKeyName, hashKeyValue),
-                    conditionExpression, nameMap, valueMap);
+                          conditionExpression, nameMap, valueMap);
     }
 
     @Override
     public DeleteItemOutcome deleteItem(String hashKeyName,
-            Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-            String conditionExpression, Map<String, String> nameMap,
-            Map<String, Object> valueMap) {
+                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
+                                        String conditionExpression, Map<String, String> nameMap,
+                                        Map<String, Object> valueMap) {
         return deleteItem(
-                new PrimaryKey(hashKeyName, hashKeyValue,  rangeKeyName, rangeKeyValue),
-                    conditionExpression, nameMap, valueMap);
+                new PrimaryKey(hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue),
+                conditionExpression, nameMap, valueMap);
     }
 }

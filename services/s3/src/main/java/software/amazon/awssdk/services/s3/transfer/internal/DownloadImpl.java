@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.io.File;
@@ -28,35 +29,32 @@ import software.amazon.awssdk.services.s3.transfer.TransferProgress;
 import software.amazon.awssdk.services.s3.transfer.exception.PauseException;
 
 public class DownloadImpl extends AbstractTransfer implements Download {
+    private final GetObjectRequest getObjectRequest;
+    private final File file;
+    private final ObjectMetadata objectMetadata;
+    private final ProgressListenerChain progressListenerChain;
     private S3Object s3Object;
-
     /**
      * Information to resume if the download is paused.
      */
     private PersistableDownload persistableDownload;
-
     /**
      * The last part that has been successfully written into the downloaded file.
      */
     private Integer lastFullyDownloadedPartNumber;
 
-    private final GetObjectRequest getObjectRequest;
-    private final File file;
-    private final ObjectMetadata objectMetadata;
-    private final ProgressListenerChain progressListenerChain;
-
     @Deprecated
     public DownloadImpl(String description, TransferProgress transferProgress,
-            ProgressListenerChain progressListenerChain, S3Object s3Object, TransferStateChangeListener listener,
-            GetObjectRequest getObjectRequest, File file) {
+                        ProgressListenerChain progressListenerChain, S3Object s3Object, TransferStateChangeListener listener,
+                        GetObjectRequest getObjectRequest, File file) {
         this(description, transferProgress, progressListenerChain, s3Object, listener,
-                getObjectRequest, file, null, false);
+             getObjectRequest, file, null, false);
     }
 
     public DownloadImpl(String description, TransferProgress transferProgress,
-            ProgressListenerChain progressListenerChain, S3Object s3Object, TransferStateChangeListener listener,
-            GetObjectRequest getObjectRequest, File file,
-            ObjectMetadata objectMetadata, boolean isDownloadParallel) {
+                        ProgressListenerChain progressListenerChain, S3Object s3Object, TransferStateChangeListener listener,
+                        GetObjectRequest getObjectRequest, File file,
+                        ObjectMetadata objectMetadata, boolean isDownloadParallel) {
         super(description, transferProgress, progressListenerChain, listener);
         this.s3Object = s3Object;
         this.objectMetadata = objectMetadata;
@@ -131,8 +129,8 @@ public class DownloadImpl extends AbstractTransfer implements Download {
 
         this.monitor.getFuture().cancel(true);
 
-        if ( s3Object != null ) {
-              s3Object.getObjectContent().abort();
+        if (s3Object != null) {
+            s3Object.getObjectContent().abort();
         }
         setState(TransferState.Canceled);
     }
@@ -163,7 +161,7 @@ public class DownloadImpl extends AbstractTransfer implements Download {
         super.setState(state);
 
         switch (state) {
-            case Completed :
+            case Completed:
                 fireProgressEvent(ProgressEventType.TRANSFER_COMPLETED_EVENT);
                 break;
             case Canceled:

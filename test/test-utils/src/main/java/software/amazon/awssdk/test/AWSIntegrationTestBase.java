@@ -27,21 +27,18 @@ import software.amazon.awssdk.util.IOUtils;
 
 public abstract class AWSIntegrationTestBase {
 
-    /**
-     * Shared AWS credentials, loaded from a properties file.
-     */
-    private static AWSCredentials credentials;
-
     /** Default Properties Credentials file path */
     private static final String propertiesFilePath = System.getProperty("user.home")
-            + "/.aws/awsTestAccount.properties";
-
+                                                     + "/.aws/awsTestAccount.properties";
     private static final String TEST_CREDENTIALS_PROFILE_NAME = "aws-java-sdk-test";
-
     private static final AWSCredentialsProviderChain chain = new AWSCredentialsProviderChain(
             new PropertiesFileCredentialsProvider(propertiesFilePath),
             new ProfileCredentialsProvider(TEST_CREDENTIALS_PROFILE_NAME), new EnvironmentVariableCredentialsProvider(),
             new SystemPropertiesCredentialsProvider());
+    /**
+     * Shared AWS credentials, loaded from a properties file.
+     */
+    private static AWSCredentials credentials;
 
     /**
      * Before of super class is guaranteed to be called before that of a subclass so the following
@@ -66,7 +63,7 @@ public abstract class AWSIntegrationTestBase {
 
     /**
      * Reads a system resource fully into a String
-     * 
+     *
      * @param location
      *            Relative or absolute location of system resource.
      * @return String contents of resource file

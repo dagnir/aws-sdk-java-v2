@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -78,10 +78,10 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testGetObjectCorrectTaggingCountHasTags() {
         ObjectTagging tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1"),
-            new Tag("bar", "2"),
-            new Tag("baz", "3")
-        ));
+                new Tag("foo", "1"),
+                new Tag("bar", "2"),
+                new Tag("baz", "3")
+                                                            ));
 
         String key = makeNewKey();
         putTestObject(key, tags);
@@ -92,10 +92,10 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testGetObjectTags() {
         ObjectTagging tagging = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1"),
-            new Tag("bar", "2"),
-            new Tag("baz", "3")
-        ));
+                new Tag("foo", "1"),
+                new Tag("bar", "2"),
+                new Tag("baz", "3")
+                                                               ));
 
         String key = makeNewKey();
         PutObjectResult putObjectResult = putTestObject(key, tagging);
@@ -108,10 +108,10 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testPutObjectWithTags() {
         ObjectTagging tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1"),
-            new Tag("bar", "2"),
-            new Tag("baz", "3")
-        ));
+                new Tag("foo", "1"),
+                new Tag("bar", "2"),
+                new Tag("baz", "3")
+                                                            ));
 
         String key = makeNewKey();
         putTestObject(key, tags);
@@ -122,10 +122,10 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testPutObjectWithTagsTagsAreUrlEncoded() {
         ObjectTagging tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "bar baz"),
-            new Tag("foo bar", "baz"),
-            new Tag("foo/bar", "baz")
-        ));
+                new Tag("foo", "bar baz"),
+                new Tag("foo bar", "baz"),
+                new Tag("foo/bar", "baz")
+                                                            ));
         String key = makeNewKey();
         putTestObject(key, tags);
 
@@ -141,11 +141,11 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
         assertEquals(null, obj.getTaggingCount());
 
         ObjectTagging tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1")
-        ));
+                new Tag("foo", "1")
+                                                            ));
 
         SetObjectTaggingResult putTaggingResult = s3.setObjectTagging(new SetObjectTaggingRequest(BUCKET,
-                key, tags));
+                                                                                                  key, tags));
 
         assertSetTagsAreEqual(BUCKET, key, null, tags);
         assertEquals(putObjectResult.getVersionId(), putTaggingResult.getVersionId());
@@ -155,14 +155,14 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     public void testGetObjectTaggingForDifferentVersions() {
         String key = makeNewKey();
         ObjectTagging tags1 = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1")
-        ));
+                new Tag("foo", "1")
+                                                             ));
         PutObjectResult putResult1 = putTestObject(key, tags1);
 
         ObjectTagging tags2 = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1"),
-            new Tag("bar", "2")
-        ));
+                new Tag("foo", "1"),
+                new Tag("bar", "2")
+                                                             ));
         PutObjectResult putResult2 = putTestObject(key, tags2);
 
         assertSetTagsAreEqual(BUCKET, key, putResult1.getVersionId(), tags1);
@@ -174,14 +174,14 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     public void testPutObjectDifferentTagsOnEachVersion() {
         String key = makeNewKey();
         ObjectTagging tags1 = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1")
-        ));
+                new Tag("foo", "1")
+                                                             ));
         PutObjectResult putResult1 = putTestObject(key, tags1);
 
         ObjectTagging tags2 = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1"),
-            new Tag("bar", "2")
-        ));
+                new Tag("foo", "1"),
+                new Tag("bar", "2")
+                                                             ));
         PutObjectResult putResult2 = putTestObject(key, tags2);
 
         assertSetTagsAreEqual(BUCKET, key, putResult1.getVersionId(), tags1);
@@ -192,17 +192,17 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     public void testSetTagsOnDifferentObjectVersion() {
         String key = makeNewKey();
         ObjectTagging tags1 = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1")
-        ));
+                new Tag("foo", "1")
+                                                             ));
         PutObjectResult putResult1 = putTestObject(key, tags1);
 
         // put a second time so we have two versions in S3
         PutObjectResult putResult2 = putTestObject(key, tags1);
 
         ObjectTagging tags2 = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "1"),
-            new Tag("bar", "2")
-        ));
+                new Tag("foo", "1"),
+                new Tag("bar", "2")
+                                                             ));
 
         // set a different set of tags on the latest version
         s3.setObjectTagging(new SetObjectTaggingRequest(BUCKET, key, putResult2.getVersionId(), tags2));
@@ -214,16 +214,16 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testCopyObjectWithNewTags() {
         ObjectTagging tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "bar")
-        ));
+                new Tag("foo", "bar")
+                                                            ));
         String sourceKey = makeNewKey();
         putTestObject(sourceKey, tags);
 
         String destKey = makeNewKey();
         ObjectTagging destTags = new ObjectTagging(Arrays.asList(
-            new Tag("foo1", "bar"),
-            new Tag("foo2", "baz")
-        ));
+                new Tag("foo1", "bar"),
+                new Tag("foo2", "baz")
+                                                                ));
 
         s3.copyObject(new CopyObjectRequest(BUCKET, sourceKey, BUCKET, destKey).withNewObjectTagging(destTags));
 
@@ -234,8 +234,8 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
 
     public void testCopyObjectNoNewTags() {
         ObjectTagging tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "bar")
-        ));
+                new Tag("foo", "bar")
+                                                            ));
         String sourceKey = makeNewKey();
         putTestObject(sourceKey, tags);
 
@@ -249,19 +249,19 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testDeleteObjectTagging() {
         ObjectTagging tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "bar")
-        ));
+                new Tag("foo", "bar")
+                                                            ));
         String key = makeNewKey();
         putTestObject(key, tags);
 
         S3Object objBeforeTagsDeletion = s3.getObject(BUCKET, key);
         assertEquals(tags.getTagSet().size(),
-                objBeforeTagsDeletion.getTaggingCount().intValue());
+                     objBeforeTagsDeletion.getTaggingCount().intValue());
 
         s3.deleteObjectTagging(new DeleteObjectTaggingRequest(
                 BUCKET,
                 key)
-                .withVersionId(objBeforeTagsDeletion.getObjectMetadata().getVersionId()));
+                                       .withVersionId(objBeforeTagsDeletion.getObjectMetadata().getVersionId()));
 
         S3Object objAfterTagsDeletion = s3.getObject(BUCKET, key);
         assertNull(objAfterTagsDeletion.getTaggingCount());
@@ -270,20 +270,20 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testDeleteObjectTaggingOnVersion() {
         ObjectTagging v1Tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "bar")
-        ));
+                new Tag("foo", "bar")
+                                                              ));
         String key = makeNewKey();
         String v1Id = putTestObject(key, v1Tags).getVersionId();
 
         ObjectTagging v2Tags = new ObjectTagging(Arrays.asList(
-            new Tag("foo", "baz")
-        ));
+                new Tag("foo", "baz")
+                                                              ));
         String v2Id = putTestObject(key, v2Tags).getVersionId();
 
         DeleteObjectTaggingResult result = s3.deleteObjectTagging(new DeleteObjectTaggingRequest(
-            BUCKET,
-            key)
-            .withVersionId(v2Id));
+                BUCKET,
+                key)
+                                                                          .withVersionId(v2Id));
         assertNull(s3.getObject(new GetObjectRequest(BUCKET, key, v2Id)).getTaggingCount());
         assertEquals(v2Id, result.getVersionId());
         assertSetTagsAreEqual(BUCKET, key, v1Id, v1Tags);
@@ -299,6 +299,6 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
 
     private void assertSetTagsAreEqual(String bucket, String key, String version, ObjectTagging expectedTagging) {
         GetObjectTaggingResult result = s3.getObjectTagging(new GetObjectTaggingRequest(bucket, key, version));
-       ObjectTaggingTestUtil.assertTagSetsAreEquals(expectedTagging.getTagSet(), result.getTagSet());
+        ObjectTaggingTestUtil.assertTagSetsAreEquals(expectedTagging.getTagSet(), result.getTagSet());
     }
 }

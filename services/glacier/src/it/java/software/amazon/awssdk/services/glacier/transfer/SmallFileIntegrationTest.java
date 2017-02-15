@@ -22,8 +22,8 @@ public class SmallFileIntegrationTest extends GlacierIntegrationTestBase {
     public void setup() throws IOException {
         randomTempFile = new RandomTempFile("SmallFileIntegrationTest-", contentLength, true);
         downloadFile = new File(randomTempFile.getParentFile(),
-                randomTempFile.getName() + ".download");
-        
+                                randomTempFile.getName() + ".download");
+
     }
 
     @After

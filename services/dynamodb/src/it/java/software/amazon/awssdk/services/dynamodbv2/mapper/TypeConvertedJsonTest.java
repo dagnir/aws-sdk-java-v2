@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -48,7 +49,7 @@ public class TypeConvertedJsonTest {
                         ImmutableMapParameter.of("hashKey", new AttributeValue(HASH_KEY),
                                                  "jsonMappedPojo", new AttributeValue(
                                         "{\"knownField\": \"knownValue\", \"unknownField\": \"unknownValue\"}")
-                        )));
+                                                )));
 
         final TopLevelPojo pojo = mapper.load(new TopLevelPojo().setHashKey(HASH_KEY));
         assertEquals("knownValue", pojo.getJsonMappedPojo().getKnownField());

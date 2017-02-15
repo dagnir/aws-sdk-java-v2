@@ -4,10 +4,10 @@ Feature: Amazon DynamoDB
 
   Scenario: Making a request
     When I call the "ListTables" API with:
-    | Limit | 1 |
+      | Limit | 1 |
     Then the value at "TableNames" should be a list
 
   Scenario: Handling errors
     When I attempt to call the "DescribeTable" API with:
-    | TableName | fake-table |
+      | TableName | fake-table |
     Then I expect the response error code to be "ResourceNotFoundException"

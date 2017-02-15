@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import java.util.Collections;
@@ -26,18 +41,16 @@ import software.amazon.awssdk.test.AWSTestBase;
  */
 public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
 
-    private static AmazonDynamoDB ddb;
-
     private static final String TABLE = "java-sdk-nested-json-document-" + System.currentTimeMillis();
     private static final String HASH = "hash";
     private static final String JSON_MAP_ATTRIBUTE = "json";
     private static final String JSON_MAP_NESTED_KEY = "key";
-
     /*
      * DynamoDB supports nested attributes up to 32 levels deep.
      * http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html
      */
     private static final int MAX_JSON_PATH_DEPTH = 32;
+    private static AmazonDynamoDB ddb;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -51,6 +64,11 @@ public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
                                 .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L)));
 
         TableUtils.waitUntilActive(ddb, TABLE);
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        ddb.deleteTable(TABLE);
     }
 
     @Test
@@ -109,10 +127,5 @@ public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
             mapAttr = mapAttr.getM().get(JSON_MAP_NESTED_KEY);
         }
         return depth;
-    }
-
-    @AfterClass
-    public static void tearDown() {
-        ddb.deleteTable(TABLE);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import software.amazon.awssdk.event.DeliveryMode;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.services.s3.transfer.internal.TransferProgressUpda
  * events to a ProgressListenerChain.
  */
 final class MultipleFileTransferProgressUpdatingListener extends
-        TransferProgressUpdatingListener implements DeliveryMode {
+                                                         TransferProgressUpdatingListener implements DeliveryMode {
     private final ProgressListenerChain progressListenerChain;
 
     public MultipleFileTransferProgressUpdatingListener(
@@ -44,6 +45,6 @@ final class MultipleFileTransferProgressUpdatingListener extends
     @Override
     public boolean isSyncCallSafe() {
         return progressListenerChain == null
-            || progressListenerChain.isSyncCallSafe();
+               || progressListenerChain.isSyncCallSafe();
     }
 }

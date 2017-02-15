@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,6 +28,29 @@ import software.amazon.awssdk.util.JavaVersionParser.JavaVersion;
 import software.amazon.awssdk.util.JavaVersionParser.KnownJavaVersions;
 
 public class JavaVersionParserTest {
+
+    public static void assertIntEquals(int expected, Integer actual) {
+        assertEquals(Integer.valueOf(expected), actual);
+    }
+
+    private static void assertJavaVersionsEqual(JavaVersion expected, JavaVersion actual) {
+        assertEquals(expected.getMajorVersionFamily(), actual.getMajorVersionFamily());
+        assertEquals(expected.getMajorVersion(), actual.getMajorVersion());
+        assertEquals(expected.getMaintenanceNumber(), actual.getMaintenanceNumber());
+        assertEquals(expected.getUpdateNumber(), actual.getUpdateNumber());
+        assertEquals(expected.getMajorVersionString(), actual.getMajorVersionString());
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Convenience factory method for a {@link JavaVersion}
+     */
+    private static JavaVersion jv(Integer majorVersionFamily,
+                                  Integer majorVersion,
+                                  Integer maintenanceNumber,
+                                  Integer updateNumber) {
+        return new JavaVersion(majorVersionFamily, majorVersion, maintenanceNumber, updateNumber);
+    }
 
     @Test
     public void verifyHashCodeAndEquals_JavaVersion() {
@@ -203,10 +226,6 @@ public class JavaVersionParserTest {
         assertThat(second, lessThan(first));
     }
 
-    public static void assertIntEquals(int expected, Integer actual) {
-        assertEquals(Integer.valueOf(expected), actual);
-    }
-
     @Test
     public void knownJavaVersions_Java6() {
         assertEquals(KnownJavaVersions.JAVA_6, KnownJavaVersions.fromMajorVersion(1, 6));
@@ -233,24 +252,5 @@ public class JavaVersionParserTest {
         assertEquals(KnownJavaVersions.UNKNOWN, KnownJavaVersions.fromMajorVersion(-8, 0));
         assertEquals(KnownJavaVersions.UNKNOWN, KnownJavaVersions.fromMajorVersion(1, 91));
         assertEquals(KnownJavaVersions.UNKNOWN, KnownJavaVersions.fromMajorVersion(2, 0));
-    }
-
-    private static void assertJavaVersionsEqual(JavaVersion expected, JavaVersion actual) {
-        assertEquals(expected.getMajorVersionFamily(), actual.getMajorVersionFamily());
-        assertEquals(expected.getMajorVersion(), actual.getMajorVersion());
-        assertEquals(expected.getMaintenanceNumber(), actual.getMaintenanceNumber());
-        assertEquals(expected.getUpdateNumber(), actual.getUpdateNumber());
-        assertEquals(expected.getMajorVersionString(), actual.getMajorVersionString());
-        assertEquals(expected, actual);
-    }
-
-    /**
-     * Convenience factory method for a {@link JavaVersion}
-     */
-    private static JavaVersion jv(Integer majorVersionFamily,
-                                  Integer majorVersion,
-                                  Integer maintenanceNumber,
-                                  Integer updateNumber) {
-        return new JavaVersion(majorVersionFamily, majorVersion, maintenanceNumber, updateNumber);
     }
 }

@@ -22,7 +22,7 @@ public abstract class SdkPredicate<T> {
 
     /**
      * Evaluates this predicate on the given argument
-     * 
+     *
      * @param t
      *            The input argument
      * @return true if the input argument matches the predicate, otherwise false

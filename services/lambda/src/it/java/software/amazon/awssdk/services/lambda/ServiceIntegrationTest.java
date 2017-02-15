@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -63,93 +63,6 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setUpKinesis() {
         IntegrationTestBase.createKinesisStream();
-    }
-
-    @Before
-    public void uploadFunction() throws IOException {
-        // Upload function
-        byte[] functionBits;
-        InputStream functionZip = new FileInputStream(cloudFuncZip);
-        try {
-            functionBits = read(functionZip);
-        } finally {
-            functionZip.close();
-        }
-
-        CreateFunctionResult result = lambda.createFunction(new CreateFunctionRequest()
-                .withDescription("My cloud function").withFunctionName(FUNCTION_NAME)
-                .withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(functionBits)))
-                .withHandler("helloworld.handler").withMemorySize(128).withRuntime(Runtime.Nodejs43).withTimeout(10)
-                .withRole(lambdaServiceRoleArn));
-
-        checkValid_CreateFunctionResult(result);
-    }
-
-    @After
-    public void deleteFunction() {
-        lambda.deleteFunction(new DeleteFunctionRequest().withFunctionName(FUNCTION_NAME));
-    }
-
-    @Test
-    public void testFunctionOperations() throws IOException {
-
-        // Get function
-        GetFunctionResult getFunc = lambda.getFunction(new GetFunctionRequest().withFunctionName(FUNCTION_NAME));
-        checkValid_GetFunctionResult(getFunc);
-
-        // Get function configuration
-        GetFunctionConfigurationResult getConfig = lambda
-                .getFunctionConfiguration(new GetFunctionConfigurationRequest().withFunctionName(FUNCTION_NAME));
-        checkValid_GetFunctionConfigurationResult(getConfig);
-
-        // List functions
-        ListFunctionsResult listFunc = lambda.listFunctions();
-        Assert.assertFalse(listFunc.getFunctions().isEmpty());
-        for (FunctionConfiguration funcConfig : listFunc.getFunctions()) {
-            checkValid_FunctionConfiguration(funcConfig);
-        }
-
-        // Invoke the function
-        InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(new InvokeAsyncRequest().withFunctionName(
-                FUNCTION_NAME).withInvokeArgs(new ByteArrayInputStream("{}".getBytes())));
-
-        Assert.assertEquals(202, invokeAsyncResult.getStatus().intValue());
-
-        InvokeResult invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
-                .withInvocationType(InvocationType.Event).withPayload(ByteBuffer.wrap("{}".getBytes())));
-
-        Assert.assertEquals(202, invokeResult.getStatusCode().intValue());
-        Assert.assertNull(invokeResult.getLogResult());
-        Assert.assertEquals(0, invokeResult.getPayload().remaining());
-
-        invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
-                .withInvocationType(InvocationType.RequestResponse).withLogType(LogType.Tail)
-                .withPayload(ByteBuffer.wrap("{}".getBytes())));
-
-        Assert.assertEquals(200, invokeResult.getStatusCode().intValue());
-
-        System.out.println(new String(Base64.decode(invokeResult.getLogResult()), StringUtils.UTF8));
-
-        Assert.assertEquals("\"Hello World\"", StringUtils.UTF8.decode(invokeResult.getPayload()).toString());
-    }
-
-    @Test
-    public void testEventSourceOperations() {
-
-        // AddEventSourceResult
-        CreateEventSourceMappingResult addResult = lambda
-                .createEventSourceMapping(new CreateEventSourceMappingRequest().withFunctionName(FUNCTION_NAME)
-                        .withEventSourceArn(streamArn).withStartingPosition("TRIM_HORIZON").withBatchSize(100));
-        checkValid_CreateEventSourceMappingResult(addResult);
-
-        String eventSourceUUID = addResult.getUUID();
-
-        // GetEventSource
-        GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(new GetEventSourceMappingRequest()
-                .withUUID(eventSourceUUID));
-
-        // RemoveEventSource
-        lambda.deleteEventSourceMapping(new DeleteEventSourceMappingRequest().withUUID(eventSourceUUID));
     }
 
     private static void checkValid_CreateFunctionResult(CreateFunctionResult result) {
@@ -223,6 +136,93 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertNotNull(result.getState());
         Assert.assertNotNull(result.getStateTransitionReason());
         Assert.assertNotNull(result.getUUID());
+    }
+
+    @Before
+    public void uploadFunction() throws IOException {
+        // Upload function
+        byte[] functionBits;
+        InputStream functionZip = new FileInputStream(cloudFuncZip);
+        try {
+            functionBits = read(functionZip);
+        } finally {
+            functionZip.close();
+        }
+
+        CreateFunctionResult result = lambda.createFunction(new CreateFunctionRequest()
+                                                                    .withDescription("My cloud function").withFunctionName(FUNCTION_NAME)
+                                                                    .withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(functionBits)))
+                                                                    .withHandler("helloworld.handler").withMemorySize(128).withRuntime(Runtime.Nodejs43).withTimeout(10)
+                                                                    .withRole(lambdaServiceRoleArn));
+
+        checkValid_CreateFunctionResult(result);
+    }
+
+    @After
+    public void deleteFunction() {
+        lambda.deleteFunction(new DeleteFunctionRequest().withFunctionName(FUNCTION_NAME));
+    }
+
+    @Test
+    public void testFunctionOperations() throws IOException {
+
+        // Get function
+        GetFunctionResult getFunc = lambda.getFunction(new GetFunctionRequest().withFunctionName(FUNCTION_NAME));
+        checkValid_GetFunctionResult(getFunc);
+
+        // Get function configuration
+        GetFunctionConfigurationResult getConfig = lambda
+                .getFunctionConfiguration(new GetFunctionConfigurationRequest().withFunctionName(FUNCTION_NAME));
+        checkValid_GetFunctionConfigurationResult(getConfig);
+
+        // List functions
+        ListFunctionsResult listFunc = lambda.listFunctions();
+        Assert.assertFalse(listFunc.getFunctions().isEmpty());
+        for (FunctionConfiguration funcConfig : listFunc.getFunctions()) {
+            checkValid_FunctionConfiguration(funcConfig);
+        }
+
+        // Invoke the function
+        InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(new InvokeAsyncRequest().withFunctionName(
+                FUNCTION_NAME).withInvokeArgs(new ByteArrayInputStream("{}".getBytes())));
+
+        Assert.assertEquals(202, invokeAsyncResult.getStatus().intValue());
+
+        InvokeResult invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
+                                                                     .withInvocationType(InvocationType.Event).withPayload(ByteBuffer.wrap("{}".getBytes())));
+
+        Assert.assertEquals(202, invokeResult.getStatusCode().intValue());
+        Assert.assertNull(invokeResult.getLogResult());
+        Assert.assertEquals(0, invokeResult.getPayload().remaining());
+
+        invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
+                                                        .withInvocationType(InvocationType.RequestResponse).withLogType(LogType.Tail)
+                                                        .withPayload(ByteBuffer.wrap("{}".getBytes())));
+
+        Assert.assertEquals(200, invokeResult.getStatusCode().intValue());
+
+        System.out.println(new String(Base64.decode(invokeResult.getLogResult()), StringUtils.UTF8));
+
+        Assert.assertEquals("\"Hello World\"", StringUtils.UTF8.decode(invokeResult.getPayload()).toString());
+    }
+
+    @Test
+    public void testEventSourceOperations() {
+
+        // AddEventSourceResult
+        CreateEventSourceMappingResult addResult = lambda
+                .createEventSourceMapping(new CreateEventSourceMappingRequest().withFunctionName(FUNCTION_NAME)
+                                                                               .withEventSourceArn(streamArn).withStartingPosition("TRIM_HORIZON").withBatchSize(100));
+        checkValid_CreateEventSourceMappingResult(addResult);
+
+        String eventSourceUUID = addResult.getUUID();
+
+        // GetEventSource
+        GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(new GetEventSourceMappingRequest()
+                                                                                     .withUUID(eventSourceUUID));
+
+        // RemoveEventSource
+        lambda.deleteEventSourceMapping(new DeleteEventSourceMappingRequest().withUUID(eventSourceUUID));
     }
 
 }

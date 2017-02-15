@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -50,15 +50,17 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     public Item getItem() {
         return item;
     }
+
     public PutItemSpec withItem(Item item) {
         this.item = item;
         return this;
     }
+
     public Collection<Expected> getExpected() {
         return expected;
     }
 
-    public PutItemSpec withExpected(Expected ... expected) {
+    public PutItemSpec withExpected(Expected... expected) {
         if (expected == null) {
             this.expected = null;
             return this;
@@ -72,11 +74,12 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
             return this;
         }
         Set<String> names = new LinkedHashSet<String>();
-        for (Expected e: expected)
+        for (Expected e : expected) {
             names.add(e.getAttribute());
+        }
         if (names.size() != expected.size()) {
             throw new IllegalArgumentException(
-                "attribute names must not duplicate in the list of expected");
+                    "attribute names must not duplicate in the list of expected");
         }
         this.expected = Collections.unmodifiableCollection(expected);
         return this;
@@ -106,10 +109,11 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
             this.nameMap = null;
         } else {
             this.nameMap = Collections.unmodifiableMap(
-                new LinkedHashMap<String, String>(nameMap));
+                    new LinkedHashMap<String, String>(nameMap));
         }
         return this;
     }
+
     public Map<String, Object> getValueMap() {
         return valueMap;
     }
@@ -123,7 +127,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
             this.valueMap = null;
         } else {
             this.valueMap = Collections.unmodifiableMap(
-                new LinkedHashMap<String, Object>(valueMap));
+                    new LinkedHashMap<String, Object>(valueMap));
         }
         return this;
     }
@@ -188,8 +192,8 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     @Beta
     public PutItemSpec withExpressionSpec(PutItemExpressionSpec xspec) {
         return withConditionExpression(xspec.getConditionExpression())
-              .withNameMap(xspec.getNameMap())
-              .withValueMap(xspec.getValueMap())
-              ;
+                .withNameMap(xspec.getNameMap())
+                .withValueMap(xspec.getValueMap())
+                ;
     }
 }

@@ -71,35 +71,41 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
 
     /** Tag Key and Value used to tag the newly created environment.*/
     private final String tagKey = "java-sdk-env-tag-key" + System.currentTimeMillis();
-    private final String tagValue= "java-sdk-env-tag-value" + System.currentTimeMillis();
+    private final String tagValue = "java-sdk-env-tag-value" + System.currentTimeMillis();
 
     /** Releases all resources created by this test. */
     @After
     public void tearDown() throws Exception {
         try {
             elasticbeanstalk.terminateEnvironment(new TerminateEnvironmentRequest().withEnvironmentName(environmentName));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
             waitForEnvironmentToTransitionToStateAndHealth(environmentName, EnvironmentStatus.Terminated, null);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
             elasticbeanstalk.deleteConfigurationTemplate(new DeleteConfigurationTemplateRequest(APPLICATION_NAME, templateName));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
             elasticbeanstalk.deleteApplicationVersion(new DeleteApplicationVersionRequest(APPLICATION_NAME, versionLabel));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
             elasticbeanstalk.deleteApplication(new DeleteApplicationRequest(APPLICATION_NAME));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
             s3.deleteObject(bucketName, versionLabel);
             s3.deleteBucket(bucketName);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
 
@@ -109,7 +115,9 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         List<String> solutionStacks = elasticbeanstalk.listAvailableSolutionStacks().getSolutionStacks();
         assertNotNull(solutionStacks);
         assertTrue(solutionStacks.size() > 1);
-        for (String stack : solutionStacks) assertNotEmpty(stack);
+        for (String stack : solutionStacks) {
+            assertNotEmpty(stack);
+        }
     }
 
     /** Tests that we can launch a new environment and walk through the ElasticBeanstalk operations. */
@@ -160,12 +168,15 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         elasticbeanstalk.requestEnvironmentInfo(new RequestEnvironmentInfoRequest("tail").withEnvironmentName(environmentName));
 
         // Wait a few seconds for ElasticBeanstalk to collect the logs
-        try {Thread.sleep(1000 * 20);} catch (Exception e) {}
+        try {
+            Thread.sleep(1000 * 20);
+        } catch (Exception e) {
+        }
 
         // Pull the log tails
         List<EnvironmentInfoDescription> environmentInfoList = elasticbeanstalk.retrieveEnvironmentInfo(
                 new RetrieveEnvironmentInfoRequest("tail")
-                    .withEnvironmentName(environmentName)).getEnvironmentInfo();
+                        .withEnvironmentName(environmentName)).getEnvironmentInfo();
         assertTrue(environmentInfoList.size() > 0);
         for (EnvironmentInfoDescription environmentInfo : environmentInfoList) {
             assertNotEmpty(environmentInfo.getEc2InstanceId());
@@ -180,7 +191,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Create an application
         ApplicationDescription createdApplication = elasticbeanstalk.createApplication(
                 new CreateApplicationRequest(APPLICATION_NAME)
-                    .withDescription(APPLICATION_DESCRIPTION)).getApplication();
+                        .withDescription(APPLICATION_DESCRIPTION)).getApplication();
         assertEquals(APPLICATION_NAME, createdApplication.getApplicationName());
         assertEquals(APPLICATION_DESCRIPTION, createdApplication.getDescription());
         assertRecent(createdApplication.getDateCreated());
@@ -188,7 +199,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Update it
         createdApplication = elasticbeanstalk.updateApplication(
                 new UpdateApplicationRequest(APPLICATION_NAME)
-                    .withDescription("New " + APPLICATION_DESCRIPTION)).getApplication();
+                        .withDescription("New " + APPLICATION_DESCRIPTION)).getApplication();
         assertEquals(APPLICATION_NAME, createdApplication.getApplicationName());
         assertEquals("New " + APPLICATION_DESCRIPTION, createdApplication.getDescription());
         assertRecent(createdApplication.getDateUpdated());
@@ -196,7 +207,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Describe it
         List<ApplicationDescription> describedApplications = elasticbeanstalk.describeApplications(
                 new DescribeApplicationsRequest()
-                    .withApplicationNames(APPLICATION_NAME)).getApplications();
+                        .withApplicationNames(APPLICATION_NAME)).getApplications();
         assertEquals(1, describedApplications.size());
         assertEquals(APPLICATION_NAME, describedApplications.get(0).getApplicationName());
     }
@@ -209,9 +220,9 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Create an application version
         ApplicationVersionDescription createdApplicationVersion = elasticbeanstalk.createApplicationVersion(
                 new CreateApplicationVersionRequest(APPLICATION_NAME, versionLabel)
-                    .withDescription(APPLICATION_VERSION_DESCRIPTION)
-                    .withAutoCreateApplication(true)
-                    .withSourceBundle(new S3Location(bucketName, versionLabel))).getApplicationVersion();
+                        .withDescription(APPLICATION_VERSION_DESCRIPTION)
+                        .withAutoCreateApplication(true)
+                        .withSourceBundle(new S3Location(bucketName, versionLabel))).getApplicationVersion();
         assertEquals(APPLICATION_NAME, createdApplicationVersion.getApplicationName());
         assertEquals(APPLICATION_VERSION_DESCRIPTION, createdApplicationVersion.getDescription());
         assertRecent(createdApplicationVersion.getDateCreated());
@@ -242,11 +253,11 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Create a new environment
         CreateEnvironmentResult createEnvironmentResult = elasticbeanstalk.createEnvironment(
                 new CreateEnvironmentRequest(APPLICATION_NAME, environmentName)
-                    .withCNAMEPrefix(environmentName)
-                    .withDescription("Environment Description")
-                    .withVersionLabel(versionLabel)
-                    .withSolutionStackName(SOLUTION_STACK_NAME)
-                    .withTags(new Tag().withKey(tagKey).withValue(tagValue)));
+                        .withCNAMEPrefix(environmentName)
+                        .withDescription("Environment Description")
+                        .withVersionLabel(versionLabel)
+                        .withSolutionStackName(SOLUTION_STACK_NAME)
+                        .withTags(new Tag().withKey(tagKey).withValue(tagValue)));
         assertEquals(APPLICATION_NAME, createEnvironmentResult.getApplicationName());
         assertNotEmpty(createEnvironmentResult.getCNAME());
         assertRecent(createEnvironmentResult.getDateCreated());
@@ -262,10 +273,10 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Describe it
         List<EnvironmentDescription> describedEnvironments = elasticbeanstalk.describeEnvironments(
                 new DescribeEnvironmentsRequest()
-                    .withApplicationName(APPLICATION_NAME)
-                    .withEnvironmentNames(environmentName)
-                    .withIncludeDeleted(false)
-                    .withVersionLabel(versionLabel)).getEnvironments();
+                        .withApplicationName(APPLICATION_NAME)
+                        .withEnvironmentNames(environmentName)
+                        .withIncludeDeleted(false)
+                        .withVersionLabel(versionLabel)).getEnvironments();
         assertEquals(1, describedEnvironments.size());
         assertEquals(APPLICATION_NAME, describedEnvironments.get(0).getApplicationName());
 
@@ -276,8 +287,8 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Update the environment once it's started
         UpdateEnvironmentResult updateEnvironmentResult = elasticbeanstalk.updateEnvironment(
                 new UpdateEnvironmentRequest()
-                    .withEnvironmentName(environmentName)
-                    .withDescription("New Environment Description"));
+                        .withEnvironmentName(environmentName)
+                        .withDescription("New Environment Description"));
         assertNotEmpty(updateEnvironmentResult.getDescription());
         assertRecent(updateEnvironmentResult.getDateUpdated());
 
@@ -285,7 +296,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Describe the resources that make up the environment
         EnvironmentResourceDescription environmentResources = elasticbeanstalk.describeEnvironmentResources(
                 new DescribeEnvironmentResourcesRequest()
-                    .withEnvironmentName(environmentName)).getEnvironmentResources();
+                        .withEnvironmentName(environmentName)).getEnvironmentResources();
         assertEquals(1, environmentResources.getAutoScalingGroups().size());
         assertEquals(environmentName, environmentResources.getEnvironmentName());
         assertTrue(environmentResources.getInstances().size() > 0);
@@ -297,8 +308,8 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     private void testEventOperations() {
         List<EventDescription> describedEvents = elasticbeanstalk.describeEvents(
                 new DescribeEventsRequest()
-                    .withApplicationName(APPLICATION_NAME)
-                    .withEnvironmentName(environmentName)).getEvents();
+                        .withApplicationName(APPLICATION_NAME)
+                        .withEnvironmentName(environmentName)).getEvents();
         assertTrue(describedEvents.size() > 0);
         for (EventDescription event : describedEvents) {
             assertEquals(APPLICATION_NAME, event.getApplicationName());
@@ -332,8 +343,8 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         // Describe current configuration settings for our environment
         List<ConfigurationSettingsDescription> configurationSettings = elasticbeanstalk.describeConfigurationSettings(
                 new DescribeConfigurationSettingsRequest()
-                    .withApplicationName(APPLICATION_NAME)
-                    .withEnvironmentName(environmentName)).getConfigurationSettings();
+                        .withApplicationName(APPLICATION_NAME)
+                        .withEnvironmentName(environmentName)).getConfigurationSettings();
         assertTrue(configurationSettings.size() > 0);
         for (ConfigurationSettingsDescription configurationSetting : configurationSettings) {
             assertEquals(APPLICATION_NAME, configurationSetting.getApplicationName());
@@ -349,14 +360,14 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         ArrayList<ConfigurationOptionSetting> optionSettings = new ArrayList<ConfigurationOptionSetting>();
         optionSettings.add(new ConfigurationOptionSetting("aws:elasticbeanstalk:application:environment", "PARAM3", "newValue"));
         elasticbeanstalk.validateConfigurationSettings(new ValidateConfigurationSettingsRequest(APPLICATION_NAME, optionSettings)
-            .withEnvironmentName(environmentName));
+                                                               .withEnvironmentName(environmentName));
 
         // Create a new template
         CreateConfigurationTemplateResult createConfigurationTemplateResult = elasticbeanstalk.createConfigurationTemplate(
                 new CreateConfigurationTemplateRequest()
-                    .withTemplateName(templateName)
-                    .withSolutionStackName(SOLUTION_STACK_NAME)
-                    .withApplicationName(APPLICATION_NAME));
+                        .withTemplateName(templateName)
+                        .withSolutionStackName(SOLUTION_STACK_NAME)
+                        .withApplicationName(APPLICATION_NAME));
         assertEquals(APPLICATION_NAME, createConfigurationTemplateResult.getApplicationName());
         assertRecent(createConfigurationTemplateResult.getDateCreated());
 

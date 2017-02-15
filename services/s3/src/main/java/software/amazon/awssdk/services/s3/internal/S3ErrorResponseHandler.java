@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import static software.amazon.awssdk.util.StringUtils.UTF8;
@@ -45,7 +46,7 @@ import software.amazon.awssdk.util.IOUtils;
  * parts of the error response.
  */
 public class S3ErrorResponseHandler implements
-        HttpResponseHandler<AmazonServiceException> {
+                                    HttpResponseHandler<AmazonServiceException> {
     /** Shared logger for profiling information */
     private static final Log log = LogFactory
             .getLog(S3ErrorResponseHandler.class);
@@ -54,10 +55,6 @@ public class S3ErrorResponseHandler implements
     private static final XMLInputFactory xmlInputFactory = XMLInputFactory
             .newInstance();
 
-    private static enum S3ErrorTags {
-        Error, Message, Code, RequestId, HostId
-    };
-
     @Override
     public AmazonServiceException handle(HttpResponse httpResponse)
             throws XMLStreamException {
@@ -65,6 +62,8 @@ public class S3ErrorResponseHandler implements
         exception.setHttpHeaders(httpResponse.getHeaders());
         return exception;
     }
+
+    ;
 
     private AmazonServiceException createException(HttpResponse httpResponse) throws
                                                                               XMLStreamException {
@@ -76,7 +75,7 @@ public class S3ErrorResponseHandler implements
          * what we can.
          */
         if (is == null
-                || httpResponse.getRequest().getHttpMethod() == HttpMethodName.HEAD) {
+            || httpResponse.getRequest().getHttpMethod() == HttpMethodName.HEAD) {
             return createExceptionFromHeaders(httpResponse, null);
         }
 
@@ -84,8 +83,9 @@ public class S3ErrorResponseHandler implements
         try {
             content = IOUtils.toString(is);
         } catch (IOException ioe) {
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("Failed in parsing the error response : ", ioe);
+            }
             return createExceptionFromHeaders(httpResponse, null);
         }
 
@@ -98,7 +98,7 @@ public class S3ErrorResponseHandler implements
         synchronized (xmlInputFactory) {
             reader = xmlInputFactory
                     .createXMLStreamReader(new ByteArrayInputStream(content
-                            .getBytes(UTF8)));
+                                                                            .getBytes(UTF8)));
         }
 
         try {
@@ -120,51 +120,54 @@ public class S3ErrorResponseHandler implements
                 int event = reader.next();
 
                 switch (event) {
-                case XMLStreamConstants.START_ELEMENT:
-                    targetDepth++;
-                    String tagName = reader.getLocalName();
-                    if (targetDepth == 1
-                            && !S3ErrorTags.Error.toString().equals(tagName))
-                        return createExceptionFromHeaders(httpResponse,
-                                "Unable to parse error response. Error XML Not in proper format."
-                                        + content);
-                    if (S3ErrorTags.Error.toString().equals(tagName)) {
-                        hasErrorTagVisited = true;
-                    }
-                    continue;
-                case XMLStreamConstants.CHARACTERS:
-                    xmlContent = reader.getText();
-                    if (xmlContent != null)
-                        xmlContent = xmlContent.trim();
-                    continue;
-                case XMLStreamConstants.END_ELEMENT:
-                    tagName = reader.getLocalName();
-                    targetDepth--;
-                    if (!(hasErrorTagVisited) || targetDepth > 1) {
-                        return createExceptionFromHeaders(httpResponse,
-                                "Unable to parse error response. Error XML Not in proper format."
-                                        + content);
-                    }
-                    if (S3ErrorTags.Message.toString().equals(tagName)) {
-                        exceptionBuilder.setErrorMessage(xmlContent);
-                    } else if (S3ErrorTags.Code.toString().equals(tagName)) {
-                        exceptionBuilder.setErrorCode(xmlContent);
-                    } else if (S3ErrorTags.RequestId.toString().equals(tagName)) {
-                        exceptionBuilder.setRequestId(xmlContent);
-                    } else if (S3ErrorTags.HostId.toString().equals(tagName)) {
-                        exceptionBuilder.setExtendedRequestId(xmlContent);
-                    } else {
-                        exceptionBuilder.addAdditionalDetail(tagName, xmlContent);
-                    }
-                    continue;
-                case XMLStreamConstants.END_DOCUMENT:
-                    return exceptionBuilder.build();
+                    case XMLStreamConstants.START_ELEMENT:
+                        targetDepth++;
+                        String tagName = reader.getLocalName();
+                        if (targetDepth == 1
+                            && !S3ErrorTags.Error.toString().equals(tagName)) {
+                            return createExceptionFromHeaders(httpResponse,
+                                                              "Unable to parse error response. Error XML Not in proper format."
+                                                              + content);
+                        }
+                        if (S3ErrorTags.Error.toString().equals(tagName)) {
+                            hasErrorTagVisited = true;
+                        }
+                        continue;
+                    case XMLStreamConstants.CHARACTERS:
+                        xmlContent = reader.getText();
+                        if (xmlContent != null) {
+                            xmlContent = xmlContent.trim();
+                        }
+                        continue;
+                    case XMLStreamConstants.END_ELEMENT:
+                        tagName = reader.getLocalName();
+                        targetDepth--;
+                        if (!(hasErrorTagVisited) || targetDepth > 1) {
+                            return createExceptionFromHeaders(httpResponse,
+                                                              "Unable to parse error response. Error XML Not in proper format."
+                                                              + content);
+                        }
+                        if (S3ErrorTags.Message.toString().equals(tagName)) {
+                            exceptionBuilder.setErrorMessage(xmlContent);
+                        } else if (S3ErrorTags.Code.toString().equals(tagName)) {
+                            exceptionBuilder.setErrorCode(xmlContent);
+                        } else if (S3ErrorTags.RequestId.toString().equals(tagName)) {
+                            exceptionBuilder.setRequestId(xmlContent);
+                        } else if (S3ErrorTags.HostId.toString().equals(tagName)) {
+                            exceptionBuilder.setExtendedRequestId(xmlContent);
+                        } else {
+                            exceptionBuilder.addAdditionalDetail(tagName, xmlContent);
+                        }
+                        continue;
+                    case XMLStreamConstants.END_DOCUMENT:
+                        return exceptionBuilder.build();
                 }
             }
         } catch (Exception e) {
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("Failed in parsing the error response : " + content,
-                        e);
+                          e);
+            }
         }
         return createExceptionFromHeaders(httpResponse, content);
     }
@@ -184,7 +187,7 @@ public class S3ErrorResponseHandler implements
         exceptionBuilder
                 .setErrorCode(statusCode + " " + errorResponse.getStatusText());
         exceptionBuilder.addAdditionalDetail(Headers.S3_BUCKET_REGION,
-                errorResponse.getHeaders().get(Headers.S3_BUCKET_REGION));
+                                             errorResponse.getHeaders().get(Headers.S3_BUCKET_REGION));
         return exceptionBuilder.build();
     }
 
@@ -197,5 +200,9 @@ public class S3ErrorResponseHandler implements
      */
     public boolean needsConnectionLeftOpen() {
         return false;
+    }
+
+    private static enum S3ErrorTags {
+        Error, Message, Code, RequestId, HostId
     }
 }

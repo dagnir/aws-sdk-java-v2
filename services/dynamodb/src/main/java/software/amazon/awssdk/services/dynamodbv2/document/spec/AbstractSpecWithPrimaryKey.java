@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -42,11 +42,12 @@ public class AbstractSpecWithPrimaryKey<T extends AmazonWebServiceRequest>
     /**
      * Sets the primary key with the specified key components.
      */
-    public AbstractSpecWithPrimaryKey<T> withPrimaryKey(KeyAttribute ... components) {
-        if (components == null)
+    public AbstractSpecWithPrimaryKey<T> withPrimaryKey(KeyAttribute... components) {
+        if (components == null) {
             this.keyComponents = null;
-        else
+        } else {
             this.keyComponents = Arrays.asList(components);
+        }
         return this;
     }
 
@@ -54,9 +55,9 @@ public class AbstractSpecWithPrimaryKey<T extends AmazonWebServiceRequest>
      * Sets the primary key.
      */
     public AbstractSpecWithPrimaryKey<T> withPrimaryKey(PrimaryKey primaryKey) {
-        if (primaryKey == null)
+        if (primaryKey == null) {
             this.keyComponents = null;
-        else {
+        } else {
             this.keyComponents = primaryKey.getComponents();
         }
         return this;
@@ -66,8 +67,9 @@ public class AbstractSpecWithPrimaryKey<T extends AmazonWebServiceRequest>
      * Sets the primary key with the specified hash-only key name and value.
      */
     public AbstractSpecWithPrimaryKey<T> withPrimaryKey(String hashKeyName, Object hashKeyValue) {
-        if (hashKeyName == null)
+        if (hashKeyName == null) {
             throw new IllegalArgumentException();
+        }
         withPrimaryKey(new PrimaryKey(hashKeyName, hashKeyValue));
         return this;
     }
@@ -76,15 +78,18 @@ public class AbstractSpecWithPrimaryKey<T extends AmazonWebServiceRequest>
      * Sets the primary key with the specified hash key and range key.
      */
     public AbstractSpecWithPrimaryKey<T> withPrimaryKey(String hashKeyName, Object hashKeyValue,
-            String rangeKeyName, Object rangeKeyValue) {
-        if (hashKeyName == null)
+                                                        String rangeKeyName, Object rangeKeyValue) {
+        if (hashKeyName == null) {
             throw new IllegalArgumentException("Invalid hash key name");
-        if (rangeKeyName == null)
+        }
+        if (rangeKeyName == null) {
             throw new IllegalArgumentException("Invalid range key name");
-        if (hashKeyName.equals(rangeKeyName))
+        }
+        if (hashKeyName.equals(rangeKeyName)) {
             throw new IllegalArgumentException("Names of hash and range keys must not be the same");
-        withPrimaryKey(new PrimaryKey(hashKeyName, hashKeyValue, 
-            rangeKeyName, rangeKeyValue));
+        }
+        withPrimaryKey(new PrimaryKey(hashKeyName, hashKeyValue,
+                                      rangeKeyName, rangeKeyValue));
         return this;
     }
 }

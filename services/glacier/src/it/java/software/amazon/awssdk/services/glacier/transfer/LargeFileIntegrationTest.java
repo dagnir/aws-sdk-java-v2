@@ -26,7 +26,7 @@ public class LargeFileIntegrationTest extends GlacierIntegrationTestBase {
         randomTempFile = new RandomTempFile("LargeFileIntegrationTest", contentLength, true);
         assertEquals(contentLength, randomTempFile.length());
         downloadFile = new File(randomTempFile.getParentFile(),
-                randomTempFile.getName() + ".download");
+                                randomTempFile.getName() + ".download");
     }
 
     @After

@@ -8,6 +8,6 @@ Feature: AWS Config
 
   Scenario: Handling errors
     When I attempt to call the "GetResourceConfigHistory" API with:
-    | resourceType | fake-type |
-    | resourceId   | fake-id   |
+      | resourceType | fake-type |
+      | resourceId   | fake-id   |
     Then I expect the response error code to be "ValidationException"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
 public interface BatchGetItemApi {
     /**
      * Used to perform a batch get-item operation from DynamoDB.
-     * 
+     *
      * @param returnConsumedCapacity
      *            returned capacity to be returned
      * @param tableKeyAndAttributes
@@ -45,7 +45,7 @@ public interface BatchGetItemApi {
 
     /**
      * Used to perform a batch get-item operation from DynamoDB.
-     * 
+     *
      * @param tableKeyAndAttributes
      *            the tables, keys, and attributes specification to be used to
      *            retrieve the items.
@@ -62,13 +62,13 @@ public interface BatchGetItemApi {
     /**
      * Used to perform a batch get-item for the unprocessed keys returned from a
      * previous batch get-item operation.
-     * 
+     *
      * @param returnConsumedCapacity
      *            returned capacity to be returned
      * @param unprocessedKeys
      *            the unprocessed keys returned from the result of a previous
      *            batch-get-item operation.
-     * 
+     *
      * @see BatchGetItemOutcome#getUnprocessedKeys()
      */
     public BatchGetItemOutcome batchGetItemUnprocessed(
@@ -78,11 +78,11 @@ public interface BatchGetItemApi {
     /**
      * Used to perform a batch get-item for the unprocessed keys returned from a
      * previous batch get-item operation.
-     * 
+     *
      * @param unprocessedKeys
      *            the unprocessed keys returned from the result of a previous
      *            batch-get-item operation.
-     * 
+     *
      * @see BatchGetItemOutcome#getUnprocessedKeys()
      */
     public BatchGetItemOutcome batchGetItemUnprocessed(

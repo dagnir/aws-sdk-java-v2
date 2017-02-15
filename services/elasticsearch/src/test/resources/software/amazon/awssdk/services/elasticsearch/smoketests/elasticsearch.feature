@@ -8,5 +8,5 @@ Feature: Amazon ElasticsearchService
 
   Scenario: Handling errors
     When I attempt to call the "DescribeElasticsearchDomain" API with:
-      | DomainName      | not-a-domain |
+      | DomainName | not-a-domain |
     Then I expect the response error code to be "ResourceNotFoundException"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -38,13 +38,13 @@ class DecodedStreamBuffer {
         if (byteBuffered >= maxBufferSize) {
             if (log.isDebugEnabled()) {
                 log.debug("Buffer size " + maxBufferSize
-                        + " has been exceeded and the input stream "
-                        + "will not be repeatable. Freeing buffer memory");
+                          + " has been exceeded and the input stream "
+                          + "will not be repeatable. Freeing buffer memory");
             }
             bufferSizeOverflow = true;
-        }
-        else
+        } else {
             bufferArray[byteBuffered++] = read;
+        }
     }
 
     public void buffer(byte[] src, int srcPos, int length) {
@@ -52,12 +52,11 @@ class DecodedStreamBuffer {
         if (byteBuffered + length > maxBufferSize) {
             if (log.isDebugEnabled()) {
                 log.debug("Buffer size " + maxBufferSize
-                        + " has been exceeded and the input stream "
-                        + "will not be repeatable. Freeing buffer memory");
+                          + " has been exceeded and the input stream "
+                          + "will not be repeatable. Freeing buffer memory");
             }
             bufferSizeOverflow = true;
-        }
-        else {
+        } else {
             System.arraycopy(src, srcPos, bufferArray, byteBuffered, length);
             byteBuffered += length;
         }
@@ -75,7 +74,7 @@ class DecodedStreamBuffer {
         if (bufferSizeOverflow) {
             throw new SdkClientException(
                     "The input stream is not repeatable since the buffer size "
-                            + maxBufferSize + " has been exceeded.");
+                    + maxBufferSize + " has been exceeded.");
         }
         pos = 0;
     }

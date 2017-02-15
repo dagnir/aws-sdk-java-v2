@@ -1,18 +1,19 @@
 /*
- * Copyright 2015-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.document.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.document.xspec;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -86,20 +87,20 @@ public final class NS extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >contains(path, operand)</a> function condition where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * &quot;contains (path, operand) — true if the attribute at the specified 
      * path contains a particular operand. Note that the path and the operand 
      * must be distinct; that is, contains (a, a) will return an error&quot;
      * </pre>
-     * 
+     *
      * @param value
      *            the value that will be used as the operand to the
      *            "contains" function condition.
      */
     public FunctionCondition contains(Number value) {
         return new FunctionCondition("contains", this,
-                new LiteralOperand(value));
+                                     new LiteralOperand(value));
     }
 
     /**
@@ -157,14 +158,14 @@ public final class NS extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value that will be used as the operand to the
      *            if_not_exists function call.
@@ -179,14 +180,14 @@ public final class NS extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value (of another string set attribute) that will be
      *            used as the operand to the if_not_exists function call.
@@ -261,14 +262,14 @@ public final class NS extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value that will be used as the operand to the
      *            if_not_exists function call.

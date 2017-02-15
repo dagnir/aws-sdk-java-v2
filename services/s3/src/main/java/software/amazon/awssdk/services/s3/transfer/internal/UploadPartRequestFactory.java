@@ -40,12 +40,11 @@ public class UploadPartRequestFactory {
     private final long optimalPartSize;
     private final File file;
     private final PutObjectRequest origReq;
+    private final int totalNumberOfParts;
     private int partNumber = 1;
     private long offset = 0;
     private long remainingBytes;
     private SSECustomerKey sseCustomerKey;
-    private final int totalNumberOfParts;
-
     /**
      * Wrapped to provide necessary mark-and-reset support for the underlying
      * input stream. In particular, it provides support for unlimited
@@ -63,7 +62,7 @@ public class UploadPartRequestFactory {
         this.remainingBytes = TransferManagerUtils.getContentLength(origReq);
         this.sseCustomerKey = origReq.getSSECustomerKey();
         this.totalNumberOfParts = (int) Math.ceil((double) this.remainingBytes
-                / this.optimalPartSize);
+                                                  / this.optimalPartSize);
         if (origReq.getInputStream() != null) {
             wrappedStream = ReleasableInputStream.wrap(origReq.getInputStream());
         }
@@ -80,25 +79,27 @@ public class UploadPartRequestFactory {
         UploadPartRequest req = null;
         if (wrappedStream != null) {
             req = new UploadPartRequest()
-                .withBucketName(bucketName)
-                .withKey(key)
-                .withUploadId(uploadId)
-                .withInputStream(new InputSubstream(wrappedStream, 0, partSize, isLastPart))
-                .withPartNumber(partNumber++)
-                .withPartSize(partSize);
+                    .withBucketName(bucketName)
+                    .withKey(key)
+                    .withUploadId(uploadId)
+                    .withInputStream(new InputSubstream(wrappedStream, 0, partSize, isLastPart))
+                    .withPartNumber(partNumber++)
+                    .withPartSize(partSize);
         } else {
             req = new UploadPartRequest()
-                .withBucketName(bucketName)
-                .withKey(key)
-                .withUploadId(uploadId)
-                .withFile(file)
-                .withFileOffset(offset)
-                .withPartNumber(partNumber++)
-                .withPartSize(partSize);
+                    .withBucketName(bucketName)
+                    .withKey(key)
+                    .withUploadId(uploadId)
+                    .withFile(file)
+                    .withFileOffset(offset)
+                    .withPartNumber(partNumber++)
+                    .withPartSize(partSize);
         }
         TransferManager.appendMultipartUserAgent(req);
 
-        if (sseCustomerKey != null) req.setSSECustomerKey(sseCustomerKey);
+        if (sseCustomerKey != null) {
+            req.setSSECustomerKey(sseCustomerKey);
+        }
 
         offset += partSize;
         remainingBytes -= partSize;
@@ -107,7 +108,7 @@ public class UploadPartRequestFactory {
 
         req.withGeneralProgressListener(origReq.getGeneralProgressListener())
            .withRequestMetricCollector(origReq.getRequestMetricCollector())
-           ;
+        ;
         req.getRequestClientOptions().setReadLimit(origReq.getReadLimit());
         return req;
     }

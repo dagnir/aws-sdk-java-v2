@@ -163,11 +163,13 @@ public class PredefinedRetryPolicies {
                                    AmazonClientException exception,
                                    int retriesAttempted) {
             // Always retry on client exceptions caused by IOException
-            if (exception.getCause() instanceof IOException) return true;
+            if (exception.getCause() instanceof IOException) {
+                return true;
+            }
 
             // Only retry on a subset of service exceptions
             if (exception instanceof AmazonServiceException) {
-                AmazonServiceException ase = (AmazonServiceException)exception;
+                AmazonServiceException ase = (AmazonServiceException) exception;
 
                 /*
                  * For 500 internal server errors and 503 service
@@ -175,7 +177,9 @@ public class PredefinedRetryPolicies {
                  * an exponential back-off strategy so that we don't overload
                  * a server with a flood of retries.
                  */
-                if (RetryUtils.isRetryableServiceException(ase)) return true;
+                if (RetryUtils.isRetryableServiceException(ase)) {
+                    return true;
+                }
 
                 /*
                  * Throttling is reported as a 400 error from newer services. To try
@@ -183,14 +187,18 @@ public class PredefinedRetryPolicies {
                  * retry, hoping that the pause is long enough for the request to
                  * get through the next time.
                  */
-                if (RetryUtils.isThrottlingException(ase)) return true;
+                if (RetryUtils.isThrottlingException(ase)) {
+                    return true;
+                }
 
                 /*
                  * Clock skew exception. If it is then we will get the time offset
                  * between the device time and the server time to set the clock skew
                  * and then retry the request.
                  */
-                if (RetryUtils.isClockSkewError(ase)) return true;
+                if (RetryUtils.isClockSkewError(ase)) {
+                    return true;
+                }
             }
 
             return false;

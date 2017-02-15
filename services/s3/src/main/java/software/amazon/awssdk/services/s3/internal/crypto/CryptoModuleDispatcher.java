@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.model.CryptoMode.AuthenticatedEncryption;
@@ -68,33 +69,33 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
         }
         cryptoConfig = cryptoConfig.readOnly(); // make read-only
         this.defaultCryptoMode = cryptoConfig.getCryptoMode();
-        switch(this.defaultCryptoMode) {
+        switch (this.defaultCryptoMode) {
             case StrictAuthenticatedEncryption:
                 this.ae = new S3CryptoModuleAEStrict(kms, s3, credentialsProvider,
-                        encryptionMaterialsProvider,
-                        cryptoConfig);
+                                                     encryptionMaterialsProvider,
+                                                     cryptoConfig);
                 this.eo = null;
                 break;
             case AuthenticatedEncryption:
                 this.ae = new S3CryptoModuleAE(kms, s3, credentialsProvider,
-                        encryptionMaterialsProvider,
-                        cryptoConfig);
+                                               encryptionMaterialsProvider,
+                                               cryptoConfig);
                 this.eo = null;
                 break;
             case EncryptionOnly:
                 this.eo = new S3CryptoModuleEO(kms, s3, credentialsProvider,
-                        encryptionMaterialsProvider,
-                        cryptoConfig);
+                                               encryptionMaterialsProvider,
+                                               cryptoConfig);
                 CryptoConfiguration aeConfig = cryptoConfig.clone();
                 try {
                     aeConfig.setCryptoMode(AuthenticatedEncryption);
-                } catch(UnsupportedOperationException ex) {
+                } catch (UnsupportedOperationException ex) {
                     // BC not available during runtime; but EO can still work.
                     // Hence ignoring.
                 }
                 this.ae = new S3CryptoModuleAE(kms, s3, credentialsProvider,
-                    encryptionMaterialsProvider,
-                    aeConfig.readOnly());
+                                               encryptionMaterialsProvider,
+                                               aeConfig.readOnly());
                 break;
             default:
                 throw new IllegalStateException();
@@ -104,9 +105,9 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
     @Override
     public PutObjectResult putObjectSecurely(PutObjectRequest putObjectRequest) {
         return defaultCryptoMode == EncryptionOnly
-             ? eo.putObjectSecurely(putObjectRequest)
-             : ae.putObjectSecurely(putObjectRequest)
-             ;
+               ? eo.putObjectSecurely(putObjectRequest)
+               : ae.putObjectSecurely(putObjectRequest)
+                ;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
 
     @Override
     public ObjectMetadata getObjectSecurely(GetObjectRequest req,
-            File destinationFile) {
+                                            File destinationFile) {
         // AE module can handle S3 objects encrypted in either AE or EO format
         return ae.getObjectSecurely(req, destinationFile);
     }
@@ -125,29 +126,30 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
     @Override
     public CompleteMultipartUploadResult completeMultipartUploadSecurely(
             CompleteMultipartUploadRequest req)
-                    throws SdkClientException, AmazonServiceException {
-        return defaultCryptoMode == EncryptionOnly 
-             ? eo.completeMultipartUploadSecurely(req)
-             : ae.completeMultipartUploadSecurely(req)
-             ;
+            throws SdkClientException, AmazonServiceException {
+        return defaultCryptoMode == EncryptionOnly
+               ? eo.completeMultipartUploadSecurely(req)
+               : ae.completeMultipartUploadSecurely(req)
+                ;
     }
 
     @Override
     public void abortMultipartUploadSecurely(AbortMultipartUploadRequest req) {
-        if (defaultCryptoMode == EncryptionOnly)
+        if (defaultCryptoMode == EncryptionOnly) {
             eo.abortMultipartUploadSecurely(req);
-        else
+        } else {
             ae.abortMultipartUploadSecurely(req);
+        }
     }
 
     @Override
     public InitiateMultipartUploadResult initiateMultipartUploadSecurely(
             InitiateMultipartUploadRequest req)
-                    throws SdkClientException, AmazonServiceException {
-        return defaultCryptoMode == EncryptionOnly 
-             ? eo.initiateMultipartUploadSecurely(req)
-             : ae.initiateMultipartUploadSecurely(req)
-             ;
+            throws SdkClientException, AmazonServiceException {
+        return defaultCryptoMode == EncryptionOnly
+               ? eo.initiateMultipartUploadSecurely(req)
+               : ae.initiateMultipartUploadSecurely(req)
+                ;
     }
 
     /**
@@ -162,36 +164,37 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
      */
     @Override
     public UploadPartResult uploadPartSecurely(UploadPartRequest req)
-        throws SdkClientException, AmazonServiceException {
+            throws SdkClientException, AmazonServiceException {
         return defaultCryptoMode == EncryptionOnly
-             ? eo.uploadPartSecurely(req)
-             : ae.uploadPartSecurely(req)
-             ;
+               ? eo.uploadPartSecurely(req)
+               : ae.uploadPartSecurely(req)
+                ;
     }
 
     @Override
     public CopyPartResult copyPartSecurely(CopyPartRequest req) {
-        return defaultCryptoMode == EncryptionOnly 
-             ? eo.copyPartSecurely(req)
-             : ae.copyPartSecurely(req)
-             ;
+        return defaultCryptoMode == EncryptionOnly
+               ? eo.copyPartSecurely(req)
+               : ae.copyPartSecurely(req)
+                ;
     }
 
     @Override
     public PutObjectResult putInstructionFileSecurely(
             PutInstructionFileRequest req) {
         return defaultCryptoMode == EncryptionOnly
-            ? eo.putInstructionFileSecurely(req)
-            : ae.putInstructionFileSecurely(req)
-            ;
+               ? eo.putInstructionFileSecurely(req)
+               : ae.putInstructionFileSecurely(req)
+                ;
     }
 
     @Override
     public void putLocalObjectSecurely(UploadObjectRequest req,
-            String uploadId, OutputStream os) throws IOException {
-        if (defaultCryptoMode == EncryptionOnly)
+                                       String uploadId, OutputStream os) throws IOException {
+        if (defaultCryptoMode == EncryptionOnly) {
             eo.putLocalObjectSecurely(req, uploadId, os);
-        else
+        } else {
             ae.putLocalObjectSecurely(req, uploadId, os);
+        }
     }
 }

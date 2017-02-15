@@ -40,7 +40,7 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
             final HttpRequest request,
             final HttpClientConnection conn,
             final HttpContext context)
-                throws IOException, HttpException {
+            throws IOException, HttpException {
         AWSRequestMetrics awsRequestMetrics = (AWSRequestMetrics) context
                 .getAttribute(AWSRequestMetrics.class.getSimpleName());
 
@@ -48,13 +48,13 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
             return super.doSendRequest(request, conn, context);
         }
         if (conn instanceof ManagedHttpClientConnection) {
-            ManagedHttpClientConnection managedConn = (ManagedHttpClientConnection)conn;
+            ManagedHttpClientConnection managedConn = (ManagedHttpClientConnection) conn;
             Socket sock = managedConn.getSocket();
             if (sock instanceof SdkMetricsSocket) {
-                SdkMetricsSocket sdkMetricsSocket = (SdkMetricsSocket)sock;
+                SdkMetricsSocket sdkMetricsSocket = (SdkMetricsSocket) sock;
                 sdkMetricsSocket.setMetrics(awsRequestMetrics);
             } else if (sock instanceof SdkSSLMetricsSocket) {
-                SdkSSLMetricsSocket sdkSSLMetricsSocket = (SdkSSLMetricsSocket)sock;
+                SdkSSLMetricsSocket sdkSSLMetricsSocket = (SdkSSLMetricsSocket) sock;
                 sdkSSLMetricsSocket.setMetrics(awsRequestMetrics);
             }
         }
@@ -68,10 +68,10 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
 
     @Override
     protected HttpResponse doReceiveResponse(
-            final HttpRequest          request,
+            final HttpRequest request,
             final HttpClientConnection conn,
-            final HttpContext          context)
-                throws HttpException, IOException {
+            final HttpContext context)
+            throws HttpException, IOException {
         AWSRequestMetrics awsRequestMetrics = (AWSRequestMetrics) context
                 .getAttribute(AWSRequestMetrics.class.getSimpleName());
         if (awsRequestMetrics == null) {

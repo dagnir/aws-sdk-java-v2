@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ public class SdkInternalList<T> extends ArrayList<T> {
     private static final long serialVersionUID = 1L;
 
     /**
-    * Auto construct flag to indicate whether the list is auto constructed by
-    * Java SDK.
-    */
+     * Auto construct flag to indicate whether the list is auto constructed by
+     * Java SDK.
+     */
     private final boolean autoConstruct;
 
     public SdkInternalList() {
@@ -50,8 +50,8 @@ public class SdkInternalList<T> extends ArrayList<T> {
     }
 
     /**
-    * Return true if the list is auto constructed by Java SDK
-    */
+     * Return true if the list is auto constructed by Java SDK
+     */
     public boolean isAutoConstruct() {
         return autoConstruct;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class TimingInfo {
      * https://blogs.oracle.com/dholmes/entry/inside_the_hotspot_vm_clocks
      */
     private final Long startEpochTimeMilli;
-    /** 
+    /**
      * Start time in nanosecond used for timing measurement.
      * Note the value in this field may have nothing to do with
      * the wall clock time.
@@ -56,7 +56,7 @@ public class TimingInfo {
      * Note System.nanoTime() can return negative values.
      */
     private final long startTimeNano;
-    /** 
+    /**
      * End time in nanosecond used for timing measurement or null if unknown.
      * Note the value in this field is only meant to be used for timing
      * measurement, and is not directly related to the wall clock time.
@@ -66,6 +66,20 @@ public class TimingInfo {
      * Note System.nanoTime() can return negative values.
      */
     private Long endTimeNano;
+
+    /**
+     * A private ctor to facilitate the deprecation of using millisecond and
+     * migration to using nanosecond for timing measurement.
+     *
+     * @param startEpochTimeMilli start time since epoch in millisecond
+     * @param startTimeNano start time in nanosecond
+     * @param endTimeNano end time in nanosecond; or null if not known
+     */
+    protected TimingInfo(Long startEpochTimeMilli, long startTimeNano, Long endTimeNano) {
+        this.startEpochTimeMilli = startEpochTimeMilli;
+        this.startTimeNano = startTimeNano;
+        this.endTimeNano = endTimeNano;
+    }
 
     /**
      * Captures the current wall clock time (since epoch in millisecond)
@@ -117,7 +131,7 @@ public class TimingInfo {
      * @param endTimeNano end time in nanosecond
      */
     public static TimingInfo newTimingInfoFullSupport(
-        long startEpochTimeMilli, long startTimeNano, long endTimeNano) {
+            long startEpochTimeMilli, long startTimeNano, long endTimeNano) {
         return new TimingInfoFullSupport(Long.valueOf(startEpochTimeMilli), startTimeNano, Long.valueOf(endTimeNano));
     }
 
@@ -141,26 +155,21 @@ public class TimingInfo {
     }
 
     /**
-     * A private ctor to facilitate the deprecation of using millisecond and
-     * migration to using nanosecond for timing measurement.
-     * 
-     * @param startEpochTimeMilli start time since epoch in millisecond
-     * @param startTimeNano start time in nanosecond
-     * @param endTimeNano end time in nanosecond; or null if not known
+     * Returns the duration in milliseconds as double, preserving the decimal
+     * precision as necessary, for the given start and end time in nanoseconds.
      */
-    protected TimingInfo(Long startEpochTimeMilli, long startTimeNano, Long endTimeNano) {
-        this.startEpochTimeMilli = startEpochTimeMilli;
-        this.startTimeNano = startTimeNano;
-        this.endTimeNano = endTimeNano;
+    public static double durationMilliOf(long startTimeNano, long endTimeNano) {
+        double micros = (double) TimeUnit.NANOSECONDS.toMicros(endTimeNano - startTimeNano);
+        return micros / 1000.0; // convert microseconds to milliseconds in double rather than long, preserving the precision
     }
 
     @Deprecated
     public final long getStartTime() {
         return isStartEpochTimeMilliKnown()
-             ? startEpochTimeMilli
+               ? startEpochTimeMilli
                // best effort even though technically this is incorrect
-             : TimeUnit.NANOSECONDS.toMillis(startTimeNano)
-             ;
+               : TimeUnit.NANOSECONDS.toMillis(startTimeNano)
+                ;
     }
 
     @Deprecated
@@ -183,6 +192,11 @@ public class TimingInfo {
     }
 
     @Deprecated
+    public void setEndTime(long endTimeMilli) {
+        this.endTimeNano = Long.valueOf(TimeUnit.MILLISECONDS.toNanos(endTimeMilli));
+    }
+
+    @Deprecated
     public final long getEndEpochTimeMilli() {
         Long v = getEndEpochTimeMilliIfKnown();
         return v == null ? UNKNOWN : v.longValue();
@@ -191,13 +205,17 @@ public class TimingInfo {
     public final Long getEndEpochTimeMilliIfKnown() {
         return isStartEpochTimeMilliKnown() && isEndTimeKnown()
                // make use of the wall clock time and elpased time
-             ? startEpochTimeMilli.longValue()
+               ? startEpochTimeMilli.longValue()
                  + TimeUnit.NANOSECONDS.toMillis(endTimeNano.longValue() - startTimeNano)
-             : null;
+               : null;
     }
 
     public final long getEndTimeNano() {
         return endTimeNano == null ? UNKNOWN : endTimeNano;
+    }
+
+    public void setEndTimeNano(long endTimeNano) {
+        this.endTimeNano = endTimeNano;
     }
 
     public final Long getEndTimeNanoIfKnown() {
@@ -211,19 +229,10 @@ public class TimingInfo {
     }
 
     public final Double getTimeTakenMillisIfKnown() {
-        return isEndTimeKnown() 
-             ? durationMilliOf(startTimeNano, endTimeNano)
-             : null
-             ;
-    }
-
-    /**
-     * Returns the duration in milliseconds as double, preserving the decimal
-     * precision as necessary, for the given start and end time in nanoseconds.
-     */
-    public static double durationMilliOf(long startTimeNano, long endTimeNano) {
-        double micros = (double)TimeUnit.NANOSECONDS.toMicros(endTimeNano - startTimeNano);
-        return micros / 1000.0; // convert microseconds to milliseconds in double rather than long, preserving the precision
+        return isEndTimeKnown()
+               ? durationMilliOf(startTimeNano, endTimeNano)
+               : null
+                ;
     }
 
     @Deprecated
@@ -244,28 +253,45 @@ public class TimingInfo {
         return String.valueOf(getTimeTakenMillis());
     }
 
-    @Deprecated
-    public void setEndTime(long endTimeMilli) {
-        this.endTimeNano = Long.valueOf(TimeUnit.MILLISECONDS.toNanos(endTimeMilli));
-    }
-
-    public void setEndTimeNano(long endTimeNano) {
-        this.endTimeNano = endTimeNano;
-    }
-
     public TimingInfo endTiming() {
         this.endTimeNano = Long.valueOf(System.nanoTime());
         return this;
     }
 
-    public void addSubMeasurement(String subMeasurementName, TimingInfo timingInfo) {}
-    public TimingInfo getSubMeasurement(String subMeasurementName) { return null; }
-    public TimingInfo getSubMeasurement(String subMesurementName, int index) { return null; }
-    public TimingInfo getLastSubMeasurement(String subMeasurementName) { return null; }
-    public List<TimingInfo> getAllSubMeasurements(String subMeasurementName) { return null; }
-    public Map<String, List<TimingInfo>> getSubMeasurementsByName() { return Collections.emptyMap(); }
-    public Number getCounter(String key) { return null; }
-    public Map<String, Number> getAllCounters() { return Collections.emptyMap(); }
-    public void setCounter(String key, long count) {}
-    public void incrementCounter(String key) {}
+    public void addSubMeasurement(String subMeasurementName, TimingInfo timingInfo) {
+    }
+
+    public TimingInfo getSubMeasurement(String subMeasurementName) {
+        return null;
+    }
+
+    public TimingInfo getSubMeasurement(String subMesurementName, int index) {
+        return null;
+    }
+
+    public TimingInfo getLastSubMeasurement(String subMeasurementName) {
+        return null;
+    }
+
+    public List<TimingInfo> getAllSubMeasurements(String subMeasurementName) {
+        return null;
+    }
+
+    public Map<String, List<TimingInfo>> getSubMeasurementsByName() {
+        return Collections.emptyMap();
+    }
+
+    public Number getCounter(String key) {
+        return null;
+    }
+
+    public Map<String, Number> getAllCounters() {
+        return Collections.emptyMap();
+    }
+
+    public void setCounter(String key, long count) {
+    }
+
+    public void incrementCounter(String key) {
+    }
 }

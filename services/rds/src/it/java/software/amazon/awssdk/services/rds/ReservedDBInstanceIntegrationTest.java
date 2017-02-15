@@ -35,7 +35,7 @@ public class ReservedDBInstanceIntegrationTest extends IntegrationTestBase {
         assertNotNull(result);
         assertNotNull(result.getReservedDBInstancesOfferings());
         assertTrue(result.getReservedDBInstancesOfferings().size() > 0);
-        
+
         for (ReservedDBInstancesOffering offering : result.getReservedDBInstancesOfferings()) {
             assertNotNull(offering);
             assertNotEmpty(offering.getCurrencyCode());
@@ -46,9 +46,9 @@ public class ReservedDBInstanceIntegrationTest extends IntegrationTestBase {
             assertNotNull(offering.getFixedPrice());
             assertNotNull(offering.getMultiAZ());
             assertNotNull(offering.getUsagePrice());
-        }        
+        }
     }
-    
+
     @Test
     public void testDescribeReservedInstances() throws Exception {
         DescribeReservedDBInstancesResult result = rds.describeReservedDBInstances();

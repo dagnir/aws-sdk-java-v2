@@ -20,6 +20,37 @@ package software.amazon.awssdk.metrics;
  * general purpose metric collector.
  */
 public abstract class ServiceMetricCollector {
+    /** A convenient instance of a no-op service metric collector. */
+    public static final ServiceMetricCollector NONE = new ServiceMetricCollector() {
+        @Override
+        public void collectByteThroughput(ByteThroughputProvider provider) {
+        }
+
+        @Override
+        public void collectLatency(ServiceLatencyProvider provider) {
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+    };
+
+    /**
+     * Collects metrics on the number of bytes written or read and the respective
+     * duration.
+     */
+    public abstract void collectByteThroughput(ByteThroughputProvider provider);
+
+    /**
+     * Collects metrics for non-request specific latencies.
+     */
+    public abstract void collectLatency(ServiceLatencyProvider provider);
+
+    public boolean isEnabled() {
+        return true;
+    }
+
     public static interface Factory {
         /**
          * Returns an instance of the collector; or null if if failed to create
@@ -27,21 +58,4 @@ public abstract class ServiceMetricCollector {
          */
         public ServiceMetricCollector getServiceMetricCollector();
     }
-    /**
-     * Collects metrics on the number of bytes written or read and the respective
-     * duration.
-     */
-    public abstract void collectByteThroughput(ByteThroughputProvider provider);
-    /**
-     * Collects metrics for non-request specific latencies.
-     */
-    public abstract void collectLatency(ServiceLatencyProvider provider);
-
-    public boolean isEnabled() { return true; }
-    /** A convenient instance of a no-op service metric collector. */
-    public static final ServiceMetricCollector NONE = new ServiceMetricCollector() {
-        @Override public void collectByteThroughput(ByteThroughputProvider provider) {}
-        @Override public void collectLatency(ServiceLatencyProvider provider) {}
-        @Override public boolean isEnabled() { return false; }
-    };
 }

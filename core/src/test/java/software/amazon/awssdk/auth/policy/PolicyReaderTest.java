@@ -42,9 +42,9 @@ public class PolicyReaderTest {
     public void testPrincipals() {
         Policy policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-          .withResources(new Resource("resource"))
-          .withPrincipals(new Principal("accountId1"), new Principal("accountId2"))
-          .withActions(new TestAction("action")));
+                                      .withResources(new Resource("resource"))
+                                      .withPrincipals(new Principal("accountId1"), new Principal("accountId2"))
+                                      .withActions(new TestAction("action")));
 
         policy = Policy.fromJson(policy.toJson());
         assertEquals(1, policy.getStatements().size());
@@ -61,7 +61,7 @@ public class PolicyReaderTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow).withResources(new Resource("resource")).withPrincipals(new Principal(Services.AmazonEC2), new Principal(Services.AmazonElasticTranscoder))
-                .withActions(new TestAction("action")));
+                                                         .withActions(new TestAction("action")));
         policy = Policy.fromJson(policy.toJson());
         assertEquals(1, policy.getStatements().size());
         statements = new LinkedList<Statement>(policy.getStatements());
@@ -77,7 +77,7 @@ public class PolicyReaderTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow).withResources(new Resource("resource")).withPrincipals(Principal.All)
-                .withActions(new TestAction("action")));
+                                                         .withActions(new TestAction("action")));
         policy = Policy.fromJson(policy.toJson());
         assertEquals(1, policy.getStatements().size());
         statements = new LinkedList<Statement>(policy.getStatements());
@@ -91,7 +91,7 @@ public class PolicyReaderTest {
 
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow).withResources(new Resource("resource")).withPrincipals(Principal.AllUsers, Principal.AllServices, Principal.AllWebProviders)
-                .withActions(new TestAction("action")));
+                                                         .withActions(new TestAction("action")));
         policy = Policy.fromJson(policy.toJson());
         assertEquals(1, policy.getStatements().size());
         statements = new LinkedList<Statement>(policy.getStatements());
@@ -101,19 +101,19 @@ public class PolicyReaderTest {
         assertEquals("action", statements.get(0).getActions().get(0).getActionName());
         assertEquals(3, statements.get(0).getPrincipals().size());
         assertThat(statements.get(0).getPrincipals(),
-                contains(Principal.AllUsers, Principal.AllServices, Principal.AllWebProviders));
+                   contains(Principal.AllUsers, Principal.AllServices, Principal.AllWebProviders));
     }
 
     @Test
     public void testMultipleConditionKeysForConditionType() throws Exception {
         Policy policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
-          .withResources(new Resource("arn:aws:sqs:us-east-1:987654321000:MyQueue"))
-          .withPrincipals(Principal.AllUsers)
-          .withActions(new TestAction("foo"))
-          .withConditions(
-                new StringCondition(StringComparisonType.StringNotLike, "key1", "foo"),
-                new StringCondition(StringComparisonType.StringNotLike, "key1", "bar")));
+                                      .withResources(new Resource("arn:aws:sqs:us-east-1:987654321000:MyQueue"))
+                                      .withPrincipals(Principal.AllUsers)
+                                      .withActions(new TestAction("foo"))
+                                      .withConditions(
+                                              new StringCondition(StringComparisonType.StringNotLike, "key1", "foo"),
+                                              new StringCondition(StringComparisonType.StringNotLike, "key1", "bar")));
 
         policy = Policy.fromJson(policy.toJson());
 
@@ -138,15 +138,15 @@ public class PolicyReaderTest {
     @Test
     public void testPolicyParsingWithNoEffect() {
         String jsonString =
-               "{" +
-                   "\"Statement\": [{" +
-                        "\"Action\": [" +
-                            "\"elasticmapreduce:*\"," +
-                            "\"iam:PassRole\"" +
-                        "]," +
-                        "\"Resource\": [\"*\"]" +
-                   "}]" +
-               "}";
+                "{" +
+                "\"Statement\": [{" +
+                "\"Action\": [" +
+                "\"elasticmapreduce:*\"," +
+                "\"iam:PassRole\"" +
+                "]," +
+                "\"Resource\": [\"*\"]" +
+                "}]" +
+                "}";
 
         Policy policy = Policy.fromJson(jsonString);
         assertEquals(1, policy.getStatements().size());
@@ -158,9 +158,9 @@ public class PolicyReaderTest {
 
     @Test
     public void testMultipleStatements() throws Exception {
-         Policy policy = new Policy("S3PolicyId1");
-            policy.withStatements(
-                    new Statement(Effect.Allow)
+        Policy policy = new Policy("S3PolicyId1");
+        policy.withStatements(
+                new Statement(Effect.Allow)
                         .withId("0")
                         .withPrincipals(Principal.AllUsers)
                         .withActions(new TestAction("action1"))
@@ -168,7 +168,7 @@ public class PolicyReaderTest {
                         .withConditions(
                                 new IpAddressCondition("192.168.143.0/24"),
                                 new IpAddressCondition(IpAddressComparisonType.NotIpAddress, "192.168.143.188/32")),
-                    new Statement(Effect.Deny)
+                new Statement(Effect.Deny)
                         .withId("1")
                         .withPrincipals(Principal.AllUsers)
                         .withActions(new TestAction("action2"))
@@ -219,23 +219,23 @@ public class PolicyReaderTest {
     @Test
     public void testNoJsonArray() {
         String jsonString =
-                  "{" +
-                    "\"Version\": \"2012-10-17\"," +
-                    "\"Statement\": [" +
-                      "{" +
-                        "\"Effect\": \"Allow\"," +
-                        "\"Principal\": {" +
-                        "\"AWS\": \"*\"" +
-                        "}," +
-                        "\"Action\": \"sts:AssumeRole\"," +
-                        "\"Condition\": {" +
-                          "\"IpAddress\": {" +
-                            " \"aws:SourceIp\": \"10.10.10.10/32\"" +
-                          "}" +
-                        "}" +
-                      "}" +
-                    "]" +
-                 "}" ;
+                "{" +
+                "\"Version\": \"2012-10-17\"," +
+                "\"Statement\": [" +
+                "{" +
+                "\"Effect\": \"Allow\"," +
+                "\"Principal\": {" +
+                "\"AWS\": \"*\"" +
+                "}," +
+                "\"Action\": \"sts:AssumeRole\"," +
+                "\"Condition\": {" +
+                "\"IpAddress\": {" +
+                " \"aws:SourceIp\": \"10.10.10.10/32\"" +
+                "}" +
+                "}" +
+                "}" +
+                "]" +
+                "}";
 
         Policy policy = Policy.fromJson(jsonString);
         assertEquals(POLICY_VERSION, policy.getVersion());
@@ -261,24 +261,24 @@ public class PolicyReaderTest {
     @Test
     public void testFederatedUserBySAMLProvider() {
         String jsonString =
-            "{" +
+                "{" +
                 "\"Version\":\"2012-10-17\"," +
                 "\"Statement\":[" +
-                   "{" +
-                      "\"Sid\":\"\"," +
-                      "\"Effect\":\"Allow\"," +
-                      "\"Principal\":{" +
-                         "\"Federated\":\"arn:aws:iam::862954416975:saml-provider/myprovider\"" +
-                      "}," +
-                      "\"Action\":\"sts:AssumeRoleWithSAML\"," +
-                      "\"Condition\":{" +
-                         "\"StringEquals\":{" +
-                            "\"SAML:aud\":\"https://signin.aws.amazon.com/saml\"" +
-                         "}" +
-                      "}" +
-                   "}" +
+                "{" +
+                "\"Sid\":\"\"," +
+                "\"Effect\":\"Allow\"," +
+                "\"Principal\":{" +
+                "\"Federated\":\"arn:aws:iam::862954416975:saml-provider/myprovider\"" +
+                "}," +
+                "\"Action\":\"sts:AssumeRoleWithSAML\"," +
+                "\"Condition\":{" +
+                "\"StringEquals\":{" +
+                "\"SAML:aud\":\"https://signin.aws.amazon.com/saml\"" +
+                "}" +
+                "}" +
+                "}" +
                 "]" +
-             "}";
+                "}";
 
         Policy policy = Policy.fromJson(jsonString);
         assertEquals(POLICY_VERSION, policy.getVersion());
@@ -300,7 +300,7 @@ public class PolicyReaderTest {
     @Test
     public void testCloudHSMServicePrincipal() {
         String jsonString =
-            "{" +
+                "{" +
                 "\"Version\":\"2008-10-17\"," +
                 "\"Statement\":[" +
                 "{\"Sid\":\"\"," +
@@ -308,7 +308,7 @@ public class PolicyReaderTest {
                 "\"Principal\":{\"Service\":\"cloudhsm.amazonaws.com\"}," +
                 "\"Action\":\"sts:AssumeRole\"}" +
                 "]" +
-            "}";
+                "}";
         Policy policy = Policy.fromJson(jsonString);
         assertEquals(POLICY_VERSION, policy.getVersion());
         List<Statement> statements = new LinkedList<Statement>(policy.getStatements());
@@ -321,19 +321,6 @@ public class PolicyReaderTest {
         assertEquals(Services.AWSCloudHSM.getServiceId(), statements.get(0).getPrincipals().get(0).getId());
         assertEquals("Service", statements.get(0).getPrincipals().get(0).getProvider());
     }
-
-    private class TestAction implements Action {
-        private final String name;
-
-        public TestAction(String name) {
-            this.name = name;
-        }
-
-        public String getActionName() {
-            return name;
-        }
-    }
-
 
     /**
      * This test case was written as result of the following TT
@@ -349,10 +336,10 @@ public class PolicyReaderTest {
     @Test
     public void testPrincipalWithServiceNotInServicesEnum() {
         String jsonString = "{" + "\"Version\":\"2008-10-17\","
-                + "\"Statement\":[" + "{" + "\"Sid\":\"\","
-                + "\"Effect\":\"Allow\"," + "\"Principal\":{"
-                + "\"Service\":\"workspaces.amazonaws.com\" " + "},"
-                + "\"Action\":\"sts:AssumeRole\"" + "}" + "]" + "}";
+                            + "\"Statement\":[" + "{" + "\"Sid\":\"\","
+                            + "\"Effect\":\"Allow\"," + "\"Principal\":{"
+                            + "\"Service\":\"workspaces.amazonaws.com\" " + "},"
+                            + "\"Action\":\"sts:AssumeRole\"" + "}" + "]" + "}";
 
         Policy policy = Policy.fromJson(jsonString);
         assertEquals(POLICY_VERSION, policy.getVersion());
@@ -362,13 +349,25 @@ public class PolicyReaderTest {
         assertEquals(1, statements.get(0).getActions().size());
         assertEquals(Effect.Allow, statements.get(0).getEffect());
         assertEquals("sts:AssumeRole", statements.get(0).getActions().get(0)
-                .getActionName());
+                                                 .getActionName());
         assertEquals(0, statements.get(0).getConditions().size());
         assertEquals(1, statements.get(0).getPrincipals().size());
         assertEquals("workspaces.amazonaws.com", statements.get(0)
-                .getPrincipals().get(0).getId());
+                                                           .getPrincipals().get(0).getId());
         assertEquals("Service", statements.get(0).getPrincipals().get(0)
-                .getProvider());
+                                          .getProvider());
+    }
+
+    private class TestAction implements Action {
+        private final String name;
+
+        public TestAction(String name) {
+            this.name = name;
+        }
+
+        public String getActionName() {
+            return name;
+        }
     }
 
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertFalse;
@@ -29,6 +44,7 @@ public class TransferManagerGCIntegrationTest {
      * otherwise.
      */
     private static boolean cleanup = true;
+    private static boolean WAIT_INSIDE = true;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -46,8 +62,6 @@ public class TransferManagerGCIntegrationTest {
         }
     }
 
-    private static boolean WAIT_INSIDE = true;
-    
     @Test
     public void testWaitInside() throws IOException, InterruptedException {
         Listener listener = new Listener();
@@ -60,7 +74,7 @@ public class TransferManagerGCIntegrationTest {
     public void testWaitOutside() throws IOException, InterruptedException {
         Listener listener = new Listener();
         Upload upload = uploadLargeFile(listener, !WAIT_INSIDE);
-        for (;;) {
+        for (; ; ) {
             System.err.println("triggering GC");
             System.gc();
             if (upload.isDone()) {
@@ -72,27 +86,29 @@ public class TransferManagerGCIntegrationTest {
     }
 
     public Upload uploadLargeFile(Listener listener, boolean waitInside) throws IOException, InterruptedException {
-        File file = CryptoTestUtils.generateRandomAsciiFile(3*1024*1024);  // 3MB
+        File file = CryptoTestUtils.generateRandomAsciiFile(3 * 1024 * 1024);  // 3MB
         AmazonS3Client s3 = new AmazonS3Client(awsTestCredentials());
         TransferManager tm = new TransferManager(s3);
         PutObjectRequest req = new PutObjectRequest(TEST_BUCKET, "somekey", file)
-            .withGeneralProgressListener(listener);
+                .withGeneralProgressListener(listener);
         Upload upload = tm.upload(req);
         if (waitInside) {
-            for (;;) {
+            for (; ; ) {
                 System.err.println("triggering GC");
                 System.gc();
-                if (upload.isDone())
+                if (upload.isDone()) {
                     return upload;
+                }
                 Thread.sleep(15000);
             }
         }
         Thread.sleep(1000);
         return upload;
     }
-    
+
     private static class Listener extends SyncProgressListener {
         private boolean failed;
+
         public boolean hasFailed() {
             return failed;
         }
@@ -102,9 +118,9 @@ public class TransferManagerGCIntegrationTest {
             if (progressEvent.getEventType() == ProgressEventType.TRANSFER_FAILED_EVENT) {
                 System.err.println(progressEvent);
                 failed = true;
-            }
-            else
+            } else {
                 System.out.println(progressEvent);
+            }
         }
     }
 }

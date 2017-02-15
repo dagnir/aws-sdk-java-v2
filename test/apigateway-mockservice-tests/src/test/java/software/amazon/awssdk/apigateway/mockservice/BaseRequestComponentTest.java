@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.apigateway.mockservice;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -55,10 +70,10 @@ public class BaseRequestComponentTest {
     public void customHeadersSetInBaseRequest_AreSentInActualRequest() {
         client.getNoauthScalars(new GetNoauthScalarsRequest().sdkRequestConfig(
                 SdkRequestConfig.builder()
-                        .customHeader("FooHeader", "FooValue")
-                        .customHeader("BarHeader", "BarValue")
-                        .build()
-        ));
+                                .customHeader("FooHeader", "FooValue")
+                                .customHeader("BarHeader", "BarValue")
+                                .build()
+                                                                              ));
         verify(anyRequestedFor(URI).withHeader("FooHeader", equalTo("FooValue")));
         verify(anyRequestedFor(URI).withHeader("BarHeader", equalTo("BarValue")));
     }
@@ -67,11 +82,11 @@ public class BaseRequestComponentTest {
     public void customQueryParamsSetInBaseRequest_AreSentInActualRequest() {
         client.getNoauthScalars(new GetNoauthScalarsRequest().sdkRequestConfig(
                 SdkRequestConfig.builder()
-                        .customQueryParam("FooParam", "valOne")
-                        .customQueryParam("FooParam", "valTwo")
-                        .customQueryParam("BarParam", "BarValue")
-                        .build()
-        ));
+                                .customQueryParam("FooParam", "valOne")
+                                .customQueryParam("FooParam", "valTwo")
+                                .customQueryParam("BarParam", "BarValue")
+                                .build()
+                                                                              ));
         verify(anyRequestedFor(URI).withQueryParam("FooParam", equalTo("valOne")));
         verify(anyRequestedFor(URI).withQueryParam("FooParam", equalTo("valTwo")));
         verify(anyRequestedFor(URI).withQueryParam("BarParam", equalTo("BarValue")));
@@ -85,12 +100,12 @@ public class BaseRequestComponentTest {
     public void customRequestTimeoutSetInBaseRequest_IsHonoredByRuntime() {
         final int expectedTimeout = 100;
         assertRequestTimeoutTriggered(expectedTimeout, () ->
-                client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(
-                        SdkRequestConfig.builder()
-                                .httpRequestTimeout(expectedTimeout)
-                                .build()
-                ))
-        );
+                                              client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(
+                                                      SdkRequestConfig.builder()
+                                                                      .httpRequestTimeout(expectedTimeout)
+                                                                      .build()
+                                                                                                                    ))
+                                     );
     }
 
     /**
@@ -101,12 +116,12 @@ public class BaseRequestComponentTest {
     public void customClientExecutionSetInBaseRequest_IsHonoredByRuntime() {
         final int expectedTimeout = 100;
         assertClientExecutionTimeoutTriggered(expectedTimeout, () ->
-                client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(
-                        SdkRequestConfig.builder()
-                                .totalExecutionTimeout(expectedTimeout)
-                                .build()
-                ))
-        );
+                                                      client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(
+                                                              SdkRequestConfig.builder()
+                                                                              .totalExecutionTimeout(expectedTimeout)
+                                                                              .build()
+                                                                                                                            ))
+                                             );
     }
 
     @Test

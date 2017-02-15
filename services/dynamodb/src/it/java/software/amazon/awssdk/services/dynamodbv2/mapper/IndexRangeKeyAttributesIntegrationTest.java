@@ -1,4 +1,19 @@
 /*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+/*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,6 +26,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -46,7 +62,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
  */
 public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
-    private static DynamoDBMapper mapper;
     private static final String RANGE_KEY = "rangeKey";
     private static final String INDEX_FOO_RANGE_KEY = "indexFooRangeKey";
     private static final String INDEX_BAR_RANGE_KEY = "indexBarRangeKey";
@@ -54,11 +69,6 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
     private static final String FOO_ATTRIBUTE = "fooAttribute";
     private static final String BAR_ATTRIBUTE = "barAttribute";
     private static final String VERSION_ATTRIBUTE = "version";
-
-    // We don't start with the current system millis like other tests because
-    // it's out of the range of some data types
-    private static int start = 1;
-
     private static final List<Map<String, AttributeValue>> attrs = new LinkedList<Map<String, AttributeValue>>();
     private static final List<Long> hashKeyValues = new LinkedList<Long>();
     private static final int totalHash = 5;
@@ -66,6 +76,10 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
     private static final int indexFooRangeStep = 2;
     private static final int indexBarRangeStep = 4;
     private static final int multipleIndexRangeStep = 8;
+    private static DynamoDBMapper mapper;
+    // We don't start with the current system millis like other tests because
+    // it's out of the range of some data types
+    private static int start = 1;
 
     // Test data
     static {

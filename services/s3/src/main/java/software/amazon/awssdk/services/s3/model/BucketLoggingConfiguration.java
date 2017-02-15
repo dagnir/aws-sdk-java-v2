@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -57,7 +55,8 @@ public class BucketLoggingConfiguration implements Serializable {
      * will turn off bucket logging for the specified bucket.
      * </p>
      */
-    public BucketLoggingConfiguration() {}
+    public BucketLoggingConfiguration() {
+    }
 
     /**
      * Creates a new bucket logging configuration which enables server access
@@ -79,17 +78,17 @@ public class BucketLoggingConfiguration implements Serializable {
 
     /**
      * Returns true if logging is enabled.
-     * 
+     *
      * @return True if logging is enabled.
      */
     public boolean isLoggingEnabled() {
         return destinationBucketName != null
-            && logFilePrefix != null;
+               && logFilePrefix != null;
     }
 
     /**
      * Returns the optional log file prefix.
-     * 
+     *
      * @return The optional log file prefix.
      */
     public String getLogFilePrefix() {
@@ -103,15 +102,16 @@ public class BucketLoggingConfiguration implements Serializable {
      */
     public void setLogFilePrefix(String logFilePrefix) {
         // Default log file prefix to the empty string if none is specified
-        if (logFilePrefix == null)
+        if (logFilePrefix == null) {
             logFilePrefix = "";
+        }
 
         this.logFilePrefix = logFilePrefix;
     }
-    
+
     /**
      * Returns the destination bucket name for this logging configuration.
-     * 
+     *
      * @return The destination bucket name for this logging configuration.
      */
     public String getDestinationBucketName() {
@@ -120,7 +120,7 @@ public class BucketLoggingConfiguration implements Serializable {
 
     /**
      * Sets the destination bucket name for this logging configuration.
-     * 
+     *
      * @param destinationBucketName The destination bucket name for this logging configuration.
      */
     public void setDestinationBucketName(String destinationBucketName) {
@@ -131,7 +131,7 @@ public class BucketLoggingConfiguration implements Serializable {
         String result = "LoggingConfiguration enabled=" + isLoggingEnabled();
         if (isLoggingEnabled()) {
             result += ", destinationBucketName=" + getDestinationBucketName()
-                + ", logFilePrefix=" + getLogFilePrefix();
+                      + ", logFilePrefix=" + getLogFilePrefix();
         }
         return result;
     }

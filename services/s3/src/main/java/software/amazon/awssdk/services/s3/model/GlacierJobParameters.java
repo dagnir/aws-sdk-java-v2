@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -33,19 +34,19 @@ public class GlacierJobParameters implements Serializable {
     /**
      * Sets Glacier retrieval tier at which the restore will be processed.
      *
-     * @param tier New tier value
+     * @param tier New tier enum value.
      */
-    public void setTier(String tier) {
-        this.tier = tier;
+    public void setTier(Tier tier) {
+        setTier(tier == null ? null : tier.toString());
     }
 
     /**
      * Sets Glacier retrieval tier at which the restore will be processed.
      *
-     * @param tier New tier enum value.
+     * @param tier New tier value
      */
-    public void setTier(Tier tier) {
-        setTier(tier == null ? null : tier.toString());
+    public void setTier(String tier) {
+        this.tier = tier;
     }
 
     /**

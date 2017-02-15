@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.QueryResult;
 
-class QueryCollection extends ItemCollection<QueryOutcome>
-{
+class QueryCollection extends ItemCollection<QueryOutcome> {
     private final AmazonDynamoDB client;
     private final QuerySpec spec;
     private final Map<String, AttributeValue> startKey;
@@ -37,10 +36,10 @@ class QueryCollection extends ItemCollection<QueryOutcome>
         this.client = client;
         this.spec = spec;
         Map<String, AttributeValue> startKey =
-            spec.getRequest().getExclusiveStartKey();
+                spec.getRequest().getExclusiveStartKey();
         this.startKey = startKey == null
-                      ? null
-                      : new LinkedHashMap<String, AttributeValue>(startKey);
+                        ? null
+                        : new LinkedHashMap<String, AttributeValue>(startKey);
     }
 
     @Override
@@ -65,6 +64,6 @@ class QueryCollection extends ItemCollection<QueryOutcome>
         super.setLastLowLevelResult(lowLevelResult);
         QueryResult result = lowLevelResult.getQueryResult();
         accumulateStats(result.getConsumedCapacity(), result.getCount(),
-                result.getScannedCount());
+                        result.getScannedCount());
     }
 }

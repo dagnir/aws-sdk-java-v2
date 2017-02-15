@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -34,16 +49,15 @@ import software.amazon.awssdk.util.Md5Utils;
 public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
     private static final boolean cleanup = true;
     private static final String TEST_BUCKET = CryptoTestUtils.tempBucketName(UploadObjectIntegrationTest.class);
-    private static AmazonS3Client s3direct;
-    private static AmazonS3EncryptionClient eo;
-
     private static final long OBJECT_SIZE = (10 << 20) - 16;   // 10M - 16 bytes
     private static final int PART_SIZE = 5 << 20;   // 5 M
+    private static AmazonS3Client s3direct;
+    private static AmazonS3EncryptionClient eo;
     private static File plaintextFile;
 
     @BeforeClass
     public static void beforeClass() throws IOException {
-    	setUpCredentials();
+        setUpCredentials();
         s3direct = new AmazonS3Client(credentials);
         eo = new AmazonS3EncryptionClient(
                 credentials,
@@ -54,34 +68,40 @@ public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
 
     @AfterClass
     public static void afterClass() {
-        if (cleanup)
+        if (cleanup) {
             CryptoTestUtils.deleteBucketAndAllContents(s3direct, TEST_BUCKET);
+        }
         eo.shutdown();
         s3direct.shutdown();
     }
 
+    private static void p(Object o) {
+        System.err.println(String.valueOf(o));
+    }
+
     private String doTest(AmazonS3EncryptionClient s3,
-            CryptoConfiguration cryptoConfig) throws IOException,
-            InterruptedException, ExecutionException {
+                          CryptoConfiguration cryptoConfig) throws IOException,
+                                                                   InterruptedException, ExecutionException {
         return doTest(s3, cryptoConfig, false);
     }
 
     private String doTest(AmazonS3EncryptionClient s3,
-            CryptoConfiguration cryptoConfig, boolean testDiskLimit) throws IOException,
-            InterruptedException, ExecutionException {
+                          CryptoConfiguration cryptoConfig, boolean testDiskLimit) throws IOException,
+                                                                                          InterruptedException,
+                                                                                          ExecutionException {
         final long start = System.nanoTime();
         // Initiate upload
         final String key = "doTest-" + cryptoConfig.getCryptoMode() + "-"
-                + cryptoConfig.getStorageMode() + "-" + yyMMdd_hhmmss();
+                           + cryptoConfig.getStorageMode() + "-" + yyMMdd_hhmmss();
         ObjectMetadata partUploadMetadata = new ObjectMetadata();
         partUploadMetadata.setHeader("testing_upload_part_header", "testing_header_123");
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
-                    .withPartSize(PART_SIZE)
-                    .withUploadPartMetadata(partUploadMetadata)
-                    ;
-        if (testDiskLimit)
-            req.withDiskLimit(PART_SIZE*2);
+                        .withPartSize(PART_SIZE)
+                        .withUploadPartMetadata(partUploadMetadata);
+        if (testDiskLimit) {
+            req.withDiskLimit(PART_SIZE * 2);
+        }
 
         s3.uploadObject(req);
         final long end = System.nanoTime();
@@ -96,19 +116,16 @@ public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
         return key;
     }
 
-    private static void p(Object o) {
-        System.err.println(String.valueOf(o));
-    }
-
     private boolean existsInstructionFile(String key) {
         try {
             s3direct.getObject(TEST_BUCKET, key + ".instruction");
             return true;
-        } catch(AmazonS3Exception ex) {
-            if (ex.getMessage().contains("The specified key does not exist"))
+        } catch (AmazonS3Exception ex) {
+            if (ex.getMessage().contains("The specified key does not exist")) {
                 return false;
-            else
+            } else {
                 throw ex;
+            }
         }
     }
 
@@ -128,12 +145,12 @@ public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void testAE() throws IOException, InterruptedException,
-            ExecutionException {
+                                ExecutionException {
         final CryptoConfiguration cryptoConfig = new CryptoConfiguration()
                 .withCryptoMode(CryptoMode.AuthenticatedEncryption);
         final AmazonS3EncryptionClient s3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(
-                        CryptoTestUtils.getTestSecretKey()), cryptoConfig);
+                CryptoTestUtils.getTestSecretKey()), cryptoConfig);
         final String key = doTest(s3, cryptoConfig);
         assertFalse(existsInstructionFile(key));
     }
@@ -145,29 +162,22 @@ public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
                 .withStorageMode(CryptoStorageMode.InstructionFile);
         final AmazonS3EncryptionClient s3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(
-                        CryptoTestUtils.getTestSecretKey()), cryptoConfig);
+                CryptoTestUtils.getTestSecretKey()), cryptoConfig);
         final String key = doTest(s3, cryptoConfig);
         assertTrue(existsInstructionFile(key));
     }
 
     @Test
     public void testInstructionFileAE() throws IOException,
-            InterruptedException, ExecutionException {
+                                               InterruptedException, ExecutionException {
         final CryptoConfiguration cryptoConfig = new CryptoConfiguration()
                 .withCryptoMode(CryptoMode.AuthenticatedEncryption)
                 .withStorageMode(CryptoStorageMode.InstructionFile);
         final AmazonS3EncryptionClient s3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(
-                        CryptoTestUtils.getTestSecretKey()), cryptoConfig);
+                CryptoTestUtils.getTestSecretKey()), cryptoConfig);
         final String key = doTest(s3, cryptoConfig);
         assertTrue(existsInstructionFile(key));
-    }
-
-    private static class BrokenUploadObjectObserver extends UploadObjectObserver {
-        @Override
-        protected UploadPartResult uploadPart(UploadPartRequest reqUploadPart) {
-            throw new RuntimeException("testing abort");
-        }
     }
 
     @Test
@@ -185,6 +195,13 @@ public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
             fail("Should have thrown exception.");
         } catch (ExecutionException e) {
             assertEquals(e.getCause().getMessage(), "testing abort");
+        }
+    }
+
+    private static class BrokenUploadObjectObserver extends UploadObjectObserver {
+        @Override
+        protected UploadPartResult uploadPart(UploadPartRequest reqUploadPart) {
+            throw new RuntimeException("testing abort");
         }
     }
 }

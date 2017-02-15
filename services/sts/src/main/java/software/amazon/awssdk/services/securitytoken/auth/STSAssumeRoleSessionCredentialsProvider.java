@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.securitytoken.auth;
@@ -134,7 +134,7 @@ public class STSAssumeRoleSessionCredentialsProvider implements AWSSessionCreden
                                                    String roleArn, String roleSessionName,
                                                    ClientConfiguration clientConfiguration) {
         this(new Builder(roleArn, roleSessionName).withLongLivedCredentials(longLivedCredentials)
-                     .withClientConfiguration(clientConfiguration));
+                                                  .withClientConfiguration(clientConfiguration));
     }
 
 
@@ -180,13 +180,6 @@ public class STSAssumeRoleSessionCredentialsProvider implements AWSSessionCreden
         this(new Builder(roleArn, roleSessionName)
                      .withLongLivedCredentialsProvider(longLivedCredentialsProvider)
                      .withClientConfiguration(clientConfiguration));
-    }
-
-    private RefreshableTask<SessionCredentialsHolder> createRefreshableTask() {
-        return new RefreshableTask.Builder<SessionCredentialsHolder>()
-                .withRefreshCallable(refreshCallable)
-                .withBlockingRefreshPredicate(new ShouldDoBlockingSessionRefresh())
-                .withAsyncRefreshPredicate(new ShouldDoAsyncSessionRefresh()).build();
     }
 
     /**
@@ -277,6 +270,13 @@ public class STSAssumeRoleSessionCredentialsProvider implements AWSSessionCreden
         }
     }
 
+    private RefreshableTask<SessionCredentialsHolder> createRefreshableTask() {
+        return new RefreshableTask.Builder<SessionCredentialsHolder>()
+                .withRefreshCallable(refreshCallable)
+                .withBlockingRefreshPredicate(new ShouldDoBlockingSessionRefresh())
+                .withAsyncRefreshPredicate(new ShouldDoAsyncSessionRefresh()).build();
+    }
+
     /**
      * Sets the AWS Security Token Service (STS) endpoint where session credentials are retrieved
      * from. <p></p> The default AWS Security Token Service (STS) endpoint ("sts.amazonaws.com")
@@ -312,9 +312,9 @@ public class STSAssumeRoleSessionCredentialsProvider implements AWSSessionCreden
      */
     private SessionCredentialsHolder newSession() {
         AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest().withRoleArn(roleArn)
-                .withDurationSeconds(roleSessionDurationSeconds)
-                .withRoleSessionName(roleSessionName)
-                .withPolicy(scopeDownPolicy);
+                                                                     .withDurationSeconds(roleSessionDurationSeconds)
+                                                                     .withRoleSessionName(roleSessionName)
+                                                                     .withPolicy(scopeDownPolicy);
         if (roleExternalId != null) {
             assumeRoleRequest = assumeRoleRequest.withExternalId(roleExternalId);
         }

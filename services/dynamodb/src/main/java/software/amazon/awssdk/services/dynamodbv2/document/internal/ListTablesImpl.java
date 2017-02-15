@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
 public class ListTablesImpl implements ListTablesApi {
     private final AmazonDynamoDB client;
 
-    public ListTablesImpl(AmazonDynamoDB client) { 
+    public ListTablesImpl(AmazonDynamoDB client) {
         this.client = client;
     }
 
@@ -44,21 +44,21 @@ public class ListTablesImpl implements ListTablesApi {
     @Override
     public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName) {
         return doList(new ListTablesSpec()
-            .withExclusiveStartTableName(exclusiveStartTableName));
+                              .withExclusiveStartTableName(exclusiveStartTableName));
     }
 
     @Override
     public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName,
-            int maxResultSize) {
+                                                        int maxResultSize) {
         return doList(new ListTablesSpec()
-            .withExclusiveStartTableName(exclusiveStartTableName)
-            .withMaxResultSize(maxResultSize));
+                              .withExclusiveStartTableName(exclusiveStartTableName)
+                              .withMaxResultSize(maxResultSize));
     }
 
     @Override
     public TableCollection<ListTablesResult> listTables(int maxResultSize) {
         return doList(new ListTablesSpec()
-            .withMaxResultSize(maxResultSize));
+                              .withMaxResultSize(maxResultSize));
     }
 
     private TableCollection<ListTablesResult> doList(ListTablesSpec spec) {

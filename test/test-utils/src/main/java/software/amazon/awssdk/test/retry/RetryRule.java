@@ -46,17 +46,17 @@ public class RetryRule implements TestRule {
             }
 
             public void retry(final Statement base, int attempts) throws Throwable {
-                    try {
-                        base.evaluate();
-                    } catch (Exception e) {
-                        if(attempts > maxRetryAttempts) {
-                            throw e;
-                        }
-                        System.out.println("Test failed. Retrying with delay of: " + delay + " " + timeUnit);
-                        timeUnit.sleep(delay);
-                        retry(base, ++attempts);
+                try {
+                    base.evaluate();
+                } catch (Exception e) {
+                    if (attempts > maxRetryAttempts) {
+                        throw e;
                     }
+                    System.out.println("Test failed. Retrying with delay of: " + delay + " " + timeUnit);
+                    timeUnit.sleep(delay);
+                    retry(base, ++attempts);
                 }
+            }
         };
     }
 }

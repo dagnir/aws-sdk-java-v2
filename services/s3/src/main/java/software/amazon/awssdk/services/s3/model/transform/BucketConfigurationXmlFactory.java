@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.util.List;
@@ -141,8 +142,9 @@ public class BucketConfigurationXmlFactory {
     public byte[] convertToXmlByteArray(BucketLoggingConfiguration loggingConfiguration) {
         // Default log file prefix to the empty string if none is specified
         String logFilePrefix = loggingConfiguration.getLogFilePrefix();
-        if (logFilePrefix == null)
+        if (logFilePrefix == null) {
             logFilePrefix = "";
+        }
 
         XmlWriter xml = new XmlWriter();
         xml.start("BucketLoggingStatus", "xmlns", Constants.XML_NAMESPACE);
@@ -180,35 +182,35 @@ public class BucketConfigurationXmlFactory {
                 xml.start("TopicConfiguration");
                 xml.start("Id").value(configName).end();
                 xml.start("Topic")
-                        .value(((TopicConfiguration) config).getTopicARN())
-                        .end();
+                   .value(((TopicConfiguration) config).getTopicARN())
+                   .end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof QueueConfiguration) {
                 xml.start("QueueConfiguration");
                 xml.start("Id").value(configName).end();
                 xml.start("Queue")
-                        .value(((QueueConfiguration) config).getQueueARN())
-                        .end();
+                   .value(((QueueConfiguration) config).getQueueARN())
+                   .end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof CloudFunctionConfiguration) {
                 xml.start("CloudFunctionConfiguration");
                 xml.start("Id").value(configName).end();
                 xml.start("InvocationRole")
-                        .value(((CloudFunctionConfiguration) config)
-                                .getInvocationRoleARN()).end();
+                   .value(((CloudFunctionConfiguration) config)
+                                  .getInvocationRoleARN()).end();
                 xml.start("CloudFunction")
-                        .value(((CloudFunctionConfiguration) config).getCloudFunctionARN())
-                        .end();
+                   .value(((CloudFunctionConfiguration) config).getCloudFunctionARN())
+                   .end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof LambdaConfiguration) {
                 xml.start("CloudFunctionConfiguration");
                 xml.start("Id").value(configName).end();
                 xml.start("CloudFunction")
-                        .value(((LambdaConfiguration) config).getFunctionARN())
-                        .end();
+                   .value(((LambdaConfiguration) config).getFunctionARN())
+                   .end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             }
@@ -494,9 +496,9 @@ public class BucketConfigurationXmlFactory {
         if (rule.getNoncurrentVersionExpirationInDays() != -1) {
             xml.start("NoncurrentVersionExpiration");
             xml.start("NoncurrentDays")
-                .value(Integer.toString(
-                    rule.getNoncurrentVersionExpirationInDays()))
-                .end();
+               .value(Integer.toString(
+                       rule.getNoncurrentVersionExpirationInDays()))
+               .end();
             xml.end(); // </NoncurrentVersionExpiration>
         }
 
@@ -504,7 +506,7 @@ public class BucketConfigurationXmlFactory {
             xml.start("AbortIncompleteMultipartUpload");
             xml.start("DaysAfterInitiation").
                     value(Integer.toString(rule.getAbortIncompleteMultipartUpload().getDaysAfterInitiation()))
-                    .end();
+               .end();
             xml.end(); // </AbortIncompleteMultipartUpload>
         }
 
@@ -540,7 +542,7 @@ public class BucketConfigurationXmlFactory {
     }
 
     private void addNoncurrentTransitions(XmlWriter xml,
-            List<NoncurrentVersionTransition> transitions) {
+                                          List<NoncurrentVersionTransition> transitions) {
         if (transitions == null || transitions.isEmpty()) {
             return;
         }
@@ -579,33 +581,6 @@ public class BucketConfigurationXmlFactory {
         predicate.accept(new LifecyclePredicateVisitorImpl(xml));
     }
 
-    private class LifecyclePredicateVisitorImpl implements LifecyclePredicateVisitor {
-        private final XmlWriter xml;
-
-        public LifecyclePredicateVisitorImpl(XmlWriter xml) {
-            this.xml = xml;
-        }
-
-        @Override
-        public void visit(LifecyclePrefixPredicate lifecyclePrefixPredicate) {
-            writePrefix(xml, lifecyclePrefixPredicate.getPrefix());
-        }
-
-        @Override
-        public void visit(LifecycleTagPredicate lifecycleTagPredicate) {
-            writeTag(xml, lifecycleTagPredicate.getTag());
-        }
-
-        @Override
-        public void visit(LifecycleAndOperator lifecycleAndOperator) {
-            xml.start("And");
-            for (LifecycleFilterPredicate predicate : lifecycleAndOperator.getOperands()) {
-                predicate.accept(this);
-            }
-            xml.end(); // </And>
-        }
-    }
-
     /**
      * @param rule
      * @return True if rule has a current expiration (<Expiration/>) policy set
@@ -629,7 +604,7 @@ public class BucketConfigurationXmlFactory {
                 xml.start("AllowedMethod").value(method.toString()).end();
             }
         }
-        if(rule.getMaxAgeSeconds() != 0) {
+        if (rule.getMaxAgeSeconds() != 0) {
             xml.start("MaxAgeSeconds").value(Integer.toString(rule.getMaxAgeSeconds())).end();
         }
         if (rule.getExposedHeaders() != null) {
@@ -638,7 +613,7 @@ public class BucketConfigurationXmlFactory {
             }
         }
         if (rule.getAllowedHeaders() != null) {
-            for(String header : rule.getAllowedHeaders()) {
+            for (String header : rule.getAllowedHeaders()) {
                 xml.start("AllowedHeader").value(header).end();
             }
         }
@@ -689,7 +664,6 @@ public class BucketConfigurationXmlFactory {
         xml.end(); // </Redirect>
         xml.end();// </CORSRule>
     }
-
 
     /**
      * Converts the specified {@link BucketTaggingConfiguration} object to an XML fragment that
@@ -843,7 +817,7 @@ public class BucketConfigurationXmlFactory {
 
     private void writeRule(XmlWriter xml, TagSet tagset) {
         xml.start("TagSet");
-        for ( String key : tagset.getAllTags().keySet() ) {
+        for (String key : tagset.getAllTags().keySet()) {
             xml.start("Tag");
             xml.start("Key").value(key).end();
             xml.start("Value").value(tagset.getTag(key)).end();
@@ -923,7 +897,9 @@ public class BucketConfigurationXmlFactory {
     }
 
     private void writeStorageClassAnalysis(XmlWriter xml, StorageClassAnalysis storageClassAnalysis) {
-        if (storageClassAnalysis == null) return;
+        if (storageClassAnalysis == null) {
+            return;
+        }
 
         xml.start("StorageClassAnalysis");
         if (storageClassAnalysis.getDataExport() != null) {
@@ -958,33 +934,6 @@ public class BucketConfigurationXmlFactory {
         }
 
         xml.end(); // </Destination>
-    }
-
-    private class AnalyticsPredicateVisitorImpl implements AnalyticsPredicateVisitor {
-        private final XmlWriter xml;
-
-        public AnalyticsPredicateVisitorImpl(XmlWriter xml) {
-            this.xml = xml;
-        }
-
-        @Override
-        public void visit(AnalyticsPrefixPredicate analyticsPrefixPredicate) {
-            writePrefix(xml, analyticsPrefixPredicate.getPrefix());
-        }
-
-        @Override
-        public void visit(AnalyticsTagPredicate analyticsTagPredicate) {
-            writeTag(xml, analyticsTagPredicate.getTag());
-        }
-
-        @Override
-        public void visit(AnalyticsAndOperator analyticsAndOperator) {
-            xml.start("And");
-            for (AnalyticsFilterPredicate predicate : analyticsAndOperator.getOperands()) {
-                predicate.accept(this);
-            }
-            xml.end();
-        }
     }
 
     /**
@@ -1045,33 +994,6 @@ public class BucketConfigurationXmlFactory {
         predicate.accept(new MetricsPredicateVisitorImpl(xml));
     }
 
-    private class MetricsPredicateVisitorImpl implements MetricsPredicateVisitor {
-        private final XmlWriter xml;
-
-        public MetricsPredicateVisitorImpl(XmlWriter xml) {
-            this.xml = xml;
-        }
-
-        @Override
-        public void visit(MetricsPrefixPredicate metricsPrefixPredicate) {
-            writePrefix(xml, metricsPrefixPredicate.getPrefix());
-        }
-
-        @Override
-        public void visit(MetricsTagPredicate metricsTagPredicate) {
-            writeTag(xml, metricsTagPredicate.getTag());
-        }
-
-        @Override
-        public void visit(MetricsAndOperator metricsAndOperator) {
-            xml.start("And");
-            for (MetricsFilterPredicate predicate : metricsAndOperator.getOperands()) {
-                predicate.accept(this);
-            }
-            xml.end();
-        }
-    }
-
     private void addParameterIfNotNull(XmlWriter xml, String xmlTagName, String value) {
         if (value != null) {
             xml.start(xmlTagName).value(value).end();
@@ -1100,6 +1022,87 @@ public class BucketConfigurationXmlFactory {
         xml.start("Key").value(tag.getKey()).end();
         xml.start("Value").value(tag.getValue()).end();
         xml.end();
+    }
+
+    private class LifecyclePredicateVisitorImpl implements LifecyclePredicateVisitor {
+        private final XmlWriter xml;
+
+        public LifecyclePredicateVisitorImpl(XmlWriter xml) {
+            this.xml = xml;
+        }
+
+        @Override
+        public void visit(LifecyclePrefixPredicate lifecyclePrefixPredicate) {
+            writePrefix(xml, lifecyclePrefixPredicate.getPrefix());
+        }
+
+        @Override
+        public void visit(LifecycleTagPredicate lifecycleTagPredicate) {
+            writeTag(xml, lifecycleTagPredicate.getTag());
+        }
+
+        @Override
+        public void visit(LifecycleAndOperator lifecycleAndOperator) {
+            xml.start("And");
+            for (LifecycleFilterPredicate predicate : lifecycleAndOperator.getOperands()) {
+                predicate.accept(this);
+            }
+            xml.end(); // </And>
+        }
+    }
+
+    private class AnalyticsPredicateVisitorImpl implements AnalyticsPredicateVisitor {
+        private final XmlWriter xml;
+
+        public AnalyticsPredicateVisitorImpl(XmlWriter xml) {
+            this.xml = xml;
+        }
+
+        @Override
+        public void visit(AnalyticsPrefixPredicate analyticsPrefixPredicate) {
+            writePrefix(xml, analyticsPrefixPredicate.getPrefix());
+        }
+
+        @Override
+        public void visit(AnalyticsTagPredicate analyticsTagPredicate) {
+            writeTag(xml, analyticsTagPredicate.getTag());
+        }
+
+        @Override
+        public void visit(AnalyticsAndOperator analyticsAndOperator) {
+            xml.start("And");
+            for (AnalyticsFilterPredicate predicate : analyticsAndOperator.getOperands()) {
+                predicate.accept(this);
+            }
+            xml.end();
+        }
+    }
+
+    private class MetricsPredicateVisitorImpl implements MetricsPredicateVisitor {
+        private final XmlWriter xml;
+
+        public MetricsPredicateVisitorImpl(XmlWriter xml) {
+            this.xml = xml;
+        }
+
+        @Override
+        public void visit(MetricsPrefixPredicate metricsPrefixPredicate) {
+            writePrefix(xml, metricsPrefixPredicate.getPrefix());
+        }
+
+        @Override
+        public void visit(MetricsTagPredicate metricsTagPredicate) {
+            writeTag(xml, metricsTagPredicate.getTag());
+        }
+
+        @Override
+        public void visit(MetricsAndOperator metricsAndOperator) {
+            xml.start("And");
+            for (MetricsFilterPredicate predicate : metricsAndOperator.getOperands()) {
+                predicate.accept(this);
+            }
+            xml.end();
+        }
     }
 
 }

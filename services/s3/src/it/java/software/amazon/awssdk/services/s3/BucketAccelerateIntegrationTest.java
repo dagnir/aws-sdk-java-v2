@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -80,14 +95,14 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
         enableAccelerateOnBucket(US_BUCKET_NAME);
 
         accelerateClient.setBucketTaggingConfiguration(US_BUCKET_NAME,
-                new BucketTaggingConfiguration().withTagSets(new TagSet(
-                        new HashMap<String, String>(){{
-                            put("foo", "bar");
-                        }})));
+                                                       new BucketTaggingConfiguration().withTagSets(new TagSet(
+                                                               new HashMap<String, String>() {{
+                                                                   put("foo", "bar");
+                                                               }})));
         accelerateClient.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(US_BUCKET_NAME,
-                        new BucketVersioningConfiguration()
-                            .withStatus(BucketVersioningConfiguration.ENABLED)));
+                                                            new BucketVersioningConfiguration()
+                                                                    .withStatus(BucketVersioningConfiguration.ENABLED)));
 
         // Retry a couple of times due to eventual consistency
         RetryableAssertion.doRetryableAssert(new AssertCallable() {
@@ -100,7 +115,7 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
         }, new RetryableParams().withMaxAttempts(30).withDelayInMs(200));
 
         assertEquals(BucketVersioningConfiguration.ENABLED,
-                accelerateClient.getBucketVersioningConfiguration(US_BUCKET_NAME).getStatus());
+                     accelerateClient.getBucketVersioningConfiguration(US_BUCKET_NAME).getStatus());
 
         accelerateClient.deleteBucketTaggingConfiguration(US_BUCKET_NAME);
         assertNull(accelerateClient.getBucketTaggingConfiguration(US_BUCKET_NAME));
@@ -120,13 +135,13 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
         assertEquals(
                 BucketAccelerateStatus.Enabled.toString(),
                 s3.getBucketAccelerateConfiguration(US_BUCKET_NAME).getStatus()
-                );
+                    );
 
         disableAccelerateOnBucket(US_BUCKET_NAME);
         assertEquals(
                 BucketAccelerateStatus.Suspended.toString(),
                 s3.getBucketAccelerateConfiguration(US_BUCKET_NAME).getStatus()
-                );
+                    );
     }
 
     @Test
@@ -195,7 +210,7 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
 
     private void disableAccelerateOnBucket(String bucket) {
         s3.setBucketAccelerateConfiguration(bucket,
-                new BucketAccelerateConfiguration(BucketAccelerateStatus.Suspended));
+                                            new BucketAccelerateConfiguration(BucketAccelerateStatus.Suspended));
     }
 
     @Test

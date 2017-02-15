@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -93,14 +93,22 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 
     private MyService client;
 
+    private static void assertJsonEquals(Object expected, Object actual) throws IOException {
+        assertEquals(toTree(expected), toTree(actual));
+    }
+
+    private static JsonNode toTree(Object result) throws IOException {
+        return MAPPER.readTree(MAPPER.writeValueAsBytes(result));
+    }
+
     @Before
     public void setup() {
         BasicConfigurator.configure();
         client = MyService.builder()
-                .iamCredentials(new AWSStaticCredentialsProvider(getCredentials()))
-                .signer(request -> "allow")
-                .apiKey("pcJeQMyqaZ4UIedQcnmN84ln4PGIzXWE8KugLPhI")
-                .build();
+                          .iamCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                          .signer(request -> "allow")
+                          .apiKey("pcJeQMyqaZ4UIedQcnmN84ln4PGIzXWE8KugLPhI")
+                          .build();
     }
 
     @Test
@@ -189,7 +197,7 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
                                                            "keyOne", new ScalarTypes().stringMember("baz"),
                                                            "keyTwo", new ScalarTypes().numberMember(9000.1)))
                                                    .mapOfStringToListOfStructure(mapStringToScalarTypesList)
-                );
+                                          );
         final PutNoauthContainersComplexResult result = client.putNoauthContainersComplex(request);
         assertJsonEquals(request, result);
     }
@@ -253,8 +261,8 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     @Test
     public void customAuth_AccessDenied_ThrowsException() {
         final MyService customAuthClient = MyService.builder()
-                .signer(request -> "deny")
-                .build();
+                                                    .signer(request -> "deny")
+                                                    .build();
         assertForbiddenException(() -> customAuthClient
                 .putCustomauthScalars(new PutCustomauthScalarsRequest().scalarTypes(
                         new ScalarTypes().stringMember("foo"))));
@@ -271,9 +279,9 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     @Test
     public void iamAuth_InvalidCredentials_ThrowsException() {
         final MyService iamAuthClient = MyService.builder()
-                .iamCredentials(new AWSStaticCredentialsProvider(
-                        new BasicAWSCredentials("akid", "skid")))
-                .build();
+                                                 .iamCredentials(new AWSStaticCredentialsProvider(
+                                                         new BasicAWSCredentials("akid", "skid")))
+                                                 .build();
         assertForbiddenException(() -> iamAuthClient.putIamauthScalars(
                 new PutIamauthScalarsRequest().scalarTypes(
                         new ScalarTypes().stringMember("foo"))));
@@ -290,7 +298,7 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     @Test
     public void apiKeyRequired_MissingApiKey_ThrowsException() throws IOException {
         final MyService missingApiKeyClient = MyService.builder()
-                .build();
+                                                       .build();
         final PutApikeyRequest request = new PutApikeyRequest().scalarTypes(
                 new ScalarTypes().stringMember("foo"));
         assertForbiddenException(() -> missingApiKeyClient.putApikey(request));
@@ -299,8 +307,8 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     @Test
     public void apiKeyRequired_InvalidApiKey_ThrowsException() throws IOException {
         final MyService invalidApiKeyClient = MyService.builder()
-                .apiKey("invalidApiKey")
-                .build();
+                                                       .apiKey("invalidApiKey")
+                                                       .build();
         final PutApikeyRequest request = new PutApikeyRequest().scalarTypes(
                 new ScalarTypes().stringMember("foo"));
         assertForbiddenException(() -> invalidApiKeyClient.putApikey(request));
@@ -442,13 +450,5 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 
     private Double to_d(double d) {
         return d;
-    }
-
-    private static void assertJsonEquals(Object expected, Object actual) throws IOException {
-        assertEquals(toTree(expected), toTree(actual));
-    }
-
-    private static JsonNode toTree(Object result) throws IOException {
-        return MAPPER.readTree(MAPPER.writeValueAsBytes(result));
     }
 }

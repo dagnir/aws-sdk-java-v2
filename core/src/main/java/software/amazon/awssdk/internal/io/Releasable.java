@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.io.Closeable;
  * a finally block) by the very same code block that created it, then it is
  * necessary that the release method must not be called while the execution is
  * made in other stack frames.
- * 
+ *
  * In such case, as other stack frames may inadvertently or indirectly call the
  * close method of the stream, the creator of the stream would need to
  * explicitly disable the accidental closing via
@@ -46,7 +46,7 @@ public interface Releasable {
      * (in a finally block) by the very same code block that created it, then it
      * is necessary that the release method must not be called while the
      * execution is made in other stack frames.
-     * 
+     *
      * In such case, as other stack frames may inadvertently or indirectly call
      * the close method of the stream, the creator of the stream would need to
      * explicitly disable the accidental closing via

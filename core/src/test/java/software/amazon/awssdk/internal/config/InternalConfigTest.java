@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -34,19 +34,15 @@ import software.amazon.awssdk.util.ClassLoaderHelper;
 
 public class InternalConfigTest {
 
-    private static InternalConfig config = null;
-
     private static final String DEFAULT_SIGNER_TYPE = "AWS4SignerType";
-
     private static final String S3V4_SIGNER_TYPE = "AWSS3V4SignerType";
-
     private static final String NEW_REGION = "newregion";
-
     private static final Map<String, String> serviceSignerMap = new HashMap<String, String>();
+    private static InternalConfig config = null;
 
     @BeforeClass
     public static void setUp() throws JsonParseException, JsonMappingException,
-            IOException {
+                                      IOException {
         config = InternalConfig.Factory.getInternalConfig();
         assertNotNull(config);
         assertSame(config, InternalConfig.Factory.getInternalConfig());
@@ -97,7 +93,7 @@ public class InternalConfigTest {
 
         for (Regions region : Regions.values()) {
             assertSignerType(S3V4_SIGNER_TYPE, serviceName,
-                    region.getName());
+                             region.getName());
         }
         assertSignerType(S3V4_SIGNER_TYPE, serviceName, NEW_REGION);
     }
@@ -147,10 +143,10 @@ public class InternalConfigTest {
     }
 
     private void assertSignerType(String expected, String serviceName,
-            String region) {
+                                  String region) {
         SignerConfig signer = config.getSignerConfig(serviceName, region);
         assertEquals("Service Signer validation failed for " + serviceName
-                + " in region " + region, expected, signer.getSignerType());
+                     + " in region " + region, expected, signer.getSignerType());
     }
 
     /**
@@ -160,10 +156,10 @@ public class InternalConfigTest {
     public void testCognitoAssertions() {
         assertSignerType("AWS4SignerType", "cognito-identity", null);
         assertSignerType("AWS4SignerType", "cognito-identity",
-                Regions.US_EAST_1.getName());
+                         Regions.US_EAST_1.getName());
         assertSignerType("AWS4SignerType", "cognito-sync", null);
         assertSignerType("AWS4SignerType", "cognito-sync",
-                Regions.US_EAST_1.getName());
+                         Regions.US_EAST_1.getName());
     }
 
     @Test

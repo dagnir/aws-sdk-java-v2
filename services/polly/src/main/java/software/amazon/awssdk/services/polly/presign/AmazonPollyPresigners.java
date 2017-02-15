@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public final class AmazonPollyPresigners {
         request.setHttpMethod(HttpMethodName.GET);
         marshallIntoRequest(synthesizeSpeechPresignRequest, request);
         Date expirationDate = synthesizeSpeechPresignRequest.getExpirationDate() == null ?
-                getDefaultExpirationDate() : synthesizeSpeechPresignRequest.getExpirationDate();
+                              getDefaultExpirationDate() : synthesizeSpeechPresignRequest.getExpirationDate();
         return presignerFacade.presign(request, expirationDate);
     }
 
@@ -93,7 +93,7 @@ public final class AmazonPollyPresigners {
 
     private Request<?> newRequest(AWSCredentialsProvider credentials) {
         return new DefaultRequest(new PresignerFacade.PresigningRequest().withRequestCredentialsProvider(credentials),
-                                     "AmazonPolly");
+                                  "AmazonPolly");
     }
 
     private Date getDefaultExpirationDate() {

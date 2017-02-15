@@ -8,7 +8,7 @@ Feature: AWS CloudTrail
 
   Scenario: Handling errors
     When I attempt to call the "DeleteTrail" API with:
-    | Name | faketrail |
+      | Name | faketrail |
     Then I expect the response error code to be "TrailNotFoundException"
     And I expect the response error message to include:
     """

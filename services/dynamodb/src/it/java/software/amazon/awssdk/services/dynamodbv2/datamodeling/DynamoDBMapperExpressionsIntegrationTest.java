@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.junit.Assert.assertTrue;
@@ -119,21 +120,21 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
         final Builder<String, AttributeValue> record1 = ImmutableMapParameter
                 .builder();
         record1.put(HASH_KEY, new AttributeValue().withN(FIRST_CUSTOMER_ID))
-                .put(RANGE_KEY, new AttributeValue().withS(ADDRESS_TYPE_WORK))
-                .put("AddressLine1",
-                     new AttributeValue().withS("1918 8th Aven"))
-                .put("city", new AttributeValue().withS("seattle"))
-                .put("state", new AttributeValue().withS("WA"))
-                .put("zipcode", new AttributeValue().withN("98104"));
+               .put(RANGE_KEY, new AttributeValue().withS(ADDRESS_TYPE_WORK))
+               .put("AddressLine1",
+                    new AttributeValue().withS("1918 8th Aven"))
+               .put("city", new AttributeValue().withS("seattle"))
+               .put("state", new AttributeValue().withS("WA"))
+               .put("zipcode", new AttributeValue().withN("98104"));
         final Builder<String, AttributeValue> record2 = ImmutableMapParameter
                 .builder();
         record2.put(HASH_KEY, new AttributeValue().withN(FIRST_CUSTOMER_ID))
-                .put(RANGE_KEY, new AttributeValue().withS(ADDRESS_TYPE_HOME))
-                .put("AddressLine1",
-                     new AttributeValue().withS("15606 NE 40th ST"))
-                .put("city", new AttributeValue().withS("redmond"))
-                .put("state", new AttributeValue().withS("WA"))
-                .put("zipcode", new AttributeValue().withN("98052"));
+               .put(RANGE_KEY, new AttributeValue().withS(ADDRESS_TYPE_HOME))
+               .put("AddressLine1",
+                    new AttributeValue().withS("15606 NE 40th ST"))
+               .put("city", new AttributeValue().withS("redmond"))
+               .put("state", new AttributeValue().withS("WA"))
+               .put("zipcode", new AttributeValue().withN("98052"));
 
         client.putItem(new PutItemRequest(TABLENAME, record1.build()));
         client.putItem(new PutItemRequest(TABLENAME, record2.build()));
@@ -144,10 +145,24 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
             DescribeTableResult describeResult = client
                     .describeTable(TABLENAME);
             if (TABLE_STATUS_ACTIVE.equals(describeResult.getTable()
-                                                   .getTableStatus())) {
+                                                         .getTableStatus())) {
                 break;
             }
             Thread.sleep(SLEEP_TIME_IN_MILLIS);
+        }
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        try {
+            if (client != null) {
+                client.deleteTable(TABLENAME);
+            }
+        } catch (Exception e) {
+        } finally {
+            if (client != null) {
+                client.shutdown();
+            }
         }
     }
 
@@ -196,7 +211,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
         final Builder<String, AttributeValue> builder =
                 ImmutableMapParameter.builder();
         builder.put(":customerId", new AttributeValue().withN(FIRST_CUSTOMER_ID))
-                .put(":addressType", new AttributeValue(ADDRESS_TYPE_HOME))
+               .put(":addressType", new AttributeValue(ADDRESS_TYPE_HOME))
         ;
         qxp.withExpressionAttributeValues(builder.build());
 
@@ -205,7 +220,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
 
         builder.put(":zipcode", new AttributeValue().withN("98109"));
         qxp.withFilterExpression("zipcode = :zipcode")
-                .withExpressionAttributeValues(builder.build())
+           .withExpressionAttributeValues(builder.build())
         ;
 
         results = mapper.query(Customer.class, qxp);
@@ -274,20 +289,6 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
             mapper.delete(customer, deleteExpression);
         } catch (Exception e) {
             assertTrue(e instanceof ConditionalCheckFailedException);
-        }
-    }
-
-    @AfterClass
-    public static void tearDown() {
-        try {
-            if (client != null) {
-                client.deleteTable(TABLENAME);
-            }
-        } catch (Exception e) {
-        } finally {
-            if (client != null) {
-                client.shutdown();
-            }
         }
     }
 

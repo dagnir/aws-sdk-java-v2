@@ -49,13 +49,11 @@ import software.amazon.awssdk.services.ec2.model.VolumeType;
  */
 public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
-    private String volumeId;
-
     /** We need to use this specific zone because it supports consistent iops */
     private static final String US_EAST_1_B = "us-east-1b";
-
     private static final Integer VOLUME_SIZE = 4; // GB
     private static final Integer PROVISIONED_IOPS = 100; // per second
+    private String volumeId;
 
     /** Release resources used in testing */
     @After
@@ -70,7 +68,7 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
         Volume volume = ec2.createVolume(
                 new CreateVolumeRequest(VOLUME_SIZE, US_EAST_1_B)
-                ).getVolume();
+                                        ).getVolume();
 
         volumeId = volume.getVolumeId();
 
@@ -90,7 +88,7 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
                 new CreateVolumeRequest(VOLUME_SIZE, US_EAST_1_B)
                         .withIops(PROVISIONED_IOPS)
                         .withVolumeType(VolumeType.Io1)
-                ).getVolume();
+                                        ).getVolume();
 
         volumeId = volume.getVolumeId();
 
@@ -103,10 +101,10 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
         // Try describing it with a filter
         List<Volume> volumes = ec2.describeVolumes(new DescribeVolumesRequest()
-                    .withFilters(new Filter()
-                            .withName("volume-id")
-                            .withValues(volumeId))
-                ).getVolumes();
+                                                           .withFilters(new Filter()
+                                                                                .withName("volume-id")
+                                                                                .withValues(volumeId))
+                                                  ).getVolumes();
         assertEquals(1, volumes.size());
 
         volume = volumes.get(0);
@@ -121,37 +119,37 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
         // Filter tags by resource id
         tagDescriptions = ec2.describeTags(new DescribeTagsRequest()
-                    .withFilters(new Filter()
-                            .withName("resource-id")
-                            .withValues(volumeId))
-                ).getTags();
+                                                   .withFilters(new Filter()
+                                                                        .withName("resource-id")
+                                                                        .withValues(volumeId))
+                                          ).getTags();
         assertEquals(TAGS.size(), tagDescriptions.size());
         assertTagDescriptionsValid(tagDescriptions);
 
         // Delete Tags
         ec2.deleteTags(new DeleteTagsRequest()
-                        .withResources(volumeId)
-                        .withTags(TAGS));
+                               .withResources(volumeId)
+                               .withTags(TAGS));
         Thread.sleep(1000 * 30);
         tagDescriptions = ec2.describeTags(new DescribeTagsRequest()
-                    .withFilters(new Filter()
-                            .withName("resource-id")
-                            .withValues(volumeId))
-                ).getTags();
+                                                   .withFilters(new Filter()
+                                                                        .withName("resource-id")
+                                                                        .withValues(volumeId))
+                                          ).getTags();
         assertEquals(0, tagDescriptions.size());
 
         // Describe volume attribute
         DescribeVolumeAttributeResult describeVolumeAttribute =
                 ec2.describeVolumeAttribute(new DescribeVolumeAttributeRequest()
-                        .withAttribute("autoEnableIO")
-                        .withVolumeId(volumeId));
+                                                    .withAttribute("autoEnableIO")
+                                                    .withVolumeId(volumeId));
         assertEquals(volumeId, describeVolumeAttribute.getVolumeId());
         assertFalse(describeVolumeAttribute.getAutoEnableIO());
 
         // Describe volume status by filter
         DescribeVolumeStatusResult describeVolumeStatus =
                 ec2.describeVolumeStatus(new DescribeVolumeStatusRequest()
-                        .withFilters(new Filter("volume-id").withValues(volumeId)));
+                                                 .withFilters(new Filter("volume-id").withValues(volumeId)));
         assertEquals(1, describeVolumeStatus.getVolumeStatuses().size());
         VolumeStatusItem volumeStatusItem = describeVolumeStatus.getVolumeStatuses().get(0);
         assertNotNull(volumeStatusItem);
@@ -163,7 +161,7 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
         // Describe volume status by id
         describeVolumeStatus = ec2.describeVolumeStatus(new DescribeVolumeStatusRequest()
-                        .withVolumeIds(volumeId));
+                                                                .withVolumeIds(volumeId));
         assertEquals(1, describeVolumeStatus.getVolumeStatuses().size());
         volumeStatusItem = describeVolumeStatus.getVolumeStatuses().get(0);
         assertNotNull(volumeStatusItem);
@@ -175,8 +173,8 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
         // Modify volume attribute
         ec2.modifyVolumeAttribute(new ModifyVolumeAttributeRequest()
-                .withVolumeId(volumeId)
-                .withAutoEnableIO(true));
+                                          .withVolumeId(volumeId)
+                                          .withAutoEnableIO(true));
         describeVolumeAttribute = ec2.describeVolumeAttribute(
                 new DescribeVolumeAttributeRequest()
                         .withAttribute("autoEnableIO")
@@ -185,18 +183,18 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
         assertEquals(true, describeVolumeAttribute.getAutoEnableIO());
 
         ec2.modifyVolumeAttribute(new ModifyVolumeAttributeRequest()
-                .withVolumeId(volumeId)
-                .withAutoEnableIO(false));
+                                          .withVolumeId(volumeId)
+                                          .withAutoEnableIO(false));
         describeVolumeAttribute = ec2.describeVolumeAttribute(new DescribeVolumeAttributeRequest()
-                        .withAttribute("autoEnableIO")
-                        .withVolumeId(volumeId));
+                                                                      .withAttribute("autoEnableIO")
+                                                                      .withVolumeId(volumeId));
         assertEquals(volumeId, describeVolumeAttribute.getVolumeId());
         assertFalse(describeVolumeAttribute.getAutoEnableIO());
 
         // Enable volume io -- this should throw an exception because io is already enabled
         try {
             ec2.enableVolumeIO(new EnableVolumeIORequest()
-                    .withVolumeId(volumeId));
+                                       .withVolumeId(volumeId));
             fail("Expected an exception");
         } catch (AmazonClientException expected) {
             assertTrue(expected.getMessage().contains("already has IO enabled"));

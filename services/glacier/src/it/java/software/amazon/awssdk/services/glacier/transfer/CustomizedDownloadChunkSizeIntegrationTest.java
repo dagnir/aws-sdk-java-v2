@@ -25,8 +25,8 @@ public class CustomizedDownloadChunkSizeIntegrationTest extends GlacierIntegrati
     public void setup() throws IOException {
         randomTempFile = new RandomTempFile("CustomizedDownloadChunkSizeIntegrationTest", contentLength);
         downloadFile = new File(randomTempFile.getParentFile(),
-                randomTempFile.getName() + ".download");
-        
+                                randomTempFile.getName() + ".download");
+
     }
 
     @After
@@ -50,8 +50,9 @@ public class CustomizedDownloadChunkSizeIntegrationTest extends GlacierIntegrati
         assertNotNull(archiveId);
 
         // Download
-        if (DEBUG)
+        if (DEBUG) {
             System.out.println("1) downloadFile=" + downloadFile + ", downloadFile.length()=" + downloadFile.length());
+        }
 
         // Bad chunk size, not power of 2
         System.setProperty("software.amazon.awssdk.services.glacier.transfer.downloadChunkSizeInMB", "13");
@@ -60,26 +61,29 @@ public class CustomizedDownloadChunkSizeIntegrationTest extends GlacierIntegrati
         } catch (AmazonClientException e) {
             assertNotNull(e.getMessage());
         }
-        if (DEBUG)
+        if (DEBUG) {
             System.out.println("2) downloadFile=" + downloadFile + ", downloadFile.length()=" + downloadFile.length());
+        }
 
         // Customized chunk size 1 MB
         System.setProperty("software.amazon.awssdk.services.glacier.transfer.downloadChunkSizeInMB", "1");
 
         int retry = 0;
-        for (;;) {
+        for (; ; ) {
             try {
                 glacierUtils.download(vaultName, archiveId, downloadFile);
-                if (DEBUG)
+                if (DEBUG) {
                     System.out.println("4) downloadFile=" + downloadFile + ", downloadFile.length()=" + downloadFile.length());
+                }
                 break;
-            } catch(QueueDoesNotExistException ex) {
-                if (retry++ >= 3)
+            } catch (QueueDoesNotExistException ex) {
+                if (retry++ >= 3) {
                     throw ex;
+                }
                 Thread.sleep(1000);
                 System.out.println("Retrying download: " + retry + "\n"
-                        + " downloadFile=" + downloadFile
-                        + ", downloadFile.length()=" + downloadFile.length());
+                                   + " downloadFile=" + downloadFile
+                                   + ", downloadFile.length()=" + downloadFile.length());
             }
         }
         assertFileEqualsFile(randomTempFile, downloadFile);

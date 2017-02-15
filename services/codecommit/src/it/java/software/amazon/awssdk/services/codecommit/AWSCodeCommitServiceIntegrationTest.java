@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.codecommit;
 
 import java.io.FileNotFoundException;
@@ -21,9 +36,8 @@ import software.amazon.awssdk.test.AWSTestBase;
  */
 public class AWSCodeCommitServiceIntegrationTest extends AWSTestBase {
 
-    private static AWSCodeCommit client;
-
     private static final String REPO_NAME = "java-sdk-test-repo-" + System.currentTimeMillis();
+    private static AWSCodeCommit client;
 
     @BeforeClass
     public static void setup() throws FileNotFoundException, IOException {
@@ -35,7 +49,7 @@ public class AWSCodeCommitServiceIntegrationTest extends AWSTestBase {
     public static void cleanup() {
         try {
             client.deleteRepository(new DeleteRepositoryRequest()
-                    .withRepositoryName(REPO_NAME));
+                                            .withRepositoryName(REPO_NAME));
         } catch (Exception ignored) {
             System.err.println("Failed to delete repository " + ignored);
         }
@@ -46,13 +60,13 @@ public class AWSCodeCommitServiceIntegrationTest extends AWSTestBase {
 
         // CreateRepository
         client.createRepository(new CreateRepositoryRequest()
-                .withRepositoryName(REPO_NAME).withRepositoryDescription(
+                                        .withRepositoryName(REPO_NAME).withRepositoryDescription(
                         "My test repo"));
 
         // GetRepository
         RepositoryMetadata repoMd = client.getRepository(
                 new GetRepositoryRequest().withRepositoryName(REPO_NAME))
-                .getRepositoryMetadata();
+                                          .getRepositoryMetadata();
         Assert.assertEquals(REPO_NAME, repoMd.getRepositoryName());
         assertValid_RepositoryMetadata(repoMd);
 
@@ -61,7 +75,7 @@ public class AWSCodeCommitServiceIntegrationTest extends AWSTestBase {
 
         // DeleteRepository
         client.deleteRepository(new DeleteRepositoryRequest()
-                .withRepositoryName(REPO_NAME));
+                                        .withRepositoryName(REPO_NAME));
 
     }
 
@@ -69,7 +83,7 @@ public class AWSCodeCommitServiceIntegrationTest extends AWSTestBase {
     public void testExceptionHandling() {
         String nonExistentRepoName = UUID.randomUUID().toString();
         client.getRepository(new GetRepositoryRequest()
-                .withRepositoryName(nonExistentRepoName));
+                                     .withRepositoryName(nonExistentRepoName));
     }
 
     private void assertValid_RepositoryMetadata(RepositoryMetadata md) {

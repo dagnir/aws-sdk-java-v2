@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -36,10 +36,56 @@ import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class ProfilesConfigFileWriterTest {
 
-    private static final AWSCredentials basicCredA   = new BasicAWSCredentials("a", "a");
-    private static final AWSCredentials basicCredB   = new BasicAWSCredentials("b", "b");
+    private static final AWSCredentials basicCredA = new BasicAWSCredentials("a", "a");
+    private static final AWSCredentials basicCredB = new BasicAWSCredentials("b", "b");
     private static final AWSCredentials sessionCredC = new BasicSessionCredentials("c", "c", "c");
     private static final AWSCredentials sessionCredD = new BasicSessionCredentials("d", "d", "d");
+
+    /**
+     * Loads the given credentials file and checks that it contains the same
+     * set of profiles as expected.
+     */
+    private static void checkCredentialsFile(File file, Profile... expectedProfiles) {
+        ProfilesConfigFile parsedFile = new ProfilesConfigFile(file);
+        Map<String, Profile> loadedProfiles = parsedFile.getAllProfiles();
+
+        assertTrue(expectedProfiles.length == loadedProfiles.size());
+
+        for (Profile expectedProfile : expectedProfiles) {
+            Profile loadedProfile = loadedProfiles.get(expectedProfile.getProfileName());
+            assertEqualProfiles(expectedProfile, loadedProfile);
+        }
+    }
+
+    private static void assertEqualProfiles(Profile expected, Profile actual) {
+        assertEquals(expected.getProfileName(), actual.getProfileName());
+        assertEqualCredentials(expected.getCredentials(), actual.getCredentials());
+    }
+
+    private static void assertEqualCredentials(AWSCredentials expected, AWSCredentials actual) {
+        assertEquals(expected.getAWSAccessKeyId(),
+                     actual.getAWSAccessKeyId());
+        assertEquals(expected.getAWSAccessKeyId(),
+                     actual.getAWSAccessKeyId());
+
+        if (expected instanceof AWSSessionCredentials) {
+            assertTrue(actual instanceof AWSSessionCredentials);
+
+            AWSSessionCredentials expectedSession = (AWSSessionCredentials) expected;
+            AWSSessionCredentials actualSession = (AWSSessionCredentials) actual;
+            assertEquals(expectedSession.getSessionToken(),
+                         actualSession.getSessionToken());
+        } else {
+            assertFalse(actual instanceof AWSSessionCredentials);
+        }
+    }
+
+    private static File copyToTempFile(File file) throws IOException {
+        File tmpFile = File.createTempFile("credentials.", null);
+        tmpFile.delete();
+        FileUtils.copyFile(file, tmpFile);
+        return tmpFile;
+    }
 
     @Test
     public void testDumpToFile() throws IOException {
@@ -50,21 +96,22 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, abcd);
         checkCredentialsFile(tmpFile, abcd);
 
         // Rewrite the file with overwrite=true
-        Profile[] a = { new Profile("a", basicCredA) };
+        Profile[] a = {new Profile("a", basicCredA)};
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, a);
         checkCredentialsFile(tmpFile, a);
 
         // Rewrite the file with overwrite=false is not allowed
         try {
             ProfilesConfigFileWriter.dumpToFile(tmpFile, false,
-                    new Profile("a", basicCredA));
+                                                new Profile("a", basicCredA));
             fail("Should have thrown exception since the destination file already exists.");
-        } catch (AmazonClientException expected) {}
+        } catch (AmazonClientException expected) {
+        }
 
     }
 
@@ -77,7 +124,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, abcd);
 
         // a <==> c, b <==> d
@@ -86,7 +133,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", sessionCredD),
                 new Profile("c", basicCredA),
                 new Profile("d", basicCredB)
-                };
+        };
         ProfilesConfigFileWriter.modifyOrInsertProfiles(tmpFile, modified);
         checkCredentialsFile(tmpFile, modified);
     }
@@ -100,7 +147,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, abcd);
 
         // Insert [e] profile
@@ -118,7 +165,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, abcd);
 
         // a <==> c, b <==> d, +e
@@ -128,7 +175,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("c", basicCredA),
                 new Profile("d", basicCredB),
                 new Profile("e", basicCredA)
-                };
+        };
         ProfilesConfigFileWriter.modifyOrInsertProfiles(tmpFile, modified);
         checkCredentialsFile(tmpFile, modified);
     }
@@ -150,7 +197,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
 
         // a <==> b, c <==> d, also renaming them to uppercase letters
         Profile[] modified = {
@@ -158,7 +205,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("B", basicCredA),
                 new Profile("C", sessionCredD),
                 new Profile("D", sessionCredC)
-                };
+        };
         ProfilesConfigFileWriter.modifyProfiles(tmpFile, ImmutableMapParameter
                 .of("a", modified[0],
                     "b", modified[1],
@@ -192,7 +239,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, abcd);
 
         // Rename a to A
@@ -201,7 +248,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.modifyOneProfile(tmpFile, "a", new Profile("A", basicCredA));
         checkCredentialsFile(tmpFile, modified);
     }
@@ -215,14 +262,14 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, abcd);
 
         // Delete a and c
         Profile[] modified = {
                 new Profile("b", basicCredB),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.deleteProfiles(tmpFile, "a", "c");
         checkCredentialsFile(tmpFile, modified);
     }
@@ -240,7 +287,7 @@ public class ProfilesConfigFileWriterTest {
                 new Profile("b", basicCredB),
                 new Profile("c", sessionCredC),
                 new Profile("d", sessionCredD)
-                };
+        };
         ProfilesConfigFileWriter.dumpToFile(tmpFile, true, abcd);
         String originalContent = FileUtils.readFileToString(tmpFile);
 
@@ -249,7 +296,8 @@ public class ProfilesConfigFileWriterTest {
         try {
             ProfilesConfigFileWriter.modifyOrInsertProfiles(tmpFile, e);
             fail("An exception is expected.");
-        } catch(AmazonClientException expected) {}
+        } catch (AmazonClientException expected) {
+        }
 
         // Check that the original file is restored
         assertTrue(tmpFile.exists());
@@ -257,56 +305,10 @@ public class ProfilesConfigFileWriterTest {
         assertEquals(originalContent, restoredContent);
     }
 
-    /**
-     * Loads the given credentials file and checks that it contains the same
-     * set of profiles as expected.
-     */
-    private static void checkCredentialsFile(File file, Profile... expectedProfiles) {
-        ProfilesConfigFile parsedFile = new ProfilesConfigFile(file);
-        Map<String, Profile> loadedProfiles = parsedFile.getAllProfiles();
-
-        assertTrue(expectedProfiles.length == loadedProfiles.size());
-
-        for (Profile expectedProfile : expectedProfiles) {
-            Profile loadedProfile = loadedProfiles.get(expectedProfile.getProfileName());
-            assertEqualProfiles(expectedProfile, loadedProfile);
-        }
-    }
-
-    private static void assertEqualProfiles(Profile expected, Profile actual) {
-        assertEquals(expected.getProfileName(), actual.getProfileName());
-        assertEqualCredentials(expected.getCredentials(), actual.getCredentials());
-    }
-
-    private static void assertEqualCredentials(AWSCredentials expected, AWSCredentials actual) {
-        assertEquals(expected.getAWSAccessKeyId(),
-                actual.getAWSAccessKeyId());
-        assertEquals(expected.getAWSAccessKeyId(),
-                actual.getAWSAccessKeyId());
-
-        if (expected instanceof AWSSessionCredentials) {
-            assertTrue(actual instanceof AWSSessionCredentials);
-
-            AWSSessionCredentials expectedSession = (AWSSessionCredentials)expected;
-            AWSSessionCredentials actualSession   = (AWSSessionCredentials)actual;
-            assertEquals(expectedSession.getSessionToken(),
-                    actualSession.getSessionToken());
-        } else {
-            assertFalse(actual instanceof AWSSessionCredentials);
-        }
-    }
-
-    private static File copyToTempFile(File file) throws IOException {
-        File tmpFile = File.createTempFile("credentials.", null);
-        tmpFile.delete();
-        FileUtils.copyFile(file, tmpFile);
-        return tmpFile;
-    }
-
     private static class ProfileWithException extends Profile {
 
         public ProfileWithException(String profileName,
-                AWSCredentials awsCredentials) {
+                                    AWSCredentials awsCredentials) {
             super(profileName, awsCredentials);
         }
 

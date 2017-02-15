@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.simpledb;
 
 import static org.junit.Assert.assertEquals;
@@ -87,19 +102,6 @@ public abstract class IntegrationTestBase extends AWSTestBase {
     }
 
     /**
-     * Returns true if the specified domain exists, otherwise false.
-     */
-    protected boolean doesDomainExist(String domainName) {
-        try {
-            DomainMetadataRequest request = new DomainMetadataRequest();
-            sdb.domainMetadata(request.withDomainName(domainName));
-            return true;
-        } catch (NoSuchDomainException e) {
-            return false;
-        }
-    }
-
-    /**
      * Returns a new list of ReplaceableItems from the specified items.
      *
      * @param items
@@ -146,7 +148,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
         for (int i = 0; i < items.size(); i++) {
             ReplaceableItem replaceableItem = (ReplaceableItem) items.get(i);
             deletableItems.add(new DeletableItem(replaceableItem.getName(), newAttributeList(replaceableItem
-                    .getAttributes())));
+                                                                                                     .getAttributes())));
         }
 
         return deletableItems;
@@ -168,6 +170,19 @@ public abstract class IntegrationTestBase extends AWSTestBase {
     protected static void deleteDomain(String domainName) {
         DeleteDomainRequest request = new DeleteDomainRequest();
         sdb.deleteDomain(request.withDomainName(domainName));
+    }
+
+    /**
+     * Returns true if the specified domain exists, otherwise false.
+     */
+    protected boolean doesDomainExist(String domainName) {
+        try {
+            DomainMetadataRequest request = new DomainMetadataRequest();
+            sdb.domainMetadata(request.withDomainName(domainName));
+            return true;
+        } catch (NoSuchDomainException e) {
+            return false;
+        }
     }
 
     /**
@@ -217,7 +232,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
         Map<String, Map<String, String>> expectedAttributesByItemName = convertReplaceableItemListToMap(expectedItems);
         Map<String, Map<String, String>> retrievedAttributesByItemName = convertItemListToMap(items);
 
-        for (Iterator itemNameIterator = expectedAttributesByItemName.keySet().iterator(); itemNameIterator.hasNext();) {
+        for (Iterator itemNameIterator = expectedAttributesByItemName.keySet().iterator(); itemNameIterator.hasNext(); ) {
             String expectedItemName = (String) itemNameIterator.next();
 
             assertTrue(retrievedAttributesByItemName.containsKey(expectedItemName));
@@ -226,7 +241,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
             Map<String, String> retrievedAttributes = (Map) retrievedAttributesByItemName.get(expectedItemName);
 
             for (Iterator attributeNameIterator = expectedAttributes.keySet().iterator(); attributeNameIterator
-                    .hasNext();) {
+                    .hasNext(); ) {
                 String expectedAttributeName = (String) attributeNameIterator.next();
                 String expectedAttributeValue = (String) expectedAttributes.get(expectedAttributeName);
 
@@ -245,7 +260,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
      */
     protected Map<String, String> convertAttributesToMap(List<Attribute> attributeList) {
         Map<String, String> attributeValuesByName = new HashMap<String, String>();
-        for (Iterator iterator = attributeList.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = attributeList.iterator(); iterator.hasNext(); ) {
             Attribute attribute = (Attribute) iterator.next();
             /*
              * TODO: Eventually we'll want to handle multiple values for a single attribute.
@@ -284,7 +299,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
         GetAttributesResult result = sdb.getAttributes(request);
         Map<String, String> attributeValuesByName = convertAttributesToMap(result.getAttributes());
 
-        for (Iterator iterator = attributeNames.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {
             String expectedAttributeName = (String) iterator.next();
             if (!attributeValuesByName.containsKey(expectedAttributeName)) {
                 return false;
@@ -309,7 +324,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
     private Map<String, Map<String, String>> convertItemListToMap(List<Item> items) {
         Map<String, Map<String, String>> attributesByItemName = new HashMap<String, Map<String, String>>();
 
-        for (Iterator iterator = items.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = items.iterator(); iterator.hasNext(); ) {
             Item item = (Item) iterator.next();
             attributesByItemName.put(item.getName(), convertAttributesToMap(item.getAttributes()));
         }
@@ -328,12 +343,12 @@ public abstract class IntegrationTestBase extends AWSTestBase {
     private Map<String, Map<String, String>> convertReplaceableItemListToMap(List<ReplaceableItem> items) {
         Map<String, Map<String, String>> attributesByItemName = new HashMap<String, Map<String, String>>();
 
-        for (Iterator itemIterator = items.iterator(); itemIterator.hasNext();) {
+        for (Iterator itemIterator = items.iterator(); itemIterator.hasNext(); ) {
             ReplaceableItem item = (ReplaceableItem) itemIterator.next();
 
             Map<String, String> attributeValuesByName = new HashMap<String, String>();
 
-            for (Iterator attributeIterator = item.getAttributes().iterator(); attributeIterator.hasNext();) {
+            for (Iterator attributeIterator = item.getAttributes().iterator(); attributeIterator.hasNext(); ) {
                 ReplaceableAttribute attribute = (ReplaceableAttribute) attributeIterator.next();
 
                 // TODO: what about attributes with multiple values?

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -34,8 +34,8 @@ public abstract class InternalLogFactory {
      */
     public static InternalLogApi getLog(Class<?> clazz) {
         return factoryConfigured
-             ? factory.doGetLog(clazz)
-             : new InternalLog(clazz.getName()); // will look up actual logger per log
+               ? factory.doGetLog(clazz)
+               : new InternalLog(clazz.getName()); // will look up actual logger per log
     }
 
     /**
@@ -44,19 +44,9 @@ public abstract class InternalLogFactory {
      */
     public static InternalLogApi getLog(String name) {
         return factoryConfigured
-             ? factory.doGetLog(name)
-             : new InternalLog(name); // will look up actual logger per log
+               ? factory.doGetLog(name)
+               : new InternalLog(name); // will look up actual logger per log
     }
-
-    /**
-     * SPI to return a logger given a class.
-     */
-    protected abstract InternalLogApi doGetLog(Class<?> clazz);
-
-    /**
-     * SPI to return a logger given a name.
-     */
-    protected abstract InternalLogApi doGetLog(String name);
 
     /**
      * Returns the current default log factory.
@@ -69,11 +59,11 @@ public abstract class InternalLogFactory {
      * Used to explicitly configure the log factory. The log factory can only be
      * configured at most once. All subsequent configurations will have no
      * effect.
-     * 
+     *
      * Note explicitly configuring the log factory will have positive
      * performance impact on all subsequent logging, since the specific logger
      * can be directly referenced instead of being searched every time.
-     * 
+     *
      * @param factory
      *            the log factory to be used internally by the SDK
      *
@@ -83,12 +73,24 @@ public abstract class InternalLogFactory {
      */
     public synchronized static boolean configureFactory(
             InternalLogFactory factory) {
-        if (factory == null)
+        if (factory == null) {
             throw new IllegalArgumentException();
-        if (factoryConfigured)
+        }
+        if (factoryConfigured) {
             return false;
+        }
         InternalLogFactory.factory = factory;
         factoryConfigured = true;
         return true;
     }
+
+    /**
+     * SPI to return a logger given a class.
+     */
+    protected abstract InternalLogApi doGetLog(Class<?> clazz);
+
+    /**
+     * SPI to return a logger given a name.
+     */
+    protected abstract InternalLogApi doGetLog(String name);
 }

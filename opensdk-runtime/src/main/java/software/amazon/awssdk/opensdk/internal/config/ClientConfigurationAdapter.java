@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,42 +40,43 @@ public class ClientConfigurationAdapter {
      * @param defaultConfiguration The configuration to use for options that are not set in customConfiguration.
      * @return The target {@link ClientConfiguration} object.
      */
-    public static ClientConfiguration adapt(ApiGatewayClientConfiguration customConfiguration, ClientConfiguration defaultConfiguration) {
+    public static ClientConfiguration adapt(ApiGatewayClientConfiguration customConfiguration,
+                                            ClientConfiguration defaultConfiguration) {
         ClientConfiguration adaptedConfiguration = new ClientConfiguration(defaultConfiguration);
 
         customConfiguration.getProxyConfiguration().ifPresent(
-            proxyConfiguration -> {
-                bind(proxyConfiguration::getProtocol, adaptedConfiguration::setProtocol);
-                bind(proxyConfiguration::getProxyHost, adaptedConfiguration::setProxyHost);
-                bind(proxyConfiguration::getProxyPort, adaptedConfiguration::setProxyPort);
-                bind(proxyConfiguration::getProxyUsername, adaptedConfiguration::setProxyUsername);
-                bind(proxyConfiguration::getProxyPassword, adaptedConfiguration::setProxyPassword);
-                bind(proxyConfiguration::getProxyDomain, adaptedConfiguration::setProxyDomain);
-                bind(proxyConfiguration::getProxyWorkstation, adaptedConfiguration::setProxyWorkstation);
-                bind(proxyConfiguration::getNonProxyHosts, adaptedConfiguration::setNonProxyHosts);
-                bind(proxyConfiguration::isPreemptiveBasicProxyAuth, adaptedConfiguration::setPreemptiveBasicProxyAuth);
-            }
-        );
+                proxyConfiguration -> {
+                    bind(proxyConfiguration::getProtocol, adaptedConfiguration::setProtocol);
+                    bind(proxyConfiguration::getProxyHost, adaptedConfiguration::setProxyHost);
+                    bind(proxyConfiguration::getProxyPort, adaptedConfiguration::setProxyPort);
+                    bind(proxyConfiguration::getProxyUsername, adaptedConfiguration::setProxyUsername);
+                    bind(proxyConfiguration::getProxyPassword, adaptedConfiguration::setProxyPassword);
+                    bind(proxyConfiguration::getProxyDomain, adaptedConfiguration::setProxyDomain);
+                    bind(proxyConfiguration::getProxyWorkstation, adaptedConfiguration::setProxyWorkstation);
+                    bind(proxyConfiguration::getNonProxyHosts, adaptedConfiguration::setNonProxyHosts);
+                    bind(proxyConfiguration::isPreemptiveBasicProxyAuth, adaptedConfiguration::setPreemptiveBasicProxyAuth);
+                }
+                                                             );
 
         customConfiguration.getTimeoutConfiguration().ifPresent(
-            timeoutConfiguration -> {
-                bind(timeoutConfiguration::getSocketTimeout, adaptedConfiguration::setSocketTimeout);
-                bind(timeoutConfiguration::getConnectionTimeout, adaptedConfiguration::setConnectionTimeout);
-                bind(timeoutConfiguration::getHttpRequestTimeout, adaptedConfiguration::setRequestTimeout);
-                bind(timeoutConfiguration::getTotalExecutionTimeout, adaptedConfiguration::setClientExecutionTimeout);
-            }
-        );
+                timeoutConfiguration -> {
+                    bind(timeoutConfiguration::getSocketTimeout, adaptedConfiguration::setSocketTimeout);
+                    bind(timeoutConfiguration::getConnectionTimeout, adaptedConfiguration::setConnectionTimeout);
+                    bind(timeoutConfiguration::getHttpRequestTimeout, adaptedConfiguration::setRequestTimeout);
+                    bind(timeoutConfiguration::getTotalExecutionTimeout, adaptedConfiguration::setClientExecutionTimeout);
+                }
+                                                               );
 
         customConfiguration.getConnectionConfiguration().ifPresent(
-            connectionConfiguration -> {
-                bind(connectionConfiguration::getMaxConnections, adaptedConfiguration::setMaxConnections);
-                bind(connectionConfiguration::getConnectionTTL, adaptedConfiguration::setConnectionTTL);
-                bind(connectionConfiguration::getConnectionMaxIdleMillis, adaptedConfiguration::setConnectionMaxIdleMillis);
-                bind(connectionConfiguration::isUseReaper, adaptedConfiguration::setUseReaper);
-            }
-        );
+                connectionConfiguration -> {
+                    bind(connectionConfiguration::getMaxConnections, adaptedConfiguration::setMaxConnections);
+                    bind(connectionConfiguration::getConnectionTTL, adaptedConfiguration::setConnectionTTL);
+                    bind(connectionConfiguration::getConnectionMaxIdleMillis, adaptedConfiguration::setConnectionMaxIdleMillis);
+                    bind(connectionConfiguration::isUseReaper, adaptedConfiguration::setUseReaper);
+                }
+                                                                  );
 
-        return  adaptedConfiguration;
+        return adaptedConfiguration;
     }
 
     public static <T> void bind(Supplier<Optional<T>> supplier, Consumer<T> consumer) {

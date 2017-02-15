@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -85,7 +85,10 @@ public class ProfilesConfigFileWriter {
 
             writerHelper.writeWithoutExistingContent();
         } finally {
-            try { writer.close(); } catch (IOException ioe) {}
+            try {
+                writer.close();
+            } catch (IOException ioe) {
+            }
         }
 
     }
@@ -167,14 +170,14 @@ public class ProfilesConfigFileWriter {
                 // that file no matter what, and File.reNameTo does not allow
                 // the destination to be an existing file
                 stashLocation = new File(destination.getParentFile(),
-                        destination.getName() + ".bak."
-                                + UUID.randomUUID().toString());
+                                         destination.getName() + ".bak."
+                                         + UUID.randomUUID().toString());
                 stashed = destination.renameTo(stashLocation);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(String
-                            .format("The original credentials file is stashed to loaction (%s).",
-                                    stashLocation.getAbsolutePath()));
+                                      .format("The original credentials file is stashed to loaction (%s).",
+                                              stashLocation.getAbsolutePath()));
                 }
 
             } finally {
@@ -201,12 +204,12 @@ public class ProfilesConfigFileWriter {
             // Make sure the output is valid and can be loaded by the loader
             new ProfilesConfigFile(destination);
 
-            if ( inPlaceModify && !stashLocation.delete() ) {
+            if (inPlaceModify && !stashLocation.delete()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(String
-                            .format("Successfully modified the credentials file. But failed to " +
-                                    "delete the stashed copy of the original file (%s).",
-                                    stashLocation.getAbsolutePath()));
+                                      .format("Successfully modified the credentials file. But failed to " +
+                                              "delete the stashed copy of the original file (%s).",
+                                              stashLocation.getAbsolutePath()));
                 }
             }
 
@@ -219,9 +222,9 @@ public class ProfilesConfigFileWriter {
                     // We don't really care about what destination.delete()
                     // returns, since the file might not have been created when
                     // the error occurred.
-                    if ( !destination.delete() ) {
+                    if (!destination.delete()) {
                         LOG.debug("Unable to remove the credentials file "
-                                + "before restoring the original one.");
+                                  + "before restoring the original one.");
                     }
                     restored = stashLocation.renameTo(destination);
                 } finally {
@@ -240,8 +243,11 @@ public class ProfilesConfigFileWriter {
 
         } finally {
             try {
-                if (writer != null) writer.close();
-            } catch (IOException e) {}
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -259,7 +265,7 @@ public class ProfilesConfigFileWriter {
         private final Map<String, Profile> newProfiles = new LinkedHashMap<String, Profile>();
 
         /** Map of the names of all the profiles to be deleted */
-        private final Set<String> deletedProfiles= new HashSet<String>();
+        private final Set<String> deletedProfiles = new HashSet<String>();
 
         private final StringBuilder buffer = new StringBuilder();
         private final Map<String, Set<String>> existingProfileProperties = new HashMap<String, Set<String>>();
@@ -280,7 +286,7 @@ public class ProfilesConfigFileWriter {
 
             for (Entry<String, Profile> entry : modifications.entrySet()) {
                 String profileName = entry.getKey();
-                Profile profile    = entry.getValue();
+                Profile profile = entry.getValue();
 
                 if (profile == null) {
                     deletedProfiles.add(profileName);
@@ -343,13 +349,14 @@ public class ProfilesConfigFileWriter {
             // Copy the line after flush the buffer
             flush();
 
-            if (deletedProfiles.contains(profileName))
+            if (deletedProfiles.contains(profileName)) {
                 return;
+            }
 
             // If the profile name is changed
             if (newProfiles.get(profileName) != null) {
                 String newProfileName = newProfiles.get(profileName).getProfileName();
-                if ( !newProfileName.equals(profileName) ) {
+                if (!newProfileName.equals(profileName)) {
                     line = "[" + newProfileName + "]";
                 }
             }
@@ -363,9 +370,9 @@ public class ProfilesConfigFileWriter {
             Profile modifiedProfile = newProfiles.get(prevProfileName);
             if (modifiedProfile != null) {
                 for (Entry<String, String> entry : modifiedProfile.getProperties().entrySet()) {
-                    String propertyKey   = entry.getKey();
+                    String propertyKey = entry.getKey();
                     String propertyValue = entry.getValue();
-                    if ( !existingProfileProperties.get(prevProfileName).contains(propertyKey) ) {
+                    if (!existingProfileProperties.get(prevProfileName).contains(propertyKey)) {
                         writeProperty(propertyKey, propertyValue);
                     }
                 }
@@ -377,19 +384,20 @@ public class ProfilesConfigFileWriter {
 
         @Override
         protected void onProfileProperty(String profileName,
-                String propertyKey, String propertyValue,
-                boolean isSupportedProperty, String line) {
+                                         String propertyKey, String propertyValue,
+                                         boolean isSupportedProperty, String line) {
             // Record that this property key has been declared for this profile
             if (existingProfileProperties.get(profileName) == null) {
                 existingProfileProperties.put(profileName, new HashSet<String>());
             }
             existingProfileProperties.get(profileName).add(propertyKey);
 
-            if (deletedProfiles.contains(profileName))
+            if (deletedProfiles.contains(profileName)) {
                 return;
+            }
 
             // Keep the unsupported properties
-            if ( !isSupportedProperty ) {
+            if (!isSupportedProperty) {
                 writeLine(line);
                 return;
             }
@@ -400,7 +408,7 @@ public class ProfilesConfigFileWriter {
             // Modify the property value
             if (newProfiles.containsKey(profileName)) {
                 String newValue = newProfiles.get(profileName)
-                        .getPropertyValue(propertyKey);
+                                             .getPropertyValue(propertyKey);
                 if (newValue != null) {
                     writeProperty(propertyKey, newValue);
                 }
@@ -416,9 +424,9 @@ public class ProfilesConfigFileWriter {
             // Append profiles that don't exist in the original file
             for (Entry<String, Profile> entry : newProfiles.entrySet()) {
                 String profileName = entry.getKey();
-                Profile profile    = entry.getValue();
+                Profile profile = entry.getValue();
 
-                if ( !existingProfileProperties.containsKey(profileName) ) {
+                if (!existingProfileProperties.containsKey(profileName)) {
                     // The profile name is not found in the file
                     // Append the profile properties
                     writeProfile(profile);

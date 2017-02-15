@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -48,13 +49,11 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
     private static final String LONG_OBJECT_ATTRIBUTE = "longObjectAttribute";
     private static final String BYTE_OBJECT_ATTRIBUTE = "byteObjectAttribute";
     private static final String BOOLEAN_ATTRIBUTE = "booleanAttribute";
-
+    private static final List<Map<String, AttributeValue>> attrs = new LinkedList<Map<String, AttributeValue>>();
     // We don't start with the current system millis like other tests because
     // it's out of the range of some data types
     private static int start = 1;
     private static int byteStart = 1;
-
-    private static final List<Map<String, AttributeValue>> attrs = new LinkedList<Map<String, AttributeValue>>();
 
     // Test data
     static {

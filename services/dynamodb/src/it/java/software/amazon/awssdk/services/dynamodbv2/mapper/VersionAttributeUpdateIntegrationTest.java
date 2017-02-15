@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -49,113 +50,6 @@ import software.amazon.awssdk.util.ImmutableMapParameter;
  */
 public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
-    public static class VersionFieldBaseClass {
-
-        protected String key;
-        protected String normalStringAttribute;
-
-        @DynamoDBHashKey
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        @DynamoDBAttribute
-        public String getNormalStringAttribute() {
-            return normalStringAttribute;
-        }
-
-        public void setNormalStringAttribute(String normalStringAttribute) {
-            this.normalStringAttribute = normalStringAttribute;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + ((normalStringAttribute == null) ? 0 : normalStringAttribute.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            VersionFieldBaseClass other = (VersionFieldBaseClass) obj;
-            if (key == null) {
-                if (other.key != null) {
-                    return false;
-                }
-            } else if (!key.equals(other.key)) {
-                return false;
-            }
-            if (normalStringAttribute == null) {
-                if (other.normalStringAttribute != null) {
-                    return false;
-                }
-            } else if (!normalStringAttribute.equals(other.normalStringAttribute)) {
-                return false;
-            }
-            return true;
-        }
-    }
-
-    public static class StringVersionField extends VersionFieldBaseClass {
-
-        private String version;
-
-        @DynamoDBVersionAttribute
-        public String getVersion() {
-            return version;
-        }
-
-        public void setVersion(String version) {
-            this.version = version;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((version == null) ? 0 : version.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!super.equals(obj)) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            StringVersionField other = (StringVersionField) obj;
-            if (version == null) {
-                if (other.version != null) {
-                    return false;
-                }
-            } else if (!version.equals(other.version)) {
-                return false;
-            }
-            return true;
-        }
-    }
-
     @Test(expected = DynamoDBMappingException.class)
     public void testStringVersion() throws Exception {
         List<StringVersionField> objs = new ArrayList<StringVersionField>();
@@ -171,56 +65,6 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
             util.save(obj);
             assertNotNull(obj.getVersion());
             assertEquals(obj, util.load(StringVersionField.class, obj.getKey()));
-        }
-    }
-
-    public static class BigIntegerVersionField extends VersionFieldBaseClass {
-
-        private BigInteger version;
-
-        @DynamoDBVersionAttribute
-        public BigInteger getVersion() {
-            return version;
-        }
-
-        public void setVersion(BigInteger version) {
-            this.version = version;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((version == null) ? 0 : version.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!super.equals(obj)) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            BigIntegerVersionField other = (BigIntegerVersionField) obj;
-            if (version == null) {
-                if (other.version != null) {
-                    return false;
-                }
-            } else if (!version.equals(other.version)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "BigIntegerVersionField [version=" + version + ", key=" + key + ", normalStringAttribute="
-                   + normalStringAttribute + "]";
         }
     }
 
@@ -276,51 +120,6 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
             } catch (Exception expected) {
                 fail("This should succeed, version was updated.");
             }
-        }
-    }
-
-    public static final class IntegerVersionField extends VersionFieldBaseClass {
-
-        private Integer notCalledVersion;
-
-        // Making sure that we can substitute attribute names as necessary
-        @DynamoDBVersionAttribute(attributeName = "version")
-        public Integer getNotCalledVersion() {
-            return notCalledVersion;
-        }
-
-        public void setNotCalledVersion(Integer notCalledVersion) {
-            this.notCalledVersion = notCalledVersion;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((notCalledVersion == null) ? 0 : notCalledVersion.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!super.equals(obj)) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            IntegerVersionField other = (IntegerVersionField) obj;
-            if (notCalledVersion == null) {
-                if (other.notCalledVersion != null) {
-                    return false;
-                }
-            } else if (!notCalledVersion.equals(other.notCalledVersion)) {
-                return false;
-            }
-            return true;
         }
     }
 
@@ -450,12 +249,12 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 ImmutableMapParameter.of(
                         "otherAttribute", new ExpectedAttributeValue(false),
                         "version", new ExpectedAttributeValue(false)
-                );
+                                        );
         Map<String, ExpectedAttributeValue> badConditions =
                 ImmutableMapParameter.of(
                         "otherAttribute", new ExpectedAttributeValue(new AttributeValue("non-existent-value")),
                         "version", new ExpectedAttributeValue(new AttributeValue().withN("-1"))
-                );
+                                        );
 
         IntegerVersionField newObj = getUniqueObject(new IntegerVersionField());
         saveExpression.setExpected(badConditions);
@@ -475,50 +274,6 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
 
         deleteExpression.setExpected(goodConditions);
         mapper.delete(newObj, deleteExpression);
-    }
-
-    public static final class ByteVersionField extends VersionFieldBaseClass {
-
-        private Byte version;
-
-        @DynamoDBVersionAttribute
-        public Byte getVersion() {
-            return version;
-        }
-
-        public void setVersion(Byte version) {
-            this.version = version;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((version == null) ? 0 : version.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!super.equals(obj)) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            ByteVersionField other = (ByteVersionField) obj;
-            if (version == null) {
-                if (other.version != null) {
-                    return false;
-                }
-            } else if (!version.equals(other.version)) {
-                return false;
-            }
-            return true;
-        }
     }
 
     @Test
@@ -558,50 +313,6 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
             }
-        }
-    }
-
-    public static final class LongVersionField extends VersionFieldBaseClass {
-
-        private Long version;
-
-        @DynamoDBVersionAttribute
-        public Long getVersion() {
-            return version;
-        }
-
-        public void setVersion(Long version) {
-            this.version = version;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((version == null) ? 0 : version.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!super.equals(obj)) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            LongVersionField other = (LongVersionField) obj;
-            if (version == null) {
-                if (other.version != null) {
-                    return false;
-                }
-            } else if (!version.equals(other.version)) {
-                return false;
-            }
-            return true;
         }
     }
 
@@ -649,5 +360,295 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         obj.setKey("" + startKey++);
         obj.setNormalStringAttribute("" + startKey++);
         return obj;
+    }
+
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    public static class VersionFieldBaseClass {
+
+        protected String key;
+        protected String normalStringAttribute;
+
+        @DynamoDBHashKey
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        @DynamoDBAttribute
+        public String getNormalStringAttribute() {
+            return normalStringAttribute;
+        }
+
+        public void setNormalStringAttribute(String normalStringAttribute) {
+            this.normalStringAttribute = normalStringAttribute;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            result = prime * result + ((normalStringAttribute == null) ? 0 : normalStringAttribute.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            VersionFieldBaseClass other = (VersionFieldBaseClass) obj;
+            if (key == null) {
+                if (other.key != null) {
+                    return false;
+                }
+            } else if (!key.equals(other.key)) {
+                return false;
+            }
+            if (normalStringAttribute == null) {
+                if (other.normalStringAttribute != null) {
+                    return false;
+                }
+            } else if (!normalStringAttribute.equals(other.normalStringAttribute)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    public static class StringVersionField extends VersionFieldBaseClass {
+
+        private String version;
+
+        @DynamoDBVersionAttribute
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((version == null) ? 0 : version.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!super.equals(obj)) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            StringVersionField other = (StringVersionField) obj;
+            if (version == null) {
+                if (other.version != null) {
+                    return false;
+                }
+            } else if (!version.equals(other.version)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    public static class BigIntegerVersionField extends VersionFieldBaseClass {
+
+        private BigInteger version;
+
+        @DynamoDBVersionAttribute
+        public BigInteger getVersion() {
+            return version;
+        }
+
+        public void setVersion(BigInteger version) {
+            this.version = version;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((version == null) ? 0 : version.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!super.equals(obj)) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            BigIntegerVersionField other = (BigIntegerVersionField) obj;
+            if (version == null) {
+                if (other.version != null) {
+                    return false;
+                }
+            } else if (!version.equals(other.version)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "BigIntegerVersionField [version=" + version + ", key=" + key + ", normalStringAttribute="
+                   + normalStringAttribute + "]";
+        }
+    }
+
+    public static final class IntegerVersionField extends VersionFieldBaseClass {
+
+        private Integer notCalledVersion;
+
+        // Making sure that we can substitute attribute names as necessary
+        @DynamoDBVersionAttribute(attributeName = "version")
+        public Integer getNotCalledVersion() {
+            return notCalledVersion;
+        }
+
+        public void setNotCalledVersion(Integer notCalledVersion) {
+            this.notCalledVersion = notCalledVersion;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((notCalledVersion == null) ? 0 : notCalledVersion.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!super.equals(obj)) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            IntegerVersionField other = (IntegerVersionField) obj;
+            if (notCalledVersion == null) {
+                if (other.notCalledVersion != null) {
+                    return false;
+                }
+            } else if (!notCalledVersion.equals(other.notCalledVersion)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    public static final class ByteVersionField extends VersionFieldBaseClass {
+
+        private Byte version;
+
+        @DynamoDBVersionAttribute
+        public Byte getVersion() {
+            return version;
+        }
+
+        public void setVersion(Byte version) {
+            this.version = version;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((version == null) ? 0 : version.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!super.equals(obj)) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            ByteVersionField other = (ByteVersionField) obj;
+            if (version == null) {
+                if (other.version != null) {
+                    return false;
+                }
+            } else if (!version.equals(other.version)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    public static final class LongVersionField extends VersionFieldBaseClass {
+
+        private Long version;
+
+        @DynamoDBVersionAttribute
+        public Long getVersion() {
+            return version;
+        }
+
+        public void setVersion(Long version) {
+            this.version = version;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((version == null) ? 0 : version.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!super.equals(obj)) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            LongVersionField other = (LongVersionField) obj;
+            if (version == null) {
+                if (other.version != null) {
+                    return false;
+                }
+            } else if (!version.equals(other.version)) {
+                return false;
+            }
+            return true;
+        }
     }
 }

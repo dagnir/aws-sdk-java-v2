@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,45 +41,6 @@ public class JsonErrorCodeParserTest {
 
     private final JsonErrorCodeParser parser = new JsonErrorCodeParser(ERROR_FIELD_NAME);
 
-    @Test
-    public void parseErrorType_ErrorTypeInHeadersTakesPrecedence_NoSuffix() {
-        String actualErrorType = parser.parseErrorCode(
-                httpResponseWithHeaders(JsonErrorCodeParser.X_AMZN_ERROR_TYPE, HEADER_ERROR_TYPE),
-                toJsonContent(JSON_ERROR_TYPE));
-        assertEquals(HEADER_ERROR_TYPE, actualErrorType);
-    }
-
-    @Test
-    public void parseErrorType_ErrorTypeInHeadersTakesPrecedence_SuffixIgnored() {
-        String actualErrorType = parser.parseErrorCode(
-                httpResponseWithHeaders(JsonErrorCodeParser.X_AMZN_ERROR_TYPE,
-                        String.format("%s:%s", HEADER_ERROR_TYPE, "someSuffix")), toJsonContent(JSON_ERROR_TYPE));
-        assertEquals(HEADER_ERROR_TYPE, actualErrorType);
-    }
-
-    @Test
-    public void parseErrorType_ErrorTypeInContent_NoPrefix() {
-        String actualErrorType = parser.parseErrorCode(httpResponseWithoutHeaders(), toJsonContent(JSON_ERROR_TYPE));
-        assertEquals(JSON_ERROR_TYPE, actualErrorType);
-    }
-
-    @Test
-    public void parseErrorType_ErrorTypeInContent_PrefixIgnored() {
-        String actualErrorType = parser.parseErrorCode(httpResponseWithoutHeaders(),
-                toJsonContent(String.format("%s#%s", "somePrefix", JSON_ERROR_TYPE)));
-        assertEquals(JSON_ERROR_TYPE, actualErrorType);
-    }
-
-    @Test
-    public void parseErrorType_NotPresentInHeadersAndNullContent_ReturnsNull() {
-        assertNull(parser.parseErrorCode(httpResponseWithoutHeaders(), null));
-    }
-
-    @Test
-    public void parseErrorType_NotPresentInHeadersAndEmptyContent_ReturnsNull() {
-        assertNull(parser.parseErrorCode(httpResponseWithoutHeaders(), new JsonContent(null, new ObjectMapper().createObjectNode())));
-    }
-
     private static JsonContent toJsonContent(String errorType) {
         ObjectNode node = MAPPER.createObjectNode();
         node.put(ERROR_FIELD_NAME, errorType);
@@ -94,5 +55,44 @@ public class JsonErrorCodeParserTest {
         HttpResponse response = new HttpResponse(null, null);
         response.addHeader(header, value);
         return response;
+    }
+
+    @Test
+    public void parseErrorType_ErrorTypeInHeadersTakesPrecedence_NoSuffix() {
+        String actualErrorType = parser.parseErrorCode(
+                httpResponseWithHeaders(JsonErrorCodeParser.X_AMZN_ERROR_TYPE, HEADER_ERROR_TYPE),
+                toJsonContent(JSON_ERROR_TYPE));
+        assertEquals(HEADER_ERROR_TYPE, actualErrorType);
+    }
+
+    @Test
+    public void parseErrorType_ErrorTypeInHeadersTakesPrecedence_SuffixIgnored() {
+        String actualErrorType = parser.parseErrorCode(
+                httpResponseWithHeaders(JsonErrorCodeParser.X_AMZN_ERROR_TYPE,
+                                        String.format("%s:%s", HEADER_ERROR_TYPE, "someSuffix")), toJsonContent(JSON_ERROR_TYPE));
+        assertEquals(HEADER_ERROR_TYPE, actualErrorType);
+    }
+
+    @Test
+    public void parseErrorType_ErrorTypeInContent_NoPrefix() {
+        String actualErrorType = parser.parseErrorCode(httpResponseWithoutHeaders(), toJsonContent(JSON_ERROR_TYPE));
+        assertEquals(JSON_ERROR_TYPE, actualErrorType);
+    }
+
+    @Test
+    public void parseErrorType_ErrorTypeInContent_PrefixIgnored() {
+        String actualErrorType = parser.parseErrorCode(httpResponseWithoutHeaders(),
+                                                       toJsonContent(String.format("%s#%s", "somePrefix", JSON_ERROR_TYPE)));
+        assertEquals(JSON_ERROR_TYPE, actualErrorType);
+    }
+
+    @Test
+    public void parseErrorType_NotPresentInHeadersAndNullContent_ReturnsNull() {
+        assertNull(parser.parseErrorCode(httpResponseWithoutHeaders(), null));
+    }
+
+    @Test
+    public void parseErrorType_NotPresentInHeadersAndEmptyContent_ReturnsNull() {
+        assertNull(parser.parseErrorCode(httpResponseWithoutHeaders(), new JsonContent(null, new ObjectMapper().createObjectNode())));
     }
 }

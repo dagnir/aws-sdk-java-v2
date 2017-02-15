@@ -27,38 +27,39 @@ public class Acceptor {
 
     private JsonNode expected;
 
-    public Acceptor(){}
-
-    public void setState(String state) {
-        this.state = state;
+    public Acceptor() {
     }
 
     public String getState() {
         return state;
     }
 
-    public void setMatcher(String matcher) {
-        this.matcher = matcher;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getMatcher() {
         return matcher;
     }
 
-    public void setArgument(String argument) {
-        this.argument = argument;
+    public void setMatcher(String matcher) {
+        this.matcher = matcher;
     }
 
     public String getArgument() {
         return argument;
     }
 
-    public void setExpected(JsonNode expected) {
-        this.expected = expected;
+    public void setArgument(String argument) {
+        this.argument = argument;
     }
 
     public JsonNode getExpected() {
         return expected;
+    }
+
+    public void setExpected(JsonNode expected) {
+        this.expected = expected;
     }
 
 }

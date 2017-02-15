@@ -1,26 +1,22 @@
-/****************************************************************************
- * Amazon Modifications: Copyright 2014 Amazon.com, Inc. or its affiliates. 
- * All Rights Reserved.
- *****************************************************************************
- * Copyright (c) 1998-2010 AOL Inc. 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  http://aws.amazon.com/apache2.0
  *
- ****************************************************************************/
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 // http://oauth.googlecode.com/svn/code/branches/jmeter/jmeter/src/main/java/org/apache/jmeter/protocol/oauth/sampler/PrivateKeyReader.java
 
 // http://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf
 // http://en.wikipedia.org/wiki/Distinguished_Encoding_Rules#DER_encoding
+
 package software.amazon.awssdk.services.cloudfront.auth;
 
 import java.io.IOException;
@@ -29,7 +25,7 @@ import java.math.BigInteger;
 /**
  * An ASN.1 TLV. The object is not parsed. It can
  * only handle integers and strings.
- * 
+ *
  * @author zhang
  */
 class Asn1Object {
@@ -37,11 +33,11 @@ class Asn1Object {
     protected final int length;
     protected final byte[] value;
     protected final int tag;
-    
+
     /**
      * Construct a ASN.1 TLV. The TLV could be either a
      * constructed or primitive entity.
-     * 
+     *
      * <p/>The first byte in DER encoding is made of following fields,
      * <pre>
      *-------------------------------------------------
@@ -57,7 +53,7 @@ class Asn1Object {
      * indicates data type (Integer, String) or a construct
      * (sequence, choice, set).
      * </ul>
-     * 
+     *
      * @param tag Tag or Identifier
      * @param length Length of the field
      * @param value Encoded octet string for the field.
@@ -72,7 +68,7 @@ class Asn1Object {
     public int getType() {
         return type;
     }
-    
+
     public int getLength() {
         return length;
     }
@@ -82,31 +78,33 @@ class Asn1Object {
     }
 
     public boolean isConstructed() {
-        return  (tag & DerParser.CONSTRUCTED) == DerParser.CONSTRUCTED;
+        return (tag & DerParser.CONSTRUCTED) == DerParser.CONSTRUCTED;
     }
 
     /**
      * For constructed field, return a parser for its content.
-     * 
+     *
      * @return A parser for the construct.
      */
     public DerParser getParser() throws IOException {
-        if (!isConstructed()) 
+        if (!isConstructed()) {
             throw new IOException("Invalid DER: can't parse primitive entity"); //$NON-NLS-1$
-        
+        }
+
         return new DerParser(value);
     }
-    
+
     /**
      * Get the value as integer
      */
     public BigInteger getInteger() throws IOException {
-        if (type != DerParser.INTEGER)
+        if (type != DerParser.INTEGER) {
             throw new IOException("Invalid DER: object is not integer"); //$NON-NLS-1$
-        
+        }
+
         return new BigInteger(value);
     }
-    
+
     /**
      * Get value as string. Most strings are treated
      * as Latin-1.
@@ -116,31 +114,31 @@ class Asn1Object {
         String encoding;
 
         switch (type) {
-        
-        // Not all are Latin-1 but it's the closest thing
-        case DerParser.NUMERIC_STRING:
-        case DerParser.PRINTABLE_STRING:
-        case DerParser.VIDEOTEX_STRING:
-        case DerParser.IA5_STRING:
-        case DerParser.GRAPHIC_STRING:
-        case DerParser.ISO646_STRING:
-        case DerParser.GENERAL_STRING:
-            encoding = "ISO-8859-1"; //$NON-NLS-1$
-            break;
 
-        case DerParser.BMP_STRING:
-            encoding = "UTF-16BE"; //$NON-NLS-1$
-            break;
+            // Not all are Latin-1 but it's the closest thing
+            case DerParser.NUMERIC_STRING:
+            case DerParser.PRINTABLE_STRING:
+            case DerParser.VIDEOTEX_STRING:
+            case DerParser.IA5_STRING:
+            case DerParser.GRAPHIC_STRING:
+            case DerParser.ISO646_STRING:
+            case DerParser.GENERAL_STRING:
+                encoding = "ISO-8859-1"; //$NON-NLS-1$
+                break;
 
-        case DerParser.UTF8_STRING:
-            encoding = "UTF-8"; //$NON-NLS-1$
-            break;
+            case DerParser.BMP_STRING:
+                encoding = "UTF-16BE"; //$NON-NLS-1$
+                break;
 
-        case DerParser.UNIVERSAL_STRING:
-            throw new IOException("Invalid DER: can't handle UCS-4 string"); //$NON-NLS-1$
+            case DerParser.UTF8_STRING:
+                encoding = "UTF-8"; //$NON-NLS-1$
+                break;
 
-        default:
-            throw new IOException("Invalid DER: object is not a string"); //$NON-NLS-1$
+            case DerParser.UNIVERSAL_STRING:
+                throw new IOException("Invalid DER: can't handle UCS-4 string"); //$NON-NLS-1$
+
+            default:
+                throw new IOException("Invalid DER: object is not a string"); //$NON-NLS-1$
         }
 
         return new String(value, encoding);

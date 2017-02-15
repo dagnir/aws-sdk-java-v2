@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import static org.junit.Assert.assertEquals;
@@ -46,6 +47,14 @@ public class S3RequestEndpointResolverTest {
     @Mock
     private ServiceEndpointBuilder endpointBuilder;
 
+    private static URI toHttpsUri(String endpoint) {
+        try {
+            return new URI("https://" + endpoint);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Before
     public void setup() {
         request = new DefaultRequest<String>(AmazonS3Client.S3_SERVICE_NAME);
@@ -57,7 +66,7 @@ public class S3RequestEndpointResolverTest {
     @Test
     public void resolveRequestEndpoint_HostStyleAddressing_ReturnsValidEndpoint() {
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, false, BUCKET_NAME,
-                KEY);
+                                                                                   KEY);
         endpointResolver.resolveRequestEndpoint(request);
         assertHostStyleAddressing(ENDPOINT, BUCKET_NAME, KEY);
     }
@@ -76,15 +85,15 @@ public class S3RequestEndpointResolverTest {
     public void
     resolveRequestEndpoint_UnknownRegion_HostStyleAddressing_throwsException() {
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, false, BUCKET_NAME,
-                KEY);
-        endpointResolver.resolveRequestEndpoint(request,"unknown-region");
+                                                                                   KEY);
+        endpointResolver.resolveRequestEndpoint(request, "unknown-region");
     }
 
     @Test
     public void resolveRequestEndpoint_InvalidDnsBucketName_UsesPathStyleAddressing() {
         String pathStyleBucketName = "invalidForVirtualAddressing";
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, false,
-                pathStyleBucketName, KEY);
+                                                                                   pathStyleBucketName, KEY);
         endpointResolver.resolveRequestEndpoint(request);
         assertPathStyleAddressing(ENDPOINT, pathStyleBucketName, KEY);
     }
@@ -92,7 +101,7 @@ public class S3RequestEndpointResolverTest {
     @Test
     public void resolveRequestEndpoint_ForcedPathStyleAddressing_UsesPathStyleAddressing() {
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, true, BUCKET_NAME,
-                KEY);
+                                                                                   KEY);
         endpointResolver.resolveRequestEndpoint(request);
         assertPathStyleAddressing(ENDPOINT, BUCKET_NAME, KEY);
     }
@@ -100,7 +109,7 @@ public class S3RequestEndpointResolverTest {
     @Test
     public void resolveRequestEndpoint_ForcedPathStyleAddressingNoKey_UsesPathStyleAddressing() {
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, true, BUCKET_NAME,
-                null);
+                                                                                   null);
         endpointResolver.resolveRequestEndpoint(request);
         // Key was null so we expect just a trailing slash after the bucket name in the resource
         // path
@@ -120,7 +129,7 @@ public class S3RequestEndpointResolverTest {
     @Test
     public void resolveRequestEndpoint_WithNewRegion_ChangesRegionOnEndpointBuilder() {
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, true, BUCKET_NAME,
-                null);
+                                                                                   null);
         final Region region = Region.getRegion(Regions.EU_CENTRAL_1);
         endpointResolver.resolveRequestEndpoint(request, region.toString());
         // The real assertion here is that we expect the region to change on the endpoint builder
@@ -138,7 +147,7 @@ public class S3RequestEndpointResolverTest {
     public void resolveRequestEndpoint_HostNameIsIp_DoesNotUseVirtualAddressing() {
         final String ipAddress = "10.1.1.1";
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, false, BUCKET_NAME,
-                KEY);
+                                                                                   KEY);
         Mockito.when(endpointBuilder.getServiceEndpoint()).thenReturn(toHttpsUri(ipAddress));
         endpointResolver.resolveRequestEndpoint(request);
         assertPathStyleAddressing(ipAddress, BUCKET_NAME, KEY);
@@ -148,7 +157,7 @@ public class S3RequestEndpointResolverTest {
     public void resolveRequestEndpoint_HostStyleAddressing_KeyNameHasSlash_PrependsAnotherSlash() {
         final String keyWithLeadingSlash = "/someKey";
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, false, BUCKET_NAME,
-                keyWithLeadingSlash);
+                                                                                   keyWithLeadingSlash);
         endpointResolver.resolveRequestEndpoint(request);
         assertHostStyleAddressing(ENDPOINT, BUCKET_NAME, "/" + keyWithLeadingSlash);
     }
@@ -196,13 +205,5 @@ public class S3RequestEndpointResolverTest {
     private void assertPathStyleAddressing(String endpoint, String bucketName, String expectedKey) {
         assertEquals(toHttpsUri(endpoint), request.getEndpoint());
         assertEquals(bucketName + "/" + expectedKey, request.getResourcePath());
-    }
-
-    private static URI toHttpsUri(String endpoint) {
-        try {
-            return new URI("https://" + endpoint);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

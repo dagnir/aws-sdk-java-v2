@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.fail;
@@ -19,7 +34,7 @@ import software.amazon.awssdk.auth.BasicAWSCredentials;
 public class BucketNameValidationIntegrationTest {
 
     private AWSCredentials fakeCredentials =
-        new BasicAWSCredentials("fakeAccessKey", "fakeSecretKey");
+            new BasicAWSCredentials("fakeAccessKey", "fakeSecretKey");
     private AmazonS3 s3 = new AmazonS3Client(fakeCredentials);
 
     /**
@@ -39,34 +54,34 @@ public class BucketNameValidationIntegrationTest {
     @Test
     public void testIllegalBucketNames() {
         assertIllegalArgumentExceptionForBucketName
-            ("buckets_cant_contain_underscores");
+                ("buckets_cant_contain_underscores");
         assertIllegalArgumentExceptionForBucketName
-            ("bucket-names-cannot-be-longer-than-sixty-three-characters-" +
-             "otherwise-they-dont-conform-with-dns-requirements");
+                ("bucket-names-cannot-be-longer-than-sixty-three-characters-" +
+                 "otherwise-they-dont-conform-with-dns-requirements");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets-cant-end-with-a-dash-");
+                ("buckets-cant-end-with-a-dash-");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets-cant-have-..-adjacent-periods");
+                ("buckets-cant-have-..-adjacent-periods");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets-.cant-.have-.dashes-.next-.to-.periods");
+                ("buckets-.cant-.have-.dashes-.next-.to-.periods");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets.-cant.-have.-dashes.-next.-to.-periods");
+                ("buckets.-cant.-have.-dashes.-next.-to.-periods");
         assertIllegalArgumentExceptionForBucketName
-            ("Buckets-Cant-Have-Uppercase-Characters");
+                ("Buckets-Cant-Have-Uppercase-Characters");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets-cannot-have- -white-space");
+                ("buckets-cannot-have- -white-space");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets-cannot-have-\n-white-space");
+                ("buckets-cannot-have-\n-white-space");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets-cannot-have-\t-white-space");
+                ("buckets-cannot-have-\t-white-space");
         assertIllegalArgumentExceptionForBucketName
-            ("buckets-cannot-have-/-slash");
+                ("buckets-cannot-have-/-slash");
         assertIllegalArgumentExceptionForBucketName
-            ("bucket-cannot-have-\\-back-slash");
+                ("bucket-cannot-have-\\-back-slash");
         assertIllegalArgumentExceptionForBucketName
-            (".bucket.cannot.start.with.period");
+                (".bucket.cannot.start.with.period");
         assertIllegalArgumentExceptionForBucketName
-            ("bucket.cannot.end.with.period.");
+                ("bucket.cannot.end.with.period.");
     }
 
     /**

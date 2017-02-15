@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -124,7 +125,8 @@ public class ListObjectsRequest extends AmazonWebServiceRequest implements Seria
      *
      * @see ListObjectsRequest#ListObjectsRequest(String, String, String, String, Integer)
      */
-    public ListObjectsRequest() {}
+    public ListObjectsRequest() {
+    }
 
     /**
      * Constructs a new {@link ListObjectsRequest} object and
@@ -427,7 +429,7 @@ public class ListObjectsRequest extends AmazonWebServiceRequest implements Seria
     /**
      * Gets the optional <code>encodingType</code> parameter indicating the
      * encoding method to be applied on the response.
-     * 
+     *
      * @return The encoding method to be applied on the response.
      */
     public String getEncodingType() {
@@ -441,7 +443,7 @@ public class ListObjectsRequest extends AmazonWebServiceRequest implements Seria
      * characters, such as characters with an ASCII value from 0 to 10. For
      * characters that are not supported in XML 1.0, you can add this parameter
      * to request that Amazon S3 encode the keys in the response.
-     * 
+     *
      * @param encodingType
      *            The encoding method to be applied on the response. Valid
      *            values: null (not encoded) or "url".
@@ -449,7 +451,7 @@ public class ListObjectsRequest extends AmazonWebServiceRequest implements Seria
     public void setEncodingType(String encodingType) {
         this.encodingType = encodingType;
     }
-    
+
     /**
      * Sets the optional <code>encodingType</code> parameter indicating the
      * encoding method to be applied on the response. An object key can contain
@@ -459,7 +461,7 @@ public class ListObjectsRequest extends AmazonWebServiceRequest implements Seria
      * to request that Amazon S3 encode the keys in the response. 
      * Returns this {@link ListObjectsRequest}, enabling additional method calls
      * to be chained together.
-     * 
+     *
      * @param encodingType
      *            The encoding method to be applied on the response. Valid
      *            values: null (not encoded) or "url".

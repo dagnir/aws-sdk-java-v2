@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -62,31 +62,24 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
 
     /** The key used in these tests */
     private final static String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
-
-    /** The file containing the test data uploaded to S3 */
-    private static File file;
-
     /** The size of the file containing the test data uploaded to S3 */
     private final static long FILE_SIZE = 3 * MB;
-
-    /**************Variables for testing multi part object***************/
     /** The key used for testing multipart object */
     private final static String MULTIPART_OBJECT_KEY = "multiPartkey";
 
-    /** The unique Id that is returned when we initiate a MultipartUpload */
-    private static String uploadId;
-
-    /** The input stream that holds the TEST_STRING */
-    private static InputStream inputStream;
-
+    /**************Variables for testing multi part object***************/
     /** The minimum size of a part in multipart object */
     private final static long MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
-
     /** The test content that is used for testing part 2 of multipart object. Contains only ASCII characters */
     private final static String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
-
     /** The size of the TEST_STRING **/
     private final static long TEST_STRING_LENGTH = TEST_STRING.length();
+    /** The file containing the test data uploaded to S3 */
+    private static File file;
+    /** The unique Id that is returned when we initiate a MultipartUpload */
+    private static String uploadId;
+    /** The input stream that holds the TEST_STRING */
+    private static InputStream inputStream;
 
     /**
      * Creates and initializes all the test resources needed for these tests.
@@ -106,47 +99,57 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
      *
      * @throws Exception
      */
-    private static void doMultiPartUpload() throws Exception{
+    private static void doMultiPartUpload() throws Exception {
         InitiateMultipartUploadResult initiateResult = s3.initiateMultipartUpload(
                 new InitiateMultipartUploadRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY)
-                    .withStorageClass(StorageClass.ReducedRedundancy));
+                        .withStorageClass(StorageClass.ReducedRedundancy));
         uploadId = initiateResult.getUploadId();
 
         try {
             List<PartETag> partETags = uploadParts(BUCKET_NAME, uploadId);
             s3.completeMultipartUpload(new CompleteMultipartUploadRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY, uploadId, partETags));
         } catch (Exception exception) {
-            System.out.println("Exception occured during multipartUpload with ID " + uploadId );
+            System.out.println("Exception occured during multipartUpload with ID " + uploadId);
             s3.abortMultipartUpload(new AbortMultipartUploadRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY, uploadId));
             throw exception;
         }
     }
 
-    private static List<PartETag> uploadParts(String bucketName, String uploadId) throws AmazonServiceException, AmazonClientException, InterruptedException, IOException {
+    private static List<PartETag> uploadParts(String bucketName, String uploadId)
+            throws AmazonServiceException, AmazonClientException, InterruptedException, IOException {
         List<PartETag> partETags = new ArrayList<PartETag>();
 
         UploadPartResult uploadPartResult = s3.uploadPart(new UploadPartRequest()
-            .withBucketName(bucketName)
-            .withInputStream(new RandomInputStream(MIN_SIZE_FIRST_PART_IN_MB))
-            .withKey(MULTIPART_OBJECT_KEY)
-            .withPartNumber(1)
-            .withPartSize(MIN_SIZE_FIRST_PART_IN_MB)
-            .withUploadId(uploadId));
+                                                                  .withBucketName(bucketName)
+                                                                  .withInputStream(new RandomInputStream(MIN_SIZE_FIRST_PART_IN_MB))
+                                                                  .withKey(MULTIPART_OBJECT_KEY)
+                                                                  .withPartNumber(1)
+                                                                  .withPartSize(MIN_SIZE_FIRST_PART_IN_MB)
+                                                                  .withUploadId(uploadId));
         assertEquals(1, uploadPartResult.getPartNumber());
         partETags.add(new PartETag(uploadPartResult.getPartNumber(), uploadPartResult.getETag()));
 
         inputStream = new StringInputStream(TEST_STRING);
         uploadPartResult = s3.uploadPart(new UploadPartRequest()
-            .withBucketName(bucketName)
-            .withInputStream(inputStream)
-            .withKey(MULTIPART_OBJECT_KEY)
-            .withPartNumber(2)
-            .withPartSize(TEST_STRING_LENGTH)
-            .withUploadId(uploadId));
+                                                 .withBucketName(bucketName)
+                                                 .withInputStream(inputStream)
+                                                 .withKey(MULTIPART_OBJECT_KEY)
+                                                 .withPartNumber(2)
+                                                 .withPartSize(TEST_STRING_LENGTH)
+                                                 .withUploadId(uploadId));
         assertEquals(2, uploadPartResult.getPartNumber());
         partETags.add(new PartETag(uploadPartResult.getPartNumber(), uploadPartResult.getETag()));
 
         return partETags;
+    }
+
+    /**
+     * Closes all the resources after the tests have finished
+     */
+    @AfterClass
+    public static void tearDown() throws Exception {
+        CryptoTestUtils.deleteBucketAndAllContents(s3, BUCKET_NAME);
+        IOUtils.closeQuietly(inputStream, LOG);
     }
 
     /**
@@ -201,7 +204,7 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
     public void getObjectMetadataOnNonMultiPartObjectGivenPartNumberLessThanOneReturns400BadRequest() {
         try {
             s3.getObjectMetadata(new GetObjectMetadataRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY)
-                                                                    .withPartNumber(-1));
+                                         .withPartNumber(-1));
             fail("Expected an AmazonS3Exception, but wasn't thrown");
         } catch (AmazonS3Exception ase) {
             assertEquals(400, ase.getStatusCode());
@@ -216,7 +219,7 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
     public void getObjectMetadataOnMultiPartObjectGivenPartNumberLessThanOneReturns400BadRequest() {
         try {
             s3.getObjectMetadata(new GetObjectMetadataRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY)
-                                                                    .withPartNumber(0));
+                                         .withPartNumber(0));
             fail("Expected an AmazonS3Exception, but wasn't thrown");
         } catch (AmazonS3Exception ase) {
             assertEquals(400, ase.getStatusCode());
@@ -231,7 +234,7 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
     public void getObjectMetadataOnNonMultiPartObjectGivenPartNumberGreaterThanActualPartCountReturns416RequestRangeNotSatisfiable() {
         try {
             s3.getObjectMetadata(new GetObjectMetadataRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY)
-                                                                    .withPartNumber(2));
+                                         .withPartNumber(2));
             fail("Expected an AmazonS3Exception, but wasn't thrown");
         } catch (AmazonS3Exception ase) {
             assertEquals(416, ase.getStatusCode());
@@ -246,19 +249,10 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
     public void getObjectMetadataOnMultiPartObjectGivenPartNumberGreaterThanActualPartCountReturns416RequestRangeNotSatisfiable() {
         try {
             s3.getObjectMetadata(new GetObjectMetadataRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY)
-                                                                    .withPartNumber(3));
+                                         .withPartNumber(3));
             fail("Expected an AmazonS3Exception, but wasn't thrown");
         } catch (AmazonS3Exception ase) {
             assertEquals(416, ase.getStatusCode());
         }
-    }
-
-    /**
-     * Closes all the resources after the tests have finished
-     */
-    @AfterClass
-    public static void tearDown() throws Exception {
-        CryptoTestUtils.deleteBucketAndAllContents(s3, BUCKET_NAME);
-        IOUtils.closeQuietly(inputStream, LOG);
     }
 }

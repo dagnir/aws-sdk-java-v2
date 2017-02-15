@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -48,10 +48,10 @@ import org.joda.time.format.DateTimeFormatter;
  * @see java.text.SimpleDateFormat
  * @see java.util.TimeZone
  */
-@DynamoDBTypeConverted(converter=DynamoDBTypeConvertedTimestamp.Converter.class)
+@DynamoDBTypeConverted(converter = DynamoDBTypeConvertedTimestamp.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBTypeConvertedTimestamp {
 
     /**
@@ -69,14 +69,14 @@ public @interface DynamoDBTypeConvertedTimestamp {
     /**
      * Timestamp format converter.
      */
-    static final class Converter<T> implements DynamoDBTypeConverter<String,T> {
-        private final DynamoDBTypeConverter<DateTime,T> converter;
+    static final class Converter<T> implements DynamoDBTypeConverter<String, T> {
+        private final DynamoDBTypeConverter<DateTime, T> converter;
         private final DateTimeFormatter formatter;
 
         public Converter(Class<T> targetType, DynamoDBTypeConvertedTimestamp annotation) {
             this.formatter = DateTimeFormat.forPattern(annotation.pattern()).withZone(
-                DateTimeZone.forTimeZone(StandardTypeConverters.Scalar.TIME_ZONE.<TimeZone>convert(annotation.timeZone()))
-            );
+                    DateTimeZone.forTimeZone(StandardTypeConverters.Scalar.TIME_ZONE.<TimeZone>convert(annotation.timeZone()))
+                                                                                     );
             this.converter = StandardTypeConverters.factory().getConverter(DateTime.class, targetType);
         }
 

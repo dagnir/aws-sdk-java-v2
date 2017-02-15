@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.email;
 
 import static org.junit.Assert.fail;
@@ -20,11 +35,9 @@ import software.amazon.awssdk.test.AWSTestBase;
 public abstract class IntegrationTestBase extends AWSTestBase {
 
     public static final String HUDSON_EMAIL_LIST = "aws-dr-tools-scripts@amazon.com";
-
+    protected static final String RAW_MESSAGE_FILE_PATH = "/software/amazon/awssdk/services/email/rawMimeMessage.txt";
     public static String DESTINATION;
     public static String SOURCE;
-    protected static final String RAW_MESSAGE_FILE_PATH = "/software/amazon/awssdk/services/email/rawMimeMessage.txt";
-
     protected static AmazonSimpleEmailService email;
 
     /**
@@ -37,7 +50,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
 
         if (DESTINATION == null) {
             DESTINATION = System.getProperty("user.name").equals("webuser") ? HUDSON_EMAIL_LIST : System
-                    .getProperty("user.name") + "@amazon.com";
+                                                                                                          .getProperty("user.name") + "@amazon.com";
             SOURCE = DESTINATION;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -119,15 +119,16 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     }
 
     public QuerySpec withQueryFilters(QueryFilter... queryFilters) {
-        if (queryFilters == null)
+        if (queryFilters == null) {
             this.queryFilters = null;
-        else {
+        } else {
             Set<String> names = new LinkedHashSet<String>();
-            for (QueryFilter e: queryFilters)
+            for (QueryFilter e : queryFilters) {
                 names.add(e.getAttribute());
+            }
             if (names.size() != queryFilters.length) {
                 throw new IllegalArgumentException(
-                    "attribute names must not duplicate in the list of query filters");
+                        "attribute names must not duplicate in the list of query filters");
             }
             this.queryFilters = Arrays.asList(queryFilters);
         }
@@ -179,12 +180,14 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
      * name, or a JSON path expression.
      */
     public QuerySpec withNameMap(Map<String, String> nameMap) {
-        if (nameMap == null)
+        if (nameMap == null) {
             this.nameMap = null;
-        else
+        } else {
             this.nameMap = Collections.unmodifiableMap(new LinkedHashMap<String, String>(nameMap));
+        }
         return this;
     }
+
     public Map<String, Object> getValueMap() {
         return valueMap;
     }
@@ -194,10 +197,11 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
      * specify the actual values for the attribute-value placeholders.
      */
     public QuerySpec withValueMap(Map<String, Object> valueMap) {
-        if (valueMap == null)
+        if (valueMap == null) {
             this.valueMap = null;
-        else
+        } else {
             this.valueMap = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(valueMap));
+        }
         return this;
     }
 
@@ -236,17 +240,18 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     }
 
     public QuerySpec withExclusiveStartKey(KeyAttribute... exclusiveStartKey) {
-        if (exclusiveStartKey == null)
+        if (exclusiveStartKey == null) {
             this.exclusiveStartKey = null;
-        else
+        } else {
             this.exclusiveStartKey = Arrays.asList(exclusiveStartKey);
+        }
         return this;
     }
 
     public QuerySpec withExclusiveStartKey(PrimaryKey exclusiveStartKey) {
-        if (exclusiveStartKey == null)
+        if (exclusiveStartKey == null) {
             this.exclusiveStartKey = null;
-        else {
+        } else {
             this.exclusiveStartKey = exclusiveStartKey.getComponents();
         }
         return this;
@@ -311,10 +316,10 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     @Beta
     public QuerySpec withExpressionSpec(QueryExpressionSpec xspec) {
         return withKeyConditionExpression(xspec.getKeyConditionExpression())
-              .withFilterExpression(xspec.getFilterExpression())
-              .withProjectionExpression(xspec.getProjectionExpression())
-              .withNameMap(xspec.getNameMap())
-              .withValueMap(xspec.getValueMap())
-              ;
+                .withFilterExpression(xspec.getFilterExpression())
+                .withProjectionExpression(xspec.getProjectionExpression())
+                .withNameMap(xspec.getNameMap())
+                .withValueMap(xspec.getValueMap())
+                ;
     }
 }

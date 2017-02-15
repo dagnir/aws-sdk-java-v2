@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import java.util.Date;
@@ -28,7 +29,7 @@ public class ExpirationHeaderParsingTest {
         MockObjectExpirationResult result = new MockObjectExpirationResult();
 
         ObjectExpirationHeaderHandler<MockObjectExpirationResult> handler =
-            new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
+                new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
 
         HttpResponse response = new HttpResponse(null, null);
 
@@ -43,13 +44,13 @@ public class ExpirationHeaderParsingTest {
         MockObjectExpirationResult result = new MockObjectExpirationResult();
 
         ObjectExpirationHeaderHandler<MockObjectExpirationResult> handler =
-            new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
+                new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
 
         HttpResponse response = new HttpResponse(null, null);
         response.addHeader(
-            "x-amz-expiration",
-            "expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\", rule-id=\"Test\""
-        );
+                "x-amz-expiration",
+                "expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\", rule-id=\"Test\""
+                          );
 
         handler.handle(result, response);
 
@@ -63,13 +64,13 @@ public class ExpirationHeaderParsingTest {
         MockObjectExpirationResult result = new MockObjectExpirationResult();
 
         ObjectExpirationHeaderHandler<MockObjectExpirationResult> handler =
-            new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
+                new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
 
         HttpResponse response = new HttpResponse(null, null);
         response.addHeader(
-            "x-amz-expiration",
-            "rule-id=\"Test\", expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\""
-        );
+                "x-amz-expiration",
+                "rule-id=\"Test\", expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\""
+                          );
 
         handler.handle(result, response);
 

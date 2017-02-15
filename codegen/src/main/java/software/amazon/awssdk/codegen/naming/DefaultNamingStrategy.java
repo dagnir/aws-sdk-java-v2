@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -82,6 +82,11 @@ public class DefaultNamingStrategy implements NamingStrategy {
         this.codeGenConfig = codeGenConfig;
     }
 
+    private static boolean isJavaKeyword(String word) {
+        return reservedKeywords.contains(word) ||
+               reservedKeywords.contains(StringUtils.lowerCase(word));
+    }
+
     @Override
     public String getExceptionName(String errorShapeName) {
 
@@ -125,12 +130,12 @@ public class DefaultNamingStrategy implements NamingStrategy {
         StringBuilder builder = new StringBuilder();
 
         String sanitizedEnumValue = enumValue.replace("::", ":").replace("/", "").replace("(", "")
-                .replace(")", "");
+                                             .replace(")", "");
 
         for (String part : sanitizedEnumValue.split("[ -.:]")) {
             if (part.length() > 1) {
                 builder.append(StringUtils.upperCase(part.substring(0, 1)))
-                        .append(part.substring(1));
+                       .append(part.substring(1));
             } else {
                 builder.append(StringUtils.upperCase(part));
             }
@@ -170,10 +175,5 @@ public class DefaultNamingStrategy implements NamingStrategy {
         } else {
             return String.format("with%s", Utils.capitialize(memberName));
         }
-    }
-
-    private static boolean isJavaKeyword(String word) {
-        return reservedKeywords.contains(word) ||
-               reservedKeywords.contains(StringUtils.lowerCase(word));
     }
 }

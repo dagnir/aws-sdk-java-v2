@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.File;
@@ -157,7 +158,7 @@ public class PutObjectRequest extends AbstractPutObjectRequest implements Serial
      *            content length for the stream of data being uploaded.
      */
     public PutObjectRequest(String bucketName, String key, InputStream input,
-            ObjectMetadata metadata) {
+                            ObjectMetadata metadata) {
         super(bucketName, key, input, metadata);
     }
 
@@ -197,7 +198,7 @@ public class PutObjectRequest extends AbstractPutObjectRequest implements Serial
 
     @Override
     @SuppressWarnings("unchecked")
-    public PutObjectRequest  withFile(File file) {
+    public PutObjectRequest withFile(File file) {
         return super.withFile(file);
     }
 
@@ -209,7 +210,7 @@ public class PutObjectRequest extends AbstractPutObjectRequest implements Serial
 
     @Override
     @SuppressWarnings("unchecked")
-    public PutObjectRequest  withCannedAcl(CannedAccessControlList cannedAcl) {
+    public PutObjectRequest withCannedAcl(CannedAccessControlList cannedAcl) {
         return super.withCannedAcl(cannedAcl);
     }
 
@@ -222,7 +223,7 @@ public class PutObjectRequest extends AbstractPutObjectRequest implements Serial
 
     @Override
     @SuppressWarnings("unchecked")
-    public PutObjectRequest  withInputStream(InputStream inputStream) {
+    public PutObjectRequest withInputStream(InputStream inputStream) {
         return super.withInputStream(inputStream);
     }
 

@@ -1,16 +1,16 @@
 /*
- * Copyright 2013-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.pojos;
@@ -299,138 +299,191 @@ public class CrossSDKVerificationClass {
 
     @Override
     public boolean equals(Object obj) {
-        if ( this == obj )
+        if (this == obj) {
             return true;
-        if ( obj == null )
+        }
+        if (obj == null) {
             return false;
-        if ( getClass() != obj.getClass() )
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CrossSDKVerificationClass other = (CrossSDKVerificationClass) obj;
-        if ( bigDecimalAttribute == null ) {
-            if ( other.bigDecimalAttribute != null )
+        if (bigDecimalAttribute == null) {
+            if (other.bigDecimalAttribute != null) {
                 return false;
-        } else if ( !bigDecimalAttribute.equals(other.bigDecimalAttribute) )
+            }
+        } else if (!bigDecimalAttribute.equals(other.bigDecimalAttribute)) {
             return false;
-        if ( bigDecimalSetAttribute == null ) {
-            if ( other.bigDecimalSetAttribute != null )
+        }
+        if (bigDecimalSetAttribute == null) {
+            if (other.bigDecimalSetAttribute != null) {
                 return false;
-        } else if ( !bigDecimalSetAttribute.equals(other.bigDecimalSetAttribute) )
+            }
+        } else if (!bigDecimalSetAttribute.equals(other.bigDecimalSetAttribute)) {
             return false;
-        if ( bigIntegerAttribute == null ) {
-            if ( other.bigIntegerAttribute != null )
+        }
+        if (bigIntegerAttribute == null) {
+            if (other.bigIntegerAttribute != null) {
                 return false;
-        } else if ( !bigIntegerAttribute.equals(other.bigIntegerAttribute) )
+            }
+        } else if (!bigIntegerAttribute.equals(other.bigIntegerAttribute)) {
             return false;
-        if ( bigIntegerSetAttribute == null ) {
-            if ( other.bigIntegerSetAttribute != null )
+        }
+        if (bigIntegerSetAttribute == null) {
+            if (other.bigIntegerSetAttribute != null) {
                 return false;
-        } else if ( !bigIntegerSetAttribute.equals(other.bigIntegerSetAttribute) )
+            }
+        } else if (!bigIntegerSetAttribute.equals(other.bigIntegerSetAttribute)) {
             return false;
-        if ( booleanAttribute == null ) {
-            if ( other.booleanAttribute != null )
+        }
+        if (booleanAttribute == null) {
+            if (other.booleanAttribute != null) {
                 return false;
-        } else if ( !booleanAttribute.equals(other.booleanAttribute) )
+            }
+        } else if (!booleanAttribute.equals(other.booleanAttribute)) {
             return false;
-        if ( booleanSetAttribute == null ) {
-            if ( other.booleanSetAttribute != null )
+        }
+        if (booleanSetAttribute == null) {
+            if (other.booleanSetAttribute != null) {
                 return false;
-        } else if ( !booleanSetAttribute.equals(other.booleanSetAttribute) )
+            }
+        } else if (!booleanSetAttribute.equals(other.booleanSetAttribute)) {
             return false;
-        if ( byteAttribute == null ) {
-            if ( other.byteAttribute != null )
+        }
+        if (byteAttribute == null) {
+            if (other.byteAttribute != null) {
                 return false;
-        } else if ( !byteAttribute.equals(other.byteAttribute) )
+            }
+        } else if (!byteAttribute.equals(other.byteAttribute)) {
             return false;
-        if ( byteSetAttribute == null ) {
-            if ( other.byteSetAttribute != null )
+        }
+        if (byteSetAttribute == null) {
+            if (other.byteSetAttribute != null) {
                 return false;
-        } else if ( !byteSetAttribute.equals(other.byteSetAttribute) )
+            }
+        } else if (!byteSetAttribute.equals(other.byteSetAttribute)) {
             return false;
-        if ( calendarAttribute == null ) {
-            if ( other.calendarAttribute != null )
+        }
+        if (calendarAttribute == null) {
+            if (other.calendarAttribute != null) {
                 return false;
-        } else if ( !calendarAttribute.equals(other.calendarAttribute) )
+            }
+        } else if (!calendarAttribute.equals(other.calendarAttribute)) {
             return false;
-        if ( calendarSetAttribute == null ) {
-            if ( other.calendarSetAttribute != null )
+        }
+        if (calendarSetAttribute == null) {
+            if (other.calendarSetAttribute != null) {
                 return false;
-        } else if ( !calendarSetAttribute.equals(other.calendarSetAttribute) )
+            }
+        } else if (!calendarSetAttribute.equals(other.calendarSetAttribute)) {
             return false;
-        if ( dateAttribute == null ) {
-            if ( other.dateAttribute != null )
+        }
+        if (dateAttribute == null) {
+            if (other.dateAttribute != null) {
                 return false;
-        } else if ( !dateAttribute.equals(other.dateAttribute) )
+            }
+        } else if (!dateAttribute.equals(other.dateAttribute)) {
             return false;
-        if ( dateSetAttribute == null ) {
-            if ( other.dateSetAttribute != null )
+        }
+        if (dateSetAttribute == null) {
+            if (other.dateSetAttribute != null) {
                 return false;
-        } else if ( !dateSetAttribute.equals(other.dateSetAttribute) )
+            }
+        } else if (!dateSetAttribute.equals(other.dateSetAttribute)) {
             return false;
-        if ( doubleAttribute == null ) {
-            if ( other.doubleAttribute != null )
+        }
+        if (doubleAttribute == null) {
+            if (other.doubleAttribute != null) {
                 return false;
-        } else if ( !doubleAttribute.equals(other.doubleAttribute) )
+            }
+        } else if (!doubleAttribute.equals(other.doubleAttribute)) {
             return false;
-        if ( doubleSetAttribute == null ) {
-            if ( other.doubleSetAttribute != null )
+        }
+        if (doubleSetAttribute == null) {
+            if (other.doubleSetAttribute != null) {
                 return false;
-        } else if ( !doubleSetAttribute.equals(other.doubleSetAttribute) )
+            }
+        } else if (!doubleSetAttribute.equals(other.doubleSetAttribute)) {
             return false;
-        if ( floatAttribute == null ) {
-            if ( other.floatAttribute != null )
+        }
+        if (floatAttribute == null) {
+            if (other.floatAttribute != null) {
                 return false;
-        } else if ( !floatAttribute.equals(other.floatAttribute) )
+            }
+        } else if (!floatAttribute.equals(other.floatAttribute)) {
             return false;
-        if ( floatSetAttribute == null ) {
-            if ( other.floatSetAttribute != null )
+        }
+        if (floatSetAttribute == null) {
+            if (other.floatSetAttribute != null) {
                 return false;
-        } else if ( !floatSetAttribute.equals(other.floatSetAttribute) )
+            }
+        } else if (!floatSetAttribute.equals(other.floatSetAttribute)) {
             return false;
-        if ( integerAttribute == null ) {
-            if ( other.integerAttribute != null )
+        }
+        if (integerAttribute == null) {
+            if (other.integerAttribute != null) {
                 return false;
-        } else if ( !integerAttribute.equals(other.integerAttribute) )
+            }
+        } else if (!integerAttribute.equals(other.integerAttribute)) {
             return false;
-        if ( integerSetAttribute == null ) {
-            if ( other.integerSetAttribute != null )
+        }
+        if (integerSetAttribute == null) {
+            if (other.integerSetAttribute != null) {
                 return false;
-        } else if ( !integerSetAttribute.equals(other.integerSetAttribute) )
+            }
+        } else if (!integerSetAttribute.equals(other.integerSetAttribute)) {
             return false;
-        if ( key == null ) {
-            if ( other.key != null )
+        }
+        if (key == null) {
+            if (other.key != null) {
                 return false;
-        } else if ( !key.equals(other.key) )
+            }
+        } else if (!key.equals(other.key)) {
             return false;
-        if ( lastUpdater == null ) {
-            if ( other.lastUpdater != null )
+        }
+        if (lastUpdater == null) {
+            if (other.lastUpdater != null) {
                 return false;
-        } else if ( !lastUpdater.equals(other.lastUpdater) )
+            }
+        } else if (!lastUpdater.equals(other.lastUpdater)) {
             return false;
-        if ( longAttribute == null ) {
-            if ( other.longAttribute != null )
+        }
+        if (longAttribute == null) {
+            if (other.longAttribute != null) {
                 return false;
-        } else if ( !longAttribute.equals(other.longAttribute) )
+            }
+        } else if (!longAttribute.equals(other.longAttribute)) {
             return false;
-        if ( longSetAttribute == null ) {
-            if ( other.longSetAttribute != null )
+        }
+        if (longSetAttribute == null) {
+            if (other.longSetAttribute != null) {
                 return false;
-        } else if ( !longSetAttribute.equals(other.longSetAttribute) )
+            }
+        } else if (!longSetAttribute.equals(other.longSetAttribute)) {
             return false;
-        if ( rangeKey == null ) {
-            if ( other.rangeKey != null )
+        }
+        if (rangeKey == null) {
+            if (other.rangeKey != null) {
                 return false;
-        } else if ( !rangeKey.equals(other.rangeKey) )
+            }
+        } else if (!rangeKey.equals(other.rangeKey)) {
             return false;
-        if ( stringSetAttribute == null ) {
-            if ( other.stringSetAttribute != null )
+        }
+        if (stringSetAttribute == null) {
+            if (other.stringSetAttribute != null) {
                 return false;
-        } else if ( !stringSetAttribute.equals(other.stringSetAttribute) )
+            }
+        } else if (!stringSetAttribute.equals(other.stringSetAttribute)) {
             return false;
-        if ( version == null ) {
-            if ( other.version != null )
+        }
+        if (version == null) {
+            if (other.version != null) {
                 return false;
-        } else if ( !version.equals(other.version) )
+            }
+        } else if (!version.equals(other.version)) {
             return false;
+        }
         return true;
     }
 

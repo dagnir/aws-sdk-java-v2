@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ class QueryPage extends Page<Item, QueryOutcome> {
             QueryOutcome outcome) {
         super(Collections.unmodifiableList(
                 toItemList(outcome.getQueryResult().getItems())),
-            outcome);
+              outcome);
         this.client = client;
         this.spec = spec;
         this.request = request;
@@ -64,11 +64,13 @@ class QueryPage extends Page<Item, QueryOutcome> {
 
     @Override
     public boolean hasNextPage() {
-        if (lastEvaluatedKey == null)
+        if (lastEvaluatedKey == null) {
             return false;
+        }
         Integer max = spec.getMaxResultSize();
-        if (max == null)
+        if (max == null) {
             return true;
+        }
         return nextRequestLimit(max.intValue()) > 0;
     }
 
@@ -80,21 +82,22 @@ class QueryPage extends Page<Item, QueryOutcome> {
     }
 
     @Override
-    public Page<Item,QueryOutcome> nextPage() {
+    public Page<Item, QueryOutcome> nextPage() {
         if (lastEvaluatedKey == null) {
             throw new NoSuchElementException("No more pages");
         }
         final Integer max = spec.getMaxResultSize();
         if (max != null) {
             int nextLimit = nextRequestLimit(max.intValue());
-            if (nextLimit == 0)
+            if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
+            }
             request.setLimit(nextLimit);
         }
         request.setExclusiveStartKey(lastEvaluatedKey);
         QueryResult result = client.query(request);
         final int nextIndex = index + this.size();
         return new QueryPage(client, spec, request, nextIndex,
-                new QueryOutcome(result));
+                             new QueryOutcome(result));
     }
 }

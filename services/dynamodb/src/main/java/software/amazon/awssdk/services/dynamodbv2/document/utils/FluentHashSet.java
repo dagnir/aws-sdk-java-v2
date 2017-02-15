@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ public class FluentHashSet<E> extends LinkedHashSet<E> {
         super(c);
     }
 
-//    @SafeVarargs
-    public FluentHashSet(E ... elements) {
+    //    @SafeVarargs
+    public FluentHashSet(E... elements) {
         withAll(elements);
     }
 
@@ -65,11 +65,12 @@ public class FluentHashSet<E> extends LinkedHashSet<E> {
     /**
      * Fluent method to add the elements to this set.
      */
-//    @SuppressWarnings("unchecked")
-    public FluentHashSet<E> withAll(E ...elements) {
+    //    @SuppressWarnings("unchecked")
+    public FluentHashSet<E> withAll(E... elements) {
         if (elements != null) {
-            for (E e: elements)
+            for (E e : elements) {
                 add(e);
+            }
         }
         return this;
     }

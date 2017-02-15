@@ -23,8 +23,8 @@ public class NoAccountIdIntegrationTest extends GlacierIntegrationTestBase {
     public void setup() throws IOException {
         randomTempFile = new RandomTempFile("NoAccountIdIntegrationTest-", contentLength);
         downloadFile = new File(randomTempFile.getParentFile(),
-                randomTempFile.getName() + ".download");
-        
+                                randomTempFile.getName() + ".download");
+
     }
 
     @After
@@ -53,16 +53,17 @@ public class NoAccountIdIntegrationTest extends GlacierIntegrationTestBase {
         String archiveId = uploadResult.getArchiveId();
         assertNotNull(archiveId);
 
-        int retries=0;
+        int retries = 0;
         // Download
-        for (;;) {
+        for (; ; ) {
             try {
                 glacierUtils.download(vaultName, archiveId, downloadFile);
                 break;
-            } catch(QueueDoesNotExistException ex) {
+            } catch (QueueDoesNotExistException ex) {
                 ex.printStackTrace();
-                if (retries++ > 3)
+                if (retries++ > 3) {
                     break;
+                }
             }
         }
         assertFileEqualsFile(randomTempFile, downloadFile);

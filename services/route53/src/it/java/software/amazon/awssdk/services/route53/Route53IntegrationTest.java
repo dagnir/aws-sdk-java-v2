@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.route53;
 
 import static org.junit.Assert.assertEquals;
@@ -68,7 +83,8 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     public static void tearDown() {
         try {
             route53.deleteHostedZone(new DeleteHostedZoneRequest(createdZoneId));
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -79,13 +95,13 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     public void testRoute53() throws Exception {
         // Create Hosted Zone
         CreateHostedZoneResult result = route53.createHostedZone(new CreateHostedZoneRequest()
-            .withName(ZONE_NAME)
-            .withCallerReference(CALLER_REFERENCE)
-            .withHostedZoneConfig(new HostedZoneConfig()
-                .withComment(COMMENT))
-        );
+                                                                         .withName(ZONE_NAME)
+                                                                         .withCallerReference(CALLER_REFERENCE)
+                                                                         .withHostedZoneConfig(new HostedZoneConfig()
+                                                                                                       .withComment(COMMENT))
+                                                                );
 
-        createdZoneId       = result.getHostedZone().getId();
+        createdZoneId = result.getHostedZone().getId();
         createdZoneChangeId = result.getChangeInfo().getId();
 
         assertValidCreatedHostedZone(result.getHostedZone());
@@ -158,17 +174,17 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
         // Change Resource Record Sets
         ResourceRecordSet newResourceRecordSet = new ResourceRecordSet()
-            .withName(ZONE_NAME)
-            .withResourceRecords(existingResourceRecordSet.getResourceRecords())
-            .withTTL(existingResourceRecordSet.getTTL() + 100)
-            .withType(existingResourceRecordSet.getType());
+                .withName(ZONE_NAME)
+                .withResourceRecords(existingResourceRecordSet.getResourceRecords())
+                .withTTL(existingResourceRecordSet.getTTL() + 100)
+                .withType(existingResourceRecordSet.getType());
 
         changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
-            .withHostedZoneId(createdZoneId)
-            .withChangeBatch(new ChangeBatch().withComment(COMMENT)
-                    .withChanges(new Change().withAction(ChangeAction.DELETE).withResourceRecordSet(existingResourceRecordSet),
-                                 new Change().withAction(ChangeAction.CREATE).withResourceRecordSet(newResourceRecordSet))
-            )).getChangeInfo();
+                                                              .withHostedZoneId(createdZoneId)
+                                                              .withChangeBatch(new ChangeBatch().withComment(COMMENT)
+                                                                                                .withChanges(new Change().withAction(ChangeAction.DELETE).withResourceRecordSet(existingResourceRecordSet),
+                                                                                                             new Change().withAction(ChangeAction.CREATE).withResourceRecordSet(newResourceRecordSet))
+                                                                              )).getChangeInfo();
         assertValidChangeInfo(changeInfo);
 
         // Add a weighted Resource Record Set so we can reproduce the bug reported by customers
@@ -183,22 +199,22 @@ public class Route53IntegrationTest extends IntegrationTestBase {
                 .withResourceRecords(
                         new ResourceRecord().withValue("www.example.com"));
         changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
-            .withHostedZoneId(createdZoneId)
-            .withChangeBatch(
-                        new ChangeBatch().withComment(COMMENT).withChanges(
-                                new Change().withAction(ChangeAction.CREATE)
-                                            .withResourceRecordSet(newResourceRecordSet)))
-            ).getChangeInfo();
+                                                              .withHostedZoneId(createdZoneId)
+                                                              .withChangeBatch(
+                                                                      new ChangeBatch().withComment(COMMENT).withChanges(
+                                                                              new Change().withAction(ChangeAction.CREATE)
+                                                                                          .withResourceRecordSet(newResourceRecordSet)))
+                                                     ).getChangeInfo();
         assertValidChangeInfo(changeInfo);
 
         // Clear up the RR Set
         changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
-            .withHostedZoneId(createdZoneId)
-            .withChangeBatch(
-                    new ChangeBatch().withComment(COMMENT).withChanges(
-                            new Change().withAction(ChangeAction.DELETE)
-                                        .withResourceRecordSet(newResourceRecordSet)))
-            ).getChangeInfo();
+                                                              .withHostedZoneId(createdZoneId)
+                                                              .withChangeBatch(
+                                                                      new ChangeBatch().withComment(COMMENT).withChanges(
+                                                                              new Change().withAction(ChangeAction.DELETE)
+                                                                                          .withResourceRecordSet(newResourceRecordSet)))
+                                                     ).getChangeInfo();
 
         // Delete Hosted Zone
         DeleteHostedZoneResult deleteHostedZoneResult = route53.deleteHostedZone(new DeleteHostedZoneRequest(createdZoneId));

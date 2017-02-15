@@ -31,10 +31,12 @@ public class AuthRetryParameters {
     private final URI endpointForRetry;
 
     public AuthRetryParameters(Signer signer, URI endpoint) {
-        if (signer == null)
+        if (signer == null) {
             throw new NullPointerException("signer");
-        if (endpoint == null)
+        }
+        if (endpoint == null) {
             throw new NullPointerException("endpoint");
+        }
 
         this.signerForRetry = signer;
         this.endpointForRetry = endpoint;

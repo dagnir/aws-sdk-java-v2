@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import static software.amazon.awssdk.util.IOUtils.release;
@@ -26,8 +27,11 @@ import org.apache.commons.logging.Log;
  */
 public interface S3DataSource {
     public File getFile();
+
     public void setFile(File file);
+
     public InputStream getInputStream();
+
     public void setInputStream(InputStream inputStream);
 
     /**
@@ -35,13 +39,14 @@ public interface S3DataSource {
      */
     public static enum Utils {
         ;
+
         /**
          * Clean up any temporary streams created during the execution,
          * and restore the original file and/or input stream.
          */
         public static void cleanupDataSource(S3DataSource req,
-                final File fileOrig, final InputStream inputStreamOrig,
-                InputStream inputStreamCurr, Log log) {
+                                             final File fileOrig, final InputStream inputStreamOrig,
+                                             InputStream inputStreamCurr, Log log) {
             if (fileOrig != null) {
                 // We opened a file underneath so would need to release it
                 release(inputStreamCurr, log);

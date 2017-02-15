@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -33,7 +31,7 @@ public class Owner implements Serializable {
      * Constructs a new {@link Owner} without specifying
      * an ID or display name.
      * </p>
-     * 
+     *
      * @see Owner#Owner(String, String)
      */
     public Owner() {
@@ -44,10 +42,10 @@ public class Owner implements Serializable {
      * Constructs a new {@link Owner} with the specified
      * ID and display name. 
      * </p>
-     * 
-     * @param id 
+     *
+     * @param id
      *      The ID for the owner.
-     * @param displayName 
+     * @param displayName
      *      The display name for the owner.
      * @see Owner#Owner()
      */
@@ -68,9 +66,9 @@ public class Owner implements Serializable {
      * <p>
      * Gets the ID of the owner.
      * </p>
-     * 
+     *
      * @return The ID of the owner.
-     * 
+     *
      * @see Owner#setId(String)
      */
     public String getId() {
@@ -81,10 +79,10 @@ public class Owner implements Serializable {
      * <p>
      * Sets the ID of the owner.
      * </p>
-     * 
+     *
      * @param id
      *      The ID of the owner.
-     *      
+     *
      * @see Owner#getId()
      */
     public void setId(String id) {
@@ -95,11 +93,11 @@ public class Owner implements Serializable {
      * <p>
      * Gets the display name of the owner.
      * </p>
-     * 
+     *
      * @return
      *      The display name of the owner.
-     *      
-     * @see Owner#setDisplayName(String)     
+     *
+     * @see Owner#setDisplayName(String)
      */
     public String getDisplayName() {
         return displayName;
@@ -109,10 +107,10 @@ public class Owner implements Serializable {
      * <p>
      * Sets the display name of the owner.
      * </p>
-     * 
+     *
      * @param name
      *      The display name of the owner.
-     *      
+     *
      * @see Owner#getDisplayName()
      */
     public void setDisplayName(String name) {
@@ -125,17 +123,25 @@ public class Owner implements Serializable {
             return false;
         }
 
-        Owner otherOwner = (Owner)obj;
+        Owner otherOwner = (Owner) obj;
 
         String otherOwnerId = otherOwner.getId();
         String otherOwnerName = otherOwner.getDisplayName();
         String thisOwnerId = this.getId();
         String thisOwnerName = this.getDisplayName();
 
-        if (otherOwnerId == null) otherOwnerId = "";
-        if (otherOwnerName == null) otherOwnerName = "";
-        if (thisOwnerId == null) thisOwnerId = "";
-        if (thisOwnerName == null) thisOwnerName = "";
+        if (otherOwnerId == null) {
+            otherOwnerId = "";
+        }
+        if (otherOwnerName == null) {
+            otherOwnerName = "";
+        }
+        if (thisOwnerId == null) {
+            thisOwnerId = "";
+        }
+        if (thisOwnerName == null) {
+            thisOwnerName = "";
+        }
 
         return (otherOwnerId.equals(thisOwnerId) &&
                 otherOwnerName.equals(thisOwnerName));

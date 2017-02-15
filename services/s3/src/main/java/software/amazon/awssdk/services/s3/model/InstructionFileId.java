@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import software.amazon.awssdk.annotation.Immutable;
@@ -29,13 +30,13 @@ public final class InstructionFileId extends S3ObjectId {
     /**
      * Package private to enable the enforcement of naming convention for
      * instruction file.
-     * 
+     *
      * @param key
      *            key of the instruction file.
      * @param versionId
      *            the version id of an instruction file is expected to be the
      *            same as that of the corresponding (encrypted) S3 object
-     * 
+     *
      * @see S3ObjectId#instructionFileId()
      * @see S3ObjectId#instructionFileId(String)
      */

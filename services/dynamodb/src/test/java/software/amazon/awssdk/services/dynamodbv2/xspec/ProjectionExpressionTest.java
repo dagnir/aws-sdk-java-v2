@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -27,19 +27,19 @@ public class ProjectionExpressionTest {
     @Test
     public void projectionExpression() {
         QueryExpressionSpec xspec = new ExpressionSpecBuilder()
-            .addProjection("Price")
-            .addProjection("Color")
-            .addProjection("Pictures.FrontView")
-            .addProjection("ProductReviews.FiveStar[0]")
-            .buildForQuery();
+                .addProjection("Price")
+                .addProjection("Color")
+                .addProjection("Pictures.FrontView")
+                .addProjection("ProductReviews.FiveStar[0]")
+                .buildForQuery();
         String expr = xspec.getProjectionExpression();
-        Map<String,String> nm = xspec.getNameMap();
-        Map<String,Object> vm = xspec.getValueMap();
-    
+        Map<String, String> nm = xspec.getNameMap();
+        Map<String, Object> vm = xspec.getValueMap();
+
         System.out.println(expr);
         System.out.println(nm);
         System.out.println(vm);
-    
+
         assertEquals("#0, #1, #2.#3, #4.#5[0]", expr);
         assertEquals("Price", nm.get("#0"));
         assertEquals("Color", nm.get("#1"));
@@ -47,7 +47,7 @@ public class ProjectionExpressionTest {
         assertEquals("FrontView", nm.get("#3"));
         assertEquals("ProductReviews", nm.get("#4"));
         assertEquals("FiveStar", nm.get("#5"));
-        
+
         assertNull(vm);
     }
 }

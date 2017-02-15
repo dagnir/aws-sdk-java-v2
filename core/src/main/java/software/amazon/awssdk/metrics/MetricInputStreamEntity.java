@@ -34,14 +34,14 @@ public class MetricInputStreamEntity extends InputStreamEntity {
     private final ByteThroughputHelper helper;
 
     public MetricInputStreamEntity(ThroughputMetricType metricType,
-            InputStream instream, long length) {
+                                   InputStream instream, long length) {
         super(instream, length);
         helper = new ByteThroughputHelper(metricType);
     }
 
     public MetricInputStreamEntity(ThroughputMetricType metricType,
-            final InputStream instream, long length,
-            final ContentType contentType) {
+                                   final InputStream instream, long length,
+                                   final ContentType contentType) {
         super(instream, length, contentType);
         helper = new ByteThroughputHelper(metricType);
     }
@@ -52,7 +52,7 @@ public class MetricInputStreamEntity extends InputStreamEntity {
             // hchar: There is currently no implementation of output stream that
             // has metric gathering capability but there could be!
             // So the code here is for future proof purposes.
-            MetricAware aware = (MetricAware)outstream;
+            MetricAware aware = (MetricAware) outstream;
             if (aware.isMetricActivated()) {
                 // let the underlying output stream takes care of byte counting
                 super.writeTo(outstream);
@@ -87,7 +87,7 @@ public class MetricInputStreamEntity extends InputStreamEntity {
                 // consume no more than length
                 long remaining = length;
                 while (remaining > 0) {
-                    l = instream.read(buffer, 0, (int)Math.min(BUFFER_SIZE, remaining));
+                    l = instream.read(buffer, 0, (int) Math.min(BUFFER_SIZE, remaining));
                     if (l == -1) {
                         break;
                     }

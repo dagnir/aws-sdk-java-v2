@@ -161,7 +161,7 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
      */
     private ClientConfiguration resolveClientConfiguration() {
         return (clientConfig == null) ? clientConfigFactory.getConfig() :
-                new ClientConfiguration(clientConfig);
+               new ClientConfiguration(clientConfig);
     }
 
     /**
@@ -196,6 +196,27 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
      */
     public final String getRegion() {
         return region == null ? null : region.getName();
+    }
+
+    private void setRegion(AmazonWebServiceClient client) {
+        if (region != null && endpointConfiguration != null) {
+            throw new IllegalStateException("Only one of Region or EndpointConfiguration may be set.");
+        }
+        if (endpointConfiguration != null) {
+            client.setEndpoint(endpointConfiguration.getServiceEndpoint());
+            client.setSignerRegionOverride(endpointConfiguration.getSigningRegion());
+        } else if (region != null) {
+            client.setRegion(region);
+        } else {
+            final String region = determineRegionFromRegionProvider();
+            if (region != null) {
+                client.setRegion(RegionUtils.getRegion(region));
+            } else {
+                throw new SdkClientException(
+                        "Unable to find a region via the region provider chain. " +
+                        "Must provide an explicit region in the builder or setup environment to supply a region.");
+            }
+        }
     }
 
     /**
@@ -292,7 +313,7 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
      */
     public final List<RequestHandler2> getRequestHandlers() {
         return this.requestHandlers == null ? null :
-                Collections.unmodifiableList(this.requestHandlers);
+               Collections.unmodifiableList(this.requestHandlers);
     }
 
     /**
@@ -321,7 +342,7 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
      */
     private List<RequestHandler2> resolveRequestHandlers() {
         return (requestHandlers == null) ? new ArrayList<RequestHandler2>() :
-                new ArrayList<RequestHandler2>(requestHandlers);
+               new ArrayList<RequestHandler2>(requestHandlers);
     }
 
     /**
@@ -354,27 +375,6 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
         return new SyncBuilderParams();
     }
 
-    private void setRegion(AmazonWebServiceClient client) {
-        if (region != null && endpointConfiguration != null) {
-            throw new IllegalStateException("Only one of Region or EndpointConfiguration may be set.");
-        }
-        if (endpointConfiguration != null) {
-            client.setEndpoint(endpointConfiguration.getServiceEndpoint());
-            client.setSignerRegionOverride(endpointConfiguration.getSigningRegion());
-        } else if (region != null) {
-            client.setRegion(region);
-        } else {
-            final String region = determineRegionFromRegionProvider();
-            if (region != null) {
-                client.setRegion(RegionUtils.getRegion(region));
-            } else {
-                throw new SdkClientException(
-                        "Unable to find a region via the region provider chain. " +
-                        "Must provide an explicit region in the builder or setup environment to supply a region.");
-            }
-        }
-    }
-
     /**
      * Attempt to determine the region from the configured region provider. This will return null in the event that the
      * region provider could not determine the region automatically.
@@ -382,8 +382,7 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
     private String determineRegionFromRegionProvider() {
         try {
             return regionProvider.getRegion();
-        }
-        catch (SdkClientException e) {
+        } catch (SdkClientException e) {
             // The AwsRegionProviderChain that is used by default throws an exception instead of returning null when
             // the region is not defined. For that reason, we have to support both throwing an exception and returning
             // null as the region not being defined.
@@ -394,6 +393,31 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
     @SuppressWarnings("unchecked")
     protected final Subclass getSubclass() {
         return (Subclass) this;
+    }
+
+    /**
+     * A container for configuration required to submit requests to a service (service endpoint and signing region)
+     */
+    public static final class EndpointConfiguration {
+        private final String serviceEndpoint;
+        private final String signingRegion;
+
+        /**
+         * @param serviceEndpoint the service endpoint either with or without the protocol (e.g. https://sns.us-west-1.amazonaws.com or sns.us-west-1.amazonaws.com)
+         * @param signingRegion the region to use for SigV4 signing of requests (e.g. us-west-1)
+         */
+        public EndpointConfiguration(String serviceEndpoint, String signingRegion) {
+            this.serviceEndpoint = serviceEndpoint;
+            this.signingRegion = signingRegion;
+        }
+
+        public String getServiceEndpoint() {
+            return serviceEndpoint;
+        }
+
+        public String getSigningRegion() {
+            return signingRegion;
+        }
     }
 
     /**
@@ -439,31 +463,6 @@ public abstract class AwsClientBuilder<Subclass extends AwsClientBuilder, TypeTo
             throw new UnsupportedOperationException("ExecutorService is not used for sync client.");
         }
 
-    }
-
-    /**
-     * A container for configuration required to submit requests to a service (service endpoint and signing region)
-     */
-    public static final class EndpointConfiguration {
-        private final String serviceEndpoint;
-        private final String signingRegion;
-
-        /**
-         * @param serviceEndpoint the service endpoint either with or without the protocol (e.g. https://sns.us-west-1.amazonaws.com or sns.us-west-1.amazonaws.com)
-         * @param signingRegion the region to use for SigV4 signing of requests (e.g. us-west-1)
-         */
-        public EndpointConfiguration(String serviceEndpoint, String signingRegion) {
-            this.serviceEndpoint = serviceEndpoint;
-            this.signingRegion = signingRegion;
-        }
-
-        public String getServiceEndpoint() {
-            return serviceEndpoint;
-        }
-
-        public String getSigningRegion() {
-            return signingRegion;
-        }
     }
 
 }

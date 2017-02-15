@@ -39,11 +39,29 @@ public class EC2ProductCodesIntegrationTest extends EC2IntegrationTestBase {
         MARKETPLACE_AMI = findPublicAmiWithProductCodeType("marketplace");
     }
 
+    private static String findPublicAmiWithProductCodeType(String type) {
+
+        List<Image> images = ec2.describeImages(new DescribeImagesRequest()
+                                                        .withFilters(
+                                                                new Filter()
+                                                                        .withName("is-public")
+                                                                        .withValues("true"),
+                                                                new Filter()
+                                                                        .withName("product-code.type")
+                                                                        .withValues(type))
+                                               ).getImages();
+
+        assertThat("Cannot find a public AMI with product-code.type=" + type,
+                   images, not(empty()));
+
+        return images.get(0).getImageId();
+    }
+
     @Test
     public void testDevpayImage() {
         List<Image> images = ec2.describeImages(new DescribeImagesRequest()
-                .withImageIds(DEVPAY_AMI)
-                ).getImages();
+                                                        .withImageIds(DEVPAY_AMI)
+                                               ).getImages();
         assertEquals(1, images.size());
 
         List<ProductCode> codes = images.get(0).getProductCodes();
@@ -57,8 +75,8 @@ public class EC2ProductCodesIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeMarketplaceImage() {
         List<Image> images = ec2.describeImages(new DescribeImagesRequest()
-                .withImageIds(MARKETPLACE_AMI)
-                ).getImages();
+                                                        .withImageIds(MARKETPLACE_AMI)
+                                               ).getImages();
         assertEquals(1, images.size());
 
         List<ProductCode> codes = images.get(0).getProductCodes();
@@ -67,23 +85,5 @@ public class EC2ProductCodesIntegrationTest extends EC2IntegrationTestBase {
         ProductCode marketPlaceCode = codes.get(0);
         assertEquals("marketplace", marketPlaceCode.getProductCodeType());
         assertStringNotEmpty(marketPlaceCode.getProductCodeId());
-    }
-
-    private static String findPublicAmiWithProductCodeType(String type) {
-
-        List<Image> images = ec2.describeImages(new DescribeImagesRequest()
-                .withFilters(
-                        new Filter()
-                            .withName("is-public")
-                            .withValues("true"),
-                        new Filter()
-                            .withName("product-code.type")
-                            .withValues(type))
-                ).getImages();
-
-        assertThat("Cannot find a public AMI with product-code.type=" + type,
-                images, not(empty()));
-
-        return images.get(0).getImageId();
     }
 }

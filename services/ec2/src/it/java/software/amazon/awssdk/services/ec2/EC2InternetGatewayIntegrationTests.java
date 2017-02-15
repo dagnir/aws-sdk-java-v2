@@ -69,6 +69,35 @@ public class EC2InternetGatewayIntegrationTests extends EC2IntegrationTestBase {
         }
     }
 
+    private static String createInternetGateway() {
+        return ec2.createInternetGateway()
+                  .getInternetGateway().getInternetGatewayId();
+    }
+
+    private static String createVpc() {
+        return ec2.createVpc(new CreateVpcRequest()
+                                     .withCidrBlock(VPC_CIDR_BLOCK)
+                            ).getVpc().getVpcId();
+    }
+
+    private static void deleteInternetGateway(String internetGatewayId) {
+
+        InternetGateway gateway = ec2.describeInternetGateways(
+                new DescribeInternetGatewaysRequest()
+                        .withInternetGatewayIds(internetGatewayId)
+                                                              ).getInternetGateways().get(0);
+
+        // We need to detach any gateways before deleting them
+        for (InternetGatewayAttachment att : gateway.getAttachments()) {
+            ec2.detachInternetGateway(new DetachInternetGatewayRequest()
+                                              .withInternetGatewayId(gateway.getInternetGatewayId())
+                                              .withVpcId(att.getVpcId()));
+        }
+
+        ec2.deleteInternetGateway(new DeleteInternetGatewayRequest()
+                                          .withInternetGatewayId(gateway.getInternetGatewayId()));
+    }
+
     /**
      * Also tests that tags work as expected
      */
@@ -104,8 +133,8 @@ public class EC2InternetGatewayIntegrationTests extends EC2IntegrationTestBase {
         assertEquals(0, gateway.getAttachments().size());
 
         ec2.attachInternetGateway(new AttachInternetGatewayRequest()
-                .withInternetGatewayId(internetGatewayId)
-                .withVpcId(vpcId));
+                                          .withInternetGatewayId(internetGatewayId)
+                                          .withVpcId(vpcId));
 
         result = ec2.describeInternetGateways(describeInternetGatewaysRequest);
         assertEquals(1, result.getInternetGateways().size());
@@ -115,41 +144,11 @@ public class EC2InternetGatewayIntegrationTests extends EC2IntegrationTestBase {
 
         // Detach
         ec2.detachInternetGateway(new DetachInternetGatewayRequest()
-                .withInternetGatewayId(internetGatewayId)
-                .withVpcId(vpcId));
+                                          .withInternetGatewayId(internetGatewayId)
+                                          .withVpcId(vpcId));
         result = ec2.describeInternetGateways(describeInternetGatewaysRequest);
         assertEquals(1, result.getInternetGateways().size());
         gateway = result.getInternetGateways().get(0);
         assertEquals(0, gateway.getAttachments().size());
-    }
-
-
-    private static String createInternetGateway() {
-        return ec2.createInternetGateway()
-                .getInternetGateway().getInternetGatewayId();
-    }
-
-    private static String createVpc() {
-        return ec2.createVpc(new CreateVpcRequest()
-                .withCidrBlock(VPC_CIDR_BLOCK)
-                ).getVpc().getVpcId();
-    }
-
-    private static void deleteInternetGateway(String internetGatewayId) {
-
-        InternetGateway gateway = ec2.describeInternetGateways(
-                new DescribeInternetGatewaysRequest()
-                        .withInternetGatewayIds(internetGatewayId)
-                ).getInternetGateways().get(0);
-
-        // We need to detach any gateways before deleting them
-        for (InternetGatewayAttachment att : gateway.getAttachments()) {
-            ec2.detachInternetGateway(new DetachInternetGatewayRequest()
-                    .withInternetGatewayId(gateway.getInternetGatewayId())
-                    .withVpcId(att.getVpcId()));
-        }
-
-        ec2.deleteInternetGateway(new DeleteInternetGatewayRequest()
-                .withInternetGatewayId(gateway.getInternetGatewayId()));
     }
 }

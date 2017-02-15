@@ -65,10 +65,10 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
      *            signature algorithm. "HmacSHA256" is recommended.
      */
     public void sign(SignableRequest<?> request, SignatureVersion version,
-            SigningAlgorithm algorithm, AWSCredentials credentials)
+                     SigningAlgorithm algorithm, AWSCredentials credentials)
             throws SdkClientException {
         // annonymous credentials, don't sign
-        if ( credentials instanceof AnonymousAWSCredentials ) {
+        if (credentials instanceof AnonymousAWSCredentials) {
             return;
         }
 
@@ -79,14 +79,14 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
         int timeOffset = request.getTimeOffset();
         request.addParameter("Timestamp", getFormattedTimestamp(timeOffset));
 
-        if ( sanitizedCredentials instanceof AWSSessionCredentials ) {
+        if (sanitizedCredentials instanceof AWSSessionCredentials) {
             addSessionCredentials(request, (AWSSessionCredentials) sanitizedCredentials);
         }
 
         String stringToSign = null;
-        if ( version.equals( SignatureVersion.V1 ) ) {
+        if (version.equals(SignatureVersion.V1)) {
             stringToSign = calculateStringToSignV1(request.getParameters());
-        } else if ( version.equals( SignatureVersion.V2 ) ) {
+        } else if (version.equals(SignatureVersion.V2)) {
             request.addParameter("SignatureMethod", algorithm.toString());
             stringToSign = calculateStringToSignV2(request);
         } else {
@@ -94,7 +94,7 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
         }
 
         String signatureValue = signAndBase64Encode(stringToSign,
-                sanitizedCredentials.getAWSSecretKey(), algorithm);
+                                                    sanitizedCredentials.getAWSSecretKey(), algorithm);
         request.addParameter("Signature", signatureValue);
     }
 
@@ -109,7 +109,7 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
     private String calculateStringToSignV1(Map<String, List<String>> parameters) {
         StringBuilder data = new StringBuilder();
         SortedMap<String, List<String>> sorted =
-            new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+                new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
         sorted.putAll(parameters);
 
         for (Map.Entry<String, List<String>> entry : sorted.entrySet()) {

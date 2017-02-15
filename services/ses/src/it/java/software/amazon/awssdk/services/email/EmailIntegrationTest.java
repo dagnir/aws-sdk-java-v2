@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.email;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -50,7 +65,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
     public static void setup() {
         email.verifyEmailIdentity(new VerifyEmailIdentityRequest().withEmailAddress(EMAIL));
         DOMAIN_VERIFICATION_TOKEN = email.verifyDomainIdentity(new VerifyDomainIdentityRequest().withDomain(DOMAIN))
-                .getVerificationToken();
+                                         .getVerificationToken();
 
     }
 
@@ -104,7 +119,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
     @Test(expected = MessageRejectedException.class)
     public void sendEmail_ToUnverifiedIdentity_ThrowsException() {
         email.sendEmail(new SendEmailRequest().withDestination(new Destination().withToAddresses(EMAIL))
-                .withMessage(newMessage("test")).withSource(EMAIL));
+                                              .withMessage(newMessage("test")).withSource(EMAIL));
     }
 
     @Test
@@ -121,7 +136,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
     public void getIdentityVerificationAttributes_ForNonVerifiedDomain_ReturnsPendingVerificatonStatus() {
         GetIdentityVerificationAttributesResult result = email
                 .getIdentityVerificationAttributes(new GetIdentityVerificationAttributesRequest()
-                        .withIdentities(DOMAIN));
+                                                           .withIdentities(DOMAIN));
         IdentityVerificationAttributes identityVerificationAttributes = result.getVerificationAttributes().get(DOMAIN);
         assertEquals(VerificationStatus.Pending.toString(), identityVerificationAttributes.getVerificationStatus());
         assertEquals(DOMAIN_VERIFICATION_TOKEN, identityVerificationAttributes.getVerificationToken());

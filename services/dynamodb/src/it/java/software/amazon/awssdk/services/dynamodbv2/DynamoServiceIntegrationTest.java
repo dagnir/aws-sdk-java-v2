@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import static org.junit.Assert.assertEquals;
@@ -72,14 +73,14 @@ import utils.test.util.DynamoDBTestBase;
 
 
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources({
-        @RequiredResource(resource = BasicTempTable.class,
-                creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
-                retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS),
-        @RequiredResource(resource = TempTableWithBinaryKey.class,
-                creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
-                retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
-})
+@RequiredResources( {
+                            @RequiredResource(resource = BasicTempTable.class,
+                                              creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
+                                              retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS),
+                            @RequiredResource(resource = TempTableWithBinaryKey.class,
+                                              creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
+                                              retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
+                    })
 public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
 
     private static final String HASH_KEY_NAME = BasicTempTable.HASH_KEY_NAME;
@@ -352,10 +353,10 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         assertTrue(updateItemResult.getAttributes().get("S").getSS().contains("THREE"));
         assertEquals(Integer.toString(30 + 10), updateItemResult.getAttributes().get("age").getN());
         assertEquals(0, updateItemResult.getAttributes().get("blob").getB()
-                .compareTo(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
+                                        .compareTo(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
         assertEquals(1, updateItemResult.getAttributes().get("blobs").getBS().size());
         assertTrue(updateItemResult.getAttributes().get("blobs").getBS()
-                           .contains(ByteBuffer.wrap(generateByteArray(contentLength))));
+                                   .contains(ByteBuffer.wrap(generateByteArray(contentLength))));
 
         itemUpdates.clear();
         itemUpdates.put("age", new AttributeValueUpdate(new AttributeValue().withN("30"), AttributeAction.PUT.toString()));
@@ -370,9 +371,9 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         assertEquals("30", updateItemResult.getAttributes().get("age").getN());
         assertEquals(2, updateItemResult.getAttributes().get("blobs").getBS().size());
         assertTrue(updateItemResult.getAttributes().get("blobs").getBS()
-                           .contains(ByteBuffer.wrap(generateByteArray(contentLength))));
+                                   .contains(ByteBuffer.wrap(generateByteArray(contentLength))));
         assertTrue(updateItemResult.getAttributes().get("blobs").getBS()
-                           .contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
+                                   .contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
 
         // Get an item that doesn't exist.
         GetItemRequest getItemsRequest = new GetItemRequest(tableName, getMapKey(HASH_KEY_NAME, new AttributeValue("3")))

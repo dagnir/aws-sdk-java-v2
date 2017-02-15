@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -84,7 +84,7 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
         s3.setBucketInventoryConfiguration(new SetBucketInventoryConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketInventoryConfiguration(new GetBucketInventoryConfigurationRequest(BUCKET_NAME, configId))
-                        .getInventoryConfiguration();
+                   .getInventoryConfiguration();
 
         assertEquals(configId, config.getId());
         assertTrue(config.isEnabled());
@@ -99,8 +99,8 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
 
         s3.deleteBucketInventoryConfiguration(new DeleteBucketInventoryConfigurationRequest(BUCKET_NAME, configId));
         List<InventoryConfiguration> configurations = s3.listBucketInventoryConfigurations(
-                                    new ListBucketInventoryConfigurationsRequest().withBucketName(BUCKET_NAME))
-                                            .getInventoryConfigurationList();
+                new ListBucketInventoryConfigurationsRequest().withBucketName(BUCKET_NAME))
+                                                        .getInventoryConfigurationList();
         assertNull(configurations);
     }
 
@@ -110,9 +110,9 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
         String prefix = "prefix";
         String accountId = "test-account";
         List<String> optionalFields = new ArrayList<String>() {{
-                            add(InventoryOptionalField.ETag.toString());
-                            add(InventoryOptionalField.Size.toString());
-                        }};
+            add(InventoryOptionalField.ETag.toString());
+            add(InventoryOptionalField.Size.toString());
+        }};
 
         InventoryS3BucketDestination s3BucketDestination = new InventoryS3BucketDestination()
                 .withBucketArn(BUCKET_ARN)
@@ -134,7 +134,7 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
         s3.setBucketInventoryConfiguration(new SetBucketInventoryConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketInventoryConfiguration(new GetBucketInventoryConfigurationRequest(BUCKET_NAME, configId))
-                .getInventoryConfiguration();
+                   .getInventoryConfiguration();
 
         assertEquals(configId, config.getId());
         assertTrue(config.isEnabled());

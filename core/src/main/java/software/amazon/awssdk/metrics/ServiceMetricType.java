@@ -21,10 +21,10 @@ package software.amazon.awssdk.metrics;
  * >Service specific Metric type</a> (eg S3, DynamoDB, etc.)
  */
 public interface ServiceMetricType extends MetricType {
-    public String getServiceName();
-
     public static final String UPLOAD_THROUGHPUT_NAME_SUFFIX = "UploadThroughput";
     public static final String UPLOAD_BYTE_COUNT_NAME_SUFFIX = "UploadByteCount";
     public static final String DOWNLOAD_THROUGHPUT_NAME_SUFFIX = "DownloadThroughput";
     public static final String DOWNLOAD_BYTE_COUNT_NAME_SUFFIX = "DownloadByteCount";
+
+    public String getServiceName();
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static org.junit.Assert.assertEquals;
@@ -34,12 +49,12 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         s3.createBucket(bucketName);
         String keyName = "file1";
 
-        RandomTempFile file = new RandomTempFile(keyName,   3*MB);
+        RandomTempFile file = new RandomTempFile(keyName, 3 * MB);
 
         // Upload the first file with a progress listener specified in the request
         TestTransferProgressListener progressListener1 = new TestTransferProgressListener();
         Upload upload = tm.upload(new PutObjectRequest(bucketName, keyName, file)
-            .<PutObjectRequest>withGeneralProgressListener(progressListener1));
+                                          .<PutObjectRequest>withGeneralProgressListener(progressListener1));
 
         upload.waitForCompletion();
 
@@ -68,7 +83,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         s3.createBucket(bucketName);
         String keyName = "file2";
 
-        RandomTempFile file = new RandomTempFile(keyName,  25*MB);
+        RandomTempFile file = new RandomTempFile(keyName, 25 * MB);
 
         Upload upload = tm.upload(bucketName, keyName, file);
         upload.waitForCompletion();
@@ -85,7 +100,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         s3.createBucket(bucketName);
         String keyName = "file3";
 
-        RandomTempFile file = new RandomTempFile(keyName,  25*MB);
+        RandomTempFile file = new RandomTempFile(keyName, 25 * MB);
 
         // Use all request parameters for the second file
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, keyName, file);
@@ -122,7 +137,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         assertEquals("ContentEncoding", retrievedMetadata.getContentEncoding());
         super.assertFileEqualsStream(file, s3.getObject(bucketName, keyName).getObjectContent());
         assertTrue(doesAclContainGroupGrant(s3.getObjectAcl(bucketName, keyName),
-                GroupGrantee.AllUsers, Permission.Read));
+                                            GroupGrantee.AllUsers, Permission.Read));
     }
 
     /**
@@ -133,7 +148,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
      */
     @Test
     public void testTransferProgressThreadpoolShutdown() throws IOException {
-        final long lengthInBytes = 3 *MB;
+        final long lengthInBytes = 3 * MB;
         final TestTransferProgressListener listener = new TestTransferProgressListener();
         final File file = CryptoTestUtils.generateRandomAsciiFile(lengthInBytes, true);
         final ExecutorService threadPool = Executors.newFixedThreadPool(1);
@@ -144,7 +159,8 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         try {
             tm.upload(new PutObjectRequest(bucketName, "key", file), listener);
             fail("Upload cannot be scheduled as the thread pool is already shutdown");
-        } catch (RejectedExecutionException expected) { }
+        } catch (RejectedExecutionException expected) {
+        }
 
         assertFalse(listener.transferStarted);
         assertFalse(listener.bytesTransferred);
@@ -169,7 +185,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         tm = new TransferManager(s3, threadPool);
 
         Upload upload = tm.upload(new PutObjectRequest("bucket-not-exists",
-                "key", file), listener);
+                                                       "key", file), listener);
 
         upload.waitForException();
 
@@ -197,11 +213,12 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         tm = new TransferManager(s3, threadPool);
 
         Upload upload = tm.upload(new PutObjectRequest("bucket-not-exists",
-                "key", file), listener);
+                                                       "key", file), listener);
 
         try {
             upload.waitForUploadResult();
-        }catch (AmazonS3Exception expected) { }
+        } catch (AmazonS3Exception expected) {
+        }
 
         assertTrue(listener.transferStarted);
         assertFalse(listener.bytesTransferred);
@@ -236,7 +253,8 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
 
         try {
             upload.waitForException();
-        } catch (CancellationException expected) { }
+        } catch (CancellationException expected) {
+        }
 
         assertTrue(listener.transferStarted);
         assertTrue(listener.bytesTransferred);

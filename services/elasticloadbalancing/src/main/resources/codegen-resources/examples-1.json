@@ -690,7 +690,6 @@
                     "Protocol": "HTTP"
                   },
                   "PolicyNames": [
-
                   ]
                 },
                 {
@@ -709,7 +708,6 @@
               "LoadBalancerName": "my-load-balancer",
               "Policies": {
                 "AppCookieStickinessPolicies": [
-
                 ],
                 "LBCookieStickinessPolicies": [
                   {

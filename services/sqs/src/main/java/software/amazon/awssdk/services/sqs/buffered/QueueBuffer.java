@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -51,18 +51,18 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResult;
 
 class QueueBuffer {
 
-    private final SendQueueBuffer sendBuffer;
-    private final ReceiveQueueBuffer receiveBuffer;
-    private final AmazonSQSAsync realSqs;
-    QueueBufferConfig config;
-
     /**
      * This executor that will be shared among all queue buffers. Since a single JVM can access
      * hundreds of queues, it won't do to have hundreds of executors spinning up hundreds of threads
      * for each queue. The DaemonThreadFactory creates daemon threads, which means they won't block
      * the JVM from exiting if only they are still around.
      */
-    static ExecutorService executor = Executors.newCachedThreadPool(new DaemonThreadFactory());;
+    static ExecutorService executor = Executors.newCachedThreadPool(new DaemonThreadFactory());
+    private final SendQueueBuffer sendBuffer;
+    private final ReceiveQueueBuffer receiveBuffer;
+    private final AmazonSQSAsync realSqs;
+    QueueBufferConfig config;
+    ;
 
     QueueBuffer(QueueBufferConfig paramConfig, String url, AmazonSQSAsync sqs) {
         realSqs = sqs;
@@ -104,7 +104,7 @@ class QueueBuffer {
      */
 
     public Future<DeleteMessageResult> deleteMessage(DeleteMessageRequest request,
-            AsyncHandler<DeleteMessageRequest, DeleteMessageResult> handler) {
+                                                     AsyncHandler<DeleteMessageRequest, DeleteMessageResult> handler) {
         QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback = null;
         if (handler != null) {
             callback = new QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult>(handler, request);
@@ -132,7 +132,7 @@ class QueueBuffer {
      */
 
     public Future<ChangeMessageVisibilityResult> changeMessageVisibility(ChangeMessageVisibilityRequest request,
-                                                AsyncHandler<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> handler) {
+                                                                         AsyncHandler<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> handler) {
         QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> callback = null;
         if (handler != null) {
             callback = new QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult>(handler, request);
@@ -222,7 +222,7 @@ class QueueBuffer {
      */
     private boolean canBeRetrievedFromQueueBuffer(ReceiveMessageRequest rq) {
         return !hasRequestedQueueAttributes(rq) && !hasRequestedMessageAttributes(rq) && isBufferingEnabled()
-                && (rq.getVisibilityTimeout() == null);
+               && (rq.getVisibilityTimeout() == null);
     }
 
     /**

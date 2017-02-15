@@ -31,19 +31,19 @@ import software.amazon.awssdk.services.support.model.ResolveCaseRequest;
 
 public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
 
+    private static String caseId;
     private final String SUBJECT = "Fake ticket for support API test";
     private final String CATEGORY_CODE = "apis";
     private final String SERVICE_CODE = "amazon-dynamodb";
     private final String COMMUNICATOR_BODY = "where is zach";
     private final String LANGUAGE = "en";
     private final String SEVERIRY_CODE = "low";
-    private static String caseId;
     private String checkId;
 
     @AfterClass
     public static void teardown() {
         try {
-        support.resolveCase(new ResolveCaseRequest().withCaseId(caseId));
+            support.resolveCase(new ResolveCaseRequest().withCaseId(caseId));
         } catch (Exception e) {
 
         }
@@ -54,12 +54,12 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
     public void testServiceOperations() {
         // Create case
         CreateCaseResult createCaseResult = support.createCase(new CreateCaseRequest()
-           .withSubject(SUBJECT)
-           .withCategoryCode(CATEGORY_CODE)
-           .withServiceCode(SERVICE_CODE)
-           .withLanguage(LANGUAGE)
-           .withSeverityCode(SEVERIRY_CODE)
-           .withCommunicationBody(COMMUNICATOR_BODY));
+                                                                       .withSubject(SUBJECT)
+                                                                       .withCategoryCode(CATEGORY_CODE)
+                                                                       .withServiceCode(SERVICE_CODE)
+                                                                       .withLanguage(LANGUAGE)
+                                                                       .withSeverityCode(SEVERIRY_CODE)
+                                                                       .withCommunicationBody(COMMUNICATOR_BODY));
 
 
         caseId = createCaseResult.getCaseId();
@@ -95,7 +95,7 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
         assertEquals(SERVICE_CODE, describeServicesResult.getServices().get(0).getCode());
 
         // Add communication
-        AddCommunicationToCaseResult  addCommunicationToCaseResult = support.addCommunicationToCase(new AddCommunicationToCaseRequest().withCaseId(caseId).withCommunicationBody(COMMUNICATOR_BODY));
+        AddCommunicationToCaseResult addCommunicationToCaseResult = support.addCommunicationToCase(new AddCommunicationToCaseRequest().withCaseId(caseId).withCommunicationBody(COMMUNICATOR_BODY));
         assertTrue(addCommunicationToCaseResult.getResult());
 
         // Describe communication
@@ -125,8 +125,8 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
 
         // Describe advisor check refresh status
         DescribeTrustedAdvisorCheckRefreshStatusesResult describeTrustedAdvisorCheckRefreshStatusesResult =
-                   support.describeTrustedAdvisorCheckRefreshStatuses(new DescribeTrustedAdvisorCheckRefreshStatusesRequest()
-                                                                      .withCheckIds(checkId));
+                support.describeTrustedAdvisorCheckRefreshStatuses(new DescribeTrustedAdvisorCheckRefreshStatusesRequest()
+                                                                           .withCheckIds(checkId));
         assertNotNull(describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses());
         assertEquals(1, describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses().size());
         assertEquals(checkId, describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses().get(0).getCheckId());

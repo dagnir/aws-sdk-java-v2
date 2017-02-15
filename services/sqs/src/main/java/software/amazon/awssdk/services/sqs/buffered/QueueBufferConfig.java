@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,13 +20,25 @@ import software.amazon.awssdk.AmazonClientException;
 public class QueueBufferConfig {
 
     public static final int MAX_BATCH_SIZE_DEFAULT = 10;
-
-    /** the maximum number of entries in a batch command */
-    private int maxBatchSize;
-
     /** Updated as the service now supports messages of size max 256 KiB. */
     public static final long SERVICE_MAX_BATCH_SIZE_BYTES = 256 * 1024 - 1;
-
+    /** 200 milliseconds */
+    public static final long MAX_BATCH_OPEN_MS_DEFAULT = 200;
+    /** 5 batches */
+    public static final int MAX_INFLIGHT_OUTBOUND_BATCHES_DEFAULT = 5;
+    /** 10 batches */
+    public static final int MAX_INFLIGHT_RECEIVE_BATCHES_DEFAULT = 10;
+    /** 10 batches */
+    public static final int MAX_DONE_RECEIVE_BATCHES_DEFAULT = 10;
+    /** 256 kilobytes */
+    public static final long MAX_BATCH_SIZE_BYTES_DEFAULT = SERVICE_MAX_BATCH_SIZE_BYTES;
+    /** -1, which means use the visibility timeout of the queue */
+    public static final int VISIBILITY_TIMEOUT_SECONDS_DEFAULT = -1;
+    public static final int LONGPOLL_WAIT_TIMEOUT_SECONDS_DEFAULT = 20;
+    /** true */
+    private static final boolean LONG_POLL_DEFAULT = true;
+    /** the maximum number of entries in a batch command */
+    private int maxBatchSize;
     /**
      * The maximum time (milliseconds) a send batch is held open for additional outbound requests.
      * The longer this timeout, the longer messages wait for other messages to be added to the
@@ -34,38 +46,22 @@ public class QueueBufferConfig {
      * also increases average message latency.
      */
     private long maxBatchOpenMs;
-
-    /** 200 milliseconds */
-    public static final long MAX_BATCH_OPEN_MS_DEFAULT = 200;
-
     /**
      * Should we use long polling or not?
      */
     private boolean longPoll;
-
-    /** true */
-    private static final boolean LONG_POLL_DEFAULT = true;
-
     /**
      * The maximum number of concurrent batches for each type of outbound request. The greater the
      * number, the greater the throughput that can be achieved (at the expense of consuming more
      * threads).
      */
     private int maxInflightOutboundBatches;
-
-    /** 5 batches */
-    public static final int MAX_INFLIGHT_OUTBOUND_BATCHES_DEFAULT = 5;
-
     /**
      * The maximum number of concurrent receive message batches. The greater this number, the faster
      * the queue will be pulling messages from the SQS servers (at the expense of consuming more
      * threads).
      */
     private int maxInflightReceiveBatches;
-
-    /** 10 batches */
-    public static final int MAX_INFLIGHT_RECEIVE_BATCHES_DEFAULT = 10;
-
     /**
      * If more than that number of completed receive batches are waiting in the buffer, the querying
      * for new messages will stop. The larger this number, the more messages the buffer queue will
@@ -77,18 +73,10 @@ public class QueueBufferConfig {
      * maxDoneReceiveBatches.
      */
     private int maxDoneReceiveBatches;
-
-    /** 10 batches */
-    public static final int MAX_DONE_RECEIVE_BATCHES_DEFAULT = 10;
-
     /**
      * Maximum permitted size of a SendMessage or SendMessageBatch message, in bytes
      */
     private long maxBatchSizeBytes;
-
-    /** 256 kilobytes */
-    public static final long MAX_BATCH_SIZE_BYTES_DEFAULT = SERVICE_MAX_BATCH_SIZE_BYTES;
-
     /**
      * Custom visibility timeout to use when retrieving messages from SQS. If set to a value greater
      * than zero, this timeout will override the default visibility timeout set on the SQS queue.
@@ -96,19 +84,12 @@ public class QueueBufferConfig {
      * seconds is not supported.
      */
     private int visibilityTimeoutSeconds;
-
-    /** -1, which means use the visibility timeout of the queue */
-    public static final int VISIBILITY_TIMEOUT_SECONDS_DEFAULT = -1;
-
     /**
      * Specifies the amount of time, in seconds, the receive call will block on the server waiting
      * for messages to arrive if the queue is empty when the receive call is first made. This
      * setting has no effect if long polling is disabled.
      */
     private int longPollWaitTimeoutSeconds;
-
-    public static final int LONGPOLL_WAIT_TIMEOUT_SECONDS_DEFAULT = 20;
-
     /**
      * Option to configure flushOnShutdown. Enabling this option will flush the pending requests in the
      * {@link SendQueueBuffer} during shutdown.
@@ -119,8 +100,8 @@ public class QueueBufferConfig {
     private boolean flushOnShutdown = false;
 
     public QueueBufferConfig(long maxBatchOpenMs, int maxInflightOutboundBatches, int maxInflightReceiveBatches,
-            int maxDoneReceiveBatches, boolean paramLongPoll, long maxBatchSizeBytes, int visibilityTimeout,
-            int longPollTimeout, int maxBatch) {
+                             int maxDoneReceiveBatches, boolean paramLongPoll, long maxBatchSizeBytes, int visibilityTimeout,
+                             int longPollTimeout, int maxBatch) {
         super();
         this.maxBatchOpenMs = maxBatchOpenMs;
         this.maxInflightOutboundBatches = maxInflightOutboundBatches;
@@ -135,8 +116,8 @@ public class QueueBufferConfig {
 
     public QueueBufferConfig() {
         this(MAX_BATCH_OPEN_MS_DEFAULT, MAX_INFLIGHT_OUTBOUND_BATCHES_DEFAULT, MAX_INFLIGHT_RECEIVE_BATCHES_DEFAULT,
-                MAX_DONE_RECEIVE_BATCHES_DEFAULT, LONG_POLL_DEFAULT, MAX_BATCH_SIZE_BYTES_DEFAULT,
-                VISIBILITY_TIMEOUT_SECONDS_DEFAULT, LONGPOLL_WAIT_TIMEOUT_SECONDS_DEFAULT, MAX_BATCH_SIZE_DEFAULT);
+             MAX_DONE_RECEIVE_BATCHES_DEFAULT, LONG_POLL_DEFAULT, MAX_BATCH_SIZE_BYTES_DEFAULT,
+             VISIBILITY_TIMEOUT_SECONDS_DEFAULT, LONGPOLL_WAIT_TIMEOUT_SECONDS_DEFAULT, MAX_BATCH_SIZE_DEFAULT);
     }
 
     /** copy constructor */
@@ -156,10 +137,10 @@ public class QueueBufferConfig {
     @Override
     public String toString() {
         return "QueueBufferConfig [maxBatchSize=" + maxBatchSize + ", maxBatchOpenMs=" + maxBatchOpenMs + ", longPoll="
-                + longPoll + ", maxInflightOutboundBatches=" + maxInflightOutboundBatches
-                + ", maxInflightReceiveBatches=" + maxInflightReceiveBatches + ", maxDoneReceiveBatches="
-                + maxDoneReceiveBatches + ", maxBatchSizeBytes=" + maxBatchSizeBytes + ", visibilityTimeoutSeconds="
-                + visibilityTimeoutSeconds + ", longPollWaitTimeoutSeconds=" + longPollWaitTimeoutSeconds + "]";
+               + longPoll + ", maxInflightOutboundBatches=" + maxInflightOutboundBatches
+               + ", maxInflightReceiveBatches=" + maxInflightReceiveBatches + ", maxDoneReceiveBatches="
+               + maxDoneReceiveBatches + ", maxBatchSizeBytes=" + maxBatchSizeBytes + ", visibilityTimeoutSeconds="
+               + visibilityTimeoutSeconds + ", longPollWaitTimeoutSeconds=" + longPollWaitTimeoutSeconds + "]";
     }
 
     /**
@@ -329,7 +310,7 @@ public class QueueBufferConfig {
      * Maximum permitted size of a SendMessage or SendMessageBatch message, in bytes. This setting
      * is also enforced on the server, and if this client submits a request of a size larger than
      * the server can support, the server will reject the request.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if the size being set is greater than the service allowed size for message body.
      */
@@ -337,7 +318,7 @@ public class QueueBufferConfig {
         if (maxBatchSizeBytes > SERVICE_MAX_BATCH_SIZE_BYTES) {
             throw new IllegalArgumentException(
                     "Maximum Size of the message cannot be greater than the allowed limit of "
-                            + SERVICE_MAX_BATCH_SIZE_BYTES + " bytes");
+                    + SERVICE_MAX_BATCH_SIZE_BYTES + " bytes");
         }
         this.maxBatchSizeBytes = maxBatchSizeBytes;
     }
@@ -346,7 +327,7 @@ public class QueueBufferConfig {
      * Maximum permitted size of a SendMessage or SendMessageBatch message, in bytes. This setting
      * is also enforced on the server, and if this client submits a request of a size larger than
      * the server can support, the server will reject the request.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if the size being set is greater than the service allowed size for message body.
      */
@@ -391,8 +372,8 @@ public class QueueBufferConfig {
      * for messages to arrive if the queue is empty when the receive call is first made. This
      * setting has no effect if long polling is disabled.
      */
-    public void setLongPollWaitTimeoutSeconds(int longPollWaitTimeoutSeconds) {
-        this.longPollWaitTimeoutSeconds = longPollWaitTimeoutSeconds;
+    public int getLongPollWaitTimeoutSeconds() {
+        return longPollWaitTimeoutSeconds;
     }
 
     /**
@@ -400,8 +381,8 @@ public class QueueBufferConfig {
      * for messages to arrive if the queue is empty when the receive call is first made. This
      * setting has no effect if long polling is disabled.
      */
-    public int getLongPollWaitTimeoutSeconds() {
-        return longPollWaitTimeoutSeconds;
+    public void setLongPollWaitTimeoutSeconds(int longPollWaitTimeoutSeconds) {
+        this.longPollWaitTimeoutSeconds = longPollWaitTimeoutSeconds;
     }
 
     /**
@@ -477,7 +458,7 @@ public class QueueBufferConfig {
     /**
      * this method checks the config for validity. If the config is deemed to be invalid, an
      * informative exception is thrown.
-     * 
+     *
      * @throws AmazonClientException
      *             with a message explaining why the config was invalid
      */

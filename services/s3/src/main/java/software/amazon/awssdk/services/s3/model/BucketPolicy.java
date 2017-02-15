@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
 
 /**
@@ -45,11 +44,11 @@ public class BucketPolicy implements Serializable {
      * Gets the raw policy JSON text as returned by Amazon S3. If no policy
      * has been applied to the specified bucket, the policy text will be
      * null.
-     * 
+     *
      * @return The raw policy JSON text as returned by Amazon S3.
      *         If no policy has been applied to the specified bucket, this method returns
      *         null policy text.
-     *         
+     *
      * @see BucketPolicy#setPolicyText(String)
      */
     public String getPolicyText() {
@@ -63,8 +62,8 @@ public class BucketPolicy implements Serializable {
      *
      * @param policyText
      *            The raw policy JSON text.
-     *            
-     * @see BucketPolicy#getPolicyText()           
+     *
+     * @see BucketPolicy#getPolicyText()
      */
     public void setPolicyText(String policyText) {
         this.policyText = policyText;

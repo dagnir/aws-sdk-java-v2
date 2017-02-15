@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer.internal;
 
 import java.util.concurrent.ExecutionException;
@@ -29,10 +30,10 @@ import software.amazon.awssdk.services.s3.transfer.model.CopyResult;
 public class CopyImpl extends AbstractTransfer implements Copy {
 
     public CopyImpl(String description, TransferProgress transferProgress,
-            software.amazon.awssdk.event.ProgressListenerChain progressListenerChain,
-            TransferStateChangeListener stateChangeListener) {
+                    software.amazon.awssdk.event.ProgressListenerChain progressListenerChain,
+                    TransferStateChangeListener stateChangeListener) {
         super(description, transferProgress, progressListenerChain,
-                stateChangeListener);
+              stateChangeListener);
     }
 
     /**
@@ -54,7 +55,7 @@ public class CopyImpl extends AbstractTransfer implements Copy {
      *             complete.
      */
     public CopyResult waitForCopyResult() throws AmazonClientException,
-            AmazonServiceException, InterruptedException {
+                                                 AmazonServiceException, InterruptedException {
         try {
             CopyResult result = null;
             while (!monitor.isDone() || result == null) {

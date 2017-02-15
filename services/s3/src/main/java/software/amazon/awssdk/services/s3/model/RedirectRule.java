@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
 
 /**
@@ -60,17 +62,17 @@ public class RedirectRule implements Serializable {
     }
 
     /**
-     * Set the host name to use in the redirect request.
-     */
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
-    }
-
-    /**
      * Return the host name to use in the redirect request.
      */
     public String getHostName() {
         return hostName;
+    }
+
+    /**
+     * Set the host name to use in the redirect request.
+     */
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
     /**
@@ -83,17 +85,17 @@ public class RedirectRule implements Serializable {
     }
 
     /**
-     * Set the object prefix key to use in the redirect request.
-     */
-    public void setReplaceKeyPrefixWith(String replaceKeyPrefixWith) {
-        this.replaceKeyPrefixWith = replaceKeyPrefixWith;
-    }
-
-    /**
      * Return the object prefix key to use in the redirect request.
      */
     public String getReplaceKeyPrefixWith() {
         return replaceKeyPrefixWith;
+    }
+
+    /**
+     * Set the object prefix key to use in the redirect request.
+     */
+    public void setReplaceKeyPrefixWith(String replaceKeyPrefixWith) {
+        this.replaceKeyPrefixWith = replaceKeyPrefixWith;
     }
 
     /**
@@ -106,17 +108,17 @@ public class RedirectRule implements Serializable {
     }
 
     /**
-     * Set the specific key to use in the redirect request.
-     */
-    public void setReplaceKeyWith(String replaceKeyWith) {
-        this.replaceKeyWith = replaceKeyWith;
-    }
-
-    /**
      * Return the specific key to use in the redirect request.
      */
     public String getReplaceKeyWith() {
         return replaceKeyWith;
+    }
+
+    /**
+     * Set the specific key to use in the redirect request.
+     */
+    public void setReplaceKeyWith(String replaceKeyWith) {
+        this.replaceKeyWith = replaceKeyWith;
     }
 
     /**
@@ -129,17 +131,17 @@ public class RedirectRule implements Serializable {
     }
 
     /**
-     * Set the HTTP code to use in the redirect response.
-     */
-    public void setHttpRedirectCode(String httpRedirectCode) {
-        this.httpRedirectCode = httpRedirectCode;
-    }
-
-    /**
      * Return the HTTP code to use in the redirect response.
      */
     public String getHttpRedirectCode() {
         return httpRedirectCode;
+    }
+
+    /**
+     * Set the HTTP code to use in the redirect response.
+     */
+    public void setHttpRedirectCode(String httpRedirectCode) {
+        this.httpRedirectCode = httpRedirectCode;
     }
 
     /**

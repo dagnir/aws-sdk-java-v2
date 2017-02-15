@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,11 +39,11 @@ class TimingInfoFullSupport extends TimingInfo {
     /**
      * A private ctor to facilitate the deprecation of using millisecond and
      * migration to using nanosecond for timing measurement.
-     * 
+     *
      * @param startEpochTimeMilli start time since epoch in millisecond
      * @param startTimeNano start time in nanosecond
      * @param endTimeNano end time in nanosecond; or null if not known
-     * 
+     *
      * @see TimingInfo#startTimingFullSupport()
      * @see TimingInfo#startTimingFullSupport(long)
      * @see TimingInfo#newTimingInfoFullSupport(long, long)
@@ -64,8 +64,8 @@ class TimingInfoFullSupport extends TimingInfo {
             timings.add(ti);
         } else {
             LogFactory.getLog(getClass()).debug(
-                "Skip submeasurement timing info with no end time for "
-                + subMeasurementName);
+                    "Skip submeasurement timing info with no end time for "
+                    + subMeasurementName);
         }
     }
 
@@ -79,7 +79,7 @@ class TimingInfoFullSupport extends TimingInfo {
 
         List<TimingInfo> timings = subMeasurementsByName.get(subMesurementName);
         if (index < 0 || timings == null || timings.size() == 0
-                || index >= timings.size()) {
+            || index >= timings.size()) {
             return null;
         }
 

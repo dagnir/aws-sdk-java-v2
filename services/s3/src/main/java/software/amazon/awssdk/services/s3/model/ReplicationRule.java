@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -87,6 +88,17 @@ public class ReplicationRule implements Serializable {
      * @param status
      *            the status of the replication rule.
      */
+    public void setStatus(ReplicationRuleStatus status) {
+        setStatus(status.getStatus());
+    }
+
+    /**
+     * Sets the status of this replication rule. Valid values are Enabled,
+     * Disabled. The rule will be applied only if the status is Enabled.
+     *
+     * @param status
+     *            the status of the replication rule.
+     */
     public void setStatus(String status) {
         this.status = status;
     }
@@ -103,17 +115,6 @@ public class ReplicationRule implements Serializable {
     public ReplicationRule withStatus(String status) {
         setStatus(status);
         return this;
-    }
-
-    /**
-     * Sets the status of this replication rule. Valid values are Enabled,
-     * Disabled. The rule will be applied only if the status is Enabled.
-     *
-     * @param status
-     *            the status of the replication rule.
-     */
-    public void setStatus(ReplicationRuleStatus status) {
-        setStatus(status.getStatus());
     }
 
     /**

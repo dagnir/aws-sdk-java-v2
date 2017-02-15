@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -32,14 +47,13 @@ import software.amazon.awssdk.test.util.IndexValues;
 
 @Category(S3Categories.Slow.class)
 public class S3RangeGetCompatIntegrationTest {
+    private static final String TEST_BUCKET = tempBucketName(S3RangeGetCompatIntegrationTest.class);
     /**
      * True to clean up the temp S3 objects created during test; false
      * otherwise.
      */
     private static boolean cleanup = true;
     private static boolean get_only = false;
-
-    private static final String TEST_BUCKET = tempBucketName(S3RangeGetCompatIntegrationTest.class);
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -56,10 +70,10 @@ public class S3RangeGetCompatIntegrationTest {
             s3.shutdown();
         }
     }
-    
+
 
     private void doTestBackwardCompatibility(EncryptionMaterials kekMaterial,
-            CryptoStorageMode storageMode, CryptoMode readMode, CryptoMode writeMode)
+                                             CryptoStorageMode storageMode, CryptoMode readMode, CryptoMode writeMode)
             throws Exception {
         CryptoConfiguration configRead = new CryptoConfiguration().withCryptoMode(readMode);
 
@@ -69,29 +83,29 @@ public class S3RangeGetCompatIntegrationTest {
                 configRead
         );
         AmazonS3Client s3Writer = writeMode == CryptoMode.EncryptionOnly
-                ? new AmazonS3EncryptionClient(
-                        awsTestCredentials(), 
-                        kekMaterial, 
-                        new CryptoConfiguration().withStorageMode(storageMode))
-                : new AmazonS3EncryptionClient(
-                        awsTestCredentials(),
-                        kekMaterial,
-                        new CryptoConfiguration()
-                            .withCryptoMode(writeMode)
-                            .withStorageMode(storageMode)
-        );
+                                  ? new AmazonS3EncryptionClient(
+                awsTestCredentials(),
+                kekMaterial,
+                new CryptoConfiguration().withStorageMode(storageMode))
+                                  : new AmazonS3EncryptionClient(
+                                          awsTestCredentials(),
+                                          kekMaterial,
+                                          new CryptoConfiguration()
+                                                  .withCryptoMode(writeMode)
+                                                  .withStorageMode(storageMode)
+                                  );
         // A S3 raw client used to inspect the raw data
         AmazonS3Client s3 = new AmazonS3Client(awsTestCredentials());
         final int pt_size = 100;
         final String bucketName = TEST_BUCKET;
         String key;
-        
+
         String plaintext = null;
         if (get_only) {
-            key = "encrypted-140325-012844-v2.txt";    
+            key = "encrypted-140325-012844-v2.txt";
         } else {
             String yymmdd_hhmmss = new SimpleDateFormat("yyMMdd-hhmmss").format(new Date());
-            key = "encrypted-" + yymmdd_hhmmss + "-" + writeMode +".txt";
+            key = "encrypted-" + yymmdd_hhmmss + "-" + writeMode + ".txt";
             System.err.println(bucketName + "/" + key);
             File file = generateRandomAsciiFile(pt_size);
             plaintext = FileUtils.readFileToString(file);
@@ -110,48 +124,51 @@ public class S3RangeGetCompatIntegrationTest {
                 {90, 116},  // last 10 bytes
                 {90, 120},  // last 10 bytes
         };
-        for (int[] test_range: test_ranges) {
+        for (int[] test_range : test_ranges) {
             int beginIndex = test_range[0];
             int endIndex = test_range[1];
             GetObjectRequest req = new GetObjectRequest(bucketName, key).withRange(beginIndex, endIndex);
             S3Object s3object;
             try {
                 s3object = s3Reader.getObject(req);
-                if (CryptoMode.StrictAuthenticatedEncryption.equals(readMode))
+                if (CryptoMode.StrictAuthenticatedEncryption.equals(readMode)) {
                     fail();
-            } catch(SecurityException ex) {
-                if (CryptoMode.StrictAuthenticatedEncryption.equals(readMode))
+                }
+            } catch (SecurityException ex) {
+                if (CryptoMode.StrictAuthenticatedEncryption.equals(readMode)) {
                     continue;
-                else
+                } else {
                     throw ex;
+                }
             }
             long instanceLen = s3object.getObjectMetadata().getInstanceLength();
             assertTrue(pt_size <= instanceLen);
             byte[] retrieved = IOUtils.toByteArray(s3object.getObjectContent());
             int expectedLen;
-            
+
             if (endIndex < beginIndex) {
                 expectedLen = plaintext.length();
                 beginIndex = 0;
             } else {
                 expectedLen = Math.min(plaintext.length() - beginIndex,
-                    Math.max(0, endIndex - beginIndex + 1));
+                                       Math.max(0, endIndex - beginIndex + 1));
             }
-//            System.out.println("retrieved.length=" + retrieved.length);
+            //            System.out.println("retrieved.length=" + retrieved.length);
             assertTrue(expectedLen == retrieved.length);
             if (retrieved.length > 0) {
                 String result = new String(retrieved, UTF8);
                 System.out.println(result);
                 if (!get_only) {
-                    String expected = plaintext.substring(beginIndex, beginIndex+expectedLen); 
+                    String expected = plaintext.substring(beginIndex, beginIndex + expectedLen);
                     assertEquals(expected, result);
                 }
             }
         }
         if (cleanup) {
             s3.deleteObject(bucketName, key);
-            if (storageMode == CryptoStorageMode.InstructionFile)
+            if (storageMode == CryptoStorageMode.InstructionFile) {
                 s3.deleteObject(bucketName, key + ".instruction");
+            }
         }
         s3.shutdown();
         s3Reader.shutdown();
@@ -187,18 +204,18 @@ public class S3RangeGetCompatIntegrationTest {
             readCryptoMode=AE, writeCryptoMode=AE, storageMode=ObjectMetadata, kekMaterial: PKI
          */
         for (int[] indexes : new IndexValues(storageModes.length, modes.length,
-                modes.length, kekMaterials.length)) {
+                                             modes.length, kekMaterials.length)) {
             int i = 0;
             CryptoStorageMode storage = storageModes[indexes[i++]];
             CryptoMode readMode = modes[indexes[i++]];
             CryptoMode writeMode = modes[indexes[i++]];
             EncryptionMaterials kekMaterial = kekMaterials[indexes[i++]];
             System.err.println("readCryptoMode=" + readMode
-                    + ", writeCryptoMode=" + writeMode
-                    + ", storageMode=" + storage
-                    + ", kekMaterial: "
-                    + (kekMaterial.getKeyPair() == null ? "SymmetricKey"
-                            : "PKI"));
+                               + ", writeCryptoMode=" + writeMode
+                               + ", storageMode=" + storage
+                               + ", kekMaterial: "
+                               + (kekMaterial.getKeyPair() == null ? "SymmetricKey"
+                                                                   : "PKI"));
             doTestBackwardCompatibility(kekMaterial, storage, readMode, writeMode);
         }
     }

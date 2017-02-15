@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -32,18 +32,6 @@ public class STSProfileCredentialsServiceProvider implements AWSCredentialsProvi
         this.roleInfo = roleInfo;
     }
 
-    private AWSCredentialsProvider getProfileCredentialsProvider() {
-        if (this.profileCredentialsProvider == null) {
-            synchronized (STSProfileCredentialsServiceProvider.class) {
-                if (this.profileCredentialsProvider == null) {
-                    this.profileCredentialsProvider = getProfileCredentialService()
-                            .getAssumeRoleCredentialsProvider(roleInfo);
-                }
-            }
-        }
-        return this.profileCredentialsProvider;
-    }
-
     /**
      * Only called once per creation of each profile credential provider so we don't bother with any
      * double checked locking.
@@ -52,7 +40,7 @@ public class STSProfileCredentialsServiceProvider implements AWSCredentialsProvi
         if (STS_CREDENTIALS_SERVICE == null) {
             try {
                 STS_CREDENTIALS_SERVICE = (ProfileCredentialsService) Class.forName(CLASS_NAME)
-                        .newInstance();
+                                                                           .newInstance();
             } catch (ClassNotFoundException ex) {
                 throw new SdkClientException(
                         "To use assume role profiles the aws-java-sdk-sts module must be on the class path.",
@@ -66,6 +54,17 @@ public class STSProfileCredentialsServiceProvider implements AWSCredentialsProvi
         return STS_CREDENTIALS_SERVICE;
     }
 
+    private AWSCredentialsProvider getProfileCredentialsProvider() {
+        if (this.profileCredentialsProvider == null) {
+            synchronized (STSProfileCredentialsServiceProvider.class) {
+                if (this.profileCredentialsProvider == null) {
+                    this.profileCredentialsProvider = getProfileCredentialService()
+                            .getAssumeRoleCredentialsProvider(roleInfo);
+                }
+            }
+        }
+        return this.profileCredentialsProvider;
+    }
 
     @Override
     public AWSCredentials getCredentials() {

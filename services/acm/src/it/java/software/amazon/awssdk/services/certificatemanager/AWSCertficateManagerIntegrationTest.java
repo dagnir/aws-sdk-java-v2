@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.certificatemanager.model.ListCertificates
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 
 public class AWSCertficateManagerIntegrationTest extends
-        AWSIntegrationTestBase {
+                                                 AWSIntegrationTestBase {
 
     private static AWSCertificateManager client;
 
@@ -38,7 +38,7 @@ public class AWSCertficateManagerIntegrationTest extends
     @Test
     public void list_certificates() {
         ListCertificatesResult result = client.listCertificates(new
-                ListCertificatesRequest());
+                                                                        ListCertificatesRequest());
         Assert.assertTrue(result.getCertificateSummaryList().size() >= 0);
     }
 

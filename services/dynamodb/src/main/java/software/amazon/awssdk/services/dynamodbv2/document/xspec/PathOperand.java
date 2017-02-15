@@ -1,18 +1,19 @@
 /*
- * Copyright 2015-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.document.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.document.xspec;
 
 import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.annotation.Immutable;
@@ -29,7 +30,7 @@ import software.amazon.awssdk.annotation.Immutable;
  * refer to attributes of specific data types. You can also use
  * {@link ExpressionSpecBuilder#attribute(String)} to instantiate a path operand
  * with an unspecified data type.
- * 
+ *
  * @see ExpressionSpecBuilder
  */
 @Beta
@@ -96,7 +97,7 @@ public class PathOperand extends Operand {
     public final String toString() {
         return pathString;
     }
-    
+
     @Override
     public final int hashCode() {
         return pathString.hashCode();
@@ -108,9 +109,10 @@ public class PathOperand extends Operand {
      */
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof PathOperand))
+        if (!(o instanceof PathOperand)) {
             return false;
-        PathOperand that = (PathOperand)o;
+        }
+        PathOperand that = (PathOperand) o;
         return this.getPath().equals(that.getPath());
     }
 }

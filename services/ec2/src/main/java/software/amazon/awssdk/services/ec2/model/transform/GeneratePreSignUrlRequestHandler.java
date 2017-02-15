@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -48,7 +48,9 @@ public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler 
             CopySnapshotRequest originalCopySnapshotRequest = (CopySnapshotRequest) originalRequest;
 
             // Return if presigned url is already specified by the user.
-            if (originalCopySnapshotRequest.getPresignedUrl() != null) return;
+            if (originalCopySnapshotRequest.getPresignedUrl() != null) {
+                return;
+            }
 
             String serviceName = "ec2";
 
@@ -66,9 +68,9 @@ public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler 
 
             URI endPointDestination = request.getEndpoint();
             String destinationRegion = originalCopySnapshotRequest
-                    .getDestinationRegion() != null ? originalCopySnapshotRequest
-                    .getDestinationRegion() : AwsHostNameUtils
-                    .parseRegionName(endPointDestination.getHost(), serviceName);
+                                               .getDestinationRegion() != null ? originalCopySnapshotRequest
+                                               .getDestinationRegion() : AwsHostNameUtils
+                                               .parseRegionName(endPointDestination.getHost(), serviceName);
 
             URI endPointSource = createEndpoint(sourceRegion, serviceName);
 
@@ -88,7 +90,7 @@ public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler 
             originalCopySnapshotRequest.setDestinationRegion(destinationRegion);
             request.addParameter("DestinationRegion", StringUtils
                     .fromString(originalCopySnapshotRequest
-                            .getDestinationRegion()));
+                                        .getDestinationRegion()));
             request.addParameter("PresignedUrl", StringUtils
                     .fromString(originalCopySnapshotRequest.getPresignedUrl()));
         }
@@ -116,7 +118,7 @@ public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler 
 
         URI endpoint = request.getEndpoint();
         String uri = SdkHttpUtils.appendUri(endpoint.toString(),
-                request.getResourcePath(), true);
+                                            request.getResourcePath(), true);
         String encodedParams = SdkHttpUtils.encodeParameters(request);
 
         if (encodedParams != null) {
@@ -133,7 +135,7 @@ public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler 
 
         if (region == null) {
             throw new AmazonClientException("{" + serviceName + ", " + regionName + "} was not "
-                    + "found in region metadata. Update to latest version of SDK and try again.");
+                                            + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
         return toURI(region.getServiceEndpoint(serviceName));

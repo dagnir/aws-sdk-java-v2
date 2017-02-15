@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -36,11 +36,12 @@ public class TableKeysAndAttributes {
     private boolean consistentRead;
 
     private String projectionExpression;
-    private Map<String,String> nameMap;
+    private Map<String, String> nameMap;
 
     public TableKeysAndAttributes(String tableName) {
-        if (tableName == null || tableName.trim().length() == 0)
+        if (tableName == null || tableName.trim().length() == 0) {
             throw new IllegalArgumentException("table name must not be null or empty");
+        }
         this.tableName = tableName;
     }
 
@@ -58,17 +59,17 @@ public class TableKeysAndAttributes {
      * schema of the table.
      */
     public TableKeysAndAttributes withPrimaryKeys(PrimaryKey... primaryKeys) {
-        if (primaryKeys == null)
+        if (primaryKeys == null) {
             this.primaryKeys = null;
-        else {
+        } else {
             Set<String> pkNameSet = null;
             for (PrimaryKey pk : primaryKeys) {
-                if (pkNameSet == null)
+                if (pkNameSet == null) {
                     pkNameSet = pk.getComponentNameSet();
-                else {
+                } else {
                     if (!pkNameSet.equals(pk.getComponentNameSet())) {
                         throw new IllegalArgumentException(
-                            "primary key attribute names must be consistent for the specified primary keys");
+                                "primary key attribute names must be consistent for the specified primary keys");
                     }
                 }
             }
@@ -82,18 +83,20 @@ public class TableKeysAndAttributes {
      * @param hashKeyName hash-only key name
      * @param hashKeyValues a list of hash key values
      */
-    public TableKeysAndAttributes withHashOnlyKeys(String hashKeyName, Object ... hashKeyValues) {
-        if (hashKeyName == null)
+    public TableKeysAndAttributes withHashOnlyKeys(String hashKeyName, Object... hashKeyValues) {
+        if (hashKeyName == null) {
             throw new IllegalArgumentException();
+        }
         PrimaryKey[] primaryKeys = new PrimaryKey[hashKeyValues.length];
-        for (int i=0; i < hashKeyValues.length; i++)
+        for (int i = 0; i < hashKeyValues.length; i++) {
             primaryKeys[i] = new PrimaryKey(hashKeyName, hashKeyValues[i]);
+        }
         return withPrimaryKeys(primaryKeys);
     }
 
     /**
      * Used to specify multiple hash-and-range primary keys.
-     * 
+     *
      * @param hashKeyName
      *            hash key name
      * @param rangeKeyName
@@ -102,20 +105,23 @@ public class TableKeysAndAttributes {
      *            a list of alternating hash key value and range key value
      */
     public TableKeysAndAttributes withHashAndRangeKeys(
-            String hashKeyName, String rangeKeyName, 
+            String hashKeyName, String rangeKeyName,
             Object... alternatingHashAndRangeKeyValues) {
-        if (hashKeyName == null)
+        if (hashKeyName == null) {
             throw new IllegalArgumentException("hash key name must be specified");
-        if (rangeKeyName == null)
+        }
+        if (rangeKeyName == null) {
             throw new IllegalArgumentException("range key name must be specified");
-        if (alternatingHashAndRangeKeyValues.length % 2 != 0)
+        }
+        if (alternatingHashAndRangeKeyValues.length % 2 != 0) {
             throw new IllegalArgumentException("number of hash and range key values must be the same");
+        }
         final int len = alternatingHashAndRangeKeyValues.length / 2;
         PrimaryKey[] primaryKeys = new PrimaryKey[len];
-        for (int i=0; i < alternatingHashAndRangeKeyValues.length; i += 2) {
+        for (int i = 0; i < alternatingHashAndRangeKeyValues.length; i += 2) {
             primaryKeys[i >> 1] = new PrimaryKey(
-                hashKeyName, alternatingHashAndRangeKeyValues[i],
-                rangeKeyName, alternatingHashAndRangeKeyValues[i+1]);
+                    hashKeyName, alternatingHashAndRangeKeyValues[i],
+                    rangeKeyName, alternatingHashAndRangeKeyValues[i + 1]);
         }
         return withPrimaryKeys(primaryKeys);
     }
@@ -127,8 +133,9 @@ public class TableKeysAndAttributes {
      */
     public TableKeysAndAttributes addPrimaryKey(PrimaryKey primaryKey) {
         if (primaryKey != null) {
-            if (primaryKeys == null)
+            if (primaryKeys == null) {
                 primaryKeys = new ArrayList<PrimaryKey>();
+            }
             checkConsistency(primaryKey);
             this.primaryKeys.add(primaryKey);
         }
@@ -139,16 +146,17 @@ public class TableKeysAndAttributes {
         if (this.primaryKeys.size() > 0) {
             // use the first one as the representative
             final Set<String> nameSet = primaryKeys.get(0).getComponentNameSet();
-            if (!nameSet.equals(primaryKey.getComponentNameSet()))
+            if (!nameSet.equals(primaryKey.getComponentNameSet())) {
                 throw new IllegalArgumentException(
-                    "primary key must be added with consistent key attribute name(s)");
+                        "primary key must be added with consistent key attribute name(s)");
+            }
         }
     }
 
     /**
      * Adds a hash-only primary key to be included in the batch get-item
      * operation.
-     * 
+     *
      * @param hashKeyName name of the hash key attribute name
      * @param hashKeyValue name of the hash key value
      * @return the current instance for method chaining purposes
@@ -162,14 +170,14 @@ public class TableKeysAndAttributes {
     /**
      * Adds multiple hash-only primary keys to be included in the batch get-item
      * operation.
-     * 
+     *
      * @param hashKeyName name of the hash key attribute name
      * @param hashKeyValues multiple hash key values
      * @return the current instance for method chaining purposes
      */
     public TableKeysAndAttributes addHashOnlyPrimaryKeys(String hashKeyName,
-            Object ... hashKeyValues) {
-        for (Object hashKeyValue: hashKeyValues) {
+                                                         Object... hashKeyValues) {
+        for (Object hashKeyValue : hashKeyValues) {
             this.addPrimaryKey(new PrimaryKey(hashKeyName, hashKeyValue));
         }
         return this;
@@ -178,7 +186,7 @@ public class TableKeysAndAttributes {
     /**
      * Adds multiple hash-and-range primary keys to be included in the batch
      * get-item operation.
-     * 
+     *
      * @param hashKeyName
      *            name of the hash key attribute name
      * @param rangeKeyName
@@ -190,19 +198,19 @@ public class TableKeysAndAttributes {
      */
     public TableKeysAndAttributes addHashAndRangePrimaryKeys(
             String hashKeyName, String rangeKeyName,
-            Object ... alternatingHashRangeKeyValues) {
+            Object... alternatingHashRangeKeyValues) {
         if (alternatingHashRangeKeyValues.length % 2 != 0) {
             throw new IllegalArgumentException(
-                "The multiple hash and range key values must alternate");
+                    "The multiple hash and range key values must alternate");
         }
-        for (int i =0; i < alternatingHashRangeKeyValues.length; i+=2) {
+        for (int i = 0; i < alternatingHashRangeKeyValues.length; i += 2) {
             Object hashKeyValue = alternatingHashRangeKeyValues[i];
-            Object rangeKeyValue = alternatingHashRangeKeyValues[i+1];
+            Object rangeKeyValue = alternatingHashRangeKeyValues[i + 1];
             this.addPrimaryKey(
-                new PrimaryKey()
-                    .addComponent(hashKeyName, hashKeyValue)
-                    .addComponent(rangeKeyName, rangeKeyValue)
-                );
+                    new PrimaryKey()
+                            .addComponent(hashKeyName, hashKeyValue)
+                            .addComponent(rangeKeyName, rangeKeyValue)
+                              );
         }
         return this;
     }
@@ -210,7 +218,7 @@ public class TableKeysAndAttributes {
     /**
      * Adds a primary key (that consists of a hash-key and a range-key) to be
      * included in the batch get-item operation.
-     * 
+     *
      * @param hashKeyName hash key attribute name
      * @param hashKeyValue hash key value
      * @param rangeKeyName range key attribute name
@@ -221,15 +229,15 @@ public class TableKeysAndAttributes {
             String hashKeyName, Object hashKeyValue,
             String rangeKeyName, Object rangeKeyValue) {
         this.addPrimaryKey(
-            new PrimaryKey()
-                .addComponent(hashKeyName, hashKeyValue)
-                .addComponent(rangeKeyName, rangeKeyValue));
+                new PrimaryKey()
+                        .addComponent(hashKeyName, hashKeyValue)
+                        .addComponent(rangeKeyName, rangeKeyValue));
         return this;
     }
 
     /** @deprecated by {@link #withAttributeNames(String...)}. */
     @Deprecated
-    public TableKeysAndAttributes withAttrbuteNames(String ... attributeNames) {
+    public TableKeysAndAttributes withAttrbuteNames(String... attributeNames) {
         return withAttributeNames(attributeNames);
     }
 
@@ -242,26 +250,28 @@ public class TableKeysAndAttributes {
     /**
      * Used to specify the attributes to be retrieved in each item returned
      * from the batch get-item operation.
-     * 
+     *
      * @param attributeNames names of the attributes to be retrieved in each
      * item returned from the batch get-item operation.
      * @return the current instance for method chaining purposes
      */
-    public TableKeysAndAttributes withAttributeNames(String ... attributeNames) {
-        if (attributeNames == null)
+    public TableKeysAndAttributes withAttributeNames(String... attributeNames) {
+        if (attributeNames == null) {
             this.attributeNames = null;
-        else
+        } else {
             this.attributeNames = Collections.unmodifiableSet(
-                new LinkedHashSet<String>(Arrays.asList(attributeNames)));
+                    new LinkedHashSet<String>(Arrays.asList(attributeNames)));
+        }
         return this;
     }
 
     public TableKeysAndAttributes withAttributeNames(List<String> attributeNames) {
-        if (attributeNames == null)
+        if (attributeNames == null) {
             this.attributeNames = null;
-        else
+        } else {
             this.attributeNames = Collections.unmodifiableSet(
                     new LinkedHashSet<String>(attributeNames));
+        }
         return this;
     }
 
@@ -296,8 +306,8 @@ public class TableKeysAndAttributes {
     }
 
     public TableKeysAndAttributes withNameMap(Map<String, String> nameMap) {
-        this.nameMap = nameMap == null 
-            ? null : Collections.unmodifiableMap(new LinkedHashMap<String, String>(nameMap));
+        this.nameMap = nameMap == null
+                       ? null : Collections.unmodifiableMap(new LinkedHashMap<String, String>(nameMap));
         return this;
     }
 }

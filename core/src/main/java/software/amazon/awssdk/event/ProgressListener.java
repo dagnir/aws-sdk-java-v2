@@ -29,19 +29,7 @@ import software.amazon.awssdk.SdkClientException;
  * @see ProgressEvent
  */
 public interface ProgressListener {
-	public static final ProgressListener NOOP = new NoOpProgressListener();
-
-    static class NoOpProgressListener implements ProgressListener, DeliveryMode {
-
-        @Override
-        public boolean isSyncCallSafe() {
-            return true;
-        }
-
-        @Override
-        public void progressChanged(ProgressEvent progressEvent) {
-        }
-    }
+    public static final ProgressListener NOOP = new NoOpProgressListener();
 
     /**
      * Called when progress has changed, such as additional bytes transferred,
@@ -64,6 +52,18 @@ public interface ProgressListener {
      */
     public void progressChanged(ProgressEvent progressEvent);
 
+    static class NoOpProgressListener implements ProgressListener, DeliveryMode {
+
+        @Override
+        public boolean isSyncCallSafe() {
+            return true;
+        }
+
+        @Override
+        public void progressChanged(ProgressEvent progressEvent) {
+        }
+    }
+
     /**
      * A utility class for capturing and reporting the first exception thrown by
      * a given progress listener. Note once an exception is thrown by the
@@ -76,46 +76,16 @@ public interface ProgressListener {
         private volatile Throwable cause;
 
         public ExceptionReporter(ProgressListener listener) {
-            if (listener == null)
+            if (listener == null) {
                 throw new IllegalArgumentException();
+            }
             this.listener = listener;
             if (listener instanceof DeliveryMode) {
                 DeliveryMode cs = (DeliveryMode) listener;
                 syncCallSafe = cs.isSyncCallSafe();
-            } else
+            } else {
                 syncCallSafe = false;
-        }
-
-        /**
-         * Delivers the progress event to the underlying listener but only if
-         * there has not been an exception previously thrown by the listener.
-         * <p>
-         * {@inheritDoc}
-         */
-        @Override public void progressChanged(ProgressEvent progressEvent) {
-            if (cause != null)
-                return;
-            try {
-                this.listener.progressChanged(progressEvent);
-            } catch(Throwable t) {
-                cause = t;
             }
-        }
-
-        /**
-         * Throws the underlying exception, if any, as an
-         * {@link SdkClientException}; or do nothing otherwise.
-         */
-        public void throwExceptionIfAny() {
-            if (cause != null)
-                throw new SdkClientException(cause);
-        }
-
-        /**
-         * Returns the underlying exception, if any; or null otherwise.
-         */
-        public Throwable getCause() {
-            return cause;
         }
 
         /**
@@ -126,6 +96,44 @@ public interface ProgressListener {
             return new ExceptionReporter(listener);
         }
 
-        @Override public boolean isSyncCallSafe() { return syncCallSafe; }
+        /**
+         * Delivers the progress event to the underlying listener but only if
+         * there has not been an exception previously thrown by the listener.
+         * <p>
+         * {@inheritDoc}
+         */
+        @Override
+        public void progressChanged(ProgressEvent progressEvent) {
+            if (cause != null) {
+                return;
+            }
+            try {
+                this.listener.progressChanged(progressEvent);
+            } catch (Throwable t) {
+                cause = t;
+            }
+        }
+
+        /**
+         * Throws the underlying exception, if any, as an
+         * {@link SdkClientException}; or do nothing otherwise.
+         */
+        public void throwExceptionIfAny() {
+            if (cause != null) {
+                throw new SdkClientException(cause);
+            }
+        }
+
+        /**
+         * Returns the underlying exception, if any; or null otherwise.
+         */
+        public Throwable getCause() {
+            return cause;
+        }
+
+        @Override
+        public boolean isSyncCallSafe() {
+            return syncCallSafe;
+        }
     }
 }

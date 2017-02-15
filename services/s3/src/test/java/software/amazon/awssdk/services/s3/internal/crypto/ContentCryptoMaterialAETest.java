@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
@@ -25,7 +40,7 @@ public class ContentCryptoMaterialAETest {
     }
 
     private void doTestMatDescAE(Map<String, String> kekMatDesc,
-            EncryptionMaterialsAccessor accessor) throws Exception {
+                                 EncryptionMaterialsAccessor accessor) throws Exception {
         Cipher cipher = Cipher.getInstance("AESWrap");
         cipher.init(Cipher.WRAP_MODE, key);
         // wrapping the test key by itself is totally insecure, but this is just
@@ -34,18 +49,18 @@ public class ContentCryptoMaterialAETest {
         ContentCryptoMaterial cekMaterial = new ContentCryptoMaterial(
                 kekMatDesc, wrapped, cipher.getAlgorithm(),
                 CryptoTestUtils.createTestCipherLite(Cipher.ENCRYPT_MODE,
-                        AES_GCM));
+                                                     AES_GCM));
         String json = cekMaterial.toJsonString(CryptoMode.AuthenticatedEncryption);
         @SuppressWarnings("unchecked")
         Map<String, String> map = Jackson.fromJsonString(json, Map.class);
         ContentCryptoMaterial cekm2 = ContentCryptoMaterial
                 .fromInstructionFile(map, accessor,
-                        null, // security provider
-                        null, // range
-                        NONE, // supplemental material descriptions
-                        false,// key-wrap expected
-                        null  // KMS client
-                );
+                                     null, // security provider
+                                     null, // range
+                                     NONE, // supplemental material descriptions
+                                     false,// key-wrap expected
+                                     null  // KMS client
+                                    );
         String json2 = cekm2.toJsonString(CryptoMode.AuthenticatedEncryption);
         assertEquals(json, json2);
     }
@@ -56,39 +71,39 @@ public class ContentCryptoMaterialAETest {
         kekMatDesc.put("Foo", "Bar");
         kekMatDesc.put("Hello", "World");
         doTestMatDescAE(kekMatDesc,
-                new EncryptionMaterialsAccessor() {
-                    @Override
-                    public EncryptionMaterials getEncryptionMaterials(
-                            Map<String, String> materialsDescription) {
-                        assertEquals("Bar", materialsDescription.get("Foo"));
-                        assertEquals("World", materialsDescription.get("Hello"));
-                        return new EncryptionMaterials(key);
-                    }
-                });
+                        new EncryptionMaterialsAccessor() {
+                            @Override
+                            public EncryptionMaterials getEncryptionMaterials(
+                                    Map<String, String> materialsDescription) {
+                                assertEquals("Bar", materialsDescription.get("Foo"));
+                                assertEquals("World", materialsDescription.get("Hello"));
+                                return new EncryptionMaterials(key);
+                            }
+                        });
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testEmptyMaterialDescription() throws Exception {
         doTestMatDescAE(Collections.EMPTY_MAP,
-                new EncryptionMaterialsAccessor() {
-                    @Override
-                    public EncryptionMaterials getEncryptionMaterials(
-                            Map<String, String> materialsDescription) {
-                        return new EncryptionMaterials(key);
-                    }
-                });
+                        new EncryptionMaterialsAccessor() {
+                            @Override
+                            public EncryptionMaterials getEncryptionMaterials(
+                                    Map<String, String> materialsDescription) {
+                                return new EncryptionMaterials(key);
+                            }
+                        });
     }
 
     @Test
     public void testNullMaterialDescription() throws Exception {
         doTestMatDescAE(null,
-                new EncryptionMaterialsAccessor() {
-                    @Override
-                    public EncryptionMaterials getEncryptionMaterials(
-                            Map<String, String> materialsDescription) {
-                        return new EncryptionMaterials(key);
-                    }
-                });
+                        new EncryptionMaterialsAccessor() {
+                            @Override
+                            public EncryptionMaterials getEncryptionMaterials(
+                                    Map<String, String> materialsDescription) {
+                                return new EncryptionMaterials(key);
+                            }
+                        });
     }
 }

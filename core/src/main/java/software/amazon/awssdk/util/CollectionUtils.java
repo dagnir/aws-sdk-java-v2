@@ -54,7 +54,7 @@ public class CollectionUtils {
         StringBuilder joinedString = new StringBuilder();
         int currentIndex = 0;
         for (String s : toJoin) {
-            if(s != null) {
+            if (s != null) {
                 joinedString.append(s);
             }
             if (currentIndex++ != toJoin.size() - 1) {

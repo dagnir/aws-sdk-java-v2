@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,6 +31,15 @@ public class SDKGlobalTime {
     private static volatile int globalTimeOffset;
 
     /**
+     * Gets the global time difference in seconds between the running JVM and
+     * AWS. See <code>Request#getTimeOffset()</code> if global time offset is
+     * not set.
+     */
+    public static int getGlobalTimeOffset() {
+        return globalTimeOffset;
+    }
+
+    /**
      * Sets the global time difference in seconds between the running JVM and
      * AWS. If this value is set then all the subsequent instantiation of an
      * <code>AmazonHttpClient</code> will start using this
@@ -39,16 +48,7 @@ public class SDKGlobalTime {
      * @param timeOffset
      *            the time difference in seconds between the running JVM and AWS
      */
-    public  static void setGlobalTimeOffset(int timeOffset) {
+    public static void setGlobalTimeOffset(int timeOffset) {
         globalTimeOffset = timeOffset;
-    }
-
-    /**
-     * Gets the global time difference in seconds between the running JVM and
-     * AWS. See <code>Request#getTimeOffset()</code> if global time offset is
-     * not set.
-     */
-    public static int getGlobalTimeOffset() {
-        return globalTimeOffset;
     }
 }

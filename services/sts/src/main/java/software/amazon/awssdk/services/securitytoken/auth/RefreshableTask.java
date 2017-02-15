@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -62,12 +62,12 @@ class RefreshableTask<T> {
      * Single threaded executor to asynchronous refresh the value.
      */
     private final ExecutorService executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
-	@Override
-	public Thread newThread(Runnable runnable) {
-	    Thread thread = Executors.defaultThreadFactory().newThread(runnable);
-	    thread.setDaemon(true);
-	    return thread;
-	}
+        @Override
+        public Thread newThread(Runnable runnable) {
+            Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+            thread.setDaemon(true);
+            return thread;
+        }
     });
 
     /**
@@ -97,52 +97,6 @@ class RefreshableTask<T> {
                 .assertNotNull(shouldDoBlockingRefresh, "shouldDoBlockingRefresh");
         this.shouldDoAsyncRefresh = ValidationUtils
                 .assertNotNull(shouldDoAsyncRefresh, "shouldDoAsyncRefresh");
-    }
-
-    @NotThreadSafe
-    public static class Builder<T> {
-        private Callable<T> refreshCallable;
-        private SdkPredicate<T> shouldDoBlockingRefresh;
-        private SdkPredicate<T> shouldDoAsyncRefresh;
-
-        /**
-         * Set the callable that will provide the value when a refresh occurs.
-         *
-         * @return This object for method chaining.
-         */
-        public Builder withRefreshCallable(Callable<T> refreshCallable) {
-            this.refreshCallable = refreshCallable;
-            return this;
-        }
-
-        /**
-         * Set the predicate that will determine when the task will do a blocking refresh.
-         *
-         * @return This object for method chaining.
-         */
-        public Builder withBlockingRefreshPredicate(SdkPredicate<T> shouldDoBlockingRefresh) {
-            this.shouldDoBlockingRefresh = shouldDoBlockingRefresh;
-            return this;
-        }
-
-        /**
-         * Set the predicate that will determine when the task will queue a non-blocking, async
-         * refresh.
-         *
-         * @return This object for method chaining.
-         */
-        public Builder withAsyncRefreshPredicate(SdkPredicate<T> shouldDoAsyncRefresh) {
-            this.shouldDoAsyncRefresh = shouldDoAsyncRefresh;
-            return this;
-        }
-
-        /**
-         * @return The configured RefreshableTask
-         */
-        public RefreshableTask<T> build() {
-            return new RefreshableTask<T>(refreshCallable, shouldDoBlockingRefresh,
-                                          shouldDoAsyncRefresh);
-        }
     }
 
     /**
@@ -276,6 +230,52 @@ class RefreshableTask<T> {
     private void handleInterruptedException(String message, InterruptedException cause) {
         Thread.currentThread().interrupt();
         throw new AmazonClientException(message, cause);
+    }
+
+    @NotThreadSafe
+    public static class Builder<T> {
+        private Callable<T> refreshCallable;
+        private SdkPredicate<T> shouldDoBlockingRefresh;
+        private SdkPredicate<T> shouldDoAsyncRefresh;
+
+        /**
+         * Set the callable that will provide the value when a refresh occurs.
+         *
+         * @return This object for method chaining.
+         */
+        public Builder withRefreshCallable(Callable<T> refreshCallable) {
+            this.refreshCallable = refreshCallable;
+            return this;
+        }
+
+        /**
+         * Set the predicate that will determine when the task will do a blocking refresh.
+         *
+         * @return This object for method chaining.
+         */
+        public Builder withBlockingRefreshPredicate(SdkPredicate<T> shouldDoBlockingRefresh) {
+            this.shouldDoBlockingRefresh = shouldDoBlockingRefresh;
+            return this;
+        }
+
+        /**
+         * Set the predicate that will determine when the task will queue a non-blocking, async
+         * refresh.
+         *
+         * @return This object for method chaining.
+         */
+        public Builder withAsyncRefreshPredicate(SdkPredicate<T> shouldDoAsyncRefresh) {
+            this.shouldDoAsyncRefresh = shouldDoAsyncRefresh;
+            return this;
+        }
+
+        /**
+         * @return The configured RefreshableTask
+         */
+        public RefreshableTask<T> build() {
+            return new RefreshableTask<T>(refreshCallable, shouldDoBlockingRefresh,
+                                          shouldDoAsyncRefresh);
+        }
     }
 
 }

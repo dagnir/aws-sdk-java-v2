@@ -6,8 +6,8 @@ Feature: Amazon CloudWatch Logs
     When I call the "DescribeLogGroups" API
     Then the value at "logGroups" should be a list
 
-  Scenario: Handling errors 
+  Scenario: Handling errors
     When I attempt to call the "GetLogEvents" API with:
-    | logGroupName  | fakegroup  |
-    | logStreamName | fakestream |
+      | logGroupName  | fakegroup  |
+      | logStreamName | fakestream |
     Then I expect the response error code to be "ResourceNotFoundException"

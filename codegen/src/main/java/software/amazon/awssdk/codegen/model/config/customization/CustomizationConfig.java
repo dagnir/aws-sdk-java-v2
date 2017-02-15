@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -26,37 +26,36 @@ import software.amazon.awssdk.codegen.model.config.templates.CodeGenTemplatesCon
 public class CustomizationConfig {
 
     public static final CustomizationConfig DEFAULT = new CustomizationConfig();
-
+    /**
+     * List of 'convenience' overloads to generate for model classes. Convenience overloads expose a
+     * different type that is adapted to the real type
+     */
+    private final List<ConvenienceTypeOverload> convenienceTypeOverloads = new ArrayList<ConvenienceTypeOverload>();
     /**
      * The fully-qualified class name of the custom metric types to be collected by the client.
      *
      * Example: "software.amazon.awssdk.services.dynamodbv2.metrics.DynamoDBRequestMetric"
      */
     private String requestMetrics;
-
     /**
      * True if auto-construct list is in use; false otherwise.
      */
     private boolean useAutoConstructList;
-
     /**
      * True if auto-construct map is in use; false otherwise.
      */
     private boolean useAutoConstructMap;
-
     /**
      * True if we want to apply the ServiceClientHolderInputStream wrapper to all the stream
      * response returned by the client; the purpose is to prevent the client being GCed before the
      * response data is fully consumed.
      */
     private boolean serviceClientHoldInputStream;
-
     /**
      * The name of the operations where the LengthCheckInputStream wrapper should be applied to the
      * response stream.
      */
     private List<String> operationsWithResponseStreamContentLengthValidation;
-
     /**
      * If specified the name of the custom exception unmarshaller (e.g. 'LegacyErrorUnmarshaller'
      * for SimpleDB). If not set then the default unmarshaller of the protocol will be used (e.g.
@@ -64,7 +63,6 @@ public class CustomizationConfig {
      * for JSON protocols is not customizable.
      */
     private String customExceptionUnmarshallerImpl;
-
     /**
      * Fully qualified class name of the client configuration factory to use when producing client
      * configurations for this client.  This factory is called when an explicit ClientConfiguration
@@ -72,19 +70,16 @@ public class CustomizationConfig {
      * "software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClientConfigurationFactory" </p>
      */
     private String customClientConfigFactory;
-
     /**
      * The name of the custom class returned by the client method getCacheResponseMetadata.
      * Currently it's only set for SimpleDB ("SimpleDBResponseMetadata")
      */
     private String customResponseMetadataClassName;
-
     /**
      * True if the generated interface should NOT include shutdown() and getCachedResponseData
      * methods. Currently it's only set true for SimpleDB.
      */
     private boolean skipInterfaceAdditions;
-
     /**
      * Overrides the request-level service name that will be used for request metrics and service
      * exceptions. If not specified, the client will use the service interface name by default.
@@ -94,66 +89,54 @@ public class CustomizationConfig {
      * @see {@link Request#getServiceName()}
      */
     private String customServiceNameForRequest;
-
     /**
      * True if the generated code should enable client-side validation on required input
      * parameters.
      */
     private boolean requiredParamValidationEnabled;
-
     /**
      * Specify additional constructor forms for a given model class.
      */
     private Map<String, ConstructorFormsWrapper> additionalShapeConstructors;
-
     /**
      * Specify simplified method forms for a given operation API.
      */
     private Map<String, SimpleMethodFormsWrapper> simpleMethods;
-
     /**
      * Specify shapes to be renamed.
      */
     private Map<String, String> renameShapes;
-
     /**
      * Specify List member shapes to send empty String when the List is auto-constructed in query
      * protocol. This customization will only affect marshaling when autoConstructList is true.
      * Currently, it's only set in ElasticLoadBalancing service.
      */
     private Map<String, List<String>> sendEmptyAutoConstructedListAsEmptyList;
-
     /**
      * Marshalls empty lists on the wire. This customization does not send empty lists created by
      * the autoconstruct customization and is only applicable to AWS Query services.
      */
     private boolean sendExplicitlyEmptyListsForQuery;
-
     /**
      * Configuration for generating policy action enums.
      */
     private AuthPolicyActions authPolicyActions;
-
     /**
      * Custom service and intermediate model metadata properties.
      */
     private MetadataConfig customServiceMetadata;
-
     private CodeGenTemplatesConfig customCodeTemplates;
-
     /**
      * Codegen customization mechanism shared by the .NET SDK
      */
     private Map<String, OperationModifier> operationModifiers;
     private Map<String, ShapeSubstitution> shapeSubstitutions;
     private Map<String, ShapeModifier> shapeModifiers;
-
     /**
      * Sets the custom field name that identifies the type of modeled exception for JSON protocols.
      * Normally this is '__type' but Glacier has a custom error code field named simply 'code'.
      */
     private String customErrorCodeFieldName;
-
     /**
      * Customization to use the actual shape name of output shapes (as defined in the service model)
      * to name the corresponding Java class. Normally we derive a new name using the operation name
@@ -163,7 +146,6 @@ public class CustomizationConfig {
      * on how the shape is represented on the wire.
      */
     private boolean useModeledOutputShapeNames;
-
     /**
      * Service specific base class for all modeled exceptions. By default this is syncInterface +
      * Exception (i.e. AmazonSQSException). Currently only DynamoDB Streams utilizes this
@@ -176,29 +158,19 @@ public class CustomizationConfig {
      * We assume it already exists.</p>
      */
     private String sdkModeledExceptionBaseClassName;
-
     /**
      * Uses the specified SignerProvider implementation for this client.
      */
     private String customSignerProvider;
-
     /**
      * Service calculates CRC32 checksum from compressed file when Accept-Encoding: gzip header is provided.
      */
     private boolean calculateCRC32FromCompressedData;
-
     /**
      * Custom file header for all generated Java classes. If not specified uses default Amazon
      * license header.
      */
     private String customFileHeader;
-
-    /**
-     * List of 'convenience' overloads to generate for model classes. Convenience overloads expose a
-     * different type that is adapted to the real type
-     */
-    private final List<ConvenienceTypeOverload> convenienceTypeOverloads = new ArrayList<ConvenienceTypeOverload>();
-
     /**
      * Skips generating smoketests if set to true.
      */
@@ -215,7 +187,7 @@ public class CustomizationConfig {
      */
     private String transformDirectory = Constants.PACKAGE_NAME_TRANSFORM_SUFFIX;
 
-    private CustomizationConfig(){
+    private CustomizationConfig() {
     }
 
     public String getRequestMetrics() {
@@ -304,6 +276,10 @@ public class CustomizationConfig {
         return operationModifiers;
     }
 
+    public void setOperationModifiers(Map<String, OperationModifier> operationModifiers) {
+        this.operationModifiers = operationModifiers;
+    }
+
     public Map<String, String> getRenameShapes() {
         return renameShapes;
     }
@@ -319,10 +295,6 @@ public class CustomizationConfig {
     public void setSendEmptyAutoConstructedListAsEmptyList(
             Map<String, List<String>> sendEmptyAutoConstructedListAsEmptyList) {
         this.sendEmptyAutoConstructedListAsEmptyList = sendEmptyAutoConstructedListAsEmptyList;
-    }
-
-    public void setOperationModifiers(Map<String, OperationModifier> operationModifiers) {
-        this.operationModifiers = operationModifiers;
     }
 
     public Map<String, ShapeSubstitution> getShapeSubstitutions() {

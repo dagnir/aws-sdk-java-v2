@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.util;
 
 import java.io.File;
@@ -14,6 +29,7 @@ import software.amazon.awssdk.util.FakeIOException;
  * of requests can be successfully retried after errors.
  */
 public class UnreliableRepeatableFileInputStream extends ResettableInputStream {
+    private final boolean isFakeIOException;
     /**
      * Max number of errors that can be triggered.
      */
@@ -23,7 +39,6 @@ public class UnreliableRepeatableFileInputStream extends ResettableInputStream {
      */
     private int currNumberOfErrors;
     private int position;
-    private final boolean isFakeIOException;
 
     public UnreliableRepeatableFileInputStream(File file) throws IOException {
         super(file);
@@ -38,7 +53,9 @@ public class UnreliableRepeatableFileInputStream extends ResettableInputStream {
     @Override
     public int read() throws IOException {
         int read = super.read();
-        if (read != -1) position++;
+        if (read != -1) {
+            position++;
+        }
         triggerError();
         return read;
     }
@@ -53,16 +70,19 @@ public class UnreliableRepeatableFileInputStream extends ResettableInputStream {
     }
 
     private void triggerError() throws IOException {
-        if (currNumberOfErrors >= maxNumberOfErrors) return;
+        if (currNumberOfErrors >= maxNumberOfErrors) {
+            return;
+        }
 
         if (position >= 100) {
             currNumberOfErrors++;
-            if (isFakeIOException)
+            if (isFakeIOException) {
                 throw new FakeIOException("Faked IO error " + currNumberOfErrors
-                        + " on UnreliableFileInputStream");
-            else
+                                          + " on UnreliableFileInputStream");
+            } else {
                 throw new IOException("Injected IO error " + currNumberOfErrors
-                        + " on UnreliableFileInputStream");
+                                      + " on UnreliableFileInputStream");
+            }
         }
     }
 
@@ -76,7 +96,7 @@ public class UnreliableRepeatableFileInputStream extends ResettableInputStream {
 
     public UnreliableRepeatableFileInputStream withNumberOfErrors(int numberOfErrors) {
         this.maxNumberOfErrors = numberOfErrors;
-        return this; 
+        return this;
     }
 
     public int getCurrNumberOfErrors() {

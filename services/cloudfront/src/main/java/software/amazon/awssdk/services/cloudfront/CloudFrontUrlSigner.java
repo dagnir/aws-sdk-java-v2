@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import software.amazon.awssdk.util.DateUtils;
 
 // The source code originated from the .NET implementation at
 // https://github.com/aws/aws-sdk-net/blob/master/AWSSDK_DotNet35/Amazon.CloudFront/AmazonCloudFrontUrlSigner.cs
+
 /**
  * Utility class for generating pre-signed URLs for serving private CloudFront
  * content. All dates must be in UTC. Use {@link Calendar} to set the timezone
@@ -61,6 +62,7 @@ import software.amazon.awssdk.util.DateUtils;
  */
 public enum CloudFrontUrlSigner {
     ;
+
     /**
      * Returns a signed URL with a canned policy that grants universal access to
      * private content until a given date.
@@ -84,11 +86,11 @@ public enum CloudFrontUrlSigner {
      * @return The signed URL.
      */
     public static String getSignedURLWithCannedPolicy(final SignerUtils.Protocol protocol,
-                                            final String distributionDomain,
-                                            final File privateKeyFile,
-                                            final String s3ObjectKey,
-                                            final String keyPairId,
-                                            final Date dateLessThan)
+                                                      final String distributionDomain,
+                                                      final File privateKeyFile,
+                                                      final String s3ObjectKey,
+                                                      final String keyPairId,
+                                                      final Date dateLessThan)
             throws InvalidKeySpecException, IOException {
         final String resourcePath = SignerUtils.generateResourcePath(protocol, distributionDomain, s3ObjectKey);
         PrivateKey privateKey = SignerUtils.loadPrivateKey(privateKeyFile);
@@ -125,13 +127,13 @@ public enum CloudFrontUrlSigner {
      * @throws InvalidKeySpecException
      */
     public static String getSignedURLWithCustomPolicy(final SignerUtils.Protocol protocol,
-                                            final String distributionDomain,
-                                            final File privateKeyFile,
-                                            final String s3ObjectKey,
-                                            final String keyPairId,
-                                            final Date dateLessThan,
-                                            final Date dateGreaterThan,
-                                            final String ipRange)
+                                                      final String distributionDomain,
+                                                      final File privateKeyFile,
+                                                      final String s3ObjectKey,
+                                                      final String keyPairId,
+                                                      final Date dateLessThan,
+                                                      final Date dateGreaterThan,
+                                                      final String ipRange)
             throws InvalidKeySpecException, IOException {
         PrivateKey privateKey = SignerUtils.loadPrivateKey(privateKeyFile);
         final String resourcePath = SignerUtils.generateResourcePath(protocol, distributionDomain, s3ObjectKey);
@@ -169,18 +171,17 @@ public enum CloudFrontUrlSigner {
      *         objects as specified in the policy document.
      */
     public static String getSignedURLWithCustomPolicy(String resourceUrlOrPath,
-            String keyPairId, PrivateKey privateKey, String policy) {
+                                                      String keyPairId, PrivateKey privateKey, String policy) {
         try {
             byte[] signatureBytes = SignerUtils.signWithSha1RSA(
                     policy.getBytes(UTF8), privateKey);
             String urlSafePolicy = SignerUtils.makeStringUrlSafe(policy);
             String urlSafeSignature = SignerUtils.makeBytesUrlSafe(signatureBytes);
             String signedUrl = resourceUrlOrPath
-                    + (resourceUrlOrPath.indexOf('?') >= 0 ? "&" : "?")
-                    + "Policy=" + urlSafePolicy
-                    + "&Signature=" + urlSafeSignature
-                    + "&Key-Pair-Id=" + keyPairId
-                    ;
+                               + (resourceUrlOrPath.indexOf('?') >= 0 ? "&" : "?")
+                               + "Policy=" + urlSafePolicy
+                               + "&Signature=" + urlSafeSignature
+                               + "&Key-Pair-Id=" + keyPairId;
             return signedUrl;
         } catch (InvalidKeyException e) {
             throw new AmazonClientException("Coudln't sign url", e);
@@ -217,21 +218,20 @@ public enum CloudFrontUrlSigner {
      *         and S3 object.
      */
     public static String getSignedURLWithCannedPolicy(String resourceUrlOrPath,
-                                       String keyPairId,
-                                       PrivateKey privateKey,
-                                       Date dateLessThan) {
+                                                      String keyPairId,
+                                                      PrivateKey privateKey,
+                                                      Date dateLessThan) {
         try {
             String cannedPolicy = SignerUtils.buildCannedPolicy(resourceUrlOrPath, dateLessThan);
             byte[] signatureBytes = SignerUtils.signWithSha1RSA(cannedPolicy.getBytes(UTF8), privateKey);
             String urlSafeSignature = SignerUtils.makeBytesUrlSafe(signatureBytes);
             String signedUrl = resourceUrlOrPath
-                             + (resourceUrlOrPath.indexOf('?') >= 0 ? "&" : "?")
-                             + "Expires=" + MILLISECONDS.toSeconds(dateLessThan.getTime())
-                             + "&Signature=" + urlSafeSignature
-                             + "&Key-Pair-Id=" + keyPairId
-                             ;
+                               + (resourceUrlOrPath.indexOf('?') >= 0 ? "&" : "?")
+                               + "Expires=" + MILLISECONDS.toSeconds(dateLessThan.getTime())
+                               + "&Signature=" + urlSafeSignature
+                               + "&Key-Pair-Id=" + keyPairId;
             return signedUrl;
-        } catch ( InvalidKeyException e ) {
+        } catch (InvalidKeyException e) {
             throw new AmazonClientException("Couldn't sign url", e);
         }
     }
@@ -278,21 +278,20 @@ public enum CloudFrontUrlSigner {
      *         generating a signed URL.
      */
     public static String buildCustomPolicyForSignedUrl(String resourcePath,
-                                                 Date epochDateLessThan,
-                                                 String limitToIpAddressCIDR,
-                                                 Date epochDateGreaterThan) {
-        if ( epochDateLessThan == null ) {
+                                                       Date epochDateLessThan,
+                                                       String limitToIpAddressCIDR,
+                                                       Date epochDateGreaterThan) {
+        if (epochDateLessThan == null) {
             throw new AmazonClientException("epochDateLessThan must be provided to sign CloudFront URLs");
         }
-        if ( resourcePath == null ) {
+        if (resourcePath == null) {
             resourcePath = "*";
         }
         String ipAddress = (limitToIpAddressCIDR == null
-                         ? "0.0.0.0/0" // No IP restriction
-                         : limitToIpAddressCIDR)
-                         ;
+                            ? "0.0.0.0/0" // No IP restriction
+                            : limitToIpAddressCIDR);
         return SignerUtils.buildCustomPolicy(resourcePath, epochDateLessThan,
-                epochDateGreaterThan, ipAddress);
+                                             epochDateGreaterThan, ipAddress);
     }
 
 }

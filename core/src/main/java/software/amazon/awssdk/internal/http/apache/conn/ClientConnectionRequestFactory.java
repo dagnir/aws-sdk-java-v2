@@ -32,7 +32,7 @@ class ClientConnectionRequestFactory {
     private static final Log log = LogFactory.getLog(ClientConnectionRequestFactory.class);
     private static final Class<?>[] interfaces = {
             ConnectionRequest.class,
-        Wrapped.class
+            Wrapped.class
     };
 
     /**
@@ -41,8 +41,9 @@ class ClientConnectionRequestFactory {
      * @param orig the target instance to be wrapped
      */
     static ConnectionRequest wrap(ConnectionRequest orig) {
-        if (orig instanceof Wrapped)
+        if (orig instanceof Wrapped) {
             throw new IllegalArgumentException();
+        }
         return (ConnectionRequest) Proxy.newProxyInstance(
                 // https://github.com/aws/aws-sdk-java/pull/48#issuecomment-29454423
                 ClientConnectionRequestFactory.class.getClassLoader(),
@@ -58,9 +59,11 @@ class ClientConnectionRequestFactory {
      */
     private static class Handler implements InvocationHandler {
         private final ConnectionRequest orig;
+
         Handler(ConnectionRequest orig) {
             this.orig = orig;
         }
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try {
@@ -71,7 +74,7 @@ class ClientConnectionRequestFactory {
                         return method.invoke(orig, args);
                     } finally {
                         AwsSdkMetrics.getServiceMetricCollector()
-                                .collectLatency(latencyProvider.endTiming());
+                                     .collectLatency(latencyProvider.endTiming());
                     }
                 }
                 return method.invoke(orig, args);

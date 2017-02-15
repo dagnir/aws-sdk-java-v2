@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.edp;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +53,7 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
     private static final String OBJECT_NAME = "object";
     private static final String VALID_KEY = "startDateTime";
     private static final String INVALID_KEY = "radom_key";
-    private static final String FIELD_VALUE ="2012-09-25T17:00:00";
+    private static final String FIELD_VALUE = "2012-09-25T17:00:00";
     private static String pipelineId;
 
     @AfterClass
@@ -68,7 +83,7 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
         pipelineObject.setFields(Arrays.asList(field));
 
         ValidatePipelineDefinitionResult validatePipelineDefinitionResult = edp.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
-                .withPipelineObjects(pipelineObject));
+                                                                                                                                                  .withPipelineObjects(pipelineObject));
         assertTrue(validatePipelineDefinitionResult.getErrored());
         assertNotNull(validatePipelineDefinitionResult.getValidationErrors());
         assertTrue(validatePipelineDefinitionResult.getValidationErrors().size() > 0);
@@ -87,7 +102,7 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
 
         // Validate pipeline definition.
         validatePipelineDefinitionResult = edp.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
-                .withPipelineObjects(pipelineObject));
+                                                                                                                 .withPipelineObjects(pipelineObject));
         assertFalse(validatePipelineDefinitionResult.getErrored());
         assertNotNull(validatePipelineDefinitionResult.getValidationErrors());
         assertEquals(0, validatePipelineDefinitionResult.getValidationErrors().size());
@@ -96,7 +111,7 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
 
         // Put pipeline definition.
         PutPipelineDefinitionResult putPipelineDefinitionResult = edp.putPipelineDefinition(new PutPipelineDefinitionRequest().withPipelineId(pipelineId)
-                .withPipelineObjects(pipelineObject));
+                                                                                                                              .withPipelineObjects(pipelineObject));
         assertFalse(putPipelineDefinitionResult.getErrored());
         assertNotNull(putPipelineDefinitionResult.getValidationErrors());
         assertEquals(0, putPipelineDefinitionResult.getValidationErrors().size());

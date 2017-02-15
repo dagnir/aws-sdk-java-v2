@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.cloudwatch.AmazonCloudWatch;
  * system property {@link SDKGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY}.
  */
 public class DefaultMetricCollectorFactory
-    implements MetricCollector.Factory {
+        implements MetricCollector.Factory {
     /**
      * Returns a instance of the Amazon CloudWatch request metric collector either by
      * starting up a new one or returning an existing one if it's already
@@ -44,16 +44,19 @@ public class DefaultMetricCollectorFactory
         Long timeoutMilli = AwsSdkMetrics.getQueuePollTimeoutMilli();
         CloudWatchMetricConfig config = new CloudWatchMetricConfig();
         ClientConfiguration clientConfig = new ClientConfiguration();
-        if (provider != null)
+        if (provider != null) {
             config.setCredentialsProvider(provider);
+        }
         if (region != null) {
             String endPoint = region.getServiceEndpoint(AmazonCloudWatch.ENDPOINT_PREFIX);
             config.setCloudWatchEndPoint(endPoint);
         }
-        if (qSize != null)
+        if (qSize != null) {
             config.setMetricQueueSize(qSize.intValue());
-        if (timeoutMilli != null)
+        }
+        if (timeoutMilli != null) {
             config.setQueuePollTimeoutMilli(timeoutMilli.longValue());
+        }
         config.setClientConfiguration(clientConfig);
         MetricCollectorSupport.startSingleton(config);
         return MetricCollectorSupport.getInstance();

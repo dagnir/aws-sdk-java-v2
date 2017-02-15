@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -27,7 +28,7 @@ import software.amazon.awssdk.services.s3.internal.crypto.CryptoRuntime;
  * encryption information. You can also specify your own crypto provider to be
  * used during encryption and decryption.
  */
-public class CryptoConfiguration implements Cloneable,Serializable {
+public class CryptoConfiguration implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -8646831898339939580L;
 
@@ -55,13 +56,13 @@ public class CryptoConfiguration implements Cloneable,Serializable {
      */
     public CryptoConfiguration() {
         this(CryptoMode.EncryptionOnly); // default to Encryption Only (EO) for
-                                         // backward compatibility
+        // backward compatibility
     }
 
     /**
      * @param cryptoMode
      *            cryptographic mode to be used
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the necessary security provider cannot be found or the
      *             necessary cryptographic operations are not supported for the
@@ -78,20 +79,9 @@ public class CryptoConfiguration implements Cloneable,Serializable {
     }
 
     /**
-     * Sets the storage mode to the specified mode.
-     * 
-     * @param storageMode
-     *            The storage mode to be used for storing encryption
-     *            information.
-     */
-    public void setStorageMode(CryptoStorageMode storageMode) {
-        this.storageMode = storageMode;
-    }
-
-    /**
      * Sets the storage mode to the specified mode, and returns the updated
      * CryptoConfiguration object.
-     * 
+     *
      * @param storageMode
      *            The storage mode to be used for storing encryption
      *            information.
@@ -104,7 +94,7 @@ public class CryptoConfiguration implements Cloneable,Serializable {
 
     /**
      * Returns the current storage mode of a CryptoConfiguration object.
-     * 
+     *
      * @return The storage mode to be used for storing encryption information.
      */
     public CryptoStorageMode getStorageMode() {
@@ -112,20 +102,20 @@ public class CryptoConfiguration implements Cloneable,Serializable {
     }
 
     /**
-     * Sets the crypto provider to the specified provider.
-     * 
-     * @param cryptoProvider
-     *            The crypto provider whose encryption implementation will be
-     *            used to encrypt and decrypt data.
+     * Sets the storage mode to the specified mode.
+     *
+     * @param storageMode
+     *            The storage mode to be used for storing encryption
+     *            information.
      */
-    public void setCryptoProvider(Provider cryptoProvider) {
-        this.cryptoProvider = cryptoProvider;
+    public void setStorageMode(CryptoStorageMode storageMode) {
+        this.storageMode = storageMode;
     }
 
     /**
      * Sets the crypto provider to the specified provider, and returns the
      * updated CryptoConfiguration object.
-     * 
+     *
      * @param cryptoProvider
      *            The crypto provider whose encryption implementation will be
      *            used to encrypt and decrypt data.
@@ -139,12 +129,23 @@ public class CryptoConfiguration implements Cloneable,Serializable {
     /**
      * Returns the crypto provider whose encryption implementation will be used
      * to encrypt and decrypt data.
-     * 
+     *
      * @return the crypto provider whose encryption implementation will be used
      *         to encrypt and decrypt data.
      */
     public Provider getCryptoProvider() {
         return this.cryptoProvider;
+    }
+
+    /**
+     * Sets the crypto provider to the specified provider.
+     *
+     * @param cryptoProvider
+     *            The crypto provider whose encryption implementation will be
+     *            used to encrypt and decrypt data.
+     */
+    public void setCryptoProvider(Provider cryptoProvider) {
+        this.cryptoProvider = cryptoProvider;
     }
 
     /**
@@ -158,7 +159,7 @@ public class CryptoConfiguration implements Cloneable,Serializable {
 
     /**
      * Sets the crypto mode; applicable only to the S3 encryption client.
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the necessary security provider cannot be found or the
      *             necessary cryptographic operations are not supported for the
@@ -175,7 +176,7 @@ public class CryptoConfiguration implements Cloneable,Serializable {
     /**
      * Fluent API to set the crypto mode; applicable only to the S3 encryption
      * client.
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the necessary security provider cannot be found or the
      *             necessary cryptographic operations are not supported for the
@@ -225,7 +226,7 @@ public class CryptoConfiguration implements Cloneable,Serializable {
 
     /**
      * Checks if the crypto mode is supported by the runtime.
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the necessary security provider cannot be found or the
      *             necessary cryptographic operations are not supported for the
@@ -233,7 +234,7 @@ public class CryptoConfiguration implements Cloneable,Serializable {
      */
     private void check(CryptoMode cryptoMode) {
         if (cryptoMode == CryptoMode.AuthenticatedEncryption
-                || cryptoMode == CryptoMode.StrictAuthenticatedEncryption) {
+            || cryptoMode == CryptoMode.StrictAuthenticatedEncryption) {
             if (!CryptoRuntime.isBouncyCastleAvailable()) {
                 CryptoRuntime.enableBouncyCastle();
                 if (!CryptoRuntime.isBouncyCastleAvailable()) {
@@ -241,60 +242,24 @@ public class CryptoConfiguration implements Cloneable,Serializable {
                             "The Bouncy castle library jar is required on the classpath to enable authenticated encryption");
                 }
             }
-            if (!CryptoRuntime.isAesGcmAvailable())
+            if (!CryptoRuntime.isAesGcmAvailable()) {
                 throw new UnsupportedOperationException(
                         "More recent version of the Bouncy castle library is required to enable authenticated encryption");
+            }
         }
     }
 
-    public boolean isReadOnly() { return false; }
-
-    /**
-     * Used to provide a read-only copy of the configuration.
-     */
-    private static final class ReadOnly extends CryptoConfiguration {
-        private ReadOnly() {}
-        @Override public boolean isReadOnly() { return true; }
-        @Override public void setStorageMode(CryptoStorageMode storageMode) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public CryptoConfiguration withStorageMode(CryptoStorageMode storageMode) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public void setCryptoProvider(Provider cryptoProvider) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public CryptoConfiguration withCryptoProvider(Provider cryptoProvider) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public void setCryptoMode(CryptoMode cryptoMode) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public CryptoConfiguration withCryptoMode(CryptoMode cryptoMode) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public void setIgnoreMissingInstructionFile(
-                boolean ignoreMissingInstructionFile) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public CryptoConfiguration withIgnoreMissingInstructionFile(
-                boolean ignoreMissingInstructionFile) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public void setKmsRegion(Regions kmsRegion) {
-            throw new UnsupportedOperationException();
-        }
-        @Override public CryptoConfiguration withKmsRegion(Regions kmsRegion) {
-            throw new UnsupportedOperationException();
-        }
+    public boolean isReadOnly() {
+        return false;
     }
 
     /**
      * Returns a read-only copy of this configuration.
      */
     public CryptoConfiguration readOnly() {
-        if (isReadOnly())
+        if (isReadOnly()) {
             return this;
+        }
         return copyTo(new CryptoConfiguration.ReadOnly());
     }
 
@@ -326,7 +291,9 @@ public class CryptoConfiguration implements Cloneable,Serializable {
      */
     @Deprecated
     public Regions getKmsRegion() {
-        if (awskmsRegion == null) return null;
+        if (awskmsRegion == null) {
+            return null;
+        }
         return Regions.fromName(awskmsRegion.getName());
     }
 
@@ -404,5 +371,70 @@ public class CryptoConfiguration implements Cloneable,Serializable {
     public CryptoConfiguration withAwsKmsRegion(Region awsKmsRegion) {
         this.awskmsRegion = awsKmsRegion;
         return this;
+    }
+
+    /**
+     * Used to provide a read-only copy of the configuration.
+     */
+    private static final class ReadOnly extends CryptoConfiguration {
+        private ReadOnly() {
+        }
+
+        @Override
+        public boolean isReadOnly() {
+            return true;
+        }
+
+        @Override
+        public void setStorageMode(CryptoStorageMode storageMode) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public CryptoConfiguration withStorageMode(CryptoStorageMode storageMode) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setCryptoProvider(Provider cryptoProvider) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public CryptoConfiguration withCryptoProvider(Provider cryptoProvider) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setCryptoMode(CryptoMode cryptoMode) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public CryptoConfiguration withCryptoMode(CryptoMode cryptoMode) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setIgnoreMissingInstructionFile(
+                boolean ignoreMissingInstructionFile) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public CryptoConfiguration withIgnoreMissingInstructionFile(
+                boolean ignoreMissingInstructionFile) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setKmsRegion(Regions kmsRegion) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public CryptoConfiguration withKmsRegion(Regions kmsRegion) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

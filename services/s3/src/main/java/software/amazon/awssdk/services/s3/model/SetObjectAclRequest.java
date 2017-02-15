@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -58,7 +59,7 @@ public class SetObjectAclRequest extends AmazonWebServiceRequest implements Seri
      *            apply to the specified bucket when this request is executed.
      */
     public SetObjectAclRequest(String bucketName, String key,
-            AccessControlList acl) {
+                               AccessControlList acl) {
         this.bucketName = bucketName;
         this.key = key;
         this.versionId = null;
@@ -81,7 +82,7 @@ public class SetObjectAclRequest extends AmazonWebServiceRequest implements Seri
      *            bucket when this request is executed.
      */
     public SetObjectAclRequest(String bucketName, String key,
-            CannedAccessControlList acl) {
+                               CannedAccessControlList acl) {
         this.bucketName = bucketName;
         this.key = key;
         this.versionId = null;
@@ -106,7 +107,7 @@ public class SetObjectAclRequest extends AmazonWebServiceRequest implements Seri
      *            apply to the specified bucket when this request is executed.
      */
     public SetObjectAclRequest(String bucketName, String key, String versionId,
-            AccessControlList acl) {
+                               AccessControlList acl) {
         this.bucketName = bucketName;
         this.key = key;
         this.versionId = versionId;
@@ -131,7 +132,7 @@ public class SetObjectAclRequest extends AmazonWebServiceRequest implements Seri
      *            bucket when this request is executed.
      */
     public SetObjectAclRequest(String bucketName, String key, String versionId,
-            CannedAccessControlList acl) {
+                               CannedAccessControlList acl) {
         this.bucketName = bucketName;
         this.key = key;
         this.versionId = versionId;

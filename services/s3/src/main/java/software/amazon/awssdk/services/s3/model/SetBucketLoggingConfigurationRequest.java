@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -44,7 +45,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  * delivered to the new target bucket 'B.' In all cases, the new settings will
  * eventually take effect without any further action from the user.
  * </p>
- * 
+ *
  * @see SetBucketLoggingConfigurationRequest#SetBucketLoggingConfigurationRequest(String, BucketLoggingConfiguration)
  */
 public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceRequest implements Serializable {
@@ -53,18 +54,18 @@ public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceReques
      * The name of the bucket whose logging configuration is being set.
      */
     private String bucketName;
-    
+
     /**
      * The new logging configuration for the specified bucket.
      */
     private BucketLoggingConfiguration loggingConfiguration;
 
-    
+
     /**
-     * Constructs a new {@link SetBucketLoggingConfigurationRequest} 
+     * Constructs a new {@link SetBucketLoggingConfigurationRequest}
      * to set the bucket logging configuration of
      * the specified bucket.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket whose logging configuration is being
      *            set.
@@ -78,9 +79,9 @@ public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceReques
 
     /**
      * Gets the name of the bucket whose logging configuration is being set.
-     * 
+     *
      * @return The name of the bucket whose logging configuration is being set.
-     * 
+     *
      * @see SetBucketLoggingConfigurationRequest#setBucketName(String)
      * @see SetBucketLoggingConfigurationRequest#withLoggingConfiguration(BucketLoggingConfiguration)
      */
@@ -90,13 +91,13 @@ public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceReques
 
     /**
      * Sets the name of the bucket whose logging configuration is being set.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket whose logging configuration is being
      *            set.
-     *            
+     *
      * @see SetBucketLoggingConfigurationRequest#getBucketName()
-     * @see SetBucketLoggingConfigurationRequest#withBucketName(String)            
+     * @see SetBucketLoggingConfigurationRequest#withBucketName(String)
      */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
@@ -106,16 +107,16 @@ public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceReques
      * Sets the name of the bucket whose logging configuration is being set
      * and returns this object, enabling additional method calls to be
      * chained together.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket whose logging configuration is being
      *            set.
-     * 
+     *
      * @return This {@link SetBucketLoggingConfigurationRequest} object, enabling
      *         additional method calls may to be chained together.
-     *         
+     *
      * @see SetBucketLoggingConfigurationRequest#getBucketName()
-     * @see SetBucketLoggingConfigurationRequest#setBucketName(String)     
+     * @see SetBucketLoggingConfigurationRequest#setBucketName(String)
      */
     public SetBucketLoggingConfigurationRequest withBucketName(String bucketName) {
         setBucketName(bucketName);
@@ -124,9 +125,9 @@ public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceReques
 
     /**
      * Gets the logging configuration for the specified bucket.
-     * 
+     *
      * @return The logging configuration for the specified bucket.
-     * 
+     *
      * @see SetBucketLoggingConfigurationRequest#setLoggingConfiguration(BucketLoggingConfiguration)
      * @see SetBucketLoggingConfigurationRequest#withLoggingConfiguration(BucketLoggingConfiguration)
      */
@@ -136,11 +137,11 @@ public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceReques
 
     /**
      * Sets the logging configuration for the specified bucket.
-     * 
+     *
      * @param loggingConfiguration
      *            The logging configuration for the specified bucket.
-     *            
-     * @see SetBucketLoggingConfigurationRequest#getLoggingConfiguration()     
+     *
+     * @see SetBucketLoggingConfigurationRequest#getLoggingConfiguration()
      * @see SetBucketLoggingConfigurationRequest#withLoggingConfiguration(BucketLoggingConfiguration)
      */
     public void setLoggingConfiguration(BucketLoggingConfiguration loggingConfiguration) {
@@ -151,13 +152,13 @@ public class SetBucketLoggingConfigurationRequest extends AmazonWebServiceReques
      * Sets the logging configuration for the specified bucket and returns
      * the updated object, enabling additional method calls to be chained
      * together.
-     * 
+     *
      * @param loggingConfiguration
      *            The logging configuration for the specified bucket.
-     * 
+     *
      * @return This {@link SetBucketLoggingConfigurationRequest} object, enabling
      *         additional method calls to be chained together.
-     *         
+     *
      * @see SetBucketLoggingConfigurationRequest#getLoggingConfiguration()
      * @see SetBucketLoggingConfigurationRequest#setLoggingConfiguration(BucketLoggingConfiguration)
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import java.util.concurrent.CountDownLatch;
@@ -25,7 +26,7 @@ final class MultipleFileTransferStateChangeListener implements TransferStateChan
     private final MultipleFileTransfer<?> multipleFileTransfer;
 
     public MultipleFileTransferStateChangeListener(CountDownLatch latch,
-            MultipleFileTransfer<?> multipleFileTransfer) {
+                                                   MultipleFileTransfer<?> multipleFileTransfer) {
         this.latch = latch;
         this.multipleFileTransfer = multipleFileTransfer;
     }
@@ -37,22 +38,23 @@ final class MultipleFileTransferStateChangeListener implements TransferStateChan
         // list, or we may incorrectly report completion.
         try {
             latch.await();
-        } catch ( InterruptedException e ) {
+        } catch (InterruptedException e) {
             throw new SdkClientException("Couldn't wait for all downloads to be queued");
         }
 
         synchronized (multipleFileTransfer) {
-            if ( multipleFileTransfer.getState() == state || multipleFileTransfer.isDone() )
+            if (multipleFileTransfer.getState() == state || multipleFileTransfer.isDone()) {
                 return;
+            }
 
             /*
              * If we're not already in a terminal state, allow a transition
              * to a non-waiting state. Mark completed if this download is
              * completed and the monitor says all of the rest are as well.
              */
-            if ( state == TransferState.InProgress ) {
+            if (state == TransferState.InProgress) {
                 multipleFileTransfer.setState(state);
-            } else if ( multipleFileTransfer.getMonitor().isDone() ) {
+            } else if (multipleFileTransfer.getMonitor().isDone()) {
                 multipleFileTransfer.collateFinalState();
             } else {
                 multipleFileTransfer.setState(TransferState.InProgress);

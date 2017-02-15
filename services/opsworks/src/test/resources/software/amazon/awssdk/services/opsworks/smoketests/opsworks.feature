@@ -8,5 +8,5 @@ Feature: AWS OpsWorks
 
   Scenario: Handling errors
     When I attempt to call the "DescribeLayers" API with:
-    | StackId | fake_stack |
+      | StackId | fake_stack |
     Then I expect the response error code to be "ResourceNotFoundException"

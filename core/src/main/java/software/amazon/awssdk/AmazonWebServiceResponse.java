@@ -52,26 +52,26 @@ public class AmazonWebServiceResponse<T> {
     }
 
     /**
-     * Sets the response metadata associated with this response.
-     * 
-     * @param responseMetadata
-     *            The response metadata for this response.
-     */
-    public void setResponseMetadata(ResponseMetadata responseMetadata) {
-        this.responseMetadata = responseMetadata;
-    }
-
-    /**
      * Returns the response metadata for this response. Response metadata
      * provides additional information about a response that isn't necessarily
      * directly part of the data the service is returning. Response metadata is
      * primarily used for debugging issues with AWS support when a service isn't
      * working as expected.
-     * 
+     *
      * @return The response metadata for this response.
      */
     public ResponseMetadata getResponseMetadata() {
         return responseMetadata;
+    }
+
+    /**
+     * Sets the response metadata associated with this response.
+     *
+     * @param responseMetadata
+     *            The response metadata for this response.
+     */
+    public void setResponseMetadata(ResponseMetadata responseMetadata) {
+        this.responseMetadata = responseMetadata;
     }
 
     /**
@@ -82,7 +82,9 @@ public class AmazonWebServiceResponse<T> {
      *         response.
      */
     public String getRequestId() {
-        if (responseMetadata == null) return null;
+        if (responseMetadata == null) {
+            return null;
+        }
         return responseMetadata.getRequestId();
     }
 

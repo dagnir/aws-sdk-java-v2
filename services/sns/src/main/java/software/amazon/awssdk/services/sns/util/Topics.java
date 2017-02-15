@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ public class Topics {
                                         boolean extendPolicy)
             throws AmazonClientException, AmazonServiceException {
         List<String> sqsAttrNames = Arrays.asList(QueueAttributeName.QueueArn.toString(),
-                QueueAttributeName.Policy.toString());
+                                                  QueueAttributeName.Policy.toString());
         Map<String, String> sqsAttrs = sqs.getQueueAttributes(sqsQueueUrl, sqsAttrNames).getAttributes();
         String sqsQueueArn = sqsAttrs.get(QueueAttributeName.QueueArn.toString());
 
@@ -190,11 +190,11 @@ public class Topics {
         Policy policy = extendPolicy && policyJson != null && policyJson.length() > 0
                         ? Policy.fromJson(policyJson) : new Policy();
         policy.getStatements().add(new Statement(Effect.Allow)
-                .withId("topic-subscription-" + snsTopicArn)
-                .withPrincipals(Principal.AllUsers)
-                .withActions(SQSActions.SendMessage)
-                .withResources(new Resource(sqsQueueArn))
-                .withConditions(ConditionFactory.newSourceArnCondition(snsTopicArn)));
+                                           .withId("topic-subscription-" + snsTopicArn)
+                                           .withPrincipals(Principal.AllUsers)
+                                           .withActions(SQSActions.SendMessage)
+                                           .withResources(new Resource(sqsQueueArn))
+                                           .withConditions(ConditionFactory.newSourceArnCondition(snsTopicArn)));
 
         Map<String, String> newAttrs = new HashMap<String, String>();
         newAttrs.put(QueueAttributeName.Policy.toString(), policy.toJson());

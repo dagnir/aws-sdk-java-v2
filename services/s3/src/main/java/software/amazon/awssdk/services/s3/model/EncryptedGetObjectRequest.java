@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import static software.amazon.awssdk.services.s3.model.ExtraMaterialsDescription.NONE;
@@ -62,7 +63,7 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
     }
 
     public EncryptedGetObjectRequest(String bucketName, String key,
-            String versionId) {
+                                     String versionId) {
         super(bucketName, key, versionId);
         setKey(key);
         setVersionId(versionId);
@@ -73,14 +74,14 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
     }
 
     public EncryptedGetObjectRequest(String bucketName, String key,
-            boolean isRequesterPays) {
+                                     boolean isRequesterPays) {
         super(bucketName, key, isRequesterPays);
     }
 
     /**
      * Returns the supplemental material description to be used for retrieving
      * the encryption materials.
-     * 
+     *
      * @return the supplemental material description; never null.
      */
     public ExtraMaterialsDescription getExtraMaterialDescription() {
@@ -90,7 +91,7 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
     /**
      * Sets the supplemental materials description for the encryption materials
      * to be used with the current request.
-     * 
+     *
      * @param supplemental
      *            the materialsDescription to set; must not conflict with the
      *            existing one saved in S3 or else will cause the get request to
@@ -99,13 +100,13 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
     public void setExtraMaterialDescription(
             ExtraMaterialsDescription supplemental) {
         this.supplemental = supplemental == null
-            ? NONE : supplemental;
+                            ? NONE : supplemental;
     }
 
     /**
      * Sets the supplemental materials description for the encryption materials
      * to be used with the current request.
-     * 
+     *
      * @param supplemental
      *            the materialsDescription to set; must not conflict with the
      *            existing one saved in S3 or else will cause the get request to
@@ -120,7 +121,7 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
     /**
      * Fluent API to set the supplemental materials description for the
      * encryption materials to be used with the current request.
-     * 
+     *
      * @param supplemental
      *            the materialsDescription to set; must not conflict with the
      *            existing one saved in S3 or else will cause the get request to
@@ -129,7 +130,7 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
     public EncryptedGetObjectRequest withExtraMaterialsDescription(
             Map<String, String> supplemental) {
         setExtraMaterialDescription(supplemental == null ? null
-                : new ExtraMaterialsDescription(supplemental));
+                                                         : new ExtraMaterialsDescription(supplemental));
         return this;
     }
 
@@ -144,10 +145,10 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
      * object. Each instruction file contains the same CEK encrypted under a
      * different KEK, the IV, and other meta information (aka material
      * description).
-     * 
+     *
      * @param instructionFileSuffix
      *            suffix of the instruction file to be used.
-     * 
+     *
      * @see AmazonS3EncryptionClient#putInstructionFile(PutInstructionFileRequest)
      */
     public void setInstructionFileSuffix(String instructionFileSuffix) {
@@ -161,10 +162,10 @@ public class EncryptedGetObjectRequest extends GetObjectRequest implements Seria
      * created for the same S3 object. Each instruction file contains the same
      * CEK encrypted under a different KEK, the IV, and other meta information
      * (aka material description).
-     * 
+     *
      * @param instructionFileSuffix
      *            suffix of the instruction file to be used.
-     * 
+     *
      * @see AmazonS3EncryptionClient#putInstructionFile(PutInstructionFileRequest)
      */
     public EncryptedGetObjectRequest withInstructionFileSuffix(

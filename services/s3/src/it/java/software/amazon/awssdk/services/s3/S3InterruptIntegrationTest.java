@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertTrue;
@@ -26,8 +41,8 @@ import software.amazon.awssdk.test.util.ConstantInputStream;
 public class S3InterruptIntegrationTest {
     private static final boolean DEBUG = false;
     private static final int DATA_SIZE = 30 * 1024 * 1024;
-    private static boolean cleanup = true;
     private static final String TEST_BUCKET = tempBucketName(S3InterruptIntegrationTest.class);
+    private static boolean cleanup = true;
     private static AmazonS3Client s3;
 
     @BeforeClass
@@ -53,7 +68,7 @@ public class S3InterruptIntegrationTest {
         ObjectMetadata omd = new ObjectMetadata();
         omd.setContentLength(DATA_SIZE);
         final PutObjectRequest req = new PutObjectRequest(TEST_BUCKET, "test",
-                is, omd);
+                                                          is, omd);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -84,7 +99,7 @@ public class S3InterruptIntegrationTest {
         ObjectMetadata omd = new ObjectMetadata();
         omd.setContentLength(DATA_SIZE);
         final PutObjectRequest req = new PutObjectRequest(TEST_BUCKET, "test",
-                is, omd);
+                                                          is, omd);
         ExecutorService es = Executors.newSingleThreadExecutor();
         final Boolean[] success = {null};
         Future<?> f = es.submit(new Runnable() {
@@ -116,13 +131,13 @@ public class S3InterruptIntegrationTest {
 
     @Test
     public void testDownloadInterrupts() throws InterruptedException,
-            IOException {
+                                                IOException {
         // Put an object to S3
         InputStream is = new ConstantInputStream(DATA_SIZE, (byte) 'Z');
         ObjectMetadata omd = new ObjectMetadata();
         omd.setContentLength(DATA_SIZE);
         final PutObjectRequest req = new PutObjectRequest(TEST_BUCKET, "test",
-                is, omd);
+                                                          is, omd);
         s3.putObject(req);
 
         final File destfile = CryptoTestUtils.generateRandomAsciiFile(0);
@@ -131,7 +146,7 @@ public class S3InterruptIntegrationTest {
             public void run() {
                 try {
                     GetObjectRequest req = new GetObjectRequest(TEST_BUCKET,
-                            "test");
+                                                                "test");
                     s3.getObject(req, destfile);
                     fail("GET should have been aborted");
                 } catch (AbortedException expected) {
@@ -153,13 +168,13 @@ public class S3InterruptIntegrationTest {
 
     @Test
     public void testDownloadInterruptsViaFuture() throws InterruptedException,
-            IOException {
+                                                         IOException {
         // Put an object to S3
         InputStream is = new ConstantInputStream(DATA_SIZE, (byte) 'Z');
         ObjectMetadata omd = new ObjectMetadata();
         omd.setContentLength(DATA_SIZE);
         final PutObjectRequest req = new PutObjectRequest(TEST_BUCKET, "test",
-                is, omd);
+                                                          is, omd);
         s3.putObject(req);
         final File destfile = CryptoTestUtils.generateRandomAsciiFile(0);
         ExecutorService es = Executors.newSingleThreadExecutor();
@@ -169,7 +184,7 @@ public class S3InterruptIntegrationTest {
             public void run() {
                 try {
                     GetObjectRequest req = new GetObjectRequest(TEST_BUCKET,
-                            "test");
+                                                                "test");
                     s3.getObject(req, destfile);
                     synchronized (success) {
                         success[0] = Boolean.FALSE;
@@ -193,7 +208,8 @@ public class S3InterruptIntegrationTest {
     }
 
     private void debug(Object o) {
-        if (DEBUG)
+        if (DEBUG) {
             System.err.println(String.valueOf(o));
+        }
     }
 }

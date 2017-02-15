@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 /**
@@ -19,7 +20,7 @@ package software.amazon.awssdk.services.s3.model;
  * as granted to grantees in an
  * {@link AccessControlList}. Only a limited set of permission are available;
  * each one is represented as a value in this enumeration.
-*/
+ */
 public enum Permission {
 
     /**
@@ -67,13 +68,37 @@ public enum Permission {
      * </p>
      */
     WriteAcp("WRITE_ACP", "x-amz-grant-write-acp");
-    
+
     private String permissionString;
     private String headerName;
-    
+
     private Permission(String permissionString, String headerName) {
         this.permissionString = permissionString;
         this.headerName = headerName;
+    }
+
+    /**
+     * Returns the {@link Permission} enumeration value representing the specified Amazon
+     * S3 Region ID string. If specified string doesn't map to a known Amazon S3
+     * Region, returns <code>null</code>.
+     *
+     * @param str
+     *            A string representation of an Amazon S3 permission, eg.
+     *            <code>FULL_CONTROL</code>
+     *
+     * @return The {@link Permission} object represented by the given permission string,
+     *         Returns <code>null</code> if the string isn't a valid representation
+     *         of an Amazon S3
+     *         permission.
+     */
+    public static Permission parsePermission(String str) {
+        for (Permission permission : Permission.values()) {
+            if (permission.permissionString.equals(str)) {
+                return permission;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -86,7 +111,7 @@ public enum Permission {
     /**
      * Gets the string representation of this permission object as defined by
      * Amazon S3, eg. <code>FULL_CONTROL</code>.
-     * 
+     *
      * @return The string representation of this permission object as defined by
      *         Amazon S3, eg. <code>FULL_CONTROL</code>.
      */
@@ -94,28 +119,4 @@ public enum Permission {
         return permissionString;
     }
 
-    /**
-     * Returns the {@link Permission} enumeration value representing the specified Amazon
-     * S3 Region ID string. If specified string doesn't map to a known Amazon S3
-     * Region, returns <code>null</code>.
-     * 
-     * @param str
-     *            A string representation of an Amazon S3 permission, eg.
-     *            <code>FULL_CONTROL</code>
-     * 
-     * @return The {@link Permission} object represented by the given permission string,
-     *         Returns <code>null</code> if the string isn't a valid representation 
-     *         of an Amazon S3
-     *         permission.
-     */
-    public static Permission parsePermission(String str) {
-        for (Permission permission : Permission.values()) {
-            if (permission.permissionString.equals(str)) {
-                return permission;
-            }
-        }
-     
-        return null;
-    }
-    
 }

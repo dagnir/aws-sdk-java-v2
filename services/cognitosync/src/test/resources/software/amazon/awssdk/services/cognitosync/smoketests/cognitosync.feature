@@ -8,5 +8,5 @@ Feature: Amazon Cognito Sync
 
   Scenario: Handling errors
     When I attempt to call the "DescribeIdentityPoolUsage" API with:
-    | IdentityPoolId | us-east-1:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee |
+      | IdentityPoolId | us-east-1:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee |
     Then I expect the response error code to be "ResourceNotFoundException"

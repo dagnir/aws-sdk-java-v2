@@ -1,16 +1,16 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -72,12 +72,12 @@ public class AbstractDynamoDBMapper implements IDynamoDBMapper {
 
     @Override
     public <T> T load(Class<T> clazz, Object hashKey, DynamoDBMapperConfig config) {
-        return load(clazz, hashKey, (Object)null, config);
+        return load(clazz, hashKey, (Object) null, config);
     }
 
     @Override
     public <T> T load(Class<T> clazz, Object hashKey) {
-        return load(clazz, hashKey, (Object)null, config);
+        return load(clazz, hashKey, (Object) null, config);
     }
 
     @Override
@@ -114,13 +114,14 @@ public class AbstractDynamoDBMapper implements IDynamoDBMapper {
         return marshallIntoObjects(clazz, itemAttributes, config);
     }
 
-    public <T> List<T> marshallIntoObjects(Class<T> clazz, List<Map<String, AttributeValue>> itemAttributes, DynamoDBMapperConfig config) {
+    public <T> List<T> marshallIntoObjects(Class<T> clazz, List<Map<String, AttributeValue>> itemAttributes,
+                                           DynamoDBMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
     public <T> void save(T object) {
-        save(object, (DynamoDBSaveExpression)null, config);
+        save(object, (DynamoDBSaveExpression) null, config);
     }
 
     @Override
@@ -130,7 +131,7 @@ public class AbstractDynamoDBMapper implements IDynamoDBMapper {
 
     @Override
     public <T> void save(T object, DynamoDBMapperConfig config) {
-        save(object, (DynamoDBSaveExpression)null, config);
+        save(object, (DynamoDBSaveExpression) null, config);
     }
 
     @Override
@@ -140,7 +141,7 @@ public class AbstractDynamoDBMapper implements IDynamoDBMapper {
 
     @Override
     public void delete(Object object) {
-        delete(object, (DynamoDBDeleteExpression)null, config);
+        delete(object, (DynamoDBDeleteExpression) null, config);
     }
 
     @Override
@@ -150,7 +151,7 @@ public class AbstractDynamoDBMapper implements IDynamoDBMapper {
 
     @Override
     public void delete(Object object, DynamoDBMapperConfig config) {
-        delete(object, (DynamoDBDeleteExpression)null, config);
+        delete(object, (DynamoDBDeleteExpression) null, config);
     }
 
     @Override
@@ -301,7 +302,7 @@ public class AbstractDynamoDBMapper implements IDynamoDBMapper {
 
     @Override
     public S3Link createS3Link(String bucketName, String key) {
-        return createS3Link((Region)null, bucketName, key);
+        return createS3Link((Region) null, bucketName, key);
     }
 
     @Override

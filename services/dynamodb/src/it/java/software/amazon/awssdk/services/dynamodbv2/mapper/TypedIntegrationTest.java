@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -33,22 +34,6 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.AutoKeyAndVal;
 public class TypedIntegrationTest extends AbstractKeyAndValIntegrationTestCase {
 
     /**
-     * test object.
-     */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
-    public static class KeyAndBinaryUuid extends AutoKeyAndVal<UUID> {
-        @DynamoDBTyped(DynamoDBAttributeType.B)
-        public UUID getVal() {
-            return super.getVal();
-        }
-
-        @Override
-        public void setVal(final UUID val) {
-            super.setVal(val);
-        }
-    }
-
-    /**
      * Test the mappings.
      */
     @Test
@@ -56,30 +41,6 @@ public class TypedIntegrationTest extends AbstractKeyAndValIntegrationTestCase {
         final KeyAndBinaryUuid object = new KeyAndBinaryUuid();
         object.setVal(UUID.randomUUID());
         assertBeforeAndAfterChange(false, object);
-    }
-
-    /**
-     * An object with an enumeration.
-     */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
-    public static class KeyAndStatus extends AutoKeyAndVal<KeyAndStatus.Status> {
-        public static enum Status {
-            X,
-            Y,
-            Z
-        }
-
-        ;
-
-        @DynamoDBTyped(DynamoDBAttributeType.S)
-        public Status getVal() {
-            return super.getVal();
-        }
-
-        @Override
-        public void setVal(final Status val) {
-            super.setVal(val);
-        }
     }
 
     /**
@@ -102,6 +63,69 @@ public class TypedIntegrationTest extends AbstractKeyAndValIntegrationTestCase {
     }
 
     /**
+     * Test with a null enum val.
+     */
+    @Test
+    public void testDefaultEnumValue() {
+        final KeyAndDefaultStatus object = new KeyAndDefaultStatus();
+        final KeyAndStatus.Status value = assertBeforeAndAfterChange(true, object);
+        assertEquals(KeyAndStatus.Status.Z, value);
+    }
+
+    /**
+     * Test the mappings.
+     */
+    @Test
+    public void testNativeMap() {
+        final Map<String, AttributeValue> map = new HashMap<String, AttributeValue>();
+        map.put("A", new AttributeValue().withN("123"));
+
+        final KeyAndNativeValue object = new KeyAndNativeValue();
+        object.setVal(new AttributeValue().withM(map));
+        assertBeforeAndAfterChange(false, object);
+    }
+
+    /**
+     * test object.
+     */
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    public static class KeyAndBinaryUuid extends AutoKeyAndVal<UUID> {
+        @DynamoDBTyped(DynamoDBAttributeType.B)
+        public UUID getVal() {
+            return super.getVal();
+        }
+
+        @Override
+        public void setVal(final UUID val) {
+            super.setVal(val);
+        }
+    }
+
+    /**
+     * An object with an enumeration.
+     */
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    public static class KeyAndStatus extends AutoKeyAndVal<KeyAndStatus.Status> {
+        @DynamoDBTyped(DynamoDBAttributeType.S)
+        public Status getVal() {
+            return super.getVal();
+        }
+
+        ;
+
+        @Override
+        public void setVal(final Status val) {
+            super.setVal(val);
+        }
+
+        public static enum Status {
+            X,
+            Y,
+            Z
+        }
+    }
+
+    /**
      * An object with an enumeration.
      */
     @DynamoDBTable(tableName = "aws-java-sdk-util")
@@ -111,16 +135,6 @@ public class TypedIntegrationTest extends AbstractKeyAndValIntegrationTestCase {
         public Status getVal() {
             return super.getVal();
         }
-    }
-
-    /**
-     * Test with a null enum val.
-     */
-    @Test
-    public void testDefaultEnumValue() {
-        final KeyAndDefaultStatus object = new KeyAndDefaultStatus();
-        final KeyAndStatus.Status value = assertBeforeAndAfterChange(true, object);
-        assertEquals(KeyAndStatus.Status.Z, value);
     }
 
     /**
@@ -137,19 +151,6 @@ public class TypedIntegrationTest extends AbstractKeyAndValIntegrationTestCase {
         public void setVal(final AttributeValue val) {
             super.setVal(val);
         }
-    }
-
-    /**
-     * Test the mappings.
-     */
-    @Test
-    public void testNativeMap() {
-        final Map<String, AttributeValue> map = new HashMap<String, AttributeValue>();
-        map.put("A", new AttributeValue().withN("123"));
-
-        final KeyAndNativeValue object = new KeyAndNativeValue();
-        object.setVal(new AttributeValue().withM(map));
-        assertBeforeAndAfterChange(false, object);
     }
 
 }

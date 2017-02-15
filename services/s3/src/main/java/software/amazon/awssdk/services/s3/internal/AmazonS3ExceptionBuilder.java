@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.HashMap;
@@ -88,6 +89,15 @@ public class AmazonS3ExceptionBuilder {
     }
 
     /**
+     * Returns the AWS error code represented by this exception.
+     *
+     * @return The AWS error code represented by this exception.
+     */
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    /**
      * Sets the AWS error code represented by this exception.
      *
      * @param errorCode
@@ -95,15 +105,6 @@ public class AmazonS3ExceptionBuilder {
      */
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
-    }
-
-    /**
-     * Returns the AWS error code represented by this exception.
-     *
-     * @return The AWS error code represented by this exception.
-     */
-    public String getErrorCode() {
-        return errorCode;
     }
 
     /**
@@ -121,17 +122,6 @@ public class AmazonS3ExceptionBuilder {
     }
 
     /**
-     * Sets the HTTP status code that was returned with this service exception.
-     *
-     * @param statusCode
-     *            The HTTP status code that was returned with this service
-     *            exception.
-     */
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    /**
      * Returns the HTTP status code that was returned with this service
      * exception.
      *
@@ -140,6 +130,17 @@ public class AmazonS3ExceptionBuilder {
      */
     public int getStatusCode() {
         return statusCode;
+    }
+
+    /**
+     * Sets the HTTP status code that was returned with this service exception.
+     *
+     * @param statusCode
+     *            The HTTP status code that was returned with this service
+     *            exception.
+     */
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 
     /**
@@ -206,18 +207,21 @@ public class AmazonS3ExceptionBuilder {
      * Adds an entry to the additional information map.
      */
     public void addAdditionalDetail(String key, String detail) {
-        if (detail == null || detail.trim().isEmpty())
+        if (detail == null || detail.trim().isEmpty()) {
             return;
+        }
 
         if (this.additionalDetails == null) {
             this.additionalDetails = new HashMap<String, String>();
         }
 
         String additionalContent = this.additionalDetails.get(key);
-        if (additionalContent != null && !additionalContent.trim().isEmpty())
+        if (additionalContent != null && !additionalContent.trim().isEmpty()) {
             detail = additionalContent + "-" + detail;
-        if (!detail.isEmpty())
+        }
+        if (!detail.isEmpty()) {
             additionalDetails.put(key, detail);
+        }
     }
 
     /**
@@ -240,7 +244,7 @@ public class AmazonS3ExceptionBuilder {
     public AmazonS3Exception build() {
         AmazonS3Exception s3Exception = errorResponseXml == null ? new AmazonS3Exception(
                 errorMessage) : new AmazonS3Exception(errorMessage,
-                errorResponseXml);
+                                                      errorResponseXml);
         s3Exception.setErrorCode(errorCode);
         s3Exception.setExtendedRequestId(extendedRequestId);
         s3Exception.setStatusCode(statusCode);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ public interface ClientExecutionAbortTrackerTask {
 
     /**
      * Client execution timer task needs to abort the current running HTTP request when executed.
-     * 
+     *
      * @param newRequest
      */
     void setCurrentHttpRequest(HttpRequestBase newRequest);

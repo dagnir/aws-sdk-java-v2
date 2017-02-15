@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class DummyErrorResponseServerIntegrationTests extends MockServerTestBase
                 new ClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
 
         httpClient.requestExecutionBuilder().request(newGetRequest()).errorResponseHandler(new UnresponsiveErrorResponseHandler())
-                .execute();
+                  .execute();
     }
 
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
@@ -74,10 +74,10 @@ public class DummyErrorResponseServerIntegrationTests extends MockServerTestBase
                 new SlowRequestHandler().withAfterErrorWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
 
         httpClient.requestExecutionBuilder()
-                .request(newGetRequest())
-                .errorResponseHandler(new NullErrorResponseHandler())
-                .executionContext(ExecutionContext.builder().withRequestHandler2s(requestHandlers).build())
-                .execute();
+                  .request(newGetRequest())
+                  .errorResponseHandler(new NullErrorResponseHandler())
+                  .executionContext(ExecutionContext.builder().withRequestHandler2s(requestHandlers).build())
+                  .execute();
     }
 
 }

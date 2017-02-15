@@ -16,27 +16,27 @@ import software.amazon.awssdk.services.cloudsearchdomain.model.SuggestResult;
 import software.amazon.awssdk.services.cloudsearchdomain.model.UploadDocumentsRequest;
 
 public class CloudSearchDomainIntegrationTest extends
-        CloudSearchDomainIntegrationTestBase {
-
-    @Test
-    public void testUploadDocumentsWithRandomData()
-            throws AmazonServiceException, AmazonClientException,
-            FileNotFoundException {
-        try {
-            cloudSearchDomain.setEndpoint(docServiceEndpoint);
-            cloudSearchDomain.uploadDocuments(new UploadDocumentsRequest()
-                    .withDocuments(new RepeatableFileInputStream(fileToUpload))
-                    .withContentType("application/json")
-                    .withContentLength(fileToUpload.length()));
-            fail("Should throw an exception as the data upload is a random and the service wouldn't be able to index it.");
-        } catch (AmazonServiceException ase) {
-        }
-    }
+                                              CloudSearchDomainIntegrationTestBase {
 
     @BeforeClass
     public static void setup() throws Exception {
         CloudSearchDomainIntegrationTestBase.setup();
         cloudSearchDomain.setEndpoint(searchServiceEndpoint);
+    }
+
+    @Test
+    public void testUploadDocumentsWithRandomData()
+            throws AmazonServiceException, AmazonClientException,
+                   FileNotFoundException {
+        try {
+            cloudSearchDomain.setEndpoint(docServiceEndpoint);
+            cloudSearchDomain.uploadDocuments(new UploadDocumentsRequest()
+                                                      .withDocuments(new RepeatableFileInputStream(fileToUpload))
+                                                      .withContentType("application/json")
+                                                      .withContentLength(fileToUpload.length()));
+            fail("Should throw an exception as the data upload is a random and the service wouldn't be able to index it.");
+        } catch (AmazonServiceException ase) {
+        }
     }
 
     @Test
@@ -81,7 +81,7 @@ public class CloudSearchDomainIntegrationTest extends
     public void testSuggestersWithInCorrectSuggester() {
         try {
             cloudSearchDomain.suggest(new SuggestRequest().withQuery("Thor")
-                    .withSuggester("suggesternotpresent"));
+                                                          .withSuggester("suggesternotpresent"));
             fail("An exception should be thrown as the suggester mentioned in the request is not available");
         } catch (Exception e) {
         }

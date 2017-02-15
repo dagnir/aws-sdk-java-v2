@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -35,10 +31,10 @@ public class TimingInfoTest {
         final long startTimeNano = System.nanoTime();
         final long startTimeMilli = System.currentTimeMillis();
         TimingInfo[] tis = {
-            TimingInfo.startTimingFullSupport(),
-            TimingInfo.startTiming()
+                TimingInfo.startTimingFullSupport(),
+                TimingInfo.startTiming()
         };
-        for (TimingInfo ti: tis) {
+        for (TimingInfo ti : tis) {
             assertTrue(ti.isStartEpochTimeMilliKnown());
             assertTrue(ti.getStartTimeNano() >= startTimeNano);
             assertTrue(ti.getStartEpochTimeMilli() >= startTimeMilli);
@@ -56,7 +52,7 @@ public class TimingInfoTest {
             assertTrue(ti.getEndEpochTimeMilli() >= startTimeMilli);
             assertTrue(ti.getEndTime() == ti.getEndEpochTimeMilli());
             assertTrue(ti.getTimeTakenMillis() >= 0);
-            assertTrue(ti.getElapsedTimeMillis() >=0 );
+            assertTrue(ti.getElapsedTimeMillis() >= 0);
         }
     }
 
@@ -75,7 +71,7 @@ public class TimingInfoTest {
         assertTrue(ti.getEndEpochTimeMilli() >= startTimeMilli);
         assertTrue(ti.getEndTime() == ti.getEndEpochTimeMilli());
         assertTrue(ti.getTimeTakenMillis() >= 0);
-        assertTrue(ti.getElapsedTimeMillis() >=0 );
+        assertTrue(ti.getElapsedTimeMillis() >= 0);
     }
 
     @Test
@@ -92,7 +88,7 @@ public class TimingInfoTest {
         assertTrue(ti.getEndEpochTimeMilli() == UNKNOWN);
         assertTrue(ti.getEndTime() == ti.getEndEpochTimeMilli());
         assertTrue(ti.getTimeTakenMillis() >= 0);
-        assertTrue(ti.getElapsedTimeMillis() >=0 );
+        assertTrue(ti.getElapsedTimeMillis() >= 0);
     }
 
     // Test the absurd case when the start/end times were insanely swapped
@@ -111,7 +107,7 @@ public class TimingInfoTest {
         assertTrue(ti.getEndTimeNano() < endTimeNano);
         assertTrue(ti.getEndEpochTimeMilli() == UNKNOWN);
         assertTrue(ti.getEndTime() == ti.getEndEpochTimeMilli());
-        double double_diff = (double)TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano)/1000.0;
+        double double_diff = (double) TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano) / 1000.0;
         assertTrue(ti.getTimeTakenMillis() == double_diff);
         long long_diff = TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
         assertTrue(ti.getElapsedTimeMillis() == long_diff);
@@ -133,10 +129,10 @@ public class TimingInfoTest {
         assertTrue(ti.isEndTimeKnown());
         assertTrue(ti.getEndTimeNano() < endTimeNano);
         long end_epoch_time = startTimeMilli
-                + TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
+                              + TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
         assertTrue(ti.getEndEpochTimeMilli() == end_epoch_time);
         assertTrue(ti.getEndTime() == ti.getEndEpochTimeMilli());
-        double double_diff = (double)TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano)/1000.0;
+        double double_diff = (double) TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano) / 1000.0;
         assertTrue(ti.getTimeTakenMillis() == double_diff);
         long long_diff = TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
         assertTrue(ti.getElapsedTimeMillis() == long_diff);
@@ -212,7 +208,7 @@ public class TimingInfoTest {
         assertTrue(ti.isEndTimeKnown());
         assertTrue(ti.getEndTimeNanoIfKnown().longValue() < endTimeNano);
         assertNull(ti.getEndEpochTimeMilliIfKnown());
-        double double_diff = (double)TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano)/1000.0;
+        double double_diff = (double) TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano) / 1000.0;
         assertTrue(ti.getTimeTakenMillisIfKnown().doubleValue() == double_diff);
         long long_diff = TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
         assertTrue(ti.getTimeTakenMillisIfKnown().longValue() == long_diff);
@@ -234,15 +230,15 @@ public class TimingInfoTest {
         assertTrue(ti.isEndTimeKnown());
         assertTrue(ti.getEndTimeNanoIfKnown().longValue() < endTimeNano);
         long end_epoch_time = startTimeMilli
-                + TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
+                              + TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
         assertTrue(ti.getEndEpochTimeMilliIfKnown().longValue() == end_epoch_time);
         assertTrue(ti.getEndEpochTimeMilliIfKnown().longValue() == ti.getEndEpochTimeMilli());
-        double double_diff = (double)TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano)/1000.0;
+        double double_diff = (double) TimeUnit.NANOSECONDS.toMicros(startTimeNano - endTimeNano) / 1000.0;
         assertTrue(ti.getTimeTakenMillisIfKnown().doubleValue() == double_diff);
         long long_diff = TimeUnit.NANOSECONDS.toMillis(startTimeNano - endTimeNano);
         assertTrue(ti.getTimeTakenMillisIfKnown().longValue() == long_diff);
     }
-    
+
     @Test
     public void subEventsEnabled() {
         TimingInfo ti = TimingInfo.startTimingFullSupport();
@@ -268,5 +264,5 @@ public class TimingInfoTest {
         ti.setCounter("c2", 0);
         assertTrue(ti.getAllCounters().size() == 0);
     }
-    
+
 }

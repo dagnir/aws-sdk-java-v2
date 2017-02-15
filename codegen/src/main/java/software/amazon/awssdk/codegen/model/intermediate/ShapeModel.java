@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -86,6 +86,10 @@ public class ShapeModel extends DocumentationModel {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @JsonIgnore
     public ShapeType getShapeType() {
         return ShapeType.fromValue(type);
@@ -94,10 +98,6 @@ public class ShapeModel extends DocumentationModel {
     @JsonIgnore
     public void setType(ShapeType shapeType) {
         setType(shapeType.getValue());
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public ShapeModel withType(String type) {
@@ -161,7 +161,7 @@ public class ShapeModel extends DocumentationModel {
                     if (hasPayloadMember) {
                         throw new IllegalStateException(String.format(
                                 "C2J Shape %s has both an explicit payload member and unbound (no explicit location) members. "
-                                        + "This is undefined behavior, verify the correctness of the C2J model", c2jName));
+                                + "This is undefined behavior, verify the correctness of the C2J model", c2jName));
                     }
                     unboundMembers.add(member);
                 }
@@ -218,9 +218,10 @@ public class ShapeModel extends DocumentationModel {
     }
 
     public MemberModel getMemberByVariableName(String memberVariableName) {
-        for (MemberModel memberModel: members) {
-            if (memberModel.getVariable().getVariableName().equals(memberVariableName))
+        for (MemberModel memberModel : members) {
+            if (memberModel.getVariable().getVariableName().equals(memberVariableName)) {
                 return memberModel;
+            }
         }
         throw new IllegalArgumentException("Unknown member variable name: " + memberVariableName);
     }
@@ -343,12 +344,12 @@ public class ShapeModel extends DocumentationModel {
 
         final List<MemberModel> memberModels = getMembers();
         final String expectedName = ignoreCase ? StringUtils.lowerCase(memberC2jName)
-                                                : memberC2jName;
+                                               : memberC2jName;
 
         if (memberModels != null) {
             for (MemberModel member : memberModels) {
                 String actualName = ignoreCase ? StringUtils.lowerCase(member.getC2jName())
-                                                : member.getC2jName();
+                                               : member.getC2jName();
 
                 if (expectedName.equals(actualName)) {
                     return member;

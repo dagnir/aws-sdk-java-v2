@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,23 +25,23 @@ public enum PEMObjectType {
     PRIVATE_KEY_PKCS1("-----BEGIN RSA PRIVATE KEY-----"),
     PRIVATE_KEY_PKCS8("-----BEGIN PRIVATE KEY-----"),
     PUBLIC_KEY_X509("-----BEGIN PUBLIC KEY-----"),
-    CERTIFICATE_X509("-----BEGIN CERTIFICATE-----")
-    ;
+    CERTIFICATE_X509("-----BEGIN CERTIFICATE-----");
     private final String beginMarker;
-
-    public String getBeginMarker() {
-        return beginMarker;
-    }
 
     PEMObjectType(String beginMarker) {
         this.beginMarker = beginMarker;
     }
-    
+
     public static PEMObjectType fromBeginMarker(String beginMarker) {
-        for (PEMObjectType e: PEMObjectType.values()) {
-            if (e.getBeginMarker().equals(beginMarker))
+        for (PEMObjectType e : PEMObjectType.values()) {
+            if (e.getBeginMarker().equals(beginMarker)) {
                 return e;
+            }
         }
         return null;
+    }
+
+    public String getBeginMarker() {
+        return beginMarker;
     }
 }

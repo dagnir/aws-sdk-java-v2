@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -46,6 +46,33 @@ public class SkipMd5CheckStrategy {
     }
 
     /**
+     * Returns true if the specified ETag was from a multipart upload.
+     *
+     * @param eTag
+     *            The ETag to test.
+     * @return True if the specified ETag was from a multipart upload, otherwise false it if belongs
+     *         to an object that was uploaded in a single part.
+     */
+    private static boolean isMultipartUploadETag(String eTag) {
+        return eTag.contains("-");
+    }
+
+    /**
+     * Helper method to avoid long chains of non null checks
+     *
+     * @param items
+     * @return True if any of the provided items is not null. False if all items are null.
+     */
+    private static boolean containsNonNull(Object... items) {
+        for (Object item : items) {
+            if (item != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determines whether the client should use the {@link Headers#ETAG} header returned by S3 to
      * validate the integrity of the message client side based on the server response. We skip the
      * client side check if any of the following conditions are true:
@@ -55,7 +82,7 @@ public class SkipMd5CheckStrategy {
      * <li>The Etag header is missing</li>
      * <li>The Etag indicates that the object was created by a MultiPart Upload</li>
      * </ol>
-     * 
+     *
      * @return True if client side validation should be skipped, false otherwise.
      */
     public boolean skipClientSideValidationPerGetResponse(ObjectMetadata metadata) {
@@ -74,7 +101,7 @@ public class SkipMd5CheckStrategy {
      * <li>The request involves SSE-C or SSE-KMS</li>
      * <li>The Etag header is missing</li>
      * </ol>
-     * 
+     *
      * @return True if client side validation should be skipped, false otherwise.
      */
     public boolean skipClientSideValidationPerPutResponse(ObjectMetadata metadata) {
@@ -93,7 +120,7 @@ public class SkipMd5CheckStrategy {
      * <li>The request involves SSE-C or SSE-KMS</li>
      * <li>The Etag header is missing</li>
      * </ol>
-     * 
+     *
      * @return True if client side validation should be skipped, false otherwise.
      */
     public boolean skipClientSideValidationPerUploadPartResponse(ObjectMetadata metadata) {
@@ -106,7 +133,7 @@ public class SkipMd5CheckStrategy {
      * {@link #skipClientSideValidationPerRequest(GetObjectRequest)} and
      * {@link #skipClientSideValidationPerGetResponse(ObjectMetadata)} for more details on the
      * criterion.
-     * 
+     *
      * @param request
      *            Original {@link GetObjectRequest}
      * @param returnedMetadata
@@ -125,7 +152,7 @@ public class SkipMd5CheckStrategy {
      * <li>The system property {@value #DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY} is set</li>
      * <li>The request involves SSE-C or SSE-KMS</li>
      * </ol>
-     * 
+     *
      * @return True if client side validation should be skipped, false otherwise.
      */
     public boolean skipClientSideValidationPerRequest(PutObjectRequest request) {
@@ -143,7 +170,7 @@ public class SkipMd5CheckStrategy {
      * <li>The system property {@value #DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY} is set</li>
      * <li>The request involves SSE-C or SSE-KMS</li>
      * </ol>
-     * 
+     *
      * @return True if client side validation should be skipped, false otherwise.
      */
     public boolean skipClientSideValidationPerRequest(UploadPartRequest request) {
@@ -237,7 +264,7 @@ public class SkipMd5CheckStrategy {
      * plaintext so we can't validate it client side. Plain SSE with S3 managed keys will return an
      * Etag that does match the MD5 of the plaintext so it's still eligible for client side
      * validation.
-     * 
+     *
      * @param metadata
      *            Metadata of request or response
      * @return True if the metadata indicates that SSE-C or SSE-KMS is used. False otherwise
@@ -247,7 +274,7 @@ public class SkipMd5CheckStrategy {
             return false;
         }
         return containsNonNull(metadata.getSSECustomerAlgorithm(), metadata.getSSECustomerKeyMd5(),
-                metadata.getSSEAwsKmsKeyId());
+                               metadata.getSSEAwsKmsKeyId());
     }
 
     /**
@@ -256,32 +283,5 @@ public class SkipMd5CheckStrategy {
      */
     private boolean putRequestInvolvesSse(PutObjectRequest request) {
         return containsNonNull(request.getSSECustomerKey(), request.getSSEAwsKeyManagementParams());
-    }
-
-    /**
-     * Returns true if the specified ETag was from a multipart upload.
-     *
-     * @param eTag
-     *            The ETag to test.
-     * @return True if the specified ETag was from a multipart upload, otherwise false it if belongs
-     *         to an object that was uploaded in a single part.
-     */
-    private static boolean isMultipartUploadETag(String eTag) {
-        return eTag.contains("-");
-    }
-
-    /**
-     * Helper method to avoid long chains of non null checks
-     * 
-     * @param items
-     * @return True if any of the provided items is not null. False if all items are null.
-     */
-    private static boolean containsNonNull(Object... items) {
-        for (Object item : items) {
-            if (item != null) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,9 +37,8 @@ import software.amazon.awssdk.util.StringUtils;
 @SdkInternalApi
 public class BasicProfileConfigLoader {
 
-    private static final Log LOG = LogFactory.getLog(BasicProfileConfigLoader.class);
-
     public static final BasicProfileConfigLoader INSTANCE = new BasicProfileConfigLoader();
+    private static final Log LOG = LogFactory.getLog(BasicProfileConfigLoader.class);
 
     private BasicProfileConfigLoader() {
     }

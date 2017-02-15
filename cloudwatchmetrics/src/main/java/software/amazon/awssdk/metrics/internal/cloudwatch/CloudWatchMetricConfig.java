@@ -1,4 +1,19 @@
 /*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+/*
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -58,12 +73,6 @@ import software.amazon.awssdk.metrics.AwsSdkMetrics;
  */
 @NotThreadSafe
 public class CloudWatchMetricConfig {
-    static final String NAMESPACE_DELIMITER = "/";
-    /**
-     * Maximum number of metric data that Amazon CloudWatch can
-     * accept in a single request
-     */
-    static final int MAX_METRICS_DATUM_SIZE = 20;
     /**
      * Default metrics queue size. If the queue size
      * exceeds this value, then excessive metrics will be dropped to prevent
@@ -74,8 +83,13 @@ public class CloudWatchMetricConfig {
      * Default timeout in millisecond for queue polling.  Set to one-minute
      * which is the finest granularity of Amazon CloudWatch.
      */
-    public static final int DEFAULT_QUEUE_POLL_TIMEOUT_MILLI = (int)TimeUnit.MINUTES.toMillis(1);
-
+    public static final int DEFAULT_QUEUE_POLL_TIMEOUT_MILLI = (int) TimeUnit.MINUTES.toMillis(1);
+    static final String NAMESPACE_DELIMITER = "/";
+    /**
+     * Maximum number of metric data that Amazon CloudWatch can
+     * accept in a single request
+     */
+    static final int MAX_METRICS_DATUM_SIZE = 20;
     /** Credentials for the uploader to communicate with Amazon CloudWatch */
     private AWSCredentialsProvider credentialsProvider;
 

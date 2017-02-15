@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class InstanceMetadataRegionProvider extends AwsRegionProvider {
             return EC2MetadataUtils.getEC2InstanceRegion();
         } catch (AmazonClientException sce) {
             LogFactory.getLog(InstanceMetadataRegionProvider.class)
-                    .debug("Ignoring failure to retrieve the region: " + sce.getMessage());
+                      .debug("Ignoring failure to retrieve the region: " + sce.getMessage());
             return null;
         }
     }

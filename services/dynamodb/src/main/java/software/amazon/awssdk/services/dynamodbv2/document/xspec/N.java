@@ -1,18 +1,19 @@
 /*
- * Copyright 2015-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.document.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.document.xspec;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,9 @@ import software.amazon.awssdk.annotation.Immutable;
 @Beta
 @Immutable
 public final class N extends PathOperand {
-    N(String path) { super(path); }
+    N(String path) {
+        super(path);
+    }
 
     /**
      * Returns a <a href=
@@ -150,9 +153,9 @@ public final class N extends PathOperand {
      * expression.
      */
     public BetweenCondition between(Number low, Number high) {
-        return new BetweenCondition(this, 
-                new LiteralOperand(low),
-                new LiteralOperand(high));
+        return new BetweenCondition(this,
+                                    new LiteralOperand(low),
+                                    new LiteralOperand(high));
     }
 
     /**
@@ -167,11 +170,12 @@ public final class N extends PathOperand {
     }
 
     // Binary operation on a number
+
     /**
      * Returns a <code>PlusOperation</code> that represents the addition of the
      * given value to that of the current attribute; used for building update
      * expression.
-     * 
+     *
      * @param value
      *            given value to be added to the value of the current attribute.
      */
@@ -183,7 +187,7 @@ public final class N extends PathOperand {
      * Returns a <code>PlusOperation</code> object that represents the addition of the
      * value of the given attribute to that of the current attribute; used for
      * building update expression.
-     * 
+     *
      * @param attr
      *            given attribute whose value is to be added to that of the
      *            current attribute
@@ -196,7 +200,7 @@ public final class N extends PathOperand {
      * Returns a <code>MinusOperation</code> object that represents the subtraction of
      * the given value from that of the current attribute; used for building
      * update expression.
-     * 
+     *
      * @param value
      *            given value to be subtracted from the value of the current
      *            attribute.
@@ -209,7 +213,7 @@ public final class N extends PathOperand {
      * Returns a <code>MinusOperation</code> object that represents the subtraction of
      * the value of the given attribute from that of the current attribute; used
      * for building update expression.
-     * 
+     *
      * @param attr
      *            given attribute whose value is to be subtracted from that of
      *            the current attribute
@@ -252,15 +256,16 @@ public final class N extends PathOperand {
      * >InCondition</a> (that evaluates to true if the value of the current
      * attribute is equal to any of the specified values) for building condition
      * expression.
-     * 
+     *
      * @param values
      *            specified values. The number of values must be at least one
      *            and at most 100.
      */
     public final InCondition in(Number... values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (Number v: values)
+        for (Number v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 
@@ -270,15 +275,16 @@ public final class N extends PathOperand {
      * >InCondition</a> (that evaluates to true if the value of the current
      * attribute is equal to any of the values in the specified list) for
      * building condition expression.
-     * 
+     *
      * @param values
      *            specified list of values. The number of values must be at
      *            least one and at most 100.
      */
     public final <T extends Number> InCondition in(List<T> values) {
         List<LiteralOperand> list = new LinkedList<LiteralOperand>();
-        for (Number v: values)
+        for (Number v : values) {
             list.add(new LiteralOperand(v));
+        }
         return new InCondition(this, list);
     }
 
@@ -348,14 +354,14 @@ public final class N extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current path operand; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value that will be used as the operand to the
      *            if_not_exists function call.
@@ -369,14 +375,14 @@ public final class N extends PathOperand {
      * "http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.Modifying.html"
      * >if_not_exists(path, operand)</a> function call where path refers to that
      * of the current attribute; used for building expressions.
-     * 
+     *
      * <pre>
      * "if_not_exists (path, operand) – If the item does not contain an attribute 
      * at the specified path, then if_not_exists evaluates to operand; otherwise, 
      * it evaluates to path. You can use this function to avoid overwriting an 
      * attribute already present in the item."
      * </pre>
-     * 
+     *
      * @param defaultValue
      *            the default value that will be used as the operand to the
      *            if_not_exists function call.

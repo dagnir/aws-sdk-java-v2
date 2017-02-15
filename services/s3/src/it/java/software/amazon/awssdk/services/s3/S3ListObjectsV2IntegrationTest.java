@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -34,12 +49,9 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
     private static final long CONTENT_LENGTH = 123;
 
     private static final String KEY_NAME_WITH_SPECIAL_CHARS = "special-chars-@$%";
-
+    private static final int BUCKET_OBJECTS = 15;
     /** The name of the bucket created, used, and deleted by these tests */
     private static String bucketName = "list-objects-integ-test-" + new Date().getTime();
-
-    private static final int BUCKET_OBJECTS = 15;
-
     /** List of all keys created  by these tests */
     private static List<String> keys = new ArrayList<String>();
 
@@ -66,6 +78,22 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         createKey(KEY_NAME_WITH_SPECIAL_CHARS);
     }
 
+    /**
+     * Creates a test object in S3 with the specified name, using random ASCII
+     * data of the default content length as defined in this test class.
+     *
+     * @param key
+     *            The key under which to create the object in this test class'
+     *            test bucket.
+     */
+    private static void createKey(String key) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(CONTENT_LENGTH);
+        InputStream input = new RandomInputStream(CONTENT_LENGTH);
+
+        s3.putObject(bucketName, key, input, metadata);
+        keys.add(key);
+    }
 
     /*
      * Individual Tests
@@ -99,9 +127,9 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         String prefix = "key";
         String startAfter = "key-01";
         ListObjectsV2Result result = s3.listObjectsV2(new ListObjectsV2Request()
-                                                      .withBucketName(bucketName)
-                                                      .withPrefix(prefix)
-                                                      .withStartAfter(startAfter));
+                                                              .withBucketName(bucketName)
+                                                              .withPrefix(prefix)
+                                                              .withStartAfter(startAfter));
         List<S3ObjectSummary> objects = result.getObjectSummaries();
 
         assertEquals(BUCKET_OBJECTS - 1, objects.size());
@@ -128,9 +156,9 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         String prefix = "a";
         String delimiter = "/";
         ListObjectsV2Result result = s3.listObjectsV2(new ListObjectsV2Request()
-                .withBucketName(bucketName)
-                .withPrefix(prefix)
-                .withDelimiter(delimiter));
+                                                              .withBucketName(bucketName)
+                                                              .withPrefix(prefix)
+                                                              .withDelimiter(delimiter));
 
         List<S3ObjectSummary> objects = result.getObjectSummaries();
 
@@ -154,8 +182,8 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
     public void testListWithMaxKeys() {
         int maxKeys = 4;
         ListObjectsV2Result result = s3.listObjectsV2(new ListObjectsV2Request()
-                .withBucketName(bucketName)
-                .withMaxKeys(maxKeys));
+                                                              .withBucketName(bucketName)
+                                                              .withMaxKeys(maxKeys));
 
         List<S3ObjectSummary> objects = result.getObjectSummaries();
 
@@ -185,9 +213,9 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
     public void testListWithEncodingType() {
         String encodingType = "url";
         ListObjectsV2Result result = s3.listObjectsV2(new ListObjectsV2Request()
-                .withBucketName(bucketName)
-                .withPrefix(KEY_NAME_WITH_SPECIAL_CHARS)
-                .withEncodingType(encodingType));
+                                                              .withBucketName(bucketName)
+                                                              .withPrefix(KEY_NAME_WITH_SPECIAL_CHARS)
+                                                              .withEncodingType(encodingType));
         List<S3ObjectSummary> objects = result.getObjectSummaries();
 
         // EncodingType should be returned in the response.
@@ -196,26 +224,31 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         // The key name returned in the response should have been decoded
         // from the URL encoded form S3 returned us.
         assertEquals(KEY_NAME_WITH_SPECIAL_CHARS,
-                objects.get(0).getKey());
+                     objects.get(0).getKey());
     }
 
     @Test
     public void testListWithFetchOwner() {
         ListObjectsV2Result result = s3.listObjectsV2(new ListObjectsV2Request()
-                .withBucketName(bucketName)
-                .withFetchOwner(true));
+                                                              .withBucketName(bucketName)
+                                                              .withFetchOwner(true));
         List<S3ObjectSummary> objects = result.getObjectSummaries();
         assertS3ObjectSummariesAreValid(objects, true);
     }
+
+
+    /*
+     * Private Test Utilities
+     */
 
     @Test
     public void testListPagination() {
         int firstRequestMaxKeys = 4;
         String prefix = "key";
         ListObjectsV2Result result = s3.listObjectsV2(new ListObjectsV2Request()
-                .withBucketName(bucketName)
-                .withPrefix(prefix)
-                .withMaxKeys(firstRequestMaxKeys));
+                                                              .withBucketName(bucketName)
+                                                              .withPrefix(prefix)
+                                                              .withMaxKeys(firstRequestMaxKeys));
         List<S3ObjectSummary> objects = result.getObjectSummaries();
 
         assertEquals(firstRequestMaxKeys, objects.size());
@@ -226,13 +259,13 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         assertS3ObjectSummariesAreValid(objects, false);
 
         for (int i = 0; i < firstRequestMaxKeys; i++) {
-            assertEquals(keys.get(i), ((S3ObjectSummary)objects.get(i)).getKey());
+            assertEquals(keys.get(i), ((S3ObjectSummary) objects.get(i)).getKey());
         }
 
         ListObjectsV2Result nextResults = s3.listObjectsV2(new ListObjectsV2Request()
-                .withBucketName(bucketName)
-                .withPrefix(prefix)
-                .withContinuationToken(result.getNextContinuationToken()));
+                                                                   .withBucketName(bucketName)
+                                                                   .withPrefix(prefix)
+                                                                   .withContinuationToken(result.getNextContinuationToken()));
         List<S3ObjectSummary> nextObjects = nextResults.getObjectSummaries();
 
         assertNull(nextResults.getNextContinuationToken());
@@ -241,28 +274,6 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         assertEquals(prefix, nextResults.getPrefix());
         assertS3ObjectSummariesAreValid(nextObjects, false);
         assertEquals(nextObjects.size(), BUCKET_OBJECTS - firstRequestMaxKeys);
-    }
-
-
-    /*
-     * Private Test Utilities
-     */
-
-    /**
-     * Creates a test object in S3 with the specified name, using random ASCII
-     * data of the default content length as defined in this test class.
-     *
-     * @param key
-     *            The key under which to create the object in this test class'
-     *            test bucket.
-     */
-    private static void createKey(String key) {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(CONTENT_LENGTH);
-        InputStream input = new RandomInputStream(CONTENT_LENGTH);
-
-        s3.putObject(bucketName, key, input, metadata);
-        keys.add(key);
     }
 
     /**
@@ -280,8 +291,8 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
     private void assertS3ObjectSummariesAreValid(List<S3ObjectSummary> objectSummaries,
                                                  boolean shouldIncludeOwner) {
 
-        for ( java.util.Iterator iterator = objectSummaries.iterator(); iterator.hasNext(); ) {
-            S3ObjectSummary obj = (S3ObjectSummary)iterator.next();
+        for (java.util.Iterator iterator = objectSummaries.iterator(); iterator.hasNext(); ) {
+            S3ObjectSummary obj = (S3ObjectSummary) iterator.next();
             assertEquals(bucketName, obj.getBucketName());
             assertTrue(obj.getETag().length() > 1);
             assertFalse(obj.getETag().startsWith("\""));

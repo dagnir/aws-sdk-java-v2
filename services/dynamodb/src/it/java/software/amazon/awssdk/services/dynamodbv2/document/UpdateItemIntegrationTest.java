@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.document;
 
 import static org.junit.Assert.assertEquals;
@@ -32,23 +47,16 @@ import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
 
 public class UpdateItemIntegrationTest {
 
-    private static DynamoDB dynamoDB;
-
-    private static String TABLE_NAME = "UpdateItemIntegrationTest";
-
-    private static String CREDENTIALS_FILE_SUFFIX = "/.aws/awsTestAccount.properties";
-
-    private static String HASH_KEY = "customer_id";
-    private static String RANGE_KEY = "address_type";
-
     private static final long READ_CAPACITY = 1;
-
     private static final long WRITE_CAPACITY = 1;
-
     private static final Long FIRST_CUSTOMER_ID = 1000L;
-
     private static final String ADDRESS_TYPE_HOME = "home";
     private static final String ADDRESS_TYPE_WORK = "work";
+    private static DynamoDB dynamoDB;
+    private static String TABLE_NAME = "UpdateItemIntegrationTest";
+    private static String CREDENTIALS_FILE_SUFFIX = "/.aws/awsTestAccount.properties";
+    private static String HASH_KEY = "customer_id";
+    private static String RANGE_KEY = "address_type";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -85,17 +93,24 @@ public class UpdateItemIntegrationTest {
     private static void fillInData() {
         Table table = dynamoDB.getTable(TABLE_NAME);
         table.putItem(new Item().with(HASH_KEY, FIRST_CUSTOMER_ID)
-                              .with(RANGE_KEY, ADDRESS_TYPE_WORK)
-                              .with("AddressLine1", "1918 8th Aven")
-                              .with("city", "seattle")
-                              .with("state", "WA")
-                              .with("zipcode", 98104));
+                                .with(RANGE_KEY, ADDRESS_TYPE_WORK)
+                                .with("AddressLine1", "1918 8th Aven")
+                                .with("city", "seattle")
+                                .with("state", "WA")
+                                .with("zipcode", 98104));
         table.putItem(new Item().with(HASH_KEY, FIRST_CUSTOMER_ID)
-                              .with(RANGE_KEY, ADDRESS_TYPE_HOME)
-                              .with("AddressLine1", "15606 NE 40th ST")
-                              .with("city", "redmond")
-                              .with("state", "WA")
-                              .with("zipcode", 98052));
+                                .with(RANGE_KEY, ADDRESS_TYPE_HOME)
+                                .with("AddressLine1", "15606 NE 40th ST")
+                                .with("city", "redmond")
+                                .with("state", "WA")
+                                .with("zipcode", 98052));
+    }
+
+    @AfterClass
+    public static void shutDown() {
+        //        Table table = dynamoDB.getTable(TABLE_NAME);
+        //        table.delete();
+        dynamoDB.shutdown();
     }
 
     /**
@@ -115,7 +130,7 @@ public class UpdateItemIntegrationTest {
         Item item = table.getItem(new GetItemSpec()
                                           .withPrimaryKey(HASH_KEY, FIRST_CUSTOMER_ID, RANGE_KEY, ADDRESS_TYPE_WORK)
                                           .withConsistentRead(true)
-        );
+                                 );
         Set<String> phoneNumbersRetrieved = item.getStringSet("phone");
         assertEquals(phoneNumbers, phoneNumbersRetrieved);
         assertTrue(phoneNumbersRetrieved.contains(phoneNumber1));
@@ -250,18 +265,11 @@ public class UpdateItemIntegrationTest {
                             // compare zipecode, which is of type int, to string
                             // leading to an intentional failure in the update condition
                             .withString(":zipcode", "98104")
-            );
+                            );
             fail("Update Should fail as the zip code mentioned in the conditon expression doesn't match");
         } catch (AmazonServiceException e) {
             assertTrue(e.getMessage().contains("conditional request failed"));
         }
-    }
-
-    @AfterClass
-    public static void shutDown() {
-        //        Table table = dynamoDB.getTable(TABLE_NAME);
-        //        table.delete();
-        dynamoDB.shutdown();
     }
 
 }

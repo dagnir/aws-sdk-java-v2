@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -46,6 +61,24 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
     }
 
     /**
+     * Initializes test resources.
+     */
+    @BeforeClass
+    public static void initializeTestData() throws Exception {
+        s3.createBucket(bucketName);
+
+        expectedMetadata = new ObjectMetadata();
+        expectedMetadata.setCacheControl("custom-cache-control");
+        expectedMetadata.setContentDisposition("custom-disposition");
+        expectedMetadata.setContentEncoding("custom-encoding");
+        expectedMetadata.setContentType("custom-content-type");
+        expectedMetadata.addUserMetadata("foo", "bar");
+        expectedMetadata.addUserMetadata("baz", "bash");
+
+        file = S3IntegrationTestBase.getRandomTempFile("foo.txt", contentLength);
+    }
+
+    /**
      * Tests that uploading a file with a known file extension will correctly
      * upload the object, set it's content type and content disposition.
      */
@@ -74,7 +107,7 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
      */
     @Test
     public void testPutFileWithUnrecognizedMimeType() throws Exception {
-        File file = super.getRandomTempFile( "foo", contentLength );
+        File file = super.getRandomTempFile("foo", contentLength);
         s3.putObject(bucketName, key, file);
 
         S3Object object = s3.getObject(bucketName, key);
@@ -99,7 +132,7 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testPutFileWithMetadata() throws Exception {
         s3.putObject(new PutObjectRequest(bucketName, key, file)
-            .withMetadata(expectedMetadata));
+                             .withMetadata(expectedMetadata));
 
         S3Object object = s3.getObject(bucketName, key);
         assertFileEqualsStream(file, object.getObjectContent());
@@ -116,7 +149,7 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testPutFileWithCannedAcl() throws Exception {
         s3.putObject(new PutObjectRequest(bucketName, key, file)
-            .withCannedAcl(CannedAccessControlList.PublicRead));
+                             .withCannedAcl(CannedAccessControlList.PublicRead));
 
         S3Object object = s3.getObject(bucketName, key);
         assertFileEqualsStream(file, object.getObjectContent());
@@ -140,7 +173,7 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
     public void testPutFileWithAcl() throws Exception {
         AccessControlList acl = new AccessControlList();
 
-        for ( Permission permission : Permission.values() ) {
+        for (Permission permission : Permission.values()) {
             acl.grantPermission(new CanonicalGrantee(AWS_DR_ECLIPSE_ACCT_ID), permission);
             acl.grantPermission(GroupGrantee.AuthenticatedUsers, permission);
             acl.grantPermission(new EmailAddressGrantee(AWS_DR_TOOLS_EMAIL_ADDRESS), permission);
@@ -162,10 +195,15 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
 
         Set<Grant> expectedGrants = translateEmailAclsIntoCanonical(acl);
 
-        for ( Grant expected : expectedGrants ) {
+        for (Grant expected : expectedGrants) {
             assertTrue("Didn't find expectd grant " + expected, aclRead.getGrantsAsList().contains(expected));
         }
     }
+
+
+    /*
+     * Private Test Helper Functions
+     */
 
     /**
      * Tests that uploading a file with explicit metadata and specifying a
@@ -175,8 +213,8 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void gotestPutFileWithMetadataAndCannedAcl() throws Exception {
         s3.putObject(new PutObjectRequest(bucketName, key, file)
-            .withMetadata(expectedMetadata)
-            .withCannedAcl(CannedAccessControlList.AuthenticatedRead));
+                             .withMetadata(expectedMetadata)
+                             .withCannedAcl(CannedAccessControlList.AuthenticatedRead));
 
         S3Object object = s3.getObject(bucketName, key);
         assertFileEqualsStream(file, object.getObjectContent());
@@ -188,29 +226,6 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
         AccessControlList acl = s3.getObjectAcl(bucketName, key);
         assertTrue(2 == acl.getGrantsAsList().size());
         assertTrue(doesAclContainGroupGrant(acl, GroupGrantee.AuthenticatedUsers, Permission.Read));
-    }
-
-
-    /*
-     * Private Test Helper Functions
-     */
-
-    /**
-     * Initializes test resources.
-     */
-    @BeforeClass
-    public static void initializeTestData() throws Exception {
-        s3.createBucket(bucketName);
-
-        expectedMetadata = new ObjectMetadata();
-        expectedMetadata.setCacheControl("custom-cache-control");
-        expectedMetadata.setContentDisposition("custom-disposition");
-        expectedMetadata.setContentEncoding("custom-encoding");
-        expectedMetadata.setContentType("custom-content-type");
-        expectedMetadata.addUserMetadata("foo", "bar");
-        expectedMetadata.addUserMetadata("baz", "bash");
-
-        file = S3IntegrationTestBase.getRandomTempFile( "foo.txt", contentLength );
     }
 
     /**
@@ -231,8 +246,8 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
         Map<String, String> userMetadata = metadata.getUserMetadata();
         assertTrue(expectedUserMetadata.size() == userMetadata.size());
 
-        for ( java.util.Iterator iterator = expectedUserMetadata.keySet().iterator(); iterator.hasNext(); ) {
-            String key = (String)iterator.next();
+        for (java.util.Iterator iterator = expectedUserMetadata.keySet().iterator(); iterator.hasNext(); ) {
+            String key = (String) iterator.next();
             assertTrue(userMetadata.containsKey(key));
             assertEquals(expectedUserMetadata.get(key), userMetadata.get(key));
         }

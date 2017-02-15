@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public interface BatchWriteItemApi {
 
     /**
      * Used to perform a batch write operation to DynamoDB.
-     * 
+     *
      * @param tableWriteItems
      *            the tables and the respective keys to delete from and/or the
      *            respective items to be put.
@@ -50,11 +50,11 @@ public interface BatchWriteItemApi {
     /**
      * Used to perform a batch write operation for the unprocessed items
      * returned from a previous batch write operation.
-     * 
+     *
      * @param unprocessedItems
      *            the unprocessed items returned from the result of a previous
      *            batch write operation
-     * 
+     *
      * @see BatchWriteItemOutcome#getUnprocessedItems()
      */
     public BatchWriteItemOutcome batchWriteItemUnprocessed(

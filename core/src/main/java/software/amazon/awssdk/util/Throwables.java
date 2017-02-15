@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import software.amazon.awssdk.AmazonClientException;
  */
 public enum Throwables {
     ;
+
     /**
      * Returns the root cause of the given throwable, or null if the given
      * throwable is null. If the root cause is over 1000 level deep, the
@@ -31,20 +32,22 @@ public enum Throwables {
      * considered a circular reference, however unlikely.
      */
     public static Throwable getRootCause(Throwable orig) {
-        if (orig == null)
+        if (orig == null) {
             return orig;
+        }
         Throwable t = orig;
         // defend against (malicious?) circularity
-        for (int i=0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             Throwable cause = t.getCause();
-            if (cause == null)
+            if (cause == null) {
                 return t;
+            }
             t = cause;
         }
         // Too bad.  Return the original exception.
         LogFactory.getLog(Throwables.class).debug(
-            "Possible circular reference detected on " + orig.getClass()
-                    + ": [" + orig + "]");
+                "Possible circular reference detected on " + orig.getClass()
+                + ": [" + orig + "]");
         return orig;
     }
 
@@ -52,13 +55,15 @@ public enum Throwables {
      * Used to help perform common throw-up with minimal wrapping.
      */
     public static RuntimeException failure(Throwable t) {
-        if (t instanceof RuntimeException)
-            return (RuntimeException)t;
-        if (t instanceof Error)
-            throw (Error)t;
+        if (t instanceof RuntimeException) {
+            return (RuntimeException) t;
+        }
+        if (t instanceof Error) {
+            throw (Error) t;
+        }
         return t instanceof InterruptedException
-             ? new AbortedException(t)
-             : new AmazonClientException(t);
+               ? new AbortedException(t)
+               : new AmazonClientException(t);
     }
 
     /**
@@ -67,12 +72,14 @@ public enum Throwables {
      * {@link AbortedException}.
      */
     public static RuntimeException failure(Throwable t, String errmsg) {
-        if (t instanceof RuntimeException)
-            return (RuntimeException)t;
-        if (t instanceof Error)
-            throw (Error)t;
-        return t instanceof InterruptedException 
-             ? new AbortedException(errmsg, t)
-             : new AmazonClientException(errmsg, t);
+        if (t instanceof RuntimeException) {
+            return (RuntimeException) t;
+        }
+        if (t instanceof Error) {
+            throw (Error) t;
+        }
+        return t instanceof InterruptedException
+               ? new AbortedException(errmsg, t)
+               : new AmazonClientException(errmsg, t);
     }
 }

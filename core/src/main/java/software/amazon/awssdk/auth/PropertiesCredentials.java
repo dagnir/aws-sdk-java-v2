@@ -67,9 +67,9 @@ public class PropertiesCredentials implements AWSCredentials {
             if (accountProperties.getProperty("accessKey") == null ||
                 accountProperties.getProperty("secretKey") == null) {
                 throw new IllegalArgumentException(
-                    "The specified file (" + file.getAbsolutePath()
-                    + ") doesn't contain the expected properties 'accessKey' "
-                    + "and 'secretKey'."
+                        "The specified file (" + file.getAbsolutePath()
+                        + ") doesn't contain the expected properties 'accessKey' "
+                        + "and 'secretKey'."
                 );
             }
 
@@ -100,13 +100,16 @@ public class PropertiesCredentials implements AWSCredentials {
         try {
             accountProperties.load(inputStream);
         } finally {
-            try {inputStream.close();} catch (Exception e) {}
+            try {
+                inputStream.close();
+            } catch (Exception e) {
+            }
         }
 
         if (accountProperties.getProperty("accessKey") == null ||
             accountProperties.getProperty("secretKey") == null) {
             throw new IllegalArgumentException("The specified properties data " +
-                    "doesn't contain the expected properties 'accessKey' and 'secretKey'.");
+                                               "doesn't contain the expected properties 'accessKey' and 'secretKey'.");
         }
 
         accessKey = accountProperties.getProperty("accessKey");

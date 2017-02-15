@@ -38,4 +38,4 @@ public class ErrorHandlingIntegrationTest extends GlacierIntegrationTestBase {
             assertEquals("ResourceNotFoundException".toLowerCase(), e.getErrorCode().toLowerCase());
         }
     }
- }
+}

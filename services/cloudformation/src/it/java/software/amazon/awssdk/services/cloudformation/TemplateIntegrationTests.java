@@ -38,13 +38,13 @@ import software.amazon.awssdk.services.cloudformation.model.ValidateTemplateResu
  */
 public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase {
 
-    private static final String TEMPLATE_DESCRIPTION = "Template Description";
     public static final String TEMPLATE_URL = "https://s3.amazonaws.com/cloudformation-templates/sampleTemplate";
+    private static final String TEMPLATE_DESCRIPTION = "Template Description";
 
     @Test
     public void testValidateTemplateURL() {
         ValidateTemplateResult response = cf.validateTemplate(new ValidateTemplateRequest()
-                .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
+                                                                      .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
 
         assertTrue(response.getParameters().size() > 0);
         for (TemplateParameter tp : response.getParameters()) {
@@ -56,7 +56,7 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
     public void testValidateTemplateBody() throws Exception {
         String templateText = FileUtils.readFileToString(new File("tst/" + templateForCloudFormationIntegrationTests));
         ValidateTemplateResult response = cf.validateTemplate(new ValidateTemplateRequest()
-                .withTemplateBody(templateText));
+                                                                      .withTemplateBody(templateText));
         assertEquals(TEMPLATE_DESCRIPTION, response.getDescription());
         assertEquals(3, response.getParameters().size());
 
@@ -91,11 +91,11 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
     public void testEstimateCost() throws Exception {
         String templateText = FileUtils.readFileToString(new File("tst/" + templateForCloudFormationIntegrationTests));
         EstimateTemplateCostResult estimateTemplateCost = cf.estimateTemplateCost(new EstimateTemplateCostRequest()
-                .withTemplateBody(templateText));
+                                                                                          .withTemplateBody(templateText));
         assertNotNull(estimateTemplateCost.getUrl());
 
         estimateTemplateCost = cf.estimateTemplateCost(new EstimateTemplateCostRequest()
-                .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
+                                                               .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
         assertNotNull(estimateTemplateCost.getUrl());
     }
 

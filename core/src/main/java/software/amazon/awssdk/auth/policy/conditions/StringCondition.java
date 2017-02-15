@@ -25,6 +25,30 @@ import software.amazon.awssdk.auth.policy.Condition;
 public class StringCondition extends Condition {
 
     /**
+     * Constructs a new access control policy condition that compares two
+     * strings.
+     *
+     * @param type
+     *            The type of comparison to perform.
+     * @param key
+     *            The access policy condition key specifying where to get the
+     *            first string for the comparison (ex: aws:UserAgent). See
+     *            {@link ConditionFactory} for a list of the condition keys
+     *            available for all services.
+     * @param value
+     *            The second string to compare against. When using
+     *            {@link StringComparisonType#StringLike} or
+     *            {@link StringComparisonType#StringNotLike} this may contain
+     *            the multi-character wildcard (*) or the single-character
+     *            wildcard (?).
+     */
+    public StringCondition(StringComparisonType type, String key, String value) {
+        super.type = type.toString();
+        super.conditionKey = key;
+        super.values = Arrays.asList(new String[] {value});
+    }
+
+    /**
      * Enumeration of the supported ways a string comparison can be evaluated.
      */
     public static enum StringComparisonType {
@@ -49,30 +73,6 @@ public class StringCondition extends Condition {
 
         /** Negated form of {@link #StringLike} */
         StringNotLike;
-    }
-
-    /**
-     * Constructs a new access control policy condition that compares two
-     * strings.
-     *
-     * @param type
-     *            The type of comparison to perform.
-     * @param key
-     *            The access policy condition key specifying where to get the
-     *            first string for the comparison (ex: aws:UserAgent). See
-     *            {@link ConditionFactory} for a list of the condition keys
-     *            available for all services.
-     * @param value
-     *            The second string to compare against. When using
-     *            {@link StringComparisonType#StringLike} or
-     *            {@link StringComparisonType#StringNotLike} this may contain
-     *            the multi-character wildcard (*) or the single-character
-     *            wildcard (?).
-     */
-    public StringCondition(StringComparisonType type, String key, String value) {
-        super.type = type.toString();
-        super.conditionKey = key;
-        super.values = Arrays.asList(new String[] {value});
     }
 
 }

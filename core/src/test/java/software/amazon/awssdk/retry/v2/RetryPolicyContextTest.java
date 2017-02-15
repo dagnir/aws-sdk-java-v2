@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -47,12 +47,12 @@ public class RetryPolicyContextTest {
                 new DefaultRequest<EmptyAmazonWebServiceRequest>(origRequest, "foo");
         final SdkClientException exception = new SdkClientException("boom");
         final RetryPolicyContext context = RetryPolicyContext.builder()
-                .retriesAttempted(3)
-                .httpStatusCode(400)
-                .request(request)
-                .exception(exception)
-                .originalRequest(origRequest)
-                .build();
+                                                             .retriesAttempted(3)
+                                                             .httpStatusCode(400)
+                                                             .request(request)
+                                                             .exception(exception)
+                                                             .originalRequest(origRequest)
+                                                             .build();
 
 
         assertEquals(3, context.retriesAttempted());

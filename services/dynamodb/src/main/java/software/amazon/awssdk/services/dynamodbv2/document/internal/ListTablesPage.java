@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
             ListTablesResult result) {
         super(Collections.unmodifiableList(
                 toTableList(client, result.getTableNames())),
-            result);
+              result);
         this.client = client;
         this.spec = spec;
         this.request = request;
@@ -54,13 +54,26 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
         }
     }
 
+    private static List<Table> toTableList(AmazonDynamoDB client, List<String> tableNames) {
+        if (tableNames == null) {
+            return null;
+        }
+        List<Table> result = new ArrayList<Table>(tableNames.size());
+        for (String tableName : tableNames) {
+            result.add(new Table(client, tableName));
+        }
+        return result;
+    }
+
     @Override
     public boolean hasNextPage() {
-        if (lastEvaluatedKey == null)
+        if (lastEvaluatedKey == null) {
             return false;
+        }
         Integer max = spec.getMaxResultSize();
-        if (max == null)
+        if (max == null) {
             return true;
+        }
         return nextRequestLimit(max.intValue()) > 0;
     }
 
@@ -72,29 +85,21 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
     }
 
     @Override
-    public Page<Table,ListTablesResult> nextPage() {
+    public Page<Table, ListTablesResult> nextPage() {
         if (lastEvaluatedKey == null) {
             throw new NoSuchElementException("No more pages");
         }
         final Integer max = spec.getMaxResultSize();
         if (max != null) {
             int nextLimit = nextRequestLimit(max.intValue());
-            if (nextLimit == 0)
+            if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
+            }
             request.setLimit(nextLimit);
         }
         request.setExclusiveStartTableName(lastEvaluatedKey);
         ListTablesResult result = client.listTables(request);
         final int nextIndex = index + this.size();
         return new ListTablesPage(client, spec, request, nextIndex, result);
-    }
-
-    private static List<Table> toTableList(AmazonDynamoDB client, List<String> tableNames) {
-        if (tableNames == null)
-            return null;
-        List<Table> result = new ArrayList<Table>(tableNames.size());
-        for (String tableName: tableNames)
-            result.add(new Table(client, tableName));
-        return result;
     }
 }

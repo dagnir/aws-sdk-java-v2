@@ -1,16 +1,16 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.marshallers;
@@ -39,11 +39,11 @@ public class ObjectSetToStringSetMarshaller
     private static final ObjectSetToStringSetMarshaller INSTANCE =
             new ObjectSetToStringSetMarshaller();
 
-    public static ObjectSetToStringSetMarshaller instance() {
-        return INSTANCE;
+    private ObjectSetToStringSetMarshaller() {
     }
 
-    private ObjectSetToStringSetMarshaller() {
+    public static ObjectSetToStringSetMarshaller instance() {
+        return INSTANCE;
     }
 
     @Override
@@ -51,11 +51,11 @@ public class ObjectSetToStringSetMarshaller
         Set<?> set = (Set<?>) obj;
 
         LOG.warn("Marshaling a set of non-String objects to a DynamoDB "
-                + "StringSet. You won't be able to read these objects back "
-                + "out of DynamoDB unless you REALLY know what you're doing: "
-                + "it's probably a bug. If you DO know what you're doing feel"
-                + "free to ignore this warning, but consider using a custom "
-                + "marshaler for this instead.");
+                 + "StringSet. You won't be able to read these objects back "
+                 + "out of DynamoDB unless you REALLY know what you're doing: "
+                 + "it's probably a bug. If you DO know what you're doing feel"
+                 + "free to ignore this warning, but consider using a custom "
+                 + "marshaler for this instead.");
 
         List<String> strings = new ArrayList<String>(set.size());
         for (Object o : set) {

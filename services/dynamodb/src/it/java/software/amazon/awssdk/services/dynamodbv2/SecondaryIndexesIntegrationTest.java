@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import static org.junit.Assert.assertEquals;
@@ -37,11 +52,11 @@ import utils.test.util.DynamoDBTestBase;
  * DynamoDB integration tests for LSI & GSI.
  */
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources({
-        @RequiredResource(resource = TempTableWithSecondaryIndexes.class,
-                creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
-                retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
-})
+@RequiredResources( {
+                            @RequiredResource(resource = TempTableWithSecondaryIndexes.class,
+                                              creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
+                                              retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
+                    })
 public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
 
     private static final int MAX_RETRIES = 5;
@@ -71,11 +86,11 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         assertEquals(2, tableDescription.getKeySchema().size());
         assertEquals(HASH_KEY_NAME,
                      tableDescription.getKeySchema().get(0)
-                             .getAttributeName());
+                                     .getAttributeName());
         assertEquals(KeyType.HASH.toString(), tableDescription
                 .getKeySchema().get(0).getKeyType());
         assertEquals(RANGE_KEY_NAME, tableDescription.getKeySchema()
-                .get(1).getAttributeName());
+                                                     .get(1).getAttributeName());
         assertEquals(KeyType.RANGE.toString(), tableDescription
                 .getKeySchema().get(1).getKeyType());
 
@@ -94,9 +109,9 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                 .getLocalSecondaryIndexes().get(0).getKeySchema().get(1).getKeyType());
         assertEquals(ProjectionType.KEYS_ONLY.toString(),
                      tableDescription.getLocalSecondaryIndexes().get(0)
-                             .getProjection().getProjectionType());
+                                     .getProjection().getProjectionType());
         assertEquals(null, tableDescription.getLocalSecondaryIndexes().get(0)
-                .getProjection().getNonKeyAttributes());
+                                           .getProjection().getNonKeyAttributes());
 
         assertEquals(1, tableDescription.getGlobalSecondaryIndexes().size());
         assertEquals(GSI_NAME, tableDescription
@@ -113,9 +128,9 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                 .getGlobalSecondaryIndexes().get(0).getKeySchema().get(1).getKeyType());
         assertEquals(ProjectionType.KEYS_ONLY.toString(),
                      tableDescription.getGlobalSecondaryIndexes().get(0)
-                             .getProjection().getProjectionType());
+                                     .getProjection().getProjectionType());
         assertEquals(null, tableDescription.getGlobalSecondaryIndexes().get(0)
-                .getProjection().getNonKeyAttributes());
+                                           .getProjection().getNonKeyAttributes());
 
     }
 
@@ -146,13 +161,13 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                 GSI_HASH_KEY_NAME,
                 new Condition().withAttributeValueList(
                         new AttributeValue().withS((duplicateGSIHashValue)))
-                        .withComparisonOperator(ComparisonOperator.EQ));
+                               .withComparisonOperator(ComparisonOperator.EQ));
         keyConditions.put(
                 GSI_RANGE_KEY_NAME,
                 new Condition().withAttributeValueList(
                         new AttributeValue().withN(Integer
                                                            .toString(duplicateGSIRangeValue)))
-                        .withComparisonOperator(ComparisonOperator.EQ));
+                               .withComparisonOperator(ComparisonOperator.EQ));
 
         // All the items with the GSI keys should be returned
         assertQueryResultCount(totalDuplicateGSIKeys, new QueryRequest()
@@ -201,8 +216,8 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                                   new Condition().withAttributeValueList(
                                                                           new AttributeValue()
                                                                                   .withS(randomGSIHashKeyValue))
-                                                                          .withComparisonOperator(
-                                                                                  ComparisonOperator.EQ))));
+                                                                                 .withComparisonOperator(
+                                                                                         ComparisonOperator.EQ))));
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.getCount());
         // By default, the result includes all the key attributes (2 primary + 2 GSI).
@@ -217,12 +232,12 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                 GSI_HASH_KEY_NAME,
                 new Condition().withAttributeValueList(
                         new AttributeValue().withS(randomGSIHashKeyValue))
-                        .withComparisonOperator(ComparisonOperator.EQ));
+                               .withComparisonOperator(ComparisonOperator.EQ));
         keyConditions.put(
                 GSI_RANGE_KEY_NAME,
                 new Condition().withAttributeValueList(new AttributeValue()
                                                                .withN(Integer.toString(rangeKeyConditionRange)))
-                        .withComparisonOperator(ComparisonOperator.LT));
+                               .withComparisonOperator(ComparisonOperator.LT));
         result = dynamo.query(new QueryRequest()
                                       .withTableName(tableName)
                                       .withIndexName(GSI_NAME)
@@ -243,7 +258,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                           new Condition().withAttributeValueList(
                                                                   new AttributeValue()
                                                                           .withS(randomGSIHashKeyValue))
-                                                                  .withComparisonOperator(ComparisonOperator.EQ)))
+                                                                         .withComparisonOperator(ComparisonOperator.EQ)))
                                           .withSelect(Select.ALL_ATTRIBUTES));
             fail("AmazonServiceException is expected");
         } catch (AmazonServiceException ase) {
@@ -262,7 +277,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                       new Condition().withAttributeValueList(
                                                               new AttributeValue()
                                                                       .withS(randomGSIHashKeyValue))
-                                                              .withComparisonOperator(ComparisonOperator.EQ)))
+                                                                     .withComparisonOperator(ComparisonOperator.EQ)))
                                       .withAttributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME));
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.getCount());
@@ -282,7 +297,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                           new Condition().withAttributeValueList(
                                                                   new AttributeValue()
                                                                           .withS(randomGSIHashKeyValue))
-                                                                  .withComparisonOperator(ComparisonOperator.EQ)))
+                                                                         .withComparisonOperator(ComparisonOperator.EQ)))
                                           .withAttributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME, LSI_RANGE_KEY_NAME)
                                           .withSelect(Select.ALL_PROJECTED_ATTRIBUTES));
             fail("Should trigger exception when using both Select and AttributeToGet.");
@@ -301,8 +316,8 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                       new Condition().withAttributeValueList(
                                                               new AttributeValue()
                                                                       .withS(randomGSIHashKeyValue))
-                                                              .withComparisonOperator(
-                                                                      ComparisonOperator.EQ)))
+                                                                     .withComparisonOperator(
+                                                                             ComparisonOperator.EQ)))
                                       .withAttributesToGet(HASH_KEY_NAME)
                                       .withSelect(Select.SPECIFIC_ATTRIBUTES));
         // Only the indexed items should be returned
@@ -351,8 +366,8 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                                   new Condition().withAttributeValueList(
                                                                           new AttributeValue()
                                                                                   .withS(randomHashKeyValue))
-                                                                          .withComparisonOperator(
-                                                                                  ComparisonOperator.EQ))));
+                                                                                 .withComparisonOperator(
+                                                                                         ComparisonOperator.EQ))));
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.getCount());
         // By default, the result includes all the projected attributes.
@@ -367,12 +382,12 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                 HASH_KEY_NAME,
                 new Condition().withAttributeValueList(
                         new AttributeValue().withS(randomHashKeyValue))
-                        .withComparisonOperator(ComparisonOperator.EQ));
+                               .withComparisonOperator(ComparisonOperator.EQ));
         keyConditions.put(
                 LSI_RANGE_KEY_NAME,
                 new Condition().withAttributeValueList(new AttributeValue()
                                                                .withN(Integer.toString(rangeKeyConditionRange)))
-                        .withComparisonOperator(ComparisonOperator.LT));
+                               .withComparisonOperator(ComparisonOperator.LT));
         result = dynamo.query(new QueryRequest()
                                       .withTableName(tableName)
                                       .withIndexName(LSI_NAME)
@@ -391,7 +406,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                       new Condition().withAttributeValueList(
                                                               new AttributeValue()
                                                                       .withS(randomHashKeyValue))
-                                                              .withComparisonOperator(ComparisonOperator.EQ)))
+                                                                     .withComparisonOperator(ComparisonOperator.EQ)))
                                       .withSelect(Select.ALL_ATTRIBUTES));
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.getCount());
@@ -410,7 +425,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                       new Condition().withAttributeValueList(
                                                               new AttributeValue()
                                                                       .withS(randomHashKeyValue))
-                                                              .withComparisonOperator(ComparisonOperator.EQ)))
+                                                                     .withComparisonOperator(ComparisonOperator.EQ)))
                                       .withAttributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME));
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.getCount());
@@ -430,7 +445,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                           new Condition().withAttributeValueList(
                                                                   new AttributeValue()
                                                                           .withS(randomHashKeyValue))
-                                                                  .withComparisonOperator(ComparisonOperator.EQ)))
+                                                                         .withComparisonOperator(ComparisonOperator.EQ)))
                                           .withAttributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME, LSI_RANGE_KEY_NAME)
                                           .withSelect(Select.ALL_PROJECTED_ATTRIBUTES));
             fail("Should trigger exception when using both Select and AttributeToGet.");
@@ -449,8 +464,8 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                                       new Condition().withAttributeValueList(
                                                               new AttributeValue()
                                                                       .withS(randomHashKeyValue))
-                                                              .withComparisonOperator(
-                                                                      ComparisonOperator.EQ)))
+                                                                     .withComparisonOperator(
+                                                                             ComparisonOperator.EQ)))
                                       .withAttributesToGet(HASH_KEY_NAME)
                                       .withSelect(Select.SPECIFIC_ATTRIBUTES));
         // Only the indexed items should be returned

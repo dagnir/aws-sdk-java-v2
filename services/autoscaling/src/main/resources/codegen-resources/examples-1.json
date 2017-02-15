@@ -400,7 +400,6 @@
               "DefaultCooldown": 300,
               "DesiredCapacity": 1,
               "EnabledMetrics": [
-
               ],
               "HealthCheckGracePeriod": 300,
               "HealthCheckType": "EC2",
@@ -415,16 +414,13 @@
               ],
               "LaunchConfigurationName": "my-launch-config",
               "LoadBalancerNames": [
-
               ],
               "MaxSize": 1,
               "MinSize": 0,
               "NewInstancesProtectedFromScaleIn": false,
               "SuspendedProcesses": [
-
               ],
               "Tags": [
-
               ],
               "TerminationPolicies": [
                 "Default"
@@ -509,7 +505,6 @@
             {
               "AssociatePublicIpAddress": true,
               "BlockDeviceMappings": [
-
               ],
               "CreatedTime": "2014-05-07T17:39:28.599Z",
               "EbsOptimized": false,
@@ -722,7 +717,6 @@
             {
               "AdjustmentType": "ChangeInCapacity",
               "Alarms": [
-
               ],
               "AutoScalingGroupName": "my-auto-scaling-group",
               "PolicyARN": "arn:aws:autoscaling:us-west-2:123456789012:scalingPolicy:2233f3d7-6290-403b-b632-93c553560106:autoScalingGroupName/my-auto-scaling-group:policyName/ScaleIn",
@@ -732,7 +726,6 @@
             {
               "AdjustmentType": "PercentChangeInCapacity",
               "Alarms": [
-
               ],
               "AutoScalingGroupName": "my-auto-scaling-group",
               "Cooldown": 60,

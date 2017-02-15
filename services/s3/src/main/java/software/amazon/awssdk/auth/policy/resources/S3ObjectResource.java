@@ -50,7 +50,7 @@ import software.amazon.awssdk.auth.policy.actions.S3Actions;
  */
 public class S3ObjectResource extends Resource {
 
-	/**
+    /**
      * Constructs a new object resource that represents the specified objects.
      * This constructor defaults to aws partition. Use {@link #S3ObjectResource(String, String, String)}
      * to specify other partitions if needed.

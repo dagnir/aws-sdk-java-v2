@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -38,23 +39,20 @@ import software.amazon.awssdk.services.s3.AmazonS3;
 public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
         implements SSECustomerKeyProvider, SSEAwsKeyManagementParamsProvider, Serializable {
     /**
+     * Additional information about the new object being created, such as
+     * content type, content encoding, user metadata, etc.
+     */
+    public ObjectMetadata objectMetadata;
+    /**
      * The name of the bucket in which to create the new multipart upload, and
      * hence, the eventual object created from the multipart upload.
      */
     private String bucketName;
-
     /**
      * The key by which to store the new multipart upload, and hence, the
      * eventual object created from the multipart upload.
      */
     private String key;
-
-    /**
-     * Additional information about the new object being created, such as
-     * content type, content encoding, user metadata, etc.
-     */
-    public ObjectMetadata objectMetadata;
-
     /**
      * An optional canned Access Control List (ACL) to set permissions for the
      * new object created when the multipart upload is completed.
@@ -352,10 +350,11 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
     }
 
     public InitiateMultipartUploadRequest withStorageClass(String storageClass) {
-        if (storageClass != null)
+        if (storageClass != null) {
             this.storageClass = StorageClass.fromValue(storageClass);
-        else
+        } else {
             this.storageClass = null;
+        }
         return this;
     }
 
@@ -401,6 +400,13 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
     }
 
     /**
+     * Gets the optional redirect location for the new object.
+     */
+    public String getRedirectLocation() {
+        return this.redirectLocation;
+    }
+
+    /**
      * Sets the optional redirect location for the new object.
      *
      * @param redirectLocation
@@ -408,13 +414,6 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      */
     public void setRedirectLocation(String redirectLocation) {
         this.redirectLocation = redirectLocation;
-    }
-
-    /**
-     * Gets the optional redirect location for the new object.
-     */
-    public String getRedirectLocation() {
-        return this.redirectLocation;
     }
 
     /**
@@ -445,7 +444,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
     public void setSSECustomerKey(SSECustomerKey sseKey) {
         if (sseKey != null && this.sseAwsKeyManagementParams != null) {
             throw new IllegalArgumentException(
-                "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
+                    "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
         this.sseCustomerKey = sseKey;
     }
@@ -484,7 +483,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
     public void setSSEAwsKeyManagementParams(SSEAwsKeyManagementParams params) {
         if (params != null && this.sseCustomerKey != null) {
             throw new IllegalArgumentException(
-                "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
+                    "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
         this.sseAwsKeyManagementParams = params;
     }

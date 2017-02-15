@@ -28,11 +28,11 @@ public class AttributeTransformerChainTest {
     public void testTransformEmptyChain() {
 
         AttributeTransformer transformer = new AttributeTransformerChain(
-            Collections.<AttributeTransformer>emptyList()
+                Collections.<AttributeTransformer>emptyList()
         );
 
         Map<String, AttributeValue> values =
-            new HashMap<String, AttributeValue>();
+                new HashMap<String, AttributeValue>();
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -45,11 +45,11 @@ public class AttributeTransformerChainTest {
     public void testUntransformEmptyChain() {
 
         AttributeTransformer transformer = new AttributeTransformerChain(
-            Collections.<AttributeTransformer>emptyList()
+                Collections.<AttributeTransformer>emptyList()
         );
 
         Map<String, AttributeValue> values =
-            new HashMap<String, AttributeValue>();
+                new HashMap<String, AttributeValue>();
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -65,10 +65,10 @@ public class AttributeTransformerChainTest {
         AttributeTransformer transformer2 = new TestTransformer(".two");
 
         AttributeTransformer chain =
-            new AttributeTransformerChain(transformer1, transformer2);
+                new AttributeTransformerChain(transformer1, transformer2);
 
         Map<String, AttributeValue> values =
-            new HashMap<String, AttributeValue>();
+                new HashMap<String, AttributeValue>();
 
         values.put("test1", new AttributeValue("foo"));
         values.put("test2", new AttributeValue("bar"));
@@ -91,10 +91,10 @@ public class AttributeTransformerChainTest {
         AttributeTransformer transformer2 = new TestTransformer(".two");
 
         AttributeTransformer chain =
-            new AttributeTransformerChain(transformer1, transformer2);
+                new AttributeTransformerChain(transformer1, transformer2);
 
         Map<String, AttributeValue> values =
-            new HashMap<String, AttributeValue>();
+                new HashMap<String, AttributeValue>();
 
         values.put("test1", new AttributeValue("foo.one.two"));
         values.put("test2", new AttributeValue("bar.one.two"));
@@ -117,10 +117,10 @@ public class AttributeTransformerChainTest {
         AttributeTransformer transformer2 = new TestTransformer(".two");
 
         AttributeTransformer chain =
-            new AttributeTransformerChain(transformer1, transformer2);
+                new AttributeTransformerChain(transformer1, transformer2);
 
         Map<String, AttributeValue> values =
-            new HashMap<String, AttributeValue>();
+                new HashMap<String, AttributeValue>();
 
         values.put("test1", new AttributeValue("foo"));
         values.put("test2", new AttributeValue("bar"));
@@ -149,10 +149,10 @@ public class AttributeTransformerChainTest {
                 final Parameters<?> parameters) {
 
             Map<String, AttributeValue> rval =
-                new HashMap<String, AttributeValue>();
+                    new HashMap<String, AttributeValue>();
 
             for (Map.Entry<String, AttributeValue> entry
-                     : parameters.getAttributeValues().entrySet()) {
+                    : parameters.getAttributeValues().entrySet()) {
 
                 rval.put(entry.getKey(), transform(entry.getValue()));
             }
@@ -165,10 +165,10 @@ public class AttributeTransformerChainTest {
                 final Parameters<?> parameters) {
 
             Map<String, AttributeValue> rval =
-                new HashMap<String, AttributeValue>();
+                    new HashMap<String, AttributeValue>();
 
             for (Map.Entry<String, AttributeValue> entry
-                     : parameters.getAttributeValues().entrySet()) {
+                    : parameters.getAttributeValues().entrySet()) {
 
                 rval.put(entry.getKey(), untransform(entry.getValue()));
             }
@@ -184,7 +184,7 @@ public class AttributeTransformerChainTest {
             String s = value.getS();
             if (s.endsWith(appendMe)) {
                 return new AttributeValue(
-                    s.substring(0, s.length() - appendMe.length()));
+                        s.substring(0, s.length() - appendMe.length()));
             } else {
                 return value;
             }

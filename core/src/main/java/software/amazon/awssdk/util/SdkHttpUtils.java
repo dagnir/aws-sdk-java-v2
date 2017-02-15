@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,17 +37,18 @@ public class SdkHttpUtils {
      * URLEncoder.encode().
      */
     private static final Pattern ENCODED_CHARACTERS_PATTERN;
+
     static {
         StringBuilder pattern = new StringBuilder();
 
         pattern
-            .append(Pattern.quote("+"))
-            .append("|")
-            .append(Pattern.quote("*"))
-            .append("|")
-            .append(Pattern.quote("%7E"))
-            .append("|")
-            .append(Pattern.quote("%2F"));
+                .append(Pattern.quote("+"))
+                .append("|")
+                .append(Pattern.quote("*"))
+                .append("|")
+                .append(Pattern.quote("%7E"))
+                .append("|")
+                .append(Pattern.quote("%2F"));
 
         ENCODED_CHARACTERS_PATTERN = Pattern.compile(pattern.toString());
     }
@@ -132,9 +133,15 @@ public class SdkHttpUtils {
         String scheme = StringUtils.lowerCase(uri.getScheme());
         int port = uri.getPort();
 
-        if (port <= 0) return false;
-        if (scheme.equals("http") && port == 80) return false;
-        if (scheme.equals("https") && port == 443) return false;
+        if (port <= 0) {
+            return false;
+        }
+        if (scheme.equals("http") && port == 80) {
+            return false;
+        }
+        if (scheme.equals("https") && port == 443) {
+            return false;
+        }
 
         return true;
     }
@@ -160,7 +167,9 @@ public class SdkHttpUtils {
 
         final Map<String, List<String>> requestParams = request.getParameters();
 
-        if (requestParams.isEmpty()) return null;
+        if (requestParams.isEmpty()) {
+            return null;
+        }
 
         final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -168,7 +177,7 @@ public class SdkHttpUtils {
             String parameterName = entry.getKey();
             for (String value : entry.getValue()) {
                 nameValuePairs
-                    .add(new BasicNameValuePair(parameterName, value));
+                        .add(new BasicNameValuePair(parameterName, value));
             }
         }
 

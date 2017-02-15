@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.File;
@@ -36,7 +37,7 @@ import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
  * </p>
  */
 public class EncryptedPutObjectRequest extends PutObjectRequest implements
-        MaterialsDescriptionProvider, Serializable {
+                                                                MaterialsDescriptionProvider, Serializable {
     /**
      * description of encryption materials to be used with this request.
      */
@@ -65,9 +66,9 @@ public class EncryptedPutObjectRequest extends PutObjectRequest implements
      */
     public void setMaterialsDescription(Map<String, String> materialsDescription) {
         this.materialsDescription = materialsDescription == null
-                ? null
-                : Collections.unmodifiableMap(new HashMap<String,String>(materialsDescription))
-                ;
+                                    ? null
+                                    : Collections.unmodifiableMap(new HashMap<String, String>(materialsDescription))
+        ;
     }
 
     /**
@@ -85,14 +86,14 @@ public class EncryptedPutObjectRequest extends PutObjectRequest implements
     @Override
     public EncryptedPutObjectRequest clone() {
         final EncryptedPutObjectRequest cloned =
-            new EncryptedPutObjectRequest(
-                getBucketName(), getKey(), getFile());
+                new EncryptedPutObjectRequest(
+                        getBucketName(), getKey(), getFile());
         super.copyPutObjectBaseTo(cloned);
         final Map<String, String> materialsDescription = getMaterialsDescription();
         cloned.withMaterialsDescription(materialsDescription == null
-            ? null
-            : new HashMap<String, String>(materialsDescription))
-            ;
+                                        ? null
+                                        : new HashMap<String, String>(materialsDescription))
+        ;
         return cloned;
     }
 }

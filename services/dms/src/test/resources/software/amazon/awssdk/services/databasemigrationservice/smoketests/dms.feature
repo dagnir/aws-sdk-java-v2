@@ -8,5 +8,5 @@ Feature: AWS Database Migration Service
 
   Scenario: Handling errors
     When I attempt to call the "DescribeTableStatistics" API with:
-        | ReplicationTaskArn  | arn:aws:acm:region:123456789012 |
+      | ReplicationTaskArn | arn:aws:acm:region:123456789012 |
     Then I expect the response error code to be "InvalidParameterValueException"

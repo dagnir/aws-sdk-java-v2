@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,10 +31,9 @@ import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
 
 public class S3EventNotificationTest {
-    private List<String> KEYS_REQUIRING_URL_ENCODE = Arrays.asList("foo bar.jpg", "foo/bar.csv", "foo<>bar");
-
     private static final String jsonBodySampleFile =
             "/software/amazon/awssdk/services/s3/event/eventNotificationBodyData.json";
+    private List<String> KEYS_REQUIRING_URL_ENCODE = Arrays.asList("foo bar.jpg", "foo/bar.csv", "foo<>bar");
 
     /**
      * Tests that we can parse event notification JSON correctly.
@@ -69,16 +83,14 @@ public class S3EventNotificationTest {
     /**
      * Tests that we throw when parsing malformed JSON.
      */
-    @Test (expected=AmazonClientException.class)
-    public void testParseMalformedJSON()
-    {
+    @Test(expected = AmazonClientException.class)
+    public void testParseMalformedJSON() {
         String malformedJSON = "this is not JSON";
         S3EventNotification.parseJson(malformedJSON);
     }
 
     @Test
-    public void testParseIncorrectJSON()
-    {
+    public void testParseIncorrectJSON() {
         String incorrectJson = "{ \"foo\": \"bar\" }";
         S3EventNotification item = S3EventNotification.parseJson(incorrectJson);
         Assert.assertNull(item.getRecords());
@@ -140,13 +152,12 @@ public class S3EventNotificationTest {
         for (String testKey : KEYS_REQUIRING_URL_ENCODE) {
             String urlEncoded = SdkHttpUtils.urlEncode(testKey, false);
             S3EventNotification.S3ObjectEntity entity = new S3EventNotification.S3ObjectEntity(urlEncoded,
-                    1L, "E-Tag", "versionId");
+                                                                                               1L, "E-Tag", "versionId");
             Assert.assertEquals(testKey, entity.getUrlDecodedKey());
         }
     }
 
-    private String readAllLinesFromFile(String file) throws IOException
-    {
+    private String readAllLinesFromFile(String file) throws IOException {
         InputStream jsonSampleStream = this.getClass().getResourceAsStream(file);
         List<String> lines = IOUtils.readLines(jsonSampleStream);
         return StringUtils.join("\n", lines.toArray(new String[0]));

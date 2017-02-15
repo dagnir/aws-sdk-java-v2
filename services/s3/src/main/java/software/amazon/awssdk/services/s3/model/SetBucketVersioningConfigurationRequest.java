@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
- * 
+ *
  *  http://aws.amazon.com/apache2.0
- * 
+ *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -63,12 +64,12 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * Amazon S3 is eventually consistent. It may take time for the versioning status of a
  * bucket to be propagated throughout the system.
  * </p>
- * 
+ *
  * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration)
  * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration, MultiFactorAuthentication)
  */
 public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceRequest implements Serializable {
-    
+
     /**
      * The bucket whose versioning configuration is being set.
      */
@@ -78,7 +79,7 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * The new versioning configuration for the specified bucket.
      */
     private BucketVersioningConfiguration versioningConfiguration;
-    
+
     /**
      * The optional Multi-Factor Authentication information to include with this
      * request. Multi-Factor Authentication is required when enabling or
@@ -86,19 +87,19 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * {@link BucketVersioningConfiguration} for more details on MFA Delete.
      */
     private MultiFactorAuthentication mfa;
-    
+
     /**
-     * Constructs a new {@link SetBucketVersioningConfigurationRequest} 
+     * Constructs a new {@link SetBucketVersioningConfigurationRequest}
      * to set the bucket versioning configuration of
      * the specified bucket.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket whose versioning configuration is being
      *            set.
      * @param configuration
      *            The new versioning configuration for the specified bucket.
-     *            
-     * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration, MultiFactorAuthentication)          
+     *
+     * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration, MultiFactorAuthentication)
      */
     public SetBucketVersioningConfigurationRequest(
             String bucketName, BucketVersioningConfiguration configuration) {
@@ -107,12 +108,12 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
     }
 
     /**
-     * Constructs a new {@link SetBucketVersioningConfigurationRequest} 
+     * Constructs a new {@link SetBucketVersioningConfigurationRequest}
      * to set the bucket versioning configuration of
      * the specified bucket, including the specified Multi-Factor Authentication
      * (MFA) information, which is required when changing the state of the MFA
      * Delete option.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket whose versioning configuration is being
      *            set.
@@ -121,24 +122,24 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * @param mfa
      *            The Multi-Factor Authentication information to include in this
      *            request.
-     *            
-     * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration)           
+     *
+     * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration)
      */
     public SetBucketVersioningConfigurationRequest(
-            String bucketName, BucketVersioningConfiguration configuration, 
+            String bucketName, BucketVersioningConfiguration configuration,
             MultiFactorAuthentication mfa) {
         this(bucketName, configuration);
         this.mfa = mfa;
     }
 
-    
+
     /**
      * Gets the name of the bucket whose versioning configuration is being
      * set.
-     * 
+     *
      * @return The name of the bucket whose versioning configuration is being
      *         set.
-     *         
+     *
      * @see SetBucketVersioningConfigurationRequest#setBucketName(String)
      */
     public String getBucketName() {
@@ -147,12 +148,12 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
 
     /**
      * Sets the name of the bucket whose versioning configuration is being set.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket whose versioning configuration is being
      *            set.
-     *            
-     * @see SetBucketVersioningConfigurationRequest#getBucketName()           
+     *
+     * @see SetBucketVersioningConfigurationRequest#getBucketName()
      */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
@@ -162,15 +163,15 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * Sets the name of the bucket whose versioning configuration is being set,
      * and returns this object so that additional method calls may be chained
      * together.
-     * 
+     *
      * @param bucketName
      *            The name of the bucket whose versioning configuration is being
      *            set.
-     * 
+     *
      * @return This {@link SetBucketVersioningConfigurationRequest} object so that
      *         additional method calls may be chained together.
-     *         
-     * @see SetBucketVersioningConfigurationRequest#setBucketName(String)       
+     *
+     * @see SetBucketVersioningConfigurationRequest#setBucketName(String)
      */
     public SetBucketVersioningConfigurationRequest withBucketName(String bucketName) {
         setBucketName(bucketName);
@@ -179,9 +180,9 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
 
     /**
      * Gets the new versioning configuration for the specified bucket.
-     * 
+     *
      * @return The new versioning configuration for the specified bucket.
-     * 
+     *
      * @see SetBucketVersioningConfigurationRequest#setVersioningConfiguration(BucketVersioningConfiguration)
      * @see SetBucketVersioningConfigurationRequest#withVersioningConfiguration(BucketVersioningConfiguration)
      */
@@ -191,11 +192,11 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
 
     /**
      * Sets the new versioning configuration for the specified bucket.
-     * 
+     *
      * @param versioningConfiguration
      *            The new versioning configuration for the specified bucket.
-     *            
-     * @see SetBucketVersioningConfigurationRequest#getVersioningConfiguration()           
+     *
+     * @see SetBucketVersioningConfigurationRequest#getVersioningConfiguration()
      * @see SetBucketVersioningConfigurationRequest#withVersioningConfiguration(BucketVersioningConfiguration)
      */
     public void setVersioningConfiguration(
@@ -207,15 +208,15 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * Sets the new versioning configuration for the specified bucket and
      * returns this object, enabling additional method calls to be chained
      * together.
-     * 
+     *
      * @param versioningConfiguration
      *            The new versioning configuration for the specified bucket.
-     * 
+     *
      * @return This {@link SetBucketVersioningConfigurationRequest} object, enabling that
      *         additional method calls may be chained together.
-     *         
-     * @see SetBucketVersioningConfigurationRequest#getVersioningConfiguration()  
-     * @see SetBucketVersioningConfigurationRequest#getVersioningConfiguration()               
+     *
+     * @see SetBucketVersioningConfigurationRequest#getVersioningConfiguration()
+     * @see SetBucketVersioningConfigurationRequest#getVersioningConfiguration()
      */
     public SetBucketVersioningConfigurationRequest withVersioningConfiguration(
             BucketVersioningConfiguration versioningConfiguration) {
@@ -236,10 +237,10 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * See {@link BucketVersioningConfiguration#setMfaDeleteEnabled(Boolean)}
      * for more information on MFADelete.
      * </p>
-     * 
+     *
      * @return The optional Multi-Factor Authentication information included
      *         with this request.
-     *         
+     *
      * @see SetBucketVersioningConfigurationRequest#setMfa(MultiFactorAuthentication)
      * @see SetBucketVersioningConfigurationRequest#withMfa(MultiFactorAuthentication)
      */
@@ -258,11 +259,11 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * See {@link BucketVersioningConfiguration#setMfaDeleteEnabled(Boolean)}
      * for more information on MFADelete.
      * </p>
-     * 
+     *
      * @param mfa
      *            The optional Multi-Factor Authentication information to
      *            include with this request.
-     *            
+     *
      * @see SetBucketVersioningConfigurationRequest#getMfa()
      * @see SetBucketVersioningConfigurationRequest#withMfa(MultiFactorAuthentication)
      */
@@ -282,16 +283,16 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * See {@link BucketVersioningConfiguration#setMfaDeleteEnabled(Boolean)}
      * for more information on MFADelete.
      * </p>
-     * 
+     *
      * @param mfa
      *            The optional Multi-Factor Authentication information to
      *            include with this request.
-     * 
+     *
      * @return The updated SetBucketVersioningConfigurationRequest object so
      *         that additional method calls may be chained together.
-     *         
+     *
      * @see SetBucketVersioningConfigurationRequest#getMfa()
-     * @see SetBucketVersioningConfigurationRequest#setMfa(MultiFactorAuthentication)       
+     * @see SetBucketVersioningConfigurationRequest#setMfa(MultiFactorAuthentication)
      */
     public SetBucketVersioningConfigurationRequest withMfa(MultiFactorAuthentication mfa) {
         setMfa(mfa);

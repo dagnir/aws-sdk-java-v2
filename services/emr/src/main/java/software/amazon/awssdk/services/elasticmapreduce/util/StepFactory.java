@@ -64,40 +64,6 @@ public class StepFactory {
     private final String bucket;
 
     /**
-     *  The available Hive versions.  These are only available on Hadoop 0.20
-     *  Hive_0_5 Hive 0.5
-     *  Hive_0_7 Hive 0.7
-     *  Hive_0_7_1 Hive 0.7.1
-     */
-    public static enum HiveVersion {
-        Hive_0_5("0.5"),
-        Hive_0_7("0.7"),
-        Hive_0_7_1("0.7.1"),
-        Hive_0_8_1("0.8.1"),
-        Hive_0_8_1_1("0.8.1.1"),
-        Hive_0_8_1_2("0.8.1.2"),
-        Hive_0_8_1_3("0.8.1.3"),
-        Hive_0_8_1_4("0.8.1.4"),
-        Hive_0_8_1_5("0.8.1.5"),
-        Hive_0_8_1_6("0.8.1.6"),
-        Hive_0_8_1_7("0.8.1.7"),
-        Hive_0_8_1_8("0.8.1.8"),
-        Hive_0_11_0("0.11.0"),
-        Hive_Latest("latest");
-
-      private String stringVal;
-
-      HiveVersion(String str) {
-        stringVal = str;
-      }
-
-        @Override
-        public String toString() {
-            return stringVal;
-        }
-    }
-
-    /**
      * Creates a new StepFactory using the default Elastic Map Reduce bucket
      * (us-east-1.elasticmapreduce) for the default (us-east-1) region.
      */
@@ -136,8 +102,8 @@ public class StepFactory {
             argsList.add(arg);
         }
         return new HadoopJarStepConfig()
-            .withJar("s3://" + bucket + "/libs/script-runner/script-runner.jar")
-            .withArgs(argsList);
+                .withJar("s3://" + bucket + "/libs/script-runner/script-runner.jar")
+                .withArgs(argsList);
     }
 
     /**
@@ -174,11 +140,11 @@ public class StepFactory {
      * @return HadoopJarStepConfig that can be passed to your job flow.
      */
     public HadoopJarStepConfig newInstallHiveStep(String... hiveVersions) {
-      if (hiveVersions.length > 0) {
-        return newHivePigStep("hive", "--install-hive", "--hive-versions",
-                StringUtils.join(",", hiveVersions));
-      }
-      return newHivePigStep("hive", "--install-hive", "--hive-versions", "latest");
+        if (hiveVersions.length > 0) {
+            return newHivePigStep("hive", "--install-hive", "--hive-versions",
+                                  StringUtils.join(",", hiveVersions));
+        }
+        return newHivePigStep("hive", "--install-hive", "--hive-versions", "latest");
     }
 
     /**
@@ -188,7 +154,7 @@ public class StepFactory {
      * @return HadoopJarStepConfig that can be passed to your job flow.
      */
     public HadoopJarStepConfig newInstallHiveStep() {
-      return newInstallHiveStep(new HiveVersion[0]);
+        return newInstallHiveStep(new HiveVersion[0]);
     }
 
     /**
@@ -203,7 +169,7 @@ public class StepFactory {
      * @return HadoopJarStepConfig that can be passed to your job flow.
      */
     public HadoopJarStepConfig newRunHiveScriptStepVersioned(String script,
-        String hiveVersion, String... scriptArgs) {
+                                                             String hiveVersion, String... scriptArgs) {
         List<String> hiveArgs = new ArrayList<String>();
         hiveArgs.add("--hive-versions");
         hiveArgs.add(hiveVersion);
@@ -247,7 +213,7 @@ public class StepFactory {
     public HadoopJarStepConfig newInstallPigStep(String... pigVersions) {
         if (pigVersions != null && pigVersions.length > 0) {
             return newHivePigStep("pig", "--install-pig", "--pig-versions",
-                    StringUtils.join(",", pigVersions));
+                                  StringUtils.join(",", pigVersions));
         }
         return newHivePigStep("pig", "--install-pig", "--pig-versions", "latest");
     }
@@ -264,7 +230,7 @@ public class StepFactory {
      * @return HadoopJarStepConfig that can be passed to your job flow.
      */
     public HadoopJarStepConfig newRunPigScriptStep(String script,
-        String pigVersion, String... scriptArgs) {
+                                                   String pigVersion, String... scriptArgs) {
         List<String> pigArgs = new ArrayList<String>();
         pigArgs.add("--pig-versions");
         pigArgs.add(pigVersion);
@@ -295,6 +261,40 @@ public class StepFactory {
         appArgs.add("s3://" + bucket + "/libs/" + type + "/");
         appArgs.addAll(Arrays.asList(args));
         return newScriptRunnerStep("s3://" + bucket + "/libs/" + type + "/" + type + "-script", appArgs.toArray(new String[0]));
+    }
+
+    /**
+     *  The available Hive versions.  These are only available on Hadoop 0.20
+     *  Hive_0_5 Hive 0.5
+     *  Hive_0_7 Hive 0.7
+     *  Hive_0_7_1 Hive 0.7.1
+     */
+    public static enum HiveVersion {
+        Hive_0_5("0.5"),
+        Hive_0_7("0.7"),
+        Hive_0_7_1("0.7.1"),
+        Hive_0_8_1("0.8.1"),
+        Hive_0_8_1_1("0.8.1.1"),
+        Hive_0_8_1_2("0.8.1.2"),
+        Hive_0_8_1_3("0.8.1.3"),
+        Hive_0_8_1_4("0.8.1.4"),
+        Hive_0_8_1_5("0.8.1.5"),
+        Hive_0_8_1_6("0.8.1.6"),
+        Hive_0_8_1_7("0.8.1.7"),
+        Hive_0_8_1_8("0.8.1.8"),
+        Hive_0_11_0("0.11.0"),
+        Hive_Latest("latest");
+
+        private String stringVal;
+
+        HiveVersion(String str) {
+            stringVal = str;
+        }
+
+        @Override
+        public String toString() {
+            return stringVal;
+        }
     }
 
 }

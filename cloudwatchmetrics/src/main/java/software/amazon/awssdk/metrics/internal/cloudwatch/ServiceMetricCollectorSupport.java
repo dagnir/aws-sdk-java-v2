@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,14 +37,13 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 /**
  * This is the default implementation of an AWS SDK service metric collection
  * system.
- * 
+ *
  * @see RequestMetricCollector
  */
 @ThreadSafe
-public class ServiceMetricCollectorSupport extends ServiceMetricCollector 
-{
-    static final double NANO_PER_SEC = TimeUnit.SECONDS.toNanos(1);
+public class ServiceMetricCollectorSupport extends ServiceMetricCollector {
     protected final static Log log = LogFactory.getLog(ServiceMetricCollectorSupport.class);
+    static final double NANO_PER_SEC = TimeUnit.SECONDS.toNanos(1);
     private final BlockingQueue<MetricDatum> queue;
 
     protected ServiceMetricCollectorSupport(BlockingQueue<MetricDatum> queue) {
@@ -55,21 +54,22 @@ public class ServiceMetricCollectorSupport extends ServiceMetricCollector
     public void collectByteThroughput(ByteThroughputProvider provider) {
         try {
             collectByteThroughput0(provider);
-        } catch(Exception ex) { // defensive code
+        } catch (Exception ex) { // defensive code
             if (log.isDebugEnabled()) {
                 log.debug("Ignoring unexpected failure", ex);
             }
         }
     }
-    
-    /** 
+
+    /**
      * Returns the number of bytes per second, given the byte count and
      * duration in nano seconds.  Duration of zero nanosecond will be treated
      * as 1 nanosecond.
      */
     double bytesPerSecond(double byteCount, double durationNano) {
-        if (byteCount < 0 || durationNano < 0)
+        if (byteCount < 0 || durationNano < 0) {
             throw new IllegalArgumentException();
+        }
         if (durationNano == 0) {
             durationNano = 1.0;   // defend against division by zero
             if (log.isDebugEnabled()) {
@@ -84,7 +84,7 @@ public class ServiceMetricCollectorSupport extends ServiceMetricCollector
         }
         return bytesPerSec;
     }
-    
+
     private void collectByteThroughput0(ByteThroughputProvider provider) {
         final ThroughputMetricType throughputType = provider.getThroughputMetricType();
         final ServiceMetricType byteCountType = throughputType.getByteCountMetricType();
@@ -95,25 +95,25 @@ public class ServiceMetricCollectorSupport extends ServiceMetricCollector
         if (metrics.contains(throughputType)) {
             // Throughput metric
             final Dimension throughputDimension = new Dimension()
-                .withName(Dimensions.MetricType.name())
-                .withValue(throughputType.name());
+                    .withName(Dimensions.MetricType.name())
+                    .withValue(throughputType.name());
             final MetricDatum throughputDatum = new MetricDatum()
-                .withMetricName(throughputType.getServiceName())
-                .withDimensions(throughputDimension)
-                .withUnit(StandardUnit.BytesSecond)
-                .withValue(bytesPerSec);
+                    .withMetricName(throughputType.getServiceName())
+                    .withDimensions(throughputDimension)
+                    .withUnit(StandardUnit.BytesSecond)
+                    .withValue(bytesPerSec);
             safeAddMetricsToQueue(throughputDatum);
         }
         if (metrics.contains(byteCountType)) {
             // Byte count metric
             final Dimension byteCountDimension = new Dimension()
-                .withName(Dimensions.MetricType.name())
-                .withValue(byteCountType.name());
+                    .withName(Dimensions.MetricType.name())
+                    .withValue(byteCountType.name());
             final MetricDatum byteCountDatum = new MetricDatum()
-                .withMetricName(byteCountType.getServiceName())
-                .withDimensions(byteCountDimension)
-                .withUnit(StandardUnit.Bytes)
-                .withValue(byteCount);
+                    .withMetricName(byteCountType.getServiceName())
+                    .withDimensions(byteCountDimension)
+                    .withUnit(StandardUnit.Bytes)
+                    .withValue(byteCount);
             safeAddMetricsToQueue(byteCountDatum);
         }
     }
@@ -124,13 +124,13 @@ public class ServiceMetricCollectorSupport extends ServiceMetricCollector
         final Set<MetricType> metrics = AwsSdkMetrics.getPredefinedMetrics();
         if (metrics.contains(type)) {
             final Dimension dim = new Dimension()
-                .withName(Dimensions.MetricType.name())
-                .withValue(type.name());
+                    .withName(Dimensions.MetricType.name())
+                    .withValue(type.name());
             final MetricDatum datum = new MetricDatum()
-                .withMetricName(type.getServiceName())
-                .withDimensions(dim)
-                .withUnit(StandardUnit.Milliseconds)
-                .withValue(provider.getDurationMilli());
+                    .withMetricName(type.getServiceName())
+                    .withDimensions(dim)
+                    .withUnit(StandardUnit.Milliseconds)
+                    .withValue(provider.getDurationMilli());
             safeAddMetricsToQueue(datum);
         }
     }
@@ -140,19 +140,20 @@ public class ServiceMetricCollectorSupport extends ServiceMetricCollector
             if (!addMetricsToQueue(metric)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to add to the metrics queue (due to no space available) for "
-                            + metric.getMetricName());
+                              + metric.getMetricName());
                 }
             }
         } catch (RuntimeException ex) {
             log.warn("Failed to add to the metrics queue for metric: " + metric,
-                    ex);
+                     ex);
         }
     }
+
     /**
      * Adds the given metric to the queue, returning true if successful or false
      * if no space available.
      */
     protected boolean addMetricsToQueue(MetricDatum metric) {
-        return queue.offer(metric); 
+        return queue.offer(metric);
     }
 }

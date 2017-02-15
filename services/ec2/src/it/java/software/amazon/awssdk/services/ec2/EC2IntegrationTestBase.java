@@ -39,20 +39,15 @@ import software.amazon.awssdk.test.AWSIntegrationTestBase;
  */
 public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
     protected static final Log log = LogFactory.getLog(EC2IntegrationTestBase.class);
-
-    /** Shared EC2 client for all tests to use */
-    protected static AmazonEC2Client ec2;
-
-    /** Shared EC2 async client for tests to use */
-    protected static AmazonEC2AsyncClient ec2Async;
-
     /** The default tags to test with */
     protected static final List<Tag> TAGS = Arrays.asList(new Tag("foo", "bar"), new Tag("baz", ""));
-
-    protected static final String AMI_ID     = "ami-7f418316";
-    protected static final String KERNEL_ID  = "aki-a71cf9ce";
+    protected static final String AMI_ID = "ami-7f418316";
+    protected static final String KERNEL_ID = "aki-a71cf9ce";
     protected static final String RAMDISK_ID = "ari-a51cf9cc";
-
+    /** Shared EC2 client for all tests to use */
+    protected static AmazonEC2Client ec2;
+    /** Shared EC2 async client for tests to use */
+    protected static AmazonEC2AsyncClient ec2Async;
 
     /**
      * Loads the AWS account info for the integration tests and creates an EC2
@@ -108,10 +103,10 @@ public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
 
             Instance instance = null;
             try {
-                instance = ec2 .describeInstances(
+                instance = ec2.describeInstances(
                         new DescribeInstancesRequest()
                                 .withInstanceIds(instanceId)
-                        ).getReservations().get(0).getInstances().get(0);
+                                                ).getReservations().get(0).getInstances().get(0);
 
             } catch (AmazonServiceException ase) {
                 if ("InvalidInstanceID.NotFound".equalsIgnoreCase(ase.getErrorCode())) {
@@ -156,13 +151,15 @@ public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
         DescribeInstancesResult result = ec2.describeInstances(request.withInstanceIds(instanceId));
 
         List<Reservation> reservations = result.getReservations();
-        if ( reservations.isEmpty() )
+        if (reservations.isEmpty()) {
             return null;
+        }
         assertEquals(1, reservations.size());
 
         List<Instance> instances = reservations.get(0).getInstances();
-        if ( instances.isEmpty() )
+        if (instances.isEmpty()) {
             return null;
+        }
         assertEquals(1, instances.size());
 
         return instances.get(0);
@@ -186,19 +183,19 @@ public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
         do {
             try {
                 Thread.sleep(1000);
-            } catch ( Exception e ) {
+            } catch (Exception e) {
             }
             tagsResult = ec2.describeTags(new DescribeTagsRequest().withFilters(new Filter().withName("resource-id")
-                    .withValues(resourceId)));
-        } while ( !allTagsPresent(tagsResult, tags) && attempts++ < 45 );
+                                                                                            .withValues(resourceId)));
+        } while (!allTagsPresent(tagsResult, tags) && attempts++ < 45);
     }
 
     private static boolean allTagsPresent(DescribeTagsResult result, List<Tag> expected) {
         Map<String, String> expectedTags = convertTagListToMap(expected);
 
-        for ( TagDescription tag : result.getTags() ) {
-            if ( expectedTags.containsKey(tag.getKey()) ) {
-                if ( expectedTags.get(tag.getKey()).equals(tag.getValue()) ) {
+        for (TagDescription tag : result.getTags()) {
+            if (expectedTags.containsKey(tag.getKey())) {
+                if (expectedTags.get(tag.getKey()).equals(tag.getValue())) {
                     expectedTags.remove(tag.getKey());
                 } else {
                     return false;
@@ -215,17 +212,10 @@ public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
 
     private static Map<String, String> convertTagListToMap(List<Tag> tags) {
         HashMap<String, String> map = new HashMap<String, String>();
-        for ( Tag tag : tags ) {
+        for (Tag tag : tags) {
             map.put(tag.getKey(), tag.getValue());
         }
         return map;
-    }
-
-    protected String loadResource(String resource) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resource);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        IOUtils.copy(inputStream, outputStream);
-        return outputStream.toString();
     }
 
     /**
@@ -237,5 +227,12 @@ public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
     protected static void assertStringNotEmpty(String s) {
         assertNotNull(s);
         assertTrue(s.length() > 1);
+    }
+
+    protected String loadResource(String resource) throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resource);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        IOUtils.copy(inputStream, outputStream);
+        return outputStream.toString();
     }
 }

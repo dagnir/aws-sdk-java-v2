@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -28,12 +24,12 @@ import org.junit.Test;
 /** Unit tests for the utility methods that parse information from AWS URLs. */
 public class AwsHostNameUtilsTest {
 
-    private static final URI IAM_ENDPOINT              = URI.create("https://iam.amazonaws.com");
-    private static final URI IAM_REGION_ENDPOINT       = URI.create("https://iam.us-west-2.amazonaws.com");
-    private static final URI EC2_REGION_ENDPOINT       = URI.create("https://ec2.us-west-2.amazonaws.com");
-    private static final URI S3_ENDPOINT               = URI.create("https://s3.amazonaws.com");
-    private static final URI S3_BUCKET_ENDPOINT        = URI.create("https://bucket.name.with.periods.s3.amazonaws.com");
-    private static final URI S3_REGION_ENDPOINT        = URI.create("https://s3-eu-west-1.amazonaws.com");
+    private static final URI IAM_ENDPOINT = URI.create("https://iam.amazonaws.com");
+    private static final URI IAM_REGION_ENDPOINT = URI.create("https://iam.us-west-2.amazonaws.com");
+    private static final URI EC2_REGION_ENDPOINT = URI.create("https://ec2.us-west-2.amazonaws.com");
+    private static final URI S3_ENDPOINT = URI.create("https://s3.amazonaws.com");
+    private static final URI S3_BUCKET_ENDPOINT = URI.create("https://bucket.name.with.periods.s3.amazonaws.com");
+    private static final URI S3_REGION_ENDPOINT = URI.create("https://s3-eu-west-1.amazonaws.com");
     private static final URI S3_BUCKET_REGION_ENDPOINT = URI.create("https://bucket.name.with.periods.s3-eu-west-1.amazonaws.com");
 
     @Test
@@ -42,10 +38,10 @@ public class AwsHostNameUtilsTest {
         assertEquals("iam", AwsHostNameUtils.parseServiceName(IAM_ENDPOINT));
         assertEquals("iam", AwsHostNameUtils.parseServiceName(IAM_REGION_ENDPOINT));
         assertEquals("ec2", AwsHostNameUtils.parseServiceName(EC2_REGION_ENDPOINT));
-        assertEquals("s3",  AwsHostNameUtils.parseServiceName(S3_ENDPOINT));
-        assertEquals("s3",  AwsHostNameUtils.parseServiceName(S3_BUCKET_ENDPOINT));
-        assertEquals("s3",  AwsHostNameUtils.parseServiceName(S3_REGION_ENDPOINT));
-        assertEquals("s3",  AwsHostNameUtils.parseServiceName(S3_BUCKET_REGION_ENDPOINT));
+        assertEquals("s3", AwsHostNameUtils.parseServiceName(S3_ENDPOINT));
+        assertEquals("s3", AwsHostNameUtils.parseServiceName(S3_BUCKET_ENDPOINT));
+        assertEquals("s3", AwsHostNameUtils.parseServiceName(S3_REGION_ENDPOINT));
+        assertEquals("s3", AwsHostNameUtils.parseServiceName(S3_BUCKET_REGION_ENDPOINT));
     }
 
     @Test

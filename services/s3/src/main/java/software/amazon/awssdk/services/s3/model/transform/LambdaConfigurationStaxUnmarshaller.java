@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model.transform;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -36,15 +37,15 @@ import software.amazon.awssdk.services.s3.model.NotificationConfiguration;
  * {@link LambdaConfiguration}.
  */
 class LambdaConfigurationStaxUnmarshaller implements
-        Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
+                                          Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
 
     private static LambdaConfigurationStaxUnmarshaller instance = new LambdaConfigurationStaxUnmarshaller();
 
-    public static LambdaConfigurationStaxUnmarshaller getInstance() {
-        return instance;
+    private LambdaConfigurationStaxUnmarshaller() {
     }
 
-    private LambdaConfigurationStaxUnmarshaller() {
+    public static LambdaConfigurationStaxUnmarshaller getInstance() {
+        return instance;
     }
 
     @Override

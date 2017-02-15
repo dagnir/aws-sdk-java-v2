@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.internal;
 
 import java.util.Date;
@@ -55,14 +56,15 @@ public class S3QueryStringSigner extends AbstractAWSSigner {
         this.resourcePath = resourcePath;
         this.expiration = expiration;
 
-        if (resourcePath == null)
+        if (resourcePath == null) {
             throw new IllegalArgumentException("Parameter resourcePath is empty");
+        }
     }
 
     public void sign(SignableRequest<?> request, AWSCredentials credentials) throws SdkClientException {
         AWSCredentials sanitizedCredentials = sanitizeCredentials(credentials);
 
-        if ( sanitizedCredentials instanceof AWSSessionCredentials ) {
+        if (sanitizedCredentials instanceof AWSSessionCredentials) {
             addSessionCredentials(request, (AWSSessionCredentials) sanitizedCredentials);
         }
 

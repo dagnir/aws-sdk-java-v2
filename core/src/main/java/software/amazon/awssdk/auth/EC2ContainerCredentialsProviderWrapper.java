@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.auth;
@@ -39,10 +39,10 @@ public class EC2ContainerCredentialsProviderWrapper implements AWSCredentialsPro
     private AWSCredentialsProvider initializeProvider() {
         try {
             return System.getenv(ContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH) != null
-                    ? new ContainerCredentialsProvider() : InstanceProfileCredentialsProvider.getInstance();
+                   ? new ContainerCredentialsProvider() : InstanceProfileCredentialsProvider.getInstance();
         } catch (SecurityException securityException) {
             LOG.debug("Security manager did not allow access to the ECS credentials environment variable " + ContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH
-                        + ". Please provide access to this environment variable if you want to load credentials from ECS Container.");
+                      + ". Please provide access to this environment variable if you want to load credentials from ECS Container.");
             return InstanceProfileCredentialsProvider.getInstance();
         }
     }
@@ -54,6 +54,6 @@ public class EC2ContainerCredentialsProviderWrapper implements AWSCredentialsPro
 
     @Override
     public void refresh() {
-       provider.refresh();
+        provider.refresh();
     }
 }

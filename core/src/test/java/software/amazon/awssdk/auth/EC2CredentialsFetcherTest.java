@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.auth;
@@ -40,15 +40,12 @@ import software.amazon.awssdk.util.IOUtils;
 
 public class EC2CredentialsFetcherTest {
 
-    @ClassRule
-    public static WireMockRule mockServer = new WireMockRule(0);
-
     /** One minute (in milliseconds) */
     private static final long ONE_MINUTE = 1000L * 60;
-
     /** Environment variable name for the AWS ECS Container credentials path */
     private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
-
+    @ClassRule
+    public static WireMockRule mockServer = new WireMockRule(0);
     private static String successResponse;
 
     private static String successResponseWithInvalidBody;
@@ -89,12 +86,12 @@ public class EC2CredentialsFetcherTest {
     public void testLoadCredentialsParsesJsonResponseProperly() {
         stubForSuccessResponseWithCustomBody(200, successResponse);
 
-         TestCredentialsProvider credentialsProvider = new TestCredentialsProvider();
-         AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider.getCredentials();
+        TestCredentialsProvider credentialsProvider = new TestCredentialsProvider();
+        AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider.getCredentials();
 
-         assertEquals("ACCESS_KEY_ID",     credentials.getAWSAccessKeyId());
-         assertEquals("SECRET_ACCESS_KEY", credentials.getAWSSecretKey());
-         assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
+        assertEquals("ACCESS_KEY_ID", credentials.getAWSAccessKeyId());
+        assertEquals("SECRET_ACCESS_KEY", credentials.getAWSSecretKey());
+        assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
     }
 
     /**
@@ -151,32 +148,32 @@ public class EC2CredentialsFetcherTest {
     private void stubForSuccessResponseWithCustomBody(int statusCode, String body) {
         stubFor(
                 get(urlPathEqualTo(CREDENTIALS_PATH))
-                .willReturn(aResponse()
-                                .withStatus(statusCode)
-                                .withHeader("Content-Type", "application/json")
-                                .withHeader("charset", "utf-8")
-                                .withBody(body)));
+                        .willReturn(aResponse()
+                                            .withStatus(statusCode)
+                                            .withHeader("Content-Type", "application/json")
+                                            .withHeader("charset", "utf-8")
+                                            .withBody(body)));
     }
 
     private void stubForSuccessResonseWithCustomExpirationDate(int statusCode, String expiration) {
         stubFor(
                 get(urlPathEqualTo(CREDENTIALS_PATH))
-                .willReturn(aResponse()
-                                .withStatus(statusCode)
-                                .withHeader("Content-Type", "application/json")
-                                .withHeader("charset", "utf-8")
-                                .withBody("{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\","
-                                        + "\"Expiration\":\"" + expiration + "\"}")));
+                        .willReturn(aResponse()
+                                            .withStatus(statusCode)
+                                            .withHeader("Content-Type", "application/json")
+                                            .withHeader("charset", "utf-8")
+                                            .withBody("{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\","
+                                                      + "\"Expiration\":\"" + expiration + "\"}")));
     }
 
     private void stubForErrorResponse() {
         stubFor(
                 get(urlPathEqualTo(CREDENTIALS_PATH))
-                .willReturn(aResponse()
-                                .withStatus(404)
-                                .withHeader("Content-Type", "application/json")
-                                .withHeader("charset", "utf-8")
-                                .withBody("{\"code\":\"404 Not Found\",\"message\":\"DetailedErrorMessage\"}")));
+                        .willReturn(aResponse()
+                                            .withStatus(404)
+                                            .withHeader("Content-Type", "application/json")
+                                            .withHeader("charset", "utf-8")
+                                            .withBody("{\"code\":\"404 Not Found\",\"message\":\"DetailedErrorMessage\"}")));
     }
 
 
@@ -200,6 +197,7 @@ public class EC2CredentialsFetcherTest {
         public TestCredentialsEndpointProvider(String host) {
             this.host = host;
         }
+
         @Override
         public URI getCredentialsEndpoint() throws URISyntaxException {
             return new URI(host + CREDENTIALS_PATH);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -37,17 +37,17 @@ import software.amazon.awssdk.services.dynamodbv2.model.ConsumedCapacity;
 /**
  * An internal service provider implementation for an DyanmoDB specific request
  * metric transformer.
- * 
+ *
  * This class is loaded only if there are Amazon DyanmoDB specific predefined
  * metrics to be processed.
- * 
+ *
  * @see AWSMetricTransformerFactory
  */
 @ThreadSafe
 public class DynamoDBRequestMetricTransformer implements RequestMetricTransformer {
     @Override
     public List<MetricDatum> toMetricData(MetricType metricType,
-            Request<?> request, Response<?> response) {
+                                          Request<?> request, Response<?> response) {
         try {
             return toMetricData0(metricType, request, response);
         } catch (SecurityException e) {
@@ -62,44 +62,49 @@ public class DynamoDBRequestMetricTransformer implements RequestMetricTransforme
     }
 
     private List<MetricDatum> toMetricData0(MetricType metricType,
-            Request<?> req, Response<?> response) throws SecurityException,
-            NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException {
-        if (!(metricType instanceof DynamoDBRequestMetric))
+                                            Request<?> req, Response<?> response) throws SecurityException,
+                                                                                         NoSuchMethodException,
+                                                                                         IllegalAccessException,
+                                                                                         InvocationTargetException {
+        if (!(metricType instanceof DynamoDBRequestMetric)) {
             return null;
+        }
         // Predefined metrics across all aws http clients
         DynamoDBRequestMetric predefined = (DynamoDBRequestMetric) metricType;
-        switch(predefined) {
+        switch (predefined) {
             case DynamoDBConsumedCapacity:
-                if (response == null)
+                if (response == null) {
                     return Collections.emptyList();
+                }
                 Object awsResponse = response.getAwsResponse();
                 Method method = awsResponse.getClass().getMethod("getConsumedCapacity");
                 Object value = method.invoke(awsResponse);
-                if (!(value instanceof ConsumedCapacity))
+                if (!(value instanceof ConsumedCapacity)) {
                     return Collections.emptyList();
+                }
                 ConsumedCapacity consumedCapacity = (ConsumedCapacity) value;
                 Double units = consumedCapacity.getCapacityUnits();
-                if (units == null)
+                if (units == null) {
                     return Collections.emptyList();
+                }
                 String tableName = consumedCapacity.getTableName();
                 List<Dimension> dims = new ArrayList<Dimension>();
                 dims.add(new Dimension()
-                        .withName(Dimensions.MetricType.name())
-                        .withValue(metricType.name()));
+                                 .withName(Dimensions.MetricType.name())
+                                 .withValue(metricType.name()));
                 // request type specific
                 dims.add(new Dimension()
-                        .withName(Dimensions.RequestType.name())
-                        .withValue(requestType(req)));
+                                 .withName(Dimensions.RequestType.name())
+                                 .withValue(requestType(req)));
                 // table specific
                 dims.add(new Dimension()
-                        .withName(DynamoDBDimensions.TableName.name())
-                        .withValue(tableName));
+                                 .withName(DynamoDBDimensions.TableName.name())
+                                 .withValue(tableName));
                 MetricDatum datum = new MetricDatum()
-                    .withMetricName(req.getServiceName())
-                    .withDimensions(dims)
-                    .withUnit(StandardUnit.Count)
-                    .withValue(units);
+                        .withMetricName(req.getServiceName())
+                        .withDimensions(dims)
+                        .withUnit(StandardUnit.Count)
+                        .withValue(units);
                 return Collections.singletonList(datum);
             default:
                 return Collections.emptyList();

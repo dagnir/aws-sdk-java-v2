@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Portions copyright 2006-2009 James Murty. Please see LICENSE.txt
- * for applicable license terms and NOTICE.txt for applicable notices.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,7 +12,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
+
 import java.io.Serializable;
 
 /**
@@ -40,18 +39,11 @@ import java.io.Serializable;
  * Alernatively, grant user access
  * specifying the canonical user representation.
  * </p>
- * 
+ *
  * @see EmailAddressGrantee#EmailAddressGrantee(String)
  */
-public class EmailAddressGrantee implements Grantee,Serializable {
+public class EmailAddressGrantee implements Grantee, Serializable {
     private String emailAddress = null;
-    
-    /* (non-Javadoc)
-     * @see software.amazon.awssdk.services.s3.model.Grantee#getTypeIdentifier()
-     */
-    public String getTypeIdentifier() {
-        return "emailAddress";
-    }
 
     /**
      * Constructs a new {@link EmailAddressGrantee} object
@@ -64,25 +56,32 @@ public class EmailAddressGrantee implements Grantee,Serializable {
         this.setIdentifier(emailAddress);
     }
 
-    /**
-     * Set the e-mail address as the grantee's ID.
-     * 
-     * @param emailAddress
-     *        The e-mail address used to identify the e-mail grantee.
-     *        
-     * @see EmailAddressGrantee#getIdentifier()       
+    /* (non-Javadoc)
+     * @see software.amazon.awssdk.services.s3.model.Grantee#getTypeIdentifier()
      */
-    public void setIdentifier(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public String getTypeIdentifier() {
+        return "emailAddress";
     }
 
     /**
      * Gets the grantee's e-mail address.
-     * 
+     *
      * @see #setIdentifier(String)
      */
     public String getIdentifier() {
         return emailAddress;
+    }
+
+    /**
+     * Set the e-mail address as the grantee's ID.
+     *
+     * @param emailAddress
+     *        The e-mail address used to identify the e-mail grantee.
+     *
+     * @see EmailAddressGrantee#getIdentifier()
+     */
+    public void setIdentifier(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     /* (non-Javadoc)
@@ -101,18 +100,23 @@ public class EmailAddressGrantee implements Grantee,Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        if ( this == obj )
+        if (this == obj) {
             return true;
-        if ( obj == null )
+        }
+        if (obj == null) {
             return false;
-        if ( getClass() != obj.getClass() )
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         EmailAddressGrantee other = (EmailAddressGrantee) obj;
-        if ( emailAddress == null ) {
-            if ( other.emailAddress != null )
+        if (emailAddress == null) {
+            if (other.emailAddress != null) {
                 return false;
-        } else if ( !emailAddress.equals(other.emailAddress) )
+            }
+        } else if (!emailAddress.equals(other.emailAddress)) {
             return false;
+        }
         return true;
     }
 

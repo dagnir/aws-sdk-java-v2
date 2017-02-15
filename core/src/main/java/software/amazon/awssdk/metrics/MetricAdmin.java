@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.metrics;
@@ -27,28 +27,32 @@ public class MetricAdmin implements MetricAdminMBean {
     public boolean enableDefaultMetrics() {
         return AwsSdkMetrics.enableDefaultMetrics();
     }
+
     @Override
     public void disableMetrics() {
         AwsSdkMetrics.disableMetrics();
     }
+
     @Override
     public String getRequestMetricCollector() {
         MetricCollector mc = AwsSdkMetrics.getInternalMetricCollector();
         RequestMetricCollector rmc = mc == null ? null : mc.getRequestMetricCollector();
         return mc == null || rmc == RequestMetricCollector.NONE
-             ? "NONE"
-             : rmc.getClass().getName()
-             ;
+               ? "NONE"
+               : rmc.getClass().getName()
+                ;
     }
+
     @Override
     public String getServiceMetricCollector() {
         MetricCollector mc = AwsSdkMetrics.getInternalMetricCollector();
         ServiceMetricCollector smc = mc == null ? null : mc.getServiceMetricCollector();
         return mc == null || smc == ServiceMetricCollector.NONE
-             ? "NONE"
-             : smc.getClass().getName()
-             ;
+               ? "NONE"
+               : smc.getClass().getName()
+                ;
     }
+
     @Override
     public boolean isMetricsEnabled() {
         return AwsSdkMetrics.isMetricsEnabled();
@@ -58,41 +62,50 @@ public class MetricAdmin implements MetricAdminMBean {
     public boolean isMachineMetricsExcluded() {
         return AwsSdkMetrics.isMachineMetricExcluded();
     }
+
     @Override
     public void setMachineMetricsExcluded(boolean excludeJvmMetrics) {
         AwsSdkMetrics.setMachineMetricsExcluded(excludeJvmMetrics);
     }
+
     @Override
     public String getRegion() {
         Regions region = AwsSdkMetrics.getRegion();
         return region == null ? null : region.getName();
     }
+
     @Override
     public void setRegion(String region) {
         AwsSdkMetrics.setRegion(region);
     }
+
     @Override
     public Integer getMetricQueueSize() {
         return AwsSdkMetrics.getMetricQueueSize();
     }
+
     @Override
     public void setMetricQueueSize(Integer metricQueueSize) {
         AwsSdkMetrics.setMetricQueueSize(metricQueueSize);
 
     }
+
     @Override
     public Integer getQueuePollTimeoutMilli() {
         Long queuePollTimeoutMilli = AwsSdkMetrics.getQueuePollTimeoutMilli();
         return queuePollTimeoutMilli == null ? null : queuePollTimeoutMilli.intValue();
     }
+
     @Override
     public void setQueuePollTimeoutMilli(Integer timeoutMilli) {
         AwsSdkMetrics.setQueuePollTimeoutMilli(timeoutMilli == null ? null : timeoutMilli.longValue());
     }
+
     @Override
     public String getMetricNameSpace() {
         return AwsSdkMetrics.getMetricNameSpace();
     }
+
     @Override
     public void setMetricNameSpace(String metricNameSpace) {
         AwsSdkMetrics.setMetricNameSpace(metricNameSpace);
@@ -102,26 +115,32 @@ public class MetricAdmin implements MetricAdminMBean {
     public boolean isPerHostMetricsIncluded() {
         return AwsSdkMetrics.isPerHostMetricIncluded();
     }
+
     @Override
     public void setPerHostMetricsIncluded(boolean includePerHostMetrics) {
         AwsSdkMetrics.setPerHostMetricsIncluded(includePerHostMetrics);
     }
+
     @Override
     public String getJvmMetricName() {
         return AwsSdkMetrics.getJvmMetricName();
     }
+
     @Override
     public void setJvmMetricName(String jvmMetricName) {
         AwsSdkMetrics.setJvmMetricName(jvmMetricName);
     }
+
     @Override
     public String getHostMetricName() {
         return AwsSdkMetrics.getHostMetricName();
     }
+
     @Override
     public void setHostMetricName(String hostMetricName) {
         AwsSdkMetrics.setHostMetricName(hostMetricName);
     }
+
     @Override
     public String getCredentialFile() {
         return AwsSdkMetrics.getCredentailFile();
@@ -132,10 +151,12 @@ public class MetricAdmin implements MetricAdminMBean {
             throws FileNotFoundException, IOException {
         AwsSdkMetrics.setCredentialFile(filepath);
     }
+
     @Override
     public boolean isSingleMetricNamespace() {
         return AwsSdkMetrics.isSingleMetricNamespace();
     }
+
     @Override
     public void setSingleMetricNamespace(boolean singleMetricNamespace) {
         AwsSdkMetrics.setSingleMetricNamespace(singleMetricNamespace);

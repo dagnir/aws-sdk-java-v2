@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -170,8 +170,9 @@ public class Region {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Region == false)
+        if (obj instanceof Region == false) {
             return false;
+        }
 
         Region region = (Region) obj;
         return this.getName().equals(region.getName());

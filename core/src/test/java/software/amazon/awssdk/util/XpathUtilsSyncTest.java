@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -36,16 +32,21 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class XpathUtilsSyncTest {
+    public static void main(String[] args) throws Exception {
+        new XpathUtilsSyncTest().test();
+        System.exit(0);
+    }
+
     @Test
     public void test() throws Exception {
         // System.setProperty("com.sun.org.apache.xml.internal.dtm.DTMManager",
         // "com.sun.org.apache.xml.internal.dtm.ref.DTMManagerDefault");
         final String content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<Error>"
-                + "  <Code>NoSuchKey</Code>"
-                + "  <Message>The resource you requested does not exist</Message>"
-                + "  <Resource>/mybucket/myfoto.jpg</Resource> "
-                + "  <RequestId>4442587FB7D0A2F9</RequestId>" + "</Error>";
+                               + "<Error>"
+                               + "  <Code>NoSuchKey</Code>"
+                               + "  <Message>The resource you requested does not exist</Message>"
+                               + "  <Resource>/mybucket/myfoto.jpg</Resource> "
+                               + "  <RequestId>4442587FB7D0A2F9</RequestId>" + "</Error>";
         ExecutorService es = Executors.newCachedThreadPool();
 
         Callable<Void> task = new Callable<Void>() {
@@ -66,10 +67,5 @@ public class XpathUtilsSyncTest {
         }
         task.call();
         task.call();
-    }
-    
-    public static void main(String[] args) throws Exception {
-        new XpathUtilsSyncTest().test();
-        System.exit(0);
     }
 }

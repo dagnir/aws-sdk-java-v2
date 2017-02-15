@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -492,6 +493,24 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
     /**
      * <p>
      * Sets the optional Amazon S3 storage class to use when storing the newly
+     * copied object. If not specified, the default standard storage class
+     * is used.
+     * </p>
+     * <p>
+     * For more information on Amazon S3 storage classes and available values,
+     * see the {@link StorageClass} enumeration.
+     * </p>
+     *
+     * @see CopyObjectRequest#getStorageClass()
+     * @see CopyObjectRequest#setStorageClass(String)
+     */
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass.toString();
+    }
+
+    /**
+     * <p>
+     * Sets the optional Amazon S3 storage class to use when storing the newly
      * copied object. If not specified, the default standard storage class is
      * used.
      * </p>
@@ -525,24 +544,6 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
     public CopyObjectRequest withStorageClass(String storageClass) {
         setStorageClass(storageClass);
         return this;
-    }
-
-    /**
-     * <p>
-     * Sets the optional Amazon S3 storage class to use when storing the newly
-     * copied object. If not specified, the default standard storage class
-     * is used.
-     * </p>
-     * <p>
-     * For more information on Amazon S3 storage classes and available values,
-     * see the {@link StorageClass} enumeration.
-     * </p>
-     *
-     * @see CopyObjectRequest#getStorageClass()
-     * @see CopyObjectRequest#setStorageClass(String)
-     */
-    public void setStorageClass(StorageClass storageClass) {
-        this.storageClass = storageClass.toString();
     }
 
     /**
@@ -968,6 +969,13 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
     }
 
     /**
+     * Gets the optional redirect location for the newly copied object.
+     */
+    public String getRedirectLocation() {
+        return this.redirectLocation;
+    }
+
+    /**
      * Sets the optional redirect location for the newly copied object.
      *
      * @param redirectLocation
@@ -975,13 +983,6 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      */
     public void setRedirectLocation(String redirectLocation) {
         this.redirectLocation = redirectLocation;
-    }
-
-    /**
-     * Gets the optional redirect location for the newly copied object.
-     */
-    public String getRedirectLocation() {
-        return this.redirectLocation;
     }
 
     /**
@@ -1058,7 +1059,7 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
     public void setDestinationSSECustomerKey(SSECustomerKey sseKey) {
         if (sseKey != null && this.sseAwsKeyManagementParams != null) {
             throw new IllegalArgumentException(
-                "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
+                    "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
         this.destinationSSECustomerKey = sseKey;
     }
@@ -1096,7 +1097,7 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
     public void setSSEAwsKeyManagementParams(SSEAwsKeyManagementParams params) {
         if (params != null && this.destinationSSECustomerKey != null) {
             throw new IllegalArgumentException(
-                "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
+                    "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
         this.sseAwsKeyManagementParams = params;
     }
@@ -1112,6 +1113,7 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
         setSSEAwsKeyManagementParams(sseAwsKeyManagementParams);
         return this;
     }
+
     /**
      * Returns true if the user has enabled Requester Pays option when
      * conducting this operation from Requester Pays Bucket; else false.

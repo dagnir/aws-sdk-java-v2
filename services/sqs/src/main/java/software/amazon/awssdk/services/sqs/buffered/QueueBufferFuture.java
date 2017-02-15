@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,16 +27,14 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  * operations. QueueBufferFutures are not cancellable
  */
 class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Future<Res> {
-    private Res result = null;
-    private Exception e = null;
-    private boolean done = false;
-
     /**
      * callback we should call after the future is done. may be null
      */
 
     private final QueueBufferCallback<Req, Res> callback;
-
+    private Res result = null;
+    private Exception e = null;
+    private boolean done = false;
     /**
      * every future should hold a reference to the buffer that issued it. that way, even if all
      * other references to the buffer are lost, it will not be garbage collected while at least one
@@ -56,8 +54,9 @@ class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Fut
      * Report that the task this future represents has succeeded.
      */
     public synchronized void setSuccess(Res paramResult) {
-        if (done)
+        if (done) {
             return; // can't mark done twice
+        }
         result = paramResult;
         done = true;
         notifyAll();
@@ -80,8 +79,9 @@ class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Fut
      * Report that the task this future represents has failed.
      */
     public synchronized void setFailure(Exception paramE) {
-        if (done)
+        if (done) {
             return; // can't mark done twice
+        }
         e = paramE;
         done = true;
         notifyAll();
@@ -126,7 +126,7 @@ class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Fut
 
     @Override
     public synchronized Res get(long timeout, TimeUnit tu) throws InterruptedException, ExecutionException,
-            TimeoutException {
+                                                                  TimeoutException {
 
         long waitStartMs = TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
         long timeoutMs = TimeUnit.MILLISECONDS.convert(timeout, tu);

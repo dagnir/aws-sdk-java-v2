@@ -154,8 +154,8 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
 
     private static Snapshot createSnapshot(String volumeId, AmazonEC2 ec2) throws InterruptedException {
         CreateSnapshotResult result = ec2.createSnapshot(new
-                CreateSnapshotRequest().withVolumeId(volumeId)
-                .withDescription(snapShotDescription));
+                                                                 CreateSnapshotRequest().withVolumeId(volumeId)
+                                                                                        .withDescription(snapShotDescription));
         assertEquals(snapShotDescription, result.getSnapshot().getDescription());
         waitUntilSnapshotIsReady(result.getSnapshot().getSnapshotId(), ec2);
         return result.getSnapshot();
@@ -163,9 +163,9 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
 
     private static Volume createVolume(AmazonEC2 ec2, boolean encrypted) throws InterruptedException {
         CreateVolumeResult result = ec2.createVolume(new CreateVolumeRequest()
-                .withEncrypted(encrypted)
-                .withSize(volumeSizeInGB)
-                .withAvailabilityZone(availabilityZone));
+                                                             .withEncrypted(encrypted)
+                                                             .withSize(volumeSizeInGB)
+                                                             .withAvailabilityZone(availabilityZone));
         assertEquals(volumeSizeInGB, result.getVolume().getSize(), volumeSizeInGB);
         waitUntilVolumeIsCreated(result.getVolume(), ec2);
         return result.getVolume();
@@ -177,7 +177,7 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
         Snapshot snapshot;
         while (true) {
             result = client.describeSnapshots(new DescribeSnapshotsRequest()
-                    .withSnapshotIds(snapshotId));
+                                                      .withSnapshotIds(snapshotId));
 
             snapshot = result.getSnapshots().get(0);
             if (snapshot.getState().equals("completed")) {
@@ -186,7 +186,7 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
             if (snapshot.getState().equals("error")) {
                 throw new AmazonClientException(
                         "Snapshot is in error state. Snapshot ID : "
-                                + snapshotId);
+                        + snapshotId);
             }
             Thread.sleep(WAIT_TIME_MILLIS);
         }
@@ -196,7 +196,7 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
         DescribeVolumesResult result = null;
         while (true) {
             result = ec2.describeVolumes(new DescribeVolumesRequest()
-                    .withVolumeIds(volume.getVolumeId()));
+                                                 .withVolumeIds(volume.getVolumeId()));
 
             if (result.getVolumes().get(0).getState().equals("available")) {
                 break;
@@ -215,7 +215,9 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
 
         List<CreateVolumePermission> createVolumePermissions = result.getCreateVolumePermissions();
         for (CreateVolumePermission permission : createVolumePermissions) {
-            if (permission.getUserId().equals(userId)) return true;
+            if (permission.getUserId().equals(userId)) {
+                return true;
+            }
         }
 
         return false;
@@ -235,14 +237,14 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
 
     @Test
     public void copy_unencrypted_snapshot_returns_success() throws
-            InterruptedException {
+                                                            InterruptedException {
         CopySnapshotResult result = destination.copySnapshot(new
-                CopySnapshotRequest().withSourceSnapshotId(sourceSnapshot.getSnapshotId())
-                .withSourceRegion(sourceRegion.getName()));
+                                                                     CopySnapshotRequest().withSourceSnapshotId(sourceSnapshot.getSnapshotId())
+                                                                                          .withSourceRegion(sourceRegion.getName()));
         Assert.assertThat(result.getSnapshotId(), Matchers.not(Matchers.isEmptyOrNullString()));
         Thread.sleep(WAIT_TIME_MILLIS);
         destSnapshot = destination.describeSnapshots(new
-                DescribeSnapshotsRequest().withSnapshotIds(result.getSnapshotId())).getSnapshots().get(0);
+                                                             DescribeSnapshotsRequest().withSnapshotIds(result.getSnapshotId())).getSnapshots().get(0);
         assertEquals(destSnapshot.getVolumeSize(), sourceSnapshot.getVolumeSize());
         assertEquals(destSnapshot.getOwnerId(), sourceSnapshot.getOwnerId());
 
@@ -255,7 +257,7 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
         // Test all (no filters)
         request = new DescribeSnapshotsRequest();
         List<Snapshot> snapshots = source.describeSnapshots(request)
-                .getSnapshots();
+                                         .getSnapshots();
         assertTrue(snapshotListContainsSnapshot(snapshots, sourceSnapshot.getSnapshotId()));
 
         // Test by specific snapshot ID
@@ -303,9 +305,9 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
 
     @Test
     public void copy_encrypted_snapshot_with_session_credentials() throws
-            InterruptedException {
+                                                                   InterruptedException {
         AmazonEC2Client ec2WithSTS = new AmazonEC2Client(new
-                STSSessionCredentialsProvider(getCredentials()));
+                                                                 STSSessionCredentialsProvider(getCredentials()));
         ec2WithSTS.configureRegion(destinationRegion);
 
         CopySnapshotResult copyResult = ec2WithSTS
@@ -333,9 +335,9 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
 
         final Request<CopySnapshotRequest> request = new CopySnapshotRequestMarshaller()
                 .marshall(new CopySnapshotRequest()
-                        .withSourceRegion("fake-region")
-                        .withSourceSnapshotId("fake-snapshot-id")
-                        .withDestinationRegion("us-east-1"));
+                                  .withSourceRegion("fake-region")
+                                  .withSourceSnapshotId("fake-snapshot-id")
+                                  .withDestinationRegion("us-east-1"));
         final GeneratePreSignUrlRequestHandler handler = new GeneratePreSignUrlRequestHandler();
         handler.setCredentials(getCredentials());
         handler.beforeRequest(request);
@@ -385,7 +387,9 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
 
     private boolean snapshotListContainsSnapshot(List<Snapshot> snapshots, String expectedId) {
         for (Snapshot snapshot : snapshots) {
-            if (snapshot.getSnapshotId().equals(expectedId)) return true;
+            if (snapshot.getSnapshotId().equals(expectedId)) {
+                return true;
+            }
         }
 
         return false;

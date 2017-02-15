@@ -43,11 +43,11 @@ import software.amazon.awssdk.services.s3.model.Region;
 public class StandardModelFactoriesV2UnconvertTest {
 
     protected static final DynamoDBMapperConfig CONFIG = new DynamoDBMapperConfig.Builder()
-        .withTypeConverterFactory(DynamoDBMapperConfig.DEFAULT.getTypeConverterFactory())
-        .withConversionSchema(ConversionSchemas.V2)
-        .build();
+            .withTypeConverterFactory(DynamoDBMapperConfig.DEFAULT.getTypeConverterFactory())
+            .withConversionSchema(ConversionSchemas.V2)
+            .build();
 
-    private static final DynamoDBMapperModelFactory factory = StandardModelFactories.of(new S3Link.Factory(new S3ClientCache((AWSCredentialsProvider)null)));
+    private static final DynamoDBMapperModelFactory factory = StandardModelFactories.of(new S3Link.Factory(new S3ClientCache((AWSCredentialsProvider) null)));
     private static final DynamoDBMapperModelFactory.TableFactory models = factory.getTableFactory(CONFIG);
 
     protected <T> Object unconvert(Class<T> clazz, Method getter, Method setter, AttributeValue value) {
@@ -58,95 +58,95 @@ public class StandardModelFactoriesV2UnconvertTest {
     @Test
     public void testBoolean() {
         assertEquals(false, unconvert("getBoolean", "setBoolean",
-                new AttributeValue().withN("0")));
+                                      new AttributeValue().withN("0")));
 
         assertEquals(true, unconvert("getBoolean", "setBoolean",
-                new AttributeValue().withN("1")));
+                                     new AttributeValue().withN("1")));
 
         assertEquals(false, unconvert("getBoolean", "setBoolean",
-                new AttributeValue().withBOOL(false)));
+                                      new AttributeValue().withBOOL(false)));
 
         assertEquals(true, unconvert("getBoolean", "setBoolean",
-                new AttributeValue().withBOOL(true)));
+                                     new AttributeValue().withBOOL(true)));
 
         assertEquals(false, unconvert("getBoxedBoolean", "setBoxedBoolean",
-                new AttributeValue().withN("0")));
+                                      new AttributeValue().withN("0")));
 
         assertEquals(true, unconvert("getBoxedBoolean", "setBoxedBoolean",
-                new AttributeValue().withN("1")));
+                                     new AttributeValue().withN("1")));
 
         assertEquals(false, unconvert("getBoxedBoolean", "setBoxedBoolean",
-                new AttributeValue().withBOOL(false)));
+                                      new AttributeValue().withBOOL(false)));
 
         assertEquals(true, unconvert("getBoxedBoolean", "setBoxedBoolean",
-                new AttributeValue().withBOOL(true)));
+                                     new AttributeValue().withBOOL(true)));
     }
 
     @Test
     public void testString() {
         assertEquals("test", unconvert("getString", "setString",
-                new AttributeValue("test")));
+                                       new AttributeValue("test")));
 
         Assert.assertNull(unconvert("getCustomString", "setCustomString",
-                new AttributeValue("ignoreme")));
+                                    new AttributeValue("ignoreme")));
     }
 
     @Test
     public void testUuid() {
         UUID uuid = UUID.randomUUID();
         assertEquals(uuid, unconvert("getUuid", "setUuid",
-                new AttributeValue(uuid.toString())));
+                                     new AttributeValue(uuid.toString())));
     }
 
     @Test
     public void testDate() {
         assertEquals(new Date(0), unconvert("getDate", "setDate",
-                new AttributeValue("1970-01-01T00:00:00.000Z")));
+                                            new AttributeValue("1970-01-01T00:00:00.000Z")));
 
         Calendar c = GregorianCalendar.getInstance();
         c.setTimeInMillis(0);
 
         assertEquals(c, unconvert("getCalendar", "setCalendar",
-                new AttributeValue("1970-01-01T00:00:00.000Z")));
+                                  new AttributeValue("1970-01-01T00:00:00.000Z")));
     }
 
     @Test
     public void testNumbers() {
         assertEquals((byte) 1, unconvert("getByte", "setByte",
-                new AttributeValue().withN("1")));
+                                         new AttributeValue().withN("1")));
         assertEquals((byte) 1, unconvert("getBoxedByte", "setBoxedByte",
-                new AttributeValue().withN("1")));
+                                         new AttributeValue().withN("1")));
 
         assertEquals((short) 1, unconvert("getShort", "setShort",
-                new AttributeValue().withN("1")));
+                                          new AttributeValue().withN("1")));
         assertEquals((short) 1, unconvert("getBoxedShort", "setBoxedShort",
-                new AttributeValue().withN("1")));
+                                          new AttributeValue().withN("1")));
 
         assertEquals(1, unconvert("getInt", "setInt",
-                new AttributeValue().withN("1")));
+                                  new AttributeValue().withN("1")));
         assertEquals(1, unconvert("getBoxedInt", "setBoxedInt",
-                new AttributeValue().withN("1")));
+                                  new AttributeValue().withN("1")));
 
         assertEquals(1l, unconvert("getLong", "setLong",
-                new AttributeValue().withN("1")));
+                                   new AttributeValue().withN("1")));
         assertEquals(1l, unconvert("getBoxedLong", "setBoxedLong",
-                new AttributeValue().withN("1")));
+                                   new AttributeValue().withN("1")));
 
         assertEquals(BigInteger.ONE, unconvert("getBigInt", "setBigInt",
-                new AttributeValue().withN("1")));
+                                               new AttributeValue().withN("1")));
 
         assertEquals(1.5f, unconvert("getFloat", "setFloat",
-                new AttributeValue().withN("1.5")));
+                                     new AttributeValue().withN("1.5")));
         assertEquals(1.5f, unconvert("getBoxedFloat", "setBoxedFloat",
-                new AttributeValue().withN("1.5")));
+                                     new AttributeValue().withN("1.5")));
 
         assertEquals(1.5d, unconvert("getDouble", "setDouble",
-                new AttributeValue().withN("1.5")));
+                                     new AttributeValue().withN("1.5")));
         assertEquals(1.5d, unconvert("getBoxedDouble", "setBoxedDouble",
-                new AttributeValue().withN("1.5")));
+                                     new AttributeValue().withN("1.5")));
 
         assertEquals(BigDecimal.ONE, unconvert("getBigDecimal", "setBigDecimal",
-                new AttributeValue().withN("1")));
+                                               new AttributeValue().withN("1")));
     }
 
     @Test
@@ -157,144 +157,182 @@ public class StandardModelFactoriesV2UnconvertTest {
                 new AttributeValue().withB(test.slice()))));
 
         assertEquals(test.slice(), unconvert("getByteBuffer", "setByteBuffer",
-                new AttributeValue().withB(test.slice())));
+                                             new AttributeValue().withB(test.slice())));
     }
 
     @Test
     public void testBooleanSet() {
-        assertEquals(new HashSet<Boolean>() {{ add(true); }},
-                unconvert("getBooleanSet", "setBooleanSet",
-                        new AttributeValue().withNS("1")));
+        assertEquals(new HashSet<Boolean>() {{
+                         add(true);
+                     }},
+                     unconvert("getBooleanSet", "setBooleanSet",
+                               new AttributeValue().withNS("1")));
 
-        assertEquals(new HashSet<Boolean>() {{ add(false); }},
-                unconvert("getBooleanSet", "setBooleanSet",
-                        new AttributeValue().withNS("0")));
+        assertEquals(new HashSet<Boolean>() {{
+                         add(false);
+                     }},
+                     unconvert("getBooleanSet", "setBooleanSet",
+                               new AttributeValue().withNS("0")));
 
-        assertEquals(new HashSet<Boolean>() {{ add(true); add(false); }},
-                unconvert("getBooleanSet", "setBooleanSet",
-                        new AttributeValue().withNS("0", "1")));
+        assertEquals(new HashSet<Boolean>() {{
+                         add(true);
+                         add(false);
+                     }},
+                     unconvert("getBooleanSet", "setBooleanSet",
+                               new AttributeValue().withNS("0", "1")));
 
-        assertEquals(new HashSet<Boolean>() {{ add(true); }},
-                unconvert("getBooleanSet", "setBooleanSet",
-                        new AttributeValue().withL(
-                                new AttributeValue().withBOOL(true))));
+        assertEquals(new HashSet<Boolean>() {{
+                         add(true);
+                     }},
+                     unconvert("getBooleanSet", "setBooleanSet",
+                               new AttributeValue().withL(
+                                       new AttributeValue().withBOOL(true))));
 
-        assertEquals(new HashSet<Boolean>() {{ add(false); }},
-                unconvert("getBooleanSet", "setBooleanSet",
-                        new AttributeValue().withL(
-                                new AttributeValue().withBOOL(false))));
+        assertEquals(new HashSet<Boolean>() {{
+                         add(false);
+                     }},
+                     unconvert("getBooleanSet", "setBooleanSet",
+                               new AttributeValue().withL(
+                                       new AttributeValue().withBOOL(false))));
 
-        assertEquals(new HashSet<Boolean>() {{ add(false); add(true); }},
-                unconvert("getBooleanSet", "setBooleanSet",
-                        new AttributeValue().withL(
-                                new AttributeValue().withBOOL(false),
-                                new AttributeValue().withBOOL(true))));
+        assertEquals(new HashSet<Boolean>() {{
+                         add(false);
+                         add(true);
+                     }},
+                     unconvert("getBooleanSet", "setBooleanSet",
+                               new AttributeValue().withL(
+                                       new AttributeValue().withBOOL(false),
+                                       new AttributeValue().withBOOL(true))));
 
-        assertEquals(new HashSet<Boolean>() {{ add(null); }},
-                unconvert("getBooleanSet", "setBooleanSet",
-                        new AttributeValue().withL(
-                                new AttributeValue().withNULL(true))));
+        assertEquals(new HashSet<Boolean>() {{
+                         add(null);
+                     }},
+                     unconvert("getBooleanSet", "setBooleanSet",
+                               new AttributeValue().withL(
+                                       new AttributeValue().withNULL(true))));
     }
 
     @Test
     public void testStringSet() {
         Assert.assertNull(unconvert("getStringSet", "setStringSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
-        assertEquals(new HashSet<String>() {{ add("a"); add("b"); }},
-                unconvert("getStringSet", "setStringSet",
-                        new AttributeValue().withSS("a", "b")));
+        assertEquals(new HashSet<String>() {{
+                         add("a");
+                         add("b");
+                     }},
+                     unconvert("getStringSet", "setStringSet",
+                               new AttributeValue().withSS("a", "b")));
     }
 
     @Test
     public void testUuidSet() {
         Assert.assertNull(unconvert("getUuidSet", "setUuidSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
         final UUID one = UUID.randomUUID();
         final UUID two = UUID.randomUUID();
 
-        assertEquals(new HashSet<UUID>() {{ add(one); add(two); }},
-                unconvert("getUuidSet", "setUuidSet",
-                        new AttributeValue().withSS(
-                                one.toString(),
-                                two.toString())));
+        assertEquals(new HashSet<UUID>() {{
+                         add(one);
+                         add(two);
+                     }},
+                     unconvert("getUuidSet", "setUuidSet",
+                               new AttributeValue().withSS(
+                                       one.toString(),
+                                       two.toString())));
     }
 
     @Test
     public void testDateSet() {
         assertEquals(Collections.singleton(new Date(0)),
-                unconvert("getDateSet", "setDateSet", new AttributeValue()
-                .withSS("1970-01-01T00:00:00.000Z")));
+                     unconvert("getDateSet", "setDateSet", new AttributeValue()
+                             .withSS("1970-01-01T00:00:00.000Z")));
 
         Calendar c = GregorianCalendar.getInstance();
         c.setTimeInMillis(0);
 
         assertEquals(Collections.singleton(c),
-                unconvert("getCalendarSet", "setCalendarSet",
-                        new AttributeValue()
-                                .withSS("1970-01-01T00:00:00.000Z")));
+                     unconvert("getCalendarSet", "setCalendarSet",
+                               new AttributeValue()
+                                       .withSS("1970-01-01T00:00:00.000Z")));
     }
 
     @Test
     public void testNumberSet() {
         Assert.assertNull(unconvert("getByteSet", "setByteSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getShortSet", "setShortSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getIntSet", "setIntSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getLongSet", "setLongSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getBigIntegerSet", "setBigIntegerSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getFloatSet", "setFloatSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getDoubleSet", "setDoubleSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getBigDecimalSet", "setBigDecimalSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
 
-        assertEquals(new HashSet<Byte>() {{ add((byte) 1); }},
-                unconvert("getByteSet", "setByteSet",
-                        new AttributeValue().withNS("1")));
+        assertEquals(new HashSet<Byte>() {{
+                         add((byte) 1);
+                     }},
+                     unconvert("getByteSet", "setByteSet",
+                               new AttributeValue().withNS("1")));
 
-        assertEquals(new HashSet<Short>() {{ add((short) 1); }},
-                unconvert("getShortSet", "setShortSet",
-                        new AttributeValue().withNS("1")));
+        assertEquals(new HashSet<Short>() {{
+                         add((short) 1);
+                     }},
+                     unconvert("getShortSet", "setShortSet",
+                               new AttributeValue().withNS("1")));
 
-        assertEquals(new HashSet<Integer>() {{ add(1); }},
-                unconvert("getIntSet", "setIntSet",
-                        new AttributeValue().withNS("1")));
+        assertEquals(new HashSet<Integer>() {{
+                         add(1);
+                     }},
+                     unconvert("getIntSet", "setIntSet",
+                               new AttributeValue().withNS("1")));
 
-        assertEquals(new HashSet<Long>() {{ add(1l); }},
-                unconvert("getLongSet", "setLongSet",
-                        new AttributeValue().withNS("1")));
+        assertEquals(new HashSet<Long>() {{
+                         add(1l);
+                     }},
+                     unconvert("getLongSet", "setLongSet",
+                               new AttributeValue().withNS("1")));
 
-        assertEquals(new HashSet<BigInteger>() {{ add(BigInteger.ONE); }},
-                unconvert("getBigIntegerSet", "setBigIntegerSet",
-                        new AttributeValue().withNS("1")));
+        assertEquals(new HashSet<BigInteger>() {{
+                         add(BigInteger.ONE);
+                     }},
+                     unconvert("getBigIntegerSet", "setBigIntegerSet",
+                               new AttributeValue().withNS("1")));
 
-        assertEquals(new HashSet<Float>() {{ add(1.5f); }},
-                unconvert("getFloatSet", "setFloatSet",
-                        new AttributeValue().withNS("1.5")));
+        assertEquals(new HashSet<Float>() {{
+                         add(1.5f);
+                     }},
+                     unconvert("getFloatSet", "setFloatSet",
+                               new AttributeValue().withNS("1.5")));
 
-        assertEquals(new HashSet<Double>() {{ add(1.5d); }},
-                unconvert("getDoubleSet", "setDoubleSet",
-                        new AttributeValue().withNS("1.5")));
+        assertEquals(new HashSet<Double>() {{
+                         add(1.5d);
+                     }},
+                     unconvert("getDoubleSet", "setDoubleSet",
+                               new AttributeValue().withNS("1.5")));
 
-        assertEquals(new HashSet<BigDecimal>() {{ add(BigDecimal.ONE); }},
-                unconvert("getBigDecimalSet", "setBigDecimalSet",
-                        new AttributeValue().withNS("1")));
+        assertEquals(new HashSet<BigDecimal>() {{
+                         add(BigDecimal.ONE);
+                     }},
+                     unconvert("getBigDecimalSet", "setBigDecimalSet",
+                               new AttributeValue().withNS("1")));
     }
 
     @Test
     public void testBinarySet() {
         Assert.assertNull(unconvert("getByteArraySet", "setByteArraySet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
         Assert.assertNull(unconvert("getByteBufferSet", "setByteBufferSet",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
         ByteBuffer test = ByteBuffer.wrap("test".getBytes());
 
@@ -308,26 +346,26 @@ public class StandardModelFactoriesV2UnconvertTest {
                 result.iterator().next()));
 
         Assert.assertEquals(Collections.singleton(test.slice()),
-                unconvert("getByteBufferSet", "setByteBufferSet",
-                        new AttributeValue().withBS(test.slice())));
+                            unconvert("getByteBufferSet", "setByteBufferSet",
+                                      new AttributeValue().withBS(test.slice())));
     }
 
     @Test
     public void testObjectSet() {
         Object result = unconvert("getObjectSet", "setObjectSet",
-            new AttributeValue().withL(new AttributeValue().withM(
-                new HashMap<String, AttributeValue>() {{
-                    put("name", new AttributeValue("name"));
-                    put("value", new AttributeValue().withN("123"));
-                    put("null", new AttributeValue().withNULL(true));
-                }}
-        )));
+                                  new AttributeValue().withL(new AttributeValue().withM(
+                                          new HashMap<String, AttributeValue>() {{
+                                              put("name", new AttributeValue("name"));
+                                              put("value", new AttributeValue().withN("123"));
+                                              put("null", new AttributeValue().withNULL(true));
+                                          }}
+                                                                                       )));
 
         assertEquals(Collections.singleton(new SubClass()), result);
 
         result = unconvert("getObjectSet", "setObjectSet",
-                new AttributeValue().withL(
-                        new AttributeValue().withNULL(true)));
+                           new AttributeValue().withL(
+                                   new AttributeValue().withNULL(true)));
 
         assertEquals(Collections.<SubClass>singleton(null), result);
     }
@@ -335,107 +373,107 @@ public class StandardModelFactoriesV2UnconvertTest {
     @Test
     public void testList() {
         Assert.assertNull(unconvert("getList", "setList",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
         assertEquals(Arrays.asList("a", "b", "c"),
-                unconvert("getList", "setList", new AttributeValue().withL(
-                        new AttributeValue("a"),
-                        new AttributeValue("b"),
-                        new AttributeValue("c"))));
+                     unconvert("getList", "setList", new AttributeValue().withL(
+                             new AttributeValue("a"),
+                             new AttributeValue("b"),
+                             new AttributeValue("c"))));
 
         assertEquals(Arrays.asList("a", null),
-                unconvert("getList", "setList", new AttributeValue().withL(
-                        new AttributeValue("a"),
-                        new AttributeValue().withNULL(true))));
+                     unconvert("getList", "setList", new AttributeValue().withL(
+                             new AttributeValue("a"),
+                             new AttributeValue().withNULL(true))));
     }
 
     @Test
     public void testObjectList() {
         Assert.assertNull(unconvert("getObjectList", "setObjectList",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
         assertEquals(Arrays.asList(new SubClass(), null),
-                unconvert("getObjectList", "setObjectList",
-                        new AttributeValue().withL(
-                                new AttributeValue().withM(new HashMap<String, AttributeValue>() {{
-                                    put("name", new AttributeValue("name"));
-                                    put("value", new AttributeValue().withN("123"));
-                                    put("null", new AttributeValue().withNULL(true));
-                                }}),
-                                new AttributeValue().withNULL(true))));
+                     unconvert("getObjectList", "setObjectList",
+                               new AttributeValue().withL(
+                                       new AttributeValue().withM(new HashMap<String, AttributeValue>() {{
+                                           put("name", new AttributeValue("name"));
+                                           put("value", new AttributeValue().withN("123"));
+                                           put("null", new AttributeValue().withNULL(true));
+                                       }}),
+                                       new AttributeValue().withNULL(true))));
     }
 
     @Test
     public void testSetList() {
         Assert.assertNull(unconvert("getSetList", "setSetList",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
-        assertEquals(Arrays.asList(new Set[] { null }),
-                unconvert("getSetList", "setSetList", new AttributeValue().withL(
-                        new AttributeValue().withNULL(true))));
+        assertEquals(Arrays.asList(new Set[] {null}),
+                     unconvert("getSetList", "setSetList", new AttributeValue().withL(
+                             new AttributeValue().withNULL(true))));
 
         assertEquals(Arrays.asList(Collections.singleton("a")),
-                unconvert("getSetList", "setSetList", new AttributeValue().withL(
-                        new AttributeValue().withSS("a"))));
+                     unconvert("getSetList", "setSetList", new AttributeValue().withL(
+                             new AttributeValue().withSS("a"))));
     }
 
     @Test
     public void testMap() {
         Assert.assertNull(unconvert("getMap", "setMap",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
         assertEquals(new HashMap<String, String>() {{
-                put("a", "b");
-                put("c", "d");
-            }},
-            unconvert("getMap", "setMap", new AttributeValue().withM(
-                    new HashMap<String, AttributeValue>() {{
-                        put("a", new AttributeValue("b"));
-                        put("c", new AttributeValue("d"));
-                    }})));
+                         put("a", "b");
+                         put("c", "d");
+                     }},
+                     unconvert("getMap", "setMap", new AttributeValue().withM(
+                             new HashMap<String, AttributeValue>() {{
+                                 put("a", new AttributeValue("b"));
+                                 put("c", new AttributeValue("d"));
+                             }})));
 
         assertEquals(new HashMap<String, String>() {{
-                put("a", null);
-            }},
-            unconvert("getMap", "setMap", new AttributeValue().withM(
-                    new HashMap<String, AttributeValue>() {{
-                        put("a", new AttributeValue().withNULL(true));
-                    }})));
+                         put("a", null);
+                     }},
+                     unconvert("getMap", "setMap", new AttributeValue().withM(
+                             new HashMap<String, AttributeValue>() {{
+                                 put("a", new AttributeValue().withNULL(true));
+                             }})));
     }
 
     @Test
     public void testSetMap() {
         Assert.assertNull(unconvert("getSetMap", "setSetMap",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
         assertEquals(new HashMap<String, Set<String>>() {{
-                put("a", null);
-                put("b", new TreeSet<String>(Arrays.asList("a", "b")));
-            }},
-            unconvert("getSetMap", "setSetMap", new AttributeValue().withM(
-                    new HashMap<String, AttributeValue>() {{
-                        put("a", new AttributeValue().withNULL(true));
-                        put("b", new AttributeValue().withSS("a", "b"));
-                    }})));
+                         put("a", null);
+                         put("b", new TreeSet<String>(Arrays.asList("a", "b")));
+                     }},
+                     unconvert("getSetMap", "setSetMap", new AttributeValue().withM(
+                             new HashMap<String, AttributeValue>() {{
+                                 put("a", new AttributeValue().withNULL(true));
+                                 put("b", new AttributeValue().withSS("a", "b"));
+                             }})));
     }
 
     @Test
     public void testObject() {
         Assert.assertNull(unconvert("getObject", "setObject",
-                new AttributeValue().withNULL(true)));
+                                    new AttributeValue().withNULL(true)));
 
         assertEquals(new SubClass(), unconvert("getObject", "setObject",
-                new AttributeValue().withM(new HashMap<String, AttributeValue>() {{
-                    put("name", new AttributeValue("name"));
-                    put("value", new AttributeValue().withN("123"));
-                }})));
+                                               new AttributeValue().withM(new HashMap<String, AttributeValue>() {{
+                                                   put("name", new AttributeValue("name"));
+                                                   put("value", new AttributeValue().withN("123"));
+                                               }})));
 
         assertEquals(new SubClass(), unconvert("getObject", "setObject",
-                new AttributeValue().withM(new HashMap<String, AttributeValue>() {{
-                    put("name", new AttributeValue("name"));
-                    put("value", new AttributeValue().withN("123"));
-                    put("null", new AttributeValue().withNULL(true));
-                }})));
+                                               new AttributeValue().withM(new HashMap<String, AttributeValue>() {{
+                                                   put("name", new AttributeValue("name"));
+                                                   put("value", new AttributeValue().withN("123"));
+                                                   put("null", new AttributeValue().withNULL(true));
+                                               }})));
     }
 
     @Test
@@ -454,10 +492,10 @@ public class StandardModelFactoriesV2UnconvertTest {
     @Test
     public void testS3Link() {
         S3Link link = (S3Link) unconvert("getS3Link", "setS3Link",
-                        new AttributeValue("{\"s3\":{"
-                                           + "\"bucket\":\"bucket\","
-                                           + "\"key\":\"key\","
-                                           + "\"region\":null}}"));
+                                         new AttributeValue("{\"s3\":{"
+                                                            + "\"bucket\":\"bucket\","
+                                                            + "\"key\":\"key\","
+                                                            + "\"region\":null}}"));
 
         assertEquals("bucket", link.getBucketName());
         assertEquals("key", link.getKey());

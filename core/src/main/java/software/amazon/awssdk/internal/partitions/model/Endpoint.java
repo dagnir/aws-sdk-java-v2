@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -65,25 +65,25 @@ public class Endpoint {
         final Endpoint merged = new Endpoint();
 
         merged.setCredentialScope(override.getCredentialScope() != null
-                ? override.getCredentialScope()
-                : defaults.getCredentialScope());
+                                  ? override.getCredentialScope()
+                                  : defaults.getCredentialScope());
 
         merged.setHostName(override.getHostName() != null
-                ? override.getHostName()
-                : defaults.getHostName());
+                           ? override.getHostName()
+                           : defaults.getHostName());
 
         merged.setSslCommonName(override.getSslCommonName() != null
-                ? override.getSslCommonName()
-                : defaults.getSslCommonName());
+                                ? override.getSslCommonName()
+                                : defaults.getSslCommonName());
 
         merged.setProtocols(override.getProtocols() != null
-                ? override.getProtocols()
-                : defaults.getProtocols());
+                            ? override.getProtocols()
+                            : defaults.getProtocols());
 
         merged.setSignatureVersions(override.getSignatureVersions() != null
-                ? override.getSignatureVersions()
-                : defaults.getSignatureVersions()
-        );
+                                    ? override.getSignatureVersions()
+                                    : defaults.getSignatureVersions()
+                                   );
 
         return merged;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,12 +31,11 @@ import software.amazon.awssdk.util.AWSRequestMetrics;
 /**
  * This is the default implementation of an AWS SDK request metric collection
  * system.
- * 
+ *
  * @see RequestMetricCollector
  */
 @ThreadSafe
-public class RequestMetricCollectorSupport extends RequestMetricCollector 
-{
+public class RequestMetricCollectorSupport extends RequestMetricCollector {
     protected final static Log log = LogFactory.getLog(RequestMetricCollectorSupport.class);
     private final BlockingQueue<MetricDatum> queue;
     private final PredefinedMetricTransformer transformer = new PredefinedMetricTransformer();
@@ -55,35 +54,37 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector
     public void collectMetrics(Request<?> request, Response<?> response) {
         try {
             collectMetrics0(request, response);
-        } catch(Exception ex) { // defensive code
+        } catch (Exception ex) { // defensive code
             if (log.isDebugEnabled()) {
                 log.debug("Ignoring unexpected failure", ex);
             }
         }
     }
+
     private void collectMetrics0(Request<?> request, Response<?> response) {
         AWSRequestMetrics arm = request.getAWSRequestMetrics();
         if (arm == null || !arm.isEnabled()) {
             return;
         }
-        for (MetricType type: AwsSdkMetrics.getPredefinedMetrics()) {
-            if (!(type instanceof RequestMetricType))
+        for (MetricType type : AwsSdkMetrics.getPredefinedMetrics()) {
+            if (!(type instanceof RequestMetricType)) {
                 continue;
+            }
             PredefinedMetricTransformer transformer = getTransformer();
             for (MetricDatum datum : transformer.toMetricData(type, request, response)) {
                 try {
                     if (!addMetricsToQueue(datum)) {
                         if (log.isDebugEnabled()) {
                             log.debug("Failed to add to the metrics queue (due to no space available) for "
-                                    + type.name()
-                                    + ":"
-                                    + request.getServiceName());
+                                      + type.name()
+                                      + ":"
+                                      + request.getServiceName());
                         }
                     }
-                } catch(RuntimeException ex) {
+                } catch (RuntimeException ex) {
                     log.warn("Failed to add to the metrics queue for "
-                        + type.name() + ":" + request.getServiceName(),
-                        ex);
+                             + type.name() + ":" + request.getServiceName(),
+                             ex);
                 }
             }
         }
@@ -94,8 +95,11 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector
      * if no space available.
      */
     protected boolean addMetricsToQueue(MetricDatum metric) {
-        return queue.offer(metric); 
+        return queue.offer(metric);
     }
+
     /** Returns the predefined metrics transformer. */
-    protected PredefinedMetricTransformer getTransformer() { return transformer; }
+    protected PredefinedMetricTransformer getTransformer() {
+        return transformer;
+    }
 }

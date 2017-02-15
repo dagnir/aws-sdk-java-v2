@@ -51,7 +51,7 @@ public class CompositeAcceptorTest {
         Assert.assertEquals("Response output doesn't match expected output.", WaiterState.RETRY, compositeAcceptor.accepts(new DescribeTableResult()));
     }
 
-    @Test (expected = AmazonServiceException.class)
+    @Test(expected = AmazonServiceException.class)
     public void exceptionNotMatchExpected() throws Exception {
         List<WaiterAcceptor> waiterAcceptorsList = new ArrayList<WaiterAcceptor>();
         waiterAcceptorsList.add(new TestResultAcceptor());
@@ -68,6 +68,12 @@ public class CompositeAcceptorTest {
         Assert.assertEquals("Exception thrown doesn't match expected exception.", WaiterState.RETRY, compositeAcceptor.accepts(new ResourceNotFoundException("")));
     }
 
+    static class ResourceNotFoundException extends AmazonServiceException {
+        public ResourceNotFoundException(String message) {
+            super(message);
+        }
+    }
+
     class DescribeTableResult {
         private String tableName;
     }
@@ -77,6 +83,7 @@ public class CompositeAcceptorTest {
         public boolean matches(DescribeTableResult result) {
             return true;
         }
+
         public WaiterState getState() {
             return WaiterState.SUCCESS;
         }
@@ -91,12 +98,6 @@ public class CompositeAcceptorTest {
 
         public WaiterState getState() {
             return WaiterState.RETRY;
-        }
-    }
-
-    static class ResourceNotFoundException extends AmazonServiceException {
-        public ResourceNotFoundException(String message) {
-            super(message);
         }
     }
 }

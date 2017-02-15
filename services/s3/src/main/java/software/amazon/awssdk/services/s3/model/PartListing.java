@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -55,7 +56,7 @@ public class PartListing implements Serializable, S3RequesterChargedResult {
      * specify where in the results to begin listing parts.
      */
     private Integer partNumberMarker;
-    
+
     /**
      * The encodingType parameter originally specified by the caller when this
      * part listing was returned.
@@ -308,7 +309,7 @@ public class PartListing implements Serializable, S3RequesterChargedResult {
      * the XML response. If you specify <code>encodingType</code> request
      * parameter, Amazon S3 includes this element in the response, and returns
      * encoded key name values in the <code>Key</code> element.
-     * 
+     *
      * @return <code>Null</code> if <code>encodingType</code> is not specified
      *         in the request parameter.
      */
@@ -319,7 +320,7 @@ public class PartListing implements Serializable, S3RequesterChargedResult {
     /**
      * For internal use only. Sets the encoding type used by Amazon S3 to encode
      * object key names in the XML response.
-     * 
+     *
      * @param encodingType
      *            <code>Null</code> if <code>encodingType</code> is not
      *            specified in the request parameter.
@@ -357,7 +358,9 @@ public class PartListing implements Serializable, S3RequesterChargedResult {
      * @return The list of parts described in this part listing.
      */
     public List<PartSummary> getParts() {
-        if (parts == null) parts = new ArrayList<PartSummary>();
+        if (parts == null) {
+            parts = new ArrayList<PartSummary>();
+        }
         return parts;
     }
 
@@ -407,6 +410,7 @@ public class PartListing implements Serializable, S3RequesterChargedResult {
     public void setAbortRuleId(String abortRuleId) {
         this.abortRuleId = abortRuleId;
     }
+
     @Override
     public boolean isRequesterCharged() {
         return isRequesterCharged;

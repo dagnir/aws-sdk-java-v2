@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,6 +28,6 @@ public class SystemDefaultDnsResolverTest {
         DnsResolver resolver = new SystemDefaultDnsResolver();
         assertNotNull(resolver.resolve("127.0.0.1"));
         assertEquals("Should resolve to 1 address", 1, resolver.resolve("127.0.0.1").length);
-        assertTrue("Should resolve localhost",  resolver.resolve("localhost").length > 0);
+        assertTrue("Should resolve localhost", resolver.resolve("localhost").length > 0);
     }
 }

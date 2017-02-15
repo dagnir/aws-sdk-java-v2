@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.codepipeline;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -34,6 +49,22 @@ public class AWSCodePipelineClientIntegrationTest extends AWSTestBase {
         client = new AWSCodePipelineClient(credentials);
     }
 
+    /**
+     * @param actionTypes
+     *            List of {@link ActionType}s to search
+     * @param actionTypeId
+     *            {@link ActionType} to search for
+     * @return True if actionTypeId is in actionTypes, false otherwise
+     */
+    private static boolean containsActionTypeId(List<ActionType> actionTypes, ActionTypeId actionTypeId) {
+        for (ActionType actionType : actionTypes) {
+            if (actionType.getId().equals(actionTypeId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Test(expected = InvalidNextTokenException.class)
     public void listPipelines_WithInvalidNextToken_ThrowsInvalidNextTokenException() {
         client.listPipelines(new ListPipelinesRequest().withNextToken("invalid_next_token"));
@@ -51,31 +82,15 @@ public class AWSCodePipelineClientIntegrationTest extends AWSTestBase {
     @Test
     public void createFindDelete_ActionType() {
         ActionTypeId actionTypeId = new ActionTypeId().withCategory(ActionCategory.Build).withProvider("test-provider")
-                .withVersion("1").withOwner(ActionOwner.Custom);
+                                                      .withVersion("1").withOwner(ActionOwner.Custom);
         client.createCustomActionType(new CreateCustomActionTypeRequest().withCategory(actionTypeId.getCategory())
-                .withProvider(actionTypeId.getProvider()).withVersion(actionTypeId.getVersion())
-                .withInputArtifactDetails(new ArtifactDetails().withMaximumCount(1).withMinimumCount(1))
-                .withOutputArtifactDetails(new ArtifactDetails().withMaximumCount(1).withMinimumCount(1)));
+                                                                         .withProvider(actionTypeId.getProvider()).withVersion(actionTypeId.getVersion())
+                                                                         .withInputArtifactDetails(new ArtifactDetails().withMaximumCount(1).withMinimumCount(1))
+                                                                         .withOutputArtifactDetails(new ArtifactDetails().withMaximumCount(1).withMinimumCount(1)));
         final ListActionTypesResult actionTypes = client.listActionTypes(new ListActionTypesRequest());
         assertTrue(containsActionTypeId(actionTypes.getActionTypes(), actionTypeId));
         client.deleteCustomActionType(new DeleteCustomActionTypeRequest().withCategory(actionTypeId.getCategory())
-                .withProvider(actionTypeId.getProvider()).withVersion(actionTypeId.getVersion()));
-    }
-
-    /**
-     * @param actionTypes
-     *            List of {@link ActionType}s to search
-     * @param actionTypeId
-     *            {@link ActionType} to search for
-     * @return True if actionTypeId is in actionTypes, false otherwise
-     */
-    private static boolean containsActionTypeId(List<ActionType> actionTypes, ActionTypeId actionTypeId) {
-        for (ActionType actionType : actionTypes) {
-            if (actionType.getId().equals(actionTypeId)) {
-                return true;
-            }
-        }
-        return false;
+                                                                         .withProvider(actionTypeId.getProvider()).withVersion(actionTypeId.getVersion()));
     }
 
 }

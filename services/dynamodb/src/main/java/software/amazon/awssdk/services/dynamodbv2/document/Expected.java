@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class Expected {
         return values == null ? null : values.clone();
     }
 
-    private Expected _withValues(Object ... values) {
+    private Expected _withValues(Object... values) {
         this.values = values.clone();
         return this;
     }
@@ -101,6 +101,7 @@ public class Expected {
     public Expected notContains(Object val) {
         return _withComparisonOperator(ComparisonOperator.NOT_CONTAINS)._withValues(val);
     }
+
     /**
      * Creates and returns a condition of the range key with a value that begins
      * with the given value.
@@ -109,7 +110,7 @@ public class Expected {
         return _withComparisonOperator(ComparisonOperator.BEGINS_WITH)._withValues(val);
     }
 
-    public Expected in(Object ...values) {
+    public Expected in(Object... values) {
         if (values == null || values.length == 0) {
             throw new IllegalArgumentException("values must not be null or empty.");
         }

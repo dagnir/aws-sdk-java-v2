@@ -21,7 +21,9 @@ public class EC2VpcIntegrationTest extends EC2IntegrationTestBase {
     /** Release resources used in testing */
     @After
     public void tearDown() {
-        if (vpc != null) EC2TestHelper.deleteVpc(vpc.getVpcId());
+        if (vpc != null) {
+            EC2TestHelper.deleteVpc(vpc.getVpcId());
+        }
     }
 
     /**
@@ -37,15 +39,17 @@ public class EC2VpcIntegrationTest extends EC2IntegrationTestBase {
             assertTrue(vpc.getVpcId().startsWith("vpc-"));
             tagResource(vpc.getVpcId(), TAGS);
         } catch (AmazonServiceException ase) {
-            if (!ase.getErrorCode().equals("VpcLimitExceeded")) throw ase;
+            if (!ase.getErrorCode().equals("VpcLimitExceeded")) {
+                throw ase;
+            }
             System.err.println("Unable to run " + getClass().getName() + ": "
-                    + ase.getMessage());
+                               + ase.getMessage());
             return;
         }
 
         // Describe
         DescribeVpcsResult describeResult =
-            EC2TestHelper.describeVpc(vpc.getVpcId());
+                EC2TestHelper.describeVpc(vpc.getVpcId());
 
         assertNotNull(describeResult.getVpcs());
         assertTrue(describeResult.getVpcs().size() == 1);

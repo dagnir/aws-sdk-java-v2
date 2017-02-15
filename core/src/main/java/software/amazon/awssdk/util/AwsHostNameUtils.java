@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ import software.amazon.awssdk.log.InternalLogFactory;
 public class AwsHostNameUtils {
 
     private static final Pattern S3_ENDPOINT_PATTERN =
-        Pattern.compile("^(?:.+\\.)?s3[.-]([a-z0-9-]+)$");
+            Pattern.compile("^(?:.+\\.)?s3[.-]([a-z0-9-]+)$");
 
     private static final Pattern STANDARD_CLOUDSEARCH_ENDPOINT_PATTERN =
-        Pattern.compile("^(?:.+\\.)?([a-z0-9-]+)\\.cloudsearch$");
+            Pattern.compile("^(?:.+\\.)?([a-z0-9-]+)\\.cloudsearch$");
 
     private static final Pattern EXTENDED_CLOUDSEARCH_ENDPOINT_PATTERN =
-        Pattern.compile("^(?:.+\\.)?([a-z0-9-]+)\\.cloudsearch\\..+");
+            Pattern.compile("^(?:.+\\.)?([a-z0-9-]+)\\.cloudsearch\\..+");
 
     /**
      * @deprecated in favor of {@link #parseRegionName(String, String)}.
@@ -48,10 +48,10 @@ public class AwsHostNameUtils {
      *
      * @param host         the hostname to parse
      * @param serviceHint  an optional hint about the service for the endpoint
-     * @return             the region parsed from the hostname, or
+     * @return the region parsed from the hostname, or
      *                     &quot;us-east-1&quot; if no region information
      *                     could be found.
-     * @deprecated	in favor of {@link #parseRegion(String, String)}.
+     * @deprecated in favor of {@link #parseRegion(String, String)}.
      */
     @Deprecated
     public static String parseRegionName(final String host,
@@ -69,11 +69,11 @@ public class AwsHostNameUtils {
      *
      * @param host         the hostname to parse
      * @param serviceHint  an optional hint about the service for the endpoint
-     * @return             the region parsed from the hostname, or
+     * @return the region parsed from the hostname, or
      *                     null if no region information could be found.
      */
     public static String parseRegion(final String host,
-                                         final String serviceHint) {
+                                     final String serviceHint) {
 
         if (host == null) {
             throw new IllegalArgumentException("hostname cannot be null");
@@ -90,7 +90,7 @@ public class AwsHostNameUtils {
 
         if (serviceHint != null) {
             if (serviceHint.equals("cloudsearch")
-                    && !host.startsWith("cloudsearch.")) {
+                && !host.startsWith("cloudsearch.")) {
 
                 // CloudSearch domains use the nonstandard domain format
                 // [domain].[region].cloudsearch.[suffix].
@@ -106,10 +106,10 @@ public class AwsHostNameUtils {
             // If we have a service hint, look for 'service.[region]' or
             // 'service-[region]' in the endpoint's hostname.
             Pattern pattern = Pattern.compile(
-                "^(?:.+\\.)?"
-                + Pattern.quote(serviceHint)
-                + "[.-]([a-z0-9-]+)\\."
-            );
+                    "^(?:.+\\.)?"
+                    + Pattern.quote(serviceHint)
+                    + "[.-]([a-z0-9-]+)\\."
+                                             );
 
             Matcher matcher = pattern.matcher(host);
             if (matcher.find()) {
@@ -126,7 +126,7 @@ public class AwsHostNameUtils {
      *
      * @param fragment  the portion of the endpoint excluding
      *                  &quot;.amazonaws.com&quot;
-     * @return          the parsed region name (or &quot;us-east-1&quot; as a
+     * @return the parsed region name (or &quot;us-east-1&quot; as a
      *                  best guess if we can't tell for sure)
      */
     private static String parseStandardRegionName(final String fragment) {
@@ -196,13 +196,13 @@ public class AwsHostNameUtils {
         // If we don't recognize the domain, throw an exception.
         if (!host.endsWith(".amazonaws.com")) {
             throw new IllegalArgumentException(
-                "Cannot parse a service name from an unrecognized endpoint ("
-                + host
-                + ").");
+                    "Cannot parse a service name from an unrecognized endpoint ("
+                    + host
+                    + ").");
         }
 
         String serviceAndRegion =
-            host.substring(0, host.indexOf(".amazonaws.com"));
+                host.substring(0, host.indexOf(".amazonaws.com"));
 
         // Special cases for S3 endpoints with bucket names embedded.
         if (serviceAndRegion.endsWith(".s3")
@@ -220,7 +220,7 @@ public class AwsHostNameUtils {
         }
 
         String service =
-            serviceAndRegion.substring(0, serviceAndRegion.indexOf(separator));
+                serviceAndRegion.substring(0, serviceAndRegion.indexOf(separator));
 
         return service;
     }
@@ -238,9 +238,9 @@ public class AwsHostNameUtils {
             return localhost.getHostName();
         } catch (Exception e) {
             InternalLogFactory.getLog(AwsHostNameUtils.class)
-                .debug(
-                    "Failed to determine the local hostname; fall back to "
-                            + "use \"localhost\".", e);
+                              .debug(
+                                      "Failed to determine the local hostname; fall back to "
+                                      + "use \"localhost\".", e);
             return "localhost";
         }
     }

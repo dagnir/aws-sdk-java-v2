@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -22,27 +37,27 @@ import software.amazon.awssdk.util.XpathUtils;
  * tokens to be entered while the test runs, these tests provide automated
  * testing for pieces of MFA Delete, without requiring a physical token
  * generator.
- * 
+ *
  * @author Jason Fulghum <fulghum@amazon.com>
  */
 public class MfaDeleteUnitTest {
 
-    private static final String MFA_UNSPECIFIED_XML = 
-        "<VersioningConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">" +
+    private static final String MFA_UNSPECIFIED_XML =
+            "<VersioningConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">" +
             "<Status>Enabled</Status>" +
-        "</VersioningConfiguration>";
-    
-    private static final String MFA_ENABLED_XML = 
-        "<VersioningConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">" +
+            "</VersioningConfiguration>";
+
+    private static final String MFA_ENABLED_XML =
+            "<VersioningConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">" +
             "<Status>Enabled</Status>" +
             "<MfaDelete>Enabled</MfaDelete>" +
-        "</VersioningConfiguration>";
-    
-    private static final String MFA_DISABLED_XML = 
-        "<VersioningConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">" +
+            "</VersioningConfiguration>";
+
+    private static final String MFA_DISABLED_XML =
+            "<VersioningConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">" +
             "<Status>Enabled</Status>" +
             "<MfaDelete>Disabled</MfaDelete>" +
-        "</VersioningConfiguration>";
+            "</VersioningConfiguration>";
 
     /**
      * Tests that we can correctly marshall a bucket versioning configuration
@@ -53,21 +68,21 @@ public class MfaDeleteUnitTest {
         BucketConfigurationXmlFactory xmlFactory = new BucketConfigurationXmlFactory();
 
         // Test the XML created when MFA Delete is unspecified
-        BucketVersioningConfiguration versioningConfiguration = 
-            new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
+        BucketVersioningConfiguration versioningConfiguration =
+                new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
         String xml = new String(xmlFactory.convertToXmlByteArray(versioningConfiguration));
         Document document = XpathUtils.documentFrom(xml);
         XPath xpath = XpathUtils.xpath();
         assertEquals("Enabled", XpathUtils.asString("/VersioningConfiguration/Status", document, xpath));
         assertEquals(null, XpathUtils.asString("/VersioningConfiguration/MfaDelete", document, xpath));
-        
+
         // Test the XML created when MFA Delete is enabled
-        versioningConfiguration.setMfaDeleteEnabled(Boolean.TRUE); 
+        versioningConfiguration.setMfaDeleteEnabled(Boolean.TRUE);
         xml = new String(xmlFactory.convertToXmlByteArray(versioningConfiguration));
         document = XpathUtils.documentFrom(xml);
         assertEquals("Enabled", XpathUtils.asString("/VersioningConfiguration/Status", document, xpath));
         assertEquals("Enabled", XpathUtils.asString("/VersioningConfiguration/MfaDelete", document, xpath));
-        
+
         // Test the XML created when MFA Delete is disabled
         versioningConfiguration.setMfaDeleteEnabled(Boolean.FALSE);
         xml = new String(xmlFactory.convertToXmlByteArray(versioningConfiguration));
@@ -83,22 +98,22 @@ public class MfaDeleteUnitTest {
     @Test
     public void testBucketVersioningConfigurationUnmarshalling() throws Exception {
         BucketVersioningConfigurationUnmarshaller unmarshaller = new BucketVersioningConfigurationUnmarshaller();
-        BucketVersioningConfiguration bucketVersioningConfiguration; 
-        
+        BucketVersioningConfiguration bucketVersioningConfiguration;
+
         // Test an XML response when MFA Delete is unspecified
-        bucketVersioningConfiguration = (BucketVersioningConfiguration)unmarshaller.unmarshall(new ByteArrayInputStream(MFA_UNSPECIFIED_XML.getBytes()));
+        bucketVersioningConfiguration = (BucketVersioningConfiguration) unmarshaller.unmarshall(new ByteArrayInputStream(MFA_UNSPECIFIED_XML.getBytes()));
         assertEquals(BucketVersioningConfiguration.ENABLED, bucketVersioningConfiguration.getStatus());
         assertNull(bucketVersioningConfiguration.isMfaDeleteEnabled());
-        
+
         // Test the XML created when MFA Delete is enabled
-        bucketVersioningConfiguration = (BucketVersioningConfiguration)unmarshaller.unmarshall(new ByteArrayInputStream(MFA_ENABLED_XML.getBytes()));
+        bucketVersioningConfiguration = (BucketVersioningConfiguration) unmarshaller.unmarshall(new ByteArrayInputStream(MFA_ENABLED_XML.getBytes()));
         assertEquals(BucketVersioningConfiguration.ENABLED, bucketVersioningConfiguration.getStatus());
-        assertTrue( bucketVersioningConfiguration.isMfaDeleteEnabled().booleanValue() );
-        
+        assertTrue(bucketVersioningConfiguration.isMfaDeleteEnabled().booleanValue());
+
         // Test the XML created when MFA Delete is disabled
-        bucketVersioningConfiguration = (BucketVersioningConfiguration)unmarshaller.unmarshall(new ByteArrayInputStream(MFA_DISABLED_XML.getBytes()));
+        bucketVersioningConfiguration = (BucketVersioningConfiguration) unmarshaller.unmarshall(new ByteArrayInputStream(MFA_DISABLED_XML.getBytes()));
         assertEquals(BucketVersioningConfiguration.ENABLED, bucketVersioningConfiguration.getStatus());
-        assertFalse( bucketVersioningConfiguration.isMfaDeleteEnabled().booleanValue() );
+        assertFalse(bucketVersioningConfiguration.isMfaDeleteEnabled().booleanValue());
     }
 
 }

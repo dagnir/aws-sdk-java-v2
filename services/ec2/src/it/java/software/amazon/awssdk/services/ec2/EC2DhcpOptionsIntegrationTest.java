@@ -36,117 +36,18 @@ import software.amazon.awssdk.services.ec2.model.Filter;
 
 public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
 
+    private static final String DOMAIN_NAME_KEY = "domain-name";
     private String dhcpOptionsId;
     private String domainNameValue;
-
-    private static final String DOMAIN_NAME_KEY = "domain-name";
-
-    /**
-     * Create a new DhcpOptions with unique value for the "domain-name" option
-     */
-    @Before
-    public void createDhcpOptions() {
-
-        domainNameValue = "testdomain-" + System.currentTimeMillis();
-
-        DhcpOptions dhcpOptions = createDhcpOptions(
-                DOMAIN_NAME_KEY, domainNameValue
-                ).getDhcpOptions();
-        dhcpOptionsId = dhcpOptions.getDhcpOptionsId();
-
-        assertTrue(findDhcpOption(dhcpOptions,
-                DOMAIN_NAME_KEY, domainNameValue));
-    }
-
-    /**
-     * Release resources used in testing
-     */
-    @After
-    public void tearDown() {
-        if (dhcpOptionsId != null) {
-            ec2.deleteDhcpOptions(new DeleteDhcpOptionsRequest(dhcpOptionsId));
-        }
-    }
-
-    /**
-     * Test DescribeDhcpOptions API with and without filter parameter
-     */
-    @Test
-    public void testDescribeDhcpOptions() {
-
-        // Add tags to the created DhcpOptions
-        tagResource(dhcpOptionsId, TAGS);
-
-        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions(new DescribeDhcpOptionsRequest()
-                    .withDhcpOptionsIds(dhcpOptionsId)
-                ).getDhcpOptions();
-        assertEquals(1, dhcpOptionsList.size());
-        DhcpOptions dhcpOptions = dhcpOptionsList.get(0);
-
-        assertTrue(findDhcpOptoin(dhcpOptionsList,
-                DOMAIN_NAME_KEY, domainNameValue));
-        assertEqualUnorderedTagLists(TAGS, dhcpOptions.getTags());
-
-        // Query by filtering
-        dhcpOptionsList = ec2.describeDhcpOptions(new DescribeDhcpOptionsRequest()
-                    .withFilters(new Filter()
-                        .withName("dhcp-options-id")
-                        .withValues(dhcpOptionsId)
-                    )
-                ).getDhcpOptions();
-        assertEquals(1, dhcpOptionsList.size());
-        dhcpOptions = dhcpOptionsList.get(0);
-
-        assertTrue(findDhcpOptoin(dhcpOptionsList,
-                DOMAIN_NAME_KEY, domainNameValue));
-        assertEqualUnorderedTagLists(TAGS, dhcpOptions.getTags());
-    }
-
-    /**
-     * This test associates DHCP options with Bogus vpc id (this is
-     * so we can verify that Vpc Id parameter is submitted correctly
-     */
-    @Test
-    public void testAssociateDhcpOptions() {
-
-        String vpcId = "BogusId";
-        try {
-            ec2.associateDhcpOptions(new AssociateDhcpOptionsRequest()
-                    .withDhcpOptionsId(dhcpOptionsId)
-                    .withVpcId(vpcId));
-
-        } catch (AmazonServiceException e) {
-            assertTrue("InvalidVpcID.NotFound".equals(e.getErrorCode()));
-            assertTrue(e.getMessage().contains(vpcId));
-        }
-    }
-
-    /**
-     * This test immediately deletes created options and verifies by
-     * calling describe options that deleted options are really gone
-     */
-    @Test
-    public void testDeleteOptions() {
-
-        ec2.deleteDhcpOptions(new DeleteDhcpOptionsRequest(dhcpOptionsId));
-
-        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions()
-                .getDhcpOptions();
-
-        assertFalse(findDhcpOptoin(dhcpOptionsList,
-                DOMAIN_NAME_KEY, domainNameValue));
-
-        dhcpOptionsId = null; // so that tearDown won't delete it again
-    }
 
     private static CreateDhcpOptionsResult createDhcpOptions(
             String optionKey, String... optionValue) {
 
         DhcpConfiguration configurationOne = new DhcpConfiguration()
-            .withKey(optionKey).withValues(optionValue);
+                .withKey(optionKey).withValues(optionValue);
 
         CreateDhcpOptionsRequest request = new CreateDhcpOptionsRequest()
-            .withDhcpConfigurations(configurationOne);
+                .withDhcpConfigurations(configurationOne);
 
         return ec2.createDhcpOptions(request);
     }
@@ -170,6 +71,104 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
             }
         }
         return false;
+    }
+
+    /**
+     * Create a new DhcpOptions with unique value for the "domain-name" option
+     */
+    @Before
+    public void createDhcpOptions() {
+
+        domainNameValue = "testdomain-" + System.currentTimeMillis();
+
+        DhcpOptions dhcpOptions = createDhcpOptions(
+                DOMAIN_NAME_KEY, domainNameValue
+                                                   ).getDhcpOptions();
+        dhcpOptionsId = dhcpOptions.getDhcpOptionsId();
+
+        assertTrue(findDhcpOption(dhcpOptions,
+                                  DOMAIN_NAME_KEY, domainNameValue));
+    }
+
+    /**
+     * Release resources used in testing
+     */
+    @After
+    public void tearDown() {
+        if (dhcpOptionsId != null) {
+            ec2.deleteDhcpOptions(new DeleteDhcpOptionsRequest(dhcpOptionsId));
+        }
+    }
+
+    /**
+     * Test DescribeDhcpOptions API with and without filter parameter
+     */
+    @Test
+    public void testDescribeDhcpOptions() {
+
+        // Add tags to the created DhcpOptions
+        tagResource(dhcpOptionsId, TAGS);
+
+        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions(new DescribeDhcpOptionsRequest()
+                                                                            .withDhcpOptionsIds(dhcpOptionsId)
+                                                                   ).getDhcpOptions();
+        assertEquals(1, dhcpOptionsList.size());
+        DhcpOptions dhcpOptions = dhcpOptionsList.get(0);
+
+        assertTrue(findDhcpOptoin(dhcpOptionsList,
+                                  DOMAIN_NAME_KEY, domainNameValue));
+        assertEqualUnorderedTagLists(TAGS, dhcpOptions.getTags());
+
+        // Query by filtering
+        dhcpOptionsList = ec2.describeDhcpOptions(new DescribeDhcpOptionsRequest()
+                                                          .withFilters(new Filter()
+                                                                               .withName("dhcp-options-id")
+                                                                               .withValues(dhcpOptionsId)
+                                                                      )
+                                                 ).getDhcpOptions();
+        assertEquals(1, dhcpOptionsList.size());
+        dhcpOptions = dhcpOptionsList.get(0);
+
+        assertTrue(findDhcpOptoin(dhcpOptionsList,
+                                  DOMAIN_NAME_KEY, domainNameValue));
+        assertEqualUnorderedTagLists(TAGS, dhcpOptions.getTags());
+    }
+
+    /**
+     * This test associates DHCP options with Bogus vpc id (this is
+     * so we can verify that Vpc Id parameter is submitted correctly
+     */
+    @Test
+    public void testAssociateDhcpOptions() {
+
+        String vpcId = "BogusId";
+        try {
+            ec2.associateDhcpOptions(new AssociateDhcpOptionsRequest()
+                                             .withDhcpOptionsId(dhcpOptionsId)
+                                             .withVpcId(vpcId));
+
+        } catch (AmazonServiceException e) {
+            assertTrue("InvalidVpcID.NotFound".equals(e.getErrorCode()));
+            assertTrue(e.getMessage().contains(vpcId));
+        }
+    }
+
+    /**
+     * This test immediately deletes created options and verifies by
+     * calling describe options that deleted options are really gone
+     */
+    @Test
+    public void testDeleteOptions() {
+
+        ec2.deleteDhcpOptions(new DeleteDhcpOptionsRequest(dhcpOptionsId));
+
+        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions()
+                                               .getDhcpOptions();
+
+        assertFalse(findDhcpOptoin(dhcpOptionsList,
+                                   DOMAIN_NAME_KEY, domainNameValue));
+
+        dhcpOptionsId = null; // so that tearDown won't delete it again
     }
 
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -30,9 +30,9 @@ public class PrimaryKeyTest {
         new PrimaryKey();
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_nullKeyAttributes() {
-        new PrimaryKey((KeyAttribute)null);
+        new PrimaryKey((KeyAttribute) null);
     }
 
     @Test
@@ -40,42 +40,42 @@ public class PrimaryKeyTest {
         new PrimaryKey("name", null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_nullName() {
         new PrimaryKey(null, "val");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_emptyName() {
         new PrimaryKey("  ", "val");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_sameHashRangeKeyNames() {
         new PrimaryKey("key", "val1", "key", "val2");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_badHashKeyName() {
         new PrimaryKey("", "val1", "key", "val2");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void ctor_badRangeKeyName() {
         new PrimaryKey("key1", "val1", "", "val2");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void addComponents_nullElement() {
-        new PrimaryKey().addComponents((KeyAttribute)null);
+        new PrimaryKey().addComponents((KeyAttribute) null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void addComponent_nullName() {
         new PrimaryKey().addComponent(null, "val");
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void addComponent_emptyName() {
         new PrimaryKey().addComponent("  ", "val");
     }
@@ -87,7 +87,7 @@ public class PrimaryKeyTest {
 
     @Test
     public void addComponents_null() {
-        new PrimaryKey().addComponents((KeyAttribute[])null);
+        new PrimaryKey().addComponents((KeyAttribute[]) null);
     }
 
     @Test

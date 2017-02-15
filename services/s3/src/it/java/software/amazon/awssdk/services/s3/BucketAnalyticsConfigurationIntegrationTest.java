@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3;
@@ -75,13 +75,13 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
     public void testAnalyticsConfiguration_works_properly_with_setting_only_required_fields() throws Exception {
         String configId = "id";
         AnalyticsConfiguration config = new AnalyticsConfiguration()
-                                                    .withId(configId)
-                                                    .withStorageClassAnalysis(getStorageClassAnalysis());
+                .withId(configId)
+                .withStorageClassAnalysis(getStorageClassAnalysis());
 
         s3.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketAnalyticsConfiguration(new GetBucketAnalyticsConfigurationRequest(BUCKET_NAME, configId))
-                                                        .getAnalyticsConfiguration();
+                   .getAnalyticsConfiguration();
 
 
         assertEquals(configId, config.getId());
@@ -99,18 +99,18 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
     public void testDeleteBucketAnalyticsConfiguration() throws Exception {
         String configId = "id";
         AnalyticsConfiguration config = new AnalyticsConfiguration()
-                                                .withId(configId)
-                                                .withStorageClassAnalysis(getStorageClassAnalysis());
+                .withId(configId)
+                .withStorageClassAnalysis(getStorageClassAnalysis());
 
         s3.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest(BUCKET_NAME, config));
 
         assertNotNull(s3.getBucketAnalyticsConfiguration(new GetBucketAnalyticsConfigurationRequest(BUCKET_NAME, configId))
-                            .getAnalyticsConfiguration());
+                        .getAnalyticsConfiguration());
 
         s3.deleteBucketAnalyticsConfiguration(new DeleteBucketAnalyticsConfigurationRequest(BUCKET_NAME, configId));
 
         ListBucketAnalyticsConfigurationsResult result = s3.listBucketAnalyticsConfigurations(
-                                                                                new ListBucketAnalyticsConfigurationsRequest().withBucketName(BUCKET_NAME));
+                new ListBucketAnalyticsConfigurationsRequest().withBucketName(BUCKET_NAME));
         assertNull(result.getAnalyticsConfigurationList());
     }
 
@@ -139,7 +139,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         s3.deleteBucketAnalyticsConfiguration(new DeleteBucketAnalyticsConfigurationRequest(BUCKET_NAME, configId2));
     }
 
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testAnalyticsConfiguration_works_properly_with_emptyFilter() throws Exception {
         String configId = "id";
         AnalyticsConfiguration config = new AnalyticsConfiguration()
@@ -150,7 +150,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         s3.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest(BUCKET_NAME, config));
     }
 
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void testAnalyticsConfiguration_works_properly_with_emptyPrefix() throws Exception {
         String configId = "id";
         AnalyticsConfiguration config = new AnalyticsConfiguration()
@@ -172,7 +172,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         s3.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketAnalyticsConfiguration(new GetBucketAnalyticsConfigurationRequest(BUCKET_NAME, configId))
-                .getAnalyticsConfiguration();
+                   .getAnalyticsConfiguration();
 
         assertEquals(configId, config.getId());
         assertEquals("key", ((AnalyticsTagPredicate) config.getFilter().getPredicate()).getTag().getKey());
@@ -204,7 +204,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         s3.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest(BUCKET_NAME, config));
 
         config = s3.getBucketAnalyticsConfiguration(new GetBucketAnalyticsConfigurationRequest(BUCKET_NAME, configId))
-                .getAnalyticsConfiguration();
+                   .getAnalyticsConfiguration();
 
         assertEquals(configId, config.getId());
         operators = ((AnalyticsAndOperator) config.getFilter().getPredicate()).getOperands();
@@ -220,7 +220,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         assertNull(s3BucketDestination.getPrefix());
     }
 
-    @Test (expected = AmazonS3Exception.class)
+    @Test(expected = AmazonS3Exception.class)
     public void setBucketAnalyticsConfiguration_fails_when_requiredfield_is_missing() throws Exception {
         String configId = "id";
         StorageClassAnalysisDataExport dataExport = new StorageClassAnalysisDataExport()
@@ -236,12 +236,12 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
 
     private StorageClassAnalysis getStorageClassAnalysis() {
         AnalyticsS3BucketDestination s3BucketDestination = new AnalyticsS3BucketDestination()
-                    .withBucketArn(BUCKET_ARN)
-                    .withFormat(AnalyticsS3ExportFileFormat.CSV);
+                .withBucketArn(BUCKET_ARN)
+                .withFormat(AnalyticsS3ExportFileFormat.CSV);
 
         return new StorageClassAnalysis().withDataExport(
-                        new StorageClassAnalysisDataExport()
-                            .withOutputSchemaVersion(StorageClassAnalysisSchemaVersion.V_1)
-                            .withDestination(new AnalyticsExportDestination().withS3BucketDestination(s3BucketDestination)));
+                new StorageClassAnalysisDataExport()
+                        .withOutputSchemaVersion(StorageClassAnalysisSchemaVersion.V_1)
+                        .withDestination(new AnalyticsExportDestination().withS3BucketDestination(s3BucketDestination)));
     }
 }

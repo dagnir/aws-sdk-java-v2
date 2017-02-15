@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sqs;
 
 import java.io.FileNotFoundException;
@@ -22,35 +37,15 @@ import software.amazon.awssdk.util.StringUtils;
  * Base class for SQS integration tests. Provides convenience methods for creating test data, and
  * automatically loads AWS credentials from a properties file on disk and instantiates clients for
  * the individual tests to use.
- * 
+ *
  * @author Jason Fulghum <fulghum@amazon.com>
  */
 public class IntegrationTestBase extends AWSTestBase {
 
-    /**
-     * Creating new clients is expensive so we share one across tests when possible. Tests that need
-     * to do something special can create their own clients specifically for their test case. We
-     * subclass SQS client to prevent a test from accidently shutting down the client as that would
-     * cause subsequent tests to fail.
-     */
-    private static class SharedSqsClient extends AmazonSQSAsyncClient {
-        public SharedSqsClient(AWSCredentials credentials) {
-            super(credentials);
-        }
-
-        @Override
-        public void shutdown() {
-            throw new IllegalAccessError("Cannot shut down the shared client. "
-                    + "If a test requires a client to be shutdown please create a new one specifically for that test");
-        }
-    }
-
-    /** The SQS client for all tests to use */
-    private static AmazonSQSAsyncClient sqs;
-
     /** Random number used for naming message attributes. */
     private static final Random random = new Random(System.currentTimeMillis());
-
+    /** The SQS client for all tests to use */
+    private static AmazonSQSAsyncClient sqs;
     /**
      * Account ID of the AWS Account identified by the credentials provider setup in AWSTestBase.
      * Cached for performance
@@ -95,17 +90,17 @@ public class IntegrationTestBase extends AWSTestBase {
             int randomeAttributeType = random.nextInt(3);
             MessageAttributeValue randomAttrValue = null;
             switch (randomeAttributeType) {
-            case 0:
-                randomAttrValue = createRandomStringAttributeValue();
-                break;
-            case 1:
-                randomAttrValue = createRandomNumberAttributeValue();
-                break;
-            case 2:
-                randomAttrValue = createRandomBinaryAttributeValue();
-                break;
-            default:
-                break;
+                case 0:
+                    randomAttrValue = createRandomStringAttributeValue();
+                    break;
+                case 1:
+                    randomAttrValue = createRandomNumberAttributeValue();
+                    break;
+                case 2:
+                    randomAttrValue = createRandomBinaryAttributeValue();
+                    break;
+                default:
+                    break;
             }
             attrs.put("attribute-" + UUID.randomUUID(), randomAttrValue);
         }
@@ -114,7 +109,7 @@ public class IntegrationTestBase extends AWSTestBase {
 
     /**
      * Helper method to create a SQS queue with a unique name
-     * 
+     *
      * @return The queue url for the created queue
      */
     protected String createQueue(AmazonSQS sqsClient) {
@@ -142,7 +137,7 @@ public class IntegrationTestBase extends AWSTestBase {
 
     /**
      * Parse the account ID out of the IAM user arn
-     * 
+     *
      * @param arn
      *            IAM user ARN
      * @return Account ID if it can be extracted
@@ -151,10 +146,28 @@ public class IntegrationTestBase extends AWSTestBase {
      */
     private String parseAccountIdFromArn(String arn) throws IllegalArgumentException {
         String[] arnComponents = arn.split(":");
-        if(arnComponents.length < 5 || StringUtils.isNullOrEmpty(arnComponents[4])) {
+        if (arnComponents.length < 5 || StringUtils.isNullOrEmpty(arnComponents[4])) {
             throw new IllegalArgumentException(String.format("%s is not a valid ARN", arn));
         }
         return arnComponents[4];
+    }
+
+    /**
+     * Creating new clients is expensive so we share one across tests when possible. Tests that need
+     * to do something special can create their own clients specifically for their test case. We
+     * subclass SQS client to prevent a test from accidently shutting down the client as that would
+     * cause subsequent tests to fail.
+     */
+    private static class SharedSqsClient extends AmazonSQSAsyncClient {
+        public SharedSqsClient(AWSCredentials credentials) {
+            super(credentials);
+        }
+
+        @Override
+        public void shutdown() {
+            throw new IllegalAccessError("Cannot shut down the shared client. "
+                                         + "If a test requires a client to be shutdown please create a new one specifically for that test");
+        }
     }
 
 }

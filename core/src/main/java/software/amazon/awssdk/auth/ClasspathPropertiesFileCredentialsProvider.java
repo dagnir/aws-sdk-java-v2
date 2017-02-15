@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -64,8 +64,9 @@ public class ClasspathPropertiesFileCredentialsProvider implements AWSCredential
      *            </ul>
      */
     public ClasspathPropertiesFileCredentialsProvider(String credentialsFilePath) {
-        if (credentialsFilePath == null)
+        if (credentialsFilePath == null) {
             throw new IllegalArgumentException("Credentials file path cannot be null");
+        }
 
         // Make sure the path is absolute
         if (!credentialsFilePath.startsWith("/")) {
@@ -88,7 +89,8 @@ public class ClasspathPropertiesFileCredentialsProvider implements AWSCredential
         }
     }
 
-    public void refresh() {}
+    public void refresh() {
+    }
 
     @Override
     public String toString() {

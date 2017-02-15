@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -51,7 +52,7 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * @see GetObjectMetadataRequest
  */
 public class GetObjectRequest extends AmazonWebServiceRequest implements
-        SSECustomerKeyProvider, Serializable {
+                                                              SSECustomerKeyProvider, Serializable {
     /**
      * Builder of an S3 object identifier.  This member field is never null.
      */
@@ -165,11 +166,11 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      * @see GetObjectRequest#GetObjectRequest(String, String, String)
      */
     public GetObjectRequest(String bucketName, String key,
-            boolean isRequesterPays) {
+                            boolean isRequesterPays) {
         this.s3ObjectIdBuilder
-            .withBucket(bucketName)
-            .withKey(key)
-            ;
+                .withBucket(bucketName)
+                .withKey(key)
+        ;
         this.isRequesterPays = isRequesterPays;
     }
 
@@ -380,6 +381,31 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
 
     /**
      * <p>
+     * Sets the optional inclusive start range within the desired object that the
+     * rest of which will be downloaded by this request.
+     * </p>
+     * <p>
+     * The first byte in an object has
+     * position 0; as an example, the object is of 10 bytes in length, the last
+     * 4 bytes can be downloaded by specifying the start range as 6.
+     * </p>
+     * <p>
+     * If no byte range is specified, this request downloads the entire
+     * object from Amazon S3.
+     * </p>
+     *
+     * @param start
+     *            The start of the inclusive byte range to download.
+     *
+     * @see #setRange(long, long)
+     * @see #withRange(long)
+     */
+    public void setRange(long start) {
+        setRange(start, Long.MAX_VALUE - 1);
+    }
+
+    /**
+     * <p>
      * Sets the optional inclusive byte range within the desired object that
      * will be downloaded by this request.
      * </p>
@@ -403,31 +429,6 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      */
     public void setRange(long start, long end) {
         range = new long[] {start, end};
-    }
-
-    /**
-     * <p>
-     * Sets the optional inclusive start range within the desired object that the
-     * rest of which will be downloaded by this request.
-     * </p>
-     * <p>
-     * The first byte in an object has
-     * position 0; as an example, the object is of 10 bytes in length, the last
-     * 4 bytes can be downloaded by specifying the start range as 6.
-     * </p>
-     * <p>
-     * If no byte range is specified, this request downloads the entire
-     * object from Amazon S3.
-     * </p>
-     *
-     * @param start
-     *            The start of the inclusive byte range to download.
-     *
-     * @see #setRange(long, long)
-     * @see #withRange(long)
-     */
-    public void setRange(long start) {
-        setRange(start, Long.MAX_VALUE - 1);
     }
 
     /**
@@ -774,21 +775,6 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
     }
 
     /**
-     * Sets the optional progress listener for receiving updates about object
-     * download status.
-     *
-     * @param progressListener
-     *            The legacy progress listener that is used exclusively for Amazon S3 client.
-     *
-     * @deprecated use {@link #setGeneralProgressListener(ProgressListener)}
-     *             instead.
-     */
-    @Deprecated
-    public void setProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener progressListener) {
-        setGeneralProgressListener(new LegacyS3ProgressListener(progressListener));
-    }
-
-    /**
      * Returns the optional progress listener for receiving updates about object
      * download status.
      *
@@ -801,10 +787,25 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
     public software.amazon.awssdk.services.s3.model.ProgressListener getProgressListener() {
         ProgressListener generalProgressListener = getGeneralProgressListener();
         if (generalProgressListener instanceof LegacyS3ProgressListener) {
-            return ((LegacyS3ProgressListener)generalProgressListener).unwrap();
+            return ((LegacyS3ProgressListener) generalProgressListener).unwrap();
         } else {
-             return null;
+            return null;
         }
+    }
+
+    /**
+     * Sets the optional progress listener for receiving updates about object
+     * download status.
+     *
+     * @param progressListener
+     *            The legacy progress listener that is used exclusively for Amazon S3 client.
+     *
+     * @deprecated use {@link #setGeneralProgressListener(ProgressListener)}
+     *             instead.
+     */
+    @Deprecated
+    public void setProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener progressListener) {
+        setGeneralProgressListener(new LegacyS3ProgressListener(progressListener));
     }
 
     /**

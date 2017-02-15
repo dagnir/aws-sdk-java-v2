@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -162,6 +163,13 @@ public class BucketWebsiteConfiguration implements Serializable {
     }
 
     /**
+     * Return the redirect information where all requests will be redirect to.
+     */
+    public RedirectRule getRedirectAllRequestsTo() {
+        return redirectAllRequestsTo;
+    }
+
+    /**
      * Sets the redirect information where all requests will be redirect to.
      *
      * @param redirectAllRequestsTo
@@ -170,13 +178,6 @@ public class BucketWebsiteConfiguration implements Serializable {
      */
     public void setRedirectAllRequestsTo(RedirectRule redirectAllRequestsTo) {
         this.redirectAllRequestsTo = redirectAllRequestsTo;
-    }
-
-    /**
-     * Return the redirect information where all requests will be redirect to.
-     */
-    public RedirectRule getRedirectAllRequestsTo() {
-        return redirectAllRequestsTo;
     }
 
     /**
@@ -196,6 +197,14 @@ public class BucketWebsiteConfiguration implements Serializable {
     }
 
     /**
+     * Return the list of routing rules that can be used for configuring
+     * redirects if certain conditions are meet.
+     */
+    public List<RoutingRule> getRoutingRules() {
+        return routingRules;
+    }
+
+    /**
      * Set the list of routing rules that can be used for configuring redirects
      * if certain conditions are meet.
      *
@@ -205,14 +214,6 @@ public class BucketWebsiteConfiguration implements Serializable {
      */
     public void setRoutingRules(List<RoutingRule> routingRules) {
         this.routingRules = routingRules;
-    }
-
-    /**
-     * Return the list of routing rules that can be used for configuring
-     * redirects if certain conditions are meet.
-     */
-    public List<RoutingRule> getRoutingRules() {
-        return routingRules;
     }
 
     /**

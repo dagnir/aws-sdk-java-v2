@@ -1,16 +1,16 @@
 /*
- * Copyright 2016-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
@@ -54,7 +54,7 @@ final class StandardAnnotationMaps {
      * level annotations which override class/type level annotations.
      */
     static final <T> FieldMap<T> of(Method getter, String defaultName) {
-        final Class<T> targetType = (Class<T>)getter.getReturnType();
+        final Class<T> targetType = (Class<T>) getter.getReturnType();
         final String fieldName = StandardBeanProperties.fieldNameOf(getter);
 
         Field declaredField = null;
@@ -62,7 +62,8 @@ final class StandardAnnotationMaps {
             declaredField = getter.getDeclaringClass().getDeclaredField(fieldName);
         } catch (final SecurityException e) {
             throw new DynamoDBMappingException("no access to field for " + getter, e);
-        } catch (final NoSuchFieldException no) {}
+        } catch (final NoSuchFieldException no) {
+        }
 
         if (defaultName == null) {
             defaultName = fieldName;
@@ -73,6 +74,28 @@ final class StandardAnnotationMaps {
         annotations.putAll(declaredField);
         annotations.putAll(getter);
         return annotations;
+    }
+
+    /**
+     * Creates a new instance of the clazz with the target type and annotation
+     * as parameters if available.
+     */
+    private static <T> T overrideOf(Class<T> clazz, Class<?> targetType, Annotation annotation) {
+        try {
+            if (annotation != null) {
+                try {
+                    return clazz.getConstructor(Class.class, annotation.annotationType()).newInstance(targetType, annotation);
+                } catch (final NoSuchMethodException no) {
+                }
+            }
+            try {
+                return clazz.getConstructor(Class.class).newInstance(targetType);
+            } catch (final NoSuchMethodException no) {
+            }
+            return clazz.newInstance();
+        } catch (final Exception e) {
+            throw new DynamoDBMappingException("could not instantiate " + clazz, e);
+        }
     }
 
     /**
@@ -88,13 +111,13 @@ final class StandardAnnotationMaps {
         final <A extends Annotation> A actualOf(final Class<A> annotationType) {
             final Annotation annotation = this.map.get(annotationType);
             if (annotation == null || annotation.annotationType() == annotationType) {
-                return (A)annotation;
+                return (A) annotation;
             } else if (annotation.annotationType().isAnnotationPresent(annotationType)) {
                 return annotation.annotationType().getAnnotation(annotationType);
             }
             throw new DynamoDBMappingException(
-                "could not resolve annotation by type" +
-                "; @" + annotationType.getSimpleName() + " not present on " + annotation
+                    "could not resolve annotation by type" +
+                    "; @" + annotationType.getSimpleName() + " not present on " + annotation
             );
         }
 
@@ -141,7 +164,7 @@ final class StandardAnnotationMaps {
          * Creates a new type-converter form the {@link DynamoDBTypeConverted}
          * annotation if present.
          */
-        public <S> DynamoDBTypeConverter<S,T> typeConverter() {
+        public <S> DynamoDBTypeConverter<S, T> typeConverter() {
             Annotation annotation = super.map.get(DynamoDBTypeConverted.class);
             if (annotation != null) {
                 final DynamoDBTypeConverted converted = actualOf(DynamoDBTypeConverted.class);
@@ -163,8 +186,8 @@ final class StandardAnnotationMaps {
                 DynamoDBAutoGenerator<T> generator = overrideOf(generated.generator(), targetType, annotation);
                 if (generator.getGenerateStrategy() == CREATE && targetType.isPrimitive()) {
                     throw new DynamoDBMappingException(
-                        "type [" + targetType + "] is not supported for auto-generation" +
-                        "; primitives are not allowed when auto-generate strategy is CREATE"
+                            "type [" + targetType + "] is not supported for auto-generation" +
+                            "; primitives are not allowed when auto-generate strategy is CREATE"
                     );
                 }
                 return generator;
@@ -175,8 +198,8 @@ final class StandardAnnotationMaps {
         /**
          * Maps the attributes from the {@link DynamoDBFlattened} annotation.
          */
-        public Map<String,String> attributes() {
-            final Map<String,String> attributes = new LinkedHashMap<String,String>();
+        public Map<String, String> attributes() {
+            final Map<String, String> attributes = new LinkedHashMap<String, String>();
             for (final DynamoDBAttribute a : actualOf(DynamoDBFlattened.class).attributes()) {
                 if (a.mappedBy().isEmpty() || a.attributeName().isEmpty()) {
                     throw new DynamoDBMappingException("@DynamoDBFlattened must specify mappedBy and attributeName");
@@ -329,8 +352,8 @@ final class StandardAnnotationMaps {
          * {@inheritDoc}
          */
         @Override
-        public Map<KeyType,List<String>> globalSecondaryIndexNames() {
-            final Map<KeyType,List<String>> gsis = new EnumMap<KeyType,List<String>>(KeyType.class);
+        public Map<KeyType, List<String>> globalSecondaryIndexNames() {
+            final Map<KeyType, List<String>> gsis = new EnumMap<KeyType, List<String>>(KeyType.class);
             final DynamoDBIndexHashKey indexHashKey = actualOf(DynamoDBIndexHashKey.class);
             if (indexHashKey != null) {
                 if (!indexHashKey.globalSecondaryIndexName().isEmpty()) {
@@ -360,7 +383,7 @@ final class StandardAnnotationMaps {
             if (!gsis.isEmpty()) {
                 return Collections.unmodifiableMap(gsis);
             }
-            return Collections.<KeyType,List<String>>emptyMap();
+            return Collections.<KeyType, List<String>>emptyMap();
         }
 
         /**
@@ -388,7 +411,7 @@ final class StandardAnnotationMaps {
      * custom annotations to any DynamoDB annotation types that are present.
      * It will support up to two levels of compounded DynamoDB annotations.
      */
-    private static final class Annotations extends LinkedHashMap<Class<? extends Annotation>,Annotation> {
+    private static final class Annotations extends LinkedHashMap<Class<? extends Annotation>, Annotation> {
         private static final long serialVersionUID = -1L;
 
         /**
@@ -401,15 +424,15 @@ final class StandardAnnotationMaps {
                 return true;
             }
             throw new DynamoDBMappingException(
-                "conflicting annotations " + annotation + " and " + get(annotationType) +
-                "; allowed only one of @" + annotationType.getSimpleName()
+                    "conflicting annotations " + annotation + " and " + get(annotationType) +
+                    "; allowed only one of @" + annotationType.getSimpleName()
             );
         }
 
         /**
          * Puts all DynamoDB annotations and meta-annotations in the map.
          */
-        public Annotations putAll(Annotation ... annotations) {
+        public Annotations putAll(Annotation... annotations) {
             for (final Annotation a1 : annotations) {
                 putIfAnnotated(a1.annotationType(), a1);
                 for (final Annotation a2 : a1.annotationType().getAnnotations()) {
@@ -421,26 +444,6 @@ final class StandardAnnotationMaps {
                 }
             }
             return this;
-        }
-    }
-
-    /**
-     * Creates a new instance of the clazz with the target type and annotation
-     * as parameters if available.
-     */
-    private static <T> T overrideOf(Class<T> clazz, Class<?> targetType, Annotation annotation) {
-        try {
-            if (annotation != null) {
-                try {
-                    return clazz.getConstructor(Class.class, annotation.annotationType()).newInstance(targetType, annotation);
-                } catch (final NoSuchMethodException no) {}
-            }
-            try {
-                return clazz.getConstructor(Class.class).newInstance(targetType);
-            } catch (final NoSuchMethodException no) {}
-            return clazz.newInstance();
-        } catch (final Exception e) {
-            throw new DynamoDBMappingException("could not instantiate " + clazz, e);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -63,11 +63,11 @@ public class ClientHandlerImpl extends ClientHandler {
     private AmazonHttpClient buildHttpClient(ClientHandlerParams handlerParams) {
         final AwsSyncClientParams clientParams = handlerParams.getClientParams();
         return AmazonHttpClient.builder()
-                .clientConfiguration(clientParams.getClientConfiguration())
-                .retryPolicy(clientParams.getRetryPolicy())
-                .requestMetricCollector(clientParams.getRequestMetricCollector())
-                .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
-                .build();
+                               .clientConfiguration(clientParams.getClientConfiguration())
+                               .retryPolicy(clientParams.getRetryPolicy())
+                               .requestMetricCollector(clientParams.getRequestMetricCollector())
+                               .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
+                               .build();
     }
 
     @Override
@@ -115,10 +115,10 @@ public class ClientHandlerImpl extends ClientHandler {
     private ExecutionContext createExecutionContext(RequestConfig requestConfig) {
         boolean isMetricsEnabled = isRequestMetricsEnabled(requestConfig);
         return ExecutionContext.builder()
-                .withRequestHandler2s(requestHandler2s)
-                .withUseRequestMetrics(isMetricsEnabled)
-                .withSignerProvider(signerProvider)
-                .build();
+                               .withRequestHandler2s(requestHandler2s)
+                               .withUseRequestMetrics(isMetricsEnabled)
+                               .withSignerProvider(signerProvider)
+                               .build();
     }
 
     /**
@@ -149,7 +149,7 @@ public class ClientHandlerImpl extends ClientHandler {
      */
     private RequestMetricCollector requestMetricCollector() {
         return clientLevelMetricCollector != null ? clientLevelMetricCollector :
-                AwsSdkMetrics.getRequestMetricCollector();
+               AwsSdkMetrics.getRequestMetricCollector();
     }
 
 
@@ -197,20 +197,20 @@ public class ClientHandlerImpl extends ClientHandler {
                                                       HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
         request.setEndpoint(endpoint);
         return client.requestExecutionBuilder()
-                .request(request)
-                .requestConfig(requestConfig)
-                .executionContext(executionContext)
-                .errorResponseHandler(errorResponseHandler)
-                .execute(responseHandler);
+                     .request(request)
+                     .requestConfig(requestConfig)
+                     .executionContext(executionContext)
+                     .errorResponseHandler(errorResponseHandler)
+                     .execute(responseHandler);
     }
 
     /**
      * Convenient method to end the client execution without logging the awsRequestMetrics.
      */
     private void endClientExecution(AWSRequestMetrics awsRequestMetrics,
-                                          RequestConfig requestConfig,
-                                          Request<?> request,
-                                          Response<?> response) {
+                                    RequestConfig requestConfig,
+                                    Request<?> request,
+                                    Response<?> response) {
         if (request != null) {
             awsRequestMetrics.endEvent(AWSRequestMetrics.Field.ClientExecuteTime);
             awsRequestMetrics.getTimingInfo().endTiming();

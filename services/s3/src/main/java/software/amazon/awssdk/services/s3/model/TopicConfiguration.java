@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -33,7 +34,7 @@ public class TopicConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Creates a new topic configuration with the given topic arn and set of events.
-     * 
+     *
      * @param topicARN
      *            the Amazon SNS topic arn to which the notifications are to be sent.
      * @param events
@@ -46,7 +47,7 @@ public class TopicConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Creates a new topic configuration with the given topic arn and set of events.
-     * 
+     *
      * @param topicARN
      *            the Amazon SNS topic arn to which the notifications are to be sent.
      * @param events
@@ -66,7 +67,7 @@ public class TopicConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Sets the topic ARN for this configuration
-     * 
+     *
      * @param topicARN
      *            ARN for the SNS topic
      */
@@ -76,7 +77,7 @@ public class TopicConfiguration extends NotificationConfiguration implements Ser
 
     /**
      * Fluent method to set the topic ARN for this configuration
-     * 
+     *
      * @param topicARN
      *            ARN for the SNS topic
      * @return This object for method chaining

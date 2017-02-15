@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights
- * Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -8,12 +7,9 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is
- * distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either
- * express or implied. See the License for the specific language
- * governing
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -126,14 +122,14 @@ public class StringUtilsTest {
         assertTrue(StringUtils.compare(" ", "") > 0);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testCompare_String1Null() {
         String str1 = null;
         String str2 = "test";
         int result = StringUtils.compare(str1, str2);
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testCompare_String2Null() {
         String str1 = "test";
         String str2 = null;
@@ -142,21 +138,21 @@ public class StringUtilsTest {
 
     @Test
     public void testAppendAndCompact() {
-        String[] pieces = { " ", "\t", "\n", "\u000b", "\r", "\f", "word", "foo", "bar", "baq"};
+        String[] pieces = {" ", "\t", "\n", "\u000b", "\r", "\f", "word", "foo", "bar", "baq"};
         int ITERATIONS = 10000;
         Random rng = new Random();
 
-        for(int i=0; i<ITERATIONS; i++) {
+        for (int i = 0; i < ITERATIONS; i++) {
             int parts = rng.nextInt(10);
             String s = "";
-            for(int j=0; j<parts; j++ ) {
-               s = s + pieces[rng.nextInt(pieces.length)];
+            for (int j = 0; j < parts; j++) {
+                s = s + pieces[rng.nextInt(pieces.length)];
             }
 
             StringBuilder sb = new StringBuilder();
             StringUtils.appendCompactedString(sb, s);
-            String compacted = s.replaceAll("\\s+",  " ");
-            assertEquals('['+compacted+']', sb.toString(), compacted);
+            String compacted = s.replaceAll("\\s+", " ");
+            assertEquals('[' + compacted + ']', sb.toString(), compacted);
         }
     }
 

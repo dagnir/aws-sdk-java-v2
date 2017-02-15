@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import org.junit.AfterClass;
@@ -43,26 +58,26 @@ public class LifecycleVersioningIntegrationTest extends S3IntegrationTestBase {
         s3.setBucketLifecycleConfiguration(
                 BUCKET_NAME,
                 new BucketLifecycleConfiguration().withRules(
-                    new Rule()
-                        .withPrefix("/quick")
-                        .withId("Quick")
-                        .withStatus("Enabled")
-                        .withNoncurrentVersionTransition(
-                                new NoncurrentVersionTransition()
-                                    .withDays(0)
-                                    .withStorageClass(StorageClass.Glacier))
-                        .withNoncurrentVersionExpirationInDays(7),
+                        new Rule()
+                                .withPrefix("/quick")
+                                .withId("Quick")
+                                .withStatus("Enabled")
+                                .withNoncurrentVersionTransition(
+                                        new NoncurrentVersionTransition()
+                                                .withDays(0)
+                                                .withStorageClass(StorageClass.Glacier))
+                                .withNoncurrentVersionExpirationInDays(7),
 
-                    new Rule()
-                        .withPrefix("/slow")
-                        .withId("Slow")
-                        .withStatus("Enabled")
-                        .withNoncurrentVersionTransition(
-                                new NoncurrentVersionTransition()
-                                    .withDays(7)
-                                    .withStorageClass(StorageClass.Glacier))
-                        .withNoncurrentVersionExpirationInDays(60)
-                ));
+                        new Rule()
+                                .withPrefix("/slow")
+                                .withId("Slow")
+                                .withStatus("Enabled")
+                                .withNoncurrentVersionTransition(
+                                        new NoncurrentVersionTransition()
+                                                .withDays(7)
+                                                .withStorageClass(StorageClass.Glacier))
+                                .withNoncurrentVersionExpirationInDays(60)
+                                                            ));
 
         BucketLifecycleConfiguration result =
                 s3.getBucketLifecycleConfiguration(BUCKET_NAME);

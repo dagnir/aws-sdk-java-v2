@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,21 +39,8 @@ public class SdkJsonGenerator implements StructuredJsonGenerator {
      * prevent frequent resizings but small enough to avoid wasted allocations for small requests.
      */
     private static final int DEFAULT_BUFFER_SIZE = 1024;
-
-    /**
-     * Indicates an issue writing JSON content.
-     */
-    public static class JsonGenerationException extends SdkClientException {
-
-        public JsonGenerationException(Throwable t) {
-            super(t);
-        }
-    }
-
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
-
     private final JsonGenerator generator;
-
     private final String contentType;
 
     public SdkJsonGenerator(JsonFactory factory, String contentType) {
@@ -276,5 +263,15 @@ public class SdkJsonGenerator implements StructuredJsonGenerator {
 
     protected JsonGenerator getGenerator() {
         return generator;
+    }
+
+    /**
+     * Indicates an issue writing JSON content.
+     */
+    public static class JsonGenerationException extends SdkClientException {
+
+        public JsonGenerationException(Throwable t) {
+            super(t);
+        }
     }
 }

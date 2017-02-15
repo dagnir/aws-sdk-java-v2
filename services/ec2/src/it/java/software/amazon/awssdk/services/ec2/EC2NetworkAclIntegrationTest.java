@@ -47,19 +47,15 @@ import software.amazon.awssdk.services.ec2.model.ReplaceNetworkAclEntryRequest;
  */
 public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
 
-    /** The id of the VPC created by this test */
-    private static String vpcId;
-
-    /** The id of the Subnet created by this test */
-    private static String subnetId;
-
-    /** The id of the network ACL created by this test */
-    private static String networkAclId;
-
     private static final String VPC_CIDR_BLOCK = "10.0.0.0/23";
     private static final String SUBNET_CIDR_BLOCK = VPC_CIDR_BLOCK;
-
     private static final Integer DEFAULT_ACL_ENTRY_COUNT = 2; // one for egress and one for ingress
+    /** The id of the VPC created by this test */
+    private static String vpcId;
+    /** The id of the Subnet created by this test */
+    private static String subnetId;
+    /** The id of the network ACL created by this test */
+    private static String networkAclId;
 
     @BeforeClass
     public static void setUp() {
@@ -78,11 +74,52 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
         }
         if (networkAclId != null) {
             ec2.deleteNetworkAcl(new DeleteNetworkAclRequest()
-                    .withNetworkAclId(networkAclId));
+                                         .withNetworkAclId(networkAclId));
         }
         if (vpcId != null) {
             ec2.deleteVpc(new DeleteVpcRequest(vpcId));
         }
+    }
+
+    private static String createVPC() {
+        return ec2.createVpc(new CreateVpcRequest()
+                                     .withCidrBlock(VPC_CIDR_BLOCK)
+                            ).getVpc().getVpcId();
+    }
+
+    private static String createSubnet(String vpcId) {
+        return ec2.createSubnet(new CreateSubnetRequest()
+                                        .withVpcId(vpcId)
+                                        .withCidrBlock(SUBNET_CIDR_BLOCK)
+                               ).getSubnet().getSubnetId();
+    }
+
+    private static String createNetworkAcl(String vpcId) {
+
+        NetworkAcl networkAcl = ec2.createNetworkAcl(
+                new CreateNetworkAclRequest()
+                        .withVpcId(vpcId)
+                                                    ).getNetworkAcl();
+        String networkAclId = networkAcl.getNetworkAclId();
+
+        assertStringNotEmpty(networkAclId);
+        assertEquals(vpcId, networkAcl.getVpcId());
+        assertEquals(DEFAULT_ACL_ENTRY_COUNT.intValue(), networkAcl.getEntries().size());
+        assertFalse(networkAcl.getEntries().get(0).getRuleNumber() == 0);
+        assertNotNull(networkAcl.getEntries().get(0).getProtocol());
+        assertEquals("deny", networkAcl.getEntries().get(0).getRuleAction());
+        assertEquals("0.0.0.0/0", networkAcl.getEntries().get(0).getCidrBlock());
+
+        return networkAclId;
+    }
+
+    private static NetworkAclEntry findEntry(NetworkAcl acl, Integer ruleNum, boolean egress) {
+        for (NetworkAclEntry e : acl.getEntries()) {
+            if (e.getRuleNumber().equals(ruleNum) && e.getEgress() == egress) {
+                return e;
+            }
+        }
+        return null;
     }
 
     /**
@@ -103,9 +140,9 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
 
         // Test filter by ACL id
         result = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                .withFilters(new Filter()
-                        .withName("network-acl-id")
-                        .withValues(networkAclId)));
+                                                 .withFilters(new Filter()
+                                                                      .withName("network-acl-id")
+                                                                      .withValues(networkAclId)));
         assertEquals(1, result.getNetworkAcls().size());
         assertEquals(networkAclId, acl.getNetworkAclId());
     }
@@ -160,8 +197,8 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
                 .withCidrBlock("0.0.0.0/16")
                 .withEgress(true)
                 .withIcmpTypeCode(new IcmpTypeCode()
-                        .withCode(-1)
-                        .withType(-1))
+                                          .withCode(-1)
+                                          .withType(-1))
                 .withNetworkAclId(networkAclId)
                 .withProtocol("1")
                 .withRuleAction("allow")
@@ -169,13 +206,13 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
         ec2.createNetworkAclEntry(createEntryRequest);
 
         NetworkAcl acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                .withNetworkAclIds(networkAclId)
-                ).getNetworkAcls().get(0);
+                                                         .withNetworkAclIds(networkAclId)
+                                                ).getNetworkAcls().get(0);
 
         assertEquals(DEFAULT_ACL_ENTRY_COUNT + 1, acl.getEntries().size());
 
         NetworkAclEntry entry = findEntry(acl,
-                createEntryRequest.getRuleNumber(), createEntryRequest.isEgress());
+                                          createEntryRequest.getRuleNumber(), createEntryRequest.isEgress());
         assertNotNull(entry);
         assertEquals(createEntryRequest.getCidrBlock(), entry.getCidrBlock());
         assertEquals(createEntryRequest.getEgress(), entry.getEgress());
@@ -188,8 +225,8 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
         createEntryRequest.setEgress(false);
         ec2.createNetworkAclEntry(createEntryRequest);
         acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                .withNetworkAclIds(acl.getNetworkAclId())
-                ).getNetworkAcls().get(0);
+                                              .withNetworkAclIds(acl.getNetworkAclId())
+                                     ).getNetworkAcls().get(0);
 
         assertEquals(DEFAULT_ACL_ENTRY_COUNT + 2, acl.getEntries().size());
         entry = findEntry(acl, createEntryRequest.getRuleNumber(), createEntryRequest.getEgress());
@@ -200,8 +237,8 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
                 .withCidrBlock("0.0.0.0/16")
                 .withEgress(true)
                 .withPortRange(new PortRange()
-                        .withFrom(1)
-                        .withTo(100))
+                                       .withFrom(1)
+                                       .withTo(100))
                 .withNetworkAclId(networkAclId)
                 .withProtocol("17")
                 .withRuleAction("deny")
@@ -209,8 +246,8 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
         ec2.replaceNetworkAclEntry(replaceRequest);
 
         acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                .withNetworkAclIds(networkAclId)
-                ).getNetworkAcls().get(0);
+                                              .withNetworkAclIds(networkAclId)
+                                     ).getNetworkAcls().get(0);
         assertEquals(DEFAULT_ACL_ENTRY_COUNT + 2, acl.getEntries().size());
 
         entry = findEntry(acl, replaceRequest.getRuleNumber(), replaceRequest.getEgress());
@@ -229,49 +266,8 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
                 .withRuleNumber(replaceRequest.getRuleNumber());
         ec2.deleteNetworkAclEntry(deleteRequest);
         acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                .withNetworkAclIds(acl.getNetworkAclId())
-                ).getNetworkAcls().get(0);
+                                              .withNetworkAclIds(acl.getNetworkAclId())
+                                     ).getNetworkAcls().get(0);
         assertEquals(DEFAULT_ACL_ENTRY_COUNT + 1, acl.getEntries().size());
-    }
-
-    private static String createVPC() {
-        return ec2.createVpc(new CreateVpcRequest()
-                .withCidrBlock(VPC_CIDR_BLOCK)
-                ).getVpc().getVpcId();
-    }
-
-    private static String createSubnet(String vpcId) {
-        return ec2.createSubnet(new CreateSubnetRequest()
-                .withVpcId(vpcId)
-                .withCidrBlock(SUBNET_CIDR_BLOCK)
-                ).getSubnet().getSubnetId();
-    }
-
-    private static String createNetworkAcl(String vpcId) {
-
-        NetworkAcl networkAcl = ec2.createNetworkAcl(
-                new CreateNetworkAclRequest()
-                        .withVpcId(vpcId)
-                ).getNetworkAcl();
-        String networkAclId = networkAcl.getNetworkAclId();
-
-        assertStringNotEmpty(networkAclId);
-        assertEquals(vpcId, networkAcl.getVpcId());
-        assertEquals(DEFAULT_ACL_ENTRY_COUNT.intValue(), networkAcl.getEntries().size());
-        assertFalse(networkAcl.getEntries().get(0).getRuleNumber() == 0);
-        assertNotNull(networkAcl.getEntries().get(0).getProtocol());
-        assertEquals("deny", networkAcl.getEntries().get(0).getRuleAction());
-        assertEquals("0.0.0.0/0", networkAcl.getEntries().get(0).getCidrBlock());
-
-        return networkAclId;
-    }
-
-    private static NetworkAclEntry findEntry(NetworkAcl acl, Integer ruleNum, boolean egress) {
-        for ( NetworkAclEntry e : acl.getEntries() ) {
-            if ( e.getRuleNumber().equals(ruleNum) && e.getEgress() == egress ) {
-                return e;
-            }
-        }
-        return null;
     }
 }

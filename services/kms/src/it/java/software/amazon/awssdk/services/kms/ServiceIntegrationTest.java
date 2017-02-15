@@ -17,12 +17,24 @@ import software.amazon.awssdk.services.kms.model.ListKeysResult;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 
+    private static void checkValid_KeyMetadata(KeyMetadata kmd) {
+        Assert.assertNotNull(kmd);
+
+        Assert.assertNotNull(kmd.getArn());
+        Assert.assertNotNull(kmd.getAWSAccountId());
+        Assert.assertNotNull(kmd.getDescription());
+        Assert.assertNotNull(kmd.getKeyId());
+        Assert.assertNotNull(kmd.getKeyUsage());
+        Assert.assertNotNull(kmd.getCreationDate());
+        Assert.assertNotNull(kmd.getEnabled());
+    }
+
     @Test
     public void testKeyOperations() {
 
         // CreateKey
         CreateKeyResult createKeyResult = kms.createKey(new CreateKeyRequest().withDescription("My KMS Key")
-                .withKeyUsage(KeyUsageType.ENCRYPT_DECRYPT));
+                                                                              .withKeyUsage(KeyUsageType.ENCRYPT_DECRYPT));
         checkValid_KeyMetadata(createKeyResult.getKeyMetadata());
 
         final String keyId = createKeyResult.getKeyMetadata().getKeyId();
@@ -41,23 +53,11 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         // CreateAlias
         kms.createAlias(new CreateAliasRequest().withAliasName("alias/my_key" + System.currentTimeMillis())
-                .withTargetKeyId(keyId));
+                                                .withTargetKeyId(keyId));
 
         GetKeyPolicyResult getKeyPolicyResult = kms.getKeyPolicy(new GetKeyPolicyRequest().withKeyId(keyId)
-                .withPolicyName("default"));
+                                                                                          .withPolicyName("default"));
         Assert.assertNotNull(getKeyPolicyResult.getPolicy());
 
-    }
-
-    private static void checkValid_KeyMetadata(KeyMetadata kmd) {
-        Assert.assertNotNull(kmd);
-
-        Assert.assertNotNull(kmd.getArn());
-        Assert.assertNotNull(kmd.getAWSAccountId());
-        Assert.assertNotNull(kmd.getDescription());
-        Assert.assertNotNull(kmd.getKeyId());
-        Assert.assertNotNull(kmd.getKeyUsage());
-        Assert.assertNotNull(kmd.getCreationDate());
-        Assert.assertNotNull(kmd.getEnabled());
     }
 }

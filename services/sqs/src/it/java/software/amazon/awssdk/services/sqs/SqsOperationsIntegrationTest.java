@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sqs;
 
 import static org.hamcrest.Matchers.allOf;
@@ -128,7 +143,7 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
     private void runGetQueueAttributesTest() throws InterruptedException {
         Thread.sleep(1000 * 10);
         GetQueueAttributesResult queueAttributesResult = sqsClient.getQueueAttributes(new GetQueueAttributesRequest()
-                .withQueueUrl(queueUrl).withAttributeNames(new String[] { ATTRIBUTE_NAME }));
+                                                                                              .withQueueUrl(queueUrl).withAttributeNames(new String[] {ATTRIBUTE_NAME}));
         assertEquals(1, queueAttributesResult.getAttributes().size());
         Map<String, String> attributes2 = queueAttributesResult.getAttributes();
         assertEquals(1, attributes2.size());
@@ -136,8 +151,8 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
     }
 
     private void runAddPermissionTest() {
-        sqsClient.addPermission(new AddPermissionRequest().withActions(new String[] { "SendMessage", "DeleteMessage" })
-                .withAWSAccountIds(new String[] { getAccountId() }).withLabel("foo-label").withQueueUrl(queueUrl));
+        sqsClient.addPermission(new AddPermissionRequest().withActions(new String[] {"SendMessage", "DeleteMessage"})
+                                                          .withAWSAccountIds(new String[] {getAccountId()}).withLabel("foo-label").withQueueUrl(queueUrl));
     }
 
     private void runRemovePermissionTest() throws InterruptedException {
@@ -148,7 +163,7 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
     private void runSendMessageTest() {
         for (int i = 0; i < 10; i++) {
             SendMessageResult sendMessageResult = sqsClient.sendMessage(new SendMessageRequest().withDelaySeconds(1)
-                    .withMessageBody(MESSAGE_BODY).withQueueUrl(queueUrl));
+                                                                                                .withMessageBody(MESSAGE_BODY).withQueueUrl(queueUrl));
             assertNotEmpty(sendMessageResult.getMessageId());
             assertNotEmpty(sendMessageResult.getMD5OfMessageBody());
         }
@@ -158,8 +173,8 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
         ResponseMetadata responseMetadata;
         ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest();
         ReceiveMessageResult receiveMessageResult = sqsClient.receiveMessage(receiveMessageRequest
-                .withQueueUrl(queueUrl).withWaitTimeSeconds(5).withMaxNumberOfMessages(new Integer(8))
-                .withAttributeNames(new String[] { "SenderId", "SentTimestamp", "All" }));
+                                                                                     .withQueueUrl(queueUrl).withWaitTimeSeconds(5).withMaxNumberOfMessages(new Integer(8))
+                                                                                     .withAttributeNames(new String[] {"SenderId", "SentTimestamp", "All"}));
         assertThat(receiveMessageResult.getMessages(), not(empty()));
         responseMetadata = sqsClient.getCachedResponseMetadata(receiveMessageRequest);
         assertNotNull(responseMetadata.getRequestId());
@@ -171,7 +186,7 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
         assertThat(message.getAttributes().size(), greaterThan(3));
 
         for (Iterator<Entry<String, String>> iterator = message.getAttributes().entrySet().iterator(); iterator
-                .hasNext();) {
+                .hasNext(); ) {
             Entry<String, String> entry = iterator.next();
             assertNotEmpty((entry.getKey()));
             assertNotEmpty((entry.getValue()));
@@ -181,7 +196,7 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
 
     private void runSendMessageBatch() {
         SendMessageBatchResult sendMessageBatchResult = sqsClient.sendMessageBatch(new SendMessageBatchRequest()
-                .withQueueUrl(queueUrl).withEntries(
+                                                                                           .withQueueUrl(queueUrl).withEntries(
                         new SendMessageBatchRequestEntry().withId("1").withMessageBody("1" + SPECIAL_CHARS),
                         new SendMessageBatchRequestEntry().withId("2").withMessageBody("2" + SPECIAL_CHARS),
                         new SendMessageBatchRequestEntry().withId("3").withMessageBody("3" + SPECIAL_CHARS),
@@ -197,7 +212,7 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
     private String runChangeMessageVisibilityTest(ReceiveMessageResult receiveMessageResult) {
         String receiptHandle = (receiveMessageResult.getMessages().get(0)).getReceiptHandle();
         sqsClient.changeMessageVisibility(new ChangeMessageVisibilityRequest().withQueueUrl(queueUrl)
-                .withReceiptHandle(receiptHandle).withVisibilityTimeout(new Integer(123)));
+                                                                              .withReceiptHandle(receiptHandle).withVisibilityTimeout(new Integer(123)));
         return receiptHandle;
     }
 
@@ -207,16 +222,16 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
 
     private void runDlqTests() throws InterruptedException {
         CreateQueueResult createDLQResult = sqsClient.createQueue(new CreateQueueRequest()
-                .withQueueName(deadLetterQueueName));
+                                                                          .withQueueName(deadLetterQueueName));
         deadLetterQueueUrl = createDLQResult.getQueueUrl();
         // We have to get the ARN for the DLQ in order to set it on the redrive policy
         GetQueueAttributesResult deadLetterQueueAttributes = sqsClient.getQueueAttributes(deadLetterQueueUrl,
-                Arrays.asList(QueueAttributeName.QueueArn.toString()));
+                                                                                          Arrays.asList(QueueAttributeName.QueueArn.toString()));
         assertNotNull(deadLetterQueueUrl);
         // Configure the DLQ
         final String deadLetterConfigAttributeName = "RedrivePolicy";
         final String deadLetterConfigAttributeValue = "{\"maxReceiveCount\" : 5, \"deadLetterTargetArn\" : \""
-                + deadLetterQueueAttributes.getAttributes().get(QueueAttributeName.QueueArn.toString()) + "\"}";
+                                                      + deadLetterQueueAttributes.getAttributes().get(QueueAttributeName.QueueArn.toString()) + "\"}";
         sqsClient.setQueueAttributes(new SetQueueAttributesRequest().withQueueUrl(queueUrl).withAttributes(
                 Collections.singletonMap(deadLetterConfigAttributeName, deadLetterConfigAttributeValue)));
         // List the DLQ

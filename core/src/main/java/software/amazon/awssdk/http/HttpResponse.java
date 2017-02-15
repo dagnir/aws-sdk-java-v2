@@ -115,6 +115,15 @@ public class HttpResponse {
     }
 
     /**
+     * Returns the input stream containing the response content.
+     *
+     * @return The input stream containing the response content.
+     */
+    public InputStream getContent() {
+        return content;
+    }
+
+    /**
      * Sets the input stream containing the response content.
      *
      * @param content
@@ -125,12 +134,12 @@ public class HttpResponse {
     }
 
     /**
-     * Returns the input stream containing the response content.
+     * Returns the HTTP status text associated with this response.
      *
-     * @return The input stream containing the response content.
+     * @return The HTTP status text associated with this response.
      */
-    public InputStream getContent() {
-        return content;
+    public String getStatusText() {
+        return statusText;
     }
 
     /**
@@ -145,12 +154,13 @@ public class HttpResponse {
     }
 
     /**
-     * Returns the HTTP status text associated with this response.
+     * Returns the HTTP status code (ex: 200, 404, etc) associated with this
+     * response.
      *
-     * @return The HTTP status text associated with this response.
+     * @return The HTTP status code associated with this response.
      */
-    public String getStatusText() {
-        return statusText;
+    public int getStatusCode() {
+        return statusCode;
     }
 
     /**
@@ -165,16 +175,6 @@ public class HttpResponse {
     }
 
     /**
-     * Returns the HTTP status code (ex: 200, 404, etc) associated with this
-     * response.
-     *
-     * @return The HTTP status code associated with this response.
-     */
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    /**
      * Returns the CRC32 checksum calculated by the underlying CRC32ChecksumCalculatingInputStream.
      *
      * @return The CRC32 checksum.
@@ -184,7 +184,7 @@ public class HttpResponse {
             return 0L;
         }
         CRC32ChecksumCalculatingInputStream crc32ChecksumInputStream =
-                (CRC32ChecksumCalculatingInputStream)context.getAttribute(CRC32ChecksumCalculatingInputStream.class.getName());
+                (CRC32ChecksumCalculatingInputStream) context.getAttribute(CRC32ChecksumCalculatingInputStream.class.getName());
         return crc32ChecksumInputStream == null ? 0L : crc32ChecksumInputStream.getCRC32Checksum();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
@@ -25,7 +26,7 @@ public class HeadBucketRequest extends AmazonWebServiceRequest implements Serial
 
     private String bucketName;
 
-    public void setBucketName(String bucketName) {
+    public HeadBucketRequest(String bucketName) {
         this.bucketName = bucketName;
     }
 
@@ -33,7 +34,7 @@ public class HeadBucketRequest extends AmazonWebServiceRequest implements Serial
         return bucketName;
     }
 
-    public HeadBucketRequest(String bucketName) {
+    public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
     }
 }

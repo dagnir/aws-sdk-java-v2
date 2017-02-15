@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -63,7 +64,7 @@ public class BucketThrottlingTest extends S3WireMockTestBase {
         assertThat(metricsCollector.getMetrics(), hasSize(1));
         AWSRequestMetrics metric = metricsCollector.getMetrics().get(0);
         Number counter = metric.getTimingInfo()
-                .getCounter(AWSRequestMetrics.Field.ThrottleException.name());
+                               .getCounter(AWSRequestMetrics.Field.ThrottleException.name());
         assertEquals(counter, Long.valueOf(MAX_RETRY + 1));
 
     }

@@ -1,4 +1,19 @@
 /*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+/*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,6 +26,7 @@
  * License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import static org.junit.Assert.fail;
@@ -80,6 +96,34 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
     }
 
     /**
+     * Creates a bucket and waits for it to exist.
+     *
+     * @param s3         The AmazonS# client to use.
+     * @param bucketName The name of the bucket to create.
+     */
+    protected static void createBucket(AmazonS3 s3, String bucketName) throws InterruptedException {
+        try {
+            s3.createBucket(bucketName);
+        } catch (AmazonS3Exception e) {
+            if (!e.getErrorCode().equals("BucketAlreadyOwnedByYou")) {
+                throw e;
+            }
+        }
+
+        int poll = 0;
+        while (!s3.doesBucketExist(bucketName) && poll++ < 60) {
+            Thread.sleep(1000);
+        }
+        if (poll >= 60 * 5) {
+            maxPollTimeExceeded();
+        }
+    }
+
+    protected static void maxPollTimeExceeded() {
+        throw new RuntimeException("Max poll time exceeded");
+    }
+
+    /**
      * Asserts that the object stored in the specified bucket and key doesn't
      * exist If it does exist, this method will fail the current test.
      *
@@ -143,33 +187,5 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
                 }
             }
         }
-    }
-
-    /**
-     * Creates a bucket and waits for it to exist.
-     *
-     * @param s3         The AmazonS# client to use.
-     * @param bucketName The name of the bucket to create.
-     */
-    protected static void createBucket(AmazonS3 s3, String bucketName) throws InterruptedException {
-        try {
-            s3.createBucket(bucketName);
-        } catch (AmazonS3Exception e) {
-            if (!e.getErrorCode().equals("BucketAlreadyOwnedByYou")) {
-                throw e;
-            }
-        }
-
-        int poll = 0;
-        while (!s3.doesBucketExist(bucketName) && poll++ < 60) {
-            Thread.sleep(1000);
-        }
-        if (poll >= 60 * 5) {
-            maxPollTimeExceeded();
-        }
-    }
-
-    protected static void maxPollTimeExceeded() {
-        throw new RuntimeException("Max poll time exceeded");
     }
 }

@@ -18,11 +18,12 @@ package software.amazon.awssdk.test.util;
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.SyncProgressListener;
+
 /**
  * Validates the events received by the progress listener.
  */
 public class ProgressListenerWithEventCodeVerification extends
-        SyncProgressListener {
+                                                       SyncProgressListener {
     private final ProgressEventType[] types;
     private int count;
 
@@ -33,12 +34,13 @@ public class ProgressListenerWithEventCodeVerification extends
     @Override
     public void progressChanged(ProgressEvent progressEvent) {
         ProgressEventType type = progressEvent.getEventType();
-        if (type.isByteCountEvent())
+        if (type.isByteCountEvent()) {
             return;
+        }
         if (type != types[count]) {
             throw new AssertionError("Expect event type "
-                    + types[count] + " but got "
-                    + progressEvent.getEventType());
+                                     + types[count] + " but got "
+                                     + progressEvent.getEventType());
         }
         count++;
     }

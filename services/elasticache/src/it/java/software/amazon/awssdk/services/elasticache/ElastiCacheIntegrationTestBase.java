@@ -5,14 +5,14 @@ import software.amazon.awssdk.test.AWSTestBase;
 
 public class ElastiCacheIntegrationTestBase extends AWSTestBase {
 
-	protected static final String MEMCACHED_ENGINE = "memcached";
-	protected static final String REDIS_ENGINE = "redis";
+    protected static final String MEMCACHED_ENGINE = "memcached";
+    protected static final String REDIS_ENGINE = "redis";
 
-	protected static AmazonElastiCacheClient elasticache;
+    protected static AmazonElastiCacheClient elasticache;
 
-	@BeforeClass
-	public static void setUp() throws Exception {
-		setUpCredentials();
-		elasticache = new AmazonElastiCacheClient(credentials);
-	}
+    @BeforeClass
+    public static void setUp() throws Exception {
+        setUpCredentials();
+        elasticache = new AmazonElastiCacheClient(credentials);
+    }
 }

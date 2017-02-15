@@ -73,6 +73,12 @@ import software.amazon.awssdk.services.opsworks.model.UpdateVolumeRequest;
 
 public class OpsWorksIntegrationTest extends IntegrationTestBase {
 
+    private static String stackId = null;
+    private static String registeredVolumeId = null;
+    private static String layerId = null;
+    private static String deploymentId = null;
+    private static String instanceId = null;
+    private static String appId = null;
     /** Configurations for the new stack to be created. **/
     private final String STACK_NAME = "java-stack" + System.currentTimeMillis();
     private final String STACK_REGION = "us-east-1";
@@ -95,7 +101,6 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     private final String LAYER_SHORT_NAME = "rails-app";
     private final String EBS_VOLUME_ID = "vol-6f643e20";
     private final String ELASTIC_IP_ADDRESS = "54.235.87.203";
-
     /**
      * Configurations for the running stack used for app deployment tests.
      * (Stack name: java-sdk-app-deployment-test-stack)
@@ -104,13 +109,6 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     private final String APP_DEPLOYMENT_TEST_RUNNING_INSTANCE_ID = "10d8a89f-66ad-4884-be1e-cf503cbf7a14";
     private final String APP_NAME = "my-app";
     private final String APP_SHORT_NAME = "app-short-name";
-
-    private static String stackId = null;
-    private static String registeredVolumeId = null;
-    private static String layerId = null;
-    private static String deploymentId = null;
-    private static String instanceId = null;
-    private static String appId = null;
 
     @AfterClass
     public static void teardown() throws FileNotFoundException, IOException, InterruptedException {
@@ -132,15 +130,15 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         // Create Stack
         CreateStackResult createStackResult = opsWorks
                 .createStack(new CreateStackRequest()
-                        .withName(STACK_NAME)
-                        .withRegion(STACK_REGION)
-                        .withDefaultInstanceProfileArn(
-                                DEFAULT_IAM_INSTANCE_PROFILE)
-                        .withServiceRoleArn(IAM_ROLE)
-                        .withConfigurationManager(
-                                new StackConfigurationManager().withName(
-                                        STACK_CONFIG_MANAGER_NAME).withVersion(
-                                        STACK_CONFIG_MANAGER_VERSION)));
+                                     .withName(STACK_NAME)
+                                     .withRegion(STACK_REGION)
+                                     .withDefaultInstanceProfileArn(
+                                             DEFAULT_IAM_INSTANCE_PROFILE)
+                                     .withServiceRoleArn(IAM_ROLE)
+                                     .withConfigurationManager(
+                                             new StackConfigurationManager().withName(
+                                                     STACK_CONFIG_MANAGER_NAME).withVersion(
+                                                     STACK_CONFIG_MANAGER_VERSION)));
         stackId = createStackResult.getStackId();
         assertNotNull(stackId);
 
@@ -170,7 +168,7 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         // Register a EBS volume with the stack
         RegisterVolumeResult registerVolumeResult = opsWorks
                 .registerVolume(new RegisterVolumeRequest()
-                        .withStackId(stackId).withEc2VolumeId(EBS_VOLUME_ID));
+                                        .withStackId(stackId).withEc2VolumeId(EBS_VOLUME_ID));
         registeredVolumeId = registerVolumeResult.getVolumeId();
 
         // Update the volume
@@ -192,8 +190,8 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         // Create the layer
         CreateLayerResult createLayerResult = opsWorks
                 .createLayer(new CreateLayerRequest().withStackId(stackId)
-                        .withType(LAYER_TYPE).withName(LAYER_NAME)
-                        .withInstallUpdatesOnBoot(false));
+                                                     .withType(LAYER_TYPE).withName(LAYER_NAME)
+                                                     .withInstallUpdatesOnBoot(false));
         layerId = createLayerResult.getLayerId();
         assertNotNull(layerId);
 
@@ -217,33 +215,33 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
 
         // Attach the ELB
         opsWorks.attachElasticLoadBalancer(new AttachElasticLoadBalancerRequest()
-                                           .withLayerId(layerId)
-                                           .withElasticLoadBalancerName(loadBalancerName));
+                                                   .withLayerId(layerId)
+                                                   .withElasticLoadBalancerName(loadBalancerName));
 
         // Describe the ELB
         DescribeElasticLoadBalancersResult describeElasticLoadBalancersResult = opsWorks
                 .describeElasticLoadBalancers(new DescribeElasticLoadBalancersRequest()
-                        .withLayerIds(layerId));
+                                                      .withLayerIds(layerId));
         assertEquals(1, describeElasticLoadBalancersResult.getElasticLoadBalancers().size());
 
         // Detach the ELB
         opsWorks.detachElasticLoadBalancer(new DetachElasticLoadBalancerRequest()
-                                                .withLayerId(layerId)
-                                                .withElasticLoadBalancerName(loadBalancerName));
+                                                   .withLayerId(layerId)
+                                                   .withElasticLoadBalancerName(loadBalancerName));
 
         // Now the stack should have zero ELB attached to it.
         describeElasticLoadBalancersResult = opsWorks.describeElasticLoadBalancers(
-                               new DescribeElasticLoadBalancersRequest()
-                                     .withLayerIds(layerId));
+                new DescribeElasticLoadBalancersRequest()
+                        .withLayerIds(layerId));
         assertEquals(0, describeElasticLoadBalancersResult.getElasticLoadBalancers().size());
 
 
         // Create an instance
         CreateInstanceResult createInstacneResult = opsWorks
                 .createInstance(new CreateInstanceRequest()
-                        .withStackId(stackId).withLayerIds(layerId)
-                        .withInstanceType(INSTANCE_TYPE).withAmiId(AMI_ID)
-                        .withOs("Custom").withInstallUpdatesOnBoot(false));
+                                        .withStackId(stackId).withLayerIds(layerId)
+                                        .withInstanceType(INSTANCE_TYPE).withAmiId(AMI_ID)
+                                        .withOs("Custom").withInstallUpdatesOnBoot(false));
         instanceId = createInstacneResult.getInstanceId();
         assertNotNull(instanceId);
 
@@ -263,12 +261,12 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
 
         // Unassign the volume
         opsWorks.unassignVolume(new UnassignVolumeRequest()
-                .withVolumeId(registeredVolumeId));
+                                        .withVolumeId(registeredVolumeId));
 
 
         // Associate the registered EIP with this instance
         opsWorks.associateElasticIp(new AssociateElasticIpRequest()
-                .withElasticIp(ELASTIC_IP_ADDRESS).withInstanceId(instanceId));
+                                            .withElasticIp(ELASTIC_IP_ADDRESS).withInstanceId(instanceId));
 
         // Disassociate the EIP
         opsWorks.disassociateElasticIp(new DisassociateElasticIpRequest().withElasticIp(ELASTIC_IP_ADDRESS));
@@ -276,8 +274,8 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
 
         // Update instance
         opsWorks.updateInstance(new UpdateInstanceRequest()
-                .withInstanceId(instanceId).withInstanceType(NEW_INSTANCE_TYPE)
-                .withLayerIds(layerId));
+                                        .withInstanceId(instanceId).withInstanceType(NEW_INSTANCE_TYPE)
+                                        .withLayerIds(layerId));
 
         // Check that the instance is really updated
         describeInstancesResult = opsWorks.describeInstances(new DescribeInstancesRequest().withInstanceIds(instanceId));
@@ -335,18 +333,19 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         // Clear the existing profile
         try {
             opsWorks.deleteUserProfile(new DeleteUserProfileRequest().withIamUserArn(IAM_ROLE));
-        } catch (AmazonServiceException ase) {}
+        } catch (AmazonServiceException ase) {
+        }
 
         // Create user profile.
         CreateUserProfileResult createUserProfileResult = opsWorks
                 .createUserProfile(new CreateUserProfileRequest()
-                        .withIamUserArn(IAM_ROLE).withSshUsername(USER_NAME).withAllowSelfManagement(true));
+                                           .withIamUserArn(IAM_ROLE).withSshUsername(USER_NAME).withAllowSelfManagement(true));
         assertEquals(IAM_ROLE, createUserProfileResult.getIamUserArn());
 
         // Describe user profile
         DescribeUserProfilesResult describeUserProfileResult = opsWorks
                 .describeUserProfiles(new DescribeUserProfilesRequest()
-                        .withIamUserArns(IAM_ROLE));
+                                              .withIamUserArns(IAM_ROLE));
         assertEquals(1, describeUserProfileResult.getUserProfiles().size());
         assertEquals(IAM_ROLE, describeUserProfileResult.getUserProfiles().get(0).getIamUserArn());
         assertEquals(USER_NAME, describeUserProfileResult.getUserProfiles().get(0).getSshUsername());
@@ -354,7 +353,7 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
 
         // Update user profile
         opsWorks.updateUserProfile(new UpdateUserProfileRequest()
-                .withIamUserArn(IAM_ROLE).withSshPublicKey(SSH_PUBLIC_KEY));
+                                           .withIamUserArn(IAM_ROLE).withSshPublicKey(SSH_PUBLIC_KEY));
 
         describeUserProfileResult = opsWorks.describeUserProfiles(new DescribeUserProfilesRequest().withIamUserArns(IAM_ROLE));
         assertEquals(1, describeUserProfileResult.getUserProfiles().size());
@@ -378,18 +377,18 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testStackSummary() {
-    	 // Create Stack
+        // Create Stack
         CreateStackResult createStackResult = opsWorks
                 .createStack(new CreateStackRequest()
-                        .withName(STACK_NAME)
-                        .withRegion(STACK_REGION)
-                        .withDefaultInstanceProfileArn(
-                                DEFAULT_IAM_INSTANCE_PROFILE)
-                        .withServiceRoleArn(IAM_ROLE)
-                        .withConfigurationManager(
-                                new StackConfigurationManager().withName(
-                                        STACK_CONFIG_MANAGER_NAME).withVersion(
-                                        STACK_CONFIG_MANAGER_VERSION)));
+                                     .withName(STACK_NAME)
+                                     .withRegion(STACK_REGION)
+                                     .withDefaultInstanceProfileArn(
+                                             DEFAULT_IAM_INSTANCE_PROFILE)
+                                     .withServiceRoleArn(IAM_ROLE)
+                                     .withConfigurationManager(
+                                             new StackConfigurationManager().withName(
+                                                     STACK_CONFIG_MANAGER_NAME).withVersion(
+                                                     STACK_CONFIG_MANAGER_VERSION)));
         stackId = createStackResult.getStackId();
         assertNotNull(stackId);
     }
@@ -403,8 +402,8 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         // Create an App
         CreateAppResult createAppResult = opsWorks
                 .createApp(new CreateAppRequest().withStackId(APP_DEPLOYMENT_TEST_STACK_ID)
-                        .withName(APP_NAME).withType(AppType.Php)
-                        .withShortname(APP_SHORT_NAME));
+                                                 .withName(APP_NAME).withType(AppType.Php)
+                                                 .withShortname(APP_SHORT_NAME));
         appId = createAppResult.getAppId();
         assertNotNull(appId);
 
@@ -420,15 +419,15 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         command.setName(DeploymentCommandName.Deploy);
         CreateDeploymentResult createDeploymentResult = opsWorks
                 .createDeployment(new CreateDeploymentRequest()
-                        .withAppId(appId).withStackId(APP_DEPLOYMENT_TEST_STACK_ID)
-                        .withInstanceIds(APP_DEPLOYMENT_TEST_RUNNING_INSTANCE_ID).withCommand(command));
+                                          .withAppId(appId).withStackId(APP_DEPLOYMENT_TEST_STACK_ID)
+                                          .withInstanceIds(APP_DEPLOYMENT_TEST_RUNNING_INSTANCE_ID).withCommand(command));
         deploymentId = createDeploymentResult.getDeploymentId();
         assertNotNull(deploymentId);
 
         // Describe a deployment
         DescribeDeploymentsResult describeDeploymentsResults = opsWorks
                 .describeDeployments(new DescribeDeploymentsRequest()
-                        .withDeploymentIds(deploymentId));
+                                             .withDeploymentIds(deploymentId));
         assertEquals(1, describeDeploymentsResults.getDeployments().size());
         assertEquals(APP_DEPLOYMENT_TEST_STACK_ID, describeDeploymentsResults.getDeployments().get(0).getStackId());
         assertEquals(appId, describeDeploymentsResults.getDeployments().get(0).getAppId());

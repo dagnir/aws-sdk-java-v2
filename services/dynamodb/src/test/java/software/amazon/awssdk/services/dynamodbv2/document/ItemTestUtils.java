@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -36,17 +36,19 @@ public class ItemTestUtils {
      */
     @SuppressWarnings("unchecked")
     public static boolean equalsSimpleValue(Object v0, Object v1) {
-        if (v0 == null || v1 == null)
+        if (v0 == null || v1 == null) {
             return v0 == null && v1 == null;
+        }
         // Byte buffer or byte array
-        if (v0 instanceof ByteBuffer)
-            return equalsByteBuffer((ByteBuffer)v0, v1);
-        else if (v1 instanceof ByteBuffer)
-            return equalsByteBuffer((ByteBuffer)v1, v0);
-        else if (v0 instanceof byte[])
-            return equalsByteArray((byte[])v0, v1);
-        else if (v1 instanceof byte[])
-            return equalsByteArray((byte[])v1, v0);
+        if (v0 instanceof ByteBuffer) {
+            return equalsByteBuffer((ByteBuffer) v0, v1);
+        } else if (v1 instanceof ByteBuffer) {
+            return equalsByteBuffer((ByteBuffer) v1, v0);
+        } else if (v0 instanceof byte[]) {
+            return equalsByteArray((byte[]) v0, v1);
+        } else if (v1 instanceof byte[]) {
+            return equalsByteArray((byte[]) v1, v0);
+        }
         // Number
         if (v0 instanceof Number && v1 instanceof Number) {
             String s0 = InternalUtils.valToString(v0);
@@ -63,7 +65,7 @@ public class ItemTestUtils {
             }
 
             for (Entry<String, Object> e : map0.entrySet()) {
-                if ( !equalsSimpleValue(
+                if (!equalsSimpleValue(
                         e.getValue(),
                         map1.get(e.getKey()))) {
                     return false;
@@ -78,9 +80,10 @@ public class ItemTestUtils {
             if (map0.size() != map1.size()) {
                 return false;
             }
-            for (int i=0; i < map0.size(); i++) {
-                if (!equalsSimpleValue(map0.get(i), map1.get(i)))
+            for (int i = 0; i < map0.size(); i++) {
+                if (!equalsSimpleValue(map0.get(i), map1.get(i))) {
                     return false;
+                }
             }
             return true;
         }
@@ -88,8 +91,8 @@ public class ItemTestUtils {
         // Currently this works only if both set have the elements in the same
         // iteration order.  Can we do better ?
         if (v0 instanceof Set && v1 instanceof Set) {
-            Set<Object> set0 = (Set<Object>)v0;
-            Set<Object> set1 = (Set<Object>)v1;
+            Set<Object> set0 = (Set<Object>) v0;
+            Set<Object> set1 = (Set<Object>) v1;
 
             if (set0.size() != set1.size()) {
                 return false;
@@ -129,11 +132,11 @@ public class ItemTestUtils {
      */
     private static boolean equalsByteArray(byte[] from, Object o) {
         if (o instanceof ByteBuffer) {
-            byte[] to = ((ByteBuffer)o).array();
+            byte[] to = ((ByteBuffer) o).array();
             return Arrays.equals(from, to);
         } else {
             return (o instanceof byte[])
-                && Arrays.equals(from, ((byte[])o));
+                   && Arrays.equals(from, ((byte[]) o));
         }
     }
 }

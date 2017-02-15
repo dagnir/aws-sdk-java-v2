@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public abstract class AbstractErrorUnmarshaller<T> implements Unmarshaller<Amazo
     /**
      * Constructs a new error unmarshaller that will unmarshall error responses
      * into objects of the specified class, extending AmazonServiceException.
-     * 
+     *
      * @param exceptionClass
      *            The subclass of AmazonServiceException which will be
      *            instantiated and populated by this class.
@@ -52,13 +52,13 @@ public abstract class AbstractErrorUnmarshaller<T> implements Unmarshaller<Amazo
     /**
      * Constructs a new exception object of the type specified in this class's
      * constructor and sets the specified error message.
-     * 
+     *
      * @param message
      *            The error message to set in the new exception object.
-     * 
+     *
      * @return A new exception object of the type specified in this class's
      *         constructor and sets the specified error message.
-     * 
+     *
      * @throws Exception
      *             If there are any problems using reflection to invoke the
      *             exception class's constructor.

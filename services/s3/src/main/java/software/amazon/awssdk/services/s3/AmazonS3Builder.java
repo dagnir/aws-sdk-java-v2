@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3;
 
 import software.amazon.awssdk.ClientConfigurationFactory;
@@ -24,7 +25,8 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @NotThreadSafe
-public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBuild extends AmazonS3> extends AwsSyncClientBuilder<Subclass, TypeToBuild> {
+public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBuild extends AmazonS3>
+        extends AwsSyncClientBuilder<Subclass, TypeToBuild> {
 
     private static final AmazonS3ClientConfigurationFactory CLIENT_CONFIG_FACTORY = new AmazonS3ClientConfigurationFactory();
 
@@ -413,10 +415,10 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
         if (this.pathStyleAccessEnabled != null) {
             builder.setPathStyleAccess(this.pathStyleAccessEnabled);
         }
-        if(Boolean.TRUE.equals(this.dualstackEnabled)) {
+        if (Boolean.TRUE.equals(this.dualstackEnabled)) {
             builder.enableDualstack();
         }
-        if(Boolean.TRUE.equals(this.forceGlobalBucketAccessEnabled)) {
+        if (Boolean.TRUE.equals(this.forceGlobalBucketAccessEnabled)) {
             builder.enableForceGlobalBucketAccess();
         }
         return builder.build();

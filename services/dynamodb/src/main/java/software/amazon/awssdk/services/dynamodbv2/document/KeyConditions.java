@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ public enum KeyConditions {
     GE(ComparisonOperator.GE),
     GT(ComparisonOperator.GT),
     BEGINS_WITH(ComparisonOperator.BEGINS_WITH),
-    BETWEEN(ComparisonOperator.BETWEEN),
-    ;
+    BETWEEN(ComparisonOperator.BETWEEN),;
 
     private final ComparisonOperator comparisonOperator;
 

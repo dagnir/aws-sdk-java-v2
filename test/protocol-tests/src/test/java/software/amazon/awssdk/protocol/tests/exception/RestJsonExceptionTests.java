@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -41,12 +41,10 @@ import software.amazon.awssdk.services.protocol.restjson.model.MultiLocationOper
 public class RestJsonExceptionTests {
 
     private static final String ALL_TYPES_PATH = "/2016-03-11/allTypes";
-
-    @Rule
-    public WireMockRule wireMock = new WireMockRule(0);
-
     private final AmazonProtocolRestJsonClient client = new AmazonProtocolRestJsonClient(
             new BasicAWSCredentials("akid", "skid"));
+    @Rule
+    public WireMockRule wireMock = new WireMockRule(0);
 
     @Before
     public void setup() {

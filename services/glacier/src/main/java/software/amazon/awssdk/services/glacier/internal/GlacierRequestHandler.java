@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -33,19 +33,23 @@ public class GlacierRequestHandler extends AbstractRequestHandler {
         request.addHeader("x-amz-content-sha256", "required");
 
         if (request.getOriginalRequest() instanceof UploadArchiveRequest) {
-           String contentLength = request.getHeaders().remove("x-amz-content-length");
+            String contentLength = request.getHeaders().remove("x-amz-content-length");
             if (contentLength != null) {
                 request.getHeaders().put("Content-Length", contentLength);
             }
         } else if (request.getOriginalRequest() instanceof UploadMultipartPartRequest) {
             String range = request.getHeaders().get("Content-Range");
 
-            if (range.startsWith("bytes=")) range = range.substring(6);
-            if (range.startsWith("bytes ")) range = range.substring(6);
+            if (range.startsWith("bytes=")) {
+                range = range.substring(6);
+            }
+            if (range.startsWith("bytes ")) {
+                range = range.substring(6);
+            }
 
             if (range != null) {
                 String start = range.substring(0, range.indexOf('-'));
-                String end   = range.substring(range.indexOf('-') + 1);
+                String end = range.substring(range.indexOf('-') + 1);
 
                 if (end.contains("/")) {
                     end = end.substring(0, end.indexOf("/"));

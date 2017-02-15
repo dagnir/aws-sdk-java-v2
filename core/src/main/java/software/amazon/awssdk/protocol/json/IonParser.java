@@ -1,14 +1,14 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"). You may not
- * use this file except in compliance with the License. A copy of the License is
- * located at
- * 
- * http://aws.amazon.com/apache2.0
- * 
- * or in the "license" file accompanying this file. This file is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
@@ -33,23 +33,13 @@ import software.amazon.ion.IonReader;
 import software.amazon.ion.IonType;
 
 final class IonParser extends JsonParser {
-    private enum State {
-        BEFORE_VALUE,
-        END_OF_CONTAINER,
-        EOF,
-        FIELD_NAME,
-        VALUE
-    }
-
     private final IonReader reader;
     private final boolean shouldCloseReader;
-
     private State state = State.BEFORE_VALUE;
     private JsonToken currentToken;
     private JsonToken lastClearedToken;
     private boolean shouldSkipContainer;
     private boolean closed;
-
     public IonParser(IonReader reader, boolean shouldCloseReader) {
         super(Feature.collectDefaults());
         this.reader = reader;
@@ -88,7 +78,7 @@ final class IonParser extends JsonParser {
     }
 
     private JsonToken doNextToken() {
-        for (;;) {
+        for (; ; ) {
             switch (state) {
                 case BEFORE_VALUE:
                     IonType currentType = reader.next();
@@ -101,8 +91,8 @@ final class IonParser extends JsonParser {
                         } else {
                             state = State.END_OF_CONTAINER;
                             return reader.isInStruct()
-                                    ? JsonToken.END_OBJECT
-                                    : JsonToken.END_ARRAY;
+                                   ? JsonToken.END_OBJECT
+                                   : JsonToken.END_ARRAY;
                         }
                     }
 
@@ -141,8 +131,8 @@ final class IonParser extends JsonParser {
     public JsonToken nextValue() throws IOException, JsonParseException {
         JsonToken token = nextToken();
         return (token == JsonToken.FIELD_NAME)
-                ? nextToken()
-                : token;
+               ? nextToken()
+               : token;
     }
 
     @Override
@@ -151,8 +141,8 @@ final class IonParser extends JsonParser {
         if (IonType.isContainer(currentType)) {
             shouldSkipContainer = true;
             currentToken = currentType == IonType.STRUCT
-                    ? JsonToken.END_OBJECT
-                    : JsonToken.END_ARRAY;
+                           ? JsonToken.END_OBJECT
+                           : JsonToken.END_ARRAY;
         }
         return this;
     }
@@ -170,8 +160,8 @@ final class IonParser extends JsonParser {
     @Override
     public int getCurrentTokenId() {
         return currentToken == null
-                ? JsonTokenId.ID_NO_TOKEN
-                : currentToken.id();
+               ? JsonTokenId.ID_NO_TOKEN
+               : currentToken.id();
     }
 
     @Override
@@ -233,8 +223,7 @@ final class IonParser extends JsonParser {
         if (IonType.isText(reader.getType())) {
             return reader.stringValue();
         }
-        if (currentToken == null)
-        {
+        if (currentToken == null) {
             // start or end of stream
             return null;
         }
@@ -394,5 +383,13 @@ final class IonParser extends JsonParser {
             default:
                 throw new SdkClientException(String.format("Unhandled Ion type %s", currentType));
         }
+    }
+
+    private enum State {
+        BEFORE_VALUE,
+        END_OF_CONTAINER,
+        EOF,
+        FIELD_NAME,
+        VALUE
     }
 }

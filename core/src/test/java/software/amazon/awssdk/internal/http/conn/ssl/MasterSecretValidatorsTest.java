@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,6 +25,29 @@ import software.amazon.awssdk.internal.http.conn.ssl.privileged.PrivilegedMaster
 import software.amazon.awssdk.util.JavaVersionParser.JavaVersion;
 
 public class MasterSecretValidatorsTest {
+
+    /**
+     * Asserts that the correct implementation of {@link MasterSecretValidator} is returned per the
+     * JavaVersion
+     *
+     * @param masterSecretValidatorImpl
+     *            Expected implementation of {@link MasterSecretValidator}
+     * @param javaVersion
+     *            Java version used
+     */
+    private static void assertMasterSecretValidatorImplForJavaVersion(
+            Class<? extends MasterSecretValidator> masterSecretValidatorImpl,
+            JavaVersion javaVersion) {
+
+        assertThat(MasterSecretValidators.getMasterSecretValidator(javaVersion), instanceOf(masterSecretValidatorImpl));
+    }
+
+    /**
+     * Convenience factory method for a {@link JavaVersion}
+     */
+    private static JavaVersion jv(int majorVersionFamily, int majorVersion, int maintenanceNumber, int updateNumber) {
+        return new JavaVersion(majorVersionFamily, majorVersion, maintenanceNumber, updateNumber);
+    }
 
     @Test
     public void java6() {
@@ -55,27 +78,5 @@ public class MasterSecretValidatorsTest {
     @Test
     public void unknownJavaVersion() {
         assertMasterSecretValidatorImplForJavaVersion(NoOpMasterSecretValidator.class, jv(1, 5, 0, 0));
-    }
-
-    /**
-     * Asserts that the correct implementation of {@link MasterSecretValidator} is returned per the
-     * JavaVersion
-     * 
-     * @param masterSecretValidatorImpl
-     *            Expected implementation of {@link MasterSecretValidator}
-     * @param javaVersion
-     *            Java version used
-     */
-    private static void assertMasterSecretValidatorImplForJavaVersion(Class<? extends MasterSecretValidator> masterSecretValidatorImpl,
-                                                                      JavaVersion javaVersion) {
-
-        assertThat(MasterSecretValidators.getMasterSecretValidator(javaVersion), instanceOf(masterSecretValidatorImpl));
-    }
-
-    /**
-     * Convenience factory method for a {@link JavaVersion}
-     */
-    private static JavaVersion jv(int majorVersionFamily, int majorVersion, int maintenanceNumber, int updateNumber) {
-        return new JavaVersion(majorVersionFamily, majorVersion, maintenanceNumber, updateNumber);
     }
 }

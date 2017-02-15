@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.simpleemail;
 
 import java.io.ByteArrayOutputStream;
@@ -21,7 +22,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
-
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -32,7 +32,6 @@ import javax.mail.URLName;
 import javax.mail.event.TransportEvent;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.auth.BasicAWSCredentials;
 import software.amazon.awssdk.services.simpleemail.model.RawMessage;
@@ -60,12 +59,11 @@ public class AWSJavaMailTransport extends Transport {
     public static final String AWS_EMAIL_SERVICE_ENDPOINT_PROPERTY = "mail.aws.host";
     public static final String AWS_SECRET_KEY_PROPERTY = "mail.aws.password";
     public static final String AWS_ACCESS_KEY_PROPERTY = "mail.aws.user";
-
-    private AmazonSimpleEmailServiceClient emailService;
+    private static final String USER_AGENT = AWSJavaMailTransport.class.getName() + "/" + VersionInfoUtils.getVersion();
     private final String accessKey;
     private final String secretKey;
     private final String httpsEndpoint;
-
+    private AmazonSimpleEmailServiceClient emailService;
     private String lastMessageId;
 
     public AWSJavaMailTransport(Session session, URLName urlname) {
@@ -73,6 +71,14 @@ public class AWSJavaMailTransport extends Transport {
         this.accessKey = session.getProperty(AWS_ACCESS_KEY_PROPERTY);
         this.secretKey = session.getProperty(AWS_SECRET_KEY_PROPERTY);
         this.httpsEndpoint = session.getProperty(AWS_EMAIL_SERVICE_ENDPOINT_PROPERTY);
+    }
+
+    private static boolean isNullOrEmpty(String s) {
+        return (s == null || s.length() == 0);
+    }
+
+    private static boolean isNullOrEmpty(Object[] o) {
+        return (o == null || o.length == 0);
     }
 
     /**
@@ -130,34 +136,34 @@ public class AWSJavaMailTransport extends Transport {
     private void checkAddresses(Message m, Address[] addresses)
             throws MessagingException, SendFailedException {
 
-        if ( isNullOrEmpty((Object[]) addresses)
-                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.TO))
-                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.CC))
-                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.BCC)) ) {
+        if (isNullOrEmpty((Object[]) addresses)
+            && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.TO))
+            && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.CC))
+            && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.BCC))) {
             throw new SendFailedException("No recipient addresses");
         }
 
         // Make sure all addresses are internet addresses
         Set<Address> invalid = new HashSet<Address>();
-        for ( Address[] recipients : new Address[][] {
+        for (Address[] recipients : new Address[][] {
                 m.getRecipients(Message.RecipientType.TO),
                 m.getRecipients(Message.RecipientType.CC),
                 m.getRecipients(Message.RecipientType.BCC),
-                addresses } ) {
-            if ( !isNullOrEmpty(recipients) ) {
-                for ( Address a : recipients ) {
-                    if ( !(a instanceof InternetAddress) ) {
+                addresses}) {
+            if (!isNullOrEmpty(recipients)) {
+                for (Address a : recipients) {
+                    if (!(a instanceof InternetAddress)) {
                         invalid.add(a);
                     }
                 }
             }
         }
 
-        if ( !invalid.isEmpty() ) {
+        if (!invalid.isEmpty()) {
             Address[] sent = new Address[0];
             Address[] unsent = new Address[0];
             super.notifyTransportListeners(TransportEvent.MESSAGE_NOT_DELIVERED, sent, unsent,
-                    invalid.toArray(new Address[invalid.size()]), m);
+                                           invalid.toArray(new Address[invalid.size()]), m);
             throw new SendFailedException("AWS Mail Service can only send to InternetAddresses");
         }
     }
@@ -172,25 +178,25 @@ public class AWSJavaMailTransport extends Transport {
      */
     private void collateRecipients(Message m, Address[] addresses) throws MessagingException {
 
-        if ( !isNullOrEmpty(addresses) ) {
+        if (!isNullOrEmpty(addresses)) {
             Hashtable<Address, Message.RecipientType> addressTable = new Hashtable<Address, Message.RecipientType>();
 
-            for ( Address a : addresses ) {
+            for (Address a : addresses) {
                 addressTable.put(a, Message.RecipientType.TO);
             }
 
-            if ( !isNullOrEmpty(m.getRecipients(Message.RecipientType.TO)) ) {
-                for ( Address a : m.getRecipients(Message.RecipientType.TO) ) {
+            if (!isNullOrEmpty(m.getRecipients(Message.RecipientType.TO))) {
+                for (Address a : m.getRecipients(Message.RecipientType.TO)) {
                     addressTable.put(a, Message.RecipientType.TO);
                 }
             }
-            if ( !isNullOrEmpty(m.getRecipients(Message.RecipientType.CC)) ) {
-                for ( Address a : m.getRecipients(Message.RecipientType.CC) ) {
+            if (!isNullOrEmpty(m.getRecipients(Message.RecipientType.CC))) {
+                for (Address a : m.getRecipients(Message.RecipientType.CC)) {
                     addressTable.put(a, Message.RecipientType.CC);
                 }
             }
-            if ( !isNullOrEmpty(m.getRecipients(Message.RecipientType.BCC)) ) {
-                for ( Address a : m.getRecipients(Message.RecipientType.BCC) ) {
+            if (!isNullOrEmpty(m.getRecipients(Message.RecipientType.BCC))) {
+                for (Address a : m.getRecipients(Message.RecipientType.BCC)) {
                     addressTable.put(a, Message.RecipientType.BCC);
                 }
             }
@@ -202,14 +208,14 @@ public class AWSJavaMailTransport extends Transport {
 
             Iterator<Address> aIter = addressTable.keySet().iterator();
 
-            while ( aIter.hasNext() ) {
+            while (aIter.hasNext()) {
                 Address a = aIter.next();
                 m.addRecipient(addressTable.get(a), a);
             }
 
             // Simple E-mail needs at least one TO address, so add one if there isn't one
-            if ( m.getRecipients(Message.RecipientType.TO) == null ||
-                    m.getRecipients(Message.RecipientType.TO).length == 0 ) {
+            if (m.getRecipients(Message.RecipientType.TO) == null ||
+                m.getRecipients(Message.RecipientType.TO).length == 0) {
                 m.setRecipient(Message.RecipientType.TO, addressTable.keySet().iterator().next());
             }
         }
@@ -245,7 +251,7 @@ public class AWSJavaMailTransport extends Transport {
                     TransportEvent.MESSAGE_NOT_DELIVERED, sent, unsent,
                     invalid, m);
             throw new MessagingException("Unable to write message: "
-                    + m.toString(), e);
+                                         + m.toString(), e);
         }
     }
 
@@ -272,7 +278,7 @@ public class AWSJavaMailTransport extends Transport {
             unsent = new Address[0];
             invalid = new Address[0];
             super.notifyTransportListeners(TransportEvent.MESSAGE_DELIVERED,
-                    sent, unsent, invalid, m);
+                                           sent, unsent, invalid, m);
         } catch (Exception e) {
             sent = new Address[0];
             unsent = m.getAllRecipients();
@@ -281,7 +287,7 @@ public class AWSJavaMailTransport extends Transport {
                     TransportEvent.MESSAGE_NOT_DELIVERED, sent, unsent,
                     invalid, m);
             throw new SendFailedException("Unable to send email", e, sent,
-                    unsent, invalid);
+                                          unsent, invalid);
         }
     }
 
@@ -308,9 +314,10 @@ public class AWSJavaMailTransport extends Transport {
      */
     @Override
     protected boolean protocolConnect(String host, int port, String awsAccessKey,
-            String awsSecretKey) {
-        if (isConnected())
+                                      String awsSecretKey) {
+        if (isConnected()) {
             throw new IllegalStateException("Already connected");
+        }
 
         if (isNullOrEmpty(awsAccessKey) || isNullOrEmpty(awsSecretKey)) {
             if (isNullOrEmpty(accessKey) || isNullOrEmpty(secretKey)) {
@@ -345,30 +352,20 @@ public class AWSJavaMailTransport extends Transport {
     }
 
     /**
-    * <p>
-    * The unique message identifier ot the last message sent by <code>sendMessage</code>
-            * </p>
-            *
-            * @return The unique message identifier sent by the last
-    *         <code>sendMessage</code> action.
-    */
+     * <p>
+     * The unique message identifier ot the last message sent by <code>sendMessage</code>
+     * </p>
+     *
+     * @return The unique message identifier sent by the last
+     *         <code>sendMessage</code> action.
+     */
     public String getLastMessageId() {
         return lastMessageId;
-    }
-
-    private static boolean isNullOrEmpty(String s) {
-        return (s == null || s.length() == 0);
-    }
-
-    private static boolean isNullOrEmpty(Object[] o) {
-        return (o == null || o.length == 0);
     }
 
     public <X extends AmazonWebServiceRequest> X appendUserAgent(X request, String userAgent) {
         request.getRequestClientOptions().appendUserAgent(USER_AGENT);
         return request;
     }
-
-    private static final String USER_AGENT = AWSJavaMailTransport.class.getName() + "/" + VersionInfoUtils.getVersion();
 
 }

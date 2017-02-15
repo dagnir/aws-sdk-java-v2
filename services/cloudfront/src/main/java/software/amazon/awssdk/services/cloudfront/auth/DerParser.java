@@ -1,24 +1,19 @@
-
-/****************************************************************************
- * Amazon Modifications: Copyright 2014 Amazon.com, Inc. or its affiliates. 
- * All Rights Reserved.
- *****************************************************************************
- * Copyright (c) 1998-2010 AOL Inc. 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  http://aws.amazon.com/apache2.0
  *
- ****************************************************************************/
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 // http://oauth.googlecode.com/svn/code/branches/jmeter/jmeter/src/main/java/org/apache/jmeter/protocol/oauth/sampler/PrivateKeyReader.java
+
 package software.amazon.awssdk.services.cloudfront.auth;
 
 import java.io.ByteArrayInputStream;
@@ -30,15 +25,15 @@ import java.math.BigInteger;
  * A bare-minimum ASN.1 DER decoder, just having enough functions to decode
  * PKCS#1 private keys. Especially, it doesn't handle explicitly tagged types
  * with an outer tag.
- * 
+ *
  * <p/>
  * This parser can only handle one layer. To parse nested constructs, get a new
  * parser for each layer using <code>Asn1Object.getParser()</code>.
- * 
+ *
  * <p/>
  * There are many DER decoders in JRE but using them will tie this program to a
  * specific JCE/JVM.
- * 
+ *
  * @author zhang
  */
 class DerParser {
@@ -86,7 +81,7 @@ class DerParser {
 
     /**
      * Create a new DER decoder from an input stream.
-     * 
+     *
      * @param in
      *            The DER encoded stream
      */
@@ -96,7 +91,7 @@ class DerParser {
 
     /**
      * Create a new DER decoder from a byte array.
-     * 
+     *
      * @param the encoded bytes
      */
     public DerParser(byte[] bytes) throws IOException {
@@ -111,16 +106,18 @@ class DerParser {
     public Asn1Object read() throws IOException {
         int tag = in.read();
 
-        if (tag == -1)
+        if (tag == -1) {
             throw new IOException("Invalid DER: stream too short, missing tag"); //$NON-NLS-1$
+        }
 
         int length = getLength();
 
         byte[] value = new byte[length];
         int n = in.read(value);
-        if (n < length)
+        if (n < length) {
             throw new IOException(
                     "Invalid DER: stream too short, missing value"); //$NON-NLS-1$
+        }
 
         Asn1Object o = new Asn1Object(tag, length, value);
 
@@ -130,7 +127,7 @@ class DerParser {
     /**
      * Decode the length of the field. Can only support length encoding up to 4
      * octets.
-     * 
+     *
      * <p/>
      * In BER/DER encoding, length can be encoded in 2 forms,
      * <ul>
@@ -141,30 +138,34 @@ class DerParser {
      * length octets. Second and following octets give the length, base 256,
      * most significant digit first.
      * </ul>
-     * 
+     *
      * @return The length as integer
      */
     private int getLength() throws IOException {
 
         int i = in.read();
-        if (i == -1)
+        if (i == -1) {
             throw new IOException("Invalid DER: length missing"); //$NON-NLS-1$
+        }
 
         // A single byte short length
-        if ((i & ~0x7F) == 0)
+        if ((i & ~0x7F) == 0) {
             return i;
+        }
 
         int num = i & 0x7F;
 
         // We can't handle length longer than 4 bytes
-        if (i >= 0xFF || num > 4)
+        if (i >= 0xFF || num > 4) {
             throw new IOException("Invalid DER: length field too big (" //$NON-NLS-1$
-                    + i + ")"); //$NON-NLS-1$
+                                  + i + ")"); //$NON-NLS-1$
+        }
 
         byte[] bytes = new byte[num];
         int n = in.read(bytes);
-        if (n < num)
+        if (n < num) {
             throw new IOException("Invalid DER: length too short"); //$NON-NLS-1$
+        }
 
         return new BigInteger(1, bytes).intValue();
     }

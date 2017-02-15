@@ -28,25 +28,6 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.TestClass;
 
 public class CachingUnmarshallerSetTest {
 
-    private static class TestUnmarshallerSet implements UnmarshallerSet {
-
-        private final Deque<ArgumentUnmarshaller> queue =
-            new ArrayDeque<ArgumentUnmarshaller>();
-
-        private final Deque<ArgumentUnmarshaller> memberQueue =
-            new ArrayDeque<ArgumentUnmarshaller>();
-
-        @Override
-        public ArgumentUnmarshaller getUnmarshaller(Method getter, Method setter) {
-            return queue.remove();
-        }
-
-        @Override
-        public ArgumentUnmarshaller getMemberUnmarshaller(Type type) {
-            return memberQueue.remove();
-        }
-    }
-
     private static final TestUnmarshallerSet mock = new TestUnmarshallerSet();
     private static final UnmarshallerSet sut = new CachingUnmarshallerSet(mock);
 
@@ -95,5 +76,24 @@ public class CachingUnmarshallerSetTest {
                 TestClass.class.getMethod("setInt", int.class));
 
         Assert.assertSame(unmarshaller2, result);
+    }
+
+    private static class TestUnmarshallerSet implements UnmarshallerSet {
+
+        private final Deque<ArgumentUnmarshaller> queue =
+                new ArrayDeque<ArgumentUnmarshaller>();
+
+        private final Deque<ArgumentUnmarshaller> memberQueue =
+                new ArrayDeque<ArgumentUnmarshaller>();
+
+        @Override
+        public ArgumentUnmarshaller getUnmarshaller(Method getter, Method setter) {
+            return queue.remove();
+        }
+
+        @Override
+        public ArgumentUnmarshaller getMemberUnmarshaller(Type type) {
+            return memberQueue.remove();
+        }
     }
 }

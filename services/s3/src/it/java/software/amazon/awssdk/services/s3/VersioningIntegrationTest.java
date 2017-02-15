@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3;
 
 import static org.junit.Assert.assertEquals;
@@ -43,27 +58,25 @@ import software.amazon.awssdk.services.s3.model.VersionListing;
 @Category(S3Categories.Slow.class)
 public class VersioningIntegrationTest extends S3IntegrationTestBase {
 
-    private String bucketName = "java-versioning-integ-test-" + new Date().getTime();
-    private String unversionedKey = "unversionedKey";
-    private String versionedKey = "key";
-    private String deletedKey = "deletedKey";
-
-    public int POLL_TIMEOUT = 5 * 60 * 1000;
-
-    private Map<String, String> fileContentsByVersionId;
     private static final String[] SAMPLE_DATA = new String[] {
             "foobarbazbarbashbarbaz",
             "binbarbashbazfoobarbash",
             "bashbashbinbarbazfoobashbar",
-    };
-
+            };
+    public int POLL_TIMEOUT = 5 * 60 * 1000;
+    private String bucketName = "java-versioning-integ-test-" + new Date().getTime();
+    private String unversionedKey = "unversionedKey";
+    private String versionedKey = "key";
+    private String deletedKey = "deletedKey";
+    private Map<String, String> fileContentsByVersionId;
 
     /** Releases all resources created by these tests */
     @After
     public void tearDown() throws Exception {
         try {
             deleteBucketAndAllVersionedContents(bucketName);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -126,33 +139,33 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
     private void gotestConfigurationOperations() throws Exception {
         // Versioning should always be OFF to start with
         assertEquals(BucketVersioningConfiguration.OFF,
-                getBucketVersioningStatus());
+                     getBucketVersioningStatus());
 
         // Enable versioning and query the configuration to check it
         s3.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(
-                    bucketName,
-                    new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED)));
-        assertEquals(BucketVersioningConfiguration.ENABLED,waitForBucketVersioningStatus(BucketVersioningConfiguration.ENABLED).getStatus());
+                        bucketName,
+                        new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED)));
+        assertEquals(BucketVersioningConfiguration.ENABLED, waitForBucketVersioningStatus(BucketVersioningConfiguration.ENABLED).getStatus());
 
         // Suspend versioning and query the configuration to check it
         s3.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(
-                    bucketName,
-                    new BucketVersioningConfiguration(BucketVersioningConfiguration.SUSPENDED)));
-        assertEquals(BucketVersioningConfiguration.SUSPENDED,waitForBucketVersioningStatus(BucketVersioningConfiguration.SUSPENDED).getStatus());
+                        bucketName,
+                        new BucketVersioningConfiguration(BucketVersioningConfiguration.SUSPENDED)));
+        assertEquals(BucketVersioningConfiguration.SUSPENDED, waitForBucketVersioningStatus(BucketVersioningConfiguration.SUSPENDED).getStatus());
 
         // Enable versioning again so the remaining tests can use versioning features
         s3.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(
-                    bucketName,
-                    new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED)));
-       assertEquals(BucketVersioningConfiguration.ENABLED,waitForBucketVersioningStatus(BucketVersioningConfiguration.ENABLED).getStatus());
+                        bucketName,
+                        new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED)));
+        assertEquals(BucketVersioningConfiguration.ENABLED, waitForBucketVersioningStatus(BucketVersioningConfiguration.ENABLED).getStatus());
     }
 
     protected String getBucketVersioningStatus() {
         String status = s3.getBucketVersioningConfiguration(bucketName)
-                .getStatus();
+                          .getStatus();
         System.err.println("Status is: " + status);
         return status;
     }
@@ -165,19 +178,20 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         long startTime = System.currentTimeMillis();
         long endTime = startTime + (10 * 60 * 1000);
         int hits = 0;
-        BucketVersioningConfiguration versioningConfiguration=s3.getBucketVersioningConfiguration(bucketName);
-        while (System.currentTimeMillis() < endTime ) {
-            versioningConfiguration=s3.getBucketVersioningConfiguration(bucketName);
+        BucketVersioningConfiguration versioningConfiguration = s3.getBucketVersioningConfiguration(bucketName);
+        while (System.currentTimeMillis() < endTime) {
+            versioningConfiguration = s3.getBucketVersioningConfiguration(bucketName);
             if (!versioningConfiguration.getStatus().equals(status)) {
                 hits = 0;
                 Thread.sleep(1000);
             }
-            if(hits ++ == 10)
+            if (hits++ == 10) {
                 return versioningConfiguration;
+            }
         }
 
-            maxPollTimeExceeded();
-            return null;
+        maxPollTimeExceeded();
+        return null;
 
     }
 
@@ -189,25 +203,26 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         // Upload the sample data and return the created version IDs
         fileContentsByVersionId = new HashMap<String, String>();
 
-        for ( int index = 0; index < SAMPLE_DATA.length; index++ ) {
+        for (int index = 0; index < SAMPLE_DATA.length; index++) {
             String s = SAMPLE_DATA[index];
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(s.getBytes().length);
             PutObjectResult putObjectResult = s3.putObject(bucketName, versionedKey,
-                    new ByteArrayInputStream(s.getBytes()), metadata);
+                                                           new ByteArrayInputStream(s.getBytes()), metadata);
             assertNotEmpty(putObjectResult.getVersionId());
             assertNotEmpty(putObjectResult.getETag());
             int poll = 0;
-            int hits=0;
-            while (poll++ < 60 * 10 && hits<=10) {
-                if(!doesObjectExist(bucketName, versionedKey, putObjectResult.getVersionId())){
-                Thread.sleep(1000);
+            int hits = 0;
+            while (poll++ < 60 * 10 && hits <= 10) {
+                if (!doesObjectExist(bucketName, versionedKey, putObjectResult.getVersionId())) {
+                    Thread.sleep(1000);
                 }
                 hits++;
             }
-            if ( poll >= 60 * 10 )
+            if (poll >= 60 * 10) {
                 maxPollTimeExceeded();
+            }
             fileContentsByVersionId.put(putObjectResult.getVersionId(), s);
         }
     }
@@ -228,8 +243,8 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         assertEquals(Constants.NULL_VERSION_ID, object.getObjectMetadata().getVersionId());
 
         // Version aware GET should be able to access all versions of an object
-        for ( java.util.Iterator iterator = fileContentsByVersionId.keySet().iterator(); iterator.hasNext(); ) {
-            String versionId = (String)iterator.next();
+        for (java.util.Iterator iterator = fileContentsByVersionId.keySet().iterator(); iterator.hasNext(); ) {
+            String versionId = (String) iterator.next();
             GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, versionedKey, versionId);
             s3Object = s3.getObject(getObjectRequest);
             assertEquals(versionId, s3Object.getObjectMetadata().getVersionId());
@@ -249,7 +264,7 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         assertNotNull(result.getLastModifiedDate());
         assertNotEmpty(result.getVersionId());
 
-        String versionId = (String)fileContentsByVersionId.keySet().toArray()[0];
+        String versionId = (String) fileContentsByVersionId.keySet().toArray()[0];
 
         // version aware copy to a different object
         request = new CopyObjectRequest(bucketName, versionedKey, versionId, bucketName, "newVersionedKey");
@@ -274,8 +289,8 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         ObjectMetadata metadata = s3.getObjectMetadata(bucketName, versionedKey);
         assertNotEmpty(metadata.getVersionId());
 
-        for ( java.util.Iterator iterator = fileContentsByVersionId.keySet().iterator(); iterator.hasNext(); ) {
-            String versionId = (String)iterator.next();
+        for (java.util.Iterator iterator = fileContentsByVersionId.keySet().iterator(); iterator.hasNext(); ) {
+            String versionId = (String) iterator.next();
             metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(bucketName, versionedKey, versionId));
             assertNotEmpty(metadata.getVersionId());
         }
@@ -290,7 +305,7 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
      * Tests that we can PUT ACLs for specific versions of objects.
      */
     private void gotestPutAcl() throws Exception {
-        String versionId = (String)fileContentsByVersionId.keySet().toArray()[1];
+        String versionId = (String) fileContentsByVersionId.keySet().toArray()[1];
 
         // version aware on a specific version
         s3.setObjectAcl(bucketName, versionedKey, versionId, CannedAccessControlList.PublicRead);
@@ -311,7 +326,7 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
      * set ACLs for earlier.
      */
     private void gotestGetAcl() throws Exception {
-        String versionId = (String)fileContentsByVersionId.keySet().toArray()[1];
+        String versionId = (String) fileContentsByVersionId.keySet().toArray()[1];
 
         // version aware on a specific version
         AccessControlList acl = s3.getObjectAcl(bucketName, versionedKey, versionId);
@@ -355,9 +370,9 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         assertNull(versionListing.getEncodingType());
         assertFalse(versionListing.isTruncated());
 
-        for ( java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+        for (java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
             Object summaryObject = iterator.next();
-            S3VersionSummary summary = (S3VersionSummary)summaryObject;
+            S3VersionSummary summary = (S3VersionSummary) summaryObject;
             assertValidVersionSummary(summary);
         }
 
@@ -376,14 +391,14 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         assertEquals("aa", versionListing.getPrefix());
         assertTrue(versionListing.getVersionSummaries().size() > 0);
         assertFalse(versionListing.isTruncated());
-        for ( java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+        for (java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
             Object summaryObject = iterator.next();
-            S3VersionSummary summary = (S3VersionSummary)summaryObject;
+            S3VersionSummary summary = (S3VersionSummary) summaryObject;
             assertValidVersionSummary(summary);
         }
 
         // Test with a very low maxKeys to get a truncated result...
-        versionListing = s3.listVersions(new ListVersionsRequest(bucketName, null, null, null, null, new Integer( 2 )));
+        versionListing = s3.listVersions(new ListVersionsRequest(bucketName, null, null, null, null, new Integer(2)));
         assertEquals(bucketName, versionListing.getBucketName());
         assertEquals(0, versionListing.getCommonPrefixes().size());
         assertNull(versionListing.getDelimiter());
@@ -396,9 +411,9 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         assertNull(versionListing.getPrefix());
         assertEquals(2, versionListing.getVersionSummaries().size());
         assertTrue(versionListing.isTruncated());
-        for ( java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+        for (java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
             Object summaryObject = iterator.next();
-            S3VersionSummary summary = (S3VersionSummary)summaryObject;
+            S3VersionSummary summary = (S3VersionSummary) summaryObject;
             assertValidVersionSummary(summary);
         }
 
@@ -420,9 +435,9 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         assertTrue(versionListing.isTruncated());
 
 
-        for ( java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+        for (java.util.Iterator iterator = versionListing.getVersionSummaries().iterator(); iterator.hasNext(); ) {
             Object summaryObject = iterator.next();
-            S3VersionSummary summary = (S3VersionSummary)summaryObject;
+            S3VersionSummary summary = (S3VersionSummary) summaryObject;
             assertValidVersionSummary(summary);
         }
 
@@ -452,7 +467,7 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
         // Test list versions with encoding-type parameter
         String encodingType = "url";
         versionListing = s3.listVersions(new ListVersionsRequest(bucketName, null, null, null, null, null)
-            .withEncodingType(encodingType));
+                                                 .withEncodingType(encodingType));
         assertEquals(encodingType, versionListing.getEncodingType());
 
     }
@@ -463,7 +478,7 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
      * object with a delete marker when no version is specified.
      */
     private void gotestDeleteObject() throws Exception {
-        String versionId = (String)fileContentsByVersionId.keySet().toArray()[1];
+        String versionId = (String) fileContentsByVersionId.keySet().toArray()[1];
 
         // version unaware on the head version of a versioned file
         s3.deleteObject(bucketName, versionedKey);

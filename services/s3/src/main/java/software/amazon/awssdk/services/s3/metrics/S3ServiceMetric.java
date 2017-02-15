@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.metrics;
 
 import software.amazon.awssdk.metrics.ServiceMetricType;
@@ -27,6 +28,35 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  */
 public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricType {
     static final String SERVICE_NAME_PREFIX = "S3";
+    public static final S3ServiceMetric S3DownloadByteCount = new S3ServiceMetric(
+            metricName(DOWNLOAD_BYTE_COUNT_NAME_SUFFIX));
+    public static final S3ThroughputMetric S3DownloadThroughput = new S3ThroughputMetric(
+            metricName(DOWNLOAD_THROUGHPUT_NAME_SUFFIX)) {
+        @Override
+        public ServiceMetricType getByteCountMetricType() {
+            return S3DownloadByteCount;
+        }
+    };
+    public static final S3ServiceMetric S3UploadByteCount = new S3ServiceMetric(
+            metricName(UPLOAD_BYTE_COUNT_NAME_SUFFIX));
+    public static final S3ThroughputMetric S3UploadThroughput = new S3ThroughputMetric(
+            metricName(UPLOAD_THROUGHPUT_NAME_SUFFIX)) {
+        @Override
+        public ServiceMetricType getByteCountMetricType() {
+            return S3UploadByteCount;
+        }
+    };
+    private static final S3ServiceMetric[] values = {
+            S3DownloadThroughput,
+            S3DownloadByteCount,
+            S3UploadThroughput,
+            S3UploadByteCount
+    };
+    private final String name;
+
+    private S3ServiceMetric(String name) {
+        this.name = name;
+    }
 
     /**
      * Returns a metric name by concatenating the service name prefix with the
@@ -36,35 +66,28 @@ public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricTy
         return SERVICE_NAME_PREFIX + suffix;
     }
 
-    public static final S3ThroughputMetric S3DownloadThroughput = new S3ThroughputMetric(
-            metricName(DOWNLOAD_THROUGHPUT_NAME_SUFFIX)) {
-        @Override
-        public ServiceMetricType getByteCountMetricType() {
-            return S3DownloadByteCount;
-        }
-    };
-    public static final S3ServiceMetric S3DownloadByteCount = new S3ServiceMetric(
-            metricName(DOWNLOAD_BYTE_COUNT_NAME_SUFFIX));
-    public static final S3ThroughputMetric S3UploadThroughput = new S3ThroughputMetric(
-            metricName(UPLOAD_THROUGHPUT_NAME_SUFFIX)) {
-        @Override
-        public ServiceMetricType getByteCountMetricType() {
-            return S3UploadByteCount;
-        }
-    };
-    public static final S3ServiceMetric S3UploadByteCount = new S3ServiceMetric(
-            metricName(UPLOAD_BYTE_COUNT_NAME_SUFFIX));
-    private static final S3ServiceMetric[] values = {
-        S3DownloadThroughput,
-        S3DownloadByteCount,
-        S3UploadThroughput,
-        S3UploadByteCount
-    };
+    public static S3ServiceMetric[] values() {
+        return values.clone();
+    }
 
-    private final String name;
-    private S3ServiceMetric(String name) { this.name = name; }
-    @Override public String name() { return name; }
-    @Override public String getServiceName() {
+    public static S3ServiceMetric valueOf(String name) {
+        for (S3ServiceMetric e : values()) {
+            if (e.name().equals(name)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("No S3ServiceMetric defined for the name " + name);
+    }
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    ;
+
+    @Override
+    public String getServiceName() {
         return Constants.S3_SERVICE_DISPLAY_NAME;
     }
 
@@ -73,15 +96,5 @@ public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricTy
         private S3ThroughputMetric(String name) {
             super(name);
         }
-    };
-
-    public static S3ServiceMetric[] values() { return values.clone(); }
-    public static S3ServiceMetric valueOf(String name) {
-        for (S3ServiceMetric e: values()) {
-            if (e.name().equals(name)) {
-                return e;
-            }
-        }
-        throw new IllegalArgumentException("No S3ServiceMetric defined for the name "+ name);
     }
 }

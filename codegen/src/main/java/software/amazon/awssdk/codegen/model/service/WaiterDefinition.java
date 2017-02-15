@@ -27,7 +27,8 @@ public class WaiterDefinition {
 
     private List<Acceptor> acceptors;
 
-    public WaiterDefinition(){}
+    public WaiterDefinition() {
+    }
 
     public int getDelay() {
         return delay;

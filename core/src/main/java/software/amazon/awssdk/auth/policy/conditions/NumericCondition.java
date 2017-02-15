@@ -24,16 +24,6 @@ import software.amazon.awssdk.auth.policy.Condition;
  */
 public class NumericCondition extends Condition {
 
-    /** Enumeration of the supported ways a numeric comparison can be evaluated */
-    public static enum NumericComparisonType {
-        NumericEquals,
-        NumericGreaterThan,
-        NumericGreaterThanEquals,
-        NumericLessThan,
-        NumericLessThanEquals,
-        NumericNotEquals;
-    };
-
     /**
      * Constructs a new access policy condition that compares two numbers.
      *
@@ -49,6 +39,18 @@ public class NumericCondition extends Condition {
         super.type = type.toString();
         super.conditionKey = key;
         super.values = Arrays.asList(new String[] {value});
+    }
+
+    ;
+
+    /** Enumeration of the supported ways a numeric comparison can be evaluated */
+    public static enum NumericComparisonType {
+        NumericEquals,
+        NumericGreaterThan,
+        NumericGreaterThanEquals,
+        NumericLessThan,
+        NumericLessThanEquals,
+        NumericNotEquals;
     }
 
 }

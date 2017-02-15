@@ -33,6 +33,35 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 
     private AWSIotDataClient iot;
 
+    private static ByteBuffer getPayloadAsByteBuffer(String payloadString) {
+        return ByteBuffer.wrap(payloadString.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static JsonNode getPaylaodAsJsonNode(ByteBuffer payload) throws IOException {
+        return new ObjectMapper().readTree(payload.duplicate().array());
+    }
+
+    private static void assertPayloadNonEmpty(ByteBuffer payload) {
+        assertThat(payload.capacity(), greaterThan(0));
+    }
+
+    /**
+     * Asserts that the returned payload has the correct state in the JSON document. It should be
+     * exactly what we sent it plus some additional metadata
+     *
+     * @param originalPayload
+     *            ByteBuffer we sent to the service containing just the state
+     * @param returnedPayload
+     *            ByteBuffer returned by the service containing the state (which should be the same
+     *            as what we sent) plus additional metadata in the JSON document
+     * @throws Exception
+     */
+    private static void assertPayloadIsValid(ByteBuffer originalPayload, ByteBuffer returnedPayload) throws Exception {
+        JsonNode originalJson = getPaylaodAsJsonNode(originalPayload);
+        JsonNode returnedJson = getPaylaodAsJsonNode(returnedPayload);
+        assertEquals(originalJson.get(STATE_FIELD_NAME), returnedJson.get(STATE_FIELD_NAME));
+    }
+
     @Before
     public void setup() throws Exception {
         iot = new AWSIotDataClient(getCredentials());
@@ -41,7 +70,7 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
 
     @Test
     public void publish_ValidTopicAndNonEmptyPayload_DoesNotThrowException() {
-        iot.publish(new PublishRequest().withTopic(THING_NAME).withPayload(ByteBuffer.wrap(new byte[] { 1, 2, 3, 4 })));
+        iot.publish(new PublishRequest().withTopic(THING_NAME).withPayload(ByteBuffer.wrap(new byte[] {1, 2, 3, 4})));
     }
 
     @Test
@@ -71,7 +100,7 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     public void updateThingShadow_MalformedPayload_ThrowsServiceException() throws Exception {
         ByteBuffer payload = getPayloadAsByteBuffer("{ }");
         UpdateThingShadowRequest request = new UpdateThingShadowRequest().withThingName(THING_NAME)
-                .withPayload(payload);
+                                                                         .withPayload(payload);
         iot.updateThingShadow(request);
     }
 
@@ -97,7 +126,7 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     private void updateThingShadow_ValidRequest_ReturnsValidResponse(String thingName) throws Exception {
         ByteBuffer originalPayload = getPayloadAsByteBuffer("{ \"state\": {\"reported\":{ \"r\": {}}}}");
         UpdateThingShadowRequest request = new UpdateThingShadowRequest().withThingName(thingName)
-                .withPayload(originalPayload);
+                                                                         .withPayload(originalPayload);
         UpdateThingShadowResult result = iot.updateThingShadow(request);
 
         // Comes back with some extra metadata so we assert it's bigger than the original
@@ -114,35 +143,6 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     private void deleteThingShadow_ValidThing_DeletesSuccessfully(String thingName) {
         DeleteThingShadowResult result = iot.deleteThingShadow(new DeleteThingShadowRequest().withThingName(thingName));
         assertPayloadNonEmpty(result.getPayload());
-    }
-
-    private static ByteBuffer getPayloadAsByteBuffer(String payloadString) {
-        return ByteBuffer.wrap(payloadString.getBytes(StandardCharsets.UTF_8));
-    }
-
-    private static JsonNode getPaylaodAsJsonNode(ByteBuffer payload) throws IOException {
-        return new ObjectMapper().readTree(payload.duplicate().array());
-    }
-
-    private static void assertPayloadNonEmpty(ByteBuffer payload) {
-        assertThat(payload.capacity(), greaterThan(0));
-    }
-
-    /**
-     * Asserts that the returned payload has the correct state in the JSON document. It should be
-     * exactly what we sent it plus some additional metadata
-     * 
-     * @param originalPayload
-     *            ByteBuffer we sent to the service containing just the state
-     * @param returnedPayload
-     *            ByteBuffer returned by the service containing the state (which should be the same
-     *            as what we sent) plus additional metadata in the JSON document
-     * @throws Exception
-     */
-    private static void assertPayloadIsValid(ByteBuffer originalPayload, ByteBuffer returnedPayload) throws Exception {
-        JsonNode originalJson = getPaylaodAsJsonNode(originalPayload);
-        JsonNode returnedJson = getPaylaodAsJsonNode(returnedPayload);
-        assertEquals(originalJson.get(STATE_FIELD_NAME), returnedJson.get(STATE_FIELD_NAME));
     }
 
 }

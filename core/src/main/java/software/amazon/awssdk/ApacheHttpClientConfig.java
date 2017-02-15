@@ -25,7 +25,8 @@ import software.amazon.awssdk.annotation.NotThreadSafe;
 public final class ApacheHttpClientConfig {
     private ConnectionSocketFactory sslSocketFactory;
 
-    ApacheHttpClientConfig() {}
+    ApacheHttpClientConfig() {
+    }
 
     ApacheHttpClientConfig(ApacheHttpClientConfig that) {
         this.sslSocketFactory = that.sslSocketFactory;
@@ -41,7 +42,7 @@ public final class ApacheHttpClientConfig {
 
     /**
      * Sets a custom Apache HTTP client specific SSL socket factory.
-     * 
+     *
      * @param sslSocketFactory a custom Apache HTTP client specific SSL socket 
      * factory; or null if there is none.
      */
@@ -52,7 +53,7 @@ public final class ApacheHttpClientConfig {
     /**
      * Fluent API for setting a custom Apache HTTP client specific SSL socket
      * factory.
-     * 
+     *
      * @param sslSocketFactory a custom Apache HTTP client specific SSL socket 
      * factory; or null if there is none.
      */

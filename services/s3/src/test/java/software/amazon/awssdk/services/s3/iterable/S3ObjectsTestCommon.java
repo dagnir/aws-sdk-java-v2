@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.iterable;
 
 import static org.junit.Assert.assertEquals;
@@ -25,7 +40,7 @@ import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 public abstract class S3ObjectsTestCommon {
 
     protected S3Objects s3Objects;
-    protected  AmazonS3 s3;
+    protected AmazonS3 s3;
 
     private ObjectListing objectListing;
     private S3ObjectSummary firstSummary;
@@ -50,7 +65,7 @@ public abstract class S3ObjectsTestCommon {
         secondSummary = mock(S3ObjectSummary.class);
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRemoveNotSupported() throws Exception {
         s3Objects.iterator().remove();
     }
@@ -74,7 +89,7 @@ public abstract class S3ObjectsTestCommon {
         ArgumentCaptor<ListObjectsRequest> listCaptor = ArgumentCaptor
                 .forClass(ListObjectsRequest.class);
         verify(s3).listObjects(listCaptor.capture());
-        assertEquals((Integer)12, listCaptor.getValue().getMaxKeys());
+        assertEquals((Integer) 12, listCaptor.getValue().getMaxKeys());
     }
 
     @Test

@@ -1,16 +1,16 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.s3.internal;
@@ -45,69 +45,48 @@ import software.amazon.awssdk.util.IOUtils;
 
 public class ServiceUtilsIntegrationTest extends S3IntegrationTestBase {
 
-    /** Logger to log events */
-    private static final Log LOG = LogFactory.getLog(ServiceUtilsIntegrationTest.class);
-
-    /** Reference to the Transfer manager instance used for testing */
-    private static TransferManager tm;
-
-    /** The bucket used for these tests */
-    private final static String BUCKET_NAME = "java-serviceutils-integ-test-" + new Date().getTime();
-
-    /** The key used for testing multipart object */
-    private final static String MULTIPART_OBJECT_KEY = "multiPartkey";
-
-    /** The key used for testing non multipart object */
-    private final static String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
-
-    /** The key used for testing multipart object with Server-side encryption */
-    private final static String MULTIPART_OBJECT_KEY_WITH_SSE = "multiPartkey-sse";
-
-    /** The key used for testing non multipart object with Server-side encryption */
-    private final static String NON_MULTIPART_OBJECT_KEY_WITH_SSE = "nonMultiPartkey-sse";
-
-    /** The customer provided server-side encryption key */
-    private static final SSECustomerKey SSE_KEY = new SSECustomerKey(CryptoTestUtils.getTestSecretKey());
-
-    /** The size of the multipart object uploaded to S3 */
-    private final static long MULTIPART_OBJECT_SIZE = 7 * MB;
-
-    /** The size of the non multipart object uploaded to S3 */
-    private final static long NON_MULTIPART_OBJECT_SIZE = 2 * MB;
-
     /** Default upload threshold for multipart uploads */
     protected static final long DEFAULT_MULTIPART_UPLOAD_THRESHOLD = 5 * MB;
-
     /** Default part size for multipart uploads */
     protected static final long DEFAULT_MULTIPART_UPLOAD_PART_SIZE = 5 * MB;
-
+    /** Logger to log events */
+    private static final Log LOG = LogFactory.getLog(ServiceUtilsIntegrationTest.class);
+    /** The bucket used for these tests */
+    private final static String BUCKET_NAME = "java-serviceutils-integ-test-" + new Date().getTime();
+    /** The key used for testing multipart object */
+    private final static String MULTIPART_OBJECT_KEY = "multiPartkey";
+    /** The key used for testing non multipart object */
+    private final static String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
+    /** The key used for testing multipart object with Server-side encryption */
+    private final static String MULTIPART_OBJECT_KEY_WITH_SSE = "multiPartkey-sse";
+    /** The key used for testing non multipart object with Server-side encryption */
+    private final static String NON_MULTIPART_OBJECT_KEY_WITH_SSE = "nonMultiPartkey-sse";
+    /** The customer provided server-side encryption key */
+    private static final SSECustomerKey SSE_KEY = new SSECustomerKey(CryptoTestUtils.getTestSecretKey());
+    /** The size of the multipart object uploaded to S3 */
+    private final static long MULTIPART_OBJECT_SIZE = 7 * MB;
+    /** The size of the non multipart object uploaded to S3 */
+    private final static long NON_MULTIPART_OBJECT_SIZE = 2 * MB;
     /** Number of parts in the multi part object */
     private static final int PARTCOUNT = (int) Math.ceil((double) MULTIPART_OBJECT_SIZE / DEFAULT_MULTIPART_UPLOAD_PART_SIZE);
-
-    /** File that contains the multipart data uploaded to S3 */
-    private static File multiPartFile;
-
-    /** File that contains the non multipart data uploaded to S3 */
-    private static File nonMultiPartFile;
-
-    /** Name of the source file used for testing append function */
-    private static File srcFile;
-
-    /** Name of the source file used for testing append function */
-    private static File dstFile;
-
     /** Name of the source file used for testing append function */
     private final static String SRC_FILE_NAME = "src";
-
     /** Name of the destination file used for testing append function */
     private final static String DST_FILE_NAME = "dst";
-
     /** Size of the source file used for testing append function */
     private final static long SRC_FILE_SIZE = 1 * KB;
-
     /** Size of the destination file used for testing append function */
     private final static long DST_FILE_SIZE = 2 * KB;
-
+    /** Reference to the Transfer manager instance used for testing */
+    private static TransferManager tm;
+    /** File that contains the multipart data uploaded to S3 */
+    private static File multiPartFile;
+    /** File that contains the non multipart data uploaded to S3 */
+    private static File nonMultiPartFile;
+    /** Name of the source file used for testing append function */
+    private static File srcFile;
+    /** Name of the source file used for testing append function */
+    private static File dstFile;
     /** Inputstream resource to read data from files */
     private static InputStream inputStream;
 
@@ -153,6 +132,20 @@ public class ServiceUtilsIntegrationTest extends S3IntegrationTestBase {
         // Upload object with Server-side encryption
         myUpload = tm.upload(new PutObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY_WITH_SSE, multiPartFile).withSSECustomerKey(SSE_KEY));
         myUpload.waitForCompletion();
+    }
+
+    /**
+     * Relases the resources at the end of all tests.
+     */
+    @AfterClass
+    public static void tearDown() throws Exception {
+        CryptoTestUtils.deleteBucketAndAllContents(s3, BUCKET_NAME);
+        if (multiPartFile != null) {
+            multiPartFile.deleteOnExit();
+        }
+        if (nonMultiPartFile != null) {
+            nonMultiPartFile.deleteOnExit();
+        }
     }
 
     /**
@@ -352,19 +345,5 @@ public class ServiceUtilsIntegrationTest extends S3IntegrationTestBase {
             dstFile.delete();
         }
         IOUtils.closeQuietly(inputStream, LOG);
-    }
-
-    /**
-     * Relases the resources at the end of all tests.
-     */
-    @AfterClass
-    public static void tearDown() throws Exception {
-        CryptoTestUtils.deleteBucketAndAllContents(s3, BUCKET_NAME);
-        if (multiPartFile != null) {
-            multiPartFile.deleteOnExit();
-        }
-        if (nonMultiPartFile != null) {
-            nonMultiPartFile.deleteOnExit();
-        }
     }
 }

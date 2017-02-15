@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -45,16 +45,17 @@ public class BatchGetItemSpec extends AbstractSpec<BatchGetItemRequest> {
     }
 
     public BatchGetItemSpec withTableKeyAndAttributes(
-            TableKeysAndAttributes ... tableKeyAndAttributes) {
-        if (tableKeyAndAttributes == null)
+            TableKeysAndAttributes... tableKeyAndAttributes) {
+        if (tableKeyAndAttributes == null) {
             this.tableKeyAndAttributes = null;
-        else {
+        } else {
             Set<String> names = new LinkedHashSet<String>();
-            for (TableKeysAndAttributes e: tableKeyAndAttributes)
+            for (TableKeysAndAttributes e : tableKeyAndAttributes) {
                 names.add(e.getTableName());
+            }
             if (names.size() != tableKeyAndAttributes.length) {
                 throw new IllegalArgumentException(
-                    "table names must not duplicate in the list of TableKeysAndAttributes");
+                        "table names must not duplicate in the list of TableKeysAndAttributes");
             }
             this.tableKeyAndAttributes = Arrays.asList(tableKeyAndAttributes);
         }

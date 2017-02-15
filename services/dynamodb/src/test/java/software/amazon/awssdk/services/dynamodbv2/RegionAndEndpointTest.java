@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import junit.framework.Assert;
@@ -26,7 +41,7 @@ public class RegionAndEndpointTest {
         Assert.assertEquals(DYNAMODB, signer.getServiceName());
         // Current don't have a better way to verify the signer region
         Assert.assertEquals(US_WEST_2,
-                AwsHostNameUtils.parseRegionName(endpoint, signer.getServiceName()));
+                            AwsHostNameUtils.parseRegionName(endpoint, signer.getServiceName()));
     }
 
     @Test
@@ -56,7 +71,7 @@ public class RegionAndEndpointTest {
         Assert.assertEquals(DYNAMODB, signer.getServiceName());
         // Current don't have a better way to verify the signer region
         Assert.assertEquals(US_WEST_2,
-                AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.getServiceName()));
+                            AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.getServiceName()));
     }
 
     @Test
@@ -71,7 +86,7 @@ public class RegionAndEndpointTest {
         Assert.assertEquals(DYNAMODB, signer.getServiceName());
         // Current don't have a better way to verify the signer region
         Assert.assertEquals(CN_NORTH_1,
-                AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.getServiceName()));
+                            AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.getServiceName()));
     }
 
     /**
@@ -80,8 +95,9 @@ public class RegionAndEndpointTest {
      */
     static class TestAmazonDynamoDBStreamsClient extends AmazonDynamoDBStreamsClient {
         public AWS4Signer getSigner() {
-            return (AWS4Signer)super.getSigner();
+            return (AWS4Signer) super.getSigner();
         }
+
         public String getEndpointHost() {
             return endpoint.getHost();
         }

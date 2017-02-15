@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2;
 
 import static org.junit.Assert.assertEquals;
@@ -27,11 +42,11 @@ import utils.test.util.DynamoDBTestBase;
  * DynamoDB integration tests on the low-level parallel scan operation.
  */
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources({
-        @RequiredResource(resource = TestTableForParallelScan.class,
-                creationPolicy = ResourceCreationPolicy.REUSE_EXISTING,
-                retentionPolicy = ResourceRetentionPolicy.KEEP)
-})
+@RequiredResources( {
+                            @RequiredResource(resource = TestTableForParallelScan.class,
+                                              creationPolicy = ResourceCreationPolicy.REUSE_EXISTING,
+                                              retentionPolicy = ResourceRetentionPolicy.KEEP)
+                    })
 public class ParallelScanIntegrationTest extends DynamoDBTestBase {
 
     private static final String tableName = TestTableForParallelScan.TABLE_NAME;
@@ -47,6 +62,23 @@ public class ParallelScanIntegrationTest extends DynamoDBTestBase {
     @BeforeClass
     public static void setUp() {
         DynamoDBTestBase.setUpTestBase();
+    }
+
+    private static void putTestData() {
+        Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
+        Random random = new Random();
+        for (int hashKeyValue = 0; hashKeyValue < itemNumber; hashKeyValue++) {
+            item.put(HASH_KEY_NAME, new AttributeValue().withN(Integer.toString(hashKeyValue)));
+            item.put(ATTRIBUTE_RANDOM, new AttributeValue().withN(Integer.toString(random.nextInt(itemNumber))));
+            if (hashKeyValue < itemNumber / 2) {
+                item.put(ATTRIBUTE_FOO, new AttributeValue().withN(Integer.toString(hashKeyValue)));
+            } else {
+                item.put(ATTRIBUTE_BAR, new AttributeValue().withN(Integer.toString(hashKeyValue)));
+            }
+
+            dynamo.putItem(new PutItemRequest(tableName, item));
+            item.clear();
+        }
     }
 
     /**
@@ -85,30 +117,13 @@ public class ParallelScanIntegrationTest extends DynamoDBTestBase {
                                     new Condition().withAttributeValueList(
                                             new AttributeValue().withN(""
                                                                        + itemNumber / 2))
-                                            .withComparisonOperator(
-                                                    ComparisonOperator.LT
-                                                            .toString())))
+                                                   .withComparisonOperator(
+                                                           ComparisonOperator.LT
+                                                                   .toString())))
                     .withTotalSegments(totalSegments).withSegment(segment);
             scanResult = dynamo.scan(scanRequest);
             filteredItemsInSegments += scanResult.getCount();
         }
         assertEquals(filteredItems, filteredItemsInSegments);
-    }
-
-    private static void putTestData() {
-        Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        Random random = new Random();
-        for (int hashKeyValue = 0; hashKeyValue < itemNumber; hashKeyValue++) {
-            item.put(HASH_KEY_NAME, new AttributeValue().withN(Integer.toString(hashKeyValue)));
-            item.put(ATTRIBUTE_RANDOM, new AttributeValue().withN(Integer.toString(random.nextInt(itemNumber))));
-            if (hashKeyValue < itemNumber / 2) {
-                item.put(ATTRIBUTE_FOO, new AttributeValue().withN(Integer.toString(hashKeyValue)));
-            } else {
-                item.put(ATTRIBUTE_BAR, new AttributeValue().withN(Integer.toString(hashKeyValue)));
-            }
-
-            dynamo.putItem(new PutItemRequest(tableName, item));
-            item.clear();
-        }
     }
 }

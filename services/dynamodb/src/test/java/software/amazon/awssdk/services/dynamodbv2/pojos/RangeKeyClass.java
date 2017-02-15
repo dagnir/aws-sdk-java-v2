@@ -1,16 +1,16 @@
 /*
- * Copyright 2013-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.dynamodbv2.pojos;
@@ -119,50 +119,65 @@ public class RangeKeyClass {
 
     @Override
     public boolean equals(Object obj) {
-        if ( this == obj )
+        if (this == obj) {
             return true;
-        if ( obj == null )
+        }
+        if (obj == null) {
             return false;
-        if ( getClass() != obj.getClass() )
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         RangeKeyClass other = (RangeKeyClass) obj;
-        if ( bigDecimalAttribute == null ) {
-            if ( other.bigDecimalAttribute != null )
+        if (bigDecimalAttribute == null) {
+            if (other.bigDecimalAttribute != null) {
                 return false;
-        } else if ( !bigDecimalAttribute.equals(other.bigDecimalAttribute) )
+            }
+        } else if (!bigDecimalAttribute.equals(other.bigDecimalAttribute)) {
             return false;
-        if ( integerSetAttribute == null ) {
-            if ( other.integerSetAttribute != null )
+        }
+        if (integerSetAttribute == null) {
+            if (other.integerSetAttribute != null) {
                 return false;
-        } else if ( !integerSetAttribute.equals(other.integerSetAttribute) )
+            }
+        } else if (!integerSetAttribute.equals(other.integerSetAttribute)) {
             return false;
-        if ( key != other.key )
+        }
+        if (key != other.key) {
             return false;
-        if ( Double.doubleToLongBits(rangeKey) != Double.doubleToLongBits(other.rangeKey) )
+        }
+        if (Double.doubleToLongBits(rangeKey) != Double.doubleToLongBits(other.rangeKey)) {
             return false;
-        if ( stringAttribute == null ) {
-            if ( other.stringAttribute != null )
+        }
+        if (stringAttribute == null) {
+            if (other.stringAttribute != null) {
                 return false;
-        } else if ( !stringAttribute.equals(other.stringAttribute) )
+            }
+        } else if (!stringAttribute.equals(other.stringAttribute)) {
             return false;
-        if ( stringSetAttribute == null ) {
-            if ( other.stringSetAttribute != null )
+        }
+        if (stringSetAttribute == null) {
+            if (other.stringSetAttribute != null) {
                 return false;
-        } else if ( !stringSetAttribute.equals(other.stringSetAttribute) )
+            }
+        } else if (!stringSetAttribute.equals(other.stringSetAttribute)) {
             return false;
-        if ( version == null ) {
-            if ( other.version != null )
+        }
+        if (version == null) {
+            if (other.version != null) {
                 return false;
-        } else if ( !version.equals(other.version) )
+            }
+        } else if (!version.equals(other.version)) {
             return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
         return "RangeKeyClass [key=" + key + ", rangeKey=" + rangeKey + ", version=" + version
-                + ", integerSetAttribute=" + integerSetAttribute + ", stringSetAttribute=" + stringSetAttribute
-                + ", bigDecimalAttribute=" + bigDecimalAttribute + ", stringAttribute=" + stringAttribute + "]";
+               + ", integerSetAttribute=" + integerSetAttribute + ", stringSetAttribute=" + stringSetAttribute
+               + ", bigDecimalAttribute=" + bigDecimalAttribute + ", stringAttribute=" + stringAttribute + "]";
     }
 
 }

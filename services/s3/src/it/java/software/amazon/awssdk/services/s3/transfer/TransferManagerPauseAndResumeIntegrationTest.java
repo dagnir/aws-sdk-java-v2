@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.s3.transfer;
 
 import static org.junit.Assert.assertEquals;
@@ -48,8 +63,7 @@ import software.amazon.awssdk.util.json.Jackson;
 
 @Category(S3Categories.ReallySlow.class)
 public class TransferManagerPauseAndResumeIntegrationTest extends
-        S3IntegrationTestBase
-{
+                                                          S3IntegrationTestBase {
     private static final boolean DEBUG = false;
     private static final boolean cleanup = true;
     /** Test object size to be created in Amazon S3. */
@@ -58,16 +72,16 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     private static final long START_BYTE = 10;
     private static final long END_BYTE = 94371840;
 
-//    private static final long TEST_OBJECT_CONTENT_LENTH = 20 * MB;
-//    private static final long INTERRUUPT_SIZE = 10 * MB;
-//    private static final long END_BYTE = TEST_OBJECT_CONTENT_LENTH - 1000;
+    //    private static final long TEST_OBJECT_CONTENT_LENTH = 20 * MB;
+    //    private static final long INTERRUUPT_SIZE = 10 * MB;
+    //    private static final long END_BYTE = TEST_OBJECT_CONTENT_LENTH - 1000;
 
-//    /** The name of the Object in Amazon S3 */
-//    private static final String key = "key";
+    //    /** The name of the Object in Amazon S3 */
+    //    private static final String key = "key";
 
     /** The bucket name in Amazon S3 used by the test cases. */
     private static final String bucketName = "java-sdk-tx-pause-"
-            + System.currentTimeMillis();
+                                             + System.currentTimeMillis();
 
     /** Reference to the transfer manager used for testing. */
     private TransferManager tm;
@@ -124,19 +138,21 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
                 }
             }
         }
-        if (tm != null)
+        if (tm != null) {
             tm.shutdownNow(false);
+        }
     }
 
     private Download resumeDownload(TransferManager tm, PersistableDownload state) throws InterruptedException {
         FileLockException exLast = null;
-        for (int i=0; i < 20; i++) {
+        for (int i = 0; i < 20; i++) {
             try {
                 return tm.resumeDownload(state);
-            } catch(FileLockException ex) {
+            } catch (FileLockException ex) {
                 exLast = ex;
-                if (DEBUG)
+                if (DEBUG) {
                     System.out.println("i=" + i + ", Failed to lock file: " + ex.getMessage());
+                }
             }
             Thread.sleep(500);
         }
@@ -146,9 +162,10 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     private Upload uploadToS3(final long contentLength, String key) throws IOException {
         fileToUpload = CryptoTestUtils.generateRandomAsciiFile(contentLength, cleanup);
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                fileToUpload);
+                                                           fileToUpload);
         return tm.upload(putRequest);
     }
+
     /**
      * Creates a test object in S3 to be used for downloads.
      */
@@ -159,8 +176,8 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
 
     private void initializeTransferManager(int threadPoolSize) {
         tm = new TransferManager(s3,
-                (ThreadPoolExecutor) Executors
-                        .newFixedThreadPool(threadPoolSize));
+                                 (ThreadPoolExecutor) Executors
+                                         .newFixedThreadPool(threadPoolSize));
         TransferManagerConfiguration configuration = new TransferManagerConfiguration();
         configuration.setMinimumUploadPartSize(10 * MB);
         configuration.setMultipartUploadThreshold(20 * MB);
@@ -168,26 +185,14 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     }
 
     private void initializeTransferManager(AmazonS3 s3Client,
-            int threadPoolSize, long uploadPartSize, long uploadPartThreshold) {
+                                           int threadPoolSize, long uploadPartSize, long uploadPartThreshold) {
         tm = new TransferManager(s3Client,
-                (ThreadPoolExecutor) Executors
-                        .newFixedThreadPool(threadPoolSize));
+                                 (ThreadPoolExecutor) Executors
+                                         .newFixedThreadPool(threadPoolSize));
         TransferManagerConfiguration configuration = new TransferManagerConfiguration();
         configuration.setMinimumUploadPartSize(uploadPartSize);
         configuration.setMultipartUploadThreshold(uploadPartThreshold);
         tm.setConfiguration(configuration);
-    }
-
-    static class TestCallback extends S3SyncProgressListener {
-        private PersistableTransfer state;
-        public PersistableTransfer getState() {
-            return state;
-        }
-
-        @Override
-        public void onPersistableTransfer(PersistableTransfer pauseTransfer) {
-            this.state = pauseTransfer;
-        }
     }
 
     /**
@@ -203,13 +208,14 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         fileToUpload = CryptoTestUtils.generateRandomAsciiFile(contentLength, cleanup);
         final String key = UUID.randomUUID().toString();
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                fileToUpload);
+                                                           fileToUpload);
         TestCallback callback = new TestCallback();
 
         Upload upload = tm.upload(putRequest, callback);
 
-        while (upload.getProgress().getBytesTransferred() < 40 * MB)
+        while (upload.getProgress().getBytesTransferred() < 40 * MB) {
             ;
+        }
         PersistableUpload persistableUploadReceivedThroughListenerCallback =
                 (PersistableUpload) callback.getState();
         PersistableUpload uploadContext = (PersistableUpload) upload.pause();
@@ -220,15 +226,15 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         assertNotNull(upload.getProgress());
         assertNotNull(persistableUploadReceivedThroughListenerCallback);
         assertEquals(uploadContext.getBucketName(),
-                persistableUploadReceivedThroughListenerCallback.getBucketName());
+                     persistableUploadReceivedThroughListenerCallback.getBucketName());
         assertEquals(uploadContext.getKey(),
-                persistableUploadReceivedThroughListenerCallback.getKey());
+                     persistableUploadReceivedThroughListenerCallback.getKey());
         assertEquals(uploadContext.getFile(),
-                persistableUploadReceivedThroughListenerCallback.getFile());
+                     persistableUploadReceivedThroughListenerCallback.getFile());
 
         String uploadId = uploadContext.getMultipartUploadId();
         PartListing parts = s3.listParts(new ListPartsRequest(bucketName, key,
-                uploadId));
+                                                              uploadId));
         assertNotNull(parts.getParts());
         assertTrue(parts.getParts().size() > 0);
 
@@ -246,7 +252,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         assertTrue(s3Object.getObjectMetadata().getContentLength() == contentLength);
         assertNotNull(s3Object.getObjectContent());
         assertFileEqualsStream(new File(fileToUpload.getAbsolutePath()),
-                s3Object.getObjectContent());
+                               s3Object.getObjectContent());
     }
 
     /**
@@ -261,8 +267,9 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         final String key = UUID.randomUUID().toString();
         Upload upload = uploadToS3(contentLength, key);
 
-        while (upload.getProgress().getBytesTransferred() < 40 * MB)
+        while (upload.getProgress().getBytesTransferred() < 40 * MB) {
             ;
+        }
         try {
             upload.pause();
             fail("An exception should be thrown here saying that operation pause is not possible as the state cannot be captured in this case.");
@@ -286,7 +293,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             fail("An exception should be thrown here saying that operation pause is not possible as the upload is yet to start and state cannot be captured in this case.");
         } catch (PauseException ace) {
             assertEquals(ace.getPauseStatus(),
-                    PauseStatus.CANCELLED_BEFORE_START);
+                         PauseStatus.CANCELLED_BEFORE_START);
         }
     }
 
@@ -302,8 +309,8 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         fileToUpload = CryptoTestUtils.generateRandomAsciiFile(contentLength, cleanup);
         final String key = UUID.randomUUID().toString();
         PersistableUpload context = new PersistableUpload(bucketName, key,
-                fileToUpload.getAbsolutePath(), "incorrect-upload-id", 0L,
-                20 * MB);
+                                                          fileToUpload.getAbsolutePath(), "incorrect-upload-id", 0L,
+                                                          20 * MB);
 
         try {
             Upload upload = tm.resumeUpload(context);
@@ -317,7 +324,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
      * This test case performs a upload with input stream and tries to pause the
      * upload. The transfers must be aborted and the state capture must fail.
      */
-     @Test
+    @Test
     public void testTryPauseOnUploadWithInputStream() {
         initializeTransferManager(s3, 1, 10 * MB, 20 * MB);
         long contentLength = 60 * MB;
@@ -325,10 +332,11 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         metadata.setContentLength(contentLength);
         final String key = UUID.randomUUID().toString();
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                new RandomInputStream(contentLength), metadata);
+                                                           new RandomInputStream(contentLength), metadata);
         Upload upload = tm.upload(putRequest);
-        while (upload.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (upload.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(true);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
         assertNull(uploadContext);
@@ -345,21 +353,22 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
      * pause the upload. The transfers must be aborted and the state capture
      * must fail.
      */
-     @Test
+    @Test
     public void testTryPauseOnUploadWithEncryptionClient() throws IOException {
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")));
+                new byte[32], "AES")));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
 
         long contentLength = 200 * MB;
         fileToUpload = CryptoTestUtils.generateRandomAsciiFile(contentLength, cleanup);
         final String key = UUID.randomUUID().toString();
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                fileToUpload);
+                                                           fileToUpload);
         Upload upload = tm.upload(putRequest);
-        while (upload.getProgress().getBytesTransferred() < 40 * MB)
+        while (upload.getProgress().getBytesTransferred() < 40 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(true);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
@@ -383,13 +392,14 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     @Test
     public void testTryPauseOnUploadWithFileSizeLessThanUploadThreshold()
             throws IOException, InterruptedException {
-    	//TODO document why this is changed.
+        //TODO document why this is changed.
         initializeTransferManager(s3, 2, TEST_OBJECT_CONTENT_LENTH, 2 * TEST_OBJECT_CONTENT_LENTH);
         long contentLength = 60 * MB;
         final String key = UUID.randomUUID().toString();
         Upload upload = uploadToS3(contentLength, key);
-        while (upload.getProgress().getBytesTransferred() < 20 * MB)
+        while (upload.getProgress().getBytesTransferred() < 20 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(true);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
@@ -415,15 +425,16 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         long contentLength = 60 * MB;
         final String key = UUID.randomUUID().toString();
         Upload upload = uploadToS3(contentLength, key);
-        while (upload.getProgress().getBytesTransferred() < 20 * MB)
+        while (upload.getProgress().getBytesTransferred() < 20 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(true);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
         assertNotNull(uploadContext);
         assertEquals(pauseResult.getPauseStatus(), PauseStatus.SUCCESS);
         s3.abortMultipartUpload(new AbortMultipartUploadRequest(bucketName,
-                key, uploadContext.getMultipartUploadId()));
+                                                                key, uploadContext.getMultipartUploadId()));
     }
 
     /**
@@ -435,7 +446,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     @Test
     public void testPauseForceAbortDisabledOnUploadWithInputStream()
             throws AmazonServiceException, AmazonClientException,
-            InterruptedException, IOException {
+                   InterruptedException, IOException {
         initializeTransferManager(s3, 2, 10 * MB, 20 * MB);
         long contentLength = 60 * MB;
         ObjectMetadata metadata = new ObjectMetadata();
@@ -443,10 +454,11 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         fileToUpload = CryptoTestUtils.generateRandomAsciiFile(contentLength, cleanup);
         final String key = UUID.randomUUID().toString();
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                new FileInputStream(fileToUpload), metadata);
+                                                           new FileInputStream(fileToUpload), metadata);
         Upload upload = tm.upload(putRequest);
-        while (upload.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (upload.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(false);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
         assertNull(uploadContext);
@@ -459,7 +471,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         assertTrue(s3Object.getObjectMetadata().getContentLength() == contentLength);
         assertNotNull(s3Object.getObjectContent());
         assertFileEqualsStream(new File(fileToUpload.getAbsolutePath()),
-                s3Object.getObjectContent());
+                               s3Object.getObjectContent());
     }
 
     /**
@@ -471,10 +483,10 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     @Test
     public void testPauseForceAbortDisabledOnUploadWithEncryptionClient()
             throws IOException, AmazonServiceException, AmazonClientException,
-            InterruptedException {
+                   InterruptedException {
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")));
+                new byte[32], "AES")));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
 
         long contentLength = 200 * MB;
@@ -482,10 +494,11 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
 
         final String key = UUID.randomUUID().toString();
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                fileToUpload);
+                                                           fileToUpload);
         Upload upload = tm.upload(putRequest);
-        while (upload.getProgress().getBytesTransferred() < 40 * MB)
+        while (upload.getProgress().getBytesTransferred() < 40 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(false);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
@@ -496,11 +509,11 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         upload.waitForUploadResult();
 
         S3Object s3Object = encS3.getObject(new GetObjectRequest(bucketName,
-                key));
+                                                                 key));
         assertTrue(s3Object.getObjectMetadata().getContentLength() > 0);
         assertNotNull(s3Object.getObjectContent());
         assertFileEqualsStream(new File(fileToUpload.getAbsolutePath()),
-                s3Object.getObjectContent());
+                               s3Object.getObjectContent());
     }
 
     /**
@@ -512,13 +525,14 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     @Test
     public void testPauseForceAbortDisabledOnUploadWithFileSizeLessThanUploadThreshold()
             throws IOException, AmazonServiceException, AmazonClientException,
-            InterruptedException {
+                   InterruptedException {
         initializeTransferManager(s3, 2, TEST_OBJECT_CONTENT_LENTH, 2 * TEST_OBJECT_CONTENT_LENTH);
         long contentLength = 60 * MB;
         final String key = UUID.randomUUID().toString();
         Upload upload = uploadToS3(contentLength, key);
-        while (upload.getProgress().getBytesTransferred() < 20 * MB)
+        while (upload.getProgress().getBytesTransferred() < 20 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(false);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
@@ -531,7 +545,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         assertTrue(s3Object.getObjectMetadata().getContentLength() == contentLength);
         assertNotNull(s3Object.getObjectContent());
         assertFileEqualsStream(new File(fileToUpload.getAbsolutePath()),
-                s3Object.getObjectContent());
+                               s3Object.getObjectContent());
 
     }
 
@@ -551,17 +565,18 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         final String key = UUID.randomUUID().toString();
 
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                fileToUpload);
+                                                           fileToUpload);
         Upload upload = tm.upload(putRequest);
-        while (upload.getProgress().getBytesTransferred() < 20 * MB)
+        while (upload.getProgress().getBytesTransferred() < 20 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(false);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
         assertNotNull(uploadContext);
         assertEquals(pauseResult.getPauseStatus(), PauseStatus.SUCCESS);
         s3.abortMultipartUpload(new AbortMultipartUploadRequest(bucketName,
-                key, uploadContext.getMultipartUploadId()));
+                                                                key, uploadContext.getMultipartUploadId()));
     }
 
     /**
@@ -574,17 +589,18 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
 
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")));
+                new byte[32], "AES")));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
 
         long contentLength = 200 * MB;
         fileToUpload = CryptoTestUtils.generateRandomAsciiFile(contentLength, cleanup);
         final String key = UUID.randomUUID().toString();
         PutObjectRequest putRequest = new PutObjectRequest(bucketName, key,
-                fileToUpload);
+                                                           fileToUpload);
         Upload upload = tm.upload(putRequest);
-        while (upload.getProgress().getBytesTransferred() < 40 * MB)
+        while (upload.getProgress().getBytesTransferred() < 40 * MB) {
             ;
+        }
         try {
             upload.pause();
             fail("An exception should be thrown as pause is not possible on encrypted uplaods");
@@ -603,8 +619,9 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         long contentLength = 60 * MB;
         final String key = UUID.randomUUID().toString();
         Upload upload = uploadToS3(contentLength, key);
-        while (upload.getProgress().getBytesTransferred() < 20 * MB)
+        while (upload.getProgress().getBytesTransferred() < 20 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(false);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
@@ -612,7 +629,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         assertEquals(pauseResult.getPauseStatus(), PauseStatus.SUCCESS);
 
         uploadContext = Jackson.fromJsonString(uploadContext.serialize(),
-                PersistableUpload.class);
+                                               PersistableUpload.class);
         assertNotNull(uploadContext);
         assertNotNull(uploadContext.getBucketName());
         assertNotNull(uploadContext.getKey());
@@ -621,7 +638,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         assertNotNull(uploadContext.getMutlipartUploadThreshold());
         assertNotNull(uploadContext.getPartSize());
         s3.abortMultipartUpload(new AbortMultipartUploadRequest(bucketName,
-                key, uploadContext.getMultipartUploadId()));
+                                                                key, uploadContext.getMultipartUploadId()));
     }
 
     /**
@@ -635,10 +652,11 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         createTestObjectForDownload(key);
         TestCallback callback = new TestCallback();
         Download download = tm.download(new GetObjectRequest(bucketName, key),
-                downloadFile, callback);
+                                        downloadFile, callback);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
         PersistableTransfer persistableUploadReceivedThroughListenerCallback = callback
                 .getState();
@@ -658,15 +676,16 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     public void testDownloadPauseEncryptedFile() throws Exception {
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")));
+                new byte[32], "AES")));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
         final String key = UUID.randomUUID().toString();
 
         createTestObjectForDownload(key);
         Download download = tm.download(bucketName, key, downloadFile);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
 
         download = resumeDownload(tm, state);
@@ -688,13 +707,14 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         final String key = UUID.randomUUID().toString();
         createTestObjectForDownload(key);
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName,
-                key);
+                                                                 key);
 
         getObjectRequest.setRange(10, END_BYTE);
 
         Download download = tm.download(getObjectRequest, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
 
         download = resumeDownload(tm, state);
@@ -714,7 +734,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
 
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")));
+                new byte[32], "AES")));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
         final String key = UUID.randomUUID().toString();
 
@@ -723,11 +743,12 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         long end = END_BYTE;
 
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName,
-                key);
+                                                                 key);
         getObjectRequest.setRange(start, end);
         Download download = tm.download(getObjectRequest, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
 
         PersistableDownload state = (PersistableDownload) download.pause();
         download = resumeDownload(tm, state);
@@ -743,7 +764,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
      * where the pause left and download file must be same as the one in Amazon
      * S3.
      */
-     @Test
+    @Test
     public void testDownloadPauseOnRequesterPaysBucket() throws Exception {
         initializeTransferManager(50);
         final String key = UUID.randomUUID().toString();
@@ -758,11 +779,13 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
 
         Download download = tm.download(getObjectRequest, downloadFile);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
-        if (DEBUG)
+        if (DEBUG) {
             System.err.println("paused: downloadFile.length()=" + downloadFile.length());
+        }
 
         download = resumeDownload(tm, state);
         download.waitForCompletion();
@@ -770,8 +793,8 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         getObjectRequest.setRange(start, end);
         S3Object s3Object = s3.getObject(getObjectRequest);
         String errmsg = "downloadFile: " + downloadFile
-                + ", bucketName=" + bucketName + ", key=" + key + ", start="
-                + start + ", end=" + end;
+                        + ", bucketName=" + bucketName + ", key=" + key + ", start="
+                        + start + ", end=" + end;
         assertFileEqualsStream(errmsg, downloadFile, s3Object.getObjectContent());
     }
 
@@ -791,11 +814,13 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
 
         Download download = tm.download(getObjectRequest, downloadFile);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
-        if (DEBUG)
+        if (DEBUG) {
             System.err.println("paused: downloadFile.length()=" + downloadFile.length());
+        }
 
         DownloadCallable.setTesting(true);
         try {
@@ -805,8 +830,8 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             getObjectRequest.setRange(start, end);
             S3Object s3Object = s3.getObject(getObjectRequest);
             String errmsg = "downloadFile: " + downloadFile
-                    + ", bucketName=" + bucketName + ", key=" + key + ", start="
-                    + start + ", end=" + end;
+                            + ", bucketName=" + bucketName + ", key=" + key + ", start="
+                            + start + ", end=" + end;
             assertFileEqualsStream(errmsg, downloadFile, s3Object.getObjectContent());
         } finally {
             DownloadCallable.setTesting(false);
@@ -823,16 +848,17 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             throws Exception {
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")), new CryptoConfiguration(
-                        CryptoMode.AuthenticatedEncryption));
+                new byte[32], "AES")), new CryptoConfiguration(
+                CryptoMode.AuthenticatedEncryption));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
 
         final String key = UUID.randomUUID().toString();
         createTestObjectForDownload(key);
         Download download = tm.download(bucketName, key, downloadFile);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
         download = resumeDownload(tm, state);
         download.waitForCompletion();
@@ -851,25 +877,26 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             throws Exception {
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")), new CryptoConfiguration(
-                        CryptoMode.AuthenticatedEncryption));
+                new byte[32], "AES")), new CryptoConfiguration(
+                CryptoMode.AuthenticatedEncryption));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
         final String key = UUID.randomUUID().toString();
 
         createTestObjectForDownload(key);
         Download download = null;
-        int i=0;
+        int i = 0;
         do {
             try {
                 download = tm.download(bucketName, key, downloadFile);
-            } catch(AmazonS3Exception ex) {
+            } catch (AmazonS3Exception ex) {
                 ex.printStackTrace();
                 Thread.sleep(3000);
             }
         } while (download == null && i++ < 3);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
         download = resumeDownload(tm, state);
         download.waitForCompletion();
@@ -887,15 +914,16 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             throws Exception {
         AmazonS3EncryptionClient encS3 = new AmazonS3EncryptionClient(
                 credentials, new EncryptionMaterials(new SecretKeySpec(
-                        new byte[32], "AES")), new CryptoConfiguration(
-                        CryptoMode.StrictAuthenticatedEncryption));
+                new byte[32], "AES")), new CryptoConfiguration(
+                CryptoMode.StrictAuthenticatedEncryption));
         initializeTransferManager(encS3, 2, 10 * MB, 20 * MB);
 
         final String key = UUID.randomUUID().toString();
         createTestObjectForDownload(key);
         Download download = tm.download(bucketName, key, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
 
         try {
@@ -917,19 +945,20 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
         final String key = UUID.randomUUID().toString();
         createTestObjectForDownload(key);
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName,
-                key);
+                                                                 key);
         getObjectRequest.setResponseHeaders(new ResponseHeaderOverrides()
-                .withContentType("text/plain"));
+                                                    .withContentType("text/plain"));
 
         Download download = tm.download(getObjectRequest, downloadFile);
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
 
         PersistableDownload downloadState = Jackson.fromJsonString(
                 state.serialize(), PersistableDownload.class);
         assertEquals(downloadState.getResponseHeaders().getContentType(),
-                "text/plain");
+                     "text/plain");
 
         download = resumeDownload(tm, downloadState);
         download.waitForCompletion();
@@ -943,14 +972,15 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
      * interface. The upload must be aborted and the object must not be in
      * Amazon S3.
      */
-     @Test
+    @Test
     public void testUploadAbort() throws IOException {
         initializeTransferManager(s3, 2, 10 * MB, 20 * MB);
         long contentLength = 60 * MB;
         String key = UUID.randomUUID().toString();
         Upload upload = uploadToS3(contentLength, key);
-        while (upload.getProgress().getBytesTransferred() < 20 * MB)
+        while (upload.getProgress().getBytesTransferred() < 20 * MB) {
             ;
+        }
         upload.abort();
 
         try {
@@ -966,13 +996,15 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
      * progress is 100 percent after the resume upload completes.
      */
     @Test
-    public void testUploadProgressAfterResume() throws IOException, AmazonServiceException, AmazonClientException, InterruptedException{
+    public void testUploadProgressAfterResume()
+            throws IOException, AmazonServiceException, AmazonClientException, InterruptedException {
         initializeTransferManager(s3, 2, 10 * MB, 20 * MB);
         long contentLength = 60 * MB;
         final String key = UUID.randomUUID().toString();
         Upload upload = uploadToS3(contentLength, key);
-        while (upload.getProgress().getBytesTransferred() < 20 * MB)
+        while (upload.getProgress().getBytesTransferred() < 20 * MB) {
             ;
+        }
 
         PauseResult<PersistableUpload> pauseResult = upload.tryPause(true);
         PersistableUpload uploadContext = pauseResult.getInfoToResume();
@@ -992,15 +1024,16 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
      * progress is 100 percent after the resume download completes.
      */
     @Test
-    public void testDownloadProgressAfterResume() throws Exception{
+    public void testDownloadProgressAfterResume() throws Exception {
         initializeTransferManager(50);
         final String key = UUID.randomUUID().toString();
         createTestObjectForDownload(key);
         Download download = tm.download(new GetObjectRequest(bucketName, key),
-                downloadFile);
+                                        downloadFile);
 
-        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE)
+        while (download.getProgress().getBytesTransferred() < INTERRUUPT_SIZE) {
             ;
+        }
         PersistableDownload state = (PersistableDownload) download.pause();
 
         download = resumeDownload(tm, state);
@@ -1010,5 +1043,18 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
 
         assertTrue(TEST_OBJECT_CONTENT_LENTH == download.getProgress().getBytesTransferred());
         assertEquals(100.00, download.getProgress().getPercentTransferred(), .001);
+    }
+
+    static class TestCallback extends S3SyncProgressListener {
+        private PersistableTransfer state;
+
+        public PersistableTransfer getState() {
+            return state;
+        }
+
+        @Override
+        public void onPersistableTransfer(PersistableTransfer pauseTransfer) {
+            this.state = pauseTransfer;
+        }
     }
 }

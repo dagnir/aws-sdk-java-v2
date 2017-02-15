@@ -41,6 +41,16 @@ public class JmesPathLengthFunction extends JmesPathFunction {
     }
 
     /**
+     * Evaluates the length of the string
+     *
+     * @param arg String argument
+     * @return Length of the string
+     */
+    private static IntNode getStringLength(JsonNode arg) {
+        return new IntNode(arg.asText().length());
+    }
+
+    /**
      * Evaluates the length of the given argument.
      *
      * @param evaluatedArgs List of expressions to be evaluated.
@@ -56,15 +66,5 @@ public class JmesPathLengthFunction extends JmesPathFunction {
             return new IntNode(arg.size());
         }
         throw new InvalidTypeException("Type mismatch. Expecting a string or an array or an object.");
-    }
-
-    /**
-     * Evaluates the length of the string
-     *
-     * @param arg String argument
-     * @return Length of the string
-     */
-    private static IntNode getStringLength(JsonNode arg) {
-        return new IntNode(arg.asText().length());
     }
 }

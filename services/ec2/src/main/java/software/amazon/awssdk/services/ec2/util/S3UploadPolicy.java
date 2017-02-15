@@ -56,35 +56,35 @@ public class S3UploadPolicy {
      *            unable to be used.
      */
     public S3UploadPolicy(String awsAccessKeyId,
-            String awsSecretKey,
-            String bucketName,
-            String prefix,
-            int expireInMinutes) {
+                          String awsSecretKey,
+                          String bucketName,
+                          String prefix,
+                          int expireInMinutes) {
         Calendar expirationDate = Calendar.getInstance();
         expirationDate.add(Calendar.MINUTE, expireInMinutes);
         SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         ISO8601.setTimeZone(new SimpleTimeZone(0, "GMT"));
         StringBuilder builder = new StringBuilder();
         builder.append("{")
-                .append("\"expiration\": \"")
-                .append(ISO8601.format(expirationDate.getTime()))
-                .append("\",")
-                .append("\"conditions\": [")
-                .append("{\"bucket\": \"")
-                .append(bucketName)
-                .append("\"},")
-                .append("{\"acl\": \"")
-                .append("ec2-bundle-read")
-                .append("\"},")
-                .append("[\"starts-with\", \"$key\", \"")
-                .append(prefix)
-                .append("\"]")
-                .append("]}");
+               .append("\"expiration\": \"")
+               .append(ISO8601.format(expirationDate.getTime()))
+               .append("\",")
+               .append("\"conditions\": [")
+               .append("{\"bucket\": \"")
+               .append(bucketName)
+               .append("\"},")
+               .append("{\"acl\": \"")
+               .append("ec2-bundle-read")
+               .append("\"},")
+               .append("[\"starts-with\", \"$key\", \"")
+               .append(prefix)
+               .append("\"]")
+               .append("]}");
         try {
             this.policyString = base64Encode(builder.toString().getBytes(UTF8));
             this.policySignature = signPolicy(awsSecretKey, policyString);
         } catch (Exception ex) {
-            throw new RuntimeException ("Unable to generate S3 upload policy", ex);
+            throw new RuntimeException("Unable to generate S3 upload policy", ex);
         }
     }
 
@@ -109,16 +109,16 @@ public class S3UploadPolicy {
     }
 
     private String signPolicy(String awsSecretKey, String base64EncodedPolicy) throws
-            NoSuchAlgorithmException,
-            InvalidKeyException,
-            UnsupportedEncodingException {
+                                                                               NoSuchAlgorithmException,
+                                                                               InvalidKeyException,
+                                                                               UnsupportedEncodingException {
         SecretKeySpec signingKey = new SecretKeySpec(awsSecretKey.getBytes(), HMAC_SHA1_ALGORITHM);
         Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
         mac.init(signingKey);
         return base64Encode(mac.doFinal(base64EncodedPolicy.getBytes()));
     }
 
-    private String base64Encode(byte [] data) {
+    private String base64Encode(byte[] data) {
         return Base64.encodeAsString(data).replaceAll("\\s", "");
     }
 

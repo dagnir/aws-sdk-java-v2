@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 public class V1MarshallerTest extends StandardModelFactoriesV1Test {
 
     private static final ItemConverter CONVERTER = CONFIG.getConversionSchema().getConverter(
-        new ConversionSchema.Dependencies());
+            new ConversionSchema.Dependencies());
 
     @Override
     protected <T> AttributeValue convert(Class<T> clazz, Method getter, Object value) {

@@ -5,4 +5,4 @@ import sys
 
 expression = sys.argv[1]
 parsed = jmespath.compile(expression)
-print(json.dumps(parsed.parsed, indent = 2))
+print(json.dumps(parsed.parsed, indent=2))

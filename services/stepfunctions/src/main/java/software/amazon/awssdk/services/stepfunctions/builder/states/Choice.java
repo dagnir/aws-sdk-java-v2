@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -143,8 +143,8 @@ public final class Choice {
                                           DeserializationContext deserializationContext) throws IOException {
             final JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             return Choice.builder()
-                    .nextStateName(node.get(PropertyNames.NEXT).asText())
-                    .condition(conditionDeserializer.deserializeCondition(node));
+                         .nextStateName(node.get(PropertyNames.NEXT).asText())
+                         .condition(conditionDeserializer.deserializeCondition(node));
         }
 
     }

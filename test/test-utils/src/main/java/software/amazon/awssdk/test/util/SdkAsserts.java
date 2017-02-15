@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -133,18 +133,20 @@ public class SdkAsserts {
      *            actual file.
      */
     public static void assertFileEqualsFile(File expected, File actual) {
-        if (expected == null || !expected.exists())
+        if (expected == null || !expected.exists()) {
             fail("Expected file doesn't exist");
-        if (actual == null || !actual.exists())
+        }
+        if (actual == null || !actual.exists()) {
             fail("Actual file doesn't exist");
+        }
 
         final long expectedFileLen = expected.length();
         final long fileLen = actual.length();
         Assert.assertTrue("expectedFileLen=" + expectedFileLen + ", fileLen=" + fileLen + ", expectedFile=" + expected
-                + ", file=" + actual, expectedFileLen == fileLen);
+                          + ", file=" + actual, expectedFileLen == fileLen);
         try {
             assertStreamEqualsStream("expected file: " + expected + " vs. actual file: " + actual,
-                    new FileInputStream(expected), new FileInputStream(actual));
+                                     new FileInputStream(expected), new FileInputStream(actual));
         } catch (Exception e) {
             fail("Unable to compare files: " + e.getMessage());
         }

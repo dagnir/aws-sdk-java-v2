@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,13 +24,14 @@ import software.amazon.awssdk.services.dynamodbv2.model.DeleteItemResult;
  */
 public class DeleteItemOutcome {
     private final DeleteItemResult result;
-    
+
     /**
      * @param result the low-level result; must not be null
      */
     public DeleteItemOutcome(DeleteItemResult result) {
-        if (result == null)
+        if (result == null) {
             throw new IllegalArgumentException();
+        }
         this.result = result;
     }
 
@@ -38,8 +39,8 @@ public class DeleteItemOutcome {
      * Returns all the returned attributes as a (non-null) {@link Item}.
      */
     public Item getItem() {
-        Map<String,Object> attributes =
-            InternalUtils.toSimpleMapValue(result.getAttributes());
+        Map<String, Object> attributes =
+                InternalUtils.toSimpleMapValue(result.getAttributes());
         Item item = Item.fromMap(attributes);
         return item;
     }
@@ -50,7 +51,7 @@ public class DeleteItemOutcome {
     public DeleteItemResult getDeleteItemResult() {
         return result;
     }
-    
+
     @Override
     public String toString() {
         return String.valueOf(result);

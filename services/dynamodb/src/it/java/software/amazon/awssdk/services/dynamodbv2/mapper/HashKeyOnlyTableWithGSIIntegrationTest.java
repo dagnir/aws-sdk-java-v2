@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -69,6 +84,35 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
         dynamo.deleteTable(HASH_KEY_ONLY_TABLE_NAME);
     }
 
+    /**
+     * Tests that we can query using the hash/range GSI on our hash-key only table.
+     */
+    @Test
+    public void testGSIQuery() throws Exception {
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        String status = "foo-status";
+
+        User user = new User();
+        user.setId("123");
+        user.setStatus(status);
+        user.setTs("321");
+        mapper.save(user);
+
+        DynamoDBQueryExpression<User> expr = new DynamoDBQueryExpression<User>()
+                .withIndexName("statusAndCreation")
+                .withLimit(100)
+                .withConsistentRead(false)
+                .withHashKeyValues(user)
+                .withRangeKeyCondition("ts",
+                                       new Condition()
+                                               .withComparisonOperator(ComparisonOperator.GT)
+                                               .withAttributeValueList(new AttributeValue("100")));
+
+        PaginatedQueryList<User> query = mapper.query(User.class, expr);
+        assertEquals(1, query.size());
+        assertEquals(status, query.get(0).getStatus());
+    }
+
     @DynamoDBTable(tableName = HASH_KEY_ONLY_TABLE_NAME)
     public static class User {
         private String id;
@@ -101,36 +145,6 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
         public void setTs(String ts) {
             this.ts = ts;
         }
-    }
-
-
-    /**
-     * Tests that we can query using the hash/range GSI on our hash-key only table.
-     */
-    @Test
-    public void testGSIQuery() throws Exception {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
-        String status = "foo-status";
-
-        User user = new User();
-        user.setId("123");
-        user.setStatus(status);
-        user.setTs("321");
-        mapper.save(user);
-
-        DynamoDBQueryExpression<User> expr = new DynamoDBQueryExpression<User>()
-                .withIndexName("statusAndCreation")
-                .withLimit(100)
-                .withConsistentRead(false)
-                .withHashKeyValues(user)
-                .withRangeKeyCondition("ts",
-                                       new Condition()
-                                               .withComparisonOperator(ComparisonOperator.GT)
-                                               .withAttributeValueList(new AttributeValue("100")));
-
-        PaginatedQueryList<User> query = mapper.query(User.class, expr);
-        assertEquals(1, query.size());
-        assertEquals(status, query.get(0).getStatus());
     }
 
 }

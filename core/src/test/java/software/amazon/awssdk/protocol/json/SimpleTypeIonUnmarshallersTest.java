@@ -1,14 +1,14 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"). You may not
- * use this file except in compliance with the License. A copy of the License is
- * located at
- * 
- * http://aws.amazon.com/apache2.0
- * 
- * or in the "license" file accompanying this file. This file is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
@@ -42,6 +42,13 @@ import software.amazon.awssdk.util.StringInputStream;
 import software.amazon.ion.system.IonSystemBuilder;
 
 public class SimpleTypeIonUnmarshallersTest {
+    private static JsonUnmarshallerContext context(String ion) throws Exception {
+        JsonParser parser = new IonFactory(IonSystemBuilder.standard().build()).createParser(new StringInputStream(ion));
+        JsonUnmarshallerContext context = new JsonUnmarshallerContextImpl(parser, null, null);
+        context.nextToken();
+        return context;
+    }
+
     @Test
     public void unmarshalString() throws Exception {
         assertEquals("foo", StringIonUnmarshaller.getInstance().unmarshall(context("\"foo\"")));
@@ -108,12 +115,5 @@ public class SimpleTypeIonUnmarshallersTest {
     @Test
     public void unmarshalShort() throws Exception {
         assertEquals(new Short((short) 1234), ShortIonUnmarshaller.getInstance().unmarshall(context("1234")));
-    }
-
-    private static JsonUnmarshallerContext context(String ion) throws Exception {
-        JsonParser parser = new IonFactory(IonSystemBuilder.standard().build()).createParser(new StringInputStream(ion));
-        JsonUnmarshallerContext context = new JsonUnmarshallerContextImpl(parser, null, null);
-        context.nextToken();
-        return context;
     }
 }

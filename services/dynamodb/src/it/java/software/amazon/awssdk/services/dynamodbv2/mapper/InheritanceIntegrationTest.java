@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import static org.junit.Assert.assertEquals;
@@ -30,6 +31,77 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
  * Tests inheritance behavior in DynamoDB mapper.
  */
 public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBase {
+
+    @Test
+    public void testSubClass() throws Exception {
+        List<Object> objs = new ArrayList<Object>();
+        for (int i = 0; i < 5; i++) {
+            SubClass obj = getUniqueObject(new SubClass());
+            obj.setSubField("" + startKey++);
+            objs.add(obj);
+        }
+
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        for (Object obj : objs) {
+            util.save(obj);
+            assertEquals(util.load(SubClass.class, ((SubClass) obj).getKey()), obj);
+        }
+    }
+
+    @Test
+    public void testSubSubClass() throws Exception {
+        List<SubSubClass> objs = new ArrayList<SubSubClass>();
+        for (int i = 0; i < 5; i++) {
+            SubSubClass obj = getUniqueObject(new SubSubClass());
+            obj.setSubField("" + startKey++);
+            obj.setSubSubField("" + startKey++);
+            objs.add(obj);
+        }
+
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        for (SubSubClass obj : objs) {
+            util.save(obj);
+            assertEquals(util.load(SubSubClass.class, obj.getKey()), obj);
+        }
+    }
+
+    @Test(expected = DynamoDBMappingException.class)
+    public void testImplementation() throws Exception {
+        List<Implementation> objs = new ArrayList<Implementation>();
+        for (int i = 0; i < 5; i++) {
+            Implementation obj = new Implementation();
+            obj.setKey("" + startKey++);
+            obj.setAttribute("" + startKey++);
+            objs.add(obj);
+        }
+
+        // Saving new objects with a null version field should populate it
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        for (Interface obj : objs) {
+            util.save(obj);
+            assertEquals(util.load(Implementation.class, obj.getKey()), obj);
+        }
+    }
+
+    private <T extends BaseClass> T getUniqueObject(T obj) {
+        obj.setKey("" + startKey++);
+        obj.setNormalStringAttribute("" + startKey++);
+        return obj;
+    }
+
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    public static interface Interface {
+
+        @DynamoDBHashKey
+        public String getKey();
+
+        public void setKey(String key);
+
+        @DynamoDBAttribute
+        public String getAttribute();
+
+        public void setAttribute(String attribute);
+    }
 
     @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class BaseClass {
@@ -108,7 +180,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         @Override
@@ -121,7 +193,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -191,53 +263,6 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
         }
     }
 
-    @Test
-    public void testSubClass() throws Exception {
-        List<Object> objs = new ArrayList<Object>();
-        for (int i = 0; i < 5; i++) {
-            SubClass obj = getUniqueObject(new SubClass());
-            obj.setSubField("" + startKey++);
-            objs.add(obj);
-        }
-
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
-        for (Object obj : objs) {
-            util.save(obj);
-            assertEquals(util.load(SubClass.class, ((SubClass) obj).getKey()), obj);
-        }
-    }
-
-    @Test
-    public void testSubSubClass() throws Exception {
-        List<SubSubClass> objs = new ArrayList<SubSubClass>();
-        for (int i = 0; i < 5; i++) {
-            SubSubClass obj = getUniqueObject(new SubSubClass());
-            obj.setSubField("" + startKey++);
-            obj.setSubSubField("" + startKey++);
-            objs.add(obj);
-        }
-
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
-        for (SubSubClass obj : objs) {
-            util.save(obj);
-            assertEquals(util.load(SubSubClass.class, obj.getKey()), obj);
-        }
-    }
-
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
-    public static interface Interface {
-
-        @DynamoDBHashKey
-        public String getKey();
-
-        public void setKey(String key);
-
-        @DynamoDBAttribute
-        public String getAttribute();
-
-        public void setAttribute(String attribute);
-    }
-
     public static class Implementation implements Interface {
 
         private String key;
@@ -296,29 +321,5 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
             }
             return true;
         }
-    }
-
-    @Test(expected = DynamoDBMappingException.class)
-    public void testImplementation() throws Exception {
-        List<Implementation> objs = new ArrayList<Implementation>();
-        for (int i = 0; i < 5; i++) {
-            Implementation obj = new Implementation();
-            obj.setKey("" + startKey++);
-            obj.setAttribute("" + startKey++);
-            objs.add(obj);
-        }
-
-        // Saving new objects with a null version field should populate it
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
-        for (Interface obj : objs) {
-            util.save(obj);
-            assertEquals(util.load(Implementation.class, obj.getKey()), obj);
-        }
-    }
-
-    private <T extends BaseClass> T getUniqueObject(T obj) {
-        obj.setKey("" + startKey++);
-        obj.setNormalStringAttribute("" + startKey++);
-        return obj;
     }
 }

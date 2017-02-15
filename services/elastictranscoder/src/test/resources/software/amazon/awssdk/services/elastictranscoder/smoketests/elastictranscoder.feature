@@ -8,5 +8,5 @@ Feature: Amazon Elastic Transcoder
 
   Scenario: Handling errors
     When I attempt to call the "ReadJob" API with:
-    | Id | fake_job |
+      | Id | fake_job |
     Then I expect the response error code to be "ValidationException"

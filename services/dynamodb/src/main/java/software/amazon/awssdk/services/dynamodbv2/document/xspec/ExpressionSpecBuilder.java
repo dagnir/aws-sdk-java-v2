@@ -1,18 +1,19 @@
 /*
- * Copyright 2015-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
- package software.amazon.awssdk.services.dynamodbv2.document.xspec;
+
+package software.amazon.awssdk.services.dynamodbv2.document.xspec;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
@@ -164,9 +165,9 @@ import software.amazon.awssdk.annotation.Beta;
 @Beta
 public final class ExpressionSpecBuilder implements Cloneable {
     private final Map<String, List<UpdateAction>> updates;
+    private final Set<PathOperand> projections;
     private Condition keyCondition;
     private Condition condition;
-    private final Set<PathOperand> projections;
 
     /**
      * Constructs a request-centric Expression Specification Builder that can be used to
@@ -355,221 +356,6 @@ public final class ExpressionSpecBuilder implements Cloneable {
         this.keyCondition = from.keyCondition;
         this.condition = from.condition;
     }
-    /**
-     * Fluent API to add the given Update expression for a request.
-     * <p>
-     * For example:
-     * <pre class="brush: java">
-     * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
-     * ...
-     * builder
-     *      // SET num1 = num1 + 20
-     *     .addUpdate(
-     *         N("num1").set(N("num1").plus(20)))
-     *      // SET string-attr = "string-value"
-     *     .addUpdate(
-     *         S("string-attr").set("string-value")
-     * )
-     */
-    public ExpressionSpecBuilder addUpdate(UpdateAction updateAction) {
-        final String operator = updateAction.getOperator();
-        List<UpdateAction> list = updates.get(operator);
-        if (list == null) {
-            list = new LinkedList<UpdateAction>();
-            updates.put(operator, list);
-        }
-        list.add(updateAction);
-        return this;
-    }
-
-    /**
-     * Fluent API to set the condition expression for a request.
-     * <p>
-     * For example:
-     * <pre class="brush: java">
-     * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
-     * ...
-     *     builder.withCondition(
-     *         // num2 BETWEEN 0 AND 100
-     *         ExpressionSpecBuilder.N("num2").between(0, 100)
-     *     )
-     * ...
-     * </pre>
-     * Example of specifying a complex condition:
-     * <pre class="brush: java">
-     * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
-     * ...
-     *      // A complex condition expression:
-     *      //
-     *      // (attribute_not_exists(item_version) AND attribute_not_exists(config_id) AND attribute_not_exists(config_version)) OR
-     *      // (item_version < 123) OR
-     *      // (item_version = 123 AND config_id < 456) OR
-     *      // (item_version = 123 AND config_id = 456 AND config_version < 999)
-     *      //
-     *      builder.withCondition(
-     *          // add explicit parenthesis
-     *          parenthesize( attribute_not_exists("item_version")
-     *              .and( attribute_not_exists("config_id") )
-     *              .and( attribute_not_exists("config_version") )
-     *          ).or( N("item_version").lt(123) )
-     *           .or( N("item_version").eq(123)
-     *              .and( N("config_id").lt(456) ) )
-     *           .or( N("item_version").eq(123)
-     *              .and( N("config_id").eq(456) )
-     *              .and( N("config_version").lt(999) ))
-     *      )
-     * ...
-     * </pre>
-     */
-    public ExpressionSpecBuilder withCondition(Condition condition) {
-        this.condition = condition;
-        return this;
-    }
-
-    public ExpressionSpecBuilder withKeyCondition(Condition keyCondition) {
-        this.keyCondition = keyCondition;
-        return this;
-    }
-
-    /**
-     * Fluent API to add the given attribute to the list of projection of a request.
-      * For example:
-     * <pre class="brush: java">
-     * builder.addProjection("binarySetAttribute")
-     *        .addProjection("listAttr[0]")
-     *        .addProjection("mapAttr.name")
-     *        .addProjection("stringSetAttr")
-     *        ;
-     * </pre>
-     */
-    public ExpressionSpecBuilder addProjection(String path) {
-        projections.add(new PathOperand(path));
-        return this;
-    }
-
-    /**
-     * Fluent API to add the given attributes to the list of projection of a request.
-     * For example:
-     * <pre class="brush: java">
-     * builder.addProjections("binarySetAttribute", "listAttr[0]", "mapAttr.name", "stringSetAttr");
-     * </pre>
-     */
-    public ExpressionSpecBuilder addProjections(String ... paths) {
-        for (String path: paths)
-            addProjection(path);
-        return this;
-    }
-
-    /**
-     * Returns an expression specification for use in a <code>DeleteItem</code>
-     * request to DynamoDB.
-     */
-    public DeleteItemExpressionSpec buildForDeleteItem() {
-        return new DeleteItemExpressionSpec(this);
-    }
-
-    /**
-     * Returns an expression specification for use in a <code>GetItem</code>
-     * request to DynamoDB.
-     */
-    public GetItemExpressionSpec buildForGetItem() {
-        return new GetItemExpressionSpec(this);
-    }
-
-    /**
-     * Returns an expression specification for use in a query
-     * request to DynamoDB.
-     */
-    public QueryExpressionSpec buildForQuery() {
-        return new QueryExpressionSpec(this);
-    }
-
-    /**
-     * Returns an expression specification for use in a scan
-     * request to DynamoDB.
-     */
-    public ScanExpressionSpec buildForScan() {
-        return new ScanExpressionSpec(this);
-    }
-
-    /**
-     * Returns an expression specification for use in an <code>UpdateItem</code>
-     * request to DynamoDB.
-     */
-    public UpdateItemExpressionSpec buildForUpdate() {
-        return new UpdateItemExpressionSpec(this);
-    }
-
-    /**
-     * Returns an expression specification for use in a <code>PutItem</code>
-     * request to DynamoDB.
-     */
-    public PutItemExpressionSpec buildForPut() {
-        return new PutItemExpressionSpec(this);
-    }
-
-    /**
-     * Builds and returns the update expression to be used in a dynamodb
-     * request; or null if there is none.
-     */
-    String buildUpdateExpression(SubstitutionContext context) {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, List<UpdateAction>> e: updates.entrySet()) {
-            boolean firstOfUpdateType = true;
-            for (UpdateAction expr: e.getValue()) {
-                if (firstOfUpdateType) {
-                    firstOfUpdateType = false;
-                    final String operator = e.getKey();
-                    if (sb.length() > 0)
-                        sb.append(" ");
-                    sb.append(operator).append(" ");
-                } else {
-                    sb.append(", ");
-                }
-                sb.append(expr.asSubstituted(context));
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Builds and returns the projection expression to be used in a dynamodb
-     * GetItem request; or null if there is none.
-     */
-    String buildProjectionExpression(SubstitutionContext context) {
-        if (projections.size() == 0)
-            return null;
-        StringBuilder sb = new StringBuilder();
-        for (PathOperand projection : projections) {
-            if (sb.length() > 0)
-                sb.append(", ");
-            sb.append(projection.asSubstituted(context));
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Builds and returns the condition expression to be used in a dynamodb
-     * request; or null if there is none.
-     */
-    String buildConditionExpression(SubstitutionContext context) {
-        return condition == null ? null : condition.asSubstituted(context);
-    }
-
-    /**
-     * Builds and returns the key condition expression to be used in a dynamodb
-     * query request; or null if there is none.
-     */
-    String buildKeyConditionExpression(SubstitutionContext context) {
-        return keyCondition == null ? null : keyCondition.asSubstituted(context);
-    }
-
-    @Override
-    public ExpressionSpecBuilder clone() {
-        return new ExpressionSpecBuilder(this);
-    }
-
-    ////////////// static factory methods //////////////
 
     /**
      * Returns an <code>IfNotExists</code> object which represents an <a href=
@@ -615,7 +401,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for number (N) attribute.
      */
     public static IfNotExistsFunction<N> if_not_exists(String path,
-            Number defaultValue) {
+                                                       Number defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -641,7 +427,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for binary (B) attribute.
      */
     public static IfNotExistsFunction<B> if_not_exists(String path,
-            byte[] defaultValue) {
+                                                       byte[] defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -667,7 +453,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for binary (B) attribute.
      */
     public static IfNotExistsFunction<B> if_not_exists(String path,
-            ByteBuffer defaultValue) {
+                                                       ByteBuffer defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -693,7 +479,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for boolean (BOOL) attribute.
      */
     public static IfNotExistsFunction<BOOL> if_not_exists(String path,
-            boolean defaultValue) {
+                                                          boolean defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -719,7 +505,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for binary set (BS) attribute.
      */
     public static IfNotExistsFunction<BS> if_not_exists(String path,
-            byte[] ... defaultValue) {
+                                                        byte[]... defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -745,7 +531,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for binary set (BS) attribute.
      */
     public static IfNotExistsFunction<BS> if_not_exists(String path,
-            ByteBuffer ... defaultValue) {
+                                                        ByteBuffer... defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -771,7 +557,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for list (L) attribute.
      */
     public static IfNotExistsFunction<L> if_not_exists(String path,
-            List<?> defaultValue) {
+                                                       List<?> defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -797,7 +583,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for map (M) attribute.
      */
     public static IfNotExistsFunction<M> if_not_exists(String path,
-            Map<String, ?> defaultValue) {
+                                                       Map<String, ?> defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -823,7 +609,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for number set (NS) attribute.
      */
     public static IfNotExistsFunction<NS> if_not_exists(String path,
-            Number ... defaultValue) {
+                                                        Number... defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -849,7 +635,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for string (S) attribute.
      */
     public static IfNotExistsFunction<S> if_not_exists(String path,
-            String defaultValue) {
+                                                       String defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -875,7 +661,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @return an <code>IfNotExists</code> object for string set (SS) attribute.
      */
     public static IfNotExistsFunction<SS> if_not_exists(String path,
-            String ... defaultValue) {
+                                                        String... defaultValue) {
         return if_not_exists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
@@ -921,7 +707,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            list of values to be appended to the list attribute
      */
     public static <T> ListAppendFunction list_append(String path,
-            List<? extends T> value) {
+                                                     List<? extends T> value) {
         return new ListAppendFunction(L(path), new ListLiteralOperand(new LinkedList<T>(
                 value)));
     }
@@ -944,12 +730,10 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            document path to a list attribute
      */
     public static <T> ListAppendFunction list_append(List<? extends T> value,
-            String path) {
+                                                     String path) {
         return new ListAppendFunction(new ListLiteralOperand(new LinkedList<T>(value)),
-                L(path));
+                                      L(path));
     }
-
-    // ///////////////////////// FunctionCondition factory methods
 
     /**
      * Returns a <a href=
@@ -961,6 +745,8 @@ public final class ExpressionSpecBuilder implements Cloneable {
             PathOperand pathOperand) {
         return new FunctionCondition("attribute_exists", pathOperand);
     }
+
+    ////////////// static factory methods //////////////
 
     /**
      * Returns a <a href=
@@ -1155,6 +941,8 @@ public final class ExpressionSpecBuilder implements Cloneable {
         return new L(path);
     }
 
+    // ///////////////////////// FunctionCondition factory methods
+
     /**
      * Creates a path operand that refers to a <a href=
      * "http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_AttributeValue.html"
@@ -1185,5 +973,223 @@ public final class ExpressionSpecBuilder implements Cloneable {
      */
     public static <T> ParenthesizedCondition _(Condition condition) {
         return parenthesize(condition);
+    }
+
+    /**
+     * Fluent API to add the given Update expression for a request.
+     * <p>
+     * For example:
+     * <pre class="brush: java">
+     * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
+     * ...
+     * builder
+     *      // SET num1 = num1 + 20
+     *     .addUpdate(
+     *         N("num1").set(N("num1").plus(20)))
+     *      // SET string-attr = "string-value"
+     *     .addUpdate(
+     *         S("string-attr").set("string-value")
+     * )
+     */
+    public ExpressionSpecBuilder addUpdate(UpdateAction updateAction) {
+        final String operator = updateAction.getOperator();
+        List<UpdateAction> list = updates.get(operator);
+        if (list == null) {
+            list = new LinkedList<UpdateAction>();
+            updates.put(operator, list);
+        }
+        list.add(updateAction);
+        return this;
+    }
+
+    /**
+     * Fluent API to set the condition expression for a request.
+     * <p>
+     * For example:
+     * <pre class="brush: java">
+     * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
+     * ...
+     *     builder.withCondition(
+     *         // num2 BETWEEN 0 AND 100
+     *         ExpressionSpecBuilder.N("num2").between(0, 100)
+     *     )
+     * ...
+     * </pre>
+     * Example of specifying a complex condition:
+     * <pre class="brush: java">
+     * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
+     * ...
+     *      // A complex condition expression:
+     *      //
+     *      // (attribute_not_exists(item_version) AND attribute_not_exists(config_id) AND attribute_not_exists(config_version)) OR
+     *      // (item_version < 123) OR
+     *      // (item_version = 123 AND config_id < 456) OR
+     *      // (item_version = 123 AND config_id = 456 AND config_version < 999)
+     *      //
+     *      builder.withCondition(
+     *          // add explicit parenthesis
+     *          parenthesize( attribute_not_exists("item_version")
+     *              .and( attribute_not_exists("config_id") )
+     *              .and( attribute_not_exists("config_version") )
+     *          ).or( N("item_version").lt(123) )
+     *           .or( N("item_version").eq(123)
+     *              .and( N("config_id").lt(456) ) )
+     *           .or( N("item_version").eq(123)
+     *              .and( N("config_id").eq(456) )
+     *              .and( N("config_version").lt(999) ))
+     *      )
+     * ...
+     * </pre>
+     */
+    public ExpressionSpecBuilder withCondition(Condition condition) {
+        this.condition = condition;
+        return this;
+    }
+
+    public ExpressionSpecBuilder withKeyCondition(Condition keyCondition) {
+        this.keyCondition = keyCondition;
+        return this;
+    }
+
+    /**
+     * Fluent API to add the given attribute to the list of projection of a request.
+     * For example:
+     * <pre class="brush: java">
+     * builder.addProjection("binarySetAttribute")
+     *        .addProjection("listAttr[0]")
+     *        .addProjection("mapAttr.name")
+     *        .addProjection("stringSetAttr")
+     *        ;
+     * </pre>
+     */
+    public ExpressionSpecBuilder addProjection(String path) {
+        projections.add(new PathOperand(path));
+        return this;
+    }
+
+    /**
+     * Fluent API to add the given attributes to the list of projection of a request.
+     * For example:
+     * <pre class="brush: java">
+     * builder.addProjections("binarySetAttribute", "listAttr[0]", "mapAttr.name", "stringSetAttr");
+     * </pre>
+     */
+    public ExpressionSpecBuilder addProjections(String... paths) {
+        for (String path : paths) {
+            addProjection(path);
+        }
+        return this;
+    }
+
+    /**
+     * Returns an expression specification for use in a <code>DeleteItem</code>
+     * request to DynamoDB.
+     */
+    public DeleteItemExpressionSpec buildForDeleteItem() {
+        return new DeleteItemExpressionSpec(this);
+    }
+
+    /**
+     * Returns an expression specification for use in a <code>GetItem</code>
+     * request to DynamoDB.
+     */
+    public GetItemExpressionSpec buildForGetItem() {
+        return new GetItemExpressionSpec(this);
+    }
+
+    /**
+     * Returns an expression specification for use in a query
+     * request to DynamoDB.
+     */
+    public QueryExpressionSpec buildForQuery() {
+        return new QueryExpressionSpec(this);
+    }
+
+    /**
+     * Returns an expression specification for use in a scan
+     * request to DynamoDB.
+     */
+    public ScanExpressionSpec buildForScan() {
+        return new ScanExpressionSpec(this);
+    }
+
+    /**
+     * Returns an expression specification for use in an <code>UpdateItem</code>
+     * request to DynamoDB.
+     */
+    public UpdateItemExpressionSpec buildForUpdate() {
+        return new UpdateItemExpressionSpec(this);
+    }
+
+    /**
+     * Returns an expression specification for use in a <code>PutItem</code>
+     * request to DynamoDB.
+     */
+    public PutItemExpressionSpec buildForPut() {
+        return new PutItemExpressionSpec(this);
+    }
+
+    /**
+     * Builds and returns the update expression to be used in a dynamodb
+     * request; or null if there is none.
+     */
+    String buildUpdateExpression(SubstitutionContext context) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, List<UpdateAction>> e : updates.entrySet()) {
+            boolean firstOfUpdateType = true;
+            for (UpdateAction expr : e.getValue()) {
+                if (firstOfUpdateType) {
+                    firstOfUpdateType = false;
+                    final String operator = e.getKey();
+                    if (sb.length() > 0) {
+                        sb.append(" ");
+                    }
+                    sb.append(operator).append(" ");
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(expr.asSubstituted(context));
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Builds and returns the projection expression to be used in a dynamodb
+     * GetItem request; or null if there is none.
+     */
+    String buildProjectionExpression(SubstitutionContext context) {
+        if (projections.size() == 0) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (PathOperand projection : projections) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(projection.asSubstituted(context));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Builds and returns the condition expression to be used in a dynamodb
+     * request; or null if there is none.
+     */
+    String buildConditionExpression(SubstitutionContext context) {
+        return condition == null ? null : condition.asSubstituted(context);
+    }
+
+    /**
+     * Builds and returns the key condition expression to be used in a dynamodb
+     * query request; or null if there is none.
+     */
+    String buildKeyConditionExpression(SubstitutionContext context) {
+        return keyCondition == null ? null : keyCondition.asSubstituted(context);
+    }
+
+    @Override
+    public ExpressionSpecBuilder clone() {
+        return new ExpressionSpecBuilder(this);
     }
 }
