@@ -18,7 +18,7 @@
         <!--Normal Dependencies-->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>aws-java-sdk-opensdk</artifactId>
+            <artifactId>opensdk-runtime</artifactId>
             <version>${awsjavasdk.version}</version>
         </dependency>
 
@@ -56,6 +56,7 @@
             <plugin>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>codegen-maven-plugin</artifactId>
+                <version>${awsjavasdk.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
