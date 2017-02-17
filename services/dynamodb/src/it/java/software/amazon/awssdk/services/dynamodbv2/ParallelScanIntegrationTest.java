@@ -42,7 +42,7 @@ import utils.test.util.DynamoDBTestBase;
  * DynamoDB integration tests on the low-level parallel scan operation.
  */
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources( {
+@RequiredResources({
                             @RequiredResource(resource = TestTableForParallelScan.class,
                                               creationPolicy = ResourceCreationPolicy.REUSE_EXISTING,
                                               retentionPolicy = ResourceRetentionPolicy.KEEP)

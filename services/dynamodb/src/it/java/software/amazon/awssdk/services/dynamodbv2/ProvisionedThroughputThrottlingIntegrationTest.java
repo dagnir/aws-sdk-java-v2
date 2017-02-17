@@ -35,7 +35,7 @@ import utils.test.util.DynamoDBTestBase;
  * DynamoDB integration tests around ProvisionedThroughput/throttling errors.
  */
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources( {
+@RequiredResources({
                             @RequiredResource(resource = BasicTempTableWithLowThroughput.class,
                                               creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
                                               retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)

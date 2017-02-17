@@ -41,6 +41,13 @@ public final class FailState implements State {
     }
 
     /**
+     * @return Builder instance to construct a {@link FailState}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Type identifier of {@link FailState}.
      */
     @Override
@@ -57,7 +64,7 @@ public final class FailState implements State {
 
     /**
      * @return Error code that can be referenced in {@link Retrier}s or {@link Catcher}s and can also be used for diagnostic
-     * purposes.
+     *     purposes.
      */
     public String getError() {
         return error;
@@ -83,13 +90,6 @@ public final class FailState implements State {
     @Override
     public <T> T accept(StateVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    /**
-     * @return Builder instance to construct a {@link FailState}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

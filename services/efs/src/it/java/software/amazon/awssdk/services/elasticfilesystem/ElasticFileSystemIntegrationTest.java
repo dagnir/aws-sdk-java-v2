@@ -28,10 +28,10 @@ import software.amazon.awssdk.services.elasticfilesystem.model.DeleteFileSystemR
 import software.amazon.awssdk.services.elasticfilesystem.model.DescribeFileSystemsRequest;
 import software.amazon.awssdk.services.elasticfilesystem.model.FileSystemAlreadyExistsException;
 import software.amazon.awssdk.services.elasticfilesystem.model.FileSystemNotFoundException;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.util.StringUtils;
 
-public class ElasticFileSystemIntegrationTest extends AWSIntegrationTestBase {
+public class ElasticFileSystemIntegrationTest extends AwsIntegrationTestBase {
 
     private static AmazonElasticFileSystemClient client;
     private String fileSystemId;

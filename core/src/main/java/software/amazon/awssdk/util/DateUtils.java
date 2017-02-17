@@ -34,21 +34,21 @@ import software.amazon.awssdk.annotation.ThreadSafe;
 @ThreadSafe
 public class DateUtils {
     private static final DateTimeZone GMT = new FixedDateTimeZone("GMT", "GMT", 0, 0);
-    /** ISO 8601 format */
-    protected static final DateTimeFormatter iso8601DateFormat =
+    /** ISO 8601 format. */
+    protected static final DateTimeFormatter ISO_8601_DATE_FORMAT =
             ISODateTimeFormat.dateTime().withZone(GMT);
-    /** Alternate ISO 8601 format without fractional seconds */
-    protected static final DateTimeFormatter alternateIso8601DateFormat =
+    /** Alternate ISO 8601 format without fractional seconds. */
+    protected static final DateTimeFormatter ALTERNATE_ISO_8601_DATE_FORMAT =
             DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(GMT);
-    /** RFC 822 format */
-    protected static final DateTimeFormatter rfc822DateFormat =
+    /** RFC 822 format. */
+    protected static final DateTimeFormatter RFC_822_DATE_FORMAT =
             DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
                           .withLocale(Locale.US)
                           .withZone(GMT);
     /**
      * This is another ISO 8601 format that's used in clock skew error response
      */
-    protected static final DateTimeFormatter compressedIso8601DateFormat =
+    protected static final DateTimeFormatter COMPRESSED_ISO_8601_DATE_FORMAT =
             DateTimeFormat.forPattern("yyyyMMdd'T'HHmmss'Z'")
                           .withZone(GMT);
     private static final long MILLI_SECONDS_OF_365_DAYS = 365L * 24 * 60 * 60 * 1000;
@@ -63,15 +63,15 @@ public class DateUtils {
      *
      * @return The parsed Date object.
      */
-    public static Date parseISO8601Date(String dateString) {
+    public static Date parseIso8601Date(String dateString) {
         try {
-            return doParseISO8601Date(dateString);
+            return doParseIso8601Date(dateString);
         } catch (RuntimeException ex) {
             throw handleException(ex);
         }
     }
 
-    static Date doParseISO8601Date(final String dateStringOrig) {
+    static Date doParseIso8601Date(final String dateStringOrig) {
         String dateString = dateStringOrig;
 
         // For EC2 Spot Fleet.
@@ -86,23 +86,23 @@ public class DateUtils {
         try {
             if (temp.equals(dateString)) {
                 // Normal case: nothing special here
-                return new Date(iso8601DateFormat.parseMillis(dateString));
+                return new Date(ISO_8601_DATE_FORMAT.parseMillis(dateString));
             }
             // Handling edge case:
             // Joda-time can only handle up to year 292278993 but we are given
             // 292278994;  So we parse the date string by first adjusting
             // the year to 292278993. Then we add 1 year back afterwards.
-            final long milliLess365Days = iso8601DateFormat.parseMillis(temp);
+            final long milliLess365Days = ISO_8601_DATE_FORMAT.parseMillis(temp);
             final long milli = milliLess365Days + MILLI_SECONDS_OF_365_DAYS;
             if (milli < 0) { // overflow!
                 // re-parse the original date string using JodaTime so as to
                 // throw  an exception with a consistent message
-                return new Date(iso8601DateFormat.parseMillis(dateString));
+                return new Date(ISO_8601_DATE_FORMAT.parseMillis(dateString));
             }
             return new Date(milli);
         } catch (IllegalArgumentException e) {
             try {
-                return new Date(alternateIso8601DateFormat.parseMillis(dateString));
+                return new Date(ALTERNATE_ISO_8601_DATE_FORMAT.parseMillis(dateString));
                 // If the first ISO 8601 parser didn't work, try the alternate
                 // version which doesn't include fractional seconds
             } catch (Exception oops) {
@@ -132,13 +132,14 @@ public class DateUtils {
      * at runtime behaves as expected.
      *
      * @throws IllegalStateException if the joda-time being used at runtime
-     * doens't appear to be of the right version.
+     *     doens't appear to be of the right version.
      */
     private static <E extends RuntimeException> E handleException(E ex) {
         if (JodaTime.hasExpectedBehavior()) {
             return ex;
         }
-        throw new IllegalStateException("Joda-time 2.2 or later version is required, but found version: " + JodaTime.getVersion(), ex);
+        throw new IllegalStateException("Joda-time 2.2 or later version is required, but found version: " +
+                                        JodaTime.getVersion(), ex);
     }
 
     /**
@@ -149,9 +150,9 @@ public class DateUtils {
      *
      * @return The ISO 8601 string representing the specified date.
      */
-    public static String formatISO8601Date(Date date) {
+    public static String formatIso8601Date(Date date) {
         try {
-            return iso8601DateFormat.print(date.getTime());
+            return ISO_8601_DATE_FORMAT.print(date.getTime());
         } catch (RuntimeException ex) {
             throw handleException(ex);
         }
@@ -163,9 +164,9 @@ public class DateUtils {
      * @param date the date to format
      * @return the ISO-8601 string representing the specified date
      */
-    public static String formatISO8601Date(DateTime date) {
+    public static String formatIso8601Date(DateTime date) {
         try {
-            return iso8601DateFormat.print(date);
+            return ISO_8601_DATE_FORMAT.print(date);
         } catch (RuntimeException ex) {
             throw handleException(ex);
         }
@@ -180,12 +181,12 @@ public class DateUtils {
      *
      * @return The parsed Date object.
      */
-    public static Date parseRFC822Date(String dateString) {
+    public static Date parseRfc822Date(String dateString) {
         if (dateString == null) {
             return null;
         }
         try {
-            return new Date(rfc822DateFormat.parseMillis(dateString));
+            return new Date(RFC_822_DATE_FORMAT.parseMillis(dateString));
         } catch (RuntimeException ex) {
             throw handleException(ex);
         }
@@ -199,9 +200,9 @@ public class DateUtils {
      *
      * @return The RFC 822 string representing the specified date.
      */
-    public static String formatRFC822Date(Date date) {
+    public static String formatRfc822Date(Date date) {
         try {
-            return rfc822DateFormat.print(date.getTime());
+            return RFC_822_DATE_FORMAT.print(date.getTime());
         } catch (RuntimeException ex) {
             throw handleException(ex);
         }
@@ -216,9 +217,9 @@ public class DateUtils {
      *
      * @return The parsed Date object.
      */
-    public static Date parseCompressedISO8601Date(String dateString) {
+    public static Date parseCompressedIso8601Date(String dateString) {
         try {
-            return new Date(compressedIso8601DateFormat.parseMillis(dateString));
+            return new Date(COMPRESSED_ISO_8601_DATE_FORMAT.parseMillis(dateString));
         } catch (RuntimeException ex) {
             throw handleException(ex);
         }

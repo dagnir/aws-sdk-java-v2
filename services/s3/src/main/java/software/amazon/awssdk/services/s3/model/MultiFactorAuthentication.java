@@ -34,8 +34,7 @@ import java.io.Serializable;
  * </p>
  * <p>
  * For more information on AWS Multi-Factor Authentication, including how to get
- * a device and associate it with an AWS account, see <a
- * href="http://aws.amazon.com/mfa"/>http://aws.amazon.com/mfa</a>
+ * a device and associate it with an AWS account, see <a href="http://aws.amazon.com/mfa">http://aws.amazon.com/mfa</a>
  * </p>
  */
 public class MultiFactorAuthentication implements Serializable {

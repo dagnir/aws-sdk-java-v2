@@ -28,11 +28,11 @@ public class ByteSetUnmarshaller extends NSUnmarshaller {
     private static final ByteSetUnmarshaller INSTANCE =
             new ByteSetUnmarshaller();
 
-    public static ByteSetUnmarshaller instance() {
-        return INSTANCE;
+    private ByteSetUnmarshaller() {
     }
 
-    private ByteSetUnmarshaller() {
+    public static ByteSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

@@ -92,6 +92,7 @@ public class JsonPolicyWriter {
             try {
                 writer.close();
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
     }

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.s3.transfer.TransferManager;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**
- * An S3 Link that works with {@link DynamoDBMapper}.
+ * An S3 Link that works with {@link DynamoDbMapper}.
  * An S3 link is persisted as a JSON string in DynamoDB.
  * This link object can be used directly to upload/download files to S3.
  * Alternatively, the underlying
@@ -136,7 +136,7 @@ public class S3Link {
     private static String convertRegionToString(Region region, String bucketName) {
         String regionAsString;
         if (region == null) {
-            if (BucketNameUtils.isDNSBucketName(bucketName)) {
+            if (BucketNameUtils.isDnsBucketName(bucketName)) {
                 regionAsString = Region.US_Standard.getFirstRegionId();
             } else {
                 throw new IllegalArgumentException("Region must be specified for bucket that cannot be addressed using virtual host style");
@@ -331,7 +331,7 @@ public class S3Link {
      * @param destination destination file to download to
      *
      * @return All S3 object metadata for the specified object.
-     * Returns null if constraints were specified but not met.
+     *     Returns null if constraints were specified but not met.
      */
     public ObjectMetadata downloadTo(final File destination) {
         return downloadTo0(destination, null);
@@ -395,6 +395,7 @@ public class S3Link {
             try {
                 objectContent.close();
             } catch (IOException ioe) {
+                // Ignored or expected.
             }
         }
 
@@ -553,7 +554,7 @@ public class S3Link {
             this.s3cc = s3cc;
         }
 
-        public static final Factory of(final AWSCredentialsProvider provider) {
+        public static final Factory of(final AwsCredentialsProvider provider) {
             return provider == null ? DEFAULT : new Factory(new S3ClientCache(provider));
         }
 

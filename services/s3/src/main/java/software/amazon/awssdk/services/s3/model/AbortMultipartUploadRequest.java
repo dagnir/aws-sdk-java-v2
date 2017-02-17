@@ -29,13 +29,13 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  */
 public class AbortMultipartUploadRequest extends AmazonWebServiceRequest implements Serializable {
 
-    /** The name of the bucket containing the multipart upload to abort */
+    /** The name of the bucket containing the multipart upload to abort. */
     private String bucketName;
 
-    /** The key of the multipart upload to abort */
+    /** The key of the multipart upload to abort. */
     private String key;
 
-    /** The ID of the multipart upload to abort */
+    /** The ID of the multipart upload to abort. */
     private String uploadId;
 
     /**

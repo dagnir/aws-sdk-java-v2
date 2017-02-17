@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder._;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.paren;
 
 import software.amazon.awssdk.annotation.Beta;
 
@@ -38,7 +38,7 @@ public abstract class Condition extends UnitOfExpression {
      * @param that given condition.
      */
     public AndCondition and(Condition that) {
-        return new AndCondition(this, that.atomic() ? that : _(that));
+        return new AndCondition(this, that.atomic() ? that : paren(that));
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class Condition extends UnitOfExpression {
      * @param that given condition.
      */
     public OrCondition or(Condition that) {
-        return new OrCondition(this, that.atomic() ? that : _(that));
+        return new OrCondition(this, that.atomic() ? that : paren(that));
     }
 
     /**

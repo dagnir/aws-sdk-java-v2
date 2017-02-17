@@ -165,7 +165,7 @@ public class CustomizationConfig {
     /**
      * Service calculates CRC32 checksum from compressed file when Accept-Encoding: gzip header is provided.
      */
-    private boolean calculateCRC32FromCompressedData;
+    private boolean calculateCrc32FromCompressedData;
     /**
      * Custom file header for all generated Java classes. If not specified uses default Amazon
      * license header.
@@ -421,13 +421,13 @@ public class CustomizationConfig {
         this.customSignerProvider = customSignerProvider;
     }
 
-    public boolean isCalculateCRC32FromCompressedData() {
-        return calculateCRC32FromCompressedData;
+    public boolean isCalculateCrc32FromCompressedData() {
+        return calculateCrc32FromCompressedData;
     }
 
-    public void setCalculateCRC32FromCompressedData(
-            boolean calculateCRC32FromCompressedData) {
-        this.calculateCRC32FromCompressedData = calculateCRC32FromCompressedData;
+    public void setCalculateCrc32FromCompressedData(
+            boolean calculateCrc32FromCompressedData) {
+        this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
     }
 
     public String getCustomFileHeader() {

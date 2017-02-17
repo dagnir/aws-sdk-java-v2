@@ -1,17 +1,17 @@
 /*
-* Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License").
-* You may not use this file except in compliance with the License.
-* A copy of the License is located at
-*
-* http://aws.amazon.com/apache2.0
-*
-* or in the "license" file accompanying this file. This file is distributed
-* on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-* express or implied. See the License for the specific language governing
-* permissions and limitations under the License.
-*/
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 
 package software.amazon.awssdk.services.logs;
 
@@ -55,12 +55,12 @@ import software.amazon.awssdk.services.logs.model.TestMetricFilterResult;
  */
 public class ServiceIntegrationTest extends IntegrationTestBase {
 
-    /* Components of the message body */
+    /* Components of the message body. */
     private static final long LOG_MESSAGE_TIMESTAMP = System.currentTimeMillis();
     private static final String LOG_MESSAGE_PREFIX = "java-integ-test";
     private static final String LOG_MESSAGE_CONTENT = "boom";
 
-    /* The log message body and the pattern that we use to filter out such message */
+    /* The log message body and the pattern that we use to filter out such message. */
     private static final String LOG_MESSAGE = String.format("%s [%d] %s", LOG_MESSAGE_PREFIX, LOG_MESSAGE_TIMESTAMP,
                                                             LOG_MESSAGE_CONTENT);
     private static final String LOG_METRIC_FILTER_PATTERN = "[prefix=java-integ-test, timestamp, content]";
@@ -85,6 +85,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
             awsLogs.createLogGroup(new CreateLogGroupRequest(groupName));
             Assert.fail("ResourceAlreadyExistsException is expected.");
         } catch (ResourceAlreadyExistsException expected) {
+            // Ignored or expected.
         }
 
         final LogGroup createdGroup = findLogGroupByName(awsLogs, groupName);
@@ -96,11 +97,11 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertNotNull(createdGroup.getCreationTime());
         Assert.assertNotNull(createdGroup.getArn());
 
-        /* The log group should have no filter and no stored bytes */
+        /* The log group should have no filter and no stored bytes. */
         Assert.assertEquals(0, createdGroup.getMetricFilterCount().intValue());
         Assert.assertEquals(0, createdGroup.getStoredBytes().longValue());
 
-        /* Retention policy is still unspecified */
+        /* Retention policy is still unspecified. */
         Assert.assertNull(createdGroup.getRetentionInDays());
 
     }
@@ -115,6 +116,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
             awsLogs.createLogStream(new CreateLogStreamRequest(groupName, logStreamName));
             Assert.fail("ResourceAlreadyExistsException is expected.");
         } catch (ResourceAlreadyExistsException expected) {
+            // Ignored or expected.
         }
 
         final LogStream createdStream = findLogStreamByName(awsLogs, groupName, logStreamName);
@@ -127,10 +129,10 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertNotNull(createdStream.getCreationTime());
         Assert.assertNotNull(createdStream.getArn());
 
-        /* The log stream should have no stored bytes */
+        /* The log stream should have no stored bytes. */
         Assert.assertEquals(0, createdStream.getStoredBytes().longValue());
 
-        /* No log event is pushed yet */
+        /* No log event is pushed yet. */
         Assert.assertNull(createdStream.getFirstEventTimestamp());
         Assert.assertNull(createdStream.getLastEventTimestamp());
         Assert.assertNull(createdStream.getLastIngestionTime());
@@ -173,7 +175,9 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         // Insert a new log event
         PutLogEventsResult putResult = awsLogs.putLogEvents(new PutLogEventsRequest(logGroupName, logStreamName,
-                                                                                    Arrays.asList(new InputLogEvent().withMessage(LOG_MESSAGE).withTimestamp(LOG_MESSAGE_TIMESTAMP))));
+                                                                                    Arrays.asList(new InputLogEvent().withMessage(
+                                                                                            LOG_MESSAGE).withTimestamp(
+                                                                                            LOG_MESSAGE_TIMESTAMP))));
 
         Assert.assertNotNull(putResult.getNextSequenceToken());
 
@@ -181,6 +185,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException ignored) {
+            // Ignored or expected.
         }
 
         // Pull the event from the log stream

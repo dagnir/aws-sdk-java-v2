@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.glacier.transfer;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.services.glacier.AmazonGlacierClient;
 import software.amazon.awssdk.services.glacier.model.GetJobOutputRequest;
 import software.amazon.awssdk.services.glacier.model.GetJobOutputResult;
@@ -40,14 +40,14 @@ public class UnreliableGlaicerClient extends AmazonGlacierClient {
     /**
      * Set the an unreliable AWS Glacier java client.
      */
-    public UnreliableGlaicerClient(AWSCredentials awsCredentials) {
+    public UnreliableGlaicerClient(AwsCredentials awsCredentials) {
         super(awsCredentials, new ClientConfiguration());
     }
 
     /**
      * Set the an unreliable AWS Glacier java client, and denote it whether is recoverable or not.
      */
-    public UnreliableGlaicerClient(AWSCredentials awsCredentials, boolean recoverable) {
+    public UnreliableGlaicerClient(AwsCredentials awsCredentials, boolean recoverable) {
         super(awsCredentials, new ClientConfiguration());
         this.recoverable = recoverable;
     }

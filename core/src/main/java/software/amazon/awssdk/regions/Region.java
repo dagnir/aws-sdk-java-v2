@@ -19,7 +19,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.util.ValidationUtils;
 
@@ -142,7 +142,7 @@ public class Region {
      */
     @Deprecated
     public <T extends AmazonWebServiceClient> T createClient(Class<T> serviceClass,
-                                                             AWSCredentialsProvider credentials,
+                                                             AwsCredentialsProvider credentials,
                                                              ClientConfiguration config) {
         Constructor<T> constructor;
         T client;
@@ -154,10 +154,10 @@ public class Region {
                 constructor = serviceClass.getConstructor(ClientConfiguration.class);
                 client = constructor.newInstance(config);
             } else if (config == null) {
-                constructor = serviceClass.getConstructor(AWSCredentialsProvider.class);
+                constructor = serviceClass.getConstructor(AwsCredentialsProvider.class);
                 client = constructor.newInstance(credentials);
             } else {
-                constructor = serviceClass.getConstructor(AWSCredentialsProvider.class, ClientConfiguration.class);
+                constructor = serviceClass.getConstructor(AwsCredentialsProvider.class, ClientConfiguration.class);
                 client = constructor.newInstance(credentials, config);
             }
 

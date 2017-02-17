@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.kms.utils;
 
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.services.kms.AWSKMSClient;
 import software.amazon.awssdk.services.kms.model.CreateAliasRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
@@ -30,7 +30,7 @@ public class KmsClientTestExtensions extends AWSKMSClient {
 
     private static final String NON_DEFAULT_KEY_ALIAS = "alias/s3/integration-tests";
 
-    public KmsClientTestExtensions(AWSCredentials awsCredentials) {
+    public KmsClientTestExtensions(AwsCredentials awsCredentials) {
         super(awsCredentials);
     }
 

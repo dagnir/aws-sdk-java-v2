@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.starling;
 
 import java.io.FileNotFoundException;
@@ -16,11 +31,11 @@ import software.amazon.awssdk.services.config.model.StartConfigurationRecorderRe
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
 import software.amazon.awssdk.services.identitymanagement.model.CreateRoleRequest;
 import software.amazon.awssdk.services.identitymanagement.model.CreateRoleResult;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class StarlingIntegrationTest extends AWSTestBase {
+public class StarlingIntegrationTest extends AwsTestBase {
 
-    /** Policy to describe the AWS resources */
+    /** Policy to describe the AWS resources. */
     private static final String POLICY_DESCRIBE_RESOURCES = "{"
                                                             + "\"Version\": \"2012-10-17\"," + "\"Statement\":" + "[" + "{"
                                                             + "\"Action\":" + "[" + "\"cloudtrail:DescribeTrails\","
@@ -29,16 +44,16 @@ public class StarlingIntegrationTest extends AWSTestBase {
     /** Name of the role being created. */
     private static final String DESCRIBE_ROLE_NAME = "java-sdk-config-describe-role-"
                                                      + System.currentTimeMillis();
-    /** Reference to the config service client */
+    /** Reference to the config service client. */
     protected static AmazonConfigClient configServiceClient;
-    /** Name of the configuration recorded */
+    /** Name of the configuration recorded. */
     private static String recorderName = null;
     /**
      * ARN of the IAM role associated with the recorder to describe the AWS
      * resources
      */
     private static String configRecorderRoleArn = null;
-    /** Reference to the IAM client */
+    /** Reference to the IAM client. */
     private static AmazonIdentityManagementClient iam = null;
 
     @BeforeClass

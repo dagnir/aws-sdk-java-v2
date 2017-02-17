@@ -26,15 +26,13 @@ import java.util.List;
 public class BucketCrossOriginConfiguration implements Serializable {
 
 
-    private List<CORSRule> rules;
+    private List<CorsRule> rules;
 
     /**
      * Constructs a new {@link BucketCrossOriginConfiguration} object with the
      * rules given.
-     *
-     * @param rules
      */
-    public BucketCrossOriginConfiguration(List<CORSRule> rules) {
+    public BucketCrossOriginConfiguration(List<CorsRule> rules) {
         this.rules = rules;
     }
 
@@ -45,14 +43,14 @@ public class BucketCrossOriginConfiguration implements Serializable {
     /**
      * Returns the list of rules that comprise this configuration.
      */
-    public List<CORSRule> getRules() {
+    public List<CorsRule> getRules() {
         return rules;
     }
 
     /**
      * Sets the rules that comprise this configuration.
      */
-    public void setRules(List<CORSRule> rules) {
+    public void setRules(List<CorsRule> rules) {
         this.rules = rules;
     }
 
@@ -60,7 +58,7 @@ public class BucketCrossOriginConfiguration implements Serializable {
      * Sets the rules that comprise this configuration and returns a reference
      * to this object for easy method chaining.
      */
-    public BucketCrossOriginConfiguration withRules(List<CORSRule> rules) {
+    public BucketCrossOriginConfiguration withRules(List<CorsRule> rules) {
         setRules(rules);
         return this;
     }
@@ -69,7 +67,7 @@ public class BucketCrossOriginConfiguration implements Serializable {
      * Convenience array style method for
      * {@link BucketCrossOriginConfiguration#withRules(List)}
      */
-    public BucketCrossOriginConfiguration withRules(CORSRule... rules) {
+    public BucketCrossOriginConfiguration withRules(CorsRule... rules) {
         setRules(Arrays.asList(rules));
         return this;
     }

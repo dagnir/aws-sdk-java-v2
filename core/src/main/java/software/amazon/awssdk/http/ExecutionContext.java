@@ -20,8 +20,8 @@ import java.util.List;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
@@ -29,8 +29,8 @@ import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTr
 import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.AWSRequestMetricsFullSupport;
+import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetricsFullSupport;
 
 /**
  * @NotThreadSafe This class should only be accessed by a single thread and be used throughout
@@ -39,7 +39,7 @@ import software.amazon.awssdk.util.AWSRequestMetricsFullSupport;
 @NotThreadSafe
 @SdkProtectedApi
 public class ExecutionContext {
-    private final AWSRequestMetrics awsRequestMetrics;
+    private final AwsRequestMetrics awsRequestMetrics;
     private final List<RequestHandler2> requestHandler2s;
     private final AmazonWebServiceClient awsClient;
     private final SignerProvider signerProvider;
@@ -50,7 +50,7 @@ public class ExecutionContext {
      * Optional credentials to enable the runtime layer to handle signing requests (and resigning on
      * retries).
      */
-    private AWSCredentialsProvider credentialsProvider;
+    private AwsCredentialsProvider credentialsProvider;
 
     /**
      * An internal retry strategy for auth errors. This is currently only used by the S3 client for
@@ -74,7 +74,7 @@ public class ExecutionContext {
     public ExecutionContext(List<RequestHandler2> requestHandler2s, boolean isMetricEnabled,
                             AmazonWebServiceClient awsClient) {
         this.requestHandler2s = requestHandler2s;
-        awsRequestMetrics = isMetricEnabled ? new AWSRequestMetricsFullSupport() : new AWSRequestMetrics();
+        awsRequestMetrics = isMetricEnabled ? new AwsRequestMetricsFullSupport() : new AwsRequestMetrics();
         this.awsClient = awsClient;
         this.signerProvider = new SignerProvider() {
             @Override
@@ -86,7 +86,7 @@ public class ExecutionContext {
 
     private ExecutionContext(final Builder builder) {
         this.requestHandler2s = builder.requestHandler2s;
-        this.awsRequestMetrics = builder.useRequestMetrics ? new AWSRequestMetricsFullSupport() : new AWSRequestMetrics();
+        this.awsRequestMetrics = builder.useRequestMetrics ? new AwsRequestMetricsFullSupport() : new AwsRequestMetrics();
         this.awsClient = builder.awsClient;
         this.signerProvider = builder.signerProvider;
     }
@@ -99,7 +99,7 @@ public class ExecutionContext {
         return requestHandler2s;
     }
 
-    public AWSRequestMetrics getAwsRequestMetrics() {
+    public AwsRequestMetrics getAwsRequestMetrics() {
         return awsRequestMetrics;
     }
 
@@ -149,7 +149,7 @@ public class ExecutionContext {
      */
     @Deprecated
     public Signer getSignerByURI(URI uri) {
-        return awsClient == null ? null : awsClient.getSignerByURI(uri);
+        return awsClient == null ? null : awsClient.getSignerByUri(uri);
     }
 
     /**
@@ -157,9 +157,9 @@ public class ExecutionContext {
      * is used for signing the request. If there is no credential provider, then the runtime will
      * not attempt to sign (or resign on retries) requests.
      *
-     * @return the credentials provider to fetch {@link AWSCredentials}
+     * @return the credentials provider to fetch {@link AwsCredentials}
      */
-    public AWSCredentialsProvider getCredentialsProvider() {
+    public AwsCredentialsProvider getCredentialsProvider() {
         return this.credentialsProvider;
     }
 
@@ -169,9 +169,9 @@ public class ExecutionContext {
      * attempt to sign (or resign on retries) requests.
      *
      * @param credentialsProvider
-     *            the credentials provider to fetch {@link AWSCredentials}
+     *            the credentials provider to fetch {@link AwsCredentials}
      */
-    public void setCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
+    public void setCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
         this.credentialsProvider = credentialsProvider;
     }
 

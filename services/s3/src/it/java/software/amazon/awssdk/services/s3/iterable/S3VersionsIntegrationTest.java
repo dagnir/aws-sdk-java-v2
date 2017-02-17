@@ -40,7 +40,7 @@ import software.amazon.awssdk.services.s3.model.VersionListing;
 @Category(S3Categories.Slow.class)
 public class S3VersionsIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String bucketName = "java-s3-version-iteration-test-" + new Date().getTime();
 
     /**
@@ -67,7 +67,6 @@ public class S3VersionsIntegrationTest extends S3IntegrationTestBase {
      * waiting the bucket versioning configuration to be enabled
      * A runtime exception will be thrown if this method doesn't detect the versioniong is enabled before the ending period.
      *
-     * @throws InterruptedException
      *
      */
     private static void waitForBucketVersioningToBeEnabled(String bucketName) throws InterruptedException {
@@ -93,7 +92,6 @@ public class S3VersionsIntegrationTest extends S3IntegrationTestBase {
      * Waits for the specified bucket to be created.
      * A runtime exception will be thrown if this method doesn't detect the bucket is created before the ending period.
      *
-     * @throws InterruptedException
      *
      */
     private static void waitForBucketCreation() throws InterruptedException {
@@ -192,7 +190,6 @@ public class S3VersionsIntegrationTest extends S3IntegrationTestBase {
     /**
      * Deletes  all object versions in the given bucket
      *
-     * @throws InterruptedException
      *
      */
     private void deleteAllVersionedContents() throws InterruptedException {
@@ -207,6 +204,7 @@ public class S3VersionsIntegrationTest extends S3IntegrationTestBase {
                     s3.deleteVersion(new DeleteVersionRequest(
                             bucketName, version.getKey(), version.getVersionId()));
                 } catch (Exception e) {
+                    // Ignored or expected.
                 }
             }
             versionListing = s3.listNextBatchOfVersions(versionListing);

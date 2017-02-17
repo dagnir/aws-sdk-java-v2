@@ -88,6 +88,7 @@ public class ProfilesConfigFileWriter {
             try {
                 writer.close();
             } catch (IOException ioe) {
+                // Ignored or expected.
             }
         }
 
@@ -247,6 +248,7 @@ public class ProfilesConfigFileWriter {
                     writer.close();
                 }
             } catch (IOException e) {
+                // Ignored or expected.
             }
         }
     }
@@ -258,13 +260,13 @@ public class ProfilesConfigFileWriter {
      */
     private static class ProfilesConfigFileWriterHelper extends AbstractProfilesConfigFileScanner {
 
-        /** The writer where the modified profiles will be output to */
+        /** The writer where the modified profiles will be output to. */
         private final Writer writer;
 
-        /** Map of all the profiles to be modified, keyed by profile names */
+        /** Map of all the profiles to be modified, keyed by profile names. */
         private final Map<String, Profile> newProfiles = new LinkedHashMap<String, Profile>();
 
-        /** Map of the names of all the profiles to be deleted */
+        /** Map of the names of all the profiles to be deleted. */
         private final Set<String> deletedProfiles = new HashSet<String>();
 
         private final StringBuilder buffer = new StringBuilder();
@@ -460,7 +462,7 @@ public class ProfilesConfigFileWriter {
                    ProfileKeyConstants.SOURCE_PROFILE.equals(propertyName);
         }
 
-        /* Private interface */
+        /* Private interface. */
 
         private void writeProfile(Profile profile) {
             writeProfileName(profile.getProfileName());

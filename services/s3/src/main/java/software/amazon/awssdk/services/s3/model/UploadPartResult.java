@@ -26,10 +26,10 @@ import software.amazon.awssdk.services.s3.internal.SSEResultBase;
 public class UploadPartResult extends SSEResultBase
         implements Serializable, S3RequesterChargedResult {
 
-    /** The part number of the newly uploaded part */
+    /** The part number of the newly uploaded part. */
     private int partNumber;
 
-    /** The entity tag generated from the content of the upload part */
+    /** The entity tag generated from the content of the upload part. */
     private String eTag;
 
     /**

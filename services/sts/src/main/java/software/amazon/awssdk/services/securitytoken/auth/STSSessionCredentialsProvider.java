@@ -18,10 +18,10 @@ package software.amazon.awssdk.services.securitytoken.auth;
 import java.util.concurrent.Callable;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentialsProvider;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
 import software.amazon.awssdk.services.securitytoken.model.GetSessionTokenRequest;
@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.securitytoken.model.GetSessionTokenResult
  * temporary, short-lived sessions to use for authentication.
  */
 @ThreadSafe
-public class STSSessionCredentialsProvider implements AWSSessionCredentialsProvider {
+public class STSSessionCredentialsProvider implements AwsSessionCredentialsProvider {
 
     /**
      * Default duration for started sessions
@@ -66,7 +66,7 @@ public class STSSessionCredentialsProvider implements AWSSessionCredentialsProvi
      *
      * @param longLivedCredentials The main AWS credentials for a user's account.
      */
-    public STSSessionCredentialsProvider(AWSCredentials longLivedCredentials) {
+    public STSSessionCredentialsProvider(AwsCredentials longLivedCredentials) {
         this(longLivedCredentials, new ClientConfiguration());
     }
 
@@ -79,7 +79,7 @@ public class STSSessionCredentialsProvider implements AWSSessionCredentialsProvi
      * @param longLivedCredentials The main AWS credentials for a user's account.
      * @param clientConfiguration  Client configuration connection parameters.
      */
-    public STSSessionCredentialsProvider(AWSCredentials longLivedCredentials,
+    public STSSessionCredentialsProvider(AwsCredentials longLivedCredentials,
                                          ClientConfiguration clientConfiguration) {
         this(new AWSSecurityTokenServiceClient(longLivedCredentials, clientConfiguration));
     }
@@ -93,7 +93,7 @@ public class STSSessionCredentialsProvider implements AWSSessionCredentialsProvi
      * @param longLivedCredentialsProvider Credentials provider for the main AWS credentials for a
      *                                     user's account.
      */
-    public STSSessionCredentialsProvider(AWSCredentialsProvider longLivedCredentialsProvider) {
+    public STSSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider) {
         this(new AWSSecurityTokenServiceClient(longLivedCredentialsProvider));
     }
 
@@ -107,7 +107,7 @@ public class STSSessionCredentialsProvider implements AWSSessionCredentialsProvi
      *                                     user's account.
      * @param clientConfiguration          Client configuration connection parameters.
      */
-    public STSSessionCredentialsProvider(AWSCredentialsProvider longLivedCredentialsProvider,
+    public STSSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider,
                                          ClientConfiguration clientConfiguration) {
 
         this(new AWSSecurityTokenServiceClient(longLivedCredentialsProvider, clientConfiguration));
@@ -141,7 +141,7 @@ public class STSSessionCredentialsProvider implements AWSSessionCredentialsProvi
      * service.
      *
      * @deprecated This method may be removed in a future major version. Create multiple providers
-     * if you need to work with multiple STS endpoints.
+     *     if you need to work with multiple STS endpoints.
      */
     @Deprecated
     public synchronized void setSTSClientEndpoint(String endpoint) {
@@ -159,7 +159,7 @@ public class STSSessionCredentialsProvider implements AWSSessionCredentialsProvi
      * STS service. Care has been taken to resist Throttling exceptions.
      */
     @Override
-    public AWSSessionCredentials getCredentials() {
+    public AwsSessionCredentials getCredentials() {
         return refreshableTask.getValue().getSessionCredentials();
     }
 

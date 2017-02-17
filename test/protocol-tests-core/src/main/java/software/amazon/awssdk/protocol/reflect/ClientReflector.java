@@ -17,10 +17,10 @@ package software.amazon.awssdk.protocol.reflect;
 
 import java.lang.reflect.Method;
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
@@ -74,8 +74,8 @@ public class ClientReflector {
                 SdkSyncClientBuilder<?, ?> builder =
                         (SdkSyncClientBuilder<?, ?>) interfaceClass.getMethod("builder").invoke(null);
                 builder.getClass()
-                       .getMethod("iamCredentials", AWSCredentialsProvider.class)
-                       .invoke(builder, new AWSStaticCredentialsProvider(getMockCredentials()));
+                       .getMethod("iamCredentials", AwsCredentialsProvider.class)
+                       .invoke(builder, new AwsStaticCredentialsProvider(getMockCredentials()));
                 return builder
                         .endpoint("http://localhost:" + WireMockUtils.port())
                         .build();
@@ -90,7 +90,7 @@ public class ClientReflector {
     private AmazonWebServiceClient createAmazonServiceClient() throws Exception {
         final Class<?> syncClientClass = Class.forName(getFqcn(metadata.getSyncClient()));
         AmazonWebServiceClient amazonClient = (AmazonWebServiceClient) syncClientClass
-                .getConstructor(AWSCredentials.class)
+                .getConstructor(AwsCredentials.class)
                 .newInstance(getMockCredentials());
         amazonClient.setEndpoint("http://localhost:" + WireMockUtils.port());
         return amazonClient;
@@ -99,8 +99,8 @@ public class ClientReflector {
     /**
      * @return Dummy credentials to create client with.
      */
-    private BasicAWSCredentials getMockCredentials() {
-        return new BasicAWSCredentials("akid", "skid");
+    private BasicAwsCredentials getMockCredentials() {
+        return new BasicAwsCredentials("akid", "skid");
     }
 
     /**

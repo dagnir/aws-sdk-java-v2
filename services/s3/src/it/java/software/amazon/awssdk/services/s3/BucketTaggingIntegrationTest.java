@@ -30,12 +30,12 @@ import software.amazon.awssdk.services.s3.model.TagSet;
  */
 public class BucketTaggingIntegrationTest extends S3IntegrationTestBase {
 
-    private static final String bucketName = "java-sdk-tagging-test-" + System.currentTimeMillis();
+    private static final String BUCKET_NAME = "java-sdk-tagging-test-" + System.currentTimeMillis();
 
     /** Releases all resources created by this test. */
     @After
     public void tearDown() throws Exception {
-        super.deleteBucketAndAllContents(bucketName);
+        deleteBucketAndAllContents(BUCKET_NAME);
     }
 
     /** Tests that we can get, set, and delete a bucket's website configuration. */
@@ -43,10 +43,10 @@ public class BucketTaggingIntegrationTest extends S3IntegrationTestBase {
     public void testBucketWebsites() throws Exception {
 
         // create a test bucket
-        s3.createBucket(bucketName);
+        s3.createBucket(BUCKET_NAME);
 
         // get tagging config for new bucket
-        BucketTaggingConfiguration bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(bucketName);
+        BucketTaggingConfiguration bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(BUCKET_NAME);
         System.out.println("config: " + bucketTaggingConfiguration);
 
         Map<String, String> tags = new HashMap<String, String>(1);
@@ -55,21 +55,21 @@ public class BucketTaggingIntegrationTest extends S3IntegrationTestBase {
         TagSet tagSet = new TagSet(tags);
 
         // set tagging configuration
-        s3.setBucketTaggingConfiguration(bucketName, new BucketTaggingConfiguration().withTagSets(tagSet));
+        s3.setBucketTaggingConfiguration(BUCKET_NAME, new BucketTaggingConfiguration().withTagSets(tagSet));
 
         // get again
-        bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(bucketName);
+        bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(BUCKET_NAME);
         TagSet remoteTagSet = bucketTaggingConfiguration.getTagSet();
         assertEquals(remoteTagSet.getAllTags().size(), tags.size());
         assertEquals(remoteTagSet.getTag("User"), tags.get("User"));
         assertEquals(remoteTagSet.getTag("Group"), tags.get("Group"));
 
         // delete
-        s3.deleteBucketTaggingConfiguration(bucketName);
+        s3.deleteBucketTaggingConfiguration(BUCKET_NAME);
         Thread.sleep(1000 * 15 * 1);
 
         // get again
-        bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(bucketName);
+        bucketTaggingConfiguration = s3.getBucketTaggingConfiguration(BUCKET_NAME);
         assertNull(bucketTaggingConfiguration);
     }
 }

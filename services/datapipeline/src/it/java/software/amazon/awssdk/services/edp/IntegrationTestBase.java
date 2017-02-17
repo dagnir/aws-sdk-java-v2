@@ -19,16 +19,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.services.datapipeline.DataPipelineClient;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Base class for all STS integration tests. Loads AWS credentials from a
  * properties file on disk, provides helper methods for tests, and instantiates
  * the STS client object for all tests to use.
  */
-public class IntegrationTestBase extends AWSTestBase {
+public class IntegrationTestBase extends AwsTestBase {
 
-    /** The shared DP client for all tests to use */
+    /** The shared DP client for all tests to use. */
     protected static DataPipelineClient edp;
 
     @BeforeClass

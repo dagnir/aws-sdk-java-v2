@@ -63,7 +63,7 @@ public class BucketNotificationEventIntegrationTest extends S3IntegrationTestBas
         sns = new AmazonSNSClient(credentials);
         s3.createBucket(BUCKET_NAME);
         topicArn = sns.createTopic(TOPIC_NAME).getTopicArn();
-        BucketNotificationTestUtils.authorizeS3ToSendToSNS(sns, topicArn, BUCKET_NAME);
+        BucketNotificationTestUtils.authorizeS3ToSendToSns(sns, topicArn, BUCKET_NAME);
     }
 
     @After

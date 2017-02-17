@@ -30,12 +30,12 @@ import software.amazon.awssdk.AmazonServiceException;
  */
 public class BucketPolicyIntegrationTest extends S3IntegrationTestBase {
 
-    /** Path to the sample policy for this test */
+    /** Path to the sample policy for this test. */
     private static final String POLICY_FILE = "/software/amazon/awssdk/services/s3/samplePolicy.json";
-    /** Name of the bucket created by this test */
+    /** Name of the bucket created by this test. */
     private final String bucketName = "java-bucket-policy-integ-test-" + System.currentTimeMillis();
 
-    /** Release all allocated resources */
+    /** Release all allocated resources. */
     @After
     public void tearDown() {
         super.deleteBucketAndAllContents(bucketName);

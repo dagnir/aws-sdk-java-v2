@@ -170,6 +170,7 @@ public class FilterConditionTest {
             ScanFilter = new ScanFilter("foo").in((Object[]) null);
             Assert.fail();
         } catch (IllegalArgumentException e) {
+            // Ignored or expected.
         }
 
         // Empty values
@@ -177,6 +178,7 @@ public class FilterConditionTest {
             ScanFilter = new ScanFilter("foo").in();
             Assert.fail();
         } catch (IllegalArgumentException e) {
+            // Ignored or expected.
         }
     }
 
@@ -252,12 +254,14 @@ public class FilterConditionTest {
             new ScanFilter(null);
             Assert.fail();
         } catch (IllegalArgumentException ScanFilter) {
+            // Ignored or expected.
         }
 
         try {
             new ScanFilter("");
             Assert.fail();
         } catch (IllegalArgumentException ScanFilter) {
+            // Ignored or expected.
         }
     }
 
@@ -270,6 +274,7 @@ public class FilterConditionTest {
                     new ScanFilter("foo").eq("charlie"));
             Assert.fail();
         } catch (IllegalArgumentException ScanFilter) {
+            // Ignored or expected.
         }
     }
 }

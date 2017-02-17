@@ -20,8 +20,8 @@ import java.util.List;
 /**
  * A logical AND of two or more predicates, which are used in evaluating an analytics filter.
  *
- * The {@link AnalyticsAndOperator} can contain at most one {@link AnalyticsPrefixPredicate} and any number of {@link AnalyticsTagPredicate}s.
- * The operator must have at least two predicates.
+ * The {@link AnalyticsAndOperator} can contain at most one {@link AnalyticsPrefixPredicate} and any number of
+ * {@link AnalyticsTagPredicate}s. The operator must have at least two predicates.
  */
 public class AnalyticsAndOperator extends AnalyticsNAryOperator {
 

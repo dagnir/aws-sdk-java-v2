@@ -38,7 +38,7 @@ import software.amazon.awssdk.util.XpathUtils;
  * testing for pieces of MFA Delete, without requiring a physical token
  * generator.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class MfaDeleteUnitTest {
 

@@ -53,7 +53,8 @@ public class BucketLoggingIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testBucketLoggingOperations() throws Exception {
         if (!CryptoTestUtils.runTimeConsumingTests()) {
-            System.out.println("Please set the environment variable, export RUN_TIME_CONSUMING_TESTS=true, to run the testBucketLoggingOperations test");
+            System.out.println("Please set the environment variable, export RUN_TIME_CONSUMING_TESTS=true, " +
+                               "to run the testBucketLoggingOperations test");
             return;
         }
         // setup for the tests
@@ -92,7 +93,6 @@ public class BucketLoggingIntegrationTest extends S3IntegrationTestBase {
      * Waits for the logging of the bucket to be enabled.  
      * A runtime exception will be thrown if this method doesn't detect logging is enabled before the ending period.
      *
-     * @throws InterruptedException
      *
      */
     private BucketLoggingConfiguration waitForLoggingConfigurationToBeEnabled() throws InterruptedException {
@@ -102,7 +102,7 @@ public class BucketLoggingIntegrationTest extends S3IntegrationTestBase {
         BucketLoggingConfiguration loggingStatus = null;
         while (System.currentTimeMillis() < endTime) {
             loggingStatus = s3.getBucketLoggingConfiguration(loggingBucketName);
-            ;
+
             if (loggingStatus.isLoggingEnabled()) {
                 hits++;
             } else {
@@ -121,7 +121,6 @@ public class BucketLoggingIntegrationTest extends S3IntegrationTestBase {
      * Waits for the logging of the bucket to be disabled.  
      * A runtime exception will be thrown if this method doesn't detect logging is disabled before the ending period.
      *
-     * @throws InterruptedException
      *
      */
     private BucketLoggingConfiguration waitForLoggingConfigurationToBeDisabled() throws InterruptedException {
@@ -131,7 +130,7 @@ public class BucketLoggingIntegrationTest extends S3IntegrationTestBase {
         BucketLoggingConfiguration loggingStatus = null;
         while (System.currentTimeMillis() < endTime) {
             loggingStatus = s3.getBucketLoggingConfiguration(loggingBucketName);
-            ;
+
             if (!loggingStatus.isLoggingEnabled()) {
                 hits++;
             } else {

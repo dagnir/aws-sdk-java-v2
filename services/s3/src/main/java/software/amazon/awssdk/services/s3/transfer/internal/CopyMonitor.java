@@ -130,7 +130,8 @@ public class CopyMonitor implements Callable<CopyResult>, TransferMonitor {
 
             if (result == null) {
                 futures.addAll(multipartCopyCallable.getFutures());
-                setFuture(threadPool.submit(new CompleteMultipartCopy(multipartCopyCallable.getMultipartUploadId(), s3, origReq, futures, listener, this)));
+                setFuture(threadPool.submit(new CompleteMultipartCopy(multipartCopyCallable.getMultipartUploadId(), s3, origReq,
+                                                                      futures, listener, this)));
             } else {
                 copyComplete();
             }

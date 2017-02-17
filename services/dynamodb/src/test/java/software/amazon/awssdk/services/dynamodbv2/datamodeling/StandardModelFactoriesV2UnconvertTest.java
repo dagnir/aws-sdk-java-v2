@@ -33,7 +33,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.pojos.SubClass;
 import software.amazon.awssdk.services.dynamodbv2.pojos.TestClass;
@@ -47,7 +47,7 @@ public class StandardModelFactoriesV2UnconvertTest {
             .withConversionSchema(ConversionSchemas.V2)
             .build();
 
-    private static final DynamoDBMapperModelFactory factory = StandardModelFactories.of(new S3Link.Factory(new S3ClientCache((AWSCredentialsProvider) null)));
+    private static final DynamoDBMapperModelFactory factory = StandardModelFactories.of(new S3Link.Factory(new S3ClientCache((AwsCredentialsProvider) null)));
     private static final DynamoDBMapperModelFactory.TableFactory models = factory.getTableFactory(CONFIG);
 
     protected <T> Object unconvert(Class<T> clazz, Method getter, Method setter, AttributeValue value) {
@@ -486,6 +486,7 @@ public class StandardModelFactoriesV2UnconvertTest {
             unconvert(UnannotatedSubClass.class, getter, setter, new AttributeValue().withS(""));
             Assert.fail("Expected DynamoDBMappingException");
         } catch (DynamoDBMappingException e) {
+            // Ignored or expected.
         }
     }
 

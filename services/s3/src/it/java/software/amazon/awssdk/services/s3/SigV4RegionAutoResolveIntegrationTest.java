@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.services.s3.internal.AWSS3V4Signer;
+import software.amazon.awssdk.services.s3.internal.AwsS3V4Signer;
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.Bucket;
@@ -46,11 +46,11 @@ import software.amazon.awssdk.services.s3.model.PartETag;
 import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.StringInputStream;
 
-public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBase {
+public class SigV4RegionAutoResolveIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String FRA_BUCKET = CryptoTestUtils.tempBucketName(SigV4RegionAutoResolveIntegrationTest.class);
     private static AmazonS3Client s3_classic;
@@ -101,8 +101,8 @@ public class SigV4RegionAutoResolveIntegrationTest extends AWSIntegrationTestBas
                 Constants.S3_HOSTNAME,
                 s3_classic.getEndpoint().getHost());
         Assert.assertTrue(
-                s3_classic.getSignerByURI(s3_classic.getEndpoint())
-                        instanceof AWSS3V4Signer);
+                s3_classic.getSignerByUri(s3_classic.getEndpoint())
+                        instanceof AwsS3V4Signer);
     }
 
     /**

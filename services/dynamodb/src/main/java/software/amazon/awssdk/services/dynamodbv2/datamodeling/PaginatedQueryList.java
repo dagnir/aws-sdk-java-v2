@@ -38,23 +38,22 @@ import software.amazon.awssdk.services.dynamodbv2.model.QueryResult;
  */
 public class PaginatedQueryList<T> extends PaginatedList<T> {
 
-    /** The current query request */
+    /** The current query request. */
     private final QueryRequest queryRequest;
 
     private final DynamoDBMapperConfig config;
 
-    /** The current results for the last executed query operation */
+    /** The current results for the last executed query operation. */
     private QueryResult queryResult;
 
     public PaginatedQueryList(
-            DynamoDBMapper mapper,
+            DynamoDbMapper mapper,
             Class<T> clazz,
             AmazonDynamoDB dynamo,
             QueryRequest queryRequest,
             QueryResult queryResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDBMapperConfig config
-                             ) {
+            DynamoDBMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.queryRequest = queryRequest;
@@ -83,7 +82,7 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
     @Override
     protected synchronized List<T> fetchNextPage() {
         queryRequest.setExclusiveStartKey(queryResult.getLastEvaluatedKey());
-        queryResult = dynamo.query(DynamoDBMapper.applyUserAgent(queryRequest));
+        queryResult = dynamo.query(DynamoDbMapper.applyUserAgent(queryRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
                 queryResult.getItems(),
                 clazz,

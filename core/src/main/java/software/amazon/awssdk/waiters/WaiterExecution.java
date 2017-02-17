@@ -21,23 +21,23 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.ValidationUtils;
 
 @SdkProtectedApi
-public class WaiterExecution<Input extends AmazonWebServiceRequest, Output> {
+public class WaiterExecution<InputT extends AmazonWebServiceRequest, OutputT> {
 
     /**
      * Resource specific function that makes a call to the
      * operation specified by the waiter
      */
-    private final SdkFunction<Input, Output> sdkFunction;
+    private final SdkFunction<InputT, OutputT> sdkFunction;
 
     /**
      * Represents the input of the operation.
      */
-    private final Input request;
+    private final InputT request;
 
     /**
      * List of acceptors defined for each waiter
      */
-    private final CompositeAcceptor<Output> acceptor;
+    private final CompositeAcceptor<OutputT> acceptor;
 
     /**
      * Custom polling strategy as given by the end users
@@ -51,10 +51,10 @@ public class WaiterExecution<Input extends AmazonWebServiceRequest, Output> {
      * @param waiterExecutionBuilder Contains all the parameters required to construct a
      *                               new waiter
      */
-    public WaiterExecution(WaiterExecutionBuilder<Input, Output> waiterExecutionBuilder) {
+    public WaiterExecution(WaiterExecutionBuilder<InputT, OutputT> waiterExecutionBuilder) {
         this.sdkFunction = ValidationUtils.assertNotNull(waiterExecutionBuilder.getSdkFunction(), "sdkFunction");
         this.request = ValidationUtils.assertNotNull(waiterExecutionBuilder.getRequest(), "request");
-        this.acceptor = new CompositeAcceptor<Output>(ValidationUtils.assertNotNull(waiterExecutionBuilder.getAcceptorsList(), "acceptors"));
+        this.acceptor = new CompositeAcceptor<OutputT>(ValidationUtils.assertNotNull(waiterExecutionBuilder.getAcceptorsList(), "acceptors"));
         this.pollingStrategy = ValidationUtils.assertNotNull(waiterExecutionBuilder.getPollingStrategy(), "pollingStrategy");
     }
 
@@ -83,12 +83,12 @@ public class WaiterExecution<Input extends AmazonWebServiceRequest, Output> {
                         safeCustomDelay(pollingStrategyContext);
                         retriesAttempted++;
                     } else {
-
                         throw new WaiterTimedOutException("Reached maximum attempts without transitioning to the desired state");
                     }
                     break;
+                default:
+                    // Ignore
             }
-
         }
     }
 
@@ -96,7 +96,6 @@ public class WaiterExecution<Input extends AmazonWebServiceRequest, Output> {
      * Fetches the current state of the resource based on the acceptor it matches
      *
      * @return Current state of the resource
-     * @throws Exception
      */
     private WaiterState getCurrentState() throws AmazonServiceException {
         try {

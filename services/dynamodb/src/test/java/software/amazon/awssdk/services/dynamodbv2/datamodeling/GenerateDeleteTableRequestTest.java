@@ -21,7 +21,7 @@ import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
 
 /**
- * Unit tests for {@link DynamoDBMapper#generateDeleteTableRequest(Class)}.
+ * Unit tests for {@link DynamoDbMapper#generateDeleteTableRequest(Class)}.
  */
 public class GenerateDeleteTableRequestTest {
 
@@ -30,7 +30,7 @@ public class GenerateDeleteTableRequestTest {
 
     @Test
     public void tableNameNotOverriden_UsesTableNameAttributeInAnnotation() {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(null);
+        DynamoDbMapper dynamoDBMapper = new DynamoDbMapper(null);
         DeleteTableRequest deleteTableRequest = dynamoDBMapper.generateDeleteTableRequest(ObjectORMExample.class);
         assertEquals(deleteTableRequest.getTableName(), TABLE_NAME);
     }
@@ -40,7 +40,7 @@ public class GenerateDeleteTableRequestTest {
         DynamoDBMapperConfig.TableNameOverride tableNameOverride = DynamoDBMapperConfig.TableNameOverride
                 .withTableNamePrefix(TABLE_PREFIX);
         DynamoDBMapperConfig config = new DynamoDBMapperConfig(tableNameOverride);
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(null, config);
+        DynamoDbMapper dynamoDBMapper = new DynamoDbMapper(null, config);
 
         DeleteTableRequest deleteTableRequest = dynamoDBMapper.generateDeleteTableRequest(ObjectORMExample.class);
         assertEquals(deleteTableRequest.getTableName(), TABLE_PREFIX.concat(TABLE_NAME));

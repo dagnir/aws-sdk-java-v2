@@ -34,17 +34,17 @@ public final class NotCondition implements Condition {
     }
 
     /**
-     * @return The condition being negated.
-     */
-    public Condition getCondition() {
-        return condition;
-    }
-
-    /**
      * @return Builder instance to construct a {@link NotCondition}.
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * @return The condition being negated.
+     */
+    public Condition getCondition() {
+        return condition;
     }
 
     /**

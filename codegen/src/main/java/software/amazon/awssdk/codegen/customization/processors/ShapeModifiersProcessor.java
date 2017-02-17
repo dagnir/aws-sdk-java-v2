@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcessor;
 import software.amazon.awssdk.codegen.internal.Utils;
+import software.amazon.awssdk.codegen.model.config.customization.ModifyModelShapeModifier;
 import software.amazon.awssdk.codegen.model.config.customization.ShapeModifier;
-import software.amazon.awssdk.codegen.model.config.customization.ShapeModifier_ModifyModel;
 import software.amazon.awssdk.codegen.model.intermediate.EnumModel;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
@@ -61,7 +61,7 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
 
             if (ALL.equals(key)) {
                 for (Shape shape : serviceModel.getShapes().values()) {
-                    preprocess_ModifyShapeMembers(serviceModel, shape, modifier);
+                    preprocessModifyShapeMembers(serviceModel, shape, modifier);
                 }
 
             } else {
@@ -73,7 +73,7 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
                             + ", but this shape doesn't exist in the model!");
                 }
 
-                preprocess_ModifyShapeMembers(serviceModel, shape, modifier);
+                preprocessModifyShapeMembers(serviceModel, shape, modifier);
             }
         }
     }
@@ -112,12 +112,12 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
                 // Modifies properties of a member in shape or shape enum.
                 // This customization currently support modifying enum name
                 // and marshall/unmarshall location of a member in the Shape.
-                for (Map<String, ShapeModifier_ModifyModel> modifies : modifier.getModify()) {
-                    for (Entry<String, ShapeModifier_ModifyModel> memberEntry : modifies.entrySet()) {
+                for (Map<String, ModifyModelShapeModifier> modifies : modifier.getModify()) {
+                    for (Entry<String, ModifyModelShapeModifier> memberEntry : modifies.entrySet()) {
                         String enumToModify = memberEntry.getKey();
-                        ShapeModifier_ModifyModel modifyModel = memberEntry.getValue();
+                        ModifyModelShapeModifier modifyModel = memberEntry.getValue();
 
-                        postprocess_ModifyMemberProperty(shapeModel, enumToModify, modifyModel);
+                        postprocessModifyMemberProperty(shapeModel, enumToModify, modifyModel);
                     }
                 }
             }
@@ -128,8 +128,8 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
      * Override name of the enums, marshall/unmarshall location of the
      * members in the given shape model.
      */
-    private void postprocess_ModifyMemberProperty(ShapeModel shapeModel, String memberName,
-                                                  ShapeModifier_ModifyModel modifyModel) {
+    private void postprocessModifyMemberProperty(ShapeModel shapeModel, String memberName,
+                                                 ModifyModelShapeModifier modifyModel) {
         if (modifyModel.getEmitEnumName() != null) {
             EnumModel enumModel = shapeModel.findEnumModelByValue(memberName);
             if (enumModel == null) {
@@ -156,14 +156,14 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
     /**
      * Exclude/modify/inject shape members
      */
-    private void preprocess_ModifyShapeMembers(ServiceModel serviceModel, Shape shape, ShapeModifier modifier) {
+    private void preprocessModifyShapeMembers(ServiceModel serviceModel, Shape shape, ShapeModifier modifier) {
 
         if (modifier.getModify() != null) {
-            for (Map<String, ShapeModifier_ModifyModel> modifies : modifier.getModify()) {
-                for (Entry<String, ShapeModifier_ModifyModel> entry : modifies.entrySet()) {
+            for (Map<String, ModifyModelShapeModifier> modifies : modifier.getModify()) {
+                for (Entry<String, ModifyModelShapeModifier> entry : modifies.entrySet()) {
 
                     String memberToModify = entry.getKey();
-                    ShapeModifier_ModifyModel modifyModel = entry.getValue();
+                    ModifyModelShapeModifier modifyModel = entry.getValue();
 
                     doModifyShapeMembers(serviceModel, shape, memberToModify, modifyModel);
                 }
@@ -198,7 +198,7 @@ final class ShapeModifiersProcessor implements CodegenCustomizationProcessor {
     }
 
     private void doModifyShapeMembers(ServiceModel serviceModel, Shape shape, String memberToModify,
-                                      ShapeModifier_ModifyModel modifyModel) {
+                                      ModifyModelShapeModifier modifyModel) {
 
         // Currrenly only supports emitPropertyName which is to rename the member
         if (modifyModel.getEmitPropertyName() != null) {

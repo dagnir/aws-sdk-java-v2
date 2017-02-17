@@ -49,7 +49,7 @@ public class JmesPathContainsFunction extends JmesPathFunction {
      * @param subject Array
      * @param search  JmesPath expression
      * @return True array contains search;
-     * False otherwise
+     *     False otherwise
      */
     private static BooleanNode doesArrayContain(JsonNode subject, JsonNode search) {
         Iterator<JsonNode> elements = subject.elements();
@@ -68,7 +68,7 @@ public class JmesPathContainsFunction extends JmesPathFunction {
      * @param subject String
      * @param search  JmesPath expression
      * @return True string contains search;
-     * False otherwise
+     *     False otherwise
      */
     private static BooleanNode doesStringContain(JsonNode subject, JsonNode search) {
         if (subject.asText().contains(search.asText())) {
@@ -87,7 +87,7 @@ public class JmesPathContainsFunction extends JmesPathFunction {
      *
      * @param evaluatedArgs List of input expressions
      * @return True subject contains search;
-     * False otherwise
+     *     False otherwise
      */
     @Override
     public JsonNode evaluate(List<JsonNode> evaluatedArgs) {

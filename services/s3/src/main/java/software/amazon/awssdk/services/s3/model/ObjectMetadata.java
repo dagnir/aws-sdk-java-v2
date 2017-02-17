@@ -417,7 +417,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * </p>
      *
      * @return The HTTP Content-Language header, which describes the natural language(s) of the
-     * intended audience for the enclosed entity. Returns <code>null</code>
+     *     intended audience for the enclosed entity. Returns <code>null</code>
      *         if it hasn't been set.
      *
      * @see ObjectMetadata#setContentLanguage(String)
@@ -439,7 +439,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      *
      * @param contentLanguage
      *            The HTTP Content-Language header which describes the natural language(s) of the
-     * intended audience for the enclosed entity.
+     *            intended audience for the enclosed entity.
      *
      * @see ObjectMetadata#getContentLanguage()
      */
@@ -462,7 +462,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * </p>
      *
      * @return The HTTP Content-Encoding header.
-     * Returns <code>null</code> if it hasn't been set.
+     *     Returns <code>null</code> if it hasn't been set.
      *
      * @see ObjectMetadata#setContentType(String)
      */
@@ -730,7 +730,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
     /**
      * For internal use only. This method is only used to set the value in the
      * object after receiving the value in a response from S3. When sending
-     * requests, use {@link SSECustomerKey} members in request objects.
+     * requests, use {@link SseCustomerKey} members in request objects.
      */
     @Override
     public void setSSECustomerAlgorithm(String algorithm) {
@@ -748,7 +748,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
     /**
      * For internal use only. This method is only used to set the value in the
      * object after receiving the value in a response from S3. When sending
-     * requests, use {@link SSECustomerKey} members in request objects.
+     * requests, use {@link SseCustomerKey} members in request objects.
      */
     public void setSSECustomerKeyMd5(String md5Digest) {
         metadata.put(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5, md5Digest);
@@ -923,8 +923,8 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * Otherwise, the response does not return Content-Range header.
      * </p>
      * @return
-     * 		Returns content range if the object is requested with specific range or part number,
-     * 		null otherwise.
+     *         Returns content range if the object is requested with specific range or part number,
+     *         null otherwise.
      */
     public Long[] getContentRange() {
         String contentRange = (String) metadata.get(Headers.CONTENT_RANGE);
@@ -944,7 +944,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
 
     /**
      * @return The replication status of the object if it is from a bucket that
-     * is the source or destination in a cross-region replication.
+     *     is the source or destination in a cross-region replication.
      */
     public String getReplicationStatus() {
         return (String) metadata.get(Headers.OBJECT_REPLICATION_STATUS);

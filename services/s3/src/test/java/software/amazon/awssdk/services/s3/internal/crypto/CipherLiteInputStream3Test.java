@@ -40,7 +40,7 @@ public class CipherLiteInputStream3Test {
     private static final boolean RANDOMLY_RETURN_ZERO = true;
     private static final boolean RANDOM_ZERO_LEN_BUFFER = true;
     private static final boolean RANDOM_NULL_BUFFER = true;
-    private static final Random rand = new Random();
+    private static final Random RAND = new Random();
 
     @BeforeClass
     public static void setup() {
@@ -66,6 +66,7 @@ public class CipherLiteInputStream3Test {
                 doTestNullBuffer(scheme);
                 fail();
             } catch (NullPointerException expected) {
+                // Expected.
             }
         }
     }
@@ -169,7 +170,7 @@ public class CipherLiteInputStream3Test {
         byte[] buf = new byte[128];
         int len;
         int countNullBufferUse = 0;
-        if (useZeroLenNullBufferRandomly && rand.nextBoolean()) {
+        if (useZeroLenNullBufferRandomly && RAND.nextBoolean()) {
             len = is.read(null, 0, 0);
             countNullBufferUse++;
         } else {
@@ -177,7 +178,7 @@ public class CipherLiteInputStream3Test {
         }
         while (len != -1) {
             bos.write(buf, 0, len);
-            if (useZeroLenNullBufferRandomly && rand.nextBoolean()) {
+            if (useZeroLenNullBufferRandomly && RAND.nextBoolean()) {
                 len = is.read(null, 0, 0);
                 countNullBufferUse++;
             } else {
@@ -211,7 +212,7 @@ public class CipherLiteInputStream3Test {
         byte[] buf = new byte[128];
         int len;
         int countZeroBufferUse = 0;
-        if (useZeroLenBufferRandomly && rand.nextBoolean()) {
+        if (useZeroLenBufferRandomly && RAND.nextBoolean()) {
             len = is.read(new byte[0]);
             countZeroBufferUse++;
         } else {
@@ -219,7 +220,7 @@ public class CipherLiteInputStream3Test {
         }
         while (len != -1) {
             bos.write(buf, 0, len);
-            if (useZeroLenBufferRandomly && rand.nextBoolean()) {
+            if (useZeroLenBufferRandomly && RAND.nextBoolean()) {
                 len = is.read(new byte[0]);
                 countZeroBufferUse++;
             } else {

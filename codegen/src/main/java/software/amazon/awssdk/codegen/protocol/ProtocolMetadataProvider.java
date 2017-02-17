@@ -42,25 +42,25 @@ public interface ProtocolMetadataProvider {
 
     /**
      * @return The content type to use when sending requests. Currently only respected by JSON
-     * protocols.
+     *     protocols.
      */
     String getContentType();
 
     /**
      * @return The name of the Unmarshaller Context class used by the generated unmarshaller
-     * classes.
+     *     classes.
      */
     String getUnmarshallerContextClassName();
 
     /**
      * @return The suffix for generated unmarshaller classes. I.e. FooStaxUnmarshaller or
-     * FooJsonUnmarshaller.
+     *     FooJsonUnmarshaller.
      */
     String getUnmarshallerClassSuffix();
 
     /**
      * @return The default implementation of exception unmarshallers to use or derive from.
-     * Currently only used by XML protocols.
+     *     Currently only used by XML protocols.
      */
     String getExceptionUnmarshallerImpl();
 
@@ -71,8 +71,8 @@ public interface ProtocolMetadataProvider {
 
     /**
      * @return The fully qualified class name of the exception class that all service exceptions
-     * will be inherited from. Not to be confused with the service specific base exception which
-     * would extend from this base exception.
+     *     will be inherited from. Not to be confused with the service specific base exception which
+     *     would extend from this base exception.
      */
     String getBaseExceptionFqcn();
 

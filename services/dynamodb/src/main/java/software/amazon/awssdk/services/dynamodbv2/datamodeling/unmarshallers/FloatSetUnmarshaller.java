@@ -28,11 +28,11 @@ public class FloatSetUnmarshaller extends NSUnmarshaller {
     private static final FloatSetUnmarshaller INSTANCE =
             new FloatSetUnmarshaller();
 
-    public static FloatSetUnmarshaller instance() {
-        return INSTANCE;
+    private FloatSetUnmarshaller() {
     }
 
-    private FloatSetUnmarshaller() {
+    public static FloatSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

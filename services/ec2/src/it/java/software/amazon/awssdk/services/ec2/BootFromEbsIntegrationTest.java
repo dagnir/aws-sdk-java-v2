@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ import software.amazon.awssdk.services.ec2.model.StopInstancesRequest;
  * Integration tests for the EC2 Boot from EBS API additions in the 2009-10-31
  * API version.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
 
@@ -64,7 +64,7 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
      */
     private static final String EBS_AMI_ID = "ami-84db39ed";
 
-    /** The id of the instance started by these tests */
+    /** The id of the instance started by these tests. */
     private static String instanceId;
 
     @BeforeClass
@@ -85,7 +85,7 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
                 instanceId, InstanceStateName.Running);
     }
 
-    /** Releases all resources allocated by these tests */
+    /** Releases all resources allocated by these tests. */
     @AfterClass
     public static void tearDown() throws Exception {
         if (instanceId != null) {
@@ -228,8 +228,7 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
                 new ModifyInstanceAttributeRequest()
                         .withInstanceId(instanceId)
                         .withAttribute(InstanceAttributeName.DisableApiTermination)
-                        .withValue("false")
-                                   );
+                        .withValue("false"));
 
         // The instance needs to be in "stopped" state before its "kernal"
         // attribute is reset.
@@ -237,8 +236,7 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
 
         ec2.resetInstanceAttribute(new ResetInstanceAttributeRequest()
                                            .withInstanceId(instanceId)
-                                           .withAttribute(InstanceAttributeName.Kernel)
-                                  );
+                                           .withAttribute(InstanceAttributeName.Kernel));
     }
 
     /*

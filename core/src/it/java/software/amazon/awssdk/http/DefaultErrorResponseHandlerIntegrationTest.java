@@ -32,10 +32,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Node;
-import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.util.LogCaptor;
 import utils.http.WireMockTestBase;
 
@@ -43,7 +40,7 @@ public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase
 
     private static final String RESOURCE = "/some-path";
     private final AmazonHttpClient client = new AmazonHttpClient(new ClientConfiguration());
-    private final DefaultErrorResponseHandler sut = new DefaultErrorResponseHandler(new ArrayList<Unmarshaller<AmazonServiceException, Node>>());
+    private final DefaultErrorResponseHandler sut = new DefaultErrorResponseHandler(new ArrayList<>());
     private LogCaptor logCaptor = new LogCaptor.DefaultLogCaptor(Level.INFO);
 
     @Before
@@ -74,7 +71,8 @@ public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase
     public void requestIdIsLoggedWithInfoIfInTheHeader() throws Exception {
         String requestId = RandomStringUtils.randomAlphanumeric(10);
 
-        stubFor(get(urlPathEqualTo(RESOURCE)).willReturn(aResponse().withStatus(418).withHeader(X_AMZN_REQUEST_ID_HEADER, requestId)));
+        stubFor(get(urlPathEqualTo(RESOURCE)).willReturn(aResponse().withStatus(418)
+                                                                    .withHeader(X_AMZN_REQUEST_ID_HEADER, requestId)));
 
         executeRequest();
 
@@ -96,6 +94,7 @@ public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase
             r.run();
             throw new RuntimeException("Expected exception, got none");
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

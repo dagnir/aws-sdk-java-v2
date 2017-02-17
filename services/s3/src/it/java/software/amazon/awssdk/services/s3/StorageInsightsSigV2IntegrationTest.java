@@ -57,12 +57,12 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class StorageInsightsSigV2IntegrationTest {
 
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String BUCKET_NAME = "java-bucket-inventory-integ-test-" + new Date().getTime();
 
     private static final String BUCKET_ARN = "arn:aws:s3:::" + BUCKET_NAME;
 
-    /** The key used in these tests */
+    /** The key used in these tests. */
     private static final String KEY = "key";
 
     private static AmazonS3 s3SigV2;

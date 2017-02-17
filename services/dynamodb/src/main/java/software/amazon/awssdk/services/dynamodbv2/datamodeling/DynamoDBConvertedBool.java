@@ -51,7 +51,7 @@ import java.lang.annotation.Target;
 @DynamoDBTypeConverted(converter = DynamoDBConvertedBool.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface DynamoDBConvertedBool {
 
     /**
@@ -59,7 +59,7 @@ public @interface DynamoDBConvertedBool {
      */
     Format value();
 
-    ;
+
 
     /**
      * Enumeration of the supported format options.
@@ -72,7 +72,8 @@ public @interface DynamoDBConvertedBool {
      * Boolean type converter.
      */
     static final class Converter implements DynamoDBTypeConverter<String, Boolean> {
-        private final String valueTrue, valueFalse;
+        private final String valueTrue;
+        private final String valueFalse;
 
         public Converter(Class<Boolean> targetType, DynamoDBConvertedBool annotation) {
             this.valueTrue = annotation.value().name().split("_")[0];

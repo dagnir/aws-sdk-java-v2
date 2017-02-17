@@ -67,7 +67,7 @@ public interface Transfer {
      * successfully.
      *
      * @return Any error that occurred while processing this transfer.
-     * 		   Otherwise returns <code>null</code> if no errors occurred.
+     *            Otherwise returns <code>null</code> if no errors occurred.
      *
      * @throws InterruptedException
      *             If this thread is interrupted while waiting for the transfer

@@ -34,14 +34,14 @@ import software.amazon.awssdk.services.simpledb.model.SelectResult;
  * Tests that we can handle SimpleDBs base64 encoding attributes when users upload data that isn't
  * XML-compatible.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
 
     private static final String NON_XML_COMPATIBLE_STRING = "\u0001" + "foobar";
     private static String domainName = "invalid-characters-integ-test-" + new Date().getTime();
 
-    /** Releases all resources used by this test */
+    /** Releases all resources used by this test. */
     @After
     public void tearDown() throws Exception {
         sdb.deleteDomain(new DeleteDomainRequest().withDomainName(domainName));

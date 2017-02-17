@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.SyncProgressListener;
@@ -108,10 +108,10 @@ public class S3ClientGCIntegrationTest {
 
     private static class Runner implements Runnable {
         private final PutObjectRequest req;
-        private final AWSCredentials cred;
+        private final AwsCredentials cred;
         private PutObjectResult result;
 
-        Runner(AWSCredentials cred, PutObjectRequest req) {
+        Runner(AwsCredentials cred, PutObjectRequest req) {
             this.cred = cred;
             this.req = req;
         }

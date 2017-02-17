@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.s3.model.ObjectListing;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.transfer.Transfer.TransferState;
 import software.amazon.awssdk.test.util.RandomInputStream;
 import software.amazon.awssdk.test.util.RandomTempFile;
@@ -74,6 +74,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
             upload.waitForCompletion();
             fail("Should get an Aborted Exception here.");
         } catch (AbortedException ae) {
+            // Ignored or expected.
         }
 
         assertEquals(TransferState.Failed, upload.getState());
@@ -90,6 +91,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
             uploadRandomInputStream(contentLength, objectMetadata);
             fail("Expected an error since TransferManager is shutdown");
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         s3 = new AmazonS3Client(credentials);
@@ -184,7 +186,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     public void testMultipartSSECustomerKeySupport() throws Exception {
         initializeTransferManager();
 
-        SSECustomerKey sseCustomerKey = new SSECustomerKey(generateSecretKey());
+        SseCustomerKey sseCustomerKey = new SseCustomerKey(generateSecretKey());
 
         // 50MB upload will trigger the multipart upload process
         uploadObjectWithSSECustomerKey(50 * MB, sseCustomerKey);
@@ -205,7 +207,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
     public void testSinglePartSSECustomerKeySupport() throws Exception {
         initializeTransferManager();
 
-        SSECustomerKey sseCustomerKey = new SSECustomerKey(generateSecretKey());
+        SseCustomerKey sseCustomerKey = new SseCustomerKey(generateSecretKey());
 
         // 5MB upload will result in a single part upload
         uploadObjectWithSSECustomerKey(5 * MB, sseCustomerKey);
@@ -228,11 +230,11 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
      *            The customer provided server-side encryption to use to encrypt
      *            the upload.
      */
-    private void uploadObjectWithSSECustomerKey(long contentLength, SSECustomerKey sseCustomerKey) throws Exception {
+    private void uploadObjectWithSSECustomerKey(long contentLength, SseCustomerKey sseCustomerKey) throws Exception {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(contentLength);
         PutObjectRequest request = new PutObjectRequest(bucketName, KEY, new RandomInputStream(contentLength), objectMetadata)
-                .withSSECustomerKey(sseCustomerKey);
+                .withSseCustomerKey(sseCustomerKey);
 
         Upload multipartStreamUpload = tm.upload(request);
         while (multipartStreamUpload.isDone() == false) {
@@ -376,6 +378,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
             download.waitForCompletion();
             Assert.fail("Download should have timed out");
         } catch (CancellationException e) {
+            // Ignored or expected.
         }
     }
 
@@ -414,6 +417,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
             download.waitForCompletion();
             fail("Expected an exception");
         } catch (AmazonClientException expected) {
+            // Ignored or expected.
         }
 
         AmazonClientException ex = download.waitForException();
@@ -527,7 +531,6 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
     /**
      * Test we can download from an empty bucket
-     * @throws Exception
      */
     @Test(timeout = 1000 * 2)
     public void testDownloadEmptyDirectory() throws Exception {
@@ -603,7 +606,6 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
     /**
      * Test that we can abort the operation when downloading from a bucket
-     * @throws IOException
      * @throws InterruptedException
      */
     @Test
@@ -695,13 +697,14 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
         long contentLength = 1L;
         tempFile = getRandomTempFile(fileName, contentLength);
-        String[] keys = new String[] {"a",
-                                      "b/c",
-                                      "b/d",
-                                      "b/e/f",
-                                      "b/e/g",
-                                      "b/e/h/i",
-                                      };
+        String[] keys = new String[] {
+                "a",
+                "b/c",
+                "b/d",
+                "b/e/f",
+                "b/e/g",
+                "b/e/h/i",
+                };
         for (String key : keys) {
             s3.putObject(bucketName, key, tempFile);
         }
@@ -721,6 +724,7 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
             download.waitForCompletion();
             fail("Expected an exception");
         } catch (AmazonClientException expected) {
+            // Ignored or expected.
         }
 
         assertKeysToDirectory(directory,
@@ -884,7 +888,6 @@ public class TransferManagerIntegrationTest extends TransferManagerTestBase
 
     /**
      * Test that whether we can upload directory without files (may contain empty sub-directories)
-     * @throws Exception
      */
     @Test(timeout = 1000 * 4)
     public void testUploadEmptyDirectory() throws Exception {

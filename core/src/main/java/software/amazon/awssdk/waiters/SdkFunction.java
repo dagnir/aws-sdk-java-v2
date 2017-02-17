@@ -18,7 +18,7 @@ package software.amazon.awssdk.waiters;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
-public interface SdkFunction<Input, Output> {
+public interface SdkFunction<InputT, OutputT> {
 
     /**
      * Abstract method that makes a call to the operation
@@ -28,6 +28,6 @@ public interface SdkFunction<Input, Output> {
      * @param input Corresponding request for the operation
      * @return Corresponding result of the operation
      */
-    Output apply(Input input);
+    OutputT apply(InputT input);
 }
 

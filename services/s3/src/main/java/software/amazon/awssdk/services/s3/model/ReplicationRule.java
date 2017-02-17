@@ -88,8 +88,8 @@ public class ReplicationRule implements Serializable {
      * @param status
      *            the status of the replication rule.
      */
-    public void setStatus(ReplicationRuleStatus status) {
-        setStatus(status.getStatus());
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**
@@ -99,8 +99,8 @@ public class ReplicationRule implements Serializable {
      * @param status
      *            the status of the replication rule.
      */
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(ReplicationRuleStatus status) {
+        setStatus(status.getStatus());
     }
 
     /**
@@ -157,9 +157,9 @@ public class ReplicationRule implements Serializable {
      * Sets the destination configuration for the replication rule.Returns the
      * updated object.
      *
+     * @return the updated {@link ReplicationRule} object.
      * @throws IllegalArgumentException
      *             if the destinationConfig is null.
-     * @return the updated {@link ReplicationRule} object.
      */
     public ReplicationRule withDestinationConfig(
             ReplicationDestinationConfig destinationConfig) {

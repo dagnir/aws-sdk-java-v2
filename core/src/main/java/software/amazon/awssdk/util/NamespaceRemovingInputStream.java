@@ -26,10 +26,10 @@ import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
  */
 class NamespaceRemovingInputStream extends SdkFilterInputStream {
 
-    /** look ahead buffer */
+    /** look ahead buffer. */
     private byte[] lookAheadData = new byte[200];
 
-    /** Set to true once the namespace has been removed */
+    /** Set to true once the namespace has been removed. */
     private boolean hasRemovedNamespace = false;
 
     /**

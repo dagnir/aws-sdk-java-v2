@@ -70,16 +70,16 @@ import software.amazon.awssdk.util.Md5Utils;
 public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase {
     private static final boolean cleanup = true;
 
-    /** Length of the random temp file to upload */
+    /** Length of the random temp file to upload. */
     private static final int RANDOM_OBJECT_DATA_LENGTH = 32 * 1024;
 
-    /** Suffix appended to the end of instruction files */
+    /** Suffix appended to the end of instruction files. */
     private static final String INSTRUCTION_SUFFIX = ".instruction";
 
-    /** Name of the test bucket these tests will create, test, delete, etc */
+    /** Name of the test bucket these tests will create, test, delete, etc. */
     private final String expectedBucketName = tempBucketName(getClass());
 
-    /** Name of the file that will be temporarily generated on disk, and then stored in S3 */
+    /** Name of the file that will be temporarily generated on disk, and then stored in S3. */
     private final String expectedObjectName = "integ-test-file-" + new Date().getTime();
 
     /** The temporary file to be uploaded, and the temporary file to be retrieved. */
@@ -92,7 +92,7 @@ public abstract class S3CryptoIntegrationTestBase extends S3IntegrationTestBase 
     /** Symmetric secret key for use in encryption and decryption. */
     private SecretKey symmetricKey;
 
-    /** Encryption providers  */
+    /** Encryption providers.  */
     private AmazonS3 defaultAsymmetricEncryption;
     private AmazonS3 bouncyCastleAsymmetricEncryption;
     private AmazonS3 instructionFileAsymmetricEncryption;

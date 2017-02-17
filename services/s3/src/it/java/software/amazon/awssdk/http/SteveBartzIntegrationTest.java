@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
@@ -36,7 +36,7 @@ public class SteveBartzIntegrationTest {
     private static final String TEST_BUCKET = CryptoTestUtils.tempBucketName(SteveBartzIntegrationTest.class);
     private static AmazonS3EncryptionClient s3;
 
-    public static AWSCredentials awsTestCredentials() throws IOException {
+    public static AwsCredentials awsTestCredentials() throws IOException {
         return new PropertiesCredentials(new File(
                 System.getProperty("user.home")
                 + "/.aws/awsTestAccount.properties"));

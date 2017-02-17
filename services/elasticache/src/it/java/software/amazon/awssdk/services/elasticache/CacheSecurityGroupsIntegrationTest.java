@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.elasticache;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +39,7 @@ public class CacheSecurityGroupsIntegrationTest extends ElastiCacheIntegrationTe
             try {
                 elasticache.deleteCacheSecurityGroup(new DeleteCacheSecurityGroupRequest(cacheSecurityGroupName));
             } catch (Exception e) {
+                // Ignore.
             }
         }
     }
@@ -33,7 +49,8 @@ public class CacheSecurityGroupsIntegrationTest extends ElastiCacheIntegrationTe
     public void testCacheSecurityGroupOperations() throws Exception {
         // Create Cache Security Group
         cacheSecurityGroupName = "java-sdk-integ-group-" + System.currentTimeMillis();
-        CacheSecurityGroup createdCacheSecurityGroup = elasticache.createCacheSecurityGroup(new CreateCacheSecurityGroupRequest(cacheSecurityGroupName, DESCRIPTION));
+        CacheSecurityGroup createdCacheSecurityGroup = elasticache.createCacheSecurityGroup(
+                new CreateCacheSecurityGroupRequest(cacheSecurityGroupName, DESCRIPTION));
         assertEquals(cacheSecurityGroupName, createdCacheSecurityGroup.getCacheSecurityGroupName());
         assertEquals(DESCRIPTION, createdCacheSecurityGroup.getDescription());
         assertTrue(createdCacheSecurityGroup.getEC2SecurityGroups().isEmpty());
@@ -41,22 +58,14 @@ public class CacheSecurityGroupsIntegrationTest extends ElastiCacheIntegrationTe
 
 
         // Describe Cache Security Groups
-        DescribeCacheSecurityGroupsResult describeCacheSecurityGroups = elasticache.describeCacheSecurityGroups(new DescribeCacheSecurityGroupsRequest().withCacheSecurityGroupName(cacheSecurityGroupName));
+        DescribeCacheSecurityGroupsResult describeCacheSecurityGroups = elasticache.describeCacheSecurityGroups(
+                new DescribeCacheSecurityGroupsRequest().withCacheSecurityGroupName(cacheSecurityGroupName));
         assertEquals(1, describeCacheSecurityGroups.getCacheSecurityGroups().size());
         CacheSecurityGroup cacheSecurityGroup = describeCacheSecurityGroups.getCacheSecurityGroups().get(0);
         assertEquals(cacheSecurityGroupName, cacheSecurityGroup.getCacheSecurityGroupName());
         assertEquals(DESCRIPTION, cacheSecurityGroup.getDescription());
         assertTrue(cacheSecurityGroup.getEC2SecurityGroups().isEmpty());
         assertNotEmpty(cacheSecurityGroup.getOwnerId());
-
-
-        // Authorize Cache Security Group Ingress
-        //		elasticache.authorizeCacheSecurityGroupIngress(new AuthorizeCacheSecurityGroupIngressRequest(cacheSecurityGroupName, eC2SecurityGroupName, eC2SecurityGroupOwnerId));
-
-
-        // Revoke Cache Security Group Ingress
-        //		elasticache.revokeCacheSecurityGroupIngress(new RevokeCacheSecurityGroupIngressRequest(cacheSecurityGroupName, ec2SecurityGroupName, ec2securityGroupOwnerId));
-
 
         // Delete Cache Security Group
         elasticache.deleteCacheSecurityGroup(new DeleteCacheSecurityGroupRequest(cacheSecurityGroupName));

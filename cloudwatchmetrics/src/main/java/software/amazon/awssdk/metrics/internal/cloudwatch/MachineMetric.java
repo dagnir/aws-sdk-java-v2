@@ -30,8 +30,8 @@ enum MachineMetric implements MetricType {
     SpareMemory(Dim.Memory, MetricName.JvmMetric),
 
     ThreadCount(Dim.Threads, MetricName.JvmMetric),
-    DeadLockThreadCount(Dim.Threads, MetricName.JvmMetric, _.EXCLUDES_ZERO_VALUES),  // exclude zero value datum
-    DaemonThreadCount(Dim.Threads, MetricName.JvmMetric, _.EXCLUDES_ZERO_VALUES),    // exclude zero value datum
+    DeadLockThreadCount(Dim.Threads, MetricName.JvmMetric, Constants.EXCLUDES_ZERO_VALUES),  // exclude zero value datum
+    DaemonThreadCount(Dim.Threads, MetricName.JvmMetric, Constants.EXCLUDES_ZERO_VALUES),    // exclude zero value datum
     PeakThreadCount(Dim.Threads, MetricName.JvmMetric),
     TotalStartedThreadCount(Dim.Threads, MetricName.JvmMetric),
 
@@ -44,7 +44,7 @@ enum MachineMetric implements MetricType {
     private final MetricName metricName;
 
     private MachineMetric(Dim dimension, MetricName metricName) {
-        this(dimension, metricName, _.INCLUDES_ZERO_VALUES);
+        this(dimension, metricName, Constants.INCLUDES_ZERO_VALUES);
     }
 
     private MachineMetric(Dim dimension, MetricName metricName, boolean includeZeroValue) {
@@ -90,7 +90,7 @@ enum MachineMetric implements MetricType {
     /**
      * An internal class used to holds static constants used by the enum. 
      */
-    private static class _ {
+    private static class Constants {
         static final boolean INCLUDES_ZERO_VALUES = true;
         static final boolean EXCLUDES_ZERO_VALUES = false;
     }

@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  */
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBTypeConvertedEnum {
 
 }

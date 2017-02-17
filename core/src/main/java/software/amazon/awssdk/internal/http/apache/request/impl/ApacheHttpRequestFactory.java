@@ -51,8 +51,7 @@ public class ApacheHttpRequestFactory implements
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
-    private static final List<String> ignoreHeaders = Arrays.asList
-            (HttpHeaders.CONTENT_LENGTH, HttpHeaders.HOST);
+    private static final List<String> IGNORE_HEADERS = Arrays.asList(HttpHeaders.CONTENT_LENGTH, HttpHeaders.HOST);
 
     @Override
     public HttpRequestBase create(final Request<?> request,
@@ -191,15 +190,14 @@ public class ApacheHttpRequestFactory implements
              * header to avoid sending it twice, which will interfere with some
              * signing schemes.
              */
-            if (!(ignoreHeaders.contains(entry.getKey()))) {
+            if (!(IGNORE_HEADERS.contains(entry.getKey()))) {
                 httpRequest.addHeader(entry.getKey(), entry.getValue());
             }
         }
 
-        /* Set content type and encoding */
-        if (httpRequest.getHeaders(HttpHeaders.CONTENT_TYPE) == null || httpRequest
-                                                                                .getHeaders
-                                                                                        (HttpHeaders.CONTENT_TYPE).length == 0) {
+        /* Set content type and encoding. */
+        if (httpRequest.getHeaders(HttpHeaders.CONTENT_TYPE) == null ||
+            httpRequest.getHeaders(HttpHeaders.CONTENT_TYPE).length == 0) {
             httpRequest.addHeader(HttpHeaders.CONTENT_TYPE,
                                   "application/x-www-form-urlencoded; " +
                                   "charset=" + DEFAULT_ENCODING.toLowerCase());

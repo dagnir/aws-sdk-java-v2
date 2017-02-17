@@ -26,7 +26,7 @@ import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.internal.CRC32MismatchException;
+import software.amazon.awssdk.internal.Crc32MismatchException;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContextImpl;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
@@ -113,7 +113,7 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
                 long serverSideCRC = Long.parseLong(CRC32Checksum);
                 long clientSideCRC = response.getCRC32Checksum();
                 if (clientSideCRC != serverSideCRC) {
-                    throw new CRC32MismatchException(
+                    throw new Crc32MismatchException(
                             "Client calculated crc32 checksum didn't match that calculated by server side");
                 }
             }

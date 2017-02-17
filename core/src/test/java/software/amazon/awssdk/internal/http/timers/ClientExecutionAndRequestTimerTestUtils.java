@@ -64,8 +64,6 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     /**
      * Assert that the executor backing {@link ClientExecutionTimer} was never created or used
-     *
-     * @param requestTimer
      */
     public static void assertRequestTimerExecutorNotCreated(HttpRequestTimer requestTimer) {
         assertNull(requestTimer.getExecutor());
@@ -73,8 +71,6 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     /**
      * Assert that the executor backing {@link ClientExecutionTimer} was never created or used
-     *
-     * @param clientExecutionTimer
      */
     public static void assertClientExecutionTimerExecutorNotCreated(ClientExecutionTimer clientExecutionTimer) {
         assertNull(clientExecutionTimer.getExecutor());
@@ -107,12 +103,12 @@ public class ClientExecutionAndRequestTimerTestUtils {
      *
      * @param timerExecutor
      *            Executor used by timer implementation
-     * @throws InterruptedException
      */
     public static void assertCoreThreadsShutDownAfterBeingIdle(ScheduledThreadPoolExecutor timerExecutor) {
         try {
             Thread.sleep(timerExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS) + 1000);
         } catch (InterruptedException ignored) {
+            // Ignored.
         }
         assertEquals(0, timerExecutor.getPoolSize());
     }
@@ -229,6 +225,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
         try {
             Thread.sleep(WAIT_BEFORE_ASSERT_ON_EXECUTOR);
         } catch (InterruptedException ignored) {
+            // Ignored.
         }
     }
 

@@ -60,7 +60,7 @@ public class RetryPolicyContext {
 
     /**
      * @return The marshalled request. See {@link Request#addHandlerContext(HandlerContextKey, Object)} for a mechanism to store
-     * request level state across invocations of the retry policy.
+     *     request level state across invocations of the retry policy.
      */
     public Request<?> request() {
         return this.request;

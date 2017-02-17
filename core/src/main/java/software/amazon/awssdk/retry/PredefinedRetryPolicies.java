@@ -34,7 +34,7 @@ public class PredefinedRetryPolicies {
             0,      // maxErrorRetry
             false); // honorMaxErrorRetryInClientConfig
 
-    /* SDK default */
+    /* SDK default. */
 
     /** SDK default max retry count **/
     public static final int DEFAULT_MAX_ERROR_RETRY = 3;
@@ -45,7 +45,7 @@ public class PredefinedRetryPolicies {
      */
     public static final RetryPolicy DEFAULT;
 
-    /* Default for DynamoDB client */
+    /* Default for DynamoDB client. */
 
     /** Default max retry count for DynamoDB client **/
     public static final int DYNAMODB_DEFAULT_MAX_ERROR_RETRY = 10;
@@ -53,7 +53,7 @@ public class PredefinedRetryPolicies {
     /** Default policy for DynamoDB client **/
     public static final RetryPolicy DYNAMODB_DEFAULT;
 
-    /* Reusable retry policy components */
+    /* Reusable retry policy components. */
 
     /**
      * The SDK default retry condition, which checks for various conditions in

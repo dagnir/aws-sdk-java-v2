@@ -28,16 +28,16 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.AWSServiceMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.util.AwsServiceMetrics;
 
 /**
  * Used to control the default AWS SDK metric collection system.
@@ -48,7 +48,7 @@ import software.amazon.awssdk.util.AWSServiceMetrics;
  * When the system property is specified, a default metric collector will be
  * started at the AWS SDK level. The default implementation uploads the
  * request/response metrics captured to Amazon CloudWatch using AWS credentials
- * obtained via the {@link DefaultAWSCredentialsProviderChain}.
+ * obtained via the {@link DefaultAwsCredentialsProviderChain}.
  * <p>
  * For additional optional attributes that can be specified for the system
  * property, please read the javadoc of the individual fields of
@@ -107,18 +107,7 @@ public enum AwsSdkMetrics {
     public static final String INCLUDE_PER_HOST_METRICS = "includePerHostMetrics";
     /**
      * Used to specify an AWS credential property file.
-     * By default, the {@link DefaultAWSCredentialsProviderChain} is used.
-     *
-     * <pre>
-     * Example:
-     *  -Dsoftware.amazon.awssdk.sdk.enableDefaultMetrics=credentialFile=/path/aws.properties
-     * </pre>
-     * @deprecated in favor of {@link AWS_CREDENTIAL_PROPERTIES_FILE}
-     */
-    public static final String AWS_CREDENTAIL_PROPERTIES_FILE = "credentialFile";
-    /**
-     * Used to specify an AWS credential property file.
-     * By default, the {@link DefaultAWSCredentialsProviderChain} is used.
+     * By default, the {@link DefaultAwsCredentialsProviderChain} is used.
      *
      * <pre>
      * Example:
@@ -190,13 +179,13 @@ public enum AwsSdkMetrics {
      * </pre>
      */
     public static final String HOST_METRIC_NAME = "hostMetricName";
-    private static final Log log = LogFactory.getLog(AwsSdkMetrics.class);
+    private static final Log LOG = LogFactory.getLog(AwsSdkMetrics.class);
     private static final String MBEAN_OBJECT_NAME =
             "software.amazon.awssdk.management:type=" + AwsSdkMetrics.class.getSimpleName();
     private static final String DEFAULT_METRIC_COLLECTOR_FACTORY =
             "software.amazon.awssdk.metrics.internal.cloudwatch.DefaultMetricCollectorFactory";
     /**
-     * Used to explicitly enable {@link AWSRequestMetrics.Field#HttpSocketReadTime} for recording socket read time.
+     * Used to explicitly enable {@link AwsRequestMetrics.Field#HttpSocketReadTime} for recording socket read time.
      *
      * <pre>
      * Example:
@@ -208,14 +197,14 @@ public enum AwsSdkMetrics {
      * True if the system property {@link #DEFAULT_METRICS_SYSTEM_PROPERTY} has
      * been set; false otherwise.
      */
-    private static final boolean defaultMetricsEnabled;
-    private static final MetricRegistry registry = new MetricRegistry();
+    private static final boolean DEFAULT_METRICS_ENABLED;
+    private static final MetricRegistry REGISTRY = new MetricRegistry();
     /**
      * Object name under which the Admin Mbean of the current classloader is
      * registered.
      */
     private static volatile String registeredAdminMbeanName;
-    private static volatile AWSCredentialsProvider credentialProvider;
+    private static volatile AwsCredentialsProvider credentialProvider;
     /**
      * True if machine metrics is to be excluded; false otherwise.
      */
@@ -228,7 +217,7 @@ public enum AwsSdkMetrics {
      */
     private static volatile boolean perHostMetricsIncluded;
     /**
-     * True if socket read time metric is enabled; false otherwise. The {@link AWSRequestMetrics.Field#HttpSocketReadTime}
+     * True if socket read time metric is enabled; false otherwise. The {@link AwsRequestMetrics.Field#HttpSocketReadTime}
      * could have a big impact to performance, disabled by default.
      */
     private static volatile boolean httpSocketReadMetricEnabled;
@@ -270,8 +259,8 @@ public enum AwsSdkMetrics {
 
     static {
         String defaultMetrics = System.getProperty(DEFAULT_METRICS_SYSTEM_PROPERTY);
-        defaultMetricsEnabled = defaultMetrics != null;
-        if (defaultMetricsEnabled) {
+        DEFAULT_METRICS_ENABLED = defaultMetrics != null;
+        if (DEFAULT_METRICS_ENABLED) {
             String[] values = defaultMetrics.split(",");
             boolean excludeMachineMetrics = false;
             boolean includePerHostMetrics = false;
@@ -293,7 +282,7 @@ public enum AwsSdkMetrics {
                         String key = pair[0].trim();
                         String value = pair[1].trim();
                         try {
-                            if (AWS_CREDENTAIL_PROPERTIES_FILE.equals(key)
+                            if (AWS_CREDENTIAL_PROPERTIES_FILE.equals(key)
                                 || AWS_CREDENTIAL_PROPERTIES_FILE.equals(key)) {
                                 setCredentialFile0(value);
                             } else if (CLOUDWATCH_REGION.equals(key)) {
@@ -364,7 +353,7 @@ public enum AwsSdkMetrics {
      * classloader. If an AdminMbean is found to have been registered under a
      * different class loader, the AdminMBean of the current class loader would
      * be registered under the same name {@link #MBEAN_OBJECT_NAME} but with an
-     * additional suffix in the format of "/<count>", where count is a counter
+     * additional suffix in the format of {@code /<count>}, where count is a counter
      * incrementing from 1.
      *
      * @return true if the registeration succeeded; false otherwise.
@@ -390,7 +379,7 @@ public enum AwsSdkMetrics {
                 }
             }
             if (registered) {
-                log.debug("Admin mbean registered under " + registeredAdminMbeanName);
+                LOG.debug("Admin mbean registered under " + registeredAdminMbeanName);
             }
             return registered;
         }
@@ -495,7 +484,7 @@ public enum AwsSdkMetrics {
      * Used to set whether the machine metrics is to be excluded.
      *
      * @param excludeMachineMetrics true if machine metrics is to be excluded;
-     * false otherwise.
+     *     false otherwise.
      */
     public static void setMachineMetricsExcluded(boolean excludeMachineMetrics) {
         AwsSdkMetrics.machineMetricsExcluded = excludeMachineMetrics;
@@ -505,14 +494,14 @@ public enum AwsSdkMetrics {
      * Used to set whether the per-host metrics is to be included.
      *
      * @param includePerHostMetrics true if per-host metrics is to be included;
-     * false otherwise.
+     *     false otherwise.
      */
     public static void setPerHostMetricsIncluded(boolean includePerHostMetrics) {
         AwsSdkMetrics.perHostMetricsIncluded = includePerHostMetrics;
     }
 
     /**
-     * Used to enable {@link AWSRequestMetrics.Field#HttpSocketReadTime} metric since by default it is disabled.
+     * Used to enable {@link AwsRequestMetrics.Field#HttpSocketReadTime} metric since by default it is disabled.
      */
     public static void enableHttpSocketReadMetric() {
         AwsSdkMetrics.httpSocketReadMetricEnabled = true;
@@ -524,7 +513,7 @@ public enum AwsSdkMetrics {
      * set; false otherwise.
      */
     public static boolean isDefaultMetricsEnabled() {
-        return defaultMetricsEnabled;
+        return DEFAULT_METRICS_ENABLED;
     }
 
     /**
@@ -638,7 +627,7 @@ public enum AwsSdkMetrics {
      *        result of the call
      */
     public static boolean add(MetricType type) {
-        return type == null ? false : registry.addMetricType(type);
+        return type == null ? false : REGISTRY.addMetricType(type);
     }
 
     /**
@@ -651,7 +640,7 @@ public enum AwsSdkMetrics {
     public static <T extends MetricType> boolean addAll(Collection<T> types) {
         return types == null || types.size() == 0
                ? false
-               : registry.addMetricTypes(types);
+               : REGISTRY.addMetricTypes(types);
     }
 
     /**
@@ -659,7 +648,7 @@ public enum AwsSdkMetrics {
      * to be captured at the AWS SDK level.
      */
     public static <T extends MetricType> void set(Collection<T> types) {
-        registry.setMetricTypes(types);
+        REGISTRY.setMetricTypes(types);
     }
 
     /**
@@ -670,14 +659,14 @@ public enum AwsSdkMetrics {
      *        result of the call
      */
     public static boolean remove(MetricType type) {
-        return type == null ? false : registry.removeMetricType(type);
+        return type == null ? false : REGISTRY.removeMetricType(type);
     }
 
     /**
      * Returns an unmodifiable set of the current predefined metrics.
      */
     public static Set<MetricType> getPredefinedMetrics() {
-        return registry.predefinedMetrics();
+        return REGISTRY.predefinedMetrics();
     }
 
     /**
@@ -686,7 +675,7 @@ public enum AwsSdkMetrics {
      *
      * @throws SecurityException if called outside the default AWS SDK metric implementation.
      */
-    public static AWSCredentialsProvider getCredentialProvider() {
+    public static AwsCredentialsProvider getCredentialProvider() {
         StackTraceElement[] e = Thread.currentThread().getStackTrace();
         for (int i = 0; i < e.length; i++) {
             if (e[i].getClassName().equals(DEFAULT_METRIC_COLLECTOR_FACTORY)) {
@@ -705,7 +694,7 @@ public enum AwsSdkMetrics {
      * file property.
      */
     public static synchronized void setCredentialProvider(
-            AWSCredentialsProvider provider) {
+            AwsCredentialsProvider provider) {
         credentialProvider = provider;
     }
 
@@ -726,6 +715,14 @@ public enum AwsSdkMetrics {
      * Sets the region to be used for the default AWS SDK metric collector;
      * or null if the default is to be used.
      */
+    public static void setRegion(Regions region) {
+        AwsSdkMetrics.region = RegionUtils.getRegion(region.getName());
+    }
+
+    /**
+     * Sets the region to be used for the default AWS SDK metric collector;
+     * or null if the default is to be used.
+     */
     public static void setRegion(String region) {
         AwsSdkMetrics.region = RegionUtils.getRegion(region);
     }
@@ -736,14 +733,6 @@ public enum AwsSdkMetrics {
      */
     public static String getRegionName() {
         return region == null ? null : region.getName();
-    }
-
-    /**
-     * Sets the region to be used for the default AWS SDK metric collector;
-     * or null if the default is to be used.
-     */
-    public static void setRegion(Regions region) {
-        AwsSdkMetrics.region = RegionUtils.getRegion(region.getName());
     }
 
     /**
@@ -771,13 +760,13 @@ public enum AwsSdkMetrics {
         final PropertiesCredentials cred =
                 new PropertiesCredentials(new File(filepath));
         synchronized (AwsSdkMetrics.class) {
-            credentialProvider = new AWSCredentialsProvider() {
+            credentialProvider = new AwsCredentialsProvider() {
                 @Override
                 public void refresh() {
                 }
 
                 @Override
-                public AWSCredentials getCredentials() {
+                public AwsCredentials getCredentials() {
                     return cred;
                 }
             };
@@ -890,24 +879,24 @@ public enum AwsSdkMetrics {
         private volatile Set<MetricType> readOnly;
 
         MetricRegistry() {
-            metricTypes.add(AWSRequestMetrics.Field.ClientExecuteTime);
-            metricTypes.add(AWSRequestMetrics.Field.Exception);
-            metricTypes.add(AWSRequestMetrics.Field.ThrottleException);
-            metricTypes.add(AWSRequestMetrics.Field.HttpClientRetryCount);
-            metricTypes.add(AWSRequestMetrics.Field.HttpRequestTime);
-            metricTypes.add(AWSRequestMetrics.Field.RequestCount);
+            metricTypes.add(AwsRequestMetrics.Field.ClientExecuteTime);
+            metricTypes.add(AwsRequestMetrics.Field.Exception);
+            metricTypes.add(AwsRequestMetrics.Field.ThrottleException);
+            metricTypes.add(AwsRequestMetrics.Field.HttpClientRetryCount);
+            metricTypes.add(AwsRequestMetrics.Field.HttpRequestTime);
+            metricTypes.add(AwsRequestMetrics.Field.RequestCount);
             //            metricTypes.add(Field.RequestSigningTime);
             //            metricTypes.add(Field.ResponseProcessingTime);
-            metricTypes.add(AWSRequestMetrics.Field.RetryCount);
-            metricTypes.add(AWSRequestMetrics.Field.RetryCapacityConsumed);
-            metricTypes.add(AWSRequestMetrics.Field.ThrottledRetryCount);
-            metricTypes.add(AWSRequestMetrics.Field.HttpClientSendRequestTime);
-            metricTypes.add(AWSRequestMetrics.Field.HttpClientReceiveResponseTime);
-            metricTypes.add(AWSRequestMetrics.Field.HttpSocketReadTime);
-            metricTypes.add(AWSRequestMetrics.Field.HttpClientPoolAvailableCount);
-            metricTypes.add(AWSRequestMetrics.Field.HttpClientPoolLeasedCount);
-            metricTypes.add(AWSRequestMetrics.Field.HttpClientPoolPendingCount);
-            metricTypes.add(AWSServiceMetrics.HttpClientGetConnectionTime);
+            metricTypes.add(AwsRequestMetrics.Field.RetryCount);
+            metricTypes.add(AwsRequestMetrics.Field.RetryCapacityConsumed);
+            metricTypes.add(AwsRequestMetrics.Field.ThrottledRetryCount);
+            metricTypes.add(AwsRequestMetrics.Field.HttpClientSendRequestTime);
+            metricTypes.add(AwsRequestMetrics.Field.HttpClientReceiveResponseTime);
+            metricTypes.add(AwsRequestMetrics.Field.HttpSocketReadTime);
+            metricTypes.add(AwsRequestMetrics.Field.HttpClientPoolAvailableCount);
+            metricTypes.add(AwsRequestMetrics.Field.HttpClientPoolLeasedCount);
+            metricTypes.add(AwsRequestMetrics.Field.HttpClientPoolPendingCount);
+            metricTypes.add(AwsServiceMetrics.HttpClientGetConnectionTime);
             syncReadOnly();
         }
 

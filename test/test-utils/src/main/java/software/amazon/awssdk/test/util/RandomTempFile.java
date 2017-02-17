@@ -26,7 +26,7 @@ import java.io.InputStream;
  * Java's temporary directory, as declared in the JRE's system properties. The
  * file is immediately filled with a specified amount of random ASCII data.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  *
  * @see RandomInputStream
  */
@@ -34,10 +34,10 @@ public class RandomTempFile extends File {
 
     private static final long serialVersionUID = -8232143353692832238L;
 
-    /** Java temp dir where all temp files will be created */
+    /** Java temp dir where all temp files will be created. */
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
-    /** Flag controlling whether binary or character data is used */
+    /** Flag controlling whether binary or character data is used. */
     private final boolean binaryData;
 
 

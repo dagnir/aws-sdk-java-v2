@@ -43,6 +43,7 @@ public class ExtraMaterialsDescriptionTest {
                 map.put("foo", "bar");
                 fail();
             } catch (UnsupportedOperationException expected) {
+                // Ignored or expected.
             }
         }
     }
@@ -69,6 +70,7 @@ public class ExtraMaterialsDescriptionTest {
             extra.mergeInto(core);
             fail();
         } catch (IllegalArgumentException expected) {
+            // Ignored or expected.
         }
         assertTrue(extra.getMaterialDescription().size() == 1);
         assertTrue(core.size() == 1);

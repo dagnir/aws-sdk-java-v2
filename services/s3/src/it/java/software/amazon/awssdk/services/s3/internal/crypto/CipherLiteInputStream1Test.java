@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.s3.categories.S3Categories;
 
 @Category(S3Categories.Slow.class)
 public class CipherLiteInputStream1Test {
-    private static final boolean debug = false;
+    private static final boolean DEBUG = false;
     private static Random rand = new Random();
 
     @BeforeClass
@@ -94,7 +94,7 @@ public class CipherLiteInputStream1Test {
             }
             testStream.reset();
             read1 = testStream.read(buf1);
-            if (debug) {
+            if (DEBUG) {
                 System.err.println("read1=" + read1 + ", read2=" + read2);
             }
             assertTrue(read1 == read2);

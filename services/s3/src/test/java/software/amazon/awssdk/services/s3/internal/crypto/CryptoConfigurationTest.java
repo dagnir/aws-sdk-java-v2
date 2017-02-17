@@ -60,7 +60,7 @@ public class CryptoConfigurationTest {
             config.withCryptoMode(CryptoMode.AuthenticatedEncryption);
             fail();
         } catch (UnsupportedOperationException expected) {
-
+            // Ignored or expected.
         }
         // property is set despite the exception
         assertEquals(CryptoMode.AuthenticatedEncryption, config.getCryptoMode());
@@ -69,6 +69,7 @@ public class CryptoConfigurationTest {
             config.setCryptoMode(CryptoMode.AuthenticatedEncryption);
             fail();
         } catch (UnsupportedOperationException expected) {
+            // Ignored or expected.
         }
         // property is set despite the exception
         assertEquals(CryptoMode.AuthenticatedEncryption, config.getCryptoMode());

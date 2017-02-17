@@ -34,8 +34,8 @@ import org.joda.time.format.ISODateTimeFormat;
  */
 public class DateModule {
 
-    private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();
     public static final SimpleModule INSTANCE = new SimpleModule();
+    private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();
 
     static {
         INSTANCE.addSerializer(Date.class, new StdSerializer<Date>(Date.class) {

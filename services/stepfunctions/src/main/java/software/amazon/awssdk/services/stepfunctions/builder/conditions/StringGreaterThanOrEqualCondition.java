@@ -38,6 +38,13 @@ public final class StringGreaterThanOrEqualCondition implements BinaryCondition<
     }
 
     /**
+     * @return Builder instance to construct a {@link StringGreaterThanOrEqualCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -51,13 +58,6 @@ public final class StringGreaterThanOrEqualCondition implements BinaryCondition<
     @Override
     public String getExpectedValue() {
         return expectedValue;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link StringGreaterThanOrEqualCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

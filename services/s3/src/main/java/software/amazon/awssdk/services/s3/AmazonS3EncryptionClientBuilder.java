@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.s3;
 
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
@@ -33,8 +34,8 @@ public final class AmazonS3EncryptionClientBuilder extends AmazonS3Builder<Amazo
     }
 
     /**
-     * @return Default client using the {@link software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain}
-     * and {@link software.amazon.awssdk.regions.DefaultAwsRegionProviderChain} chain
+     * @return Default client using the {@link DefaultAwsCredentialsProviderChain}
+     *     and {@link software.amazon.awssdk.regions.DefaultAwsRegionProviderChain} chain
      */
     public static AmazonS3Encryption defaultClient() {
         return standard().build();

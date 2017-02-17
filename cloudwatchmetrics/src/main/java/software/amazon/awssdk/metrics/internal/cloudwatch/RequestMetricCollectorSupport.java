@@ -26,7 +26,7 @@ import software.amazon.awssdk.metrics.MetricType;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.RequestMetricType;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * This is the default implementation of an AWS SDK request metric collection
@@ -36,7 +36,7 @@ import software.amazon.awssdk.util.AWSRequestMetrics;
  */
 @ThreadSafe
 public class RequestMetricCollectorSupport extends RequestMetricCollector {
-    protected final static Log log = LogFactory.getLog(RequestMetricCollectorSupport.class);
+    protected static final Log log = LogFactory.getLog(RequestMetricCollectorSupport.class);
     private final BlockingQueue<MetricDatum> queue;
     private final PredefinedMetricTransformer transformer = new PredefinedMetricTransformer();
 
@@ -62,7 +62,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
     }
 
     private void collectMetrics0(Request<?> request, Response<?> response) {
-        AWSRequestMetrics arm = request.getAWSRequestMetrics();
+        AwsRequestMetrics arm = request.getAWSRequestMetrics();
         if (arm == null || !arm.isEnabled()) {
             return;
         }

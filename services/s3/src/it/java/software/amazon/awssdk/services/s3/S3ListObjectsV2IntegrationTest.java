@@ -42,21 +42,21 @@ import software.amazon.awssdk.test.util.RandomInputStream;
  * client.
  */
 public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
-    /** One hour in milliseconds for verifying that a last modified date is recent */
+    /** One hour in milliseconds for verifying that a last modified date is recent. */
     private static final long ONE_HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
 
-    /** Content length for sample keys created by these tests */
+    /** Content length for sample keys created by these tests. */
     private static final long CONTENT_LENGTH = 123;
 
     private static final String KEY_NAME_WITH_SPECIAL_CHARS = "special-chars-@$%";
     private static final int BUCKET_OBJECTS = 15;
-    /** The name of the bucket created, used, and deleted by these tests */
+    /** The name of the bucket created, used, and deleted by these tests. */
     private static String bucketName = "list-objects-integ-test-" + new Date().getTime();
-    /** List of all keys created  by these tests */
+    /** List of all keys created  by these tests. */
     private static List<String> keys = new ArrayList<String>();
 
 
-    /** Releases all resources created in this test */
+    /** Releases all resources created in this test. */
     @AfterClass
     public static void tearDown() {
         CryptoTestUtils.deleteBucketAndAllContents(s3, bucketName);

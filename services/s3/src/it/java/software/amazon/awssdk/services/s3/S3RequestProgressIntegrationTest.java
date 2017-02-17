@@ -61,16 +61,18 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
         }
     }
 
-    /** Releases all resources created by this test */
+    /** Releases all resources created by this test. */
     @After
     public void tearDown() {
         try {
             s3.deleteObject(bucketName, KEY);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             s3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
@@ -82,7 +84,7 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
     public void testProgressEventNotification() throws AmazonServiceException, AmazonClientException, IOException {
         s3.createBucket(bucketName);
 
-        /* PutObject */
+        /* PutObject. */
 
         PutObjectRequest putRequest = generatePutObjectRequest(bucketName, KEY, CONTENT_LENGTH);
         ProgressListenerWithEventCodeVerification verifier = new ProgressListenerWithEventCodeVerification(
@@ -101,7 +103,7 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
 
         waitTillListenerCallbacksComplete();
 
-        /* GetObject */
+        /* GetObject. */
 
         listener.throwExceptionIfAny();
         verifier.reset();
@@ -128,7 +130,7 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
     public void testRequestCycleProgressReporting() throws AmazonServiceException, AmazonClientException, IOException {
         s3.createBucket(bucketName);
 
-        /* PubObject */
+        /* PubObject. */
 
         ProgressTracker putTracker = new ProgressTracker();
         PutObjectRequest putRequest =
@@ -144,7 +146,7 @@ public class S3RequestProgressIntegrationTest extends S3IntegrationTestBase {
         Assert.assertTrue(putProgress.getResponseBytesTransferred() == 0);
 
 
-        /* GetObject */
+        /* GetObject. */
 
         ProgressTracker getTracker = new ProgressTracker();
         GetObjectRequest getRequest = new GetObjectRequest(bucketName, KEY)

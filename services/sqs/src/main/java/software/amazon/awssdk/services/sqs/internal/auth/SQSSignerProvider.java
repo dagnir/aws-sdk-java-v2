@@ -37,7 +37,7 @@ public class SQSSignerProvider extends SignerProvider {
 
     @Override
     public Signer getSigner(SignerProviderContext context) {
-        return awsClient.getSignerByURI(context.getUri());
+        return awsClient.getSignerByUri(context.getUri());
     }
 
 }

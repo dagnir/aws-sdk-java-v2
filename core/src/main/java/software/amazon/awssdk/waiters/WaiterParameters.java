@@ -17,12 +17,12 @@ package software.amazon.awssdk.waiters;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public final class WaiterParameters<Input extends AmazonWebServiceRequest> {
+public final class WaiterParameters<InputT extends AmazonWebServiceRequest> {
 
     /**
      * Represents the input of the operation.
      */
-    private final Input request;
+    private final InputT request;
 
     /**
      * Represents the custom polling strategy. Will be null
@@ -35,7 +35,7 @@ public final class WaiterParameters<Input extends AmazonWebServiceRequest> {
         this.pollingStrategy = null;
     }
 
-    public WaiterParameters(Input request) {
+    public WaiterParameters(InputT request) {
         this.request = request;
         this.pollingStrategy = null;
     }
@@ -48,7 +48,7 @@ public final class WaiterParameters<Input extends AmazonWebServiceRequest> {
      * @param pollingStrategy Custom polling strategy
      * @return WaiterParameters object with custom polling strategy defined
      */
-    private WaiterParameters(Input request, PollingStrategy pollingStrategy) {
+    private WaiterParameters(InputT request, PollingStrategy pollingStrategy) {
         this.request = request;
         this.pollingStrategy = pollingStrategy;
     }
@@ -59,8 +59,8 @@ public final class WaiterParameters<Input extends AmazonWebServiceRequest> {
      * @param request Input of the operation
      * @return WaiterParameters Object
      */
-    public WaiterParameters<Input> withRequest(Input request) {
-        return new WaiterParameters<Input>(request, this.pollingStrategy);
+    public WaiterParameters<InputT> withRequest(InputT request) {
+        return new WaiterParameters<InputT>(request, this.pollingStrategy);
     }
 
     /**
@@ -69,14 +69,14 @@ public final class WaiterParameters<Input extends AmazonWebServiceRequest> {
      * @param pollingStrategy Custom polling strategy
      * @return WaiterParameters Object
      */
-    public WaiterParameters<Input> withPollingStrategy(PollingStrategy pollingStrategy) {
-        return new WaiterParameters<Input>(this.request, pollingStrategy);
+    public WaiterParameters<InputT> withPollingStrategy(PollingStrategy pollingStrategy) {
+        return new WaiterParameters<InputT>(this.request, pollingStrategy);
     }
 
     /**
      * @return Input of the operation
      */
-    public Input getRequest() {
+    public InputT getRequest() {
         return this.request;
     }
 

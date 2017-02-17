@@ -321,35 +321,33 @@ public class UploadCallable implements Callable<UploadResult> {
 
     /**
      * Initiates a multipart upload and returns the upload id
-     * @param isUsingEncryption
      */
     private String initiateMultipartUpload(PutObjectRequest origReq, boolean isUsingEncryption) {
 
-        InitiateMultipartUploadRequest req = null;
+        InitiateMultipartUploadRequest request = null;
         if (isUsingEncryption && origReq instanceof EncryptedPutObjectRequest) {
-            req = new EncryptedInitiateMultipartUploadRequest(
+            request = new EncryptedInitiateMultipartUploadRequest(
                     origReq.getBucketName(), origReq.getKey()).withCannedACL(
                     origReq.getCannedAcl()).withObjectMetadata(origReq.getMetadata());
-            ((EncryptedInitiateMultipartUploadRequest) req)
+            ((EncryptedInitiateMultipartUploadRequest) request)
                     .setMaterialsDescription(((EncryptedPutObjectRequest) origReq).getMaterialsDescription());
         } else {
-            req = new InitiateMultipartUploadRequest(origReq.getBucketName(), origReq.getKey())
+            request = new InitiateMultipartUploadRequest(origReq.getBucketName(), origReq.getKey())
                     .withCannedACL(origReq.getCannedAcl())
                     .withObjectMetadata(origReq.getMetadata());
         }
 
-        TransferManager.appendMultipartUserAgent(req);
+        TransferManager.appendMultipartUserAgent(request);
 
-        req.withAccessControlList(origReq.getAccessControlList())
-           .withStorageClass(origReq.getStorageClass())
-           .withRedirectLocation(origReq.getRedirectLocation())
-           .withSSECustomerKey(origReq.getSSECustomerKey())
-           .withSSEAwsKeyManagementParams(origReq.getSSEAwsKeyManagementParams())
-           .withGeneralProgressListener(origReq.getGeneralProgressListener())
-           .withRequestMetricCollector(origReq.getRequestMetricCollector())
-        ;
+        request.withAccessControlList(origReq.getAccessControlList())
+               .withStorageClass(origReq.getStorageClass())
+               .withRedirectLocation(origReq.getRedirectLocation())
+               .withSSECustomerKey(origReq.getSSECustomerKey())
+               .withSSEAwsKeyManagementParams(origReq.getSseAwsKeyManagementParams())
+               .withGeneralProgressListener(origReq.getGeneralProgressListener())
+               .withRequestMetricCollector(origReq.getRequestMetricCollector());
 
-        String uploadId = s3.initiateMultipartUpload(req).getUploadId();
+        String uploadId = s3.initiateMultipartUpload(request).getUploadId();
         log.debug("Initiated new multipart upload: " + uploadId);
 
         return uploadId;

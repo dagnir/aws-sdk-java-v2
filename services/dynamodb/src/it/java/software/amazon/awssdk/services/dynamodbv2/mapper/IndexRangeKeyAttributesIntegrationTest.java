@@ -45,11 +45,11 @@ import java.util.UUID;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.Condition;
@@ -76,7 +76,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
     private static final int indexFooRangeStep = 2;
     private static final int indexBarRangeStep = 4;
     private static final int multipleIndexRangeStep = 8;
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
     // We don't start with the current system millis like other tests because
     // it's out of the range of some data types
     private static int start = 1;
@@ -120,7 +120,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             dynamo.putItem(new PutItemRequest(TABLE_WITH_INDEX_RANGE_ATTRIBUTE, attr));
         }
 
-        mapper = new DynamoDBMapper(dynamo,
+        mapper = new DynamoDbMapper(dynamo,
                                     new DynamoDBMapperConfig(ConsistentReads.CONSISTENT));
     }
 
@@ -214,6 +214,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
                 mapper.save(replacement);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
         }
     }

@@ -59,9 +59,9 @@ public class ReplicationDestinationConfig implements Serializable {
      * Sets the destination bucket ARN for the replication rule. Returns the
      * updated object.
      *
+     * @return the updated {@link ReplicationDestinationConfig} object
      * @throws IllegalArgumentException
      *             if the bucket arn is null.
-     * @return the updated {@link ReplicationDestinationConfig} object
      */
     public ReplicationDestinationConfig withBucketARN(String bucketARN) {
         setBucketARN(bucketARN);

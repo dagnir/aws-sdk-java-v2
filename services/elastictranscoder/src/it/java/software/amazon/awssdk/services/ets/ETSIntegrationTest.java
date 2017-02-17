@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ets;
 
 import static org.junit.Assert.assertEquals;
@@ -58,24 +73,24 @@ import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 
 public class ETSIntegrationTest extends IntegrationTestBase {
 
-    private final static String PIPE_NAME = "java-sdk-pipeline" + System.currentTimeMillis();
-    private final static String INPUT_BUCKET_NAME = "java-integration-test-input-bucket" + System.currentTimeMillis();
-    private final static String OUTPUT_BUCKET_NAME = "java-integration-test-output-bucket";
-    private final static String INPUT_KEY = "123";
-    private final static String RATIO = "4:3";
-    private final static String CONTAINER = "auto";
-    private final static String RATE = "15";
-    private final static String RESOLUTION = "auto";
-    private final static String INTERLACED = "auto";
-    private final static String ROTATION = "270";
-    private final static String OUTPUT_KEY = "321";
-    private final static String SEGMENT_DURATION = "30.0";
-    private final static String PLAY_LIST_NAME = "my-playlist";
-    private final static String FORMAT = "HLSv3";
-    private final static String WATERMARK_ID = "my-watermark";
+    private static final String PIPE_NAME = "java-sdk-pipeline" + System.currentTimeMillis();
+    private static final String INPUT_BUCKET_NAME = "java-integration-test-input-bucket" + System.currentTimeMillis();
+    private static final String OUTPUT_BUCKET_NAME = "java-integration-test-output-bucket";
+    private static final String INPUT_KEY = "123";
+    private static final String RATIO = "4:3";
+    private static final String CONTAINER = "auto";
+    private static final String RATE = "15";
+    private static final String RESOLUTION = "auto";
+    private static final String INTERLACED = "auto";
+    private static final String ROTATION = "270";
+    private static final String OUTPUT_KEY = "321";
+    private static final String SEGMENT_DURATION = "30.0";
+    private static final String PLAY_LIST_NAME = "my-playlist";
+    private static final String FORMAT = "HLSv3";
+    private static final String WATERMARK_ID = "my-watermark";
     private static String topicArn;
-    private final String STORAGE_CLASS = "ReducedRedundancy";
-    private final String ROLE = "arn:aws:iam::369666460722:role/data-pipeline-test";
+    private static final String STORAGE_CLASS = "ReducedRedundancy";
+    private static final String ROLE = "arn:aws:iam::369666460722:role/data-pipeline-test";
     private String pipelineId;
     private String jobId;
     private PipelineOutputConfig contentConfig;
@@ -106,7 +121,7 @@ public class ETSIntegrationTest extends IntegrationTestBase {
                 try {
                     ets.deletePipeline(new DeletePipelineRequest().withId(pipeline.getId()));
                 } catch (Exception e) {
-
+                    // Ignored or expected.
                 }
             }
         }
@@ -114,11 +129,13 @@ public class ETSIntegrationTest extends IntegrationTestBase {
         try {
             s3.deleteBucket(INPUT_BUCKET_NAME);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             s3.deleteBucket(OUTPUT_BUCKET_NAME);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
@@ -225,7 +242,8 @@ public class ETSIntegrationTest extends IntegrationTestBase {
 
         // update pipeline notification
         notifications.setCompleted(topicArn);
-        ets.updatePipelineNotifications(new UpdatePipelineNotificationsRequest().withId(pipelineId).withNotifications(notifications));
+        ets.updatePipelineNotifications(
+                new UpdatePipelineNotificationsRequest().withId(pipelineId).withNotifications(notifications));
 
         // Get pipeline back
         readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
@@ -307,7 +325,8 @@ public class ETSIntegrationTest extends IntegrationTestBase {
         isValidJob(readJobResult.getJob());
 
         // List jobs
-        ListJobsByPipelineResult listJobsByPipelineResult = ets.listJobsByPipeline(new ListJobsByPipelineRequest().withPipelineId(pipelineId));
+        ListJobsByPipelineResult listJobsByPipelineResult =
+                ets.listJobsByPipeline(new ListJobsByPipelineRequest().withPipelineId(pipelineId));
         assertEquals(1, listJobsByPipelineResult.getJobs().size());
         isValidJob(listJobsByPipelineResult.getJobs().get(0));
 
@@ -326,7 +345,7 @@ public class ETSIntegrationTest extends IntegrationTestBase {
             readPipelineResult = ets.readPipeline(new ReadPipelineRequest().withId(pipelineId));
             fail();
         } catch (AmazonServiceException e) {
-
+            // Ignored or expected.
         }
 
         // Delete preset
@@ -337,7 +356,7 @@ public class ETSIntegrationTest extends IntegrationTestBase {
             ets.readPreset(new ReadPresetRequest().withId(presetId));
             fail();
         } catch (AmazonServiceException e) {
-
+            // Ignored or expected.
         }
 
     }

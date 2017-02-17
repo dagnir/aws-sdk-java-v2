@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  */
 @DynamoDB
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBIndexRangeKey {
 
     /**

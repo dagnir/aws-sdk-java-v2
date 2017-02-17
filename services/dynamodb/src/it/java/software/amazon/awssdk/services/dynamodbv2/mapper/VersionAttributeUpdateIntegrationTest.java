@@ -32,13 +32,13 @@ import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestB
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBDeleteExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalOperator;
@@ -59,7 +59,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         }
 
         // Saving new objects with a null version field should populate it
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (StringVersionField obj : objs) {
             assertNull(obj.getVersion());
             util.save(obj);
@@ -77,7 +77,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         }
 
         // Saving new objects with a null version field should populate it
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (BigIntegerVersionField obj : objs) {
             assertNull(obj.getVersion());
             util.save(obj);
@@ -104,6 +104,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 util.save(obj);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
 
             // Now try again overlaying the correct version number by using a saveExpression
@@ -132,7 +133,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         }
 
         // Saving new objects with a null version field should populate it
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (IntegerVersionField obj : objs) {
             assertNull(obj.getNotCalledVersion());
             util.save(obj);
@@ -159,6 +160,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 util.save(obj);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
 
             // Trying to delete the object should also fail
@@ -166,6 +168,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 util.delete(obj);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
 
             // But specifying CLOBBER will allow deletion
@@ -178,6 +181,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 util.delete(obj);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
 
             // Now try deleting again overlaying the correct version number by using a deleteExpression
@@ -203,7 +207,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
      */
     @Test
     public void testVersionedAttributeWithUserProvidedExpectedConditions() {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         IntegerVersionField versionedObject = getUniqueObject(new IntegerVersionField());
         assertNull(versionedObject.getNotCalledVersion());
 
@@ -237,10 +241,12 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         try {
             mapper.save(getUniqueObject(new IntegerVersionField()), saveExpression);
         } catch (IllegalArgumentException expected) {
+            // Ignored or expected.
         }
         try {
             mapper.delete(getUniqueObject(new IntegerVersionField()), deleteExpression);
         } catch (IllegalArgumentException expected) {
+            // Ignored or expected.
         }
 
         // User-provided OR conditions should work if they completely override
@@ -261,6 +267,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         try {
             mapper.save(newObj, saveExpression);
         } catch (ConditionalCheckFailedException expected) {
+            // Ignored or expected.
         }
 
         saveExpression.setExpected(goodConditions);
@@ -270,6 +277,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         try {
             mapper.delete(newObj, deleteExpression);
         } catch (ConditionalCheckFailedException expected) {
+            // Ignored or expected.
         }
 
         deleteExpression.setExpected(goodConditions);
@@ -285,7 +293,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         }
 
         // Saving new objects with a null version field should populate it
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (ByteVersionField obj : objs) {
             assertNull(obj.getVersion());
             util.save(obj);
@@ -312,6 +320,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 util.save(obj);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
         }
     }
@@ -325,7 +334,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         }
 
         // Saving new objects with a null version field should populate it
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (LongVersionField obj : objs) {
             assertNull(obj.getVersion());
             util.save(obj);
@@ -352,6 +361,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 util.save(obj);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
         }
     }

@@ -26,7 +26,7 @@ public enum BucketNameUtils {
     private static final int MIN_BUCKET_NAME_LENGTH = 3;
     private static final int MAX_BUCKET_NAME_LENGTH = 63;
 
-    private static final Pattern ipAddressPattern = Pattern.compile("(\\d+\\.){3}\\d+");
+    private static final Pattern IP_ADDRESS_PATTERN = Pattern.compile("(\\d+\\.){3}\\d+");
 
     /**
      * Validates that the specified bucket name is valid for Amazon S3 V2 naming
@@ -67,7 +67,7 @@ public enum BucketNameUtils {
     /**
      * Convience method that allows the DNS rules to be altered for different SDKs.
      */
-    public static boolean isDNSBucketName(String bucketName) {
+    public static boolean isDnsBucketName(String bucketName) {
         return isValidV2BucketName(bucketName);
     }
 
@@ -90,13 +90,12 @@ public enum BucketNameUtils {
         if (bucketName.length() < MIN_BUCKET_NAME_LENGTH ||
             bucketName.length() > MAX_BUCKET_NAME_LENGTH) {
 
-            return exception(
-                    throwOnError,
-                    "Bucket name should be between " + MIN_BUCKET_NAME_LENGTH + " and " + MAX_BUCKET_NAME_LENGTH + " characters long"
-                            );
+            return exception(throwOnError,
+                             "Bucket name should be between " + MIN_BUCKET_NAME_LENGTH + " and " +
+                             MAX_BUCKET_NAME_LENGTH + " characters long");
         }
 
-        if (ipAddressPattern.matcher(bucketName).matches()) {
+        if (IP_ADDRESS_PATTERN.matcher(bucketName).matches()) {
             return exception(
                     throwOnError,
                     "Bucket name must not be formatted as an IP Address"

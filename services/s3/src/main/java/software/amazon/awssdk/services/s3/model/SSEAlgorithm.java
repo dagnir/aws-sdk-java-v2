@@ -33,7 +33,7 @@ public enum SSEAlgorithm {
      * or null if and only if the given algorithm is null.
      *
      * @throws IllegalArgumentException if the specified algorithm is not
-     * supported.
+     *     supported.
      */
     public static SSEAlgorithm fromString(String algorithm) {
         if (algorithm == null) {

@@ -161,6 +161,7 @@ public class TreeHashGenerator {
             try {
                 bis.close();
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
     }

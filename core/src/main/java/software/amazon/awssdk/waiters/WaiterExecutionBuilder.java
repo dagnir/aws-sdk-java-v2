@@ -21,46 +21,46 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
-public class WaiterExecutionBuilder<Input extends AmazonWebServiceRequest, Output> {
+public class WaiterExecutionBuilder<InputT extends AmazonWebServiceRequest, OutputT> {
 
-    private SdkFunction<Input, Output> sdkFunction;
+    private SdkFunction<InputT, OutputT> sdkFunction;
 
-    private Input request;
+    private InputT request;
 
     private PollingStrategy pollingStrategy;
 
-    private List<WaiterAcceptor<Output>> acceptors = new ArrayList<WaiterAcceptor<Output>>();
+    private List<WaiterAcceptor<OutputT>> acceptors = new ArrayList<WaiterAcceptor<OutputT>>();
 
-    public WaiterExecutionBuilder<Input, Output> withSdkFunction(SdkFunction sdkFunction) {
+    public WaiterExecutionBuilder<InputT, OutputT> withSdkFunction(SdkFunction sdkFunction) {
         this.sdkFunction = sdkFunction;
         return this;
     }
 
-    public WaiterExecutionBuilder<Input, Output> withRequest(Input request) {
+    public WaiterExecutionBuilder<InputT, OutputT> withRequest(InputT request) {
         this.request = request;
         return this;
     }
 
 
-    public WaiterExecutionBuilder<Input, Output> withPollingStrategy(PollingStrategy pollingStrategy) {
+    public WaiterExecutionBuilder<InputT, OutputT> withPollingStrategy(PollingStrategy pollingStrategy) {
         this.pollingStrategy = pollingStrategy;
         return this;
     }
 
-    public WaiterExecutionBuilder<Input, Output> withAcceptors(List<WaiterAcceptor<Output>> acceptors) {
+    public WaiterExecutionBuilder<InputT, OutputT> withAcceptors(List<WaiterAcceptor<OutputT>> acceptors) {
         this.acceptors = acceptors;
         return this;
     }
 
-    public Input getRequest() {
+    public InputT getRequest() {
         return this.request;
     }
 
-    public List<WaiterAcceptor<Output>> getAcceptorsList() {
+    public List<WaiterAcceptor<OutputT>> getAcceptorsList() {
         return this.acceptors;
     }
 
-    public SdkFunction<Input, Output> getSdkFunction() {
+    public SdkFunction<InputT, OutputT> getSdkFunction() {
         return this.sdkFunction;
     }
 
@@ -68,8 +68,8 @@ public class WaiterExecutionBuilder<Input extends AmazonWebServiceRequest, Outpu
         return this.pollingStrategy;
     }
 
-    public WaiterExecution<Input, Output> build() {
-        return new WaiterExecution<Input, Output>(this);
+    public WaiterExecution<InputT, OutputT> build() {
+        return new WaiterExecution<InputT, OutputT>(this);
     }
 
 }

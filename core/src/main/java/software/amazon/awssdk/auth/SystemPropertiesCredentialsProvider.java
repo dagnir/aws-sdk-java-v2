@@ -22,14 +22,14 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.util.StringUtils;
 
 /**
- * {@link AWSCredentialsProvider} implementation that provides credentials by
+ * {@link AwsCredentialsProvider} implementation that provides credentials by
  * looking at the <code>aws.accessKeyId</code> and <code>aws.secretKey</code>
  * Java system properties.
  */
-public class SystemPropertiesCredentialsProvider implements AWSCredentialsProvider {
+public class SystemPropertiesCredentialsProvider implements AwsCredentialsProvider {
 
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         String accessKey =
                 StringUtils.trim(System.getProperty(ACCESS_KEY_SYSTEM_PROPERTY));
 
@@ -45,7 +45,7 @@ public class SystemPropertiesCredentialsProvider implements AWSCredentialsProvid
                     + SECRET_KEY_SYSTEM_PROPERTY + ")");
         }
 
-        return new BasicAWSCredentials(accessKey, secretKey);
+        return new BasicAwsCredentials(accessKey, secretKey);
     }
 
     @Override

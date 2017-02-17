@@ -43,7 +43,7 @@ public class NumericCondition extends Condition {
 
     ;
 
-    /** Enumeration of the supported ways a numeric comparison can be evaluated */
+    /** Enumeration of the supported ways a numeric comparison can be evaluated. */
     public static enum NumericComparisonType {
         NumericEquals,
         NumericGreaterThan,

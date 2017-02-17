@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import software.amazon.awssdk.handlers.AsyncHandler;
-import software.amazon.awssdk.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.AmazonSqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
@@ -39,14 +39,14 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
 
     private static final int CALLBACK_TIMEOUT_IN_MILLIS = 10 * 1000;
 
-    private AmazonSQSBufferedAsyncClient buffSqs;
+    private AmazonSqsBufferedAsyncClient buffSqs;
     private AmazonSQSAsync realSqs;
     private String queueUrl;
 
     @Before
     public void setup() {
         realSqs = createSqsAyncClient();
-        buffSqs = new AmazonSQSBufferedAsyncClient(realSqs, new QueueBufferConfig());
+        buffSqs = new AmazonSqsBufferedAsyncClient(realSqs, new QueueBufferConfig());
         queueUrl = createQueue(buffSqs);
     }
 

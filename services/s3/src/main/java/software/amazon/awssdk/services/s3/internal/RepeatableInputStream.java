@@ -24,8 +24,6 @@ import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
 import software.amazon.awssdk.runtime.io.SdkInputStream;
 
 /**
- * @deprecated by {@link SdkBufferedInputStream}.
- *
  * A repeatable input stream wrapper for any input stream. This input stream
  * relies on buffered data to repeat, and can therefore only be repeated when
  * less data has been read than this buffer can hold.
@@ -33,6 +31,8 @@ import software.amazon.awssdk.runtime.io.SdkInputStream;
  * <b>Note:</b> Always use a {@link ResettableInputStream} instead of this
  * class if you are sourcing data from a file, as the file-based repeatable
  * input stream can be repeated without any limitations.
+ *
+ * @deprecated by {@link SdkBufferedInputStream}.
  */
 @Deprecated
 public class RepeatableInputStream extends SdkInputStream {

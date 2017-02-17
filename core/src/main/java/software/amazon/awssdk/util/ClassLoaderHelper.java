@@ -115,6 +115,7 @@ public enum ClassLoaderHelper {
         try {
             return loader == null ? null : loader.loadClass(fqcn);
         } catch (ClassNotFoundException e) {
+            // Ignored.
         }
         return null;
     }

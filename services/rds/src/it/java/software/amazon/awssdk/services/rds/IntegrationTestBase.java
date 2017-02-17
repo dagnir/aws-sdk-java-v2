@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.rds;
 
 import static org.junit.Assert.assertNotNull;
@@ -19,23 +34,23 @@ import software.amazon.awssdk.services.rds.model.DescribeDBSecurityGroupsRequest
 import software.amazon.awssdk.services.rds.model.DescribeDBSnapshotsRequest;
 import software.amazon.awssdk.services.rds.model.IPRange;
 import software.amazon.awssdk.services.sns.AmazonSNSClient;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
  * Base class for all RDS integration tests. Loads AWS credentials from a
  * properties file on disk, provides helper methods for tests, and instantiates
  * the RDS client object for all tests to use.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
-public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
+public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
     protected static final String ENGINE = "mysql5.1";
 
-    /** The shared RDS client for all tests to use */
+    /** The shared RDS client for all tests to use. */
     protected static AmazonRDSClient rds;
 
-    /** The shared SNS client for all tests to use */
+    /** The shared SNS client for all tests to use. */
     protected static AmazonSNSClient sns;
 
     /**
@@ -79,13 +94,14 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
         rds = new AmazonRDSClient(getCredentials());
     }
 
-    /** Releases all resources allocated by these tests */
+    /** Releases all resources allocated by these tests. */
     @After
     public void tearDown() throws Exception {
         if (parameterGroupName != null) {
             try {
                 rds.deleteDBParameterGroup(new DeleteDBParameterGroupRequest().withDBParameterGroupName(parameterGroupName));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
 
@@ -94,6 +110,7 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
                 rds.deleteDBSecurityGroup(new DeleteDBSecurityGroupRequest()
                                                   .withDBSecurityGroupName(securityGroupName));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
 
@@ -104,6 +121,7 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
                                              .withDBInstanceIdentifier(databaseInstanceName)
                                              .withSkipFinalSnapshot(true));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
 
@@ -113,6 +131,7 @@ public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
                 rds.deleteDBSnapshot(new DeleteDBSnapshotRequest()
                                              .withDBSnapshotIdentifier(snapshotIdentifier));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
     }

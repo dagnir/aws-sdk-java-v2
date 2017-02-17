@@ -485,11 +485,13 @@ public final class ReflectionUtils {
         try {
             return target.getClass().getMethod("get" + propertyName);
         } catch (NoSuchMethodException nsme) {
+            // Ignored or expected.
         }
 
         try {
             return target.getClass().getMethod("is" + propertyName);
         } catch (NoSuchMethodException nsme) {
+            // Ignored or expected.
         }
 
         LogFactory.getLog(ReflectionUtils.class).warn(

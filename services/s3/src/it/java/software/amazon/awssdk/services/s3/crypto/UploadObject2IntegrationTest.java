@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.s3.crypto;
 
 import static org.junit.Assert.assertTrue;
-import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
+import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
                                                                  NoSuchAlgorithmException, InvalidKeySpecException {
         final long start = System.nanoTime();
         // Initiate upload
-        final String key = "testMaterialDescrption_forPublicKeyPair" + "-" + yyMMdd_hhmmss();
+        final String key = "testMaterialDescrption_forPublicKeyPair" + "-" + yyMMddhhmmss();
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
                         .withPartSize(PART_SIZE)
@@ -120,7 +120,7 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
                                                              InvalidKeySpecException {
         final long start = System.nanoTime();
         // Initiate upload
-        final String key = "testMaterialDescrption_forSecretKey" + "-" + yyMMdd_hhmmss();
+        final String key = "testMaterialDescrption_forSecretKey" + "-" + yyMMddhhmmss();
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
                         .withPartSize(PART_SIZE)
@@ -150,7 +150,7 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
                                                        InvalidKeySpecException {
         final long start = System.nanoTime();
         // Initiate upload
-        final String key = "testDefaultMaterialDescrption" + "-" + yyMMdd_hhmmss();
+        final String key = "testDefaultMaterialDescrption" + "-" + yyMMddhhmmss();
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
                         .withPartSize(PART_SIZE);

@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  * @see AmazonS3#initiateMultipartUpload(InitiateMultipartUploadRequest)
  */
 public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
-        implements SSECustomerKeyProvider, SSEAwsKeyManagementParamsProvider, Serializable {
+        implements SSECustomerKeyProvider, SseAwsKeyManagementParamsProvider, Serializable {
     /**
      * Additional information about the new object being created, such as
      * content type, content encoding, user metadata, etc.
@@ -80,13 +80,13 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * The optional customer-provided server-side encryption key to use to
      * encrypt the upload being started.
      */
-    private SSECustomerKey sseCustomerKey;
+    private SseCustomerKey sseCustomerKey;
 
     /**
      * The optional AWS Key Management system parameters to be used to encrypt
      * the the object on the server side.
      */
-    private SSEAwsKeyManagementParams sseAwsKeyManagementParams;
+    private SseAwsKeyManagementParams sseAwsKeyManagementParams;
 
     /**
      * If enabled, the requester is charged for conducting this operation from
@@ -429,7 +429,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
     }
 
     @Override
-    public SSECustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSSECustomerKey() {
         return sseCustomerKey;
     }
 
@@ -441,7 +441,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      *            The optional customer-provided server-side encryption key to
      *            use to encrypt the upload being started.
      */
-    public void setSSECustomerKey(SSECustomerKey sseKey) {
+    public void setSSECustomerKey(SseCustomerKey sseKey) {
         if (sseKey != null && this.sseAwsKeyManagementParams != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
@@ -462,7 +462,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * @return The updated request object, so that additional method calls can
      *         be chained together.
      */
-    public InitiateMultipartUploadRequest withSSECustomerKey(SSECustomerKey sseKey) {
+    public InitiateMultipartUploadRequest withSSECustomerKey(SseCustomerKey sseKey) {
         setSSECustomerKey(sseKey);
         return this;
     }
@@ -472,7 +472,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * object on server side.
      */
     @Override
-    public SSEAwsKeyManagementParams getSSEAwsKeyManagementParams() {
+    public SseAwsKeyManagementParams getSseAwsKeyManagementParams() {
         return sseAwsKeyManagementParams;
     }
 
@@ -480,7 +480,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * Sets the AWS Key Management System parameters used to encrypt the object
      * on server side.
      */
-    public void setSSEAwsKeyManagementParams(SSEAwsKeyManagementParams params) {
+    public void setSSEAwsKeyManagementParams(SseAwsKeyManagementParams params) {
         if (params != null && this.sseCustomerKey != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
@@ -495,7 +495,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * @return returns the update InitiateMultipartUploadRequest
      */
     public InitiateMultipartUploadRequest withSSEAwsKeyManagementParams(
-            SSEAwsKeyManagementParams sseAwsKeyManagementParams) {
+            SseAwsKeyManagementParams sseAwsKeyManagementParams) {
         setSSEAwsKeyManagementParams(sseAwsKeyManagementParams);
         return this;
     }

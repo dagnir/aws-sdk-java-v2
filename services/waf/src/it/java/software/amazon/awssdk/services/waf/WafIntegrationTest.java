@@ -36,9 +36,9 @@ import software.amazon.awssdk.services.waf.model.IPSetUpdate;
 import software.amazon.awssdk.services.waf.model.ListIPSetsRequest;
 import software.amazon.awssdk.services.waf.model.ListIPSetsResult;
 import software.amazon.awssdk.services.waf.model.UpdateIPSetRequest;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class WafIntegrationTest extends AWSTestBase {
+public class WafIntegrationTest extends AwsTestBase {
 
     private static final String IP_SET_NAME = "java-sdk-ipset-" + System.currentTimeMillis();
     private static final long SLEEP_TIME_MILLIS = 5000;

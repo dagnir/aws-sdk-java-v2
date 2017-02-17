@@ -194,8 +194,7 @@ public class TTE004146470IntegrationTest {
     @Test
     public void test() throws Exception {
         System.setProperty("javax.net.debug", "ssl");
-        HttpClient httpclient = new ApacheHttpClientFactory().create
-                (HttpClientSettings.adapt(new ClientConfiguration()));
+        HttpClient httpclient = new ApacheHttpClientFactory().create(HttpClientSettings.adapt(new ClientConfiguration()));
         //        HttpUriRequest request = new HttpGet("https://google.com:6443");
         HttpUriRequest request = new HttpGet("https://google.com");
         org.apache.http.HttpResponse resp = httpclient.execute(request);

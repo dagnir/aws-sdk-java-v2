@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sns;
 
 import static org.junit.Assert.fail;
@@ -16,7 +31,7 @@ import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.sns.model.Subscription;
 import software.amazon.awssdk.services.sns.model.Topic;
 import software.amazon.awssdk.services.sqs.AmazonSQSClient;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
  * Base class for SNS integration tests; responsible for loading AWS account info for running the
@@ -24,7 +39,7 @@ import software.amazon.awssdk.test.AWSIntegrationTestBase;
  *
  * @author fulghum@amazon.com
  */
-public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
+public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
     protected static AmazonSNSClient sns;
     protected static AmazonSQSClient sqs;

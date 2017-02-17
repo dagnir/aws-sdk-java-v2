@@ -54,12 +54,12 @@ public abstract class AbstractProfilesConfigFileScanner {
     }
 
     /**
-     * Action to be performed when an empty or comment line is detected
+     * Action to be performed when an empty or comment line is detected.
      */
     protected abstract void onEmptyOrCommentLine(String profileName, String line);
 
     /**
-     * Action to be performed when the starting line of a new profile is detected
+     * Action to be performed when the starting line of a new profile is detected.
      */
     protected abstract void onProfileStartingLine(String newProfileName, String line);
 

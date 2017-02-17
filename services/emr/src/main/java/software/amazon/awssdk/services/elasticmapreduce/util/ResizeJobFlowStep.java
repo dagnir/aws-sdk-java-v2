@@ -71,6 +71,7 @@ public class ResizeJobFlowStep {
     private boolean wait = true;
     private OnArrested onArrested = null;
     private OnFailure onFailure = null;
+
     /**
      * Creates a new ResizeJobFlowStep using the default Elastic Map Reduce
      * bucket (us-east-1.elasticmapreduce) for the default (us-east-1) region.
@@ -78,6 +79,7 @@ public class ResizeJobFlowStep {
     public ResizeJobFlowStep() {
         this("us-east-1.elasticmapreduce");
     }
+
     /**
      * Creates a new ResizeJobFlowStep using the specified Amazon S3 bucket to
      * load resources.

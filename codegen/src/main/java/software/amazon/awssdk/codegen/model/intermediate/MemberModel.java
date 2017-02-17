@@ -403,7 +403,7 @@ public class MemberModel extends DocumentationModel {
 
     /**
      * @return Implementation of {@link PathMarshallers.PathMarshaller} to use if this
-     * member is bound the the URI.
+     *     member is bound the the URI.
      * @throws IllegalStateException If this member is not bound to the URI. Templates should first check {@link
      *                               ParameterHttpMapping#isUri()} first.
      */

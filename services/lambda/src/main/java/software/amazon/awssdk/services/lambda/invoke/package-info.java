@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 /**
  * A higher-level wrapper for AWS Lambda's Invoke operation. Allows you to
  * model the input and/or output of your Lambda functions as POJOs and

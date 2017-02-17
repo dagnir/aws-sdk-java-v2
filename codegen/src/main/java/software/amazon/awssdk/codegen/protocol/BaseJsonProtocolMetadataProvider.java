@@ -36,8 +36,7 @@ public abstract class BaseJsonProtocolMetadataProvider extends BaseProtocolMetad
     }
 
     /**
-     * @return Exception unmarshaller is generic in JSON based protocols and completely encapsulated
-     * from the client.
+     * @return Exception unmarshaller is generic in JSON based protocols and completely encapsulated from the client.
      */
     @Override
     public String getExceptionUnmarshallerImpl() {

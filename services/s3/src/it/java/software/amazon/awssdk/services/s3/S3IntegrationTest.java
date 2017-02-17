@@ -39,7 +39,7 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.AccessControlList;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
@@ -66,20 +66,20 @@ import software.amazon.awssdk.test.util.UnreliableRandomInputStream;
  */
 public final class S3IntegrationTest extends S3IntegrationTestBase {
 
-    /** Object contents to use/expect when we get/put a test object */
+    /** Object contents to use/expect when we get/put a test object. */
     private static final String EXPECTED_OBJECT_CONTENTS = "Hello S3 Java client world!!!";
 
-    /** Name of the test bucket these tests will create, test, delete, etc */
+    /** Name of the test bucket these tests will create, test, delete, etc. */
     private static final String expectedBucketName = "integ-test-bucket-" + new Date().getTime();
 
-    /** Name of the test CN bucket these tests will create, test, delete, etc */
+    /** Name of the test CN bucket these tests will create, test, delete, etc. */
     private static final String expectedCnBucketName = "integ.test.cn.bucket-foobar-" + new Date().getTime();
-    /** Name of the test key these tests will create, test, delete, etc */
+    /** Name of the test key these tests will create, test, delete, etc. */
     private static final String expectedKey = "integ-test-key-" + new Date().getTime();
-    /** Redirect location for a specific object */
+    /** Redirect location for a specific object. */
     private static final String REDIRECT_LOCATION = "/redirecting...";
     private static final String CREATE_BUCKET_TEST_BUCKET_PREFIX = "test-create-bucket-";
-    /** Name of the test S3 account running these tests */
+    /** Name of the test S3 account running these tests. */
     private final String expectedS3AccountOwnerName = "aws-dr-tools-test";
 
     /**
@@ -278,12 +278,13 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
         s3.listBuckets();
 
         ListBucketsRequest listBucketsRequest = new ListBucketsRequest();
-        listBucketsRequest.setRequestCredentials(new BasicAWSCredentials("foo",
+        listBucketsRequest.setRequestCredentials(new BasicAwsCredentials("foo",
                                                                          "bar"));
         try {
             s3.listBuckets(listBucketsRequest);
             fail("Expected an authentication exception from bogus request credentials.");
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
@@ -296,6 +297,7 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
             s3.listObjects("aws:s3:::bucket.s3.amazonaws.com");
             fail("Expected an exception, but wasn't thrown");
         } catch (AmazonClientException ace) {
+            // Ignored or expected.
         }
     }
 
@@ -323,11 +325,11 @@ public final class S3IntegrationTest extends S3IntegrationTestBase {
         assertTrue(noCredentialsS3.doesBucketExist(expectedBucketName));
 
         AmazonS3 unknownCredentialsS3 = new AmazonS3Client(
-                new BasicAWSCredentials("FOO", "BAR"));
+                new BasicAwsCredentials("FOO", "BAR"));
         assertTrue(unknownCredentialsS3.doesBucketExist(expectedBucketName));
 
-        AmazonS3 badCredentialsS3 = new AmazonS3Client(new BasicAWSCredentials(
-                credentials.getAWSAccessKeyId(), "BAD"));
+        AmazonS3 badCredentialsS3 = new AmazonS3Client(new BasicAwsCredentials(
+                credentials.getAwsAccessKeyId(), "BAD"));
         assertTrue(badCredentialsS3.doesBucketExist(expectedBucketName));
 
     }

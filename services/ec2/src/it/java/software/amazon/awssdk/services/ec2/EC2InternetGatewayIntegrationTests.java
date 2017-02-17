@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -123,11 +123,9 @@ public class EC2InternetGatewayIntegrationTests extends EC2IntegrationTestBase {
     public void testAttachGateway() {
 
         // Attach
-        final DescribeInternetGatewaysRequest describeInternetGatewaysRequest = new DescribeInternetGatewaysRequest().withInternetGatewayIds
-                (internetGatewayId);
+        final DescribeInternetGatewaysRequest describeInternetGatewaysRequest = new DescribeInternetGatewaysRequest().withInternetGatewayIds(internetGatewayId);
 
-        DescribeInternetGatewaysResult result = ec2.describeInternetGateways
-                (describeInternetGatewaysRequest);
+        DescribeInternetGatewaysResult result = ec2.describeInternetGateways(describeInternetGatewaysRequest);
         Assert.assertEquals(1, result.getInternetGateways().size());
         InternetGateway gateway = result.getInternetGateways().get(0);
         assertEquals(0, gateway.getAttachments().size());

@@ -27,7 +27,7 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndex;
@@ -50,13 +50,13 @@ import utils.test.util.DynamoDBTestBase;
 public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase {
 
     private static final ProvisionedThroughput DEFAULT_CAPACITY = new ProvisionedThroughput(5L, 5L);
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
     private static Set<String> testedTableName = new HashSet<String>();
 
     @BeforeClass
     public static void setUp() throws Exception {
         DynamoDBTestBase.setUpTestBase();
-        mapper = new DynamoDBMapper(dynamo);
+        mapper = new DynamoDbMapper(dynamo);
     }
 
     @AfterClass

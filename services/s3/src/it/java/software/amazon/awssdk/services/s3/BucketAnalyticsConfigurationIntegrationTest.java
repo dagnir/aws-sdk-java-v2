@@ -51,12 +51,12 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String BUCKET_NAME = "java-bucket-analytics-integ-test-" + new Date().getTime();
 
     private static final String BUCKET_ARN = "arn:aws:s3:::" + BUCKET_NAME;
 
-    /** The key used in these tests */
+    /** The key used in these tests. */
     private static final String KEY = "key";
 
     @BeforeClass
@@ -86,9 +86,11 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
 
         assertEquals(configId, config.getId());
         assertNull(config.getFilter());
-        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(), config.getStorageClassAnalysis().getDataExport().getOutputSchemaVersion());
+        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(),
+                     config.getStorageClassAnalysis().getDataExport().getOutputSchemaVersion());
 
-        AnalyticsS3BucketDestination s3BucketDestination = config.getStorageClassAnalysis().getDataExport().getDestination().getS3BucketDestination();
+        AnalyticsS3BucketDestination s3BucketDestination =
+                config.getStorageClassAnalysis().getDataExport().getDestination().getS3BucketDestination();
         assertEquals(BUCKET_ARN, s3BucketDestination.getBucketArn());
         assertEquals(AnalyticsS3ExportFileFormat.CSV.toString(), s3BucketDestination.getFormat());
         assertNull(s3BucketDestination.getBucketAccountId());
@@ -177,9 +179,11 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         assertEquals(configId, config.getId());
         assertEquals("key", ((AnalyticsTagPredicate) config.getFilter().getPredicate()).getTag().getKey());
         assertEquals("value", ((AnalyticsTagPredicate) config.getFilter().getPredicate()).getTag().getValue());
-        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(), config.getStorageClassAnalysis().getDataExport().getOutputSchemaVersion());
+        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(),
+                     config.getStorageClassAnalysis().getDataExport().getOutputSchemaVersion());
 
-        AnalyticsS3BucketDestination s3BucketDestination = config.getStorageClassAnalysis().getDataExport().getDestination().getS3BucketDestination();
+        AnalyticsS3BucketDestination s3BucketDestination =
+                config.getStorageClassAnalysis().getDataExport().getDestination().getS3BucketDestination();
         assertEquals(BUCKET_ARN, s3BucketDestination.getBucketArn());
         assertEquals(AnalyticsS3ExportFileFormat.CSV.toString(), s3BucketDestination.getFormat());
         assertNull(s3BucketDestination.getBucketAccountId());
@@ -189,7 +193,9 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
     @Test
     public void testAnalyticsConfiguration_works_properly_with_validAndOperator() throws Exception {
         String configId = "id";
-        String prefix = "prefix", key = "k", value = "v";
+        String prefix = "prefix";
+        String key = "k";
+        String value = "v";
         AnalyticsPrefixPredicate analyticsPrefixPredicate = new AnalyticsPrefixPredicate(prefix);
         AnalyticsTagPredicate analyticsTagPredicate = new AnalyticsTagPredicate(new Tag(key, value));
         List<AnalyticsFilterPredicate> operators = new ArrayList<AnalyticsFilterPredicate>();
@@ -211,9 +217,11 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         assertEquals(prefix, ((AnalyticsPrefixPredicate) operators.get(0)).getPrefix());
         assertEquals(key, ((AnalyticsTagPredicate) operators.get(1)).getTag().getKey());
         assertEquals(value, ((AnalyticsTagPredicate) operators.get(1)).getTag().getValue());
-        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(), config.getStorageClassAnalysis().getDataExport().getOutputSchemaVersion());
+        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(),
+                     config.getStorageClassAnalysis().getDataExport().getOutputSchemaVersion());
 
-        AnalyticsS3BucketDestination s3BucketDestination = config.getStorageClassAnalysis().getDataExport().getDestination().getS3BucketDestination();
+        AnalyticsS3BucketDestination s3BucketDestination =
+                config.getStorageClassAnalysis().getDataExport().getDestination().getS3BucketDestination();
         assertEquals(BUCKET_ARN, s3BucketDestination.getBucketArn());
         assertEquals(AnalyticsS3ExportFileFormat.CSV.toString(), s3BucketDestination.getFormat());
         assertNull(s3BucketDestination.getBucketAccountId());

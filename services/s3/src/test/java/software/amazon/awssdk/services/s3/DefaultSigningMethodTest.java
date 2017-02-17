@@ -23,13 +23,13 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.AnonymousAWSCredentials;
+import software.amazon.awssdk.auth.AnonymousAwsCredentials;
 import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.auth.internal.AWS4SignerRequestParams;
+import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.auth.internal.SignerConstants;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.services.s3.internal.AWSS3V4Signer;
+import software.amazon.awssdk.services.s3.internal.AwsS3V4Signer;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 /**
@@ -48,7 +48,8 @@ public class DefaultSigningMethodTest {
     private static void setUpInternalMethods() {
         try {
             CREATE_REQUEST = AmazonS3Client.class.getDeclaredMethod("createRequest",
-                                                                    String.class, String.class, AmazonWebServiceRequest.class, HttpMethodName.class);
+                                                                    String.class, String.class, AmazonWebServiceRequest.class,
+                                                                    HttpMethodName.class);
             CREATE_REQUEST.setAccessible(true);
         } catch (Exception e) {
             fail("Failed to set up the internal methods of AmazonS3Clinet" + e.getMessage());
@@ -62,15 +63,16 @@ public class DefaultSigningMethodTest {
      */
     private static void assertSigV4WithRegion(AmazonS3Client s3, String expectedRegion) {
         Signer signer = invokeCreateSigner(s3);
-        assertTrue(signer instanceof AWSS3V4Signer);
-        assertEquals(expectedRegion, invokeExtractRegionName(s3, (AWSS3V4Signer) signer));
+        assertTrue(signer instanceof AwsS3V4Signer);
+        assertEquals(expectedRegion, invokeExtractRegionName(s3, (AwsS3V4Signer) signer));
         testSignAnonymously(s3);
     }
 
     private static Request<?> createFakeGetObjectRequest(AmazonS3Client s3) {
         try {
             GetObjectRequest fakeRequest = new GetObjectRequest(FAKE_BUCKET, FAKE_KEY);
-            Request<?> fakeGetObjectRequest = (Request<?>) CREATE_REQUEST.invoke(s3, FAKE_BUCKET, FAKE_KEY, fakeRequest, HttpMethodName.GET);
+            Request<?> fakeGetObjectRequest =
+                    (Request<?>) CREATE_REQUEST.invoke(s3, FAKE_BUCKET, FAKE_KEY, fakeRequest, HttpMethodName.GET);
 
             return fakeGetObjectRequest;
         } catch (Exception e) {
@@ -85,9 +87,9 @@ public class DefaultSigningMethodTest {
         return s3.createSigner(fakeGetObjectRequest, FAKE_BUCKET, FAKE_KEY);
     }
 
-    private static String invokeExtractRegionName(AmazonS3Client s3, AWSS3V4Signer signer) {
+    private static String invokeExtractRegionName(AmazonS3Client s3, AwsS3V4Signer signer) {
         try {
-            AWS4SignerRequestParams signerParams = new AWS4SignerRequestParams(
+            Aws4SignerRequestParams signerParams = new Aws4SignerRequestParams(
                     createFakeGetObjectRequest(s3), signer.getOverriddenDate(),
                     signer.getRegionName(), signer.getServiceName(),
                     SignerConstants.AWS4_SIGNING_ALGORITHM);
@@ -101,14 +103,14 @@ public class DefaultSigningMethodTest {
     private static void testSignAnonymously(AmazonS3Client s3) {
         Request<?> fakeGetObjectRequest = createFakeGetObjectRequest(s3);
         Signer signer = s3.createSigner(fakeGetObjectRequest, FAKE_BUCKET, FAKE_KEY);
-        signer.sign(fakeGetObjectRequest, new AnonymousAWSCredentials());
+        signer.sign(fakeGetObjectRequest, new AnonymousAwsCredentials());
     }
 
     /**
      * Tests that BJS endpoint always defaults to SigV4.
      */
     @Test
-    public void testBJSDefaultSigning() {
+    public void testBjsDefaultSigning() {
         AmazonS3Client s3 = new AmazonS3Client();
         s3.setEndpoint("s3.cn-north-1.amazonaws.com.cn");
         assertSigV4WithRegion(s3, "cn-north-1");

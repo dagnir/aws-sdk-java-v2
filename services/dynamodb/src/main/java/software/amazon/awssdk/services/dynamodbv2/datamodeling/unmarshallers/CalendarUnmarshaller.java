@@ -29,17 +29,17 @@ public class CalendarUnmarshaller extends SUnmarshaller {
     private static final CalendarUnmarshaller INSTANCE =
             new CalendarUnmarshaller();
 
-    public static CalendarUnmarshaller instance() {
-        return INSTANCE;
+    private CalendarUnmarshaller() {
     }
 
-    private CalendarUnmarshaller() {
+    public static CalendarUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override
     public Object unmarshall(AttributeValue value) {
         Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(DateUtils.parseISO8601Date(value.getS()));
+        cal.setTime(DateUtils.parseIso8601Date(value.getS()));
         return cal;
     }
 }

@@ -18,7 +18,7 @@ package software.amazon.awssdk.auth;
 /**
  * Simple session credentials with keys and session token.
  */
-public class BasicSessionCredentials implements AWSSessionCredentials {
+public class BasicSessionCredentials implements AwsSessionCredentials {
 
     private final String awsAccessKey;
     private final String awsSecretKey;
@@ -30,11 +30,11 @@ public class BasicSessionCredentials implements AWSSessionCredentials {
         this.sessionToken = sessionToken;
     }
 
-    public String getAWSAccessKeyId() {
+    public String getAwsAccessKeyId() {
         return awsAccessKey;
     }
 
-    public String getAWSSecretKey() {
+    public String getAwsSecretKey() {
         return awsSecretKey;
     }
 

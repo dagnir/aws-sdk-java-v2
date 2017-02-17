@@ -25,9 +25,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import org.junit.Test;
 import software.amazon.awssdk.services.sns.util.SignatureChecker;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class SnsSignatureCheckerTest extends AWSTestBase {
+public class SnsSignatureCheckerTest extends AwsTestBase {
 
     @Test
     public void validateMessageTest() throws URISyntaxException, IOException, CertificateException {

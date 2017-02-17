@@ -101,6 +101,7 @@ public class RetryComponentTest {
             service.getNoauthErrors(new GetNoauthErrorsRequest()
                                             .errorType("InternalError"));
         } catch (SdkBaseException expected) {
+            // Ignored or expected.
         }
 
     }

@@ -81,8 +81,8 @@ public class BucketNotificationConfigurationStaxUnmarshallerTest {
 
         CloudFunctionConfiguration cloudFunctionConfig = (CloudFunctionConfiguration) config
                 .getConfigurationByName("CloudFunctionConfigId");
-        assertEquals("some-cloud-function-arn", cloudFunctionConfig.getCloudFunctionARN());
-        assertEquals("some-cloud-invoc-role", cloudFunctionConfig.getInvocationRoleARN());
+        assertEquals("some-cloud-function-arn", cloudFunctionConfig.getCloudFunctionArn());
+        assertEquals("some-cloud-invoc-role", cloudFunctionConfig.getInvocationRoleArn());
         assertEventsUnmarshalledCorrectly(cloudFunctionConfig.getEvents());
         assertFilterRulesUnmarshalledCorrectly(cloudFunctionConfig.getFilter().getS3KeyFilter().getFilterRules());
     }

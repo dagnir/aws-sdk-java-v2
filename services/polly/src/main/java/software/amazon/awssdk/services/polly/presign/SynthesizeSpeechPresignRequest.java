@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.polly.presign;
 
 import java.io.Serializable;
 import java.util.Date;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
 import software.amazon.awssdk.services.polly.model.TextType;
 import software.amazon.awssdk.services.polly.model.VoiceId;
@@ -29,7 +29,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
 
     private Date expirationDate;
 
-    private AWSCredentialsProvider signingCredentials;
+    private AwsCredentialsProvider signingCredentials;
 
     private java.util.List<String> lexiconNames;
 
@@ -46,7 +46,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
 
     /**
      * @return Expiration of the presigned request. Default is {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES}
-     * minutes if not overridden.
+     *     minutes if not overridden.
      */
     public Date getExpirationDate() {
         return expirationDate;
@@ -74,14 +74,14 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     /**
      * @return Credentials to use in presigning the request. If not provided, client credentials are used.
      */
-    public AWSCredentialsProvider getSigningCredentials() {
+    public AwsCredentialsProvider getSigningCredentials() {
         return signingCredentials;
     }
 
     /**
      * @param signingCredentials Credentials to use in presigning the request. If not provided, client credentials are used.
      */
-    public void setSigningCredentials(AWSCredentialsProvider signingCredentials) {
+    public void setSigningCredentials(AwsCredentialsProvider signingCredentials) {
         this.signingCredentials = signingCredentials;
     }
 
@@ -89,7 +89,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
      * @param signingCredentials Credentials to use in presigning the request. If not provided, client credentials are used.
      * @return This object for method chaining.
      */
-    public SynthesizeSpeechPresignRequest withSigningCredentials(AWSCredentialsProvider signingCredentials) {
+    public SynthesizeSpeechPresignRequest withSigningCredentials(AwsCredentialsProvider signingCredentials) {
         this.signingCredentials = signingCredentials;
         return this;
     }
@@ -172,14 +172,12 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     }
 
     /**
-     * @return
      */
     public String getSampleRate() {
         return this.sampleRate;
     }
 
     /**
-     * @param sampleRate
      */
     public void setSampleRate(String sampleRate) {
         this.sampleRate = sampleRate;
@@ -194,14 +192,12 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
     }
 
     /**
-     * @return
      */
     public String getText() {
         return this.text;
     }
 
     /**
-     * @param text
      */
     public void setText(String text) {
         this.text = text;

@@ -116,6 +116,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.downloadDirectory(BUCKET_NAME, "", DOWNLOAD_DIRECTORY).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
         verify(mockS3, times(2)).getObject(any(GetObjectRequest.class));
     }
@@ -139,6 +140,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.downloadDirectory(BUCKET_NAME, "", DOWNLOAD_DIRECTORY).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
         verify(mockS3, times(1)).getObject(any(GetObjectRequest.class));
     }
@@ -159,6 +161,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.download(req, DOWNLOAD_FILE, null, Long.MAX_VALUE).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
         verify(mockS3, times(2)).getObject(any(GetObjectRequest.class));
     }
@@ -183,6 +186,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.download(req, DOWNLOAD_FILE, null, Long.MAX_VALUE).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
         verify(mockS3, times(1)).getObject(any(GetObjectRequest.class));
     }
@@ -197,7 +201,7 @@ public class DownloadAutoRetryUnitTest {
     @Test
     public void testDownloadObjectRetryAdjustsRange() throws InterruptedException {
         s3Obj.setObjectContent(new ConnectionResetInputStream(DATA, THROW_AT_POS));
-        final long rangeStarts[] = {-1L, -1L};
+        final long[] rangeStarts = {-1L, -1L};
         when(mockS3.getObject(any(GetObjectRequest.class))).thenAnswer(new Answer<S3Object>() {
             @Override
             public S3Object answer(InvocationOnMock inv) {
@@ -211,6 +215,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.download(req, DOWNLOAD_FILE, null, Long.MAX_VALUE, true).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
         assertEquals(0, rangeStarts[0]);
         assertEquals(THROW_AT_POS, rangeStarts[1]);
@@ -225,7 +230,7 @@ public class DownloadAutoRetryUnitTest {
     @Test
     public void testDownloadObjectRetryNoResumeRangeNotAdjusted() throws InterruptedException {
         s3Obj.setObjectContent(new ConnectionResetInputStream(DATA, THROW_AT_POS));
-        final long rangeStarts[] = {-1L, -1L};
+        final long[] rangeStarts = {-1L, -1L};
         when(mockS3.getObject(any(GetObjectRequest.class))).thenAnswer(new Answer<S3Object>() {
             @Override
             public S3Object answer(InvocationOnMock inv) {
@@ -239,6 +244,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.download(req, DOWNLOAD_FILE, null, Long.MAX_VALUE, false).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
         assertEquals(0, rangeStarts[0]);
         assertEquals(0, rangeStarts[1]);
@@ -254,7 +260,7 @@ public class DownloadAutoRetryUnitTest {
     public void testDownloadDirectoryRetryAdjustsRange() throws InterruptedException {
         s3Obj.setObjectContent(new ConnectionResetInputStream(DATA, THROW_AT_POS));
 
-        final long rangeStarts[] = {-1L, -1L};
+        final long[] rangeStarts = {-1L, -1L};
         when(mockS3.getObject(any(GetObjectRequest.class))).thenAnswer(new Answer<S3Object>() {
             @Override
             public S3Object answer(InvocationOnMock inv) {
@@ -268,6 +274,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.downloadDirectory(BUCKET_NAME, "", DOWNLOAD_DIRECTORY, true).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
 
         assertEquals(0, rangeStarts[0]);
@@ -283,7 +290,7 @@ public class DownloadAutoRetryUnitTest {
     public void testDownloadDirectoryRetryNoResumeRangeNotAdjusted() throws InterruptedException {
         s3Obj.setObjectContent(new ConnectionResetInputStream(DATA, THROW_AT_POS));
 
-        final long rangeStarts[] = {-1L, -1L};
+        final long[] rangeStarts = {-1L, -1L};
         when(mockS3.getObject(any(GetObjectRequest.class))).thenAnswer(new Answer<S3Object>() {
             @Override
             public S3Object answer(InvocationOnMock inv) {
@@ -297,6 +304,7 @@ public class DownloadAutoRetryUnitTest {
         try {
             tm.downloadDirectory(BUCKET_NAME, "", DOWNLOAD_DIRECTORY, false).waitForCompletion();
         } catch (AmazonClientException ignored) {
+            // Ignored or expected.
         }
 
         assertEquals(0, rangeStarts[0]);

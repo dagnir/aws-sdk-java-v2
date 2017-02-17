@@ -25,7 +25,7 @@ import java.io.InputStream;
 import javax.net.ssl.SSLSocket;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 public class SdkSSLMetricsSocketTest {
 
@@ -36,8 +36,8 @@ public class SdkSSLMetricsSocketTest {
 
         when(sock.getInputStream()).thenReturn(inputStream);
 
-        SdkSSLMetricsSocket sdkSSLMetricsSocket = new SdkSSLMetricsSocket(sock);
-        sdkSSLMetricsSocket.setMetrics(new AWSRequestMetrics());
+        SdkSslMetricsSocket sdkSSLMetricsSocket = new SdkSslMetricsSocket(sock);
+        sdkSSLMetricsSocket.setMetrics(new AwsRequestMetrics());
 
         Assert.assertThat(sdkSSLMetricsSocket.getMetricsInputStream(), not(nullValue()));
     }

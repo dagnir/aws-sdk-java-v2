@@ -32,7 +32,7 @@ package software.amazon.awssdk.metrics.internal.cloudwatch;
 import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 
 /**
@@ -90,10 +90,10 @@ public class CloudWatchMetricConfig {
      * accept in a single request
      */
     static final int MAX_METRICS_DATUM_SIZE = 20;
-    /** Credentials for the uploader to communicate with Amazon CloudWatch */
-    private AWSCredentialsProvider credentialsProvider;
+    /** Credentials for the uploader to communicate with Amazon CloudWatch. */
+    private AwsCredentialsProvider credentialsProvider;
 
-    /** ClientConfiguration for connecting to Amazon CloudWatch */
+    /** ClientConfiguration for connecting to Amazon CloudWatch. */
     private ClientConfiguration clientConfiguration;
 
     /**
@@ -114,7 +114,7 @@ public class CloudWatchMetricConfig {
      * Returns the credential provider that holds the credentials to connect to
      * Amazon CloudWatch.
      */
-    public AWSCredentialsProvider getCredentialsProvider() {
+    public AwsCredentialsProvider getCredentialsProvider() {
         return credentialsProvider;
     }
 
@@ -122,11 +122,11 @@ public class CloudWatchMetricConfig {
      * Sets the credential provider to the given provider. This credential
      * provider is used by the uploader thread to connect to Amazon CloudWatch.
      */
-    public void setCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
+    public void setCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
         this.credentialsProvider = credentialsProvider;
     }
 
-    public CloudWatchMetricConfig withCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
+    public CloudWatchMetricConfig withCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
         setCredentialsProvider(credentialsProvider);
         return this;
     }

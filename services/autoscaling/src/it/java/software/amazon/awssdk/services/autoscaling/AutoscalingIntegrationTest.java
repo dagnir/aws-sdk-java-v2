@@ -139,6 +139,7 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
                 autoscaling.deleteAutoScalingGroup(new DeleteAutoScalingGroupRequest().withAutoScalingGroupName(
                         autoScalingGroupName).withForceDelete(true));
             } catch (Exception e) {
+                // Ignored.
             }
         }
         if (launchConfigurationName != null) {
@@ -146,12 +147,14 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
                 autoscaling.deleteLaunchConfiguration(new DeleteLaunchConfigurationRequest()
                                                               .withLaunchConfigurationName(launchConfigurationName));
             } catch (Exception e) {
+                // Ignored.
             }
         }
         if (topicARN != null) {
             try {
                 sns.deleteTopic(new DeleteTopicRequest(topicARN));
             } catch (Exception e) {
+                // Ignored.
             }
         }
     }
@@ -521,7 +524,8 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
 
         // DeleteNotificationConfiguration
         autoscaling.deleteNotificationConfiguration(new DeleteNotificationConfigurationRequest()
-                                                            .withAutoScalingGroupName(autoScalingGroupName).withTopicARN(topicARN));
+                                                            .withAutoScalingGroupName(autoScalingGroupName)
+                                                            .withTopicARN(topicARN));
         assertEquals(0, autoscaling.describeNotificationConfigurations(describeRequest).getNotificationConfigurations()
                                    .size());
     }
@@ -553,8 +557,10 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
         tags.put("tag3", "");
         autoscaling.createOrUpdateTags(new CreateOrUpdateTagsRequest().withTags(convertTagList(tags,
                                                                                                autoScalingGroupName)));
-        DescribeTagsResult describeTags = autoscaling.describeTags(new DescribeTagsRequest().withFilters(new Filter()
-                                                                                                                 .withName("auto-scaling-group").withValues(autoScalingGroupName)));
+
+        Filter filter = new Filter().withName("auto-scaling-group").withValues(autoScalingGroupName);
+
+        DescribeTagsResult describeTags = autoscaling.describeTags(new DescribeTagsRequest().withFilters(filter));
         assertEquals(3, describeTags.getTags().size());
         for (TagDescription tag : describeTags.getTags()) {
             assertEquals(autoScalingGroupName, tag.getResourceId());
@@ -565,8 +571,7 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
         // Now delete the tags
         autoscaling.deleteTags(new DeleteTagsRequest().withTags(convertTagList(tags, autoScalingGroupName)));
 
-        describeTags = autoscaling.describeTags(new DescribeTagsRequest().withFilters(new Filter().withName(
-                "auto-scaling-group").withValues(autoScalingGroupName)));
+        describeTags = autoscaling.describeTags(new DescribeTagsRequest().withFilters(filter));
         assertEquals(0, describeTags.getTags().size());
     }
 
@@ -596,7 +601,7 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
      */
 
     @Test
-    public void testClockSkewAS() {
+    public void testClockSkewAs() {
         SDKGlobalTime.setGlobalTimeOffset(3600);
         AmazonAutoScalingClient clockSkewClient = new AmazonAutoScalingClient(credentials);
         clockSkewClient.describePolicies();

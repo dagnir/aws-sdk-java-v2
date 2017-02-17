@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,20 +24,21 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DeleteStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksRequest;
 import software.amazon.awssdk.services.cloudformation.model.Tag;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.waiters.WaiterParameters;
 
 /**
  * See https://github.com/aws/aws-sdk-java/issues/721. Cloudformation treats empty lists as removing
  * that list of values.
  */
-public class SendEmptyListIntegrationTest extends AWSIntegrationTestBase {
+public class SendEmptyListIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String STARTING_TEMPLATE =
             "{" +
@@ -66,7 +67,7 @@ public class SendEmptyListIntegrationTest extends AWSIntegrationTestBase {
     public void setup() {
         stackName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
         cf = AmazonCloudFormationAsyncClientBuilder.standard()
-                                                   .withCredentials(new StaticCredentialsProvider(getCredentials()))
+                                                   .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                                                    .withRegion(Regions.US_WEST_2)
                                                    .build();
 

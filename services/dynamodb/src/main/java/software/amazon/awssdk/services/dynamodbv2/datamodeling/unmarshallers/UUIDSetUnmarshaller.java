@@ -31,11 +31,11 @@ public class UUIDSetUnmarshaller extends SSUnmarshaller {
     private static final UUIDSetUnmarshaller INSTANCE =
             new UUIDSetUnmarshaller();
 
-    public static UUIDSetUnmarshaller instance() {
-        return INSTANCE;
+    private UUIDSetUnmarshaller() {
     }
 
-    private UUIDSetUnmarshaller() {
+    public static UUIDSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

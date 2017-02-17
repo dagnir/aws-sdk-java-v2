@@ -30,11 +30,11 @@ public class DateSetUnmarshaller extends SSUnmarshaller {
     private static final DateSetUnmarshaller INSTANCE =
             new DateSetUnmarshaller();
 
-    public static DateSetUnmarshaller instance() {
-        return INSTANCE;
+    private DateSetUnmarshaller() {
     }
 
-    private DateSetUnmarshaller() {
+    public static DateSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DateSetUnmarshaller extends SSUnmarshaller {
         Set<Date> result = new HashSet<Date>();
 
         for (String s : value.getSS()) {
-            result.add(DateUtils.parseISO8601Date(s));
+            result.add(DateUtils.parseIso8601Date(s));
         }
 
         return result;

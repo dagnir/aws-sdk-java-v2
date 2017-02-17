@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.elasticbeanstalk;
 
 import static org.junit.Assert.assertNotNull;
@@ -14,22 +29,19 @@ import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentDescrip
 import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentHealth;
 import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentStatus;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Base class for ElasticBeanstalk integration tests; responsible for loading AWS account info for
  * running the tests, and instantiating clients for tests to use.
  */
-public abstract class ElasticBeanstalkIntegrationTestBase extends AWSTestBase {
+public abstract class ElasticBeanstalkIntegrationTestBase extends AwsTestBase {
 
     protected static AWSElasticBeanstalkClient elasticbeanstalk;
     protected static AmazonS3Client s3;
 
     /**
      * Loads the AWS account info for the integration tests and creates an clients for tests to use.
-     *
-     * @throws FileNotFoundException
-     * @throws IOException
      */
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {

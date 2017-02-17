@@ -285,7 +285,7 @@ public class CryptoConfiguration implements Cloneable, Serializable {
      * users, instead of being implicitly created.
      *
      * @Deprecated This method is not forward compatible. Throws
-     * IllegalArguementException when a new region is encountered.
+     *     IllegalArguementException when a new region is encountered.
      *
      * @use {@link #getAwsKmsRegion()} instead
      */
@@ -304,8 +304,7 @@ public class CryptoConfiguration implements Cloneable, Serializable {
      * ignored when the AWS KMS client of the S3 encryption client is explicitly
      * passed in by the users, instead of being implicitly created.
      *
-     * @Deprecated This method is not forward compatible. Doesn't handle new
-     * regions.
+     * @Deprecated This method is not forward compatible. Doesn't handle new regions.
      *
      * @use {@link #setAwsKmsRegion(software.amazon.awssdk.regions.Region)} instead
      */
@@ -326,11 +325,9 @@ public class CryptoConfiguration implements Cloneable, Serializable {
      * encryption client is explicitly passed in by the users, instead of being
      * implicitly created.
      *
-     * @Deprecated This method is not forward compatible. Doesn't handle new
-     * regions.
+     * @Deprecated This method is not forward compatible. Doesn't handle new regions.
      *
-     * @use {@link #withAwsKmsRegion(software.amazon.awssdk.regions.Region)} AwsKmsRegion}
-     * instead
+     * @use {@link #withAwsKmsRegion(software.amazon.awssdk.regions.Region)} AwsKmsRegion} instead
      */
     @Deprecated
     public CryptoConfiguration withKmsRegion(Regions kmsRegion) {

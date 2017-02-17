@@ -24,7 +24,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocol.restxml.AmazonProtocolRestXmlClient;
 import software.amazon.awssdk.services.protocol.restxml.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocol.restxml.model.AmazonProtocolRestXmlException;
@@ -35,7 +35,7 @@ public class RestXmlExceptionTests {
 
     private static final String ALL_TYPES_PATH = "/2016-03-11/allTypes";
     private final AmazonProtocolRestXmlClient client = new AmazonProtocolRestXmlClient(
-            new BasicAWSCredentials("akid", "skid"));
+            new BasicAwsCredentials("akid", "skid"));
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 

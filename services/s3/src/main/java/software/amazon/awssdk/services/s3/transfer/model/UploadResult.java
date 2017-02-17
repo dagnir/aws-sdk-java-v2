@@ -105,8 +105,8 @@ public class UploadResult {
      * set if versioning has been enabled for the bucket.
      *
      * @return The version ID of the new object. 
-     * 		   The version ID is only
-     *  	   set if versioning has been enabled for the bucket.
+     *            The version ID is only
+     *         set if versioning has been enabled for the bucket.
      */
     public String getVersionId() {
         return versionId;

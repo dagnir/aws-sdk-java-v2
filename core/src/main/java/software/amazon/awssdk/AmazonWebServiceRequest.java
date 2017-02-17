@@ -21,9 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 
@@ -55,7 +55,7 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      * The optional credentials to use for this request - overrides the default credentials set at
      * the client level.
      */
-    private AWSCredentialsProvider credentialsProvider;
+    private AwsCredentialsProvider credentialsProvider;
 
     /**
      * A map of custom header names to header values.
@@ -86,7 +86,7 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      * @deprecated by {@link #getRequestCredentialsProvider()}
      */
     @Deprecated
-    public AWSCredentials getRequestCredentials() {
+    public AwsCredentials getRequestCredentials() {
         return credentialsProvider == null ? null : credentialsProvider.getCredentials();
     }
 
@@ -95,12 +95,12 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      *
      * @param credentials The optional AWS security credentials to use for this request, overriding the default credentials set at
      *                    the client level.
-     * @deprecated by {@link #setRequestCredentialsProvider(AWSCredentialsProvider)}. If you must use {@link AWSCredentials} you
-     * can wrap it with a {@link AWSStaticCredentialsProvider}.
+     * @deprecated by {@link #setRequestCredentialsProvider(AwsCredentialsProvider)}. If you must use {@link AwsCredentials} you
+     *     can wrap it with a {@link AwsStaticCredentialsProvider}.
      */
     @Deprecated
-    public void setRequestCredentials(AWSCredentials credentials) {
-        this.credentialsProvider = credentials == null ? null : new AWSStaticCredentialsProvider(credentials);
+    public void setRequestCredentials(AwsCredentials credentials) {
+        this.credentialsProvider = credentials == null ? null : new AwsStaticCredentialsProvider(credentials);
     }
 
     /**
@@ -110,7 +110,7 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      * @return The optional credentials provider to use to sign this request, overriding the default
      *         credentials provider at the client level.
      */
-    public AWSCredentialsProvider getRequestCredentialsProvider() {
+    public AwsCredentialsProvider getRequestCredentialsProvider() {
         return credentialsProvider;
     }
 
@@ -122,7 +122,7 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      *            The optional AWS security credentials provider to use for this request, overriding the
      *            default credentials provider at the client level.
      */
-    public void setRequestCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
+    public void setRequestCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
         this.credentialsProvider = credentialsProvider;
     }
 

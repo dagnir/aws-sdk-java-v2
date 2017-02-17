@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.s3;
 import software.amazon.awssdk.ClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.function.SdkFunction;
 import software.amazon.awssdk.regions.AwsRegionProvider;
@@ -48,8 +49,8 @@ public final class AmazonS3ClientBuilder extends AmazonS3Builder<AmazonS3ClientB
     }
 
     /**
-     * @return Default client using the {@link software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain}
-     * and {@link software.amazon.awssdk.regions.DefaultAwsRegionProviderChain} chain
+     * @return Default client using the {@link DefaultAwsCredentialsProviderChain}
+     *     and {@link software.amazon.awssdk.regions.DefaultAwsRegionProviderChain} chain
      */
     public static AmazonS3 defaultClient() {
         return standard().build();

@@ -55,50 +55,55 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      */
     private static final String LARGE_FILE_KEY = CopyPartIntegrationTest.class.getName() + ".largeFile";
     private static final String LARGE_BUCKET_NAME = "copy-part-integ-test-large-" + new Date().getTime();
-    /** The S3 bucket created and used by these tests */
+    /** The S3 bucket created and used by these tests. */
     private final String bucketName = "copy-part-integ-test-" + new Date().getTime();
-    /** The key of the object being copied */
+    /** The key of the object being copied. */
     private final String sourceKey = "source-key";
-    /** The key of the copied object */
+    /** The key of the copied object. */
     private final String destinationKey = "destination-key";
-    /** Length of the data uploaded to S3 */
+    /** Length of the data uploaded to S3. */
     private final long contentLength = 345L;
-    /** The file of random data uploaded to S3 */
+    /** The file of random data uploaded to S3. */
     private File file;
-    /** The ETag of the source object created by these tests */
+    /** The ETag of the source object created by these tests. */
     private String sourceEtag;
-    /** A date before the last modified time of the source object used by these tests */
+    /** A date before the last modified time of the source object used by these tests. */
     private Date earlierDate;
-    /** A date after the last modified time of the source object used by these tests */
+    /** A date after the last modified time of the source object used by these tests. */
     private Date laterDate;
     /**
      * The id of our multipart upload
      */
     private String multipartUploadId;
 
-    /** Releases resources used by tests */
+    /** Releases resources used by tests. */
     @After
     public void tearDown() {
         try {
             s3.deleteObject(bucketName, sourceKey);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             s3.deleteObject(bucketName, destinationKey);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             s3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             file.delete();
         } catch (Exception e) {
+            // Ignored or expected.
         }
         if (multipartUploadId != null) {
             try {
                 s3.abortMultipartUpload(new AbortMultipartUploadRequest(bucketName, destinationKey, multipartUploadId));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
     }
@@ -112,7 +117,8 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testcopyPart() throws Exception {
         if (!CryptoTestUtils.runTimeConsumingTests()) {
-            System.out.println("Please set the environment variable, export RUN_TIME_CONSUMING_TESTS=true, to run the testcopyPart test");
+            System.out.println("Please set the environment variable, export RUN_TIME_CONSUMING_TESTS=true, " +
+                               "to run the testcopyPart test");
             return;
         }
         initializeTestData();
@@ -303,7 +309,8 @@ public class CopyPartIntegrationTest extends S3IntegrationTestBase {
      */
     private CopyPartRequest newCopyPartRequest() {
         return new CopyPartRequest().withDestinationBucketName(bucketName).withSourceKey(sourceKey)
-                                    .withSourceBucketName(bucketName).withDestinationKey(destinationKey).withUploadId(multipartUploadId)
+                                    .withSourceBucketName(bucketName).withDestinationKey(destinationKey)
+                                    .withUploadId(multipartUploadId)
                                     .withPartNumber(1);
     }
 

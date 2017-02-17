@@ -16,8 +16,8 @@
 package software.amazon.awssdk.auth.profile;
 
 import java.util.concurrent.Semaphore;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
 
 /**
@@ -29,7 +29,7 @@ import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
  *
  * @see ProfilesConfigFile
  */
-public class ProfileCredentialsProvider implements AWSCredentialsProvider {
+public class ProfileCredentialsProvider implements AwsCredentialsProvider {
 
     /**
      * Default refresh interval
@@ -123,7 +123,7 @@ public class ProfileCredentialsProvider implements AWSCredentialsProvider {
     }
 
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         if (profilesConfigFile == null) {
             synchronized (this) {
                 if (profilesConfigFile == null) {

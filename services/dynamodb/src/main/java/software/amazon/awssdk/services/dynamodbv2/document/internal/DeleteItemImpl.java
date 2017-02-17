@@ -79,7 +79,7 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
         // set the table name
         final String tableName = getTable().getTableName();
         // set up the keys
-        DeleteItemRequest req = spec.getRequest().withTableName(tableName)
+        DeleteItemRequest request = spec.getRequest().withTableName(tableName)
                                     .withKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()));
         // set up the expected attribute map, if any
         final Collection<Expected> expected = spec.getExpected();
@@ -89,11 +89,10 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
         final Map<String, AttributeValue> attrValMap =
                 InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up the request
-        req.withExpected(expectedMap)
-           .withExpressionAttributeNames(spec.getNameMap())
-           .withExpressionAttributeValues(attrValMap)
-        ;
-        DeleteItemResult result = getClient().deleteItem(req);
+        request.withExpected(expectedMap)
+               .withExpressionAttributeNames(spec.getNameMap())
+               .withExpressionAttributeValues(attrValMap);
+        DeleteItemResult result = getClient().deleteItem(request);
         return new DeleteItemOutcome(result);
     }
 

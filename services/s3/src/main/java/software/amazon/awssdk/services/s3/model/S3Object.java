@@ -34,19 +34,19 @@ public class S3Object implements Closeable, Serializable, S3RequesterChargedResu
 
     private static final long serialVersionUID = 1L;
 
-    /** The key under which this object is stored */
+    /** The key under which this object is stored. */
     private String key = null;
 
-    /** The name of the bucket in which this object is contained */
+    /** The name of the bucket in which this object is contained. */
     private String bucketName = null;
 
-    /** The metadata stored by Amazon S3 for this object */
+    /** The metadata stored by Amazon S3 for this object. */
     private ObjectMetadata metadata = new ObjectMetadata();
 
-    /** The stream containing the contents of this object from S3 */
+    /** The stream containing the contents of this object from S3. */
     private transient S3ObjectInputStream objectContent;
 
-    /** The redirect location for this object */
+    /** The redirect location for this object. */
     private String redirectLocation;
 
     private Integer taggingCount;
@@ -108,6 +108,18 @@ public class S3Object implements Closeable, Serializable, S3RequesterChargedResu
      * Sets the input stream containing this object's contents.
      *
      * @param objectContent
+     *            The input stream containing this object's contents.
+     *
+     * @see S3Object#getObjectContent()
+     */
+    public void setObjectContent(S3ObjectInputStream objectContent) {
+        this.objectContent = objectContent;
+    }
+
+    /**
+     * Sets the input stream containing this object's contents.
+     *
+     * @param objectContent
      *            The input stream containing this object's contents. Will get
      *            wrapped in an S3ObjectInputStream.
      * @see S3Object#getObjectContent()
@@ -115,18 +127,6 @@ public class S3Object implements Closeable, Serializable, S3RequesterChargedResu
     public void setObjectContent(InputStream objectContent) {
         setObjectContent(new S3ObjectInputStream(objectContent,
                                                  this.objectContent != null ? this.objectContent.getHttpRequest() : null));
-    }
-
-    /**
-     * Sets the input stream containing this object's contents.
-     *
-     * @param objectContent
-     *            The input stream containing this object's contents.
-     *
-     * @see S3Object#getObjectContent()
-     */
-    public void setObjectContent(S3ObjectInputStream objectContent) {
-        this.objectContent = objectContent;
     }
 
     /**

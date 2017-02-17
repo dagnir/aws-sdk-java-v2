@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
 import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
@@ -58,7 +58,7 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
     private final S3CryptoModuleAE ae;
 
     public CryptoModuleDispatcher(AWSKMS kms, S3Direct s3,
-                                  AWSCredentialsProvider credentialsProvider,
+                                  AwsCredentialsProvider credentialsProvider,
                                   EncryptionMaterialsProvider encryptionMaterialsProvider,
                                   CryptoConfiguration cryptoConfig) {
         cryptoConfig = cryptoConfig.clone();    // make a clone

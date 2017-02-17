@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers;
 
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMarshaller;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**
@@ -26,35 +26,21 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 public class CustomUnmarshaller extends SUnmarshaller {
 
     private final Class<?> targetClass;
-    private final Class<? extends DynamoDBMarshaller<?>> unmarshallerClass;
+    private final Class<? extends DynamoDbMarshaller<?>> unmarshallerClass;
 
     public CustomUnmarshaller(
             Class<?> targetClass,
-            Class<? extends DynamoDBMarshaller<?>> unmarshallerClass) {
+            Class<? extends DynamoDbMarshaller<?>> unmarshallerClass) {
 
         this.targetClass = targetClass;
         this.unmarshallerClass = unmarshallerClass;
     }
 
-    @Override
-    @SuppressWarnings( {"rawtypes", "unchecked"})
-    public Object unmarshall(AttributeValue value) {
-
-        // TODO: Would be nice to cache this object, but not sure if we can
-        // do that now without a breaking change; user's unmarshallers
-        // might not all be thread-safe.
-
-        DynamoDBMarshaller unmarshaller =
-                createUnmarshaller(unmarshallerClass);
-
-        return unmarshaller.unmarshall(targetClass, value.getS());
-    }
-
-    @SuppressWarnings( {"rawtypes"})
-    private static DynamoDBMarshaller createUnmarshaller(Class<?> clazz) {
+    @SuppressWarnings({"rawtypes"})
+    private static DynamoDbMarshaller createUnmarshaller(Class<?> clazz) {
         try {
 
-            return (DynamoDBMarshaller) clazz.newInstance();
+            return (DynamoDbMarshaller) clazz.newInstance();
 
         } catch (InstantiationException e) {
             throw new DynamoDBMappingException(
@@ -66,5 +52,19 @@ public class CustomUnmarshaller extends SUnmarshaller {
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
         }
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public Object unmarshall(AttributeValue value) {
+
+        // TODO: Would be nice to cache this object, but not sure if we can
+        // do that now without a breaking change; user's unmarshallers
+        // might not all be thread-safe.
+
+        DynamoDbMarshaller unmarshaller =
+                createUnmarshaller(unmarshallerClass);
+
+        return unmarshaller.unmarshall(targetClass, value.getS());
     }
 }

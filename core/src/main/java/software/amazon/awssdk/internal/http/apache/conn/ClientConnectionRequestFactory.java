@@ -25,14 +25,14 @@ import org.apache.http.conn.ConnectionRequest;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.ServiceLatencyProvider;
-import software.amazon.awssdk.util.AWSServiceMetrics;
+import software.amazon.awssdk.util.AwsServiceMetrics;
 
 @SdkInternalApi
 class ClientConnectionRequestFactory {
-    private static final Log log = LogFactory.getLog(ClientConnectionRequestFactory.class);
-    private static final Class<?>[] interfaces = {
-            ConnectionRequest.class,
-            Wrapped.class
+    private static final Log LOG = LogFactory.getLog(ClientConnectionRequestFactory.class);
+    private static final Class<?>[] INTERFACES = {
+        ConnectionRequest.class,
+        Wrapped.class
     };
 
     /**
@@ -46,8 +46,7 @@ class ClientConnectionRequestFactory {
         }
         return (ConnectionRequest) Proxy.newProxyInstance(
                 // https://github.com/aws/aws-sdk-java/pull/48#issuecomment-29454423
-                ClientConnectionRequestFactory.class.getClassLoader(),
-                interfaces,
+                ClientConnectionRequestFactory.class.getClassLoader(), INTERFACES,
                 new Handler(orig));
     }
 
@@ -69,7 +68,7 @@ class ClientConnectionRequestFactory {
             try {
                 if ("get".equals(method.getName())) {
                     ServiceLatencyProvider latencyProvider = new ServiceLatencyProvider(
-                            AWSServiceMetrics.HttpClientGetConnectionTime);
+                            AwsServiceMetrics.HttpClientGetConnectionTime);
                     try {
                         return method.invoke(orig, args);
                     } finally {
@@ -79,7 +78,7 @@ class ClientConnectionRequestFactory {
                 }
                 return method.invoke(orig, args);
             } catch (InvocationTargetException e) {
-                log.debug("", e);
+                LOG.debug("", e);
                 throw e.getCause();
             }
         }

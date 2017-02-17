@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 
 /**
- * {@link WaitFor} implementation that can be used in a {@link WaitState}. Corresponds to the "{@value
- * PropertyNames#SECONDS_PATH}" field in the JSON document.
+ * {@link WaitFor} implementation that can be used in a {@link WaitState}. Corresponds to the
+ * "{@value PropertyNames#SECONDS_PATH}" field in the JSON document.
  *
  * @see <a href="https://states-language.net/spec.html#wait-state">https://states-language.net/spec.html#wait-state</a>
  */
@@ -34,17 +34,17 @@ public final class WaitForSecondsPath implements WaitFor {
     }
 
     /**
-     * @return The path to data in the input to this state indicating the number of seconds to wait for.
-     */
-    public String getSecondsPath() {
-        return secondsPath;
-    }
-
-    /**
      * @return Builder instance to construct a {@link WaitForSecondsPath}.
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * @return The path to data in the input to this state indicating the number of seconds to wait for.
+     */
+    public String getSecondsPath() {
+        return secondsPath;
     }
 
     /**

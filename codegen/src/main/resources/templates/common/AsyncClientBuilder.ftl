@@ -27,7 +27,7 @@ public final class ${metadata.asyncClientBuilderClassName}
     }
 
     /**
-     * @return Default async client using the {@link software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain}
+     * @return Default async client using the {@link software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain}
      * and {@link software.amazon.awssdk.regions.DefaultAwsRegionProviderChain} chain
      */
     public static ${metadata.asyncInterface} defaultClient() {

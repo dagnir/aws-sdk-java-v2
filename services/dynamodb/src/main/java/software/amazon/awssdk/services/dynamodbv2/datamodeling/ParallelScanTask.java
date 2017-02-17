@@ -60,7 +60,7 @@ public class ParallelScanTask {
     private ExecutorService executorService;
 
     @Deprecated
-    public ParallelScanTask(DynamoDBMapper mapper, AmazonDynamoDB dynamo, List<ScanRequest> parallelScanRequests) {
+    public ParallelScanTask(DynamoDbMapper mapper, AmazonDynamoDB dynamo, List<ScanRequest> parallelScanRequests) {
         this(dynamo, parallelScanRequests);
     }
 
@@ -136,44 +136,41 @@ public class ParallelScanTask {
              * Assert: Should never see any task in state of "Scanning" when starting a new batch.
              */
             if (currentSegmentState == SegmentScanState.Scanning) {
+
                 throw new SdkClientException("Should never see a 'Scanning' state when starting parallel scans.");
-            }
-            /**
-             * Skip any failed or completed segment, and clear the corresponding cached result.
-             */
-            else if (currentSegmentState == SegmentScanState.Failed
-                     || currentSegmentState == SegmentScanState.SegmentScanCompleted) {
+
+            } else if (currentSegmentState == SegmentScanState.Failed ||
+                     currentSegmentState == SegmentScanState.SegmentScanCompleted) {
+                /**
+                 * Skip any failed or completed segment, and clear the corresponding cached result.
+                 */
                 segmentScanResults.set(currentSegment, null);
                 continue;
-            }
-            /**
-             * Otherwise, submit a new future task and save it in segmentScanFutureTasks.
-             */
-            else {
+            } else {
+                /**
+                 * Otherwise, submit a new future task and save it in segmentScanFutureTasks.
+                 */
                 // Update the state to "Scanning" and notify any waiting thread.
                 synchronized (segmentScanStates) {
                     segmentScanStates.set(currentSegment, SegmentScanState.Scanning);
                     segmentScanStates.notifyAll();
                 }
-                Future<ScanResult> futureTask = executorService.submit(new Callable<ScanResult>() {
-                    @Override
-                    public ScanResult call() throws Exception {
-                        try {
-                            if (currentSegmentState == SegmentScanState.HasNextPage) {
-                                return scanNextPageOfSegment(currentSegment, true);
-                            } else if (currentSegmentState == SegmentScanState.Waiting) {
-                                return scanNextPageOfSegment(currentSegment, false);
-                            } else {
-                                throw new SdkClientException("Should not start a new future task");
-                            }
-                        } catch (Exception e) {
-                            synchronized (segmentScanStates) {
-                                segmentScanStates.set(currentSegment, SegmentScanState.Failed);
-                                segmentScanStates.notifyAll();
-                                executorService.shutdown();
-                            }
-                            throw e;
+                Future<ScanResult> futureTask = executorService.submit(() -> {
+                    try {
+                        if (currentSegmentState == SegmentScanState.HasNextPage) {
+                            return scanNextPageOfSegment(currentSegment, true);
+                        } else if (currentSegmentState == SegmentScanState.Waiting) {
+                            return scanNextPageOfSegment(currentSegment, false);
+                        } else {
+                            throw new SdkClientException("Should not start a new future task");
                         }
+                    } catch (Exception e) {
+                        synchronized (segmentScanStates) {
+                            segmentScanStates.set(currentSegment, SegmentScanState.Failed);
+                            segmentScanStates.notifyAll();
+                            executorService.shutdown();
+                        }
+                        throw e;
                     }
                 });
                 // Cache the future task (for getting the Exceptions in the working thread).
@@ -203,12 +200,11 @@ public class ParallelScanTask {
                 } catch (Exception e) {
                     throw new SdkClientException("Error during the scan on segment #" + segment + ".", e);
                 }
-            }
-            /**
-             * Get the ScanResult from cache if the segment scan has finished.
-             */
-            else if (currentSegmentState == SegmentScanState.HasNextPage
-                     || currentSegmentState == SegmentScanState.SegmentScanCompleted) {
+            } else if (currentSegmentState == SegmentScanState.HasNextPage ||
+                       currentSegmentState == SegmentScanState.SegmentScanCompleted) {
+                /**
+                 * Get the ScanResult from cache if the segment scan has finished.
+                 */
                 ScanResult scanResult = segmentScanResults.get(segment);
                 scanResults.add(scanResult);
             } else if (currentSegmentState == SegmentScanState.Waiting
@@ -227,7 +223,7 @@ public class ParallelScanTask {
         } else {
             segmentScanRequest.setExclusiveStartKey(null);
         }
-        ScanResult scanResult = dynamo.scan(DynamoDBMapper.applyUserAgent(segmentScanRequest));
+        ScanResult scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(segmentScanRequest));
 
         /**
          * Cache the scan result in segmentScanResults.

@@ -38,9 +38,9 @@ public class CodeWriter extends StringWriter {
     /**
      * Constructor to use for .java files.
      * @param dir
-     * 		    output directory where the file is to be created.
+     *             output directory where the file is to be created.
      * @param file
-     * 		    name of the file without .java suffix.
+     *             name of the file without .java suffix.
      */
     public CodeWriter(String dir, String file) {
         this(dir, file, JAVA_FILE_NAME_SUFFIX);
@@ -50,11 +50,11 @@ public class CodeWriter extends StringWriter {
      * Constructor to use for custom file suffixes.
      *
      * @param dir
-     * 		 	output directory where the file is to be created.
+     *              output directory where the file is to be created.
      * @param file
-     * 			name of the file excluding suffix.
+     *             name of the file excluding suffix.
      * @param fileNameSuffix
-     * 			suffix to be appended at the end of file name.
+     *             suffix to be appended at the end of file name.
      */
     public CodeWriter(String dir, String file, String fileNameSuffix) {
         if (dir == null) {

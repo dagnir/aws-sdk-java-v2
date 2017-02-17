@@ -17,21 +17,21 @@ package software.amazon.awssdk.internal.io;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
- * Record input stream read time into {@link AWSRequestMetrics} under metric type
+ * Record input stream read time into {@link AwsRequestMetrics} under metric type
  * HttpSocketReadTime;
  */
 public class MetricsInputStream extends DelegateInputStream {
 
-    private AWSRequestMetrics metrics;
+    private AwsRequestMetrics metrics;
 
     public MetricsInputStream(InputStream in) {
         super(in);
     }
 
-    public void setMetrics(AWSRequestMetrics metrics) {
+    public void setMetrics(AwsRequestMetrics metrics) {
         this.metrics = metrics;
     }
 
@@ -42,13 +42,13 @@ public class MetricsInputStream extends DelegateInputStream {
     @Override
     public int read() throws IOException {
         if (metrics != null) {
-            metrics.startEvent(AWSRequestMetrics.Field.HttpSocketReadTime);
+            metrics.startEvent(AwsRequestMetrics.Field.HttpSocketReadTime);
         }
         try {
             return in.read();
         } finally {
             if (metrics != null) {
-                metrics.endEvent(AWSRequestMetrics.Field.HttpSocketReadTime);
+                metrics.endEvent(AwsRequestMetrics.Field.HttpSocketReadTime);
             }
         }
     }
@@ -59,15 +59,15 @@ public class MetricsInputStream extends DelegateInputStream {
      * Record the read time into the metrics.
      */
     @Override
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
         if (metrics != null) {
-            metrics.startEvent(AWSRequestMetrics.Field.HttpSocketReadTime);
+            metrics.startEvent(AwsRequestMetrics.Field.HttpSocketReadTime);
         }
         try {
             return in.read(b);
         } finally {
             if (metrics != null) {
-                metrics.endEvent(AWSRequestMetrics.Field.HttpSocketReadTime);
+                metrics.endEvent(AwsRequestMetrics.Field.HttpSocketReadTime);
             }
         }
     }
@@ -78,15 +78,15 @@ public class MetricsInputStream extends DelegateInputStream {
      * Record the read time into the metrics.
      */
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         if (metrics != null) {
-            metrics.startEvent(AWSRequestMetrics.Field.HttpSocketReadTime);
+            metrics.startEvent(AwsRequestMetrics.Field.HttpSocketReadTime);
         }
         try {
             return in.read(b, off, len);
         } finally {
             if (metrics != null) {
-                metrics.endEvent(AWSRequestMetrics.Field.HttpSocketReadTime);
+                metrics.endEvent(AwsRequestMetrics.Field.HttpSocketReadTime);
             }
         }
     }

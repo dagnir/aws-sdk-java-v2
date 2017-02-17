@@ -68,7 +68,7 @@ public class ApacheHttpClientFactory implements HttpClientFactory<ConnectionMana
             builder.disableContentCompression();
         }
 
-        HttpResponseInterceptor itcp = new CRC32ChecksumResponseInterceptor();
+        HttpResponseInterceptor itcp = new Crc32ChecksumResponseInterceptor();
         if (settings.calculateCRC32FromCompressedData()) {
             builder.addInterceptorFirst(itcp);
         } else {
@@ -103,8 +103,7 @@ public class ApacheHttpClientFactory implements HttpClientFactory<ConnectionMana
         }
     }
 
-    private ConnectionKeepAliveStrategy buildKeepAliveStrategy
-            (HttpClientSettings settings) {
+    private ConnectionKeepAliveStrategy buildKeepAliveStrategy(HttpClientSettings settings) {
         return settings.getMaxIdleConnectionTime() > 0
                ? new SdkConnectionKeepAliveStrategy(settings.getMaxIdleConnectionTime())
                : null;

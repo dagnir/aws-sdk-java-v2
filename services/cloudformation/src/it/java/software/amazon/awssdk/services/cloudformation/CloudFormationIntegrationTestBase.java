@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.cloudformation;
 
 import java.io.File;
@@ -8,13 +23,13 @@ import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Base class for CloudFormation integration tests. Loads AWS credentials from a properties file and
  * creates a client for callers to use.
  */
-public class CloudFormationIntegrationTestBase extends AWSTestBase {
+public class CloudFormationIntegrationTestBase extends AwsTestBase {
 
     protected static AmazonCloudFormation cf;
     protected static String bucketName = "cloudformation-templates" + System.currentTimeMillis();
@@ -38,8 +53,8 @@ public class CloudFormationIntegrationTestBase extends AWSTestBase {
         cf.setEndpoint("https://cloudformation.ap-northeast-1.amazonaws.com");
         s3 = new AmazonS3Client(credentials);
         s3.createBucket(bucketName);
-        s3.putObject(bucketName, templateForCloudFormationIntegrationTests, new File("tst/"
-                                                                                     + templateForCloudFormationIntegrationTests));
+        s3.putObject(bucketName, templateForCloudFormationIntegrationTests, new File("tst/" +
+                                                                                     templateForCloudFormationIntegrationTests));
         s3.putObject(bucketName, templateForStackIntegrationTests, new File("tst/" + templateForStackIntegrationTests));
     }
 

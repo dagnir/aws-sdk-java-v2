@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.util.AWSRequestMetrics.Field;
+import software.amazon.awssdk.util.AwsRequestMetrics.Field;
 
 public class AwsSdkMetricsTest {
     /**
@@ -109,7 +109,7 @@ public class AwsSdkMetricsTest {
 
     @Test
     public void addAndRemove() {
-        Set<MetricType> orig = AwsSdkMetrics.getPredefinedMetrics();
+        final Set<MetricType> orig = AwsSdkMetrics.getPredefinedMetrics();
         AwsSdkMetrics.set(null);
         // Test add and remove
         assertTrue(AwsSdkMetrics.getPredefinedMetrics().isEmpty());

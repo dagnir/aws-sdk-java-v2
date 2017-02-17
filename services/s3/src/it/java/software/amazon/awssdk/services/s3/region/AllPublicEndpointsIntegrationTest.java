@@ -49,17 +49,17 @@ public class AllPublicEndpointsIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testRegionsWithValidCreds() throws IOException {
         String[] endpoints = {
-                "s3.amazonaws.com",
-                "s3-external-1.amazonaws.com",
-                "s3-us-west-1.amazonaws.com",
-                "s3-us-west-2.amazonaws.com",
-                "s3-eu-west-1.amazonaws.com",
-                "s3.eu-central-1.amazonaws.com",
-                "s3-ap-southeast-1.amazonaws.com",
-                "s3-ap-southeast-2.amazonaws.com",
-                "s3-ap-northeast-1.amazonaws.com",
-                "s3-sa-east-1.amazonaws.com",
-                };
+            "s3.amazonaws.com",
+            "s3-external-1.amazonaws.com",
+            "s3-us-west-1.amazonaws.com",
+            "s3-us-west-2.amazonaws.com",
+            "s3-eu-west-1.amazonaws.com",
+            "s3.eu-central-1.amazonaws.com",
+            "s3-ap-southeast-1.amazonaws.com",
+            "s3-ap-southeast-2.amazonaws.com",
+            "s3-ap-northeast-1.amazonaws.com",
+            "s3-sa-east-1.amazonaws.com",
+        };
 
         for (String endpoint : endpoints) {
             testOperations(endpoint, s3);
@@ -69,9 +69,9 @@ public class AllPublicEndpointsIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testRegionsWithInvalidCreds() throws IOException {
         String[] endpoints = {
-                "s3.cn-north-1.amazonaws.com.cn",
-                "s3-us-gov-west-1.amazonaws.com",
-                "s3-fips-us-gov-west-1.amazonaws.com"
+            "s3.cn-north-1.amazonaws.com.cn",
+            "s3-us-gov-west-1.amazonaws.com",
+            "s3-fips-us-gov-west-1.amazonaws.com"
         };
 
         for (String endpoint : endpoints) {
@@ -84,21 +84,21 @@ public class AllPublicEndpointsIntegrationTest extends S3IntegrationTestBase {
     }
 
     private void testOperations(String endpoint, AmazonS3Client s3) throws IOException {
-        String BUCKET = "java-all-public-regions-test-" + System.currentTimeMillis();
+        String bucket = "java-all-public-regions-test-" + System.currentTimeMillis();
 
         s3.setEndpoint(endpoint);
 
-        if (!s3.doesBucketExist(BUCKET)) {
-            s3.createBucket(BUCKET);
+        if (!s3.doesBucketExist(bucket)) {
+            s3.createBucket(bucket);
         }
 
-        s3.putObject(BUCKET, KEY, file);
+        s3.putObject(bucket, KEY, file);
 
-        S3Object object = s3.getObject(BUCKET, KEY);
+        S3Object object = s3.getObject(bucket, KEY);
         object.close();
 
-        s3.deleteObject(BUCKET, KEY);
+        s3.deleteObject(bucket, KEY);
 
-        s3.deleteBucket(BUCKET);
+        s3.deleteBucket(bucket);
     }
 }

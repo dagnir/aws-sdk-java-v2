@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.iot;
 
 import java.io.IOException;
@@ -8,12 +23,32 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.services.iot.model.AttributePayload;
+import software.amazon.awssdk.services.iot.model.CertificateStatus;
+import software.amazon.awssdk.services.iot.model.CreateCertificateFromCsrRequest;
+import software.amazon.awssdk.services.iot.model.CreateKeysAndCertificateRequest;
+import software.amazon.awssdk.services.iot.model.CreateKeysAndCertificateResult;
+import software.amazon.awssdk.services.iot.model.CreatePolicyRequest;
+import software.amazon.awssdk.services.iot.model.CreatePolicyResult;
+import software.amazon.awssdk.services.iot.model.CreateThingRequest;
+import software.amazon.awssdk.services.iot.model.CreateThingResult;
+import software.amazon.awssdk.services.iot.model.DeleteCertificateRequest;
+import software.amazon.awssdk.services.iot.model.DeletePolicyRequest;
+import software.amazon.awssdk.services.iot.model.DeleteThingRequest;
+import software.amazon.awssdk.services.iot.model.DescribeThingRequest;
+import software.amazon.awssdk.services.iot.model.DescribeThingResult;
+import software.amazon.awssdk.services.iot.model.GetPolicyVersionRequest;
+import software.amazon.awssdk.services.iot.model.GetPolicyVersionResult;
+import software.amazon.awssdk.services.iot.model.InvalidRequestException;
+import software.amazon.awssdk.services.iot.model.ListThingsRequest;
+import software.amazon.awssdk.services.iot.model.ListThingsResult;
+import software.amazon.awssdk.services.iot.model.UpdateCertificateRequest;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Integration tests for Iot control plane APIs.
  */
-public class IotControlPlaneIntegrationTest extends AWSTestBase {
+public class IotControlPlaneIntegrationTest extends AwsTestBase {
 
     private static final String THING_NAME = "java-sdk-thing-" + System.currentTimeMillis();
     private static final Map<String, String> THING_ATTRIBUTES = new HashMap<String, String>();

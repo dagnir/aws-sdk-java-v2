@@ -48,8 +48,8 @@ public final class TransferProgress {
      * if the total size isn't known.
      *
      * @return The total size in bytes of the associated transfer.
-     * 		   Returns or -1 if the total size of the associated
-     * 		   transfer isn't known yet.
+     *            Returns or -1 if the total size of the associated
+     *            transfer isn't known yet.
      */
     public long getTotalBytesToTransfer() {
         return totalBytesToTransfer;

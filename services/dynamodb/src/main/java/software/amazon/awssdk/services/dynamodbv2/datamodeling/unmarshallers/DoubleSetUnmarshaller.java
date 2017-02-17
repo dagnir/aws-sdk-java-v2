@@ -28,11 +28,11 @@ public class DoubleSetUnmarshaller extends NSUnmarshaller {
     private static final DoubleSetUnmarshaller INSTANCE =
             new DoubleSetUnmarshaller();
 
-    public static DoubleSetUnmarshaller instance() {
-        return INSTANCE;
+    private DoubleSetUnmarshaller() {
     }
 
-    private DoubleSetUnmarshaller() {
+    public static DoubleSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

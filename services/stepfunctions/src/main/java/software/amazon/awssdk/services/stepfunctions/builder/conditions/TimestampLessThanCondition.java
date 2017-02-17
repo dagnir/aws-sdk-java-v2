@@ -39,6 +39,13 @@ public final class TimestampLessThanCondition implements BinaryCondition<Date> {
     }
 
     /**
+     * @return Builder instance to construct a {@link TimestampLessThanCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -52,13 +59,6 @@ public final class TimestampLessThanCondition implements BinaryCondition<Date> {
     @Override
     public Date getExpectedValue() {
         return expectedValue;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link TimestampLessThanCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

@@ -28,7 +28,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 
 @SdkInternalApi
 public class ClientConnectionManagerFactory {
-    private static final Log log = LogFactory.getLog(ClientConnectionManagerFactory.class);
+    private static final Log LOG = LogFactory.getLog(ClientConnectionManagerFactory.class);
 
     /**
      * Returns a wrapped instance of {@link HttpClientConnectionManager}
@@ -36,22 +36,21 @@ public class ClientConnectionManagerFactory {
      *
      * @param orig the target instance to be wrapped
      */
-    public static HttpClientConnectionManager wrap
-    (HttpClientConnectionManager orig) {
+    public static HttpClientConnectionManager wrap(HttpClientConnectionManager orig) {
         if (orig instanceof Wrapped) {
             throw new IllegalArgumentException();
         }
         final Class<?>[] interfaces;
         if (orig instanceof ConnPoolControl) {
             interfaces = new Class<?>[] {
-                    HttpClientConnectionManager.class,
-                    ConnPoolControl.class,
-                    Wrapped.class
+                HttpClientConnectionManager.class,
+                ConnPoolControl.class,
+                Wrapped.class
             };
         } else {
             interfaces = new Class<?>[] {
-                    HttpClientConnectionManager.class,
-                    Wrapped.class
+                HttpClientConnectionManager.class,
+                Wrapped.class
             };
         }
         return (HttpClientConnectionManager) Proxy.newProxyInstance(
@@ -82,7 +81,7 @@ public class ClientConnectionManagerFactory {
                        : ret
                         ;
             } catch (InvocationTargetException e) {
-                log.debug("", e);
+                LOG.debug("", e);
                 throw e.getCause();
             }
         }

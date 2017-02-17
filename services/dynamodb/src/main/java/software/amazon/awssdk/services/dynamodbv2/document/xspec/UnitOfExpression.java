@@ -27,7 +27,7 @@ abstract class UnitOfExpression {
      * tokens using the given substitution context.
      *
      * @param context the substitution context which may get mutated as a side
-     * effect upon completion of this method
+     *     effect upon completion of this method
      */
     abstract String asSubstituted(SubstitutionContext context);
 }

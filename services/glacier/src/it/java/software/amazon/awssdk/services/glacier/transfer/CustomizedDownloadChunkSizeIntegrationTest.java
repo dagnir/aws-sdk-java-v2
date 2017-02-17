@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.glacier.transfer;
 
 import static org.junit.Assert.assertNotNull;
@@ -9,21 +24,22 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.glacier.GlacierIntegrationTestBase;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
 // hchar: last took ~14 hours to run this test
 public class CustomizedDownloadChunkSizeIntegrationTest extends GlacierIntegrationTestBase {
-    private static final long contentLength = 1024 * 1024 * 3 - 123;
+    private static final long CONTENT_LENGTH = 1024 * 1024 * 3 - 123;
     private static final boolean DEBUG = false;
-    private static final boolean cleanup = true;
+    private static final boolean CLEANUP = true;
     private File randomTempFile;
     private File downloadFile;
 
     @Before
     public void setup() throws IOException {
-        randomTempFile = new RandomTempFile("CustomizedDownloadChunkSizeIntegrationTest", contentLength);
+        randomTempFile = new RandomTempFile("CustomizedDownloadChunkSizeIntegrationTest", CONTENT_LENGTH);
         downloadFile = new File(randomTempFile.getParentFile(),
                                 randomTempFile.getName() + ".download");
 
@@ -32,7 +48,7 @@ public class CustomizedDownloadChunkSizeIntegrationTest extends GlacierIntegrati
     @After
     public void teanDown() {
         System.getProperties().remove("software.amazon.awssdk.services.glacier.transfer.downloadChunkSizeInMB");
-        if (cleanup) {
+        if (CLEANUP) {
             randomTempFile.delete();
             downloadFile.delete();
         }
@@ -90,6 +106,6 @@ public class CustomizedDownloadChunkSizeIntegrationTest extends GlacierIntegrati
     }
 
     private ArchiveTransferManager newArchiveTransferManager() {
-        return new ArchiveTransferManager(glacier, new StaticCredentialsProvider(credentials), new ClientConfiguration());
+        return new ArchiveTransferManager(glacier, new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
     }
 }

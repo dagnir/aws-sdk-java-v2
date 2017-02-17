@@ -29,11 +29,11 @@ import software.amazon.awssdk.services.dynamodbv2.AbstractAmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.Condition;
@@ -53,12 +53,12 @@ public class MapperQueryExpressionTest {
             .withComparisonOperator(ComparisonOperator.EQ);
 
     private static CaptureDynamoDB capture;
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
 
     @BeforeClass
     public static void setUp() throws SecurityException, NoSuchMethodException {
         capture = new CaptureDynamoDB(Collections.<Map<String, AttributeValue>>emptyList());
-        mapper = new DynamoDBMapper(capture);
+        mapper = new DynamoDbMapper(capture);
     }
 
     private static <T> QueryRequest testCreateQueryRequestFromExpression(

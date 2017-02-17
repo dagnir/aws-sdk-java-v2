@@ -31,12 +31,10 @@ public class DefaultRequestTest {
 
         Integer intValue = new Integer(10);
 
-        HandlerContextKey<Integer> integerContextKey = new HandlerContextKey<Integer>
-                ("integer-context-key");
+        HandlerContextKey<Integer> integerContextKey = new HandlerContextKey<Integer>("integer-context-key");
 
         request.addHandlerContext(integerContextKey, intValue);
 
-        Assert.assertEquals(intValue, request.getHandlerContext
-                (integerContextKey));
+        Assert.assertEquals(intValue, request.getHandlerContext(integerContextKey));
     }
 }

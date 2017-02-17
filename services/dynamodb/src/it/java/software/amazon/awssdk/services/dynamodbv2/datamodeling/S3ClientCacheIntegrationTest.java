@@ -24,9 +24,9 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.AmazonS3ClientBuilder;
@@ -34,11 +34,11 @@ import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.services.s3.transfer.TransferManager;
 
 public class S3ClientCacheIntegrationTest {
-    private AWSCredentials credentials;
+    private AwsCredentials credentials;
 
     @Before
     public void setUp() {
-        credentials = new BasicAWSCredentials("mock", "mock");
+        credentials = new BasicAwsCredentials("mock", "mock");
     }
 
     @Test
@@ -87,7 +87,7 @@ public class S3ClientCacheIntegrationTest {
     public void testS3ClientCacheWithRegionString() {
         S3ClientCache s3cc = new S3ClientCache(credentials);
         AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion("us-east-2")
-                                           .withCredentials(new DefaultAWSCredentialsProviderChain()).build();
+                                           .withCredentials(new DefaultAwsCredentialsProviderChain()).build();
         s3cc.useClient(s3);
 
         TransferManager tm = s3cc.getTransferManager("us-east-2");

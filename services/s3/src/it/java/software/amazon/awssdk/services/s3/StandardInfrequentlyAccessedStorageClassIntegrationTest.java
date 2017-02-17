@@ -55,16 +55,16 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
     private static final String KEY_PREFIX = "prefix";
 
     private static final String RULE_ID = "first-rule";
-    private final static String BUCKET_NAME = "aws-java-sdk-standard-ia-test-" + System.currentTimeMillis();
-    private final static String key = "key";
+    private static final String BUCKET_NAME = "aws-java-sdk-standard-ia-test-" + System.currentTimeMillis();
+    private static final String key = "key";
     private static final String DEST_BUCKET_NAME = "mvtargetbucketforreplication-" + System.currentTimeMillis();
     private static final String DEST_BUCKET_ARN = "arn:aws:s3:::"
                                                   + DEST_BUCKET_NAME;
-    /** The time in days from  object's creation to its expiration used in the tests */
+    /** The time in days from  object's creation to its expiration used in the tests. */
     private static final int EXPIRATION_IN_DAYS = 100;
-    /** The time in days from an object's creation to the transition time(change the storage class to STANDARD_IA) used in the tests */
+    /** The time in days from an object's creation to the transition time(change the storage class to STANDARD_IA) used in the tests. */
     private static final int STANDARD_IA_TRANSITION_TIME_IN_DAYS = 31;
-    /** The time in days from an object's creation to the transition time(change the storage class to GLACIER) used in the tests */
+    /** The time in days from an object's creation to the transition time(change the storage class to GLACIER) used in the tests. */
     private static final int GLACIER_TRANSITION_TIME_IN_DAYS = 70;
     private static final Transition standardIATransition = new Transition()
             .withDays(STANDARD_IA_TRANSITION_TIME_IN_DAYS)
@@ -168,7 +168,7 @@ public class StandardInfrequentlyAccessedStorageClassIntegrationTest extends S3I
                             + System.currentTimeMillis();
 
         final BucketReplicationConfiguration configuration = new BucketReplicationConfiguration()
-                .withRoleARN(ROLE);
+                .withRoleArn(ROLE);
 
         configuration.addRule(
                 RULE,

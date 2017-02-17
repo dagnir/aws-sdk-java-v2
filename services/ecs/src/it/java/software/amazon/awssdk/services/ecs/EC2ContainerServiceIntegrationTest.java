@@ -29,9 +29,9 @@ import software.amazon.awssdk.services.ecs.model.DescribeClustersRequest;
 import software.amazon.awssdk.services.ecs.model.PortMapping;
 import software.amazon.awssdk.services.ecs.model.RegisterTaskDefinitionRequest;
 import software.amazon.awssdk.services.ecs.model.RegisterTaskDefinitionResult;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class EC2ContainerServiceIntegrationTest extends AWSTestBase {
+public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
     private static final String CLUSTER_NAME =
             "java-sdk-test-cluster-" + System.currentTimeMillis();

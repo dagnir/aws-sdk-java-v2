@@ -70,7 +70,7 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
      * The optional customer-provided server-side encryption key to use when
      * retrieving the metadata of a server-side encrypted object.
      */
-    private SSECustomerKey sseCustomerKey;
+    private SseCustomerKey sseCustomerKey;
 
     /**
      * The optional part number to find the number of parts of an object.
@@ -332,7 +332,7 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
     }
 
     @Override
-    public SSECustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSSECustomerKey() {
         return sseCustomerKey;
     }
 
@@ -345,7 +345,7 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
      *            use when retrieving the metadata of a server-side encrypted
      *            object.
      */
-    public void setSSECustomerKey(SSECustomerKey sseKey) {
+    public void setSSECustomerKey(SseCustomerKey sseKey) {
         this.sseCustomerKey = sseKey;
     }
 
@@ -363,7 +363,7 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public GetObjectMetadataRequest withSSECustomerKey(SSECustomerKey sseKey) {
+    public GetObjectMetadataRequest withSSECustomerKey(SseCustomerKey sseKey) {
         setSSECustomerKey(sseKey);
         return this;
     }

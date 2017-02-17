@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 // https://github.com/aws/aws-sdk-java/issues/359
 public class GitHub359IntegrationTest extends S3IntegrationTestBase {
     private String bucketName = CryptoTestUtils.tempBucketName(GitHub359IntegrationTest.class);
-    /** The key of the object these tests will create, test on and delete */
+    /** The key of the object these tests will create, test on and delete. */
     private String key = "key";
 
     @Before

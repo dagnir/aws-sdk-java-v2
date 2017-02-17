@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocol.query.AmazonProtocolQueryClient;
 import software.amazon.awssdk.services.protocol.query.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocol.query.model.AmazonProtocolQueryException;
@@ -35,7 +35,7 @@ public class QueryExceptionTests {
 
     private static final String PATH = "/";
     private final AmazonProtocolQueryClient client = new AmazonProtocolQueryClient(
-            new BasicAWSCredentials("akid", "skid"));
+            new BasicAwsCredentials("akid", "skid"));
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 

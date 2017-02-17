@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.securitytoken.internal;
 
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
 import software.amazon.awssdk.services.securitytoken.auth.STSAssumeRoleSessionCredentialsProvider;
@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.securitytoken.auth.STSAssumeRoleSessionCr
  */
 public class STSProfileCredentialsService implements ProfileCredentialsService {
     @Override
-    public AWSCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
+    public AwsCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
         return new STSAssumeRoleSessionCredentialsProvider.Builder(targetRoleInfo.getRoleArn(), targetRoleInfo.getRoleSessionName())
                 .withLongLivedCredentialsProvider(targetRoleInfo.getLongLivedCredentialsProvider())
                 .withExternalId(targetRoleInfo.getExternalId())

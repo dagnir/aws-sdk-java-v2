@@ -33,8 +33,8 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.apigateway.mockservice.MyService;
 import software.amazon.awssdk.services.apigateway.mockservice.model.AnonListsInput;
 import software.amazon.awssdk.services.apigateway.mockservice.model.AnonMapInput;
@@ -83,11 +83,11 @@ import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRef
 import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthScalarsResult;
 import software.amazon.awssdk.services.apigateway.mockservice.model.ScalarTypes;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
-public class ServiceIntegrationTest extends AWSIntegrationTestBase {
+public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -105,7 +105,7 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     public void setup() {
         BasicConfigurator.configure();
         client = MyService.builder()
-                          .iamCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                          .iamCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                           .signer(request -> "allow")
                           .apiKey("pcJeQMyqaZ4UIedQcnmN84ln4PGIzXWE8KugLPhI")
                           .build();
@@ -279,8 +279,8 @@ public class ServiceIntegrationTest extends AWSIntegrationTestBase {
     @Test
     public void iamAuth_InvalidCredentials_ThrowsException() {
         final MyService iamAuthClient = MyService.builder()
-                                                 .iamCredentials(new AWSStaticCredentialsProvider(
-                                                         new BasicAWSCredentials("akid", "skid")))
+                                                 .iamCredentials(new AwsStaticCredentialsProvider(
+                                                         new BasicAwsCredentials("akid", "skid")))
                                                  .build();
         assertForbiddenException(() -> iamAuthClient.putIamauthScalars(
                 new PutIamauthScalarsRequest().scalarTypes(

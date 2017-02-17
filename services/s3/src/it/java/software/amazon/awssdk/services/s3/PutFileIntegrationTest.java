@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 /**
  * Integration tests for uploading files to Amazon S3.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class PutFileIntegrationTest extends S3IntegrationTestBase {
 
@@ -52,7 +52,7 @@ public class PutFileIntegrationTest extends S3IntegrationTestBase {
     private static ObjectMetadata expectedMetadata;
     private static File file;
 
-    /** Releases all resources created by tests */
+    /** Releases all resources created by tests. */
     @AfterClass
     public static void tearDown() {
         s3.deleteObject(bucketName, key);

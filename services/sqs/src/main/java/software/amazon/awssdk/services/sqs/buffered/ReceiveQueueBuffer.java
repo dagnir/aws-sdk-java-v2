@@ -47,6 +47,8 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
 public class ReceiveQueueBuffer {
 
     private static Log log = LogFactory.getLog(ReceiveQueueBuffer.class);
+    /** shutdown buffer does not retrieve any more messages from sqs. */
+    volatile boolean shutDown = false;
     private final QueueBufferConfig config;
     private final String qUrl;
     private final Executor executor;
@@ -55,10 +57,8 @@ public class ReceiveQueueBuffer {
      * synchronize on this object to create new receive batches or modify inflight message count
      */
     private final Object taskSpawnSyncPoint = new Object();
-    /** message delivery futures we gave out */
+    /** message delivery futures we gave out. */
     private final LinkedList<ReceiveMessageFuture> futures = new LinkedList<ReceiveMessageFuture>();
-    /** shutdown buffer does not retrieve any more messages from sqs */
-    volatile boolean shutDown = false;
     private long bufferCounter = 0;
     /**
      * This buffer's queue visibility timeout. Used to detect expired message that should not be
@@ -283,7 +283,7 @@ public class ReceiveQueueBuffer {
             if (visibilityTimeoutNanos == -1) {
                 GetQueueAttributesRequest request = new GetQueueAttributesRequest().withQueueUrl(qUrl)
                                                                                    .withAttributeNames("VisibilityTimeout");
-                ResultConverter.appendUserAgent(request, AmazonSQSBufferedAsyncClient.USER_AGENT);
+                ResultConverter.appendUserAgent(request, AmazonSqsBufferedAsyncClient.USER_AGENT);
                 long visibilityTimeoutSeconds = Long.parseLong(sqsClient.getQueueAttributes(request).getAttributes()
                                                                         .get("VisibilityTimeout"));
                 visibilityTimeoutNanos = TimeUnit.NANOSECONDS.convert(visibilityTimeoutSeconds, TimeUnit.SECONDS);
@@ -346,8 +346,6 @@ public class ReceiveQueueBuffer {
 
     /**
      * Simple interface to represent a condition
-     *
-     * @param <T>
      */
     private interface Predicate<T> {
         /**
@@ -359,7 +357,7 @@ public class ReceiveQueueBuffer {
     }
 
     private class ReceiveMessageFuture extends QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult> {
-        /* how many messages did the request ask for */
+        /* how many messages did the request ask for. */
         private int requestedSize;
 
         ReceiveMessageFuture(QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult> cb, int paramSize) {
@@ -456,7 +454,7 @@ public class ReceiveQueueBuffer {
             if (!isExpired()) {
                 ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
                         .withQueueUrl(qUrl);
-                ResultConverter.appendUserAgent(batchRequest, AmazonSQSBufferedAsyncClient.USER_AGENT);
+                ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
 
                 List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                         messages.size());
@@ -490,7 +488,7 @@ public class ReceiveQueueBuffer {
                 visibilityDeadlineNano = System.nanoTime() + visibilityTimeoutNanos;
                 ReceiveMessageRequest request = new ReceiveMessageRequest(qUrl).withMaxNumberOfMessages(config
                                                                                                                 .getMaxBatchSize());
-                ResultConverter.appendUserAgent(request, AmazonSQSBufferedAsyncClient.USER_AGENT);
+                ResultConverter.appendUserAgent(request, AmazonSqsBufferedAsyncClient.USER_AGENT);
 
                 if (config.getVisibilityTimeoutSeconds() > 0) {
                     request.setVisibilityTimeout(config.getVisibilityTimeoutSeconds());

@@ -63,7 +63,6 @@ public class TimeoutThreadPoolBuilder {
      * {@link ScheduledThreadPoolExecutor#setRemoveOnCancelPolicy(boolean)} is not available in Java
      * 6 so we invoke it with reflection to be able to compile against Java 6.
      *
-     * @param executor
      */
     private static void safeSetRemoveOnCancel(ScheduledThreadPoolExecutor executor) {
         try {

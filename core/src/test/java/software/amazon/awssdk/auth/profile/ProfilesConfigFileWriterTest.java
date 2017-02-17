@@ -27,19 +27,19 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.auth.profile.internal.Profile;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class ProfilesConfigFileWriterTest {
 
-    private static final AWSCredentials basicCredA = new BasicAWSCredentials("a", "a");
-    private static final AWSCredentials basicCredB = new BasicAWSCredentials("b", "b");
-    private static final AWSCredentials sessionCredC = new BasicSessionCredentials("c", "c", "c");
-    private static final AWSCredentials sessionCredD = new BasicSessionCredentials("d", "d", "d");
+    private static final AwsCredentials basicCredA = new BasicAwsCredentials("a", "a");
+    private static final AwsCredentials basicCredB = new BasicAwsCredentials("b", "b");
+    private static final AwsCredentials sessionCredC = new BasicSessionCredentials("c", "c", "c");
+    private static final AwsCredentials sessionCredD = new BasicSessionCredentials("d", "d", "d");
 
     /**
      * Loads the given credentials file and checks that it contains the same
@@ -62,21 +62,21 @@ public class ProfilesConfigFileWriterTest {
         assertEqualCredentials(expected.getCredentials(), actual.getCredentials());
     }
 
-    private static void assertEqualCredentials(AWSCredentials expected, AWSCredentials actual) {
-        assertEquals(expected.getAWSAccessKeyId(),
-                     actual.getAWSAccessKeyId());
-        assertEquals(expected.getAWSAccessKeyId(),
-                     actual.getAWSAccessKeyId());
+    private static void assertEqualCredentials(AwsCredentials expected, AwsCredentials actual) {
+        assertEquals(expected.getAwsAccessKeyId(),
+                     actual.getAwsAccessKeyId());
+        assertEquals(expected.getAwsAccessKeyId(),
+                     actual.getAwsAccessKeyId());
 
-        if (expected instanceof AWSSessionCredentials) {
-            assertTrue(actual instanceof AWSSessionCredentials);
+        if (expected instanceof AwsSessionCredentials) {
+            assertTrue(actual instanceof AwsSessionCredentials);
 
-            AWSSessionCredentials expectedSession = (AWSSessionCredentials) expected;
-            AWSSessionCredentials actualSession = (AWSSessionCredentials) actual;
+            AwsSessionCredentials expectedSession = (AwsSessionCredentials) expected;
+            AwsSessionCredentials actualSession = (AwsSessionCredentials) actual;
             assertEquals(expectedSession.getSessionToken(),
                          actualSession.getSessionToken());
         } else {
-            assertFalse(actual instanceof AWSSessionCredentials);
+            assertFalse(actual instanceof AwsSessionCredentials);
         }
     }
 
@@ -111,6 +111,7 @@ public class ProfilesConfigFileWriterTest {
                                                 new Profile("a", basicCredA));
             fail("Should have thrown exception since the destination file already exists.");
         } catch (AmazonClientException expected) {
+            // Ignored or expected.
         }
 
     }
@@ -183,7 +184,6 @@ public class ProfilesConfigFileWriterTest {
     /**
      * Tests that comments and unsupported properties are preserved after
      * profile modification.
-     * @throws URISyntaxException
      */
     @Test
     public void testModifyAndInsertProfile_WithComments() throws IOException, URISyntaxException {
@@ -297,6 +297,7 @@ public class ProfilesConfigFileWriterTest {
             ProfilesConfigFileWriter.modifyOrInsertProfiles(tmpFile, e);
             fail("An exception is expected.");
         } catch (AmazonClientException expected) {
+            // Ignored or expected.
         }
 
         // Check that the original file is restored
@@ -308,7 +309,7 @@ public class ProfilesConfigFileWriterTest {
     private static class ProfileWithException extends Profile {
 
         public ProfileWithException(String profileName,
-                                    AWSCredentials awsCredentials) {
+                                    AwsCredentials awsCredentials) {
             super(profileName, awsCredentials);
         }
 

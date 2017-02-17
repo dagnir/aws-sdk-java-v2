@@ -43,6 +43,12 @@ public final class Branch {
         this.states = Buildable.Utils.build(builder.stateBuilders);
     }
 
+    /**
+     * @return Builder instance to construct a {@link Branch}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
 
     /**
      * @return Name of the state to start branch execution at.
@@ -63,13 +69,6 @@ public final class Branch {
      */
     public Map<String, State> getStates() {
         return states;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link Branch}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**
@@ -116,10 +115,8 @@ public final class Branch {
          * REQUIRED. Adds a new state to the branch. A branch MUST have at least one state.
          *
          * @param stateName    Name of the state
-         * @param stateBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.State.Builder}. Note that
-         *                     the {@link State}
-         *                     object is not built until the {@link Branch} is built so any modifications on the state builder
-         *                     will be reflected in this object.
+         * @param stateBuilder Instance of {@link Builder}. Note that the {@link State} object is not built until the
+         *     {@link Branch} is built so any modifications on the state builder will be reflected in this object.
          * @return This object for method chaining.
          */
         public Builder state(String stateName, State.Builder stateBuilder) {

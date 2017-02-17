@@ -59,7 +59,8 @@ public class AuthorizerModel extends DocumentationModel {
             case QUERY_STRING:
                 return "addParameter";
             default:
-                throw new IllegalArgumentException(String.format("Unhandled Location type for Auth Token Location '%s'", authTokenLocation));
+                throw new IllegalArgumentException(String.format("Unhandled Location type for Auth Token Location '%s'",
+                                                                 authTokenLocation));
         }
     }
 }

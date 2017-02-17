@@ -18,14 +18,14 @@ package software.amazon.awssdk.services.route53;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Before;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Base class for Route53 integration tests.
  */
-public abstract class IntegrationTestBase extends AWSTestBase {
+public abstract class IntegrationTestBase extends AwsTestBase {
 
-    /** Shared client for all tests to use */
+    /** Shared client for all tests to use. */
     protected static AmazonRoute53Client route53;
 
 

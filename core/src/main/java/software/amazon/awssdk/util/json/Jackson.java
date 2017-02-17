@@ -32,7 +32,7 @@ public enum Jackson {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final ObjectWriter writer = objectMapper.writer();
 
-    ;
+
     private static final ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
 
     static {

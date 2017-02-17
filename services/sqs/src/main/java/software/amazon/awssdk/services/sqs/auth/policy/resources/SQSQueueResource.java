@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.sqs.auth.policy.resources;
 
-
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.services.sqs.AmazonSQS;
 

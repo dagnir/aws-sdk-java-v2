@@ -74,8 +74,10 @@ public class ArnCondition extends Condition {
     /**
      * Enumeration of the supported ways an ARN comparison can be evaluated.
      */
-    public static enum ArnComparisonType {
-        /** Exact matching */
+    public enum ArnComparisonType {
+        /**
+         * Exact matching.
+         */
         ArnEquals,
 
         /**
@@ -86,11 +88,15 @@ public class ArnCondition extends Condition {
          */
         ArnLike,
 
-        /** Negated form of {@link #ArnEquals} */
+        /**
+         * Negated form of {@link #ArnEquals}
+         */
         ArnNotEquals,
 
-        /** Negated form of {@link #ArnLike} */
-        ArnNotLike;
+        /**
+         * Negated form of {@link #ArnLike}
+         */
+        ArnNotLike
     }
 
 }

@@ -26,11 +26,11 @@ public class IntegerUnmarshaller extends NUnmarshaller {
     private static final IntegerUnmarshaller INSTANCE =
             new IntegerUnmarshaller();
 
-    public static IntegerUnmarshaller instance() {
-        return INSTANCE;
+    private IntegerUnmarshaller() {
     }
 
-    private IntegerUnmarshaller() {
+    public static IntegerUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

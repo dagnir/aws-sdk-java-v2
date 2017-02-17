@@ -69,6 +69,7 @@ public class BucketAnalyticsConfigurationMarshallerTest extends S3WireMockTestBa
         try {
             s3.setBucketAnalyticsConfiguration(new SetBucketAnalyticsConfigurationRequest(BUCKET_NAME, config));
         } catch (Exception expected) {
+            // Expected.
         }
 
         verify(putRequestedFor(urlEqualTo(String.format("/%s/?analytics&id=%s", BUCKET_NAME, configId)))

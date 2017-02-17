@@ -97,6 +97,7 @@ public abstract class PersistableTransfer {
             try {
                 byteStream.close();
             } catch (IOException ioe) {
+                // Ignored or expected.
             }
             ;
         }

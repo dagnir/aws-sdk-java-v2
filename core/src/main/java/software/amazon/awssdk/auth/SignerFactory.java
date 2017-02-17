@@ -34,8 +34,8 @@ public final class SignerFactory {
     static {
         // Register the standard signer types.
         SIGNERS.put(QUERY_STRING_SIGNER, QueryStringSigner.class);
-        SIGNERS.put(VERSION_THREE_SIGNER, AWS3Signer.class);
-        SIGNERS.put(VERSION_FOUR_SIGNER, AWS4Signer.class);
+        SIGNERS.put(VERSION_THREE_SIGNER, Aws3Signer.class);
+        SIGNERS.put(VERSION_FOUR_SIGNER, Aws4Signer.class);
         SIGNERS.put(NO_OP_SIGNER, NoOpSigner.class);
     }
 

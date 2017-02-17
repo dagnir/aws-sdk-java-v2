@@ -18,9 +18,9 @@ package software.amazon.awssdk.util;
 /**
  * Currently provided encoding schemes "out of the box".
  *
- * @author Hanson Char
- *
  * See http://www.ietf.org/rfc/rfc4648.txt
+ *
+ * @author Hanson Char
  */
 public enum EncodingSchemeEnum implements EncodingScheme {
     BASE16 {

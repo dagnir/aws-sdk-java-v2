@@ -30,5 +30,5 @@ public interface Signer {
      * @param request      The request to sign.
      * @param credentials  The credentials to sign the request with.
      */
-    public void sign(SignableRequest<?> request, AWSCredentials credentials);
+    public void sign(SignableRequest<?> request, AwsCredentials credentials);
 }

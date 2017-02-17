@@ -34,8 +34,7 @@ public class InMemoryRegionsProvider extends AbstractRegionMetadataProvider {
 
     public InMemoryRegionsProvider(List<Region> regions) {
         ValidationUtils.assertNotNull(regions, "regions");
-        this.regions = Collections.unmodifiableList(new ArrayList<Region>
-                                                            (regions));
+        this.regions = Collections.unmodifiableList(new ArrayList<Region>(regions));
     }
 
     @Override

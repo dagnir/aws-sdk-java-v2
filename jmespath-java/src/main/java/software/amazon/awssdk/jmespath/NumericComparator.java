@@ -39,7 +39,7 @@ public abstract class NumericComparator extends Comparator {
      * @param lhs Lhs expression
      * @param rhs Rhs expression
      * @return Boolean result of the matches method of the
-     * corresponding comparison operator
+     *     corresponding comparison operator
      */
     @Override
     public final boolean matches(JsonNode lhs, JsonNode rhs) {
@@ -54,7 +54,7 @@ public abstract class NumericComparator extends Comparator {
      * @param lhs Lhs Number
      * @param rhs Rhs Number
      * @return True if the comparison is evaluated to true;
-     * False otherwise
+     *     False otherwise
      */
     public abstract boolean matches(BigDecimal lhs, BigDecimal rhs);
 

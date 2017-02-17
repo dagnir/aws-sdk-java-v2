@@ -57,10 +57,10 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("aws-dr-tools-test");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider.getCredentials();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
-        assertEquals("ACCESS_KEY_ID", credentials.getAWSAccessKeyId());
-        assertEquals("SECRET_ACCESS_KEY", credentials.getAWSSecretKey());
+        assertEquals("ACCESS_KEY_ID", credentials.getAwsAccessKeyId());
+        assertEquals("SECRET_ACCESS_KEY", credentials.getAwsSecretKey());
         assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
     }
 
@@ -74,10 +74,10 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("test-credentials");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider.getCredentials();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
-        assertEquals("ACCESS_KEY_ID", credentials.getAWSAccessKeyId());
-        assertEquals("SECRET_ACCESS_KEY", credentials.getAWSSecretKey());
+        assertEquals("ACCESS_KEY_ID", credentials.getAwsAccessKeyId());
+        assertEquals("SECRET_ACCESS_KEY", credentials.getAwsSecretKey());
         assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
     }
 
@@ -130,14 +130,14 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("test-credentials");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider
                 .getCredentials();
 
         assertNotNull(credentials);
 
         new RefreshThread(credentialsProvider).join();
 
-        AWSSessionCredentials newCredentials = (AWSSessionCredentials) credentialsProvider
+        AwsSessionCredentials newCredentials = (AwsSessionCredentials) credentialsProvider
                 .getCredentials();
 
         assertNotNull(newCredentials);

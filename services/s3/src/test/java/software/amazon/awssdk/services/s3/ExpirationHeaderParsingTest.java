@@ -49,8 +49,7 @@ public class ExpirationHeaderParsingTest {
         HttpResponse response = new HttpResponse(null, null);
         response.addHeader(
                 "x-amz-expiration",
-                "expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\", rule-id=\"Test\""
-                          );
+                "expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\", rule-id=\"Test\"");
 
         handler.handle(result, response);
 
@@ -69,8 +68,7 @@ public class ExpirationHeaderParsingTest {
         HttpResponse response = new HttpResponse(null, null);
         response.addHeader(
                 "x-amz-expiration",
-                "rule-id=\"Test\", expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\""
-                          );
+                "rule-id=\"Test\", expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\"");
 
         handler.handle(result, response);
 

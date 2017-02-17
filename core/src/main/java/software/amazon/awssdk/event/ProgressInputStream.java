@@ -36,9 +36,11 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
     private boolean hasBeenRead;
     private boolean doneEOF;
     private long notifiedByteCount;
+
     public ProgressInputStream(InputStream is, ProgressListener listener) {
         this(is, listener, DEFAULT_NOTIFICATION_THRESHOLD);
     }
+
     public ProgressInputStream(InputStream is, ProgressListener listener, int notifyThresHold) {
         super(is);
         if (is == null || listener == null) {
@@ -53,7 +55,6 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
      * tracking is not enabled, this method simply return the given input stream as is.
      *
      * @param is the request content input stream
-     * @deprecated
      */
     @Deprecated
     public static InputStream inputStreamForRequest(InputStream is,
@@ -67,8 +68,8 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
      * @param is               the request content input stream
      * @param progressListener Optional progress listener
      * @return If the progress listener is non null returns a new input stream decorated with
-     * progress reporting functionality. If progress listener is null it returns the same input
-     * stream.
+     *     progress reporting functionality. If progress listener is null it returns the same input
+     *     stream.
      */
     @SdkInternalApi
     public static InputStream inputStreamForRequest(InputStream is, ProgressListener progressListener) {
@@ -97,7 +98,7 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
      * @param is               the response content input stream
      * @param progressListener Optional progress listener
      * @return If the progress listener is non null returns a new input stream decorated with progress reporting functionality. If
-     * progress listener is null it returns the same input stream.
+     *     progress listener is null it returns the same input stream.
      */
     public static InputStream inputStreamForResponse(InputStream is, ProgressListener progressListener) {
         return progressListener == null

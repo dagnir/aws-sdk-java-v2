@@ -50,10 +50,11 @@ public class DynamoDBMapperFieldModel<T, V> implements DynamoDBAutoGenerator<V>,
 
     private final DynamoDBMapperFieldModel.Properties<V> properties;
 
-    ;
+
     private final DynamoDBTypeConverter<AttributeValue, V> converter;
     private final DynamoDBAttributeType attributeType;
     private final DynamoDBMapperFieldModel.Reflect<T, V> reflect;
+
     /**
      * Creates a new field model instance.
      * @param builder The builder.
@@ -382,7 +383,9 @@ public class DynamoDBMapperFieldModel<T, V> implements DynamoDBAutoGenerator<V>,
         return lo == null ? (hi == null ? null : le(hi)) : (hi == null ? ge(lo) : (lo.equals(hi) ? eq(lo) : between(lo, hi)));
     }
 
-    public static enum DynamoDBAttributeType {B, N, S, BS, NS, SS, BOOL, NULL, L, M;}
+    public static enum DynamoDBAttributeType {
+        B, N, S, BS, NS, SS, BOOL, NULL, L, M
+    }
 
     /**
      * The field model properties.

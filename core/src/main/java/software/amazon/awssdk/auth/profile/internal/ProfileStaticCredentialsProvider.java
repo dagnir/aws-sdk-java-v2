@@ -18,10 +18,10 @@ package software.amazon.awssdk.auth.profile.internal;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.util.StringUtils;
 
@@ -31,18 +31,18 @@ import software.amazon.awssdk.util.StringUtils;
  */
 @SdkInternalApi
 @Immutable
-public class ProfileStaticCredentialsProvider implements AWSCredentialsProvider {
+public class ProfileStaticCredentialsProvider implements AwsCredentialsProvider {
 
     private final BasicProfile profile;
-    private final AWSCredentialsProvider credentialsProvider;
+    private final AwsCredentialsProvider credentialsProvider;
 
     public ProfileStaticCredentialsProvider(BasicProfile profile) {
         this.profile = profile;
-        this.credentialsProvider = new AWSStaticCredentialsProvider(fromStaticCredentials());
+        this.credentialsProvider = new AwsStaticCredentialsProvider(fromStaticCredentials());
     }
 
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         return credentialsProvider.getCredentials();
     }
 
@@ -51,7 +51,7 @@ public class ProfileStaticCredentialsProvider implements AWSCredentialsProvider 
         // No Op
     }
 
-    private AWSCredentials fromStaticCredentials() {
+    private AwsCredentials fromStaticCredentials() {
         if (StringUtils.isNullOrEmpty(profile.getAwsAccessIdKey())) {
             throw new SdkClientException(String.format(
                     "Unable to load credentials into profile [%s]: AWS Access Key ID is not specified.",
@@ -64,7 +64,7 @@ public class ProfileStaticCredentialsProvider implements AWSCredentialsProvider 
         }
 
         if (profile.getAwsSessionToken() == null) {
-            return new BasicAWSCredentials(profile.getAwsAccessIdKey(),
+            return new BasicAwsCredentials(profile.getAwsAccessIdKey(),
                                            profile.getAwsSecretAccessKey());
         } else {
             if (profile.getAwsSessionToken().isEmpty()) {

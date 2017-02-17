@@ -457,7 +457,7 @@ public class XpathUtils {
         }
 
         try {
-            return DateUtils.parseISO8601Date(dateString);
+            return DateUtils.parseIso8601Date(dateString);
         } catch (Exception e) {
             log.warn("Unable to parse date '" + dateString + "':  " + e.getMessage(), e);
             return null;

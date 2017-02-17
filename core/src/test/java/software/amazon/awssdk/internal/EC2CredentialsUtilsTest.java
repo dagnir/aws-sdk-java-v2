@@ -44,12 +44,12 @@ import utils.http.SocketUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EC2CredentialsUtilsTest {
+    @ClassRule
+    public static WireMockRule mockServer = new WireMockRule(0);
 
     private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
     private static final String SUCCESS_BODY = "{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\","
                                                + "\"Token\":\"TOKEN_TOKEN_TOKEN\",\"Expiration\":\"3000-05-03T04:55:54Z\"}";
-    @ClassRule
-    public static WireMockRule mockServer = new WireMockRule(0);
     private static URI endpoint;
 
     private static CustomRetryPolicy customRetryPolicy;

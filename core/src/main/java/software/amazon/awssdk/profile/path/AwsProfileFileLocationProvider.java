@@ -48,7 +48,7 @@ public interface AwsProfileFileLocationProvider {
 
     /**
      * @return Location of file containing profile data. Null if implementation cannot provide the
-     * location.
+     *     location.
      */
     File getLocation();
 }

@@ -210,8 +210,7 @@ public class TableWriteItems {
             this.addPrimaryKeyToDelete(
                     new PrimaryKey()
                             .addComponent(hashKeyName, hashKeyValue)
-                            .addComponent(rangeKeyName, rangeKeyValue)
-                                      );
+                            .addComponent(rangeKeyName, rangeKeyValue));
         }
         return this;
     }

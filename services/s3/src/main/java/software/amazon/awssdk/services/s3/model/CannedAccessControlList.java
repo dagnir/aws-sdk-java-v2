@@ -105,7 +105,7 @@ public enum CannedAccessControlList {
      */
     AwsExecRead("aws-exec-read");
 
-    /** The Amazon S3 x-amz-acl header value representing the canned acl */
+    /** The Amazon S3 x-amz-acl header value representing the canned acl. */
     private final String cannedAclHeader;
 
     private CannedAccessControlList(String cannedAclHeader) {

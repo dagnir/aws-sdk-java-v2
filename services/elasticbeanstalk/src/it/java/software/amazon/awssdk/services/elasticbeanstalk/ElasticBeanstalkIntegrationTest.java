@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.elasticbeanstalk;
 
 import static org.junit.Assert.assertEquals;
@@ -79,37 +94,43 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         try {
             elasticbeanstalk.terminateEnvironment(new TerminateEnvironmentRequest().withEnvironmentName(environmentName));
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             waitForEnvironmentToTransitionToStateAndHealth(environmentName, EnvironmentStatus.Terminated, null);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             elasticbeanstalk.deleteConfigurationTemplate(new DeleteConfigurationTemplateRequest(APPLICATION_NAME, templateName));
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             elasticbeanstalk.deleteApplicationVersion(new DeleteApplicationVersionRequest(APPLICATION_NAME, versionLabel));
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             elasticbeanstalk.deleteApplication(new DeleteApplicationRequest(APPLICATION_NAME));
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             s3.deleteObject(bucketName, versionLabel);
             s3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
 
-    /** Tests that we can describe the available solution stacks */
+    /** Tests that we can describe the available solution stacks. */
     @Test
     public void testListAvailableSolutionStacks() throws Exception {
         List<String> solutionStacks = elasticbeanstalk.listAvailableSolutionStacks().getSolutionStacks();
@@ -171,6 +192,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         try {
             Thread.sleep(1000 * 20);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         // Pull the log tails
@@ -320,7 +342,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         }
     }
 
-    /** Tests that we can call the DNS operations */
+    /** Tests that we can call the DNS operations. */
     private void testDnsOperations() {
         CheckDNSAvailabilityResult checkDNSAvailabilityResult = elasticbeanstalk.checkDNSAvailability(
                 new CheckDNSAvailabilityRequest(environmentName));

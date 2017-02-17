@@ -71,9 +71,11 @@ public class RetryCountInUserAgentTest extends WireMockTestBase {
                 new ClientConfiguration().withRetryPolicy(buildRetryPolicy())
                                          .withThrottledRetries(true));
         try {
-            httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler()).execute();
+            httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler())
+                      .execute();
             fail("Expected exception");
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
     }
 

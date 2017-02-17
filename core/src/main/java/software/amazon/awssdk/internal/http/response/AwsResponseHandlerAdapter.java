@@ -26,13 +26,12 @@ import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.SdkHttpMetadata;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.MetadataCache;
 
 /**
- * Adapts an {@link HttpResponseHandler < AmazonWebServiceResponse <T>>} to an {@link
- * HttpResponseHandler<T>} (unwrapped result) with proper handling and logging of response
- * metadata.
+ * Adapts an {@code HttpResponseHandler<AmazonWebServiceResponse<T>>} to an {@code HttpResponseHandler<T>} (unwrapped result)
+ * with proper handling and logging of response metadata.
  *
  * @param <T> Unmarshalled result type
  */
@@ -43,13 +42,13 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
      * Logger used for the purpose of logging the AWS request id extracted either from the
      * httpClientSettings header response or from the response body.
      */
-    private static final Log requestIdLog = LogFactory.getLog("software.amazon.awssdk.requestId");
+    private static final Log REQUEST_ID_LOG = LogFactory.getLog("software.amazon.awssdk.requestId");
 
-    private static final Log requestLog = AmazonHttpClient.requestLog;
+    private static final Log REQUEST_LOG = AmazonHttpClient.REQUEST_LOG;
 
     private final HttpResponseHandler<AmazonWebServiceResponse<T>> delegate;
     private final Request<?> request;
-    private final AWSRequestMetrics awsRequestMetrics;
+    private final AwsRequestMetrics awsRequestMetrics;
     private final MetadataCache responseMetadataCache;
 
     /**
@@ -59,7 +58,7 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
      */
     public AwsResponseHandlerAdapter(HttpResponseHandler<AmazonWebServiceResponse<T>> delegate,
                                      Request<?> request,
-                                     AWSRequestMetrics awsRequestMetrics,
+                                     AwsRequestMetrics awsRequestMetrics,
                                      MetadataCache responseMetadataCache) {
         this.delegate = delegate;
         this.request = request;
@@ -84,8 +83,8 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
         responseMetadataCache.add(userRequest, awsResponse.getResponseMetadata());
         final String awsRequestId = awsResponse.getRequestId();
 
-        if (requestLog.isDebugEnabled()) {
-            requestLog
+        if (REQUEST_LOG.isDebugEnabled()) {
+            REQUEST_LOG
                     .debug("Received successful response: " + response.getStatusCode() +
                            ", AWS Request ID: " + awsRequestId);
         }
@@ -95,7 +94,7 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
             // it is not available from the response header.
             logResponseRequestId(awsRequestId);
         }
-        awsRequestMetrics.addProperty(AWSRequestMetrics.Field.AWSRequestID, awsRequestId);
+        awsRequestMetrics.addProperty(AwsRequestMetrics.Field.AWSRequestID, awsRequestId);
         return fillInResponseMetadata(awsResponse, response);
     }
 
@@ -124,20 +123,20 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
      * "software.amazon.awssdk.request" logger.
      *
      * @return true if the AWS request id is available from the httpClientSettings header; false
-     * otherwise.
+     *     otherwise.
      */
     private boolean logHeaderRequestId(final HttpResponse response) {
         final String reqIdHeader = response.getHeaders()
                                            .get(HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER);
         final boolean isHeaderReqIdAvail = reqIdHeader != null;
 
-        if (requestIdLog.isDebugEnabled() || requestLog.isDebugEnabled()) {
+        if (REQUEST_ID_LOG.isDebugEnabled() || REQUEST_LOG.isDebugEnabled()) {
             final String msg = HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER + ": "
                                + (isHeaderReqIdAvail ? reqIdHeader : "not available");
-            if (requestIdLog.isDebugEnabled()) {
-                requestIdLog.debug(msg);
+            if (REQUEST_ID_LOG.isDebugEnabled()) {
+                REQUEST_ID_LOG.debug(msg);
             } else {
-                requestLog.debug(msg);
+                REQUEST_LOG.debug(msg);
             }
         }
         return isHeaderReqIdAvail;
@@ -151,13 +150,13 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
      * logger.
      */
     private void logResponseRequestId(final String awsRequestId) {
-        if (requestIdLog.isDebugEnabled() || requestLog.isDebugEnabled()) {
+        if (REQUEST_ID_LOG.isDebugEnabled() || REQUEST_LOG.isDebugEnabled()) {
             final String msg = "AWS Request ID: " +
                                (awsRequestId == null ? "not available" : awsRequestId);
-            if (requestIdLog.isDebugEnabled()) {
-                requestIdLog.debug(msg);
+            if (REQUEST_ID_LOG.isDebugEnabled()) {
+                REQUEST_ID_LOG.debug(msg);
             } else {
-                requestLog.debug(msg);
+                REQUEST_LOG.debug(msg);
             }
         }
     }

@@ -85,7 +85,7 @@ public enum CloudFrontUrlSigner {
      *            The expiration date of the signed URL in UTC
      * @return The signed URL.
      */
-    public static String getSignedURLWithCannedPolicy(final SignerUtils.Protocol protocol,
+    public static String getSignedUrlWithCannedPolicy(final SignerUtils.Protocol protocol,
                                                       final String distributionDomain,
                                                       final File privateKeyFile,
                                                       final String s3ObjectKey,
@@ -94,7 +94,7 @@ public enum CloudFrontUrlSigner {
             throws InvalidKeySpecException, IOException {
         final String resourcePath = SignerUtils.generateResourcePath(protocol, distributionDomain, s3ObjectKey);
         PrivateKey privateKey = SignerUtils.loadPrivateKey(privateKeyFile);
-        return getSignedURLWithCannedPolicy(resourcePath, keyPairId, privateKey, dateLessThan);
+        return getSignedUrlWithCannedPolicy(resourcePath, keyPairId, privateKey, dateLessThan);
     }
 
     /**
@@ -123,10 +123,8 @@ public enum CloudFrontUrlSigner {
      *            The allowed IP address range of the client making the GET
      *            request, in CIDR form (e.g. 192.168.0.1/24).
      * @return The signed URL.
-     * @throws IOException
-     * @throws InvalidKeySpecException
      */
-    public static String getSignedURLWithCustomPolicy(final SignerUtils.Protocol protocol,
+    public static String getSignedUrlWithCustomPolicy(final SignerUtils.Protocol protocol,
                                                       final String distributionDomain,
                                                       final File privateKeyFile,
                                                       final String s3ObjectKey,
@@ -138,7 +136,7 @@ public enum CloudFrontUrlSigner {
         PrivateKey privateKey = SignerUtils.loadPrivateKey(privateKeyFile);
         final String resourcePath = SignerUtils.generateResourcePath(protocol, distributionDomain, s3ObjectKey);
         String policy = buildCustomPolicyForSignedUrl(resourcePath, dateLessThan, ipRange, dateGreaterThan);
-        return getSignedURLWithCustomPolicy(resourcePath, keyPairId, privateKey, policy);
+        return getSignedUrlWithCustomPolicy(resourcePath, keyPairId, privateKey, policy);
     }
 
     /**
@@ -170,7 +168,7 @@ public enum CloudFrontUrlSigner {
      * @return A signed URL that will permit access to distribution and S3
      *         objects as specified in the policy document.
      */
-    public static String getSignedURLWithCustomPolicy(String resourceUrlOrPath,
+    public static String getSignedUrlWithCustomPolicy(String resourceUrlOrPath,
                                                       String keyPairId, PrivateKey privateKey, String policy) {
         try {
             byte[] signatureBytes = SignerUtils.signWithSha1RSA(
@@ -217,7 +215,7 @@ public enum CloudFrontUrlSigner {
      * @return A signed URL that will permit access to a specific distribution
      *         and S3 object.
      */
-    public static String getSignedURLWithCannedPolicy(String resourceUrlOrPath,
+    public static String getSignedUrlWithCannedPolicy(String resourceUrlOrPath,
                                                       String keyPairId,
                                                       PrivateKey privateKey,
                                                       Date dateLessThan) {

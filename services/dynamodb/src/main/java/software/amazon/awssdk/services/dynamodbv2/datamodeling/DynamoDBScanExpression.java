@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.Select;
  * different conditions are returned (see {@link ComparisonOperator} for more
  * information on the available comparison types).
  *
- * @see DynamoDBMapper#scan(Class, DynamoDBScanExpression)
+ * @see DynamoDbMapper#scan(Class, DynamoDBScanExpression)
  */
 public class DynamoDBScanExpression {
 
@@ -404,15 +404,15 @@ public class DynamoDBScanExpression {
     /**
      * Sets the logical operator on the filter conditions of this scan.
      */
-    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
-        setConditionalOperator(conditionalOperator.toString());
+    public void setConditionalOperator(String conditionalOperator) {
+        this.conditionalOperator = conditionalOperator;
     }
 
     /**
      * Sets the logical operator on the filter conditions of this scan.
      */
-    public void setConditionalOperator(String conditionalOperator) {
-        this.conditionalOperator = conditionalOperator;
+    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
+        setConditionalOperator(conditionalOperator.toString());
     }
 
     /**
@@ -689,8 +689,8 @@ public class DynamoDBScanExpression {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.Select
      */
-    public void setSelect(Select select) {
-        this.select = select.toString();
+    public void setSelect(String select) {
+        this.select = select;
     }
 
     /**
@@ -709,8 +709,8 @@ public class DynamoDBScanExpression {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.Select
      */
-    public void setSelect(String select) {
-        this.select = select;
+    public void setSelect(Select select) {
+        this.select = select.toString();
     }
 
     /**
@@ -892,8 +892,8 @@ public class DynamoDBScanExpression {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity
      */
-    public void setReturnConsumedCapacity(ReturnConsumedCapacity returnConsumedCapacity) {
-        this.returnConsumedCapacity = returnConsumedCapacity.toString();
+    public void setReturnConsumedCapacity(String returnConsumedCapacity) {
+        this.returnConsumedCapacity = returnConsumedCapacity;
     }
 
     /**
@@ -920,8 +920,8 @@ public class DynamoDBScanExpression {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity
      */
-    public void setReturnConsumedCapacity(String returnConsumedCapacity) {
-        this.returnConsumedCapacity = returnConsumedCapacity;
+    public void setReturnConsumedCapacity(ReturnConsumedCapacity returnConsumedCapacity) {
+        this.returnConsumedCapacity = returnConsumedCapacity.toString();
     }
 
     /**

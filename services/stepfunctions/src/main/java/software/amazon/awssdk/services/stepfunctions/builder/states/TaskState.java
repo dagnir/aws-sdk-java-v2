@@ -76,6 +76,13 @@ public final class TaskState extends TransitionState {
     }
 
     /**
+     * @return Builder instance to construct a {@link TaskState}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Type identifier of {@link TaskState}.
      */
     @Override
@@ -159,45 +166,29 @@ public final class TaskState extends TransitionState {
     }
 
     /**
-     * @return Builder instance to construct a {@link TaskState}.
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder for a {@link TaskState}.
      */
     public static final class Builder extends TransitionStateBuilder {
 
-        @JsonProperty(PropertyNames.RESOURCE)
-        private String resource;
-
-        @JsonProperty(PropertyNames.INPUT_PATH)
-        private String inputPath;
-
-        @JsonProperty(PropertyNames.RESULT_PATH)
-        private String resultPath;
-
-        @JsonProperty(PropertyNames.OUTPUT_PATH)
-        private String outputPath;
-
-        @JsonProperty(PropertyNames.COMMENT)
-        private String comment;
-
-        @JsonProperty(PropertyNames.TIMEOUT_SECONDS)
-        private Integer timeoutSeconds;
-
-        @JsonProperty(PropertyNames.HEARTBEAT_SECONDS)
-        private Integer heartbeatSeconds;
-
-        private Transition.Builder transition = Transition.NULL_BUILDER;
-
         @JsonProperty(PropertyNames.RETRY)
         private final List<Retrier.Builder> retriers = new ArrayList<Retrier.Builder>();
-
         @JsonProperty(PropertyNames.CATCH)
         private final List<Catcher.Builder> catchers = new ArrayList<Catcher.Builder>();
+        @JsonProperty(PropertyNames.RESOURCE)
+        private String resource;
+        @JsonProperty(PropertyNames.INPUT_PATH)
+        private String inputPath;
+        @JsonProperty(PropertyNames.RESULT_PATH)
+        private String resultPath;
+        @JsonProperty(PropertyNames.OUTPUT_PATH)
+        private String outputPath;
+        @JsonProperty(PropertyNames.COMMENT)
+        private String comment;
+        @JsonProperty(PropertyNames.TIMEOUT_SECONDS)
+        private Integer timeoutSeconds;
+        @JsonProperty(PropertyNames.HEARTBEAT_SECONDS)
+        private Integer heartbeatSeconds;
+        private Transition.Builder transition = Transition.NULL_BUILDER;
 
         private Builder() {
         }

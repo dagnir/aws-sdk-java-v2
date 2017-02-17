@@ -75,7 +75,7 @@ public class BucketTaggingConfiguration implements Serializable {
      *            A set of TagSet objects.
      *
      * @return The updated {@link BucketTaggingConfiguration} object,
-     * 		   enabling additional method calls to be chained together.
+     *         enabling additional method calls to be chained together.
      *
      * @see BucketTaggingConfiguration#setTagSets(Collection)
      */
@@ -116,7 +116,7 @@ public class BucketTaggingConfiguration implements Serializable {
      * </p>
      *
      * @return The list of <code>TagSet</code> objects contained in this object.
-     *   May return an empty list.
+     *         May return an empty list.
      */
     public List<TagSet> getAllTagSets() {
         return this.tagSets;
@@ -138,8 +138,7 @@ public class BucketTaggingConfiguration implements Serializable {
      * Gets the {@link TagSet} object at the specified index contained in this object.
      * </p>
      *
-     * @param index
-     * 			The index of the <code>TagSet</code> object to return
+     * @param index The index of the <code>TagSet</code> object to return
      *
      * @return The <code>TagSet</code> object contained in the object
      */

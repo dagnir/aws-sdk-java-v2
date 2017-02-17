@@ -27,12 +27,10 @@ public class RegionMetadataTest {
 
     @BeforeClass
     public static void setUp() {
-        Region us_east_1_region = new Region(new InMemoryRegionImpl
-                                                     ("us-east-1",
+        Region us_east_1_region = new Region(new InMemoryRegionImpl("us-east-1",
                                                       null).addEndpoint("s3", "s3.amazonaws.com"));
 
-        Region us_west_1_region = new Region(new InMemoryRegionImpl
-                                                     ("us-west-1", null).addEndpoint("s3", "s3-us-west-1.amazonaws.com"));
+        Region us_west_1_region = new Region(new InMemoryRegionImpl("us-west-1", null).addEndpoint("s3", "s3-us-west-1.amazonaws.com"));
 
         Region cn_north_1_region = new Region(new InMemoryRegionImpl("cn-north-1",
                                                                      "amazonaws.com.cn"));
@@ -85,6 +83,7 @@ public class RegionMetadataTest {
             metadata.getRegionByEndpoint("bogus-monkeys");
             Assert.fail("Expected an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
+            // Ignored or expected.
         }
     }
 }

@@ -33,19 +33,18 @@ public class OpGreaterThanOrEqualTo extends NumericComparator {
      *
      * @param visitor  CodeGen visitor or Evaluation visitor
      * @param input    Input expression that needs to be evaluated
-     * @param <Input>  Input type for the visitor
+     * @param <InputT>  Input type for the visitor
      *                 CodeGen visitor: Void
      *                 Evaluation visitor: JsonNode
-     * @param <Output> Output type for the visitor
+     * @param <OutputT> Output type for the visitor
      *                 CodeGen visitor: String
      *                 Evaluation visitor: JsonNode
      * @return Corresponding output is returned. Evaluated String
-     * in the case of CodeGen visitor or an evaluated JsonNode
-     * in the case of Evaluation visitor
-     * @throws InvalidTypeException
+     *     in the case of CodeGen visitor or an evaluated JsonNode
+     *     in the case of Evaluation visitor
      */
     @Override
-    public <Input, Output> Output accept(JmesPathVisitor<Input, Output> visitor, Input input) throws InvalidTypeException {
+    public <InputT, OutputT> OutputT accept(JmesPathVisitor<InputT, OutputT> visitor, InputT input) throws InvalidTypeException {
         return visitor.visit(this, input);
     }
 
@@ -55,7 +54,7 @@ public class OpGreaterThanOrEqualTo extends NumericComparator {
      * @param lhs Lhs number
      * @param rhs Rhs number
      * @return True if lhs is greater than or equal to rhs;
-     * False otherwise
+     *     False otherwise
      */
     @Override
     public boolean matches(BigDecimal lhs, BigDecimal rhs) {

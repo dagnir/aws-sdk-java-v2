@@ -88,8 +88,9 @@ public class ShouldClearSslSessionPredicate extends SdkPredicate<SSLException> {
             case UNKNOWN:
                 // If we can't determine the Java version err on the side of caution and apply the fix
                 return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     /**

@@ -20,15 +20,15 @@ package software.amazon.awssdk.services.s3;
  */
 public class S3ClientOptions {
 
-    /** The default setting for use of path-style access */
+    /** The default setting for use of path-style access. */
     public static final boolean DEFAULT_PATH_STYLE_ACCESS = false;
-    /** The default setting for use of chunked encoding */
+    /** The default setting for use of chunked encoding. */
     public static final boolean DEFAULT_CHUNKED_ENCODING_DISABLED = false;
-    /** The default setting for use of payload signing */
+    /** The default setting for use of payload signing. */
     public static final boolean DEFAULT_PAYLOAD_SIGNING_ENABLED = false;
-    /** S3 accelerate is by default not enabled */
+    /** S3 accelerate is by default not enabled. */
     public static final boolean DEFAULT_ACCELERATE_MODE_ENABLED = false;
-    /** S3 dualstack endpoint is by default not enabled */
+    /** S3 dualstack endpoint is by default not enabled. */
     public static final boolean DEFAULT_DUALSTACK_ENABLED = false;
     /** By default, clients should be created with a region. */
     public static final boolean DEFAULT_FORCE_GLOBAL_BUCKET_ACCESS_ENABLED = false;
@@ -241,7 +241,7 @@ public class S3ClientOptions {
     public static class Builder {
 
         private boolean pathStyleAccess = DEFAULT_PATH_STYLE_ACCESS;
-        /** Flag for user of chunked encoding */
+        /** Flag for user of chunked encoding. */
         private boolean chunkedEncodingDisabled = DEFAULT_CHUNKED_ENCODING_DISABLED;
         private boolean accelerateModeEnabled = DEFAULT_ACCELERATE_MODE_ENABLED;
         private boolean payloadSigningEnabled = DEFAULT_PAYLOAD_SIGNING_ENABLED;

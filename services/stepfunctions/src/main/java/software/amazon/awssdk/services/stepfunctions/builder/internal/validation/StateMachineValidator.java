@@ -92,6 +92,13 @@ public class StateMachineValidator {
         return stateMachine;
     }
 
+    private void validateStates(ValidationContext parentContext, Map<String, State> states) {
+        for (Map.Entry<String, State> entry : states.entrySet()) {
+            parentContext.assertStringNotEmpty(entry.getKey(), "State Name");
+            entry.getValue().accept(new StateValidationVisitor(states, parentContext.state(entry.getKey())));
+        }
+    }
+
     /**
      * Validates the DFS does not contain unrecoverable cycles (i.e. cycles with no branching logic) or
      * does not contain a path to a terminal state.
@@ -187,13 +194,6 @@ public class StateMachineValidator {
             return merged;
         }
 
-    }
-
-    private void validateStates(ValidationContext parentContext, Map<String, State> states) {
-        for (Map.Entry<String, State> entry : states.entrySet()) {
-            parentContext.assertStringNotEmpty(entry.getKey(), "State Name");
-            entry.getValue().accept(new StateValidationVisitor(states, parentContext.state(entry.getKey())));
-        }
     }
 
     /**

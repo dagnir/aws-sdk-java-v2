@@ -39,6 +39,13 @@ public final class TimestampGreaterThanOrEqualCondition implements BinaryConditi
     }
 
     /**
+     * @return Builder instance to construct a {@link TimestampGreaterThanOrEqualCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -52,13 +59,6 @@ public final class TimestampGreaterThanOrEqualCondition implements BinaryConditi
     @Override
     public Date getExpectedValue() {
         return expectedValue;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link TimestampGreaterThanOrEqualCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

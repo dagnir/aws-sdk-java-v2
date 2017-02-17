@@ -125,7 +125,7 @@ public enum InternalUtils {
     }
 
     /**
-     * Converts a simple value into the low-level <code><AttributeValue/code>
+     * Converts a simple value into the low-level {@code <AttributeValue/>}
      * representation.
      *
      * @param value

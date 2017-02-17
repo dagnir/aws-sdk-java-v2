@@ -135,6 +135,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
                 s3object = s3v2.getObject(bucketName, v1key);
                 fail();
             } catch (SecurityException expected) {
+                // Ignored or expected.
             }
         } else {
             s3object = s3v2.getObject(bucketName, v1key);
@@ -244,6 +245,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
                 s3object = s3v2.getObject(bucketName, v1key);
                 fail();
             } catch (SecurityException expected) {
+                // Ignored or expected.
             }
         } else {
             s3object = s3v2.getObject(bucketName, v1key);
@@ -275,6 +277,7 @@ public abstract class S3PutGetAEIntegrationTestBase {
                 s3object = s3v2.getObject(bucketName, v1key);
                 fail();
             } catch (SecurityException expected) {
+                // Ignored or expected.
             }
         } else {
             s3object = s3v2.getObject(bucketName, v1key);

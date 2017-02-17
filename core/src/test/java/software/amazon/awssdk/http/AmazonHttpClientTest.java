@@ -39,8 +39,8 @@ import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
@@ -49,8 +49,8 @@ import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 public class AmazonHttpClientTest {
 
-    private final String SERVER_NAME = "testsvc";
-    private final String URI_NAME = "http://testsvc.region.amazonaws.com";
+    private final String serverName = "testsvc";
+    private final String uriName = "http://testsvc.region.amazonaws.com";
 
     private ConnectionManagerAwareHttpClient httpClient;
     private AmazonHttpClient client;
@@ -66,7 +66,7 @@ public class AmazonHttpClientTest {
     }
 
     @Test
-    public void testRetryIOExceptionFromExecute() throws IOException {
+    public void testRetryIoExceptionFromExecute() throws IOException {
         IOException exception = new IOException("BOOM");
 
         EasyMock.reset(httpClient);
@@ -105,7 +105,7 @@ public class AmazonHttpClientTest {
     }
 
     @Test
-    public void testRetryIOExceptionFromHandler() throws Exception {
+    public void testRetryIoExceptionFromHandler() throws Exception {
         final IOException exception = new IOException("BOOM");
 
         HttpResponseHandler<AmazonWebServiceResponse<Object>> handler =
@@ -162,7 +162,7 @@ public class AmazonHttpClientTest {
 
     @Test
     public void testUseExpectContinueTrue() throws IOException {
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.PUT, URI_NAME, true);
+        Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, true);
         ClientConfiguration clientConfiguration = new ClientConfiguration().withUseExpectContinue(true);
 
         HttpRequestFactory<HttpRequestBase> httpRequestFactory = new ApacheHttpRequestFactory();
@@ -175,7 +175,7 @@ public class AmazonHttpClientTest {
 
     @Test
     public void testUseExpectContinueFalse() throws IOException {
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.PUT, URI_NAME, true);
+        Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, true);
         ClientConfiguration clientConfiguration = new ClientConfiguration().withUseExpectContinue(false);
 
         HttpRequestFactory<HttpRequestBase> httpRequestFactory = new ApacheHttpRequestFactory();
@@ -186,33 +186,34 @@ public class AmazonHttpClientTest {
     }
 
     @Test
-    public void testPutRetryNoCL() throws Exception {
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.PUT, URI_NAME, false);
+    public void testPutRetryNoCl() throws Exception {
+        Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, false);
         testRetries(request, 100);
     }
 
     @Test
-    public void testPostRetryNoCL() throws Exception {
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.POST, URI_NAME, false);
+    public void testPostRetryNoCl() throws Exception {
+        Request<?> request = mockRequest(serverName, HttpMethodName.POST, uriName, false);
         testRetries(request, 100);
     }
 
     @Test
-    public void testPutRetryCL() throws Exception {
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.PUT, URI_NAME, true);
+    public void testPutRetryCl() throws Exception {
+        Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, true);
         testRetries(request, 100);
     }
 
     @Test
-    public void testPostRetryCL() throws Exception {
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.POST, URI_NAME, true);
+    public void testPostRetryCl() throws Exception {
+        Request<?> request = mockRequest(serverName, HttpMethodName.POST, uriName, true);
         testRetries(request, 100);
     }
 
     @Test
     public void testUserAgentPrefixAndSuffixAreAdded() throws Exception {
-        String prefix = "somePrefix", suffix = "someSuffix";
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.PUT, URI_NAME, true);
+        String prefix = "somePrefix";
+        String suffix = "someSuffix";
+        Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, true);
 
         HttpResponseHandler<AmazonWebServiceResponse<Object>> handler = createStubResponseHandler();
         EasyMock.replay(handler);
@@ -249,9 +250,9 @@ public class AmazonHttpClientTest {
 
         AmazonHttpClient client = new AmazonHttpClient(new ClientConfiguration(), httpClient, null);
 
-        final BasicAWSCredentials credentials = new BasicAWSCredentials("foo", "bar");
+        final BasicAwsCredentials credentials = new BasicAwsCredentials("foo", "bar");
 
-        AWSCredentialsProvider credentialsProvider = EasyMock.createMock(AWSCredentialsProvider.class);
+        AwsCredentialsProvider credentialsProvider = EasyMock.createMock(AwsCredentialsProvider.class);
         EasyMock.expect(credentialsProvider.getCredentials())
                 .andReturn(credentials)
                 .anyTimes();
@@ -260,7 +261,7 @@ public class AmazonHttpClientTest {
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setCredentialsProvider(credentialsProvider);
 
-        Request<?> request = mockRequest(SERVER_NAME, HttpMethodName.PUT, URI_NAME, true);
+        Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, true);
 
         HttpResponseHandler<AmazonWebServiceResponse<Object>> handler = createStubResponseHandler();
         EasyMock.replay(handler);
@@ -309,6 +310,7 @@ public class AmazonHttpClientTest {
             client.requestExecutionBuilder().request(request).executionContext(context).execute();
             Assert.fail("Expected AmazonClientException");
         } catch (AmazonClientException e) {
+            // Expected.
         }
     }
 

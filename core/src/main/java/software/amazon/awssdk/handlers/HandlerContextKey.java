@@ -16,37 +16,34 @@
 package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 
 /**
- * A type safe key used for setting and retrieving context in a {@link
- * Request} object.
+ * A type safe key used for setting and retrieving context in a {@link Request} object.
  *
  * <pre class="brush: java">
- *     final HandlerContextKey<String> METRICS_KEY = new HandlerContextKey("METRICS_KEY");
+ *     final HandlerContextKey&lt;String&gt; METRICS_KEY = new HandlerContextKey("METRICS_KEY");
  *
  *      new RequestHandler2(){
  *
- *          @Override
- *          public void beforeRequest(Request<?> request) {
- *              request.addHandlerContext(METRICS_KEY, AWSRequestMetrics
- *                                                  .Field.HttpRequestTime.name());
+ *          {@literal @}Override
+ *          public void beforeRequest(Request&lt;?&gt; request) {
+ *              request.addHandlerContext(METRICS_KEY, AWSRequestMetrics.Field.HttpRequestTime.name());
  *          }
  *
- *          @Override
- *          public void afterResponse(Request<?> request, Response<?> response) {
+ *          {@literal @}Override
+ *          public void afterResponse(Request&lt;?&gt; request, Response&lt;?&gt; response) {
  *              String metricsKey = request.getHandlerContext(METRICS_KEY);
  *          }
  *
- *          @Override
- *          public void afterError(Request<?> request, Response<?> response,
- *          Exception e) { }
+ *          {@literal @}Override
+ *          public void afterError(Request&lt;?&gt; request, Response&lt;?&gt; response, Exception e) { }
  *      }
  * </pre>
  */
 public class HandlerContextKey<T> {
     /** The key under which the request credentials are set. */
-    public static final HandlerContextKey<AWSCredentials> AWS_CREDENTIALS = new HandlerContextKey<AWSCredentials>("AWSCredentials");
+    public static final HandlerContextKey<AwsCredentials> AWS_CREDENTIALS = new HandlerContextKey<AwsCredentials>("AWSCredentials");
 
     private final String name;
 

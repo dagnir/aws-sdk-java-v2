@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
  */
 @ThreadSafe
 public class MetricCollectorSupport extends MetricCollector {
-    protected final static Log log = LogFactory.getLog(MetricCollectorSupport.class);
+    protected static final Log log = LogFactory.getLog(MetricCollectorSupport.class);
     private static volatile MetricCollectorSupport singleton;
     private final RequestMetricCollectorSupport requestMetricCollector;
     private final ServiceMetricCollectorSupport serviceMetricCollector;
@@ -42,6 +42,7 @@ public class MetricCollectorSupport extends MetricCollector {
     //    private final PredefinedMetricTransformer transformer = new PredefinedMetricTransformer();
     private final CloudWatchMetricConfig config;
     private MetricUploaderThread uploaderThread;
+
     protected MetricCollectorSupport(CloudWatchMetricConfig config) {
         if (config == null) {
             throw new IllegalArgumentException();
@@ -61,8 +62,8 @@ public class MetricCollectorSupport extends MetricCollector {
      * Starts a new CloudWatch collector if it's not already started.
      *
      * @return true if it is successfully started by this call; false if the
-     * collector is already running or if there is failure in trying to start
-     * the collector for the first time.
+     *     collector is already running or if there is failure in trying to start
+     *     the collector for the first time.
      */
     static synchronized boolean startSingleton(CloudWatchMetricConfig config) {
         if (singleton != null) {
@@ -72,7 +73,7 @@ public class MetricCollectorSupport extends MetricCollector {
         return createAndStartCollector(config);
     }
 
-    /** Retarts with a new CloudWatch collector. */
+    /** Restarts with a new CloudWatch collector. */
     static synchronized boolean restartSingleton(CloudWatchMetricConfig config) {
         if (singleton == null) {
             throw new IllegalStateException(MetricCollectorSupport.class.getSimpleName()

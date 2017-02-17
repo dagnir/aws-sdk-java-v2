@@ -21,7 +21,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;
 
 /**
@@ -37,7 +37,7 @@ public class AuthenticationErrorsIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testInvalidClientTokenId() {
-        AmazonSimpleDBClient client = new AmazonSimpleDBClient(new BasicAWSCredentials("accessKey", "secretKey"));
+        AmazonSimpleDBClient client = new AmazonSimpleDBClient(new BasicAwsCredentials("accessKey", "secretKey"));
 
         try {
             client.listDomains(new ListDomainsRequest());
@@ -55,8 +55,8 @@ public class AuthenticationErrorsIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testSignatureDoesNotMatch() {
-        String accessKey = credentials.getAWSAccessKeyId();
-        AmazonSimpleDBClient client = new AmazonSimpleDBClient(new BasicAWSCredentials(accessKey, "secretKey"));
+        String accessKey = credentials.getAwsAccessKeyId();
+        AmazonSimpleDBClient client = new AmazonSimpleDBClient(new BasicAwsCredentials(accessKey, "secretKey"));
 
         try {
             client.listDomains(new ListDomainsRequest());

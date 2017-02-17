@@ -48,7 +48,6 @@ public class ResourceCentricBlockJUnit4ClassRunner extends BlockJUnit4ClassRunne
 
     /**
      *
-     * @throws IllegalAccessException
      */
     private static TestResource createResourceInstance(RequiredResource resourceAnnotation)
             throws InstantiationException, IllegalAccessException {

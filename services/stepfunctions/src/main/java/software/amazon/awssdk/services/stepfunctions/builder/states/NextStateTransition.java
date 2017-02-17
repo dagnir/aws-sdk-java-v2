@@ -33,6 +33,13 @@ public final class NextStateTransition implements Transition {
     }
 
     /**
+     * @return Builder instance to construct a {@link NextStateTransition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The name of the state to transition to.
      */
     public String getNextStateName() {
@@ -42,13 +49,6 @@ public final class NextStateTransition implements Transition {
     @Override
     public boolean isTerminal() {
         return false;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link NextStateTransition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

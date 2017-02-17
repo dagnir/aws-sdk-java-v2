@@ -261,21 +261,22 @@ public class MessageMD5ChecksumHandler extends AbstractRequestHandler {
         if (request != null && response != null) {
             // SendMessage
             if (request.getOriginalRequest() instanceof SendMessageRequest && response instanceof SendMessageResult) {
+
                 SendMessageRequest sendMessageRequest = (SendMessageRequest) request.getOriginalRequest();
                 SendMessageResult sendMessageResult = (SendMessageResult) response;
                 sendMessageOperationMd5Check(sendMessageRequest, sendMessageResult);
-            }
 
-            // ReceiveMessage
-            else if (request.getOriginalRequest() instanceof ReceiveMessageRequest
-                     && response instanceof ReceiveMessageResult) {
+            } else if (request.getOriginalRequest() instanceof ReceiveMessageRequest &&
+                       response instanceof ReceiveMessageResult) {
+
+                // ReceiveMessage
                 ReceiveMessageResult receiveMessageResult = (ReceiveMessageResult) response;
                 receiveMessageResultMd5Check(receiveMessageResult);
-            }
 
-            // SendMessageBatch
-            else if (request.getOriginalRequest() instanceof SendMessageBatchRequest
-                     && response instanceof SendMessageBatchResult) {
+            } else if (request.getOriginalRequest() instanceof SendMessageBatchRequest &&
+                       response instanceof SendMessageBatchResult) {
+
+                // SendMessageBatch
                 SendMessageBatchRequest sendMessageBatchRequest = (SendMessageBatchRequest) request
                         .getOriginalRequest();
                 SendMessageBatchResult sendMessageBatchResult = (SendMessageBatchResult) response;

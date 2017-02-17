@@ -26,8 +26,8 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3ObjectId;
-import software.amazon.awssdk.services.s3.model.SSEAwsKeyManagementParams;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParams;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.util.StringInputStream;
 
@@ -89,7 +89,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void getObject_InvolvesSseC_ShouldSkipClientSideValidation() {
         GetObjectRequest request = newGetObjectRequest();
-        request.setSSECustomerKey(new SSECustomerKey("some-key"));
+        request.setSSECustomerKey(new SseCustomerKey("some-key"));
         assertTrue(strategy.skipClientSideValidationPerRequest(request));
     }
 
@@ -129,7 +129,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void putObject_InvolvesSseC_ShouldNotSkipServerSideValidation() throws UnsupportedEncodingException {
         PutObjectRequest request = newPutObjectRequest();
-        request.setSSECustomerKey(new SSECustomerKey("some-key"));
+        request.setSseCustomerKey(new SseCustomerKey("some-key"));
         assertFalse(strategy.skipServerSideValidation(request));
     }
 
@@ -140,7 +140,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void putObject_InvolvesSseKms_ShouldNotSkipServerSideValidation() throws UnsupportedEncodingException {
         PutObjectRequest request = newPutObjectRequest();
-        request.setSSEAwsKeyManagementParams(new SSEAwsKeyManagementParams());
+        request.setSseAwsKeyManagementParams(new SseAwsKeyManagementParams());
         assertFalse(strategy.skipServerSideValidation(request));
     }
 
@@ -159,7 +159,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void putObject_InvolvesSseC_ShouldSkipClientSideValidation() throws UnsupportedEncodingException {
         PutObjectRequest request = newPutObjectRequest();
-        request.setSSECustomerKey(new SSECustomerKey("some-key"));
+        request.setSseCustomerKey(new SseCustomerKey("some-key"));
         assertTrue(strategy.skipClientSideValidationPerRequest(request));
     }
 
@@ -170,7 +170,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void putObject_InvolvesSseKms_ShouldSkipClientSideValidation() throws UnsupportedEncodingException {
         PutObjectRequest request = newPutObjectRequest();
-        request.setSSEAwsKeyManagementParams(new SSEAwsKeyManagementParams());
+        request.setSseAwsKeyManagementParams(new SseAwsKeyManagementParams());
         assertTrue(strategy.skipClientSideValidationPerRequest(request));
     }
 
@@ -221,7 +221,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void uploadPart_InvolvesSseC_ShouldSkipClientSideValidation() {
         UploadPartRequest request = new UploadPartRequest();
-        request.setSSECustomerKey(new SSECustomerKey("some-key"));
+        request.setSSECustomerKey(new SseCustomerKey("some-key"));
         assertTrue(strategy.skipClientSideValidationPerRequest(request));
     }
 

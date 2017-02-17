@@ -69,11 +69,11 @@ abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
         return maxResultSize;
     }
 
-    public void setMaxResultSize(int maxResultSize) {
+    public void setMaxResultSize(Integer maxResultSize) {
         this.maxResultSize = maxResultSize;
     }
 
-    public void setMaxResultSize(Integer maxResultSize) {
+    public void setMaxResultSize(int maxResultSize) {
         this.maxResultSize = maxResultSize;
     }
 

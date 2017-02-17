@@ -43,7 +43,7 @@ public class AmazonS3ExceptionBuilder {
      */
     private String errorMessage;
 
-    /** The HTTP status code that was returned with this error */
+    /** The HTTP status code that was returned with this error. */
     private int statusCode;
 
     /**

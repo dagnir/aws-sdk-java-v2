@@ -22,7 +22,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.auth.AWS4Signer;
+import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.handlers.CredentialsRequestHandler;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.regions.Region;
@@ -80,7 +80,7 @@ public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler 
             requestForPresigning.setEndpoint(endPointSource);
             requestForPresigning.setHttpMethod(HttpMethodName.GET);
 
-            AWS4Signer signer = new AWS4Signer();
+            Aws4Signer signer = new Aws4Signer();
             signer.setServiceName(serviceName);
 
             signer.presignRequest(requestForPresigning, awsCredentials, null);

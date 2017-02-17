@@ -26,11 +26,11 @@ public class ShortUnmarshaller extends NUnmarshaller {
     private static final ShortUnmarshaller INSTANCE =
             new ShortUnmarshaller();
 
-    public static ShortUnmarshaller instance() {
-        return INSTANCE;
+    private ShortUnmarshaller() {
     }
 
-    private ShortUnmarshaller() {
+    public static ShortUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

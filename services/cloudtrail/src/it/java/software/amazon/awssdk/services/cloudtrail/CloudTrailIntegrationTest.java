@@ -67,6 +67,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
                 cloudTrail.deleteTrail(new DeleteTrailRequest().withName(trail.getName()));
             }
         } catch (Exception e) {
+            // Expected.
         }
     }
 

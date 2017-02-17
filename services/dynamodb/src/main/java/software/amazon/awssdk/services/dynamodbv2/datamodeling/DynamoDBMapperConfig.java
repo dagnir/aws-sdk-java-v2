@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
 
 /**
  * Immutable configuration object for service call behavior. An instance of this
- * configuration is supplied to every {@link DynamoDBMapper} at construction; if
+ * configuration is supplied to every {@link DynamoDbMapper} at construction; if
  * not provided explicitly, {@link DynamoDBMapperConfig#DEFAULT} is used. New
  * instances can be given to the mapper object on individual save, load, and
  * delete operations to override the defaults. For example:
@@ -69,11 +69,7 @@ public class DynamoDBMapperConfig {
     private final SaveBehavior saveBehavior;
     private final ConsistentReads consistentReads;
     private final TableNameOverride tableNameOverride;
-
-    ;
     private final TableNameResolver tableNameResolver;
-
-    ;
     private final ObjectTableNameResolver objectTableNameResolver;
     private final PaginationLoadingStrategy paginationLoadingStrategy;
     private final RequestMetricCollector requestMetricCollector;
@@ -174,6 +170,7 @@ public class DynamoDBMapperConfig {
              DEFAULT.getBatchWriteRetryStrategy(),
              DEFAULT.getBatchLoadRetryStrategy());
     }
+
     private DynamoDBMapperConfig(
             SaveBehavior saveBehavior,
             ConsistentReads consistentReads,
@@ -198,6 +195,7 @@ public class DynamoDBMapperConfig {
         this.batchLoadRetryStrategy = batchLoadRetryStrategy;
         this.typeConverterFactory = null;
     }
+
     /**
      * Constructs a new configuration object with the save behavior given.
      * @see SaveBehavior#config
@@ -207,6 +205,7 @@ public class DynamoDBMapperConfig {
         this(saveBehavior, null, null, null, null, null, null,
              DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object with the consistent read behavior
      * given.
@@ -217,6 +216,7 @@ public class DynamoDBMapperConfig {
         this(null, consistentReads, null, null, null, null, null,
              DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object with the table name override given.
      * @see TableNameOverride#config
@@ -226,6 +226,7 @@ public class DynamoDBMapperConfig {
         this(null, null, tableNameOverride, null, null, null, null,
              DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object with the table name resolver strategy given.
      * @see DynamoDBConfig#builder
@@ -235,6 +236,7 @@ public class DynamoDBMapperConfig {
         this(null, null, null, tableNameResolver, null, null, null,
              DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object with the object table name resolver strategy given.
      * @see DynamoDBConfig#builder
@@ -244,6 +246,7 @@ public class DynamoDBMapperConfig {
         this(null, null, null, null, objectTableNameResolver, null, null,
              DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object with the table name resolver strategies given.
      * @see DynamoDBConfig#builder
@@ -253,6 +256,7 @@ public class DynamoDBMapperConfig {
         this(null, null, null, tableNameResolver, objectTableNameResolver, null, null,
              DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object with the pagination loading
      * strategy given.
@@ -265,6 +269,7 @@ public class DynamoDBMapperConfig {
         this(null, null, null, null, null, paginationLoadingStrategy, null,
              DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object with the conversion schema given.
      * @see DynamoDBConfig#builder
@@ -273,6 +278,7 @@ public class DynamoDBMapperConfig {
     public DynamoDBMapperConfig(ConversionSchema conversionSchema) {
         this(null, null, null, null, null, null, null, conversionSchema, DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
+
     /**
      * Constructs a new configuration object from two others: a set of defaults
      * and a set of overrides. Any non-null overrides will be applied to the
@@ -514,7 +520,7 @@ public class DynamoDBMapperConfig {
     /**
      * Interface for a strategy used to determine the table name of an object based on it's class.
      * This resolver is used when an object isn't available such as in
-     * {@link DynamoDBMapper#query(Class, DynamoDBQueryExpression)}
+     * {@link DynamoDbMapper#query(Class, DynamoDBQueryExpression)}
      *
      * @see ObjectTableNameResolver
      * @author Raniz
@@ -535,10 +541,10 @@ public class DynamoDBMapperConfig {
     /**
      * Interface for a strategy used to determine the table name of an object based on it's class.
      * This resolver is used when an object is available such as in
-     * {@link DynamoDBMapper#316
+     * {@link DynamoDbMapper#316
      * (java.util.List)}.
      *
-     * If no table name resolver for objects is set, {@link DynamoDBMapper} reverts to using the
+     * If no table name resolver for objects is set, {@link DynamoDbMapper} reverts to using the
      * {@link TableNameResolver} on each object's class.
      *
      * @see TableNameResolver
@@ -566,8 +572,8 @@ public class DynamoDBMapperConfig {
      * the UnprocessedItems response parameter. This interface allows you to
      * control the retry strategy when such scenario occurs.
      *
-     * @see DynamoDBMapper#batchWrite(List, List, DynamoDBMapperConfig)
-     * @see <ahref="http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html">DynamoDB service API reference -- BatchWriteItem</a>
+     * @see DynamoDbMapper#batchWrite(List, List, DynamoDBMapperConfig)
+     * @see <a href="http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html">DynamoDB service API reference -- BatchWriteItem</a>
      */
     public interface BatchWriteRetryStrategy {
 
@@ -605,7 +611,7 @@ public class DynamoDBMapperConfig {
     }
 
     /**
-     * {@link DynamoDBMapper#batchLoad(List)} breaks the requested items in batches of maximum size 100.
+     * {@link DynamoDbMapper#batchLoad(List)} breaks the requested items in batches of maximum size 100.
      * When calling the Dyanmo Db client, there is a chance that due to throttling, some unprocessed keys will be returned.
      * This interfaces controls whether we need to retry these unprocessed keys and it also controls the strategy as to how retries should be handled
      */

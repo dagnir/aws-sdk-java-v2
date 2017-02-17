@@ -23,16 +23,16 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  * An unmarshaller that unmarshals BinarySet values as sets of Java
  * {@code ByteBuffer}s.
  */
-public class ByteBufferSetUnmarshaller extends BSUnmarshaller {
+public class ByteBufferSetUnmarshaller extends BsUnmarshaller {
 
     private static final ByteBufferSetUnmarshaller INSTANCE =
             new ByteBufferSetUnmarshaller();
 
-    public static ByteBufferSetUnmarshaller instance() {
-        return INSTANCE;
+    private ByteBufferSetUnmarshaller() {
     }
 
-    private ByteBufferSetUnmarshaller() {
+    public static ByteBufferSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

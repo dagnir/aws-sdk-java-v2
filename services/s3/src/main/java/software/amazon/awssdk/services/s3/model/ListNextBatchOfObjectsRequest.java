@@ -29,7 +29,7 @@ public class ListNextBatchOfObjectsRequest extends AmazonWebServiceRequest imple
      * Creates a request object for listing next batch of objects.
      *
      * @param previousObjectListing
-     * 			The previous object listing whose features are to be fetched.
+     *             The previous object listing whose features are to be fetched.
      */
     public ListNextBatchOfObjectsRequest(ObjectListing previousObjectListing) {
         setPreviousObjectListing(previousObjectListing);
@@ -46,7 +46,7 @@ public class ListNextBatchOfObjectsRequest extends AmazonWebServiceRequest imple
     /**
      * Sets the previous object listing and all the features of the next object listing as well.
      * @param previousObjectListing
-     * 			This parameter must be specified.
+     *             This parameter must be specified.
      */
     public void setPreviousObjectListing(ObjectListing previousObjectListing) {
         if (previousObjectListing == null) {
@@ -60,7 +60,7 @@ public class ListNextBatchOfObjectsRequest extends AmazonWebServiceRequest imple
      * method calls can be chained together.
      *
      * @param previousObjectListing
-     * 			The previous object listing whose features are to be fetched.
+     *             The previous object listing whose features are to be fetched.
      * @return The updated request object so that additional method calls can be chained together.
      */
     public ListNextBatchOfObjectsRequest withPreviousObjectListing(ObjectListing previousObjectListing) {

@@ -160,15 +160,15 @@ public class InventoryConfiguration implements Serializable {
     /**
      * Sets which object version(s) to included in the inventory results.
      */
-    public void setIncludedObjectVersions(InventoryIncludedObjectVersions includedObjectVersions) {
-        setIncludedObjectVersions(includedObjectVersions == null ? (String) null : includedObjectVersions.toString());
+    public void setIncludedObjectVersions(String includedObjectVersions) {
+        this.includedObjectVersions = includedObjectVersions;
     }
 
     /**
      * Sets which object version(s) to included in the inventory results.
      */
-    public void setIncludedObjectVersions(String includedObjectVersions) {
-        this.includedObjectVersions = includedObjectVersions;
+    public void setIncludedObjectVersions(InventoryIncludedObjectVersions includedObjectVersions) {
+        setIncludedObjectVersions(includedObjectVersions == null ? (String) null : includedObjectVersions.toString());
     }
 
     /**

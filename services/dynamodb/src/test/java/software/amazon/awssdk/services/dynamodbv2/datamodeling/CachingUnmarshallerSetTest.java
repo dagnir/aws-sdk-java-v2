@@ -28,8 +28,8 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.TestClass;
 
 public class CachingUnmarshallerSetTest {
 
-    private static final TestUnmarshallerSet mock = new TestUnmarshallerSet();
-    private static final UnmarshallerSet sut = new CachingUnmarshallerSet(mock);
+    private static final TestUnmarshallerSet MOCK = new TestUnmarshallerSet();
+    private static final UnmarshallerSet SUT = new CachingUnmarshallerSet(MOCK);
 
     @Test
     public void testIt() throws Exception {
@@ -44,15 +44,15 @@ public class CachingUnmarshallerSetTest {
             }
         };
 
-        mock.queue.add(unmarshaller);
+        MOCK.queue.add(unmarshaller);
 
-        ArgumentUnmarshaller result = sut.getUnmarshaller(
+        ArgumentUnmarshaller result = SUT.getUnmarshaller(
                 TestClass.class.getMethod("getString"),
                 TestClass.class.getMethod("setString", String.class));
 
         Assert.assertSame(unmarshaller, result);
 
-        result = sut.getUnmarshaller(
+        result = SUT.getUnmarshaller(
                 TestClass.class.getMethod("getString"),
                 TestClass.class.getMethod("setString", String.class));
 
@@ -69,9 +69,9 @@ public class CachingUnmarshallerSetTest {
             }
         };
 
-        mock.queue.add(unmarshaller2);
+        MOCK.queue.add(unmarshaller2);
 
-        result = sut.getUnmarshaller(
+        result = SUT.getUnmarshaller(
                 TestClass.class.getMethod("getInt"),
                 TestClass.class.getMethod("setInt", int.class));
 

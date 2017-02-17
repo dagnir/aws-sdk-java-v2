@@ -29,7 +29,7 @@ public class ListNextBatchOfVersionsRequest extends AmazonWebServiceRequest impl
      * Creates a request object for listing next batch of versions.
      *
      * @param previousVersionListing
-     * 			The previous version listing whose features are to be fetched.
+     *             The previous version listing whose features are to be fetched.
      */
     public ListNextBatchOfVersionsRequest(VersionListing previousVersionListing) {
         setPreviousVersionListing(previousVersionListing);
@@ -46,7 +46,7 @@ public class ListNextBatchOfVersionsRequest extends AmazonWebServiceRequest impl
     /**
      * Sets the previous version listing and all the features of the next version listing as well.
      * @param previousVersionListing
-     * 			This parameter must be specified.
+     *             This parameter must be specified.
      */
     public void setPreviousVersionListing(VersionListing previousVersionListing) {
         if (previousVersionListing == null) {
@@ -60,7 +60,7 @@ public class ListNextBatchOfVersionsRequest extends AmazonWebServiceRequest impl
      * method calls can be chained together.
      *
      * @param previousVersionListing
-     * 			The previous version listing object whose features are to be fetched.
+     *             The previous version listing object whose features are to be fetched.
      * @return This updated request object so that additional method calls can be chained together.
      */
     public ListNextBatchOfVersionsRequest withPreviousVersionListing(VersionListing previousVersionListing) {

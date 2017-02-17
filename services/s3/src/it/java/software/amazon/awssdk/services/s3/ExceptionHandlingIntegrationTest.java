@@ -27,17 +27,17 @@ import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 /**
  * Integration tests for exception handling in the Amazon S3 Java client.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class ExceptionHandlingIntegrationTest extends S3IntegrationTestBase {
 
-    /** A non-existent bucket name for tests to use */
+    /** A non-existent bucket name for tests to use. */
     private String nonExistentBucket = "non-existent-bucket-" + new Date().getTime();
 
-    /** A non-existent object key for tests to use */
+    /** A non-existent object key for tests to use. */
     private String nonExistentKey = "non-existent-key-" + new Date().getTime();
 
-    /** An existing bucket name, not owned by us, for tests to use */
+    /** An existing bucket name, not owned by us, for tests to use. */
     private String existingBucket = "amazon";
 
 
@@ -51,6 +51,7 @@ public class ExceptionHandlingIntegrationTest extends S3IntegrationTestBase {
             s3.createBucket("!!!");
             fail("Expected exception, IllegalArgumentException, wasn't thrown");
         } catch (IllegalArgumentException ase) {
+            // Ignored or expected.
         }
     }
 
@@ -124,6 +125,7 @@ public class ExceptionHandlingIntegrationTest extends S3IntegrationTestBase {
             s3.getObject((String) null, (String) null);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
+            // Ignored or expected.
         }
     }
 }

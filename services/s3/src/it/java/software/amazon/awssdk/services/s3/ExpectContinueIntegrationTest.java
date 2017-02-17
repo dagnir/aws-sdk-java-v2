@@ -29,23 +29,25 @@ import software.amazon.awssdk.test.util.RandomInputStream;
 /**
  * Integration tests for object too large which utilizes the "expect continue" header.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class ExpectContinueIntegrationTest extends S3IntegrationTestBase {
 
     private String bucketName = "expect-continue-integ-test-" + new Date().getTime();
     private String key = "key";
 
-    /** Releases all resources created by this test */
+    /** Releases all resources created by this test. */
     @After
     public void tearDown() {
         try {
             s3.deleteObject(bucketName, key);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             s3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

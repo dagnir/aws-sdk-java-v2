@@ -21,7 +21,6 @@ public final class NumberUtils {
     }
 
     /**
-     * @param toParse
      * @return {@link Integer} or null if string can't be parsed
      */
     public static Integer tryParseInt(String toParse) {

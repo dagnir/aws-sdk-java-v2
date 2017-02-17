@@ -20,7 +20,7 @@ import java.io.FileInputStream;
 import software.amazon.awssdk.runtime.io.ReleasableInputStream;
 import software.amazon.awssdk.services.s3.internal.InputSubstream;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.transfer.TransferManager;
 
@@ -44,7 +44,7 @@ public class UploadPartRequestFactory {
     private int partNumber = 1;
     private long offset = 0;
     private long remainingBytes;
-    private SSECustomerKey sseCustomerKey;
+    private SseCustomerKey sseCustomerKey;
     /**
      * Wrapped to provide necessary mark-and-reset support for the underlying
      * input stream. In particular, it provides support for unlimited
@@ -76,9 +76,9 @@ public class UploadPartRequestFactory {
         long partSize = Math.min(optimalPartSize, remainingBytes);
         boolean isLastPart = (remainingBytes - partSize <= 0);
 
-        UploadPartRequest req = null;
+        UploadPartRequest request = null;
         if (wrappedStream != null) {
-            req = new UploadPartRequest()
+            request = new UploadPartRequest()
                     .withBucketName(bucketName)
                     .withKey(key)
                     .withUploadId(uploadId)
@@ -86,7 +86,7 @@ public class UploadPartRequestFactory {
                     .withPartNumber(partNumber++)
                     .withPartSize(partSize);
         } else {
-            req = new UploadPartRequest()
+            request = new UploadPartRequest()
                     .withBucketName(bucketName)
                     .withKey(key)
                     .withUploadId(uploadId)
@@ -95,22 +95,21 @@ public class UploadPartRequestFactory {
                     .withPartNumber(partNumber++)
                     .withPartSize(partSize);
         }
-        TransferManager.appendMultipartUserAgent(req);
+        TransferManager.appendMultipartUserAgent(request);
 
         if (sseCustomerKey != null) {
-            req.setSSECustomerKey(sseCustomerKey);
+            request.setSSECustomerKey(sseCustomerKey);
         }
 
         offset += partSize;
         remainingBytes -= partSize;
 
-        req.setLastPart(isLastPart);
+        request.setLastPart(isLastPart);
 
-        req.withGeneralProgressListener(origReq.getGeneralProgressListener())
-           .withRequestMetricCollector(origReq.getRequestMetricCollector())
-        ;
-        req.getRequestClientOptions().setReadLimit(origReq.getReadLimit());
-        return req;
+        request.withGeneralProgressListener(origReq.getGeneralProgressListener())
+               .withRequestMetricCollector(origReq.getRequestMetricCollector());
+        request.getRequestClientOptions().setReadLimit(origReq.getReadLimit());
+        return request;
     }
 
     public int getTotalNumberOfParts() {

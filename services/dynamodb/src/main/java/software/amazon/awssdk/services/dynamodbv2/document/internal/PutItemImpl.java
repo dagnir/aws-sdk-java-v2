@@ -66,7 +66,7 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
     private PutItemOutcome doPutItem(PutItemSpec spec) {
         // set the table name
         String tableName = getTable().getTableName();
-        PutItemRequest req = spec.getRequest().withTableName(tableName);
+        PutItemRequest request = spec.getRequest().withTableName(tableName);
         // set up the item
         Item item = spec.getItem();
         final Map<String, AttributeValue> attributes = InternalUtils.toAttributeValues(item);
@@ -77,12 +77,12 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
         final Map<String, AttributeValue> attrValMap =
                 InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up the request
-        req.withItem(attributes)
-           .withExpected(expectedMap)
-           .withExpressionAttributeNames(spec.getNameMap())
-           .withExpressionAttributeValues(attrValMap)
+        request.withItem(attributes)
+               .withExpected(expectedMap)
+               .withExpressionAttributeNames(spec.getNameMap())
+               .withExpressionAttributeValues(attrValMap)
         ;
-        PutItemResult result = getClient().putItem(req);
+        PutItemResult result = getClient().putItem(request);
         return new PutItemOutcome(result);
     }
 }

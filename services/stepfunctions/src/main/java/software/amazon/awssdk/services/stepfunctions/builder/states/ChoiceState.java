@@ -55,6 +55,13 @@ public final class ChoiceState implements State {
     }
 
     /**
+     * @return Builder instance to construct a {@link ChoiceState}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Type identifier of {@link ChoiceState}.
      */
     @Override
@@ -113,13 +120,6 @@ public final class ChoiceState implements State {
     }
 
     /**
-     * @return Builder instance to construct a {@link ChoiceState}.
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder for a {@link ChoiceState}.
      */
     public static final class Builder implements State.Builder {
@@ -169,8 +169,7 @@ public final class ChoiceState implements State {
          * REQUIRED. Adds a new {@link Choice} rule to the {@link ChoiceState}. A {@link ChoiceState} must contain at least one
          * choice rule.
          *
-         * @param choiceBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Choice.Builder}. Note that
-         *                      the {@link
+         * @param choiceBuilder Instance of {@link Choice.Builder}. Note that the {@link
          *                      Choice} object is not built until the {@link ChoiceState} is built so any modifications on the
          *                      state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -184,8 +183,7 @@ public final class ChoiceState implements State {
          * REQUIRED. Adds the {@link Choice} rules to the {@link ChoiceState}. A {@link ChoiceState} must contain at least one
          * choice rule.
          *
-         * @param choiceBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Choice.Builder}. Note
-         *                       that the {@link
+         * @param choiceBuilders Instances of {@link Choice.Builder}. Note that the {@link
          *                       Choice} object is not built until the {@link ChoiceState} is built so any modifications on the
          *                       state builder will be reflected in this object.
          * @return This object for method chaining.

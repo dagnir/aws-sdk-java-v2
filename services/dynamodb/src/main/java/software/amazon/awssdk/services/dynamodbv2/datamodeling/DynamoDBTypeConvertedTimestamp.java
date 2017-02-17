@@ -51,7 +51,7 @@ import org.joda.time.format.DateTimeFormatter;
 @DynamoDBTypeConverted(converter = DynamoDBTypeConvertedTimestamp.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBTypeConvertedTimestamp {
 
     /**

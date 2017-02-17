@@ -68,7 +68,9 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
     @Test
     public void testPipelineOperations() throws InterruptedException {
         // Create a pipeline.
-        CreatePipelineResult createPipelineResult = edp.createPipeline(new CreatePipelineRequest().withName(PIPELINE_NAME).withUniqueId(PIPELINE_ID).withDescription(PIPELINE_DESCRIPTION));
+        CreatePipelineResult createPipelineResult = edp.createPipeline(
+                new CreatePipelineRequest().withName(PIPELINE_NAME).withUniqueId(PIPELINE_ID)
+                                           .withDescription(PIPELINE_DESCRIPTION));
         pipelineId = createPipelineResult.getPipelineId();
         assertNotNull(pipelineId);
 
@@ -82,8 +84,9 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
         field.setStringValue(FIELD_VALUE);
         pipelineObject.setFields(Arrays.asList(field));
 
-        ValidatePipelineDefinitionResult validatePipelineDefinitionResult = edp.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
-                                                                                                                                                  .withPipelineObjects(pipelineObject));
+        ValidatePipelineDefinitionResult validatePipelineDefinitionResult =
+                edp.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
+                                                                                      .withPipelineObjects(pipelineObject));
         assertTrue(validatePipelineDefinitionResult.getErrored());
         assertNotNull(validatePipelineDefinitionResult.getValidationErrors());
         assertTrue(validatePipelineDefinitionResult.getValidationErrors().size() > 0);
@@ -101,8 +104,9 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
         pipelineObject.setFields(Arrays.asList(field));
 
         // Validate pipeline definition.
-        validatePipelineDefinitionResult = edp.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
-                                                                                                                 .withPipelineObjects(pipelineObject));
+        validatePipelineDefinitionResult =
+                edp.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
+                                                                                      .withPipelineObjects(pipelineObject));
         assertFalse(validatePipelineDefinitionResult.getErrored());
         assertNotNull(validatePipelineDefinitionResult.getValidationErrors());
         assertEquals(0, validatePipelineDefinitionResult.getValidationErrors().size());
@@ -110,8 +114,9 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(0, validatePipelineDefinitionResult.getValidationWarnings().size());
 
         // Put pipeline definition.
-        PutPipelineDefinitionResult putPipelineDefinitionResult = edp.putPipelineDefinition(new PutPipelineDefinitionRequest().withPipelineId(pipelineId)
-                                                                                                                              .withPipelineObjects(pipelineObject));
+        PutPipelineDefinitionResult putPipelineDefinitionResult =
+                edp.putPipelineDefinition(new PutPipelineDefinitionRequest().withPipelineId(pipelineId)
+                                                                            .withPipelineObjects(pipelineObject));
         assertFalse(putPipelineDefinitionResult.getErrored());
         assertNotNull(putPipelineDefinitionResult.getValidationErrors());
         assertEquals(0, putPipelineDefinitionResult.getValidationErrors().size());
@@ -119,15 +124,18 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(0, putPipelineDefinitionResult.getValidationWarnings().size());
 
         // Get pipeline definition.
-        GetPipelineDefinitionResult getPipelineDefinitionResult = edp.getPipelineDefinition(new GetPipelineDefinitionRequest().withPipelineId(pipelineId));
+        GetPipelineDefinitionResult getPipelineDefinitionResult =
+                edp.getPipelineDefinition(new GetPipelineDefinitionRequest().withPipelineId(pipelineId));
         assertEquals(1, getPipelineDefinitionResult.getPipelineObjects().size());
         assertEquals(OBJECT_ID, getPipelineDefinitionResult.getPipelineObjects().get(0).getId());
         assertEquals(OBJECT_NAME, getPipelineDefinitionResult.getPipelineObjects().get(0).getName());
         assertEquals(1, getPipelineDefinitionResult.getPipelineObjects().get(0).getFields().size());
-        assertTrue(getPipelineDefinitionResult.getPipelineObjects().get(0).getFields().contains(new Field().withKey(VALID_KEY).withStringValue(FIELD_VALUE)));
+        assertTrue(getPipelineDefinitionResult.getPipelineObjects().get(0).getFields()
+                                              .contains(new Field().withKey(VALID_KEY).withStringValue(FIELD_VALUE)));
 
         // Activate a pipeline.
-        ActivatePipelineResult activatePipelineResult = edp.activatePipeline(new ActivatePipelineRequest().withPipelineId(pipelineId));
+        ActivatePipelineResult activatePipelineResult =
+                edp.activatePipeline(new ActivatePipelineRequest().withPipelineId(pipelineId));
         assertNotNull(activatePipelineResult);
 
         // List pipeline.
@@ -139,23 +147,30 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
         Thread.sleep(1000 * 5);
 
         // Describe objects.
-        DescribeObjectsResult describeObjectsResult = edp.describeObjects(new DescribeObjectsRequest().withPipelineId(pipelineId).withObjectIds(OBJECT_ID));
+        DescribeObjectsResult describeObjectsResult =
+                edp.describeObjects(new DescribeObjectsRequest().withPipelineId(pipelineId).withObjectIds(OBJECT_ID));
         assertEquals(1, describeObjectsResult.getPipelineObjects().size());
         assertEquals(OBJECT_ID, describeObjectsResult.getPipelineObjects().get(0).getId());
         assertEquals(OBJECT_NAME, describeObjectsResult.getPipelineObjects().get(0).getName());
-        assertTrue(describeObjectsResult.getPipelineObjects().get(0).getFields().contains(new Field().withKey(VALID_KEY).withStringValue(FIELD_VALUE)));
-        assertTrue(describeObjectsResult.getPipelineObjects().get(0).getFields().contains(new Field().withKey("@pipelineId").withStringValue(pipelineId)));
+        assertTrue(describeObjectsResult.getPipelineObjects().get(0).getFields()
+                                        .contains(new Field().withKey(VALID_KEY).withStringValue(FIELD_VALUE)));
+        assertTrue(describeObjectsResult.getPipelineObjects().get(0).getFields()
+                                        .contains(new Field().withKey("@pipelineId").withStringValue(pipelineId)));
 
         // Describe a pipeline.
-        DescribePipelinesResult describepipelinesResult = edp.describePipelines(new DescribePipelinesRequest().withPipelineIds(pipelineId));
+        DescribePipelinesResult describepipelinesResult =
+                edp.describePipelines(new DescribePipelinesRequest().withPipelineIds(pipelineId));
         assertEquals(1, describepipelinesResult.getPipelineDescriptionList().size());
         assertEquals(PIPELINE_NAME, describepipelinesResult.getPipelineDescriptionList().get(0).getName());
         assertEquals(pipelineId, describepipelinesResult.getPipelineDescriptionList().get(0).getPipelineId());
         assertEquals(PIPELINE_DESCRIPTION, describepipelinesResult.getPipelineDescriptionList().get(0).getDescription());
         assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields().size() > 0);
-        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields().contains(new Field().withKey("name").withStringValue(PIPELINE_NAME)));
-        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields().contains(new Field().withKey("@id").withStringValue(pipelineId)));
-        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields().contains(new Field().withKey("uniqueId").withStringValue(PIPELINE_ID)));
+        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields()
+                                          .contains(new Field().withKey("name").withStringValue(PIPELINE_NAME)));
+        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields()
+                                          .contains(new Field().withKey("@id").withStringValue(pipelineId)));
+        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields()
+                                          .contains(new Field().withKey("uniqueId").withStringValue(PIPELINE_ID)));
 
         // Delete a pipeline.
         edp.deletePipeline(new DeletePipelineRequest().withPipelineId(pipelineId));
@@ -166,7 +181,7 @@ public class ElasticDatePipelineIntegrationTest extends IntegrationTestBase {
                 fail();
             }
         } catch (AmazonServiceException e) {
-
+            // Ignored or expected.
         }
     }
 }

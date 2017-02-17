@@ -21,52 +21,45 @@ import org.junit.Test;
 public class BucketNameUtilsTest {
 
     @Test
-    public void bucketnameLessThan3Chars_NotDNSCompatible() {
+    public void bucketnameLessThan3Chars_NotDnsCompatible() {
         Assert.assertFalse(BucketNameUtils.isValidV2BucketName("ab"));
     }
 
     @Test
-    public void bucketnameGreaterThan63Chars_NotDNSCompatible() {
-        Assert.assertFalse(BucketNameUtils.isValidV2BucketName
-                ("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrst"));
+    public void bucketnameGreaterThan63Chars_NotDnsCompatible() {
+        Assert.assertFalse(BucketNameUtils.isValidV2BucketName("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrst" +
+                                                               "uvwxyzabcdefghijklmnopqrst"));
     }
 
     @Test
     public void bucketNameWithMultipleLabelsSeparatedBySingleDot_validV2BucketName() {
-        Assert.assertTrue(BucketNameUtils.isValidV2BucketName
-                ("abc.def.ghi"));
+        Assert.assertTrue(BucketNameUtils.isValidV2BucketName("abc.def.ghi"));
     }
 
     @Test
     public void bucketNameWithMultipleLabelsSeparatedByMoreThanOneDot_notValidV2BucketName() {
-        Assert.assertFalse(BucketNameUtils.isValidV2BucketName
-                ("abc..def.ghi"));
+        Assert.assertFalse(BucketNameUtils.isValidV2BucketName("abc..def.ghi"));
     }
 
     @Test
     public void bucketNameWithMultipleLabelsSeparatedBySingleDot_labelsStartWithUppercase_notValidV2BucketName() {
-        Assert.assertFalse(BucketNameUtils.isValidV2BucketName
-                ("abc.Def.ghi"));
+        Assert.assertFalse(BucketNameUtils.isValidV2BucketName("abc.Def.ghi"));
     }
 
     @Test
     public void bucketNameWithMultipleLabelsSeparatedBySingleDot_labelsEndWithUppercase_notValidV2BucketName() {
-        Assert.assertFalse(BucketNameUtils.isValidV2BucketName
-                ("abc.deF.ghi"));
+        Assert.assertFalse(BucketNameUtils.isValidV2BucketName("abc.deF.ghi"));
     }
 
     @Test
     public void bucketNameWithMultipleLabelsSeparatedBySingleDot_labelsWithNumbers_ValidV2BucketName() {
-        Assert.assertTrue(BucketNameUtils.isValidV2BucketName
-                ("abc.de1fg.ghi"));
-        Assert.assertTrue(BucketNameUtils.isValidV2BucketName
-                ("abc.1def.ghi"));
-        Assert.assertTrue(BucketNameUtils.isValidV2BucketName
-                ("abc.def12.ghi"));
+        Assert.assertTrue(BucketNameUtils.isValidV2BucketName("abc.de1fg.ghi"));
+        Assert.assertTrue(BucketNameUtils.isValidV2BucketName("abc.1def.ghi"));
+        Assert.assertTrue(BucketNameUtils.isValidV2BucketName("abc.def12.ghi"));
     }
 
     @Test
-    public void bucketnameStartWithUppercaseLetters_NotDNSCompatible() {
+    public void bucketnameStartWithUppercaseLetters_NotDnsCompatible() {
         Assert.assertFalse(BucketNameUtils.isValidV2BucketName("MyAwsbucket"));
     }
 
@@ -102,7 +95,7 @@ public class BucketNameUtilsTest {
     }
 
     @Test
-    public void bucketNameContainsIPAddress_notValidV2Bucket() {
+    public void bucketNameContainsIpAddress_notValidV2Bucket() {
         Assert.assertFalse(BucketNameUtils.isValidV2BucketName("192.168.1.1"));
     }
 }

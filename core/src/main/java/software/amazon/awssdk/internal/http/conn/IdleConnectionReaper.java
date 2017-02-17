@@ -118,7 +118,7 @@ public final class IdleConnectionReaper extends Thread {
      * and shutting down the reaper if there is zero connection manager left.
      *
      * @return true if the connection manager has been successfully removed;
-     * false otherwise.
+     *     false otherwise.
      */
     public static boolean removeConnectionManager(HttpClientConnectionManager connectionManager) {
         boolean wasRemoved = connectionManagers.remove(connectionManager) != null;

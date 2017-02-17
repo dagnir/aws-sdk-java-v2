@@ -1,24 +1,38 @@
 /*
- * Copyright 2011-2017 Amazon Technologies, Inc.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- *    http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
- * OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and
- * limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package software.amazon.awssdk.services.rds;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.AfterClass;
+import org.junit.Test;
+import software.amazon.awssdk.services.rds.model.CreateOptionGroupRequest;
+import software.amazon.awssdk.services.rds.model.DBSecurityGroup;
+import software.amazon.awssdk.services.rds.model.DeleteOptionGroupRequest;
+import software.amazon.awssdk.services.rds.model.DescribeOptionGroupOptionsRequest;
+import software.amazon.awssdk.services.rds.model.DescribeOptionGroupsRequest;
+import software.amazon.awssdk.services.rds.model.ModifyOptionGroupRequest;
+import software.amazon.awssdk.services.rds.model.Option;
+import software.amazon.awssdk.services.rds.model.OptionConfiguration;
+import software.amazon.awssdk.services.rds.model.OptionGroup;
+import software.amazon.awssdk.services.rds.model.OptionGroupOption;
 
 /**
  * Integration tests for RDS Options

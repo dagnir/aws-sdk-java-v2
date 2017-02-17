@@ -1438,7 +1438,8 @@ public final class ConversionSchemas {
         private final boolean customSchema;
 
         ItemConverterRuleFactory(DynamoDBMapperConfig config, S3Link.Factory s3Links, RuleFactory<V> typeConverters) {
-            final ConversionSchema.Dependencies depends = new ConversionSchema.Dependencies().with(S3ClientCache.class, s3Links.getS3ClientCache());
+            final ConversionSchema.Dependencies depends =
+                    new ConversionSchema.Dependencies().with(S3ClientCache.class, s3Links.getS3ClientCache());
             final ConversionSchema schema = config.getConversionSchema();
 
             this.customSchema = (schema != V1 && schema != V2_COMPATIBLE && schema != V2);
@@ -1477,6 +1478,7 @@ public final class ConversionSchemas {
                 try {
                     return converter.getFieldModel(type.getter()).attributeType();
                 } catch (final DynamoDBMappingException no) {
+                    // Ignored or expected.
                 }
                 return DynamoDBAttributeType.NULL;
             }

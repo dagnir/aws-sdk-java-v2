@@ -54,12 +54,12 @@ import software.amazon.awssdk.util.json.Jackson;
  */
 public class S3CryptoKMSPerRequestIntegrationTest extends S3IntegrationTestBase {
 
-    /** Length of the random temp file to upload */
+    /** Length of the random temp file to upload. */
     private static final int RANDOM_OBJECT_DATA_LENGTH = 32 * 1024;
     private static String nonDefaultKmsKeyId;
-    /** Name of the test bucket these tests will create, test, delete, etc */
+    /** Name of the test bucket these tests will create, test, delete, etc. */
     private final String expectedBucketName = tempBucketName(getClass());
-    /** Name of the file that will be temporarily generated on disk, and then stored in S3 */
+    /** Name of the file that will be temporarily generated on disk, and then stored in S3. */
     private final String expectedObjectName = "integ-test-file-" + new Date().getTime();
     /** The temporary file to be uploaded, and the temporary file to be retrieved. */
     private File temporaryFile;

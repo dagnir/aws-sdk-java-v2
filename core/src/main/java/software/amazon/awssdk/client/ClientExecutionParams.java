@@ -26,44 +26,44 @@ import software.amazon.awssdk.runtime.transform.Marshaller;
 /**
  * Encapsulates parameters needed for a particular API call. Captures input and output pojo types.
  *
- * @param <Input>  Input POJO type.
- * @param <Output> Output POJO type.
+ * @param <InputT>  Input POJO type.
+ * @param <OutputT> Output POJO type.
  */
 @SdkProtectedApi
 @NotThreadSafe
-public class ClientExecutionParams<Input, Output> {
+public class ClientExecutionParams<InputT, OutputT> {
 
-    private Input input;
-    private Marshaller<Request<Input>, Input> marshaller;
-    private HttpResponseHandler<Output> responseHandler;
+    private InputT input;
+    private Marshaller<Request<InputT>, InputT> marshaller;
+    private HttpResponseHandler<OutputT> responseHandler;
     private HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
     private RequestConfig requestConfig;
 
-    public Marshaller<Request<Input>, Input> getMarshaller() {
+    public Marshaller<Request<InputT>, InputT> getMarshaller() {
         return marshaller;
     }
 
-    public ClientExecutionParams<Input, Output> withMarshaller(
-            Marshaller<Request<Input>, Input> marshaller) {
+    public ClientExecutionParams<InputT, OutputT> withMarshaller(
+            Marshaller<Request<InputT>, InputT> marshaller) {
         this.marshaller = marshaller;
         return this;
     }
 
-    public Input getInput() {
+    public InputT getInput() {
         return input;
     }
 
-    public ClientExecutionParams<Input, Output> withInput(Input input) {
+    public ClientExecutionParams<InputT, OutputT> withInput(InputT input) {
         this.input = input;
         return this;
     }
 
-    public HttpResponseHandler<Output> getResponseHandler() {
+    public HttpResponseHandler<OutputT> getResponseHandler() {
         return responseHandler;
     }
 
-    public ClientExecutionParams<Input, Output> withResponseHandler(
-            HttpResponseHandler<Output> responseHandler) {
+    public ClientExecutionParams<InputT, OutputT> withResponseHandler(
+            HttpResponseHandler<OutputT> responseHandler) {
         this.responseHandler = responseHandler;
         return this;
     }
@@ -72,7 +72,7 @@ public class ClientExecutionParams<Input, Output> {
         return errorResponseHandler;
     }
 
-    public ClientExecutionParams<Input, Output> withErrorResponseHandler(
+    public ClientExecutionParams<InputT, OutputT> withErrorResponseHandler(
             HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
         this.errorResponseHandler = errorResponseHandler;
         return this;
@@ -82,7 +82,7 @@ public class ClientExecutionParams<Input, Output> {
         return requestConfig;
     }
 
-    public ClientExecutionParams<Input, Output> withRequestConfig(RequestConfig requestConfig) {
+    public ClientExecutionParams<InputT, OutputT> withRequestConfig(RequestConfig requestConfig) {
         this.requestConfig = requestConfig;
         return this;
     }

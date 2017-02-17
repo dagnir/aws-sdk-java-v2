@@ -63,11 +63,11 @@ public class CryptoRuntime {
     }
 
     static boolean isRsaKeyWrapAvailable() {
-        return RsaEcbOaepWithSHA256AndMGF1Padding.isAvailable;
+        return RsaEcbOaepWithSha256AndMgf1Padding.isAvailable;
     }
 
     private static void recheckRsaKeyWrapAvailablility() {
-        RsaEcbOaepWithSHA256AndMGF1Padding.recheck();
+        RsaEcbOaepWithSha256AndMgf1Padding.recheck();
     }
 
     private static final class AesGcm {
@@ -89,7 +89,7 @@ public class CryptoRuntime {
         }
     }
 
-    private static final class RsaEcbOaepWithSHA256AndMGF1Padding {
+    private static final class RsaEcbOaepWithSha256AndMgf1Padding {
         static volatile boolean isAvailable = check();
 
         static boolean recheck() {

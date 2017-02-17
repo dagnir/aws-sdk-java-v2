@@ -510,13 +510,13 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * table every 5 seconds.
      *
      * @return the table description if the table has become active; or null
-     * if the table has been deleted.
+     *     if the table has been deleted.
      *
      * @deprecated If this method is called immediately after
-     * {@link AmazonDynamoDB#createTable(CreateTableRequest)} or
-     * {@link AmazonDynamoDB#deleteTable(DeleteTableRequest)} operation,
-     * the result might be incorrect as all {@link software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB}
-     * operations are eventually consistent and might have a few seconds delay before the status is changed.
+     *     {@link AmazonDynamoDB#createTable(CreateTableRequest)} or
+     *     {@link AmazonDynamoDB#deleteTable(DeleteTableRequest)} operation,
+     *     the result might be incorrect as all {@link software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB}
+     *     operations are eventually consistent and might have a few seconds delay before the status is changed.
      */
     @Deprecated
     public TableDescription waitForActiveOrDelete() throws InterruptedException {
@@ -531,6 +531,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                 }
             }
         } catch (ResourceNotFoundException deleted) {
+            // Ignored or expected.
         }
         return null;
     }
@@ -545,10 +546,10 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      *         become active; or null if the table has been deleted.
      *
      * @deprecated If this method is called immediately after
-     * {@link AmazonDynamoDB#createTable(CreateTableRequest)} or
-     * {@link AmazonDynamoDB#deleteTable(DeleteTableRequest)} operation,
-     * the result might be incorrect as all {@link software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB}
-     * operations are eventually consistent and might have a few seconds delay before the status is changed.
+     *     {@link AmazonDynamoDB#createTable(CreateTableRequest)} or
+     *     {@link AmazonDynamoDB#deleteTable(DeleteTableRequest)} operation,
+     *     the result might be incorrect as all {@link software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB}
+     *     operations are eventually consistent and might have a few seconds delay before the status is changed.
      */
     @Deprecated
     public TableDescription waitForAllActiveOrDelete() throws InterruptedException {
@@ -576,6 +577,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                 continue;
             }
         } catch (ResourceNotFoundException deleted) {
+            // Ignored or expected.
         }
         return null;
     }

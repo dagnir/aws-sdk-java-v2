@@ -33,7 +33,7 @@ import java.util.concurrent.Future;
 import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.AttributeDoesNotExistException;
 import software.amazon.awssdk.services.simpledb.model.BatchDeleteAttributesRequest;
@@ -101,6 +101,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         try {
             deleteDomain(domainName);
         } catch (NoSuchDomainException e) {
+            // Ignored or expected.
         }
     }
 
@@ -152,11 +153,12 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         sdb.listDomains();
 
         ListDomainsRequest listDomainsRequest = new ListDomainsRequest();
-        listDomainsRequest.setRequestCredentials(new BasicAWSCredentials("foo", "bar"));
+        listDomainsRequest.setRequestCredentials(new BasicAwsCredentials("foo", "bar"));
         try {
             sdb.listDomains(listDomainsRequest);
             fail("Expected an authentication exception from bogus request credentials.");
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
@@ -263,6 +265,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         try {
             Thread.sleep(1000 * 5);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         assertTrue(doesDomainExist(domainName));
     }
@@ -435,7 +438,8 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
     private void gotestDeleteAttributes() {
         List<String> attributeNames = Arrays.asList(new String[] {
                 ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(0)).getName(),
-                ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()});
+                ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()
+        });
         List<Attribute> attributeList = new ArrayList<Attribute>();
         for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {
             String attributeName = (String) iterator.next();
@@ -455,6 +459,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         try {
             Thread.sleep(5 * 1000);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         assertFalse(doAttributesExistForItem(sdb, FOO_ITEM.getName(), domainName, attributeNames));

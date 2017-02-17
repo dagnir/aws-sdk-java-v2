@@ -34,19 +34,19 @@ public class GlacierJobParameters implements Serializable {
     /**
      * Sets Glacier retrieval tier at which the restore will be processed.
      *
-     * @param tier New tier enum value.
+     * @param tier New tier value
      */
-    public void setTier(Tier tier) {
-        setTier(tier == null ? null : tier.toString());
+    public void setTier(String tier) {
+        this.tier = tier;
     }
 
     /**
      * Sets Glacier retrieval tier at which the restore will be processed.
      *
-     * @param tier New tier value
+     * @param tier New tier enum value.
      */
-    public void setTier(String tier) {
-        this.tier = tier;
+    public void setTier(Tier tier) {
+        setTier(tier == null ? null : tier.toString());
     }
 
     /**

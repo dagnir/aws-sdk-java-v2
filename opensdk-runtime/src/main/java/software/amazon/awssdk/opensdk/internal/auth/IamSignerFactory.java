@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.opensdk.internal.auth;
 
-import software.amazon.awssdk.auth.AWS4Signer;
+import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.Signer;
 
 public class IamSignerFactory {
@@ -26,7 +26,7 @@ public class IamSignerFactory {
     }
 
     public Signer createSigner() {
-        final AWS4Signer signer = new AWS4Signer();
+        final Aws4Signer signer = new Aws4Signer();
         signer.setRegionName(region);
         // API Gateway always has the same signing name
         signer.setServiceName("execute-api");

@@ -126,6 +126,7 @@ public class TransferManagerTestBase extends S3IntegrationTestBase {
         try {
             deleteBucketAndAllContents(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         tm.shutdownNow(false);
 

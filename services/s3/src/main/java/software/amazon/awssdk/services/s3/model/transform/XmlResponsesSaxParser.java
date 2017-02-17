@@ -59,11 +59,11 @@ import software.amazon.awssdk.services.s3.model.BucketReplicationConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketTaggingConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketWebsiteConfiguration;
-import software.amazon.awssdk.services.s3.model.CORSRule;
-import software.amazon.awssdk.services.s3.model.CORSRule.AllowedMethods;
 import software.amazon.awssdk.services.s3.model.CanonicalGrantee;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadResult;
 import software.amazon.awssdk.services.s3.model.CopyObjectResult;
+import software.amazon.awssdk.services.s3.model.CorsRule;
+import software.amazon.awssdk.services.s3.model.CorsRule.AllowedMethods;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResult.DeletedObject;
 import software.amazon.awssdk.services.s3.model.EmailAddressGrantee;
 import software.amazon.awssdk.services.s3.model.GetBucketAnalyticsConfigurationResult;
@@ -142,7 +142,6 @@ public class XmlResponsesSaxParser {
     /**
      * Constructs the XML SAX parser.
      *
-     * @throws SdkClientException
      */
     public XmlResponsesSaxParser() throws SdkClientException {
         // Ensure we can load the XML Reader.
@@ -347,7 +346,6 @@ public class XmlResponsesSaxParser {
      *            XML data input stream.
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
-     * @throws SdkClientException
      */
     public ListBucketHandler parseListBucketObjectsResponse(InputStream inputStream, final boolean shouldSDKDecodeResponse)
             throws IOException {
@@ -364,7 +362,6 @@ public class XmlResponsesSaxParser {
      *            XML data input stream.
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
-     * @throws SdkClientException
      */
     public ListObjectsV2Handler parseListObjectsV2Response(InputStream inputStream, final boolean shouldSDKDecodeResponse)
             throws IOException {
@@ -381,7 +378,6 @@ public class XmlResponsesSaxParser {
      *            XML data input stream.
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
-     * @throws SdkClientException
      */
     public ListVersionsHandler parseListVersionsResponse(InputStream inputStream, final boolean shouldSDKDecodeResponse)
             throws IOException {
@@ -397,7 +393,6 @@ public class XmlResponsesSaxParser {
      *            XML data input stream.
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
-     * @throws SdkClientException
      */
     public ListAllMyBucketsHandler parseListMyBucketsResponse(InputStream inputStream)
             throws IOException {
@@ -415,7 +410,6 @@ public class XmlResponsesSaxParser {
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
      *
-     * @throws SdkClientException
      */
     public AccessControlListHandler parseAccessControlListResponse(InputStream inputStream)
             throws IOException {
@@ -433,7 +427,6 @@ public class XmlResponsesSaxParser {
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
      *
-     * @throws SdkClientException
      */
     public BucketLoggingConfigurationHandler parseLoggingStatusResponse(InputStream inputStream)
             throws IOException {
@@ -593,12 +586,10 @@ public class XmlResponsesSaxParser {
     // ////////////
 
     /**
-     * @param inputStream
      *
      * @return true if the bucket's is configured as Requester Pays, false if it
      *         is configured as Owner pays.
      *
-     * @throws SdkClientException
      */
     public RequestPaymentConfigurationHandler parseRequestPaymentConfigurationResponse(InputStream inputStream)
             throws IOException {
@@ -685,23 +676,19 @@ public class XmlResponsesSaxParser {
                     }
 
                 } else if (name.equals("Prefix")) {
-                    objectListing.setPrefix(decodeIfSpecified
-                                                    (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    objectListing.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
 
                 } else if (name.equals("Marker")) {
-                    objectListing.setMarker(decodeIfSpecified
-                                                    (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    objectListing.setMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
 
                 } else if (name.equals("NextMarker")) {
-                    objectListing.setNextMarker(decodeIfSpecified
-                                                        (getText(), shouldSDKDecodeResponse));
+                    objectListing.setNextMarker(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
 
                 } else if (name.equals("MaxKeys")) {
                     objectListing.setMaxKeys(parseInt(getText()));
 
                 } else if (name.equals("Delimiter")) {
-                    objectListing.setDelimiter(decodeIfSpecified
-                                                       (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    objectListing.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
 
                 } else if (name.equals("EncodingType")) {
                     objectListing.setEncodingType(shouldSDKDecodeResponse ?
@@ -727,8 +714,7 @@ public class XmlResponsesSaxParser {
             } else if (in("ListBucketResult", "Contents")) {
                 if (name.equals("Key")) {
                     lastKey = getText();
-                    currentObject.setKey(decodeIfSpecified
-                                                 (lastKey, shouldSDKDecodeResponse));
+                    currentObject.setKey(decodeIfSpecified(lastKey, shouldSDKDecodeResponse));
                 } else if (name.equals("LastModified")) {
                     currentObject.setLastModified(
                             ServiceUtils.parseIso8601Date(getText()));
@@ -756,8 +742,7 @@ public class XmlResponsesSaxParser {
                 }
             } else if (in("ListBucketResult", "CommonPrefixes")) {
                 if (name.equals("Prefix")) {
-                    objectListing.getCommonPrefixes().add
-                            (decodeIfSpecified(getText(), shouldSDKDecodeResponse));
+                    objectListing.getCommonPrefixes().add(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
                 }
             }
         }
@@ -837,8 +822,7 @@ public class XmlResponsesSaxParser {
                     }
 
                 } else if (name.equals("Prefix")) {
-                    result.setPrefix(decodeIfSpecified
-                                             (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    result.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
 
                 } else if (name.equals("MaxKeys")) {
                     result.setMaxKeys(parseInt(getText()));
@@ -850,15 +834,13 @@ public class XmlResponsesSaxParser {
                     result.setContinuationToken(getText());
 
                 } else if (name.equals("StartAfter")) {
-                    result.setStartAfter(decodeIfSpecified
-                                                 (getText(), shouldSDKDecodeResponse));
+                    result.setStartAfter(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
 
                 } else if (name.equals("KeyCount")) {
                     result.setKeyCount(parseInt(getText()));
 
                 } else if (name.equals("Delimiter")) {
-                    result.setDelimiter(decodeIfSpecified
-                                                (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    result.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
 
                 } else if (name.equals("EncodingType")) {
                     result.setEncodingType(checkForEmptyString(getText()));
@@ -883,8 +865,7 @@ public class XmlResponsesSaxParser {
             } else if (in("ListBucketResult", "Contents")) {
                 if (name.equals("Key")) {
                     lastKey = getText();
-                    currentObject.setKey(decodeIfSpecified
-                                                 (lastKey, shouldSDKDecodeResponse));
+                    currentObject.setKey(decodeIfSpecified(lastKey, shouldSDKDecodeResponse));
                 } else if (name.equals("LastModified")) {
                     currentObject.setLastModified(
                             ServiceUtils.parseIso8601Date(getText()));
@@ -912,8 +893,7 @@ public class XmlResponsesSaxParser {
                 }
             } else if (in("ListBucketResult", "CommonPrefixes")) {
                 if (name.equals("Prefix")) {
-                    result.getCommonPrefixes().add
-                            (decodeIfSpecified(getText(), shouldSDKDecodeResponse));
+                    result.getCommonPrefixes().add(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
                 }
             }
         }
@@ -983,7 +963,7 @@ public class XmlResponsesSaxParser {
                     currentBucket.setName(getText());
 
                 } else if (name.equals("CreationDate")) {
-                    Date creationDate = DateUtils.parseISO8601Date(getText());
+                    Date creationDate = DateUtils.parseIso8601Date(getText());
                     currentBucket.setCreationDate(creationDate);
                 }
             }
@@ -1096,7 +1076,7 @@ public class XmlResponsesSaxParser {
 
         /**
          * @return
-         * an object representing the bucket's LoggingStatus document.
+         *     an object representing the bucket's LoggingStatus document.
          */
         public BucketLoggingConfiguration getBucketLoggingConfiguration() {
             return bucketLoggingConfiguration;
@@ -1137,7 +1117,7 @@ public class XmlResponsesSaxParser {
 
         /**
          * @return
-         * the bucket's location.
+         *     the bucket's location.
          */
         public String getLocation() {
             return location;
@@ -1167,7 +1147,7 @@ public class XmlResponsesSaxParser {
         }
     }
 
-    public static class CopyObjectResultHandler extends AbstractSSEHandler
+    public static class CopyObjectResultHandler extends AbstractSseHandler
             implements ObjectExpirationResult, S3RequesterChargedResult, S3VersionResult {
 
         // Data items for successful copy
@@ -1379,11 +1359,9 @@ public class XmlResponsesSaxParser {
                     versionListing.setBucketName(getText());
 
                 } else if (name.equals("Prefix")) {
-                    versionListing.setPrefix(decodeIfSpecified
-                                                     (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
                 } else if (name.equals("KeyMarker")) {
-                    versionListing.setKeyMarker(decodeIfSpecified
-                                                        (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setKeyMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
                 } else if (name.equals("VersionIdMarker")) {
                     versionListing.setVersionIdMarker(checkForEmptyString(
                             getText()));
@@ -1392,15 +1370,13 @@ public class XmlResponsesSaxParser {
                     versionListing.setMaxKeys(Integer.parseInt(getText()));
 
                 } else if (name.equals("Delimiter")) {
-                    versionListing.setDelimiter(decodeIfSpecified
-                                                        (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
 
                 } else if (name.equals("EncodingType")) {
                     versionListing.setEncodingType(shouldSDKDecodeResponse ?
                                                    null : checkForEmptyString(getText()));
                 } else if (name.equals("NextKeyMarker")) {
-                    versionListing.setNextKeyMarker(decodeIfSpecified
-                                                            (checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setNextKeyMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
 
                 } else if (name.equals("NextVersionIdMarker")) {
                     versionListing.setNextVersionIdMarker(getText());
@@ -1643,7 +1619,7 @@ public class XmlResponsesSaxParser {
      *     <HostId>Uuag1LuByRx9e6j5Onimru9pO4ZVKnJ2Qz7/C1NPcfTWAtRPfTaOFg==</HostId>
      * </Error>
      */
-    public static class CompleteMultipartUploadHandler extends AbstractSSEHandler
+    public static class CompleteMultipartUploadHandler extends AbstractSseHandler
             implements ObjectExpirationResult, S3VersionResult, S3RequesterChargedResult {
         // Successful completion
         private CompleteMultipartUploadResult result;
@@ -2105,22 +2081,22 @@ public class XmlResponsesSaxParser {
      *
      * <pre>
      * <ReplicationConfiguration>
-     * 	<Rule>
-     *   	<ID>replication-rule-1-1421862858808</ID>
-     *   	<Prefix>testPrefix1</Prefix>
-     *   	<Status>Enabled</Status>
-     *   	<Destination>
-     *       	<Bucket>bucketARN</Bucket>
-     *   	</Destination>
-     *	</Rule>
-     *	<Rule>
-     *   	<ID>replication-rule-2-1421862858808</ID>
-     *   	<Prefix>testPrefix2</Prefix>
-     *   	<Status>Disabled</Status>
-     *   	<Destination>
-     *       	<Bucket>arn:aws:s3:::bucket-dest-replication-integ-test-1421862858808</Bucket>
-     *   	</Destination>
-     *	</Rule>
+     *     <Rule>
+     *       <ID>replication-rule-1-1421862858808</ID>
+     *       <Prefix>testPrefix1</Prefix>
+     *       <Status>Enabled</Status>
+     *       <Destination>
+     *           <Bucket>bucketARN</Bucket>
+     *       </Destination>
+     *    </Rule>
+     *    <Rule>
+     *       <ID>replication-rule-2-1421862858808</ID>
+     *       <Prefix>testPrefix2</Prefix>
+     *       <Status>Disabled</Status>
+     *       <Destination>
+     *           <Bucket>arn:aws:s3:::bucket-dest-replication-integ-test-1421862858808</Bucket>
+     *       </Destination>
+     *    </Rule>
      * </ReplicationConfiguration>
      * </pre>
      */
@@ -2170,7 +2146,7 @@ public class XmlResponsesSaxParser {
                     currentRuleId = null;
                     destinationConfig = null;
                 } else if (name.equals(ROLE)) {
-                    bucketReplicationConfiguration.setRoleARN(getText());
+                    bucketReplicationConfiguration.setRoleArn(getText());
                 }
             } else if (in(REPLICATION_CONFIG, RULE)) {
                 if (name.equals(ID)) {
@@ -2594,8 +2570,7 @@ public class XmlResponsesSaxParser {
                 }
             } else if (in("LifecycleConfiguration", "Rule", "AbortIncompleteMultipartUpload")) {
                 if (name.equals("DaysAfterInitiation")) {
-                    abortIncompleteMultipartUpload.setDaysAfterInitiation
-                            (Integer.parseInt(getText()));
+                    abortIncompleteMultipartUpload.setDaysAfterInitiation(Integer.parseInt(getText()));
                 }
             } else if (in("LifecycleConfiguration", "Rule", "Filter")) {
                 if (name.equals("Prefix")) {
@@ -2653,9 +2628,9 @@ public class XmlResponsesSaxParser {
     public static class BucketCrossOriginConfigurationHandler extends AbstractHandler {
 
         private final BucketCrossOriginConfiguration configuration =
-                new BucketCrossOriginConfiguration(new ArrayList<CORSRule>());
+                new BucketCrossOriginConfiguration(new ArrayList<CorsRule>());
 
-        private CORSRule currentRule;
+        private CorsRule currentRule;
         private List<AllowedMethods> allowedMethods = null;
         private List<String> allowedOrigins = null;
         private List<String> exposedHeaders = null;
@@ -2674,7 +2649,7 @@ public class XmlResponsesSaxParser {
 
             if (in("CORSConfiguration")) {
                 if (name.equals("CORSRule")) {
-                    currentRule = new CORSRule();
+                    currentRule = new CorsRule();
                 }
             } else if (in("CORSConfiguration", "CORSRule")) {
                 if (name.equals("AllowedOrigin")) {

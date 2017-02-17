@@ -39,7 +39,8 @@ public class BucketInventorySaxUnmarshallerTest {
 
     @Test
     public void getResponse_unmarshalls_properly() throws Exception {
-        InventoryConfiguration configuration = parseGetBucketInventoryConfigurationResponse(GET_RESPONSE).getInventoryConfiguration();
+        InventoryConfiguration configuration =
+                parseGetBucketInventoryConfigurationResponse(GET_RESPONSE).getInventoryConfiguration();
 
         assertEquals("inventory-id", configuration.getId());
 
@@ -55,10 +56,9 @@ public class BucketInventorySaxUnmarshallerTest {
 
         List<String> optionalFields = configuration.getOptionalFields();
         assertEquals(3, optionalFields.size());
-        assertTrue(optionalFields.containsAll(Arrays.asList(
-                InventoryOptionalField.LastModifiedDate.toString(),
-                InventoryOptionalField.StorageClass.toString(),
-                InventoryOptionalField.ReplicationStatus.toString())));
+        assertTrue(optionalFields.containsAll(
+                Arrays.asList(InventoryOptionalField.LastModifiedDate.toString(), InventoryOptionalField.StorageClass.toString(),
+                              InventoryOptionalField.ReplicationStatus.toString())));
         assertFalse(optionalFields.contains(InventoryOptionalField.Size.toString()));
 
         assertEquals(InventoryFrequency.Daily.toString(), configuration.getSchedule().getFrequency());
@@ -90,10 +90,9 @@ public class BucketInventorySaxUnmarshallerTest {
 
         List<String> optionalFields = configuration.getOptionalFields();
         assertEquals(3, optionalFields.size());
-        assertTrue(optionalFields.containsAll(Arrays.asList(
-                InventoryOptionalField.LastModifiedDate.toString(),
-                InventoryOptionalField.StorageClass.toString(),
-                InventoryOptionalField.ReplicationStatus.toString())));
+        assertTrue(optionalFields.containsAll(
+                Arrays.asList(InventoryOptionalField.LastModifiedDate.toString(), InventoryOptionalField.StorageClass.toString(),
+                              InventoryOptionalField.ReplicationStatus.toString())));
         assertFalse(optionalFields.contains(InventoryOptionalField.Size.toString()));
 
         assertEquals(InventoryFrequency.Daily.toString(), configuration.getSchedule().getFrequency());
@@ -105,21 +104,18 @@ public class BucketInventorySaxUnmarshallerTest {
     }
 
     /**
-     * @param resourceLocation
-     *            Location of resource containing XML to unmarshall
+     * @param resourceLocation Location of resource containing XML to unmarshall
      * @return Marshalled response
      */
     private GetBucketInventoryConfigurationResult parseGetBucketInventoryConfigurationResponse(String resourceLocation)
             throws Exception {
         return new XmlResponsesSaxParser()
-                .parseGetBucketInventoryConfigurationResponse(getClass().getResourceAsStream(resourceLocation))
-                .getResult();
+                .parseGetBucketInventoryConfigurationResponse(getClass().getResourceAsStream(resourceLocation)).getResult();
     }
 
     private ListBucketInventoryConfigurationsResult parseListBucketInventoryConfigurationsResponse(String resourceLocation)
             throws Exception {
         return new XmlResponsesSaxParser()
-                .parseBucketListInventoryConfigurationsResponse(getClass().getResourceAsStream(resourceLocation))
-                .getResult();
+                .parseBucketListInventoryConfigurationsResponse(getClass().getResourceAsStream(resourceLocation)).getResult();
     }
 }

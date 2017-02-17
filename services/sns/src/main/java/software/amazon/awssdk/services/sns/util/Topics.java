@@ -95,6 +95,9 @@ public class Topics {
      *            The URL uniquely identifying the Amazon SQS queue. This value
      *            is returned from Amazon SQS when creating the queue.
      *
+     * @return The subscription ARN as returned by Amazon SNS when the queue is
+     *         successfully subscribed to the topic.
+     *
      * @throws AmazonClientException
      *             If any internal errors are encountered inside the client
      *             while attempting to make the request or handle the response.
@@ -103,9 +106,6 @@ public class Topics {
      *             If an error response is returned by AmazonSNS indicating
      *             either a problem with the data in the request, or a server
      *             side issue.
-     *
-     * @return The subscription ARN as returned by Amazon SNS when the queue is
-     *         successfully subscribed to the topic.
      */
     public static String subscribeQueue(AmazonSNS sns, AmazonSQS sqs, String snsTopicArn, String sqsQueueUrl)
             throws AmazonClientException, AmazonServiceException {
@@ -166,6 +166,9 @@ public class Topics {
      * @param extendPolicy
      *            Decides behavior to overwrite the existing policy or extend it.
      *
+     * @return The subscription ARN as returned by Amazon SNS when the queue is
+     *         successfully subscribed to the topic.
+     *
      * @throws AmazonClientException
      *             If any internal errors are encountered inside the client
      *             while attempting to make the request or handle the response.
@@ -174,9 +177,6 @@ public class Topics {
      *             If an error response is returned by AmazonSNS indicating
      *             either a problem with the data in the request, or a server
      *             side issue.
-     *
-     * @return The subscription ARN as returned by Amazon SNS when the queue is
-     *         successfully subscribed to the topic.
      */
     public static String subscribeQueue(AmazonSNS sns, AmazonSQS sqs, String snsTopicArn, String sqsQueueUrl,
                                         boolean extendPolicy)

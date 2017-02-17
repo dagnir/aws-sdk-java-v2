@@ -153,7 +153,7 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFie
 @DynamoDB
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface DynamoDBTyped {
 
     /**

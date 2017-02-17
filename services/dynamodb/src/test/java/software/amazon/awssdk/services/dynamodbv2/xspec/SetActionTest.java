@@ -16,8 +16,8 @@
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import static org.junit.Assert.assertEquals;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
 
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class SetActionTest {
     // SET num1 = num1 + 20
     @Test
     public void number() {
-        SetAction setSection = N("num1").set(N("num1").plus(20));
+        SetAction setSection = n("num1").set(n("num1").plus(20));
         SubstitutionContext context = new SubstitutionContext();
         String s = setSection.asSubstituted(context);
 
@@ -41,7 +41,7 @@ public class SetActionTest {
     // SET string-attr = "value"
     @Test
     public void string() {
-        SetAction setSection = S("string-attr").set("string-value");
+        SetAction setSection = s("string-attr").set("string-value");
         SubstitutionContext context = new SubstitutionContext();
         String s = setSection.asSubstituted(context);
 

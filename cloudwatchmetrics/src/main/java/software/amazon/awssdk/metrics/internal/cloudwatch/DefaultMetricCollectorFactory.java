@@ -17,7 +17,7 @@ package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricCollector;
 import software.amazon.awssdk.regions.Region;
@@ -38,7 +38,7 @@ public class DefaultMetricCollectorFactory
      */
     @Override
     public MetricCollector getInstance() {
-        AWSCredentialsProvider provider = AwsSdkMetrics.getCredentialProvider();
+        AwsCredentialsProvider provider = AwsSdkMetrics.getCredentialProvider();
         Region region = RegionUtils.getRegion(AwsSdkMetrics.getRegionName());
         Integer qSize = AwsSdkMetrics.getMetricQueueSize();
         Long timeoutMilli = AwsSdkMetrics.getQueuePollTimeoutMilli();

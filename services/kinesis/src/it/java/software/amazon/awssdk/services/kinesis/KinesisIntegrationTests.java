@@ -1,8 +1,49 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.kinesis;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DeleteStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamResult;
+import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
+import software.amazon.awssdk.services.kinesis.model.GetRecordsResult;
+import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
+import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResult;
+import software.amazon.awssdk.services.kinesis.model.HashKeyRange;
+import software.amazon.awssdk.services.kinesis.model.InvalidArgumentException;
+import software.amazon.awssdk.services.kinesis.model.ListStreamsRequest;
+import software.amazon.awssdk.services.kinesis.model.ListStreamsResult;
+import software.amazon.awssdk.services.kinesis.model.MergeShardsRequest;
+import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
+import software.amazon.awssdk.services.kinesis.model.PutRecordResult;
+import software.amazon.awssdk.services.kinesis.model.Record;
+import software.amazon.awssdk.services.kinesis.model.ResourceNotFoundException;
+import software.amazon.awssdk.services.kinesis.model.SequenceNumberRange;
+import software.amazon.awssdk.services.kinesis.model.Shard;
+import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
+import software.amazon.awssdk.services.kinesis.model.SplitShardRequest;
+import software.amazon.awssdk.services.kinesis.model.StreamDescription;
+import software.amazon.awssdk.services.kinesis.model.StreamStatus;
 
 public class KinesisIntegrationTests extends AbstractTestCase {
 
@@ -14,6 +55,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                                  );
             Assert.fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException exception) {
+            // Ignored or expected.
         }
     }
 
@@ -25,6 +67,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                                );
             Assert.fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException exception) {
+            // Ignored or expected.
         }
     }
 
@@ -39,6 +82,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                                    );
             Assert.fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException exception) {
+            // Ignored or expected.
         }
     }
 
@@ -48,6 +92,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
             client.getRecords(new GetRecordsRequest());
             Assert.fail("Expected InvalidArgumentException");
         } catch (AmazonServiceException exception) {
+            // Ignored or expected.
         }
     }
 
@@ -60,6 +105,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                              );
             Assert.fail("Expected InvalidArgumentException");
         } catch (InvalidArgumentException exception) {
+            // Ignored or expected.
         }
 
     }

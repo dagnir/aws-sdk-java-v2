@@ -24,9 +24,9 @@ import software.amazon.awssdk.services.ecr.model.CreateRepositoryResult;
 import software.amazon.awssdk.services.ecr.model.DeleteRepositoryRequest;
 import software.amazon.awssdk.services.ecr.model.DescribeRepositoriesRequest;
 import software.amazon.awssdk.services.ecr.model.Repository;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class ECRIntegrationTest extends AWSIntegrationTestBase {
+public class ECRIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String REPO_NAME = "java-sdk-test-repo-" + System.currentTimeMillis();
     private static AmazonECR ecr;

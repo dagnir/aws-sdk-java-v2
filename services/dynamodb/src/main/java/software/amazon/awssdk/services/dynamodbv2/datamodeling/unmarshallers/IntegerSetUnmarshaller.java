@@ -28,11 +28,11 @@ public class IntegerSetUnmarshaller extends NSUnmarshaller {
     private static final IntegerSetUnmarshaller INSTANCE =
             new IntegerSetUnmarshaller();
 
-    public static IntegerSetUnmarshaller instance() {
-        return INSTANCE;
+    private IntegerSetUnmarshaller() {
     }
 
-    private IntegerSetUnmarshaller() {
+    public static IntegerSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

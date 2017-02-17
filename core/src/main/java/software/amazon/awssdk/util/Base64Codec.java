@@ -21,7 +21,7 @@ package software.amazon.awssdk.util;
  * @author Hanson Char
  */
 class Base64Codec implements Codec {
-    private static final int OFFSET_OF_a = 'a' - 26;
+    private static final int OFFSET_OF_LITTLE_A = 'a' - 26;
     private static final int OFFSET_OF_0 = '0' - 52;
     private static final int OFFSET_OF_PLUS = '+' - 62;
     private static final int OFFSET_OF_SLASH = '/' - 63;
@@ -56,7 +56,8 @@ class Base64Codec implements Codec {
         }
 
         byte[] dest = new byte[(num3bytes + 1) * 4];
-        int s = 0, d = 0;
+        int s = 0;
+        int d = 0;
 
         for (; s < src.length - remainder; s += 3, d += 4) {
             encode3bytes(src, s, dest, d);
@@ -169,8 +170,7 @@ class Base64Codec implements Codec {
     @Override
     public byte[] decode(byte[] src, final int length) {
         if (length % 4 != 0) {
-            throw new IllegalArgumentException
-                    ("Input is expected to be encoded in multiple of 4 bytes but found: " + length);
+            throw new IllegalArgumentException("Input is expected to be encoded in multiple of 4 bytes but found: " + length);
         }
 
         int pads = 0;
@@ -199,7 +199,8 @@ class Base64Codec implements Codec {
                 throw new Error("Impossible");
         }
         final byte[] dest = new byte[length / 4 * 3 - (3 - fq)];
-        int s = 0, d = 0;
+        int s = 0;
+        int d = 0;
 
         // % has a higher precedence than - than <
         for (; d < dest.length - fq % 3; s += 4, d += 3) {
@@ -237,7 +238,7 @@ class Base64Codec implements Codec {
                 } else if (i == '/') {
                     dest[i] = (byte) (i - OFFSET_OF_SLASH);
                 } else if (i >= 'a' && i <= 'z') {
-                    dest[i] = (byte) (i - OFFSET_OF_a);
+                    dest[i] = (byte) (i - OFFSET_OF_LITTLE_A);
                 } else {
                     dest[i] = -1;
                 }

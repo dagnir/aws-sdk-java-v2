@@ -23,16 +23,16 @@ import software.amazon.awssdk.SignableRequest;
  */
 public final class SignerAsRequestSigner implements RequestSigner {
     private final Signer signer;
-    private final AWSCredentialsProvider credentialsProvider;
+    private final AwsCredentialsProvider credentialsProvider;
 
     /**
      * Creates a {@link SignerAsRequestSigner}
      * @param signer
      *          the underlying {@link Signer} to use to actually sign the request
      * @param credentialsProvider
-     *          the credentialsProvider to use to pass {@link AWSCredentials} to the underlying {@link Signer}
+     *          the credentialsProvider to use to pass {@link AwsCredentials} to the underlying {@link Signer}
      */
-    public SignerAsRequestSigner(Signer signer, AWSCredentialsProvider credentialsProvider) {
+    public SignerAsRequestSigner(Signer signer, AwsCredentialsProvider credentialsProvider) {
         this.signer = signer;
         this.credentialsProvider = credentialsProvider;
     }

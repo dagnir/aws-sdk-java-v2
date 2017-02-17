@@ -28,7 +28,7 @@ import java.util.Properties;
  * property and the AWS secret key id is expected to be in the "secretKey"
  * property.
  */
-public class PropertiesCredentials implements AWSCredentials {
+public class PropertiesCredentials implements AwsCredentials {
 
     private final String accessKey;
     private final String secretAccessKey;
@@ -80,6 +80,7 @@ public class PropertiesCredentials implements AWSCredentials {
             try {
                 stream.close();
             } catch (IOException e) {
+                // Ignored or expected.
             }
         }
     }
@@ -103,6 +104,7 @@ public class PropertiesCredentials implements AWSCredentials {
             try {
                 inputStream.close();
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
 
@@ -119,14 +121,14 @@ public class PropertiesCredentials implements AWSCredentials {
     /* (non-Javadoc)
      * @see software.amazon.awssdk.auth.AWSCredentials#getAWSAccessKeyId()
      */
-    public String getAWSAccessKeyId() {
+    public String getAwsAccessKeyId() {
         return accessKey;
     }
 
     /* (non-Javadoc)
      * @see software.amazon.awssdk.auth.AWSCredentials#getAWSSecretKey()
      */
-    public String getAWSSecretKey() {
+    public String getAwsSecretKey() {
         return secretAccessKey;
     }
 

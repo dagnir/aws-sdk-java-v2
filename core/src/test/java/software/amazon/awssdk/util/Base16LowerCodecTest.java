@@ -30,24 +30,8 @@ public class Base16LowerCodecTest {
     @Test
     public void testVectorsPerRfc4648()
             throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String[] testVectors = {
-                "",
-                "f",
-                "fo",
-                "foo",
-                "foob",
-                "fooba",
-                "foobar",
-                };
-        String[] expected = {
-                "",
-                "66",
-                "666f",
-                "666f6f",
-                "666f6f62",
-                "666f6f6261",
-                "666f6f626172",
-                };
+        String[] testVectors = {"", "f", "fo", "foo", "foob", "fooba", "foobar"};
+        String[] expected = {"", "66", "666f", "666f6f", "666f6f62", "666f6f6261", "666f6f626172"};
         for (int i = 0; i < testVectors.length; i++) {
             String data = testVectors[i];
             byte[] source = data.getBytes("UTF-8");

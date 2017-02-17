@@ -93,7 +93,7 @@ public class Item {
      * given JSON string.
      *
      * @return an <code>Item</code> initialized from the given JSON document;
-     * or null if the input is null.
+     *     or null if the input is null.
      */
     public static Item fromJSON(String json) {
         if (json == null) {
@@ -209,8 +209,7 @@ public class Item {
     public short getShort(String attrName) {
         BigDecimal bd = getNumber(attrName);
         if (bd == null) {
-            throw new NumberFormatException
-                    ("value of " + attrName + " is null");
+            throw new NumberFormatException("value of " + attrName + " is null");
         }
         return bd.shortValue();
     }
@@ -231,8 +230,7 @@ public class Item {
     public int getInt(String attrName) {
         BigDecimal bd = getNumber(attrName);
         if (bd == null) {
-            throw new NumberFormatException
-                    ("value of " + attrName + " is null");
+            throw new NumberFormatException("value of " + attrName + " is null");
         }
         return bd.intValue();
     }
@@ -253,8 +251,7 @@ public class Item {
     public long getLong(String attrName) {
         BigDecimal bd = getNumber(attrName);
         if (bd == null) {
-            throw new NumberFormatException
-                    ("value of " + attrName + " is null");
+            throw new NumberFormatException("value of " + attrName + " is null");
         }
         return bd.longValue();
     }
@@ -275,8 +272,7 @@ public class Item {
     public float getFloat(String attrName) {
         BigDecimal bd = getNumber(attrName);
         if (bd == null) {
-            throw new NumberFormatException
-                    ("value of " + attrName + " is null");
+            throw new NumberFormatException("value of " + attrName + " is null");
         }
         return bd.floatValue();
     }
@@ -297,8 +293,7 @@ public class Item {
     public double getDouble(String attrName) {
         BigDecimal bd = getNumber(attrName);
         if (bd == null) {
-            throw new NumberFormatException
-                    ("value of " + attrName + " is null");
+            throw new NumberFormatException("value of " + attrName + " is null");
         }
         return bd.doubleValue();
     }

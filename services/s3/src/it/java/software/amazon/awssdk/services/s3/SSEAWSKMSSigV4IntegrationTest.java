@@ -30,9 +30,9 @@ import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.SSEAwsKeyManagementParams;
+import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParams;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
 
@@ -110,8 +110,8 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         final AmazonS3Client s3Client = new AmazonS3Client(credentials);
 
         PutObjectRequest request = new PutObjectRequest(BUCKET_NAME, KEY,
-                                                        fileToUpload).withSSEAwsKeyManagementParams(
-                new SSEAwsKeyManagementParams()).withRequestMetricCollector(
+                                                        fileToUpload).withSseAwsKeyManagementParams(
+                new SseAwsKeyManagementParams()).withRequestMetricCollector(
                 requestCountCollector);
         s3Client.putObject(request);
         assertTrue(requestCountCollector.getRequestCount() == 1);
@@ -131,8 +131,8 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         s3Client.configureRegion(Regions.US_EAST_1);
 
         PutObjectRequest request = new PutObjectRequest(BUCKET_NAME_US_WEST,
-                                                        KEY, fileToUpload).withSSEAwsKeyManagementParams(
-                new SSEAwsKeyManagementParams()).withRequestMetricCollector(
+                                                        KEY, fileToUpload).withSseAwsKeyManagementParams(
+                new SseAwsKeyManagementParams()).withRequestMetricCollector(
                 requestCountCollector);
         s3Client.putObject(request);
         assertTrue(requestCountCollector.getRequestCount() > 1);
@@ -148,8 +148,8 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         s3Client.configureRegion(Regions.US_WEST_1);
 
         PutObjectRequest request = new PutObjectRequest(BUCKET_NAME_US_WEST,
-                                                        KEY, fileToUpload).withSSEAwsKeyManagementParams(
-                new SSEAwsKeyManagementParams()).withRequestMetricCollector(
+                                                        KEY, fileToUpload).withSseAwsKeyManagementParams(
+                new SseAwsKeyManagementParams()).withRequestMetricCollector(
                 requestCountCollector);
         s3Client.putObject(request);
         assertTrue(requestCountCollector.getRequestCount() == 1);
@@ -163,7 +163,7 @@ public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
         public void collectMetrics(Request<?> request, Response<?> response) {
 
             requestCount = request.getAWSRequestMetrics().getTimingInfo()
-                                  .getCounter(AWSRequestMetrics.Field.RequestCount.name())
+                                  .getCounter(AwsRequestMetrics.Field.RequestCount.name())
                                   .intValue();
         }
 

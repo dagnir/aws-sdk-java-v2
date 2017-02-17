@@ -58,7 +58,7 @@ import org.xml.sax.SAXParseException;
  */
 public class XpathUtilsTest {
 
-    /** Test data for all tests to share */
+    /** Test data for all tests to share. */
     private static final String DOCUMENT =
             "<Foo>" +
             "    <Title>Boo</Title>" +
@@ -75,7 +75,7 @@ public class XpathUtilsTest {
             "    <NegativeByte>-99</NegativeByte>" +
             "</Foo>";
 
-    /** Test XML document with a namespace */
+    /** Test XML document with a namespace. */
     private static final String DOCUMENT_WITH_NAMESPACE =
             "<?xml version=\"1.0\"?> \n" +
             "<AllocateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\"> \n" +

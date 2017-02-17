@@ -30,7 +30,7 @@ import software.amazon.awssdk.util.Md5Utils;
 
 public class DigestValidationInputStreamTest {
 
-    private final static String INPUT_STRING = "Jason bought a house";
+    private static final String INPUT_STRING = "Jason bought a house";
 
     @Test
     public void testDigestValidationInputStream() throws NoSuchAlgorithmException, IOException {
@@ -42,7 +42,7 @@ public class DigestValidationInputStreamTest {
             StreamUtils.consumeInputStream(digestValidationInputStream);
             fail();
         } catch (AmazonClientException e) {
-
+            // Ignored or expected.
         }
         digestValidationInputStream.close();
 

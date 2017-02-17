@@ -26,7 +26,7 @@ import software.amazon.awssdk.event.ProgressListener;
  */
 public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest implements
                                                                                Cloneable, SSECustomerKeyProvider,
-                                                                               SSEAwsKeyManagementParamsProvider, S3DataSource,
+                                                                               SseAwsKeyManagementParamsProvider, S3DataSource,
                                                                                Serializable {
     /**
      * The name of an existing bucket, to which this request will upload a new
@@ -85,20 +85,20 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      */
     private String storageClass;
 
-    /** The optional redirect location about an object */
+    /** The optional redirect location about an object. */
     private String redirectLocation;
 
     /**
      * The optional customer-provided server-side encryption key to use to
      * encrypt the uploaded object.
      */
-    private SSECustomerKey sseCustomerKey;
+    private SseCustomerKey sseCustomerKey;
 
     /**
      * The optional AWS Key Management system parameters to be used to encrypt
      * the the object on the server side.
      */
-    private SSEAwsKeyManagementParams sseAwsKeyManagementParams;
+    private SseAwsKeyManagementParams sseAwsKeyManagementParams;
 
     private ObjectTagging tagging;
 
@@ -182,7 +182,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      * users must have {@link Permission#Write} permission granted.
      *
      * @return The name of an existing bucket where this request will
-     * upload a new object to.
+     *     upload a new object to.
      *
      * @see AbstractPutObjectRequest#setBucketName(String)
      * @see AbstractPutObjectRequest#withBucketName(String)
@@ -304,25 +304,6 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     /**
      * Sets the optional Amazon S3 storage class to use when storing the new
      * object. If not specified, the default standard storage class will be
-     * used when storing the object.
-     * <p>
-     * For more information on Amazon S3 storage classes and available values,
-     * see the {@link StorageClass} enumeration.
-     * </p>
-     *
-     * @param storageClass
-     *         The storage class to use when storing the new object.
-     *
-     * @see #getStorageClass()
-     * @see #setStorageClass(String)
-     */
-    public void setStorageClass(StorageClass storageClass) {
-        this.storageClass = storageClass.toString();
-    }
-
-    /**
-     * Sets the optional Amazon S3 storage class to use when storing the new
-     * object. If not specified, the default standard storage class will be
      * used when storing the new object.
      * <p>
      * For more information on Amazon S3 storage classes and available values,
@@ -339,6 +320,25 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      */
     public void setStorageClass(String storageClass) {
         this.storageClass = storageClass;
+    }
+
+    /**
+     * Sets the optional Amazon S3 storage class to use when storing the new
+     * object. If not specified, the default standard storage class will be
+     * used when storing the object.
+     * <p>
+     * For more information on Amazon S3 storage classes and available values,
+     * see the {@link StorageClass} enumeration.
+     * </p>
+     *
+     * @param storageClass
+     *         The storage class to use when storing the new object.
+     *
+     * @see #getStorageClass()
+     * @see #setStorageClass(String)
+     */
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass.toString();
     }
 
     /**
@@ -724,7 +724,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     }
 
     @Override
-    public SSECustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSSECustomerKey() {
         return sseCustomerKey;
     }
 
@@ -736,7 +736,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      *            The optional customer-provided server-side encryption key to
      *            use to encrypt the uploaded object.
      */
-    public void setSSECustomerKey(SSECustomerKey sseKey) {
+    public void setSseCustomerKey(SseCustomerKey sseKey) {
         if (sseKey != null && this.sseAwsKeyManagementParams != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
@@ -756,9 +756,8 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public <T extends AbstractPutObjectRequest> T withSSECustomerKey(
-            SSECustomerKey sseKey) {
-        setSSECustomerKey(sseKey);
+    public <T extends AbstractPutObjectRequest> T withSseCustomerKey(SseCustomerKey sseKey) {
+        setSseCustomerKey(sseKey);
         @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
@@ -835,7 +834,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      * object on server side.
      */
     @Override
-    public SSEAwsKeyManagementParams getSSEAwsKeyManagementParams() {
+    public SseAwsKeyManagementParams getSseAwsKeyManagementParams() {
         return sseAwsKeyManagementParams;
     }
 
@@ -843,7 +842,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      * Sets the AWS Key Management System parameters used to encrypt the object
      * on server side.
      */
-    public void setSSEAwsKeyManagementParams(SSEAwsKeyManagementParams params) {
+    public void setSseAwsKeyManagementParams(SseAwsKeyManagementParams params) {
         if (params != null && this.sseCustomerKey != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
@@ -857,9 +856,9 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
      *
      * @return returns the update PutObjectRequest
      */
-    public <T extends AbstractPutObjectRequest> T withSSEAwsKeyManagementParams(
-            SSEAwsKeyManagementParams sseAwsKeyManagementParams) {
-        setSSEAwsKeyManagementParams(sseAwsKeyManagementParams);
+    public <T extends AbstractPutObjectRequest>
+        T withSseAwsKeyManagementParams(SseAwsKeyManagementParams sseAwsKeyManagementParams) {
+        setSseAwsKeyManagementParams(sseAwsKeyManagementParams);
         @SuppressWarnings("unchecked") T t = (T) this;
         return t;
     }
@@ -879,8 +878,8 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
                      .withMetadata(metadata == null ? null : metadata.clone())
                      .withRedirectLocation(getRedirectLocation())
                      .withStorageClass(getStorageClass())
-                     .withSSEAwsKeyManagementParams(getSSEAwsKeyManagementParams())
-                     .withSSECustomerKey(getSSECustomerKey())
+                     .withSseAwsKeyManagementParams(getSseAwsKeyManagementParams())
+                     .withSseCustomerKey(getSSECustomerKey())
                 ;
     }
 }

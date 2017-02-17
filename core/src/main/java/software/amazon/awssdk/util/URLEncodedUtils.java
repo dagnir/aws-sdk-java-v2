@@ -46,7 +46,7 @@ class URLEncodedUtils {
      */
     private static final BitSet PUNCT = new BitSet(256);
     /** Characters which are safe to use in userinfo,
-     * i.e. {@link #UNRESERVED} plus {@link #PUNCT}uation */
+     * i.e. {@link #UNRESERVED} plus {@link #PUNCT}uation. */
     private static final BitSet USERINFO = new BitSet(256);
     /** Characters which are safe to use in a path,
      * i.e. {@link #UNRESERVED} plus {@link #PUNCT}uation plus / @ */

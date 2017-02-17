@@ -18,7 +18,8 @@ package software.amazon.awssdk.services.s3.model;
 import java.io.Serializable;
 
 /**
- * Specifies the days since the initiation of an Incomplete Multipart Upload that Lifecycle will wait before permanently removing all parts of the upload.
+ * Specifies the days since the initiation of an Incomplete Multipart Upload that Lifecycle will wait before permanently
+ * removing all parts of the upload.
  */
 public class AbortIncompleteMultipartUpload implements Serializable {
 

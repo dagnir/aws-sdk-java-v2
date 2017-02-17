@@ -178,7 +178,6 @@ public class Utils {
     /**
      * Return an InputStream of the specified resource, failing if it can't be found.
      *
-     * @param clzz
      * @param location
      *            Location of resource
      */
@@ -201,8 +200,6 @@ public class Utils {
     /**
      * Retrieve system property by name, failing if it's not found
      *
-     * @param propertyName
-     * @param errorMsgIfNotFound
      * @return Value of property if it exists
      */
     public static String getRequiredSystemProperty(String propertyName, String errorMsgIfNotFound) {
@@ -216,7 +213,6 @@ public class Utils {
     /**
      * Retrieve optional system property by name, returning null if not found
      *
-     * @param propertyName
      * @return Value of property if it exists, null if it does not
      */
     public static String getOptionalSystemProperty(String propertyName) {
@@ -269,10 +265,6 @@ public class Utils {
     /**
      * Create the ShapeMarshaller to the input shape from the specified Operation.
      * The input shape in the operation could be empty.
-     *
-     * @param service
-     * @param operation
-     * @return
      */
     public static ShapeMarshaller createInputShapeMarshaller(ServiceMetadata service, Operation operation) {
 

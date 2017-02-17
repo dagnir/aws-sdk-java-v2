@@ -28,8 +28,8 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.TestClass;
 
 public class CachingMarshallerSetTest {
 
-    private static final TestMarshallerSet mock = new TestMarshallerSet();
-    private static final MarshallerSet sut = new CachingMarshallerSet(mock);
+    private static final TestMarshallerSet MOCK = new TestMarshallerSet();
+    private static final MarshallerSet SUT = new CachingMarshallerSet(MOCK);
 
     @Test
     public void testIt() throws Exception {
@@ -40,14 +40,14 @@ public class CachingMarshallerSetTest {
             }
         };
 
-        mock.queue.add(marshaller);
+        MOCK.queue.add(marshaller);
 
-        ArgumentMarshaller result = sut.getMarshaller(
+        ArgumentMarshaller result = SUT.getMarshaller(
                 TestClass.class.getMethod("getString"));
 
         Assert.assertSame(marshaller, result);
 
-        result = sut.getMarshaller(TestClass.class.getMethod("getString"));
+        result = SUT.getMarshaller(TestClass.class.getMethod("getString"));
 
         Assert.assertSame(marshaller, result);
 
@@ -58,9 +58,9 @@ public class CachingMarshallerSetTest {
             }
         };
 
-        mock.queue.add(marshaller2);
+        MOCK.queue.add(marshaller2);
 
-        result = sut.getMarshaller(TestClass.class.getMethod("getInt"));
+        result = SUT.getMarshaller(TestClass.class.getMethod("getInt"));
 
         Assert.assertSame(marshaller2, result);
     }

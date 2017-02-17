@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.http;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkPublicApi;
-import software.amazon.awssdk.util.CRC32ChecksumCalculatingInputStream;
+import software.amazon.awssdk.util.Crc32ChecksumCalculatingInputStream;
 
 /**
  * Represents an HTTP response returned by an AWS service in response to a
@@ -48,7 +47,6 @@ public class HttpResponse {
      *            The associated request that generated this response.
      * @param httpRequest
      *            The underlying http request that generated this response.
-     * @throws IOException
      */
     public HttpResponse(Request<?> request, HttpRequestBase httpRequest) {
         this(request, httpRequest, null);
@@ -183,9 +181,9 @@ public class HttpResponse {
         if (context == null) {
             return 0L;
         }
-        CRC32ChecksumCalculatingInputStream crc32ChecksumInputStream =
-                (CRC32ChecksumCalculatingInputStream) context.getAttribute(CRC32ChecksumCalculatingInputStream.class.getName());
-        return crc32ChecksumInputStream == null ? 0L : crc32ChecksumInputStream.getCRC32Checksum();
+        Crc32ChecksumCalculatingInputStream crc32ChecksumInputStream =
+                (Crc32ChecksumCalculatingInputStream) context.getAttribute(Crc32ChecksumCalculatingInputStream.class.getName());
+        return crc32ChecksumInputStream == null ? 0L : crc32ChecksumInputStream.getCrc32Checksum();
     }
 
 }

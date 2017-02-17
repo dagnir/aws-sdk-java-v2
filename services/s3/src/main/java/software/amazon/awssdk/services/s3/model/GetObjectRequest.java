@@ -58,7 +58,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      */
     private S3ObjectIdBuilder s3ObjectIdBuilder = new S3ObjectIdBuilder();
 
-    /** Optional member indicating the byte range of data to retrieve */
+    /** Optional member indicating the byte range of data to retrieve. */
     private long[] range;
 
     /**
@@ -101,7 +101,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      * The optional customer-provided server-side encryption key to use to
      * decrypt this object.
      */
-    private SSECustomerKey sseCustomerKey;
+    private SseCustomerKey sseCustomerKey;
 
     /**
      * The part number of the requested part in a multipart object.
@@ -340,7 +340,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      *            to download.
      *
      * @return The updated request object, enabling additional method calls to be
-     * chained together.
+     *     chained together.
      *
      * @see GetObjectRequest#getVersionId()
      * @see GetObjectRequest#setVersionId(String)
@@ -893,7 +893,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
     }
 
     @Override
-    public SSECustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSSECustomerKey() {
         return sseCustomerKey;
     }
 
@@ -905,7 +905,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      *            The optional customer-provided server-side encryption key to
      *            use to decrypt this object.
      */
-    public void setSSECustomerKey(SSECustomerKey sseKey) {
+    public void setSSECustomerKey(SseCustomerKey sseKey) {
         this.sseCustomerKey = sseKey;
     }
 
@@ -921,7 +921,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      * @return The optional customer-provided server-side encryption key to use
      *         to decrypt this object.
      */
-    public GetObjectRequest withSSECustomerKey(SSECustomerKey sseKey) {
+    public GetObjectRequest withSSECustomerKey(SseCustomerKey sseKey) {
         setSSECustomerKey(sseKey);
         return this;
     }

@@ -27,22 +27,22 @@ import java.util.Date;
  */
 public class S3ObjectSummary implements Serializable {
 
-    /** The name of the bucket in which this object is stored */
+    /** The name of the bucket in which this object is stored. */
     protected String bucketName;
 
-    /** The key under which this object is stored */
+    /** The key under which this object is stored. */
     protected String key;
 
-    /** Hex encoded MD5 hash of this object's contents, as computed by Amazon S3 */
+    /** Hex encoded MD5 hash of this object's contents, as computed by Amazon S3. */
     protected String eTag;
 
-    /** The size of this object, in bytes */
+    /** The size of this object, in bytes. */
     protected long size;
 
-    /** The date, according to Amazon S3, when this object was last modified */
+    /** The date, according to Amazon S3, when this object was last modified. */
     protected Date lastModified;
 
-    /** The class of storage used by Amazon S3 to store this object */
+    /** The class of storage used by Amazon S3 to store this object. */
     protected String storageClass;
 
     /**

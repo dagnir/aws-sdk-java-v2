@@ -71,7 +71,7 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
                 String b64iv = userMD.get(Headers.CRYPTO_IV);
                 assertNotNull(b64iv);
                 byte[] iv = decodeBase64(b64iv);
-                assertTrue(AES_CBC.getIVLengthInBytes() == iv.length);
+                assertTrue(AES_CBC.getIvLengthInBytes() == iv.length);
                 assertNull(userMD.get(Headers.CRYPTO_CEK_ALGORITHM));
                 assertNull(userMD.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
                 assertNull(userMD.get(Headers.CRYPTO_TAG_LENGTH));
@@ -131,7 +131,7 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
                     String b64iv = map.get(Headers.CRYPTO_IV);
                     assertNotNull(b64iv);
                     byte[] iv = decodeBase64(b64iv);
-                    assertTrue(AES_CBC.getIVLengthInBytes() == iv.length);
+                    assertTrue(AES_CBC.getIvLengthInBytes() == iv.length);
                     assertEquals("{}", map.get(Headers.MATERIALS_DESCRIPTION));
                     assertNull(map.get(Headers.CRYPTO_CEK_ALGORITHM));
                     assertNull(map.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
@@ -157,7 +157,7 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
         ContentCryptoScheme scheme = inst.getContentCryptoScheme();
         assertTrue(AES_CBC.getBlockSizeInBytes() == scheme.getBlockSizeInBytes());
         assertEquals(AES_CBC.getCipherAlgorithm(), scheme.getCipherAlgorithm());
-        assertTrue(AES_CBC.getIVLengthInBytes() == scheme.getIVLengthInBytes());
+        assertTrue(AES_CBC.getIvLengthInBytes() == scheme.getIvLengthInBytes());
         assertTrue(AES_CBC.getTagLengthInBits() == scheme.getTagLengthInBits());
         assertEquals(AES_CBC.getKeyGeneratorAlgorithm(), scheme.getKeyGeneratorAlgorithm());
         assertTrue(AES_CBC.getKeyLengthInBits() == scheme.getKeyLengthInBits());
@@ -170,7 +170,7 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
         assertNull(kwa);
 
         // verify the key wrapped
-        byte[] encryptedCEK = inst.getEncryptedCEK();
+        byte[] encryptedCEK = inst.getEncryptedCek();
         //        assertTrue(""+encryptedCEK.length, encryptedCEK.length == 40);
         assertTrue("" + encryptedCEK.length, encryptedCEK.length == 48);
 
@@ -178,7 +178,7 @@ public class S3CryptoModuleEOTest extends S3CryptoModuleTestBase {
         CipherLite cipher = inst.getCipherLite();
         assertEquals(scheme.getCipherAlgorithm(), cipher.getCipherAlgorithm());
         assertTrue(scheme.getBlockSizeInBytes() == cipher.getBlockSize());
-        assertTrue(scheme.getIVLengthInBytes() == cipher.getIV().length);
+        assertTrue(scheme.getIvLengthInBytes() == cipher.getIv().length);
         // default implementation of the JDK
         assertEquals("SunJCE", cipher.getCipherProvider().getName());
 

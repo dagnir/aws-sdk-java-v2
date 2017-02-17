@@ -18,11 +18,11 @@ package software.amazon.awssdk.function;
 /**
  * Similar to the Function functional interface in Java 8.
  *
- * @param <Input>  Input type
- * @param <Output> Output type
+ * @param <InputT>  Input type
+ * @param <OutputT> Output type
  */
-public interface SdkFunction<Input, Output> {
+public interface SdkFunction<InputT, OutputT> {
 
-    Output apply(Input input);
+    OutputT apply(InputT input);
 
 }

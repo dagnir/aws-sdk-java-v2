@@ -42,6 +42,13 @@ final class ValidationContext {
     }
 
     /**
+     * @return Builder instance to construct a {@link ValidationContext}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Path to validation error given current context.
      */
     public String getPath() {
@@ -266,19 +273,12 @@ final class ValidationContext {
 
     /**
      * @return Sub-context with this context as the parent and the
-     * same problem reporter.
+     *     same problem reporter.
      */
     private ValidationContext.Builder newChildContext() {
         return ValidationContext.builder()
                                 .parentContext(this)
                                 .problemReporter(problemReporter);
-    }
-
-    /**
-     * @return Builder instance to construct a {@link ValidationContext}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

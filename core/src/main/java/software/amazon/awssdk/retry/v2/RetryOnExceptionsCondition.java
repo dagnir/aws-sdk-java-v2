@@ -38,7 +38,7 @@ public class RetryOnExceptionsCondition implements RetryCondition {
     /**
      * @param context Context about the state of the last request and information about the number of requests made.
      * @return True if the exception class matches one of the whitelisted exceptions or if the cause of the exception matches the
-     * whitelisted exception.
+     *     whitelisted exception.
      */
     @Override
     public boolean shouldRetry(RetryPolicyContext context) {

@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import static org.junit.Assert.assertEquals;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
 
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class BetweenConditionTest {
 
     @Test
     public void test() {
-        BetweenCondition cond = N("num").between(1, 100);
+        BetweenCondition cond = n("num").between(1, 100);
         SubstitutionContext context = new SubstitutionContext();
         String s = cond.asSubstituted(context);
 

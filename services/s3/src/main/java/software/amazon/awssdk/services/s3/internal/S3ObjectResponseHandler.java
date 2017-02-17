@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.s3.internal;
 
-
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.s3.Headers;

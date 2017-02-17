@@ -27,7 +27,9 @@ import software.amazon.awssdk.services.s3.model.NotificationConfiguration;
 public class BucketNotificationConfigurationStaxUnmarshaller implements
                                                              Unmarshaller<BucketNotificationConfiguration, InputStream> {
 
-    private static BucketNotificationConfigurationStaxUnmarshaller instance = new BucketNotificationConfigurationStaxUnmarshaller();
+    private static BucketNotificationConfigurationStaxUnmarshaller instance =
+            new BucketNotificationConfigurationStaxUnmarshaller();
+    
     private final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
     private BucketNotificationConfigurationStaxUnmarshaller() {

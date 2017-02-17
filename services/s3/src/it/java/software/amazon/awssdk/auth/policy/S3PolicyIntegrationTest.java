@@ -32,10 +32,10 @@ import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
  */
 public class S3PolicyIntegrationTest extends S3IntegrationTestBase {
 
-    /** Name of the bucket created by this test */
+    /** Name of the bucket created by this test. */
     private final String bucketName = "java-custom-bucket-policy-integ-test-" + System.currentTimeMillis();
 
-    /** Release all allocated resources */
+    /** Release all allocated resources. */
     @After
     public void tearDown() {
         s3.deleteBucket(bucketName);

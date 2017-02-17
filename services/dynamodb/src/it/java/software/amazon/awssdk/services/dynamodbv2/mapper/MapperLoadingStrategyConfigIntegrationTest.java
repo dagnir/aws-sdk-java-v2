@@ -27,12 +27,12 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.PaginatedList;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
@@ -57,7 +57,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
     }
 
     private static void createTestData() {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         List<RangeKeyClass> objs = new ArrayList<RangeKeyClass>();
         for (int i = 0; i < OBJECTS_NUM; i++) {
@@ -72,7 +72,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
 
     private static PaginatedList<RangeKeyClass> getTestPaginatedQueryList(PaginationLoadingStrategy paginationLoadingStrategy) {
         DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(ConsistentReads.CONSISTENT);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, mapperConfig);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         // Construct the query expression for the tested hash-key value and any range-key value greater that 1.0
         RangeKeyClass keyObject = new RangeKeyClass();
@@ -89,7 +89,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
 
     private static PaginatedList<RangeKeyClass> getTestPaginatedScanList(PaginationLoadingStrategy paginationLoadingStrategy) {
         DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(ConsistentReads.CONSISTENT);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, mapperConfig);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         // Construct the scan expression with the exact same conditions
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
@@ -107,7 +107,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
     private static PaginatedList<RangeKeyClass> getTestPaginatedParallelScanList(
             PaginationLoadingStrategy paginationLoadingStrategy) {
         DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(ConsistentReads.CONSISTENT);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, mapperConfig);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         // Construct the scan expression with the exact same conditions
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
@@ -146,6 +146,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.subList(0, RESULTS_NUM + 1);
             fail("IndexOutOfBoundsException is IndexOutOfBoundsException but not thrown");
         } catch (IndexOutOfBoundsException e) {
+            // Ignored or expected.
         }
 
         // (5) indexOf(Object org0)
@@ -181,6 +182,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.isEmpty();
             fail("UnsupportedOperationException expected but is not thrown");
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
 
         // (2) get(int n)
@@ -188,6 +190,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.get(RESULTS_NUM / 2);
             fail("UnsupportedOperationException expected but is not thrown");
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
 
         // (3) contains(Object org0)
@@ -195,6 +198,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.contains(new RangeKeyClass());
             fail("UnsupportedOperationException expected but is not thrown");
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
 
         // (4) subList(int org0, int arg1)
@@ -202,6 +206,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.subList(0, RESULTS_NUM);
             fail("UnsupportedOperationException expected but is not thrown");
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
 
         // (5) indexOf(Object org0)
@@ -209,6 +214,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.indexOf(new RangeKeyClass());
             fail("UnsupportedOperationException expected but is not thrown");
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
 
         // (6) loadAllResults()
@@ -216,6 +222,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.loadAllResults();
             fail("UnsupportedOperationException expected but is not thrown");
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
 
         // (7) size()
@@ -223,6 +230,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             list.size();
             fail("UnsupportedOperationException expected but is not thrown");
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
         ;
 
@@ -240,6 +248,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
                 fail("UnsupportedOperationException expected but is not thrown");
             }
         } catch (UnsupportedOperationException e) {
+            // Ignored or expected.
         }
 
     }

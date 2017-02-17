@@ -18,7 +18,7 @@ package software.amazon.awssdk;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
@@ -42,7 +42,7 @@ public abstract class RequestConfig {
 
     public abstract RequestMetricCollector getRequestMetricsCollector();
 
-    public abstract AWSCredentialsProvider getCredentialsProvider();
+    public abstract AwsCredentialsProvider getCredentialsProvider();
 
     /**
      * @return A non null map of custom headers to inject into the request.
@@ -62,13 +62,13 @@ public abstract class RequestConfig {
 
     /**
      * @return String identifying the 'type' (i.e. operation) of the request. Used in metrics
-     * subsystem.
+     *     subsystem.
      */
     public abstract String getRequestType();
 
     /**
      * @return The original request object. May be delivered to various strategies or hooks for
-     * extra context. I.E. {@link RequestHandler2} or {@link
+     *     extra context. I.E. {@link RequestHandler2} or {@link
      * RetryPolicy}.
      */
     public abstract Object getOriginalRequest();

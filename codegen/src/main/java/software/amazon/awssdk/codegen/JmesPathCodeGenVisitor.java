@@ -41,8 +41,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param subExpression JmesPath subexpression type
      * @param aVoid         void
      * @return String that represents a call to
-     * the new subexpression
-     * @throws InvalidTypeException
+     *     the new subexpression
      */
     @Override
     public String visit(final JmesPathSubExpression subExpression, final Void aVoid)
@@ -59,7 +58,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param fieldNode JmesPath field type
      * @param aVoid     void
      * @return String that represents a call to
-     * the new fieldNode
+     *     the new fieldNode
      */
     @Override
     public String visit(final JmesPathField fieldNode, final Void aVoid) {
@@ -72,8 +71,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param jmesPathProjection JmesPath projection type
      * @param aVoid              void
      * @return String that represents a call to
-     * the new list projection
-     * @throws InvalidTypeException
+     *     the new list projection
      */
     @Override
     public String visit(final JmesPathProjection jmesPathProjection,
@@ -89,8 +87,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param flatten JmesPath flatten type
      * @param aVoid   void
      * @return String that represents a call to
-     * the new flatten projection
-     * @throws InvalidTypeException
+     *     the new flatten projection
      */
     @Override
     public String visit(final JmesPathFlatten flatten, final Void aVoid)
@@ -105,7 +102,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param jmesPathIdentity JmesPath identity type
      * @param aVoid            void
      * @return String that represents a call to
-     * the new identity expression
+     *     the new identity expression
      */
     @Override
     public String visit(final JmesPathIdentity jmesPathIdentity,
@@ -119,8 +116,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param valueProjection JmesPath value projection type
      * @param aVoid           void
      * @return String that represents a call to
-     * the new value projection
-     * @throws InvalidTypeException
+     *     the new value projection
      */
     @Override
     public String visit(final JmesPathValueProjection valueProjection,
@@ -136,7 +132,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param literal JmesPath literal type
      * @param aVoid   void
      * @return String that represents a call to
-     * the new literal expression
+     *     the new literal expression
      */
     @Override
     public String visit(final JmesPathLiteral literal, final Void aVoid) {
@@ -151,8 +147,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param filter JmesPath filter type
      * @param aVoid  void
      * @return String that represents a call to
-     * the new filter expression
-     * @throws InvalidTypeException
+     *     the new filter expression
      */
     @Override
     public String visit(final JmesPathFilter filter,
@@ -168,8 +163,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param function JmesPath function type
      * @param aVoid    void
      * @return String that represents a call to
-     * the new function expression
-     * @throws InvalidTypeException
+     *     the new function expression
      */
     @Override
     public String visit(final JmesPathFunction function,
@@ -187,8 +181,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param op    JmesPath comparison operator type
      * @param aVoid void
      * @return String that represents a call to
-     * the new comparator expression
-     * @throws InvalidTypeException
+     *     the new comparator expression
      */
     @Override
     public String visit(final Comparator op, final Void aVoid)
@@ -206,8 +199,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param notExpression JmesPath not-expression type
      * @param aVoid         void
      * @return String that represents a call to
-     * the new not-expression
-     * @throws InvalidTypeException
+     *     the new not-expression
      */
     @Override
     public String visit(final JmesPathNotExpression notExpression,
@@ -222,8 +214,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param andExpression JmesPath and-expression type
      * @param aVoid         void
      * @return String that represents a call to
-     * the new and-expression
-     * @throws InvalidTypeException
+     *     the new and-expression
      */
     @Override
     public String visit(final JmesPathAndExpression andExpression,
@@ -239,8 +230,7 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
      * @param multiSelectList JmesPath multiSelectList type
      * @param aVoid           void
      * @return String that represents a call to
-     * the new multiSelectList
-     * @throws InvalidTypeException
+     *     the new multiSelectList
      */
     @Override
     public String visit(final JmesPathMultiSelectList multiSelectList,

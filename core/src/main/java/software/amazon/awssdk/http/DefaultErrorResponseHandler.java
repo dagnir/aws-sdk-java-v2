@@ -42,7 +42,7 @@ import software.amazon.awssdk.util.XpathUtils;
  */
 @SdkProtectedApi
 public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonServiceException> {
-    private static final Log log = LogFactory.getLog(DefaultErrorResponseHandler.class);
+    private static final Log LOG = LogFactory.getLog(DefaultErrorResponseHandler.class);
 
     /**
      * The list of error response unmarshallers to try to apply to error responses.
@@ -111,7 +111,7 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
         try {
             return IOUtils.toString(content);
         } catch (Exception e) {
-            log.info(String.format("Unable to read input stream to string (%s)", idString), e);
+            LOG.info(String.format("Unable to read input stream to string (%s)", idString), e);
             throw e;
         }
     }
@@ -120,7 +120,7 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
         try {
             return XpathUtils.documentFrom(xml);
         } catch (Exception e) {
-            log.info(String.format("Unable to parse HTTP response (%s) content to XML document '%s' ", idString, xml), e);
+            LOG.info(String.format("Unable to parse HTTP response (%s) content to XML document '%s' ", idString, xml), e);
             throw e;
         }
     }
@@ -129,7 +129,8 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
         StringBuilder idString = new StringBuilder();
         try {
             if (errorResponse.getRequest().getHeaders().containsKey(AmazonHttpClient.HEADER_SDK_TRANSACTION_ID)) {
-                idString.append("Invocation Id:").append(errorResponse.getRequest().getHeaders().get(AmazonHttpClient.HEADER_SDK_TRANSACTION_ID));
+                idString.append("Invocation Id:")
+                        .append(errorResponse.getRequest().getHeaders().get(AmazonHttpClient.HEADER_SDK_TRANSACTION_ID));
             }
             if (errorResponse.getHeaders().containsKey(X_AMZN_REQUEST_ID_HEADER)) {
                 if (idString.length() > 0) {
@@ -138,7 +139,7 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
                 idString.append("Request Id:").append(errorResponse.getHeaders().get(X_AMZN_REQUEST_ID_HEADER));
             }
         } catch (NullPointerException npe) {
-            log.info("Error getting Request or Invocation ID from response", npe);
+            LOG.info("Error getting Request or Invocation ID from response", npe);
         }
         return idString.length() > 0 ? idString.toString() : "Unknown";
     }

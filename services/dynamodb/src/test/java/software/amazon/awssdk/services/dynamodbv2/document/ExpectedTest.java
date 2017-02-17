@@ -187,6 +187,7 @@ public class ExpectedTest {
             expected = new Expected("foo").in((Object[]) null);
             Assert.fail();
         } catch (IllegalArgumentException e) {
+            // Ignored or expected.
         }
 
         // Empty values
@@ -194,6 +195,7 @@ public class ExpectedTest {
             expected = new Expected("foo").in();
             Assert.fail();
         } catch (IllegalArgumentException e) {
+            // Ignored or expected.
         }
     }
 
@@ -279,12 +281,14 @@ public class ExpectedTest {
             new Expected(null);
             Assert.fail();
         } catch (IllegalArgumentException expected) {
+            // Ignored or expected.
         }
 
         try {
             new Expected("");
             Assert.fail();
         } catch (IllegalArgumentException expected) {
+            // Ignored or expected.
         }
     }
 
@@ -297,6 +301,7 @@ public class ExpectedTest {
                               new Expected("foo").eq("charlie"));
             Assert.fail();
         } catch (IllegalArgumentException expected) {
+            // Ignored or expected.
         }
     }
 }

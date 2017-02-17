@@ -38,10 +38,10 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.util.StringInputStream;
 
-public class RequestHandlerIntegrationTest extends AWSIntegrationTestBase {
+public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
     private static AmazonDynamoDBClient ddb;
 
@@ -92,6 +92,7 @@ public class RequestHandlerIntegrationTest extends AWSIntegrationTestBase {
         try {
             ddb.describeTable("some-nonexistent-table-name");
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
 
         // Before callbacks should always be called

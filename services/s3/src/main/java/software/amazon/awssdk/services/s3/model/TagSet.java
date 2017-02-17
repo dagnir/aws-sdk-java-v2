@@ -38,7 +38,7 @@ public class TagSet implements Serializable {
      * Creates a new TagSet with the set of tags defined.
      * </p>
      * @param tags
-     * 			A key/value mapping of tags to store in this <code>TagSet</code>
+     *             A key/value mapping of tags to store in this <code>TagSet</code>
      */
     public TagSet(Map<String, String> tags) {
         this.tags = new HashMap<String, String>(1);
@@ -50,9 +50,9 @@ public class TagSet implements Serializable {
      * Get the value of the tag with the given key.
      * </p>
      * @param key
-     * 			The key of the tag to return
+     *             The key of the tag to return
      * @return The value of the given tag.  Will return null if no tag by the
-     * 			given key exists.
+     *             given key exists.
      */
     public String getTag(String key) {
         return tags.get(key);
@@ -63,9 +63,9 @@ public class TagSet implements Serializable {
      * Sets the value of the tag for a given key.  Will overwrite existing value.
      * </p>
      * @param key
-     * 			The key for the tag
+     *             The key for the tag
      * @param value
-     * 			The value for the tag
+     *             The value for the tag
      */
     public void setTag(String key, String value) {
         tags.put(key, value);

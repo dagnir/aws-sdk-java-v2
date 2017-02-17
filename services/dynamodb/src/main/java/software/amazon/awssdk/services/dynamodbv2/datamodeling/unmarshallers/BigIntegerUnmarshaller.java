@@ -27,11 +27,11 @@ public class BigIntegerUnmarshaller extends NUnmarshaller {
     private static final BigIntegerUnmarshaller INSTANCE =
             new BigIntegerUnmarshaller();
 
-    public static BigIntegerUnmarshaller instance() {
-        return INSTANCE;
+    private BigIntegerUnmarshaller() {
     }
 
-    private BigIntegerUnmarshaller() {
+    public static BigIntegerUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

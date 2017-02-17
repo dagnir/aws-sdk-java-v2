@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import software.amazon.awssdk.RequestClientOptions.Marker;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.SyncProgressListener;
@@ -51,10 +51,9 @@ public class AmazonWebServiceRequestTest {
     }
 
     private static void verifyBaseAfterCopy(final ProgressListener listener,
-                                            final AWSCredentials credentials,
+                                            final AwsCredentials credentials,
                                             final RequestMetricCollector collector,
                                             final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
-        RequestClientOptions toOptions;
         Map<String, String> headers = to.getCustomRequestHeaders();
         assertTrue(2 == headers.size());
         assertEquals("v1", headers.get("k1"));
@@ -68,7 +67,7 @@ public class AmazonWebServiceRequestTest {
         assertSame(collector, to.getRequestMetricCollector());
 
         assertTrue(1234 == to.getReadLimit());
-        toOptions = to.getRequestClientOptions();
+        RequestClientOptions toOptions = to.getRequestClientOptions();
         assertEquals(
                 from.getRequestClientOptions().getClientMarker(
                         Marker.USER_AGENT),
@@ -99,7 +98,7 @@ public class AmazonWebServiceRequestTest {
             public void progressChanged(ProgressEvent progressEvent) {
             }
         };
-        final AWSCredentials credentials = new BasicAWSCredentials("accesskey",
+        final AwsCredentials credentials = new BasicAwsCredentials("accesskey",
                                                                    "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override

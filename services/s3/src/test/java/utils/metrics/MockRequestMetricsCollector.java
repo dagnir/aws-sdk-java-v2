@@ -21,7 +21,7 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * Mock metrics collector that just holds a reference to all metrics recorded. Get captured metrics
@@ -30,7 +30,7 @@ import software.amazon.awssdk.util.AWSRequestMetrics;
 @NotThreadSafe
 public class MockRequestMetricsCollector extends RequestMetricCollector {
 
-    private final List<AWSRequestMetrics> metrics = new ArrayList<AWSRequestMetrics>();
+    private final List<AwsRequestMetrics> metrics = new ArrayList<AwsRequestMetrics>();
 
     @Override
     public void collectMetrics(Request<?> request, Response<?> response) {
@@ -40,7 +40,7 @@ public class MockRequestMetricsCollector extends RequestMetricCollector {
     /**
      * @return A list of all metrics captured by this metric collector.
      */
-    public List<AWSRequestMetrics> getMetrics() {
+    public List<AwsRequestMetrics> getMetrics() {
         return metrics;
     }
 }

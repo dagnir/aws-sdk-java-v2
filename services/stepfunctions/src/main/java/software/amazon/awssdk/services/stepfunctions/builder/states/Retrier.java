@@ -51,6 +51,13 @@ public final class Retrier {
     }
 
     /**
+     * @return Builder instance to construct a {@link Retrier}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return List of error codes this retrier handles.
      */
     public List<String> getErrorEquals() {
@@ -76,13 +83,6 @@ public final class Retrier {
      */
     public Double getBackoffRate() {
         return backoffRate;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link Retrier}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

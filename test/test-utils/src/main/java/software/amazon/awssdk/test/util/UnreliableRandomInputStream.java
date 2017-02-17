@@ -22,11 +22,11 @@ import java.io.IOException;
  * of random characters, throws an IOException. Intended for testing error
  * recovery in the client library.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class UnreliableRandomInputStream extends RandomInputStream {
     private static final boolean DEBUG = false;
-    /** True if this stream has already triggered an exception */
+    /** True if this stream has already triggered an exception. */
     private boolean hasTriggeredAnException = false;
 
     /**

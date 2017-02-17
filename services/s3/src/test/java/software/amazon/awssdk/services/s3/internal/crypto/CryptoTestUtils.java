@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-
 import static org.junit.Assert.assertFalse;
 import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
 
@@ -49,7 +48,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.internal.MD5DigestCalculatingInputStream;
@@ -69,20 +68,44 @@ public class CryptoTestUtils {
     static final int ASCII_LOW = 33; // '!', skipping space for readability
     static final int ASCII_HIGH = 126;
     // include a line break character
-    static final int modulo = ASCII_HIGH - ASCII_LOW + 2;
-    private static final Random rand = new Random();
-    private static final SecureRandom srand = new SecureRandom();
-    private static final String TEST_PRIVATE_KEY_B64 = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKo4dkqOcgSJGQdRQgGg1IeQNrEc5pXPxag3XOgz4JcSkttBTI597aPCPW51/939EDNskiFhNyP7XzUVTHr5AnZ2GBjVkUKY4eo9Hd4CWxptLKgZCIZ+MOhyreE51rGLlA/Mxp7r5/AtDZ4GqAntFW3Ask4ePByqFBWyewVYfO5dAgMBAAECgYAA3WqUdGbV6RBsfhg0w+lwiuYMPlZZmoWpliZts53HhruiS5GlA7TKaTlAr27OZPPJHxsa+lB6aVORhHswAMXnbBEbMm9pUllRc04iQrZ30dOa9Ud70p5kWuCJN3FKjrExKp/90Mbt2nJ46uCnE/QbnUhhXhtgIZVRac8eZ8gtYQJBANIQlYH3cPj792TXf6Ul85wKk3mcK4CEn2JYLmU8oyplJj1cNuwWrExAU/Z35HrcXJAhhku5Fg+iZWyNtU6StkUCQQDPcWZ3Q+dVmsN4f5de9CpvLD10zSRUYPdeEG/2zlUefjRFfg47NX0/HDExk1oGc9NjTu9sdorc+00BGPe05wU5AkAwXVMe3kqreM/H7vnbmzZQefrkZ/l4GJDdwrHD60ch7rH0NLQMfVfkIndyar43L188bAuQiaezp880RBg3Y/4FAkBuJgnBhGXet6nZXu6SddXeaEBNt+v1ffN7mADLrW3XHi5FRBTsbY+Opjqc12AzEueI0M4i6qL7idiun4JQJWdJAkBoyZJTZS5ZInxTD2jm3QAIR1yM7I3wsvEyFVqVeV5gkYXQ3GyTIKEaCuYDN8o9SWUqn0bKOt7w2z3XG9EyXbbV";
-    private static final String TEST_PUBLIC_KEY_B64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqOHZKjnIEiRkHUUIBoNSHkDaxHOaVz8WoN1zoM+CXEpLbQUyOfe2jwj1udf/d/RAzbJIhYTcj+181FUx6+QJ2dhgY1ZFCmOHqPR3eAlsabSyoGQiGfjDocq3hOdaxi5QPzMae6+fwLQ2eBqgJ7RVtwLJOHjwcqhQVsnsFWHzuXQIDAQAB";
-    private static final String TEST_PRIVATE_KEY1_B64 = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAI3HDeqfG9fQrJJemZIY5jTv+W9vgBZsOnbTUV6hy2rWAAFYedTJT1mL39payniUJxDsFsGanPjM8ijKhH7lmBxztnc6gw2rzvmFi+MjMnd+nfynurro7yjdvf9ad/OZJInXWgxdYhLsrsontWlVi2jQFsXX9kSZUFWHGCTF35JFAgMBAAECgYB+yJirTSlq7xLDuZD/UwDaKhcXDdCvPI1zoTlMtMbhfQl4KpSYMoWhADJoY3RYK7Rbr6QR8Z+Z5jxPOfsON2a0ArfcZ6oqXgZyLVyU+euAnwsYlX3Bg6AcC9KEWVqLz3xTbeN1QdPZxK30l4sJI75wnFC4s5WUb0biZUJjr/Lx6QJBANstaObcwotVCyCXRj6jhsMVa3hlG7CgPlvjaSUvGb15nYoqdQ+6qv3H00VqkacKI++cU99K2Rdb2toowX82IXcCQQClmMJJuzv38exruQwYVhu68wnCxo9/T1P9XYRcRVM/uVe7HqV1kvKD0o8/UXPxz7F9+Hq9xKi4HUU8IyD5hrkjAkBLoqgIwzX/jyF/5bQ/+X6P49xqd7nOgf4DB79JLa/cSxOqkmxDOU+4tDScR+Jrmnw8O95VuCaigPhNQLNFixCRAkBrSqRnXTanmUmTKhwaEIB7CkkCt9/1npJOkK7Xkds0aIPdKygNG56hpmVFoyK6Q9U+RyZPmgGu+NgI9MHCqnV9AkEAxX+dpBUaP4e6B+a0xZx5zXrp5fFrtyrpF6NLNy2QD3P2JzDAVbfbGYGQ+iA9cG+z1YQxUqn55uv7RLlJaXYAsg==";
-    private static final String TEST_PUBLIC_KEY1_B64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNxw3qnxvX0KySXpmSGOY07/lvb4AWbDp201Feoctq1gABWHnUyU9Zi9/aWsp4lCcQ7BbBmpz4zPIoyoR+5Zgcc7Z3OoMNq875hYvjIzJ3fp38p7q66O8o3b3/WnfzmSSJ11oMXWIS7K7KJ7VpVYto0BbF1/ZEmVBVhxgkxd+SRQIDAQAB";
+    static final int MODULO = ASCII_HIGH - ASCII_LOW + 2;
+    private static final Random RAND = new Random();
+    private static final SecureRandom SRAND = new SecureRandom();
+
+    private static final String TEST_PRIVATE_KEY_B64 =
+            "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAKo4dkqOcgSJGQdRQgGg1IeQNrEc5pXPxag3XOgz4JcSkttBTI597aPCPW51/93" +
+            "9EDNskiFhNyP7XzUVTHr5AnZ2GBjVkUKY4eo9Hd4CWxptLKgZCIZ+MOhyreE51rGLlA/Mxp7r5/AtDZ4GqAntFW3Ask4ePByqFBWyewVYfO5dAg" +
+            "MBAAECgYAA3WqUdGbV6RBsfhg0w+lwiuYMPlZZmoWpliZts53HhruiS5GlA7TKaTlAr27OZPPJHxsa+lB6aVORhHswAMXnbBEbMm9pUllRc04iQ" +
+            "rZ30dOa9Ud70p5kWuCJN3FKjrExKp/90Mbt2nJ46uCnE/QbnUhhXhtgIZVRac8eZ8gtYQJBANIQlYH3cPj792TXf6Ul85wKk3mcK4CEn2JYLmU8" +
+            "oyplJj1cNuwWrExAU/Z35HrcXJAhhku5Fg+iZWyNtU6StkUCQQDPcWZ3Q+dVmsN4f5de9CpvLD10zSRUYPdeEG/2zlUefjRFfg47NX0/HDExk1o" +
+            "Gc9NjTu9sdorc+00BGPe05wU5AkAwXVMe3kqreM/H7vnbmzZQefrkZ/l4GJDdwrHD60ch7rH0NLQMfVfkIndyar43L188bAuQiaezp880RBg3Y/" +
+            "4FAkBuJgnBhGXet6nZXu6SddXeaEBNt+v1ffN7mADLrW3XHi5FRBTsbY+Opjqc12AzEueI0M4i6qL7idiun4JQJWdJAkBoyZJTZS5ZInxTD2jm3" +
+            "QAIR1yM7I3wsvEyFVqVeV5gkYXQ3GyTIKEaCuYDN8o9SWUqn0bKOt7w2z3XG9EyXbbV";
+
+    private static final String TEST_PUBLIC_KEY_B64 =
+            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqOHZKjnIEiRkHUUIBoNSHkDaxHOaVz8WoN1zoM+CXEpLbQUyOfe2jwj1udf/d/RAzbJIhYTc" +
+            "j+181FUx6+QJ2dhgY1ZFCmOHqPR3eAlsabSyoGQiGfjDocq3hOdaxi5QPzMae6+fwLQ2eBqgJ7RVtwLJOHjwcqhQVsnsFWHzuXQIDAQAB";
+
+    private static final String TEST_PRIVATE_KEY1_B64 =
+            "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAI3HDeqfG9fQrJJemZIY5jTv+W9vgBZsOnbTUV6hy2rWAAFYedTJT1mL39payni" +
+            "UJxDsFsGanPjM8ijKhH7lmBxztnc6gw2rzvmFi+MjMnd+nfynurro7yjdvf9ad/OZJInXWgxdYhLsrsontWlVi2jQFsXX9kSZUFWHGCTF35JFAg" +
+            "MBAAECgYB+yJirTSlq7xLDuZD/UwDaKhcXDdCvPI1zoTlMtMbhfQl4KpSYMoWhADJoY3RYK7Rbr6QR8Z+Z5jxPOfsON2a0ArfcZ6oqXgZyLVyU+" +
+            "euAnwsYlX3Bg6AcC9KEWVqLz3xTbeN1QdPZxK30l4sJI75wnFC4s5WUb0biZUJjr/Lx6QJBANstaObcwotVCyCXRj6jhsMVa3hlG7CgPlvjaSUv" +
+            "Gb15nYoqdQ+6qv3H00VqkacKI++cU99K2Rdb2toowX82IXcCQQClmMJJuzv38exruQwYVhu68wnCxo9/T1P9XYRcRVM/uVe7HqV1kvKD0o8/UXP" +
+            "xz7F9+Hq9xKi4HUU8IyD5hrkjAkBLoqgIwzX/jyF/5bQ/+X6P49xqd7nOgf4DB79JLa/cSxOqkmxDOU+4tDScR+Jrmnw8O95VuCaigPhNQLNFix" +
+            "CRAkBrSqRnXTanmUmTKhwaEIB7CkkCt9/1npJOkK7Xkds0aIPdKygNG56hpmVFoyK6Q9U+RyZPmgGu+NgI9MHCqnV9AkEAxX+dpBUaP4e6B+a0x" +
+            "Zx5zXrp5fFrtyrpF6NLNy2QD3P2JzDAVbfbGYGQ+iA9cG+z1YQxUqn55uv7RLlJaXYAsg==";
+
+    private static final String TEST_PUBLIC_KEY1_B64 =
+            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNxw3qnxvX0KySXpmSGOY07/lvb4AWbDp201Feoctq1gABWHnUyU9Zi9/aWsp4lCcQ7BbBmpz" +
+            "4zPIoyoR+5Zgcc7Z3OoMNq875hYvjIzJ3fp38p7q66O8o3b3/WnfzmSSJ11oMXWIS7K7KJ7VpVYto0BbF1/ZEmVBVhxgkxd+SRQIDAQAB";
 
     /**
      * Used to control whether those tests that take a long time are
      * to be run or not.
      *
      * @return true if the environment variable "RUN_TIME_CONSUMING_TESTS" has been set;
-     * false otherwise.
+     *     false otherwise.
      */
     public static boolean runTimeConsumingTests() {
         return Boolean.parseBoolean(System.getenv("RUN_TIME_CONSUMING_TESTS"));
@@ -142,14 +165,14 @@ public class CryptoTestUtils {
         return file;
     }
 
-    public static File generateRandomGCMEncryptedAsciiFile(long byteSize)
+    public static File generateRandomGcmEncryptedAsciiFile(long byteSize)
             throws IOException, InvalidKeyException, NoSuchAlgorithmException,
                    NoSuchProviderException, NoSuchPaddingException,
                    InvalidAlgorithmParameterException {
-        return generateRandomGCMEncryptedAsciiFile(byteSize, true);
+        return generateRandomGcmEncryptedAsciiFile(byteSize, true);
     }
 
-    public static File generateRandomGCMEncryptedAsciiFile(long byteSize,
+    public static File generateRandomGcmEncryptedAsciiFile(long byteSize,
                                                            boolean deleteOnExit) throws IOException, InvalidKeyException,
                                                                                         NoSuchAlgorithmException,
                                                                                         NoSuchProviderException,
@@ -166,20 +189,20 @@ public class CryptoTestUtils {
         IOUtils.copy(
                 new CipherLiteInputStream(new FileInputStream(infile), scheme
                         .createCipherLite(getTestSecretKey(scheme),
-                                          new byte[scheme.getIVLengthInBytes()],
+                                          new byte[scheme.getIvLengthInBytes()],
                                           Cipher.ENCRYPT_MODE)), new FileOutputStream(
                         oufile));
         return oufile;
     }
 
     private static byte[] fillRandomAscii(byte[] bytes) {
-        rand.nextBytes(bytes);
+        RAND.nextBytes(bytes);
         for (int i = 0; i < bytes.length; i++) {
             byte b = bytes[i];
             if (b < ASCII_LOW || b > ASCII_HIGH) {
-                byte c = (byte) (b % modulo);
+                byte c = (byte) (b % MODULO);
                 if (c < 0) {
-                    c = (byte) (c + modulo);
+                    c = (byte) (c + MODULO);
                 }
                 bytes[i] = (byte) (c + ASCII_LOW);
                 if (bytes[i] > ASCII_HIGH) {
@@ -190,7 +213,7 @@ public class CryptoTestUtils {
         return bytes;
     }
 
-    public static KeyPair createRSAKeyPair() throws NoSuchAlgorithmException {
+    public static KeyPair createRsaKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator g = KeyPairGenerator.getInstance("RSA");
         g.initialize(1024);
         KeyPair kp = g.generateKeyPair();
@@ -221,7 +244,7 @@ public class CryptoTestUtils {
                                                         NoSuchPaddingException, InvalidAlgorithmParameterException {
         SecretKey cek = getTestSecretKey(scheme);
         byte[] iv_gcm = new byte[sourceIVLengthInBytes];
-        byte[] iv = scheme.adjustIV(iv_gcm, startingBytePos);
+        byte[] iv = scheme.adjustIv(iv_gcm, startingBytePos);
         return scheme.createCipherLite(cek, iv, cipherMode);
     }
 
@@ -319,17 +342,14 @@ public class CryptoTestUtils {
      * Creates and returns an test CipherLite using the same underlying test
      * secret key.
      */
-    public static CipherLite createTestCipherLite(int cipherMode,
-                                                  ContentCryptoScheme scheme, Provider provider) throws InvalidKeyException,
-                                                                                                        NoSuchAlgorithmException,
-                                                                                                        NoSuchProviderException,
-                                                                                                        NoSuchPaddingException,
-                                                                                                        InvalidAlgorithmParameterException {
+    public static CipherLite createTestCipherLite(int cipherMode, ContentCryptoScheme scheme, Provider provider)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException,
+                   NoSuchPaddingException, InvalidAlgorithmParameterException {
         // Assuming IV is always in bytes
         SecretKey cek = new SecretKeySpec(
                 new byte[scheme.getKeyLengthInBits() / 8],
                 scheme.getKeyGeneratorAlgorithm());
-        byte[] iv = new byte[scheme.getIVLengthInBytes()];
+        byte[] iv = new byte[scheme.getIvLengthInBytes()];
         return scheme.createCipherLite(cek, iv, cipherMode, provider);
     }
 
@@ -345,24 +365,21 @@ public class CryptoTestUtils {
     /**
      * Generates and returns a test CipherLite using a random test secret key.
      */
-    public static CipherLite generateTestCipherLite(int cipherMode,
-                                                    ContentCryptoScheme scheme, Provider provider) throws InvalidKeyException,
-                                                                                                          NoSuchAlgorithmException,
-                                                                                                          NoSuchProviderException,
-                                                                                                          NoSuchPaddingException,
-                                                                                                          InvalidAlgorithmParameterException {
+    public static CipherLite generateTestCipherLite(int cipherMode, ContentCryptoScheme scheme, Provider provider)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException,
+                   NoSuchPaddingException, InvalidAlgorithmParameterException {
         KeyGenerator kg = KeyGenerator.getInstance(scheme.getKeyGeneratorAlgorithm());
-        kg.init(scheme.getKeyLengthInBits(), srand);
+        kg.init(scheme.getKeyLengthInBits(), SRAND);
         SecretKey cek = kg.generateKey();
         // Assuming IV is always in bytes
-        byte[] iv = new byte[scheme.getIVLengthInBytes()];
+        byte[] iv = new byte[scheme.getIvLengthInBytes()];
         return scheme.createCipherLite(cek, iv, cipherMode, provider);
     }
 
     public static byte[] flipRandomBit(byte[] in) {
         byte[] out = in.clone();
-        int pos = rand.nextInt(out.length); // random target byte
-        int bit = rand.nextInt(8); // random target bit
+        int pos = RAND.nextInt(out.length); // random target byte
+        int bit = RAND.nextInt(8); // random target bit
         out[pos] ^= (1 << bit);
         assertFalse(Arrays.equals(in, out));
         return out;
@@ -410,7 +427,7 @@ public class CryptoTestUtils {
         client.deleteBucket(bucketName);
     }
 
-    public static AWSCredentials awsTestCredentials() throws IOException {
+    public static AwsCredentials awsTestCredentials() throws IOException {
         return new PropertiesCredentials(new File(
                 System.getProperty("user.home")
                 + "/.aws/awsTestAccount.properties"));

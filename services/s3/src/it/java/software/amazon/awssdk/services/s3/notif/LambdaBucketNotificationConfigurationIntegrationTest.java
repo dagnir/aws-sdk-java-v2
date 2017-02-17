@@ -89,7 +89,7 @@ public class LambdaBucketNotificationConfigurationIntegrationTest extends S3Inte
                                                             + "\"Service\": [\"lambda.amazonaws.com\"]" + "}," + "\"Action\": \"sts:AssumeRole\"" + "}" + "]" + "}";
 
     private static final String LAMBDA_EXECUTION_ROLE_NAME = "lambda-java-sdk-test-role-" + System.currentTimeMillis();
-    ;
+
 
     private static String lambdaExecutionRoleArn;
 

@@ -36,7 +36,6 @@ public interface MultipleFileDownload extends Transfer {
     /**
      * Cancels this download.
      *
-     * @throws IOException
      */
     public void abort() throws IOException;
 }

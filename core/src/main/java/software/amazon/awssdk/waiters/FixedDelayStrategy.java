@@ -26,7 +26,6 @@ public class FixedDelayStrategy implements PollingStrategy.DelayStrategy {
      * Constructs a new FixedDelayStrategy with the given
      * default delay time
      *
-     * @param defaultDelayInSeconds
      */
     public FixedDelayStrategy(int defaultDelayInSeconds) {
         this.defaultDelayInSeconds = defaultDelayInSeconds;
@@ -38,7 +37,6 @@ public class FixedDelayStrategy implements PollingStrategy.DelayStrategy {
      * waiter definition
      *
      * @param pollingStrategyContext Provides the polling context required to define custom delay
-     * @throws InterruptedException
      */
     @Override
     public void delayBeforeNextRetry(PollingStrategyContext pollingStrategyContext) throws InterruptedException {

@@ -18,10 +18,10 @@ package software.amazon.awssdk.services.dynamodbv2.xspec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.L;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.SS;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.l;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.ss;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.if_not_exists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.list_append;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.remove;
@@ -39,8 +39,8 @@ public class UpdateExpressionTest {
     @Test
     public void udpateAttributes() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(S("Brand").set("AWS"))
-                .addUpdate(N("Price").set(100))
+                .addUpdate(s("Brand").set("AWS"))
+                .addUpdate(n("Price").set(100))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -62,7 +62,7 @@ public class UpdateExpressionTest {
     @Test
     public void updateListAttribute() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(S("RelatedItems[0]").set("Amazon"))
+                .addUpdate(s("RelatedItems[0]").set("Amazon"))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -82,8 +82,8 @@ public class UpdateExpressionTest {
     @Test
     public void nestedMapAttributes() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(S("ProductReviews[0]").set("Good"))
-                .addUpdate(S("ProductReviews[1]").set("Bad"))
+                .addUpdate(s("ProductReviews[0]").set("Good"))
+                .addUpdate(s("ProductReviews[1]").set("Bad"))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -103,7 +103,7 @@ public class UpdateExpressionTest {
     @Test
     public void decreasthePrice() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(N("Price").set(N("Price").minus(10)))
+                .addUpdate(n("Price").set(n("Price").minus(10)))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -122,7 +122,7 @@ public class UpdateExpressionTest {
     @Test
     public void ifNotExists() {
         UpdateItemExpressionSpec builder = new ExpressionSpecBuilder()
-                .addUpdate(N("Price").set(if_not_exists("Price", 100)))
+                .addUpdate(n("Price").set(if_not_exists("Price", 100)))
                 .buildForUpdate();
         String expr = builder.getUpdateExpression();
         Map<String, String> nm = builder.getNameMap();
@@ -141,7 +141,7 @@ public class UpdateExpressionTest {
     @Test
     public void listAppend() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(L("ProductReview.FiveStar").set(list_append("ProductReview.FiveStar", 100)))
+                .addUpdate(l("ProductReview.FiveStar").set(list_append("ProductReview.FiveStar", 100)))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -162,7 +162,7 @@ public class UpdateExpressionTest {
     public void listAppend2() {
         List<Number> list = Arrays.<Number>asList(100);
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(L("ProductReview.FiveStar").set(list_append(list, "ProductReview.FiveStar")))
+                .addUpdate(l("ProductReview.FiveStar").set(list_append(list, "ProductReview.FiveStar")))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -206,7 +206,7 @@ public class UpdateExpressionTest {
     @Test
     public void addNumeric() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(N("Price").add(100))
+                .addUpdate(n("Price").add(100))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -225,7 +225,7 @@ public class UpdateExpressionTest {
     @Test
     public void addToStringSet() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(SS("Color").append("blue"))
+                .addUpdate(ss("Color").append("blue"))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -244,7 +244,7 @@ public class UpdateExpressionTest {
     @Test
     public void deleteFromStringSet() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(SS("Color").delete("blue"))
+                .addUpdate(ss("Color").delete("blue"))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -264,12 +264,12 @@ public class UpdateExpressionTest {
     @Test
     public void multiUpdates() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(S("list[0]").set("someValue"))
+                .addUpdate(s("list[0]").set("someValue"))
                 .addUpdate(remove("someMap.nestedField1"))
                 .addUpdate(remove("someMap.nestedField2"))
-                .addUpdate(N("aNumber").add(10))
-                .addUpdate(N("anotherNumber").add(20))
-                .addUpdate(SS("aSet").delete("elementToDelete"))
+                .addUpdate(n("aNumber").add(10))
+                .addUpdate(n("anotherNumber").add(20))
+                .addUpdate(ss("aSet").delete("elementToDelete"))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();

@@ -30,11 +30,11 @@ public class S3ProgressPublisher extends SDKProgressPublisher {
      * Used to deliver a persistable transfer to the given s3 listener.
      *
      * @param listener only listener of type {@link S3ProgressListener} will be
-     * notified.
+     *     notified.
      *
      * @return the future of a submitted task; or null if the delivery is
-     * synchronous with no future task involved.  Note a listener should never
-     * block, and therefore returning null is the typical case.
+     *     synchronous with no future task involved.  Note a listener should never
+     *     block, and therefore returning null is the typical case.
      */
     public static Future<?> publishTransferPersistable(
             final ProgressListener listener,

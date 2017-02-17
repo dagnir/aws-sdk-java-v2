@@ -58,7 +58,7 @@ import software.amazon.awssdk.internal.net.SdkSSLContext;
 public class ApacheConnectionManagerFactory implements
                                             ConnectionManagerFactory<HttpClientConnectionManager> {
 
-    private final Log LOG = LogFactory.getLog(AmazonHttpClient.class);
+    private static final Log LOG = LogFactory.getLog(AmazonHttpClient.class);
 
     @Override
     public HttpClientConnectionManager create(final HttpClientSettings settings) {
@@ -112,8 +112,7 @@ public class ApacheConnectionManagerFactory implements
                                  .build();
     }
 
-    private HostnameVerifier getHostNameVerifier
-            (HttpClientSettings options) {
+    private HostnameVerifier getHostNameVerifier(HttpClientSettings options) {
         // TODO Need to find a better way to handle these deprecations.
         return options.useBrowserCompatibleHostNameVerifier()
                ? SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER
@@ -151,7 +150,7 @@ public class ApacheConnectionManagerFactory implements
 
         private SSLContext sslcontext = null;
 
-        private static SSLContext createSSLContext() throws IOException {
+        private static SSLContext createSslContext() throws IOException {
             try {
                 SSLContext context = SSLContext.getInstance("TLS");
                 context.init(null, new TrustManager[] {new TrustingX509TrustManager()}, null);
@@ -164,13 +163,13 @@ public class ApacheConnectionManagerFactory implements
         @Override
         public Socket createLayeredSocket(Socket socket, String target, int port, HttpContext context)
                 throws IOException, UnknownHostException {
-            return getSSLContext().getSocketFactory().createSocket(socket,
+            return getSslContext().getSocketFactory().createSocket(socket,
                                                                    target, port, true);
         }
 
         @Override
         public Socket createSocket(HttpContext context) throws IOException {
-            return getSSLContext().getSocketFactory().createSocket();
+            return getSslContext().getSocketFactory().createSocket();
         }
 
         @Override
@@ -190,9 +189,9 @@ public class ApacheConnectionManagerFactory implements
             return sslsock;
         }
 
-        private SSLContext getSSLContext() throws IOException {
+        private SSLContext getSslContext() throws IOException {
             if (this.sslcontext == null) {
-                this.sslcontext = createSSLContext();
+                this.sslcontext = createSslContext();
             }
             return this.sslcontext;
         }

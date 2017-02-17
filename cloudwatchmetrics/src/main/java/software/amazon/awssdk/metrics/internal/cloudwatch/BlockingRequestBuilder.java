@@ -199,7 +199,7 @@ class BlockingRequestBuilder {
                         // there is little reason, if any, to include them at the
                         // JVM level.  Hence the filtering.
                         req = newPutMetricDataRequest(
-                                filterOSMetrics(data), ns, hostDim, jvmDim);
+                                filterOsMetrics(data), ns, hostDim, jvmDim);
                     } else {
                         req = newPutMetricDataRequest(data, ns, jvmDim);
                     }
@@ -211,8 +211,7 @@ class BlockingRequestBuilder {
                     // If OS metrics are already included at the per host level,
                     // there is little reason, if any, to include them at the
                     // JVM level.  Hence the filtering.
-                    req = newPutMetricDataRequest
-                            (perHost ? filterOSMetrics(data) : data, perJvmNameSpace);
+                    req = newPutMetricDataRequest(perHost ? filterOsMetrics(data) : data, perJvmNameSpace);
                 }
                 list.add(req);
             }
@@ -224,7 +223,7 @@ class BlockingRequestBuilder {
      * Return a collection of metrics almost the same as the input except with
      * all OS metrics removed.
      */
-    private Collection<MetricDatum> filterOSMetrics(Collection<MetricDatum> data) {
+    private Collection<MetricDatum> filterOsMetrics(Collection<MetricDatum> data) {
         Collection<MetricDatum> output = new ArrayList<MetricDatum>(data.size());
         for (MetricDatum datum : data) {
             if (!OS_METRIC_NAME.equals(datum.getMetricName())) {

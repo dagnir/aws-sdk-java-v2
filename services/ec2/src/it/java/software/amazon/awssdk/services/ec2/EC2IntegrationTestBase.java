@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +44,7 @@ import software.amazon.awssdk.services.ec2.model.Reservation;
 import software.amazon.awssdk.services.ec2.model.Tag;
 import software.amazon.awssdk.services.ec2.model.TagDescription;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesRequest;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
  * Base class for EC2 integration tests; responsible for loading AWS account
@@ -37,23 +52,22 @@ import software.amazon.awssdk.test.AWSIntegrationTestBase;
  *
  * @author fulghum@amazon.com
  */
-public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
+public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
     protected static final Log log = LogFactory.getLog(EC2IntegrationTestBase.class);
-    /** The default tags to test with */
+    /** The default tags to test with. */
     protected static final List<Tag> TAGS = Arrays.asList(new Tag("foo", "bar"), new Tag("baz", ""));
     protected static final String AMI_ID = "ami-7f418316";
     protected static final String KERNEL_ID = "aki-a71cf9ce";
     protected static final String RAMDISK_ID = "ari-a51cf9cc";
-    /** Shared EC2 client for all tests to use */
+    /** Shared EC2 client for all tests to use. */
     protected static AmazonEC2Client ec2;
-    /** Shared EC2 async client for tests to use */
+    /** Shared EC2 async client for tests to use. */
     protected static AmazonEC2AsyncClient ec2Async;
 
     /**
      * Loads the AWS account info for the integration tests and creates an EC2
      * client for tests to use.
      *
-     * @throws IOException
      */
     @BeforeClass
     public static void setupClients() throws IOException {
@@ -123,8 +137,7 @@ public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
             if (state.toString().equalsIgnoreCase(
                     instance.getState().getName())) {
                 return instance;
-            } else if (InstanceStateName.Terminated.toString().equals
-                    (instance.getState().getName())) {
+            } else if (InstanceStateName.Terminated.toString().equals(instance.getState().getName())) {
                 // There are cases where the instance directly goes from
                 // pending to terminated state. In such cases, this while
                 // loop waits for a longer time before it could throw the
@@ -184,6 +197,7 @@ public abstract class EC2IntegrationTestBase extends AWSIntegrationTestBase {
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {
+                // Ignored or expected.
             }
             tagsResult = ec2.describeTags(new DescribeTagsRequest().withFilters(new Filter().withName("resource-id")
                                                                                             .withValues(resourceId)));

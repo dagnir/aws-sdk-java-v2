@@ -91,6 +91,7 @@ public class PaginatedScanTaskTest {
             parallelScanTask.getNextBatchOfScanResults();
             fail("Expected ProvisionedThroughputExceededException");
         } catch (ProvisionedThroughputExceededException expected) {
+            // Ignored or expected.
         }
 
         executorService.awaitTermination(5, TimeUnit.SECONDS);

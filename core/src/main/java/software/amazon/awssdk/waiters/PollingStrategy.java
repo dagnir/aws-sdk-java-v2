@@ -84,7 +84,6 @@ public class PollingStrategy {
          * Defines the custom delay strategy to control the sleep time
          *
          * @param pollingStrategyContext Provides the polling context required to define custom delay
-         * @throws InterruptedException
          * @see PollingStrategyContext
          */
         void delayBeforeNextRetry(PollingStrategyContext pollingStrategyContext) throws InterruptedException;

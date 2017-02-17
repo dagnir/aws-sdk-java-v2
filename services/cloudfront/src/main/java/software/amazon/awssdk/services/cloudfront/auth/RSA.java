@@ -127,7 +127,6 @@ public enum RSA {
      * </pre>
      *
      * @param keyInPkcs1 PKCS#1 encoded key
-     * @throws IOException
      */
     private static RSAPrivateCrtKeySpec newRSAPrivateCrtKeySpec(byte[] keyInPkcs1) throws IOException {
         DerParser parser = new DerParser(keyInPkcs1);

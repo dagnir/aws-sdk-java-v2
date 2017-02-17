@@ -16,9 +16,9 @@
 package software.amazon.awssdk.auth.profile.internal.securitytoken;
 
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 
 @SdkProtectedApi
 public interface ProfileCredentialsService {
-    AWSCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo);
+    AwsCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo);
 }

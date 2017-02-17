@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.s3.model.EncryptionMaterials;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.transfer.internal.TransferManagerUtils;
 
 public class TransferManagerUtilsTest {
@@ -95,7 +95,7 @@ public class TransferManagerUtilsTest {
     @Test
     public void isDownloadParallelizableGivenSSECustomerkeyInRequestReturnsFalse() {
         GetObjectRequest getObjectRequest = new GetObjectRequest(BUCKET_NAME, KEY)
-                .withSSECustomerKey(new SSECustomerKey(" "));
+                .withSSECustomerKey(new SseCustomerKey(" "));
         assertTrue(TransferManagerUtils.isDownloadParallelizable(s3, getObjectRequest, 1));
     }
 

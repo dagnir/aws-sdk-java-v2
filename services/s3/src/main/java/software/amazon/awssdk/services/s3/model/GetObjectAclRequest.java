@@ -223,7 +223,7 @@ public class GetObjectAclRequest extends AmazonWebServiceRequest implements Seri
      *            to be retrieved.
      *
      * @return The updated request object, enabling additional method calls to be
-     * chained together.
+     *     chained together.
      *
      * @see GetObjectAclRequest#getVersionId()
      * @see GetObjectAclRequest#setVersionId(String)

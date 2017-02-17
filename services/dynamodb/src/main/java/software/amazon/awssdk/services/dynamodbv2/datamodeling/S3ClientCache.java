@@ -18,9 +18,9 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.AmazonS3;
@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.s3.transfer.TransferManager;
 
 /**
  * A smart Map for {@link AmazonS3} objects. {@link S3ClientCache} keeps the
- * clients organized by region, and if provided {@link AWSCredentials} will
+ * clients organized by region, and if provided {@link AwsCredentials} will
  * create clients on the fly. Otherwise it just return clients given to it with
  * {@link #useClient(AmazonS3)}.
  */
@@ -38,24 +38,24 @@ public class S3ClientCache {
     private final ConcurrentMap<String, AmazonS3> clientsByRegion = new ConcurrentHashMap<String, AmazonS3>();
     private final Map<String, TransferManager> transferManagersByRegion = new ConcurrentHashMap<String, TransferManager>();
 
-    private final AWSCredentialsProvider awscredentialsProvider;
+    private final AwsCredentialsProvider awscredentialsProvider;
 
     @Deprecated
-    S3ClientCache(AWSCredentials credentials) {
-        this(new AWSStaticCredentialsProvider(credentials));
+    S3ClientCache(AwsCredentials credentials) {
+        this(new AwsStaticCredentialsProvider(credentials));
     }
 
     /**
      * Create a client cache using the given AWSCredentialsProvider. If
      * {@link #getClient(Regions)} or {@link #getTransferManager(Regions)} is
      * called and a client has not been provided for the region, the cache will
-     * instantiate one from the provided {@link AWSCredentialsProvider}.
+     * instantiate one from the provided {@link AwsCredentialsProvider}.
      *
      * @param awsCredentialsProvider
      *            The credentials provider to use when creating new
      *            {@link AmazonS3}.
      */
-    S3ClientCache(AWSCredentialsProvider awsCredentialsProvider) {
+    S3ClientCache(AwsCredentialsProvider awsCredentialsProvider) {
         this.awscredentialsProvider = awsCredentialsProvider;
     }
 
@@ -94,12 +94,12 @@ public class S3ClientCache {
      *            The region the returned {@link AmazonS3} will be
      *            configured to use.
      * @return A client for the given region from the cache, either instantiated
-     *         automatically from the provided {@link AWSCredentials} or
+     *         automatically from the provided {@link AwsCredentials} or
      *         provided with {@link #useClient(AmazonS3)}.
      * @throws IllegalArgumentException
      *             When a region is requested that has not been provided to the
      *             cache with {@link #useClient(AmazonS3)}, and the cache
-     *             has no {@link AWSCredentials} with which a client may be
+     *             has no {@link AwsCredentials} with which a client may be
      *             instantiated.
      */
     public AmazonS3 getClient(Region region) {
@@ -117,12 +117,12 @@ public class S3ClientCache {
      *            The region the returned {@link AmazonS3} will be
      *            configured to use.
      * @return A client for the given region from the cache, either instantiated
-     *         automatically from the provided {@link AWSCredentials} or
+     *         automatically from the provided {@link AwsCredentials} or
      *         provided with {@link #useClient(AmazonS3)}.
      * @throws IllegalArgumentException
      *             When a region is requested that has not been provided to the
      *             cache with {@link #useClient(AmazonS3)}, and the cache
-     *             has no {@link AWSCredentials} with which a client may be
+     *             has no {@link AwsCredentials} with which a client may be
      *             instantiated.
      */
     public AmazonS3 getClient(String region) {
@@ -159,7 +159,7 @@ public class S3ClientCache {
      * exception when unable. The returned {@link TransferManager} will always
      * be instantiated from whatever {@link AmazonS3} is in the cache,
      * whether provided with {@link #useClient(AmazonS3)} or instantiated
-     * automatically from {@link AWSCredentials}.
+     * automatically from {@link AwsCredentials}.
      *
      * Any {@link TransferManager} returned could be shut down if a new
      * underlying {@link AmazonS3} is provided with
@@ -181,7 +181,7 @@ public class S3ClientCache {
      * exception when unable. The returned {@link TransferManager} will always
      * be instantiated from whatever {@link AmazonS3} is in the cache,
      * whether provided with {@link #useClient(AmazonS3)} or instantiated
-     * automatically from {@link AWSCredentials}.
+     * automatically from {@link AwsCredentials}.
      *
      * Any {@link TransferManager} returned could be shut down if a new
      * underlying {@link AmazonS3} is provided with

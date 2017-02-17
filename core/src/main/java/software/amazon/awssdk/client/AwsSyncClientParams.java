@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicyAdapter;
@@ -33,7 +33,7 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 @SdkProtectedApi
 public abstract class AwsSyncClientParams {
 
-    public abstract AWSCredentialsProvider getCredentialsProvider();
+    public abstract AwsCredentialsProvider getCredentialsProvider();
 
     public abstract ClientConfiguration getClientConfiguration();
 

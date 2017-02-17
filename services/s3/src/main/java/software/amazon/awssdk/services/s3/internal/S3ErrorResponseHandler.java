@@ -47,11 +47,11 @@ import software.amazon.awssdk.util.IOUtils;
  */
 public class S3ErrorResponseHandler implements
                                     HttpResponseHandler<AmazonServiceException> {
-    /** Shared logger for profiling information */
+    /** Shared logger for profiling information. */
     private static final Log log = LogFactory
             .getLog(S3ErrorResponseHandler.class);
 
-    /** Shared factory for creating XML event readers */
+    /** Shared factory for creating XML event readers. */
     private static final XMLInputFactory xmlInputFactory = XMLInputFactory
             .newInstance();
 
@@ -161,6 +161,8 @@ public class S3ErrorResponseHandler implements
                         continue;
                     case XMLStreamConstants.END_DOCUMENT:
                         return exceptionBuilder.build();
+                    default:
+                        // Ignore
                 }
             }
         } catch (Exception e) {

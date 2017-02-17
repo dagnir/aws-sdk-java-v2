@@ -20,7 +20,7 @@ import java.io.InputStream;
 import software.amazon.awssdk.SdkClientException;
 
 /**
- * {@link AWSCredentialsProvider} implementation that loads AWS security
+ * {@link AwsCredentialsProvider} implementation that loads AWS security
  * credentials from a properties file on the classpath. The default
  * constructor creates a credentials provider that loads the credentials
  * from a file named <code>AwsCredentials.properties</code> on the
@@ -31,9 +31,9 @@ import software.amazon.awssdk.SdkClientException;
  * property and the AWS secret key is expected to be in the
  * <code>secretKey</code> property.
  */
-public class ClasspathPropertiesFileCredentialsProvider implements AWSCredentialsProvider {
+public class ClasspathPropertiesFileCredentialsProvider implements AwsCredentialsProvider {
 
-    /** The name of the properties file to check for credentials */
+    /** The name of the properties file to check for credentials. */
     private static String DEFAULT_PROPERTIES_FILE = "AwsCredentials.properties";
 
     private final String credentialsFilePath;
@@ -76,16 +76,18 @@ public class ClasspathPropertiesFileCredentialsProvider implements AWSCredential
         }
     }
 
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         InputStream inputStream = getClass().getResourceAsStream(credentialsFilePath);
         if (inputStream == null) {
-            throw new SdkClientException("Unable to load AWS credentials from the " + credentialsFilePath + " file on the classpath");
+            throw new SdkClientException("Unable to load AWS credentials from the " + credentialsFilePath +
+                                         " file on the classpath");
         }
 
         try {
             return new PropertiesCredentials(inputStream);
         } catch (IOException e) {
-            throw new SdkClientException("Unable to load AWS credentials from the " + credentialsFilePath + " file on the classpath", e);
+            throw new SdkClientException("Unable to load AWS credentials from the " + credentialsFilePath +
+                                         " file on the classpath", e);
         }
     }
 

@@ -21,7 +21,7 @@ import java.util.Map;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * Represents a request being sent to an Amazon Web Service, including the
@@ -106,7 +106,7 @@ public interface Request<T> extends SignableRequest<T> {
      *         signing purpose.
      *
      * @see {@link AmazonServiceException#getServiceName()}
-     * @see {@link AWSRequestMetrics.Field#ServiceName}
+     * @see {@link AwsRequestMetrics.Field#ServiceName}
      */
     String getServiceName();
 
@@ -140,7 +140,7 @@ public interface Request<T> extends SignableRequest<T> {
     /**
      * Returns the request metrics.
      */
-    AWSRequestMetrics getAWSRequestMetrics();
+    AwsRequestMetrics getAWSRequestMetrics();
 
     /**
      * Bind the request metrics to the request. Note metrics can be captured
@@ -148,7 +148,7 @@ public interface Request<T> extends SignableRequest<T> {
      *
      * @throws IllegalStateException if the binding has already occurred
      */
-    void setAWSRequestMetrics(AWSRequestMetrics metrics);
+    void setAwsRequestMetrics(AwsRequestMetrics metrics);
 
     /**
      * Adds a context to the request object that is visible

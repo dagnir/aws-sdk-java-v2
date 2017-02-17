@@ -92,10 +92,7 @@ public class BootstrapActions {
      * ConfigureHadoop is deprecated. Use {@link software.amazon.awssdk.services
      * .elasticmapreduce.model.RunJobFlowRequest#setConfigurations} instead.
      * For more information see,
-     * @link http://docs.aws.amazon.com/ElasticMapReduce/latest/ReleaseGuide/emr
-     * -configure-apps.html
-     *
-     * @Deprecated
+     * @link http://docs.aws.amazon.com/ElasticMapReduce/latest/ReleaseGuide/emr-configure-apps.html
      */
     public ConfigureHadoop newConfigureHadoop() {
         return new ConfigureHadoop();
@@ -135,10 +132,7 @@ public class BootstrapActions {
      * ConfigureHadoop is deprecated. Use {@link software.amazon.awssdk.services
      * .elasticmapreduce.model.RunJobFlowRequest#setConfigurations} instead.
      * For more information see,
-     * @link http://docs.aws.amazon.com/ElasticMapReduce/latest/ReleaseGuide/emr
-     * -configure-apps.html
-     *
-     * @Deprecated
+     * @link http://docs.aws.amazon.com/ElasticMapReduce/latest/ReleaseGuide/emr-configure-apps.html
      */
     @Deprecated
     public class ConfigureHadoop {
@@ -155,7 +149,7 @@ public class BootstrapActions {
          *         together.
          */
         public ConfigureHadoop withXml(ConfigFile file, String xmlPath) {
-            String arg = "";
+            String arg;
 
             switch (file) {
                 case Site:
@@ -173,6 +167,8 @@ public class BootstrapActions {
                 case Mapred:
                     arg = "-M";
                     break;
+                default:
+                    arg = "";
             }
 
             args.add(arg);
@@ -189,7 +185,7 @@ public class BootstrapActions {
          *         together.
          */
         public ConfigureHadoop withKeyValue(ConfigFile file, String key, String value) {
-            String arg = "";
+            String arg;
 
             switch (file) {
                 case Site:
@@ -207,6 +203,8 @@ public class BootstrapActions {
                 case Mapred:
                     arg = "-m";
                     break;
+                default:
+                    arg = "";
             }
 
             args.add(arg);

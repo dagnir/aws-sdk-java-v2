@@ -39,9 +39,9 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.ProgressListenerChain;
 import software.amazon.awssdk.services.s3.AmazonS3;
@@ -105,15 +105,15 @@ import software.amazon.awssdk.util.VersionInfoUtils;
  * <pre class="brush: java">
  * DefaultAWSCredentialsProviderChain credentialProviderChain = new DefaultAWSCredentialsProviderChain();
  * TransferManager tx = new TransferManager(
- * 		credentialProviderChain.getCredentials());
+ *         credentialProviderChain.getCredentials());
  * Upload myUpload = tx.upload(myBucket, myFile.getName(), myFile);
  *
  * // You can poll your transfer's status to check its progress
  * if (myUpload.isDone() == false) {
- * 	System.out.println(&quot;Transfer: &quot; + myUpload.getDescription());
- * 	System.out.println(&quot;  - State: &quot; + myUpload.getState());
- * 	System.out.println(&quot;  - Progress: &quot;
- * 			+ myUpload.getProgress().getBytesTransferred());
+ *     System.out.println(&quot;Transfer: &quot; + myUpload.getDescription());
+ *     System.out.println(&quot;  - State: &quot; + myUpload.getState());
+ *     System.out.println(&quot;  - Progress: &quot;
+ *             + myUpload.getProgress().getBytesTransferred());
  * }
  *
  * // Transfers also allow you to set a &lt;code&gt;ProgressListener&lt;/code&gt; to receive
@@ -189,7 +189,7 @@ public class TransferManager {
      */
     @Deprecated
     public TransferManager() {
-        this(new AmazonS3Client(new DefaultAWSCredentialsProviderChain()));
+        this(new AmazonS3Client(new DefaultAwsCredentialsProviderChain()));
     }
 
     /**
@@ -209,7 +209,7 @@ public class TransferManager {
      * {@code TransferManagerBuilder.standard().withS3Client(AmazonS3ClientBuilder.standard.withCredentials(credentialsProvider).build()).build(); }
      */
     @Deprecated
-    public TransferManager(AWSCredentialsProvider credentialsProvider) {
+    public TransferManager(AwsCredentialsProvider credentialsProvider) {
         this(new AmazonS3Client(credentialsProvider));
     }
 
@@ -231,7 +231,7 @@ public class TransferManager {
      * {@code TransferManagerBuilder.standard().withS3Client(AmazonS3ClientBuilder.standard.withCredentials(credentials).build()).build(); }
      */
     @Deprecated
-    public TransferManager(AWSCredentials credentials) {
+    public TransferManager(AwsCredentials credentials) {
         this(new AmazonS3Client(credentials));
     }
 
@@ -430,8 +430,8 @@ public class TransferManager {
      *            custom user metadata, etc.
      *
      * @return A new <code>Upload</code> object to use to check
-     * 		   the state of the upload, listen for progress notifications,
-     * 		   and otherwise manage the upload.
+     *            the state of the upload, listen for progress notifications,
+     *            and otherwise manage the upload.
      *
      * @throws AmazonClientException
      *             If any errors are encountered in the client while making the
@@ -518,8 +518,8 @@ public class TransferManager {
      *            The request containing all the parameters for the upload.
      *
      * @return A new <code>Upload</code> object to use to check
-     * 		   the state of the upload, listen for progress notifications,
-     * 		   and otherwise manage the upload.
+     *            the state of the upload, listen for progress notifications,
+     *            and otherwise manage the upload.
      *
      * @throws AmazonClientException
      *             If any errors are encountered in the client while making the
@@ -1229,7 +1229,7 @@ public class TransferManager {
             } while (listObjectsResponse.isTruncated());
         } while (!commonPrefixes.isEmpty());
 
-        /* This is the hook for adding additional progress listeners */
+        /* This is the hook for adding additional progress listeners. */
         ProgressListenerChain additionalListeners = new ProgressListenerChain();
 
         TransferProgress transferProgress = new TransferProgress();
@@ -1348,7 +1348,7 @@ public class TransferManager {
      *            files found in subdirectories will be included with an
      *            appropriate concatenation to the key prefix.
      * @param metadataProvider
-     * 			  A callback of type <code>ObjectMetadataProvider</code> which
+     *               A callback of type <code>ObjectMetadataProvider</code> which
      *            is used to provide metadata for each file being uploaded.
      */
     public MultipleFileUpload uploadDirectory(String bucketName, String virtualDirectoryKeyPrefix, File directory,
@@ -1430,7 +1430,7 @@ public class TransferManager {
      *            calculated relative to the common parent directory and the
      *            virtualDirectoryKeyPrefix.
      * @param metadataProvider
-     * 			  A callback of type <code>ObjectMetadataProvider</code> which
+     *               A callback of type <code>ObjectMetadataProvider</code> which
      *            is used to provide metadata for each file being uploaded.
      */
     public MultipleFileUpload uploadFileList(String bucketName, String virtualDirectoryKeyPrefix, File directory,
@@ -1446,7 +1446,7 @@ public class TransferManager {
             virtualDirectoryKeyPrefix = virtualDirectoryKeyPrefix + "/";
         }
 
-        /* This is the hook for adding additional progress listeners */
+        /* This is the hook for adding additional progress listeners. */
         ProgressListenerChain additionalListeners = new ProgressListenerChain();
         TransferProgress progress = new TransferProgress();
         /*
@@ -1778,7 +1778,7 @@ public class TransferManager {
      *                            object's bucket is located.
      * @param stateChangeListener The transfer state change listener to monitor the copy request
      * @return A new <code>Copy</code> object to use to check the state of the
-     * copy request being processed.
+     *     copy request being processed.
      * @throws AmazonClientException  If any errors are encountered in the client while making the
      *                                request or handling the response.
      * @throws AmazonServiceException If any errors occurred in Amazon S3 while processing the
@@ -1809,7 +1809,7 @@ public class TransferManager {
 
         GetObjectMetadataRequest getObjectMetadataRequest = new GetObjectMetadataRequest(
                 copyObjectRequest.getSourceBucketName(), copyObjectRequest.getSourceKey())
-                .withSSECustomerKey(copyObjectRequest.getSourceSSECustomerKey())
+                .withSSECustomerKey(copyObjectRequest.getSourceSseCustomerKey())
                 .withRequesterPays(copyObjectRequest.isRequesterPays());
 
         ObjectMetadata metadata = srcS3.getObjectMetadata(getObjectMetadataRequest);
@@ -1914,15 +1914,6 @@ public class TransferManager {
         if (parameterValue == null) {
             throw new IllegalArgumentException(errorMessage);
         }
-    }
-
-    /**
-     * Releasing all resources created by <code>TransferManager</code> before it
-     * is being garbage collected.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        shutdownThreadPools();
     }
 
     /**

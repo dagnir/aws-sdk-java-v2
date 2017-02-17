@@ -20,13 +20,13 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.util.StringUtils;
 
 /**
- * {@link AWSCredentialsProvider} implementation that provides credentials
+ * {@link AwsCredentialsProvider} implementation that provides credentials
  * by looking at the: <code>AWS_ACCESS_KEY_ID</code> (or <code>AWS_ACCESS_KEY</code>) and
  * <code>AWS_SECRET_KEY</code> (or <code>AWS_SECRET_ACCESS_KEY</code>) environment variables.
  */
-public class EnvironmentVariableCredentialsProvider implements AWSCredentialsProvider {
+public class EnvironmentVariableCredentialsProvider implements AwsCredentialsProvider {
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         String accessKey = System.getenv(SDKGlobalConfiguration.ACCESS_KEY_ENV_VAR);
         if (accessKey == null) {
             accessKey = System.getenv(SDKGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR);
@@ -52,7 +52,7 @@ public class EnvironmentVariableCredentialsProvider implements AWSCredentialsPro
         }
 
         return sessionToken == null ?
-               new BasicAWSCredentials(accessKey, secretKey)
+               new BasicAwsCredentials(accessKey, secretKey)
                                     :
                new BasicSessionCredentials(accessKey, secretKey, sessionToken);
     }

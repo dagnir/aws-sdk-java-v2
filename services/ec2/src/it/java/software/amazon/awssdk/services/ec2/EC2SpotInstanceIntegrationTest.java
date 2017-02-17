@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +51,7 @@ import software.amazon.awssdk.services.s3.AmazonS3Client;
 /**
  * Integration tests for Spot Instance APIs in EC2.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
 
@@ -44,7 +59,7 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     private static final String TEST_AMI_ID = "ami-84db39ed";
 
     private static final String DEFAULT_GROUP_NAME = "default";
-    private final String UNAVAILABLE_ZONE = "us-east-1a";
+    private static final String UNAVAILABLE_ZONE = "us-east-1a";
     private AvailabilityZone zone;
 
     /**
@@ -64,10 +79,8 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
 
         for (SpotPrice spotPrice : spotPrices) {
             assertNotNull(spotPrice.getInstanceType());
-            Assert.assertThat(spotPrice.getProductDescription(), Matchers.not
-                    (Matchers.isEmptyOrNullString()));
-            Assert.assertThat(spotPrice.getSpotPrice(), Matchers.not
-                    (Matchers.isEmptyOrNullString()));
+            Assert.assertThat(spotPrice.getProductDescription(), Matchers.not(Matchers.isEmptyOrNullString()));
+            Assert.assertThat(spotPrice.getSpotPrice(), Matchers.not(Matchers.isEmptyOrNullString()));
             assertNotNull(spotPrice.getAvailabilityZone());
             assertNotNull(spotPrice.getTimestamp());
         }
@@ -221,11 +234,9 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
                                                      String prefix) {
         assertEquals(bucketName, datafeedSubscription.getBucket());
         assertNull(datafeedSubscription.getFault());
-        Assert.assertThat(datafeedSubscription.getOwnerId(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
+        Assert.assertThat(datafeedSubscription.getOwnerId(), Matchers.not(Matchers.isEmptyOrNullString()));
         assertEquals(prefix, datafeedSubscription.getPrefix());
-        Assert.assertThat(datafeedSubscription.getState(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
+        Assert.assertThat(datafeedSubscription.getState(), Matchers.not(Matchers.isEmptyOrNullString()));
     }
 
     /**
@@ -242,13 +253,10 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
         assertNull(spotInstanceRequest.getInstanceId());
 
         assertEquals("launch-group", spotInstanceRequest.getLaunchGroup());
-        Assert.assertThat(spotInstanceRequest.getProductDescription(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
-        Assert.assertThat(spotInstanceRequest.getSpotInstanceRequestId(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
+        Assert.assertThat(spotInstanceRequest.getProductDescription(), Matchers.not(Matchers.isEmptyOrNullString()));
+        Assert.assertThat(spotInstanceRequest.getSpotInstanceRequestId(), Matchers.not(Matchers.isEmptyOrNullString()));
         assertEquals(Double.parseDouble("0.01"), Double.parseDouble(spotInstanceRequest.getSpotPrice()), .001);
-        Assert.assertThat(spotInstanceRequest.getState(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
+        Assert.assertThat(spotInstanceRequest.getState(), Matchers.not(Matchers.isEmptyOrNullString()));
         assertEquals(SpotInstanceType.OneTime.toString(), spotInstanceRequest.getType());
         assertRecent(spotInstanceRequest.getValidFrom());
         assertRecent(spotInstanceRequest.getValidUntil());
@@ -264,8 +272,7 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
         assertEquals(DEFAULT_GROUP_NAME, launchSpecification.getSecurityGroups().get(0));
         assertEquals(TEST_AMI_ID, launchSpecification.getImageId());
         assertEquals(InstanceType.M1Small.toString(), launchSpecification.getInstanceType());
-        Assert.assertThat(launchSpecification.getKeyName(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
+        Assert.assertThat(launchSpecification.getKeyName(), Matchers.not(Matchers.isEmptyOrNullString()));
         assertNull(launchSpecification.getKernelId());
         assertEquals(zone.getZoneName(), launchSpecification.getPlacement().getAvailabilityZone());
         assertNull(launchSpecification.getRamdiskId());

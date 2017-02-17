@@ -27,7 +27,6 @@ public final class IdempotentUtils {
      * This method is intended for internal use only.
      * if input token is null, create and return a new unique token.
      * Otherwise return the existing token.
-     * @param token
      * @return if input token is not null, return the same. Else return new token.
      */
     public static String resolveString(String token) {

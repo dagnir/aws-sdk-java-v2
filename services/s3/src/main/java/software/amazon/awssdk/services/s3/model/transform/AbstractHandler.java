@@ -58,7 +58,7 @@ abstract class AbstractHandler extends DefaultHandler {
             String qName);
 
     @Override
-    public final void characters(char ch[], int start, int length) {
+    public final void characters(char[] ch, int start, int length) {
         text.append(ch, start, length);
     }
 

@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageResult;
 
-/** this class converts sqs batch entry results to individual results */
+/** this class converts sqs batch entry results to individual results. */
 class ResultConverter {
 
     static SendMessageResult convert(SendMessageBatchResultEntry br) {

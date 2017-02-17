@@ -30,7 +30,7 @@ import software.amazon.awssdk.SignableRequest;
 public class QueryStringSignerTest {
 
     private static final QueryStringSigner signer = new QueryStringSigner();
-    private static final AWSCredentials credentials = new BasicAWSCredentials("123456789", "123456789");
+    private static final AwsCredentials credentials = new BasicAwsCredentials("123456789", "123456789");
 
     private static final String EXPECTED_SIGNATURE = "VjYMhf9TWp08zAxXbKDAvUhW9GjJ56QjAuSj3LBsfjM=";
 
@@ -89,7 +89,7 @@ public class QueryStringSignerTest {
                                                        .withPath("bar")
                                                        .build();
 
-        signer.sign(request, new AnonymousAWSCredentials());
+        signer.sign(request, new AnonymousAwsCredentials());
 
         assertNull(request.getParameters().get("Signature"));
     }

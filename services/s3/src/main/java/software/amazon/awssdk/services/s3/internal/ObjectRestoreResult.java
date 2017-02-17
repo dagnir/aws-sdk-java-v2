@@ -46,7 +46,6 @@ public interface ObjectRestoreResult {
 
     /**
      * Sets a boolean value which indicates there is an ongoing restore request.
-     * @param ongoingRestore
      */
     public void setOngoingRestore(boolean ongoingRestore);
 }

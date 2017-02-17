@@ -96,7 +96,7 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanPrope
 @DynamoDBTypeConverted(converter = DynamoDBDelimited.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface DynamoDBDelimited {
 
     /**

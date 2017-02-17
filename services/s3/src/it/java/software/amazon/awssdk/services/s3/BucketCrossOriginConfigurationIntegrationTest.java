@@ -26,25 +26,25 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.s3.model.BucketCrossOriginConfiguration;
-import software.amazon.awssdk.services.s3.model.CORSRule;
-import software.amazon.awssdk.services.s3.model.CORSRule.AllowedMethods;
+import software.amazon.awssdk.services.s3.model.CorsRule;
+import software.amazon.awssdk.services.s3.model.CorsRule.AllowedMethods;
 
 public class BucketCrossOriginConfigurationIntegrationTest extends S3IntegrationTestBase {
     private static final boolean ANDROID_TESTING = false;
 
-    /** The bucket created and used by these tests */
-    private static final String bucketName = "java-bucket-cross-origin-integ-test-" + new Date().getTime();
+    /** The bucket created and used by these tests. */
+    private static final String BUCKET_NAME = "java-bucket-cross-origin-integ-test-" + new Date().getTime();
 
     private static final int MAX_AGE_SECONDS = 3000;
     private static final String EXPOSE_HEADER = "x-amz-server-side-encryption";
     private static final String ALLOWED_ORIGIN = "http://www.foobar.com";
     private static final String ALLOWED_HEADER = "x-amz-meta-tastic";
-    final String ID1 = "123";
-    final String ID2 = "321";
+    private static final String ID1 = "123";
+    private static final String ID2 = "321";
 
     @AfterClass
     public static void tearDown() throws Exception {
-        deleteBucketAndAllContents(bucketName);
+        deleteBucketAndAllContents(BUCKET_NAME);
     }
 
     /**
@@ -59,19 +59,19 @@ public class BucketCrossOriginConfigurationIntegrationTest extends S3Integration
             setUpCredentials();
         }
 
-        s3.createBucket(bucketName);
+        s3.createBucket(BUCKET_NAME);
 
     }
 
     @Test
     public void testBucketCrossOrigin() throws Exception {
         // Check the bucket for its existing CORS config
-        waitForBucketCreation(bucketName);
-        BucketCrossOriginConfiguration bucketCrossOriginConfiguration = s3.getBucketCrossOriginConfiguration(bucketName);
+        waitForBucketCreation(BUCKET_NAME);
+        BucketCrossOriginConfiguration bucketCrossOriginConfiguration = s3.getBucketCrossOriginConfiguration(BUCKET_NAME);
         assertNull(bucketCrossOriginConfiguration);
 
         // Apply a config
-        CORSRule rule1 = new CORSRule();
+        CorsRule rule1 = new CorsRule();
         rule1.setId(ID1);
         rule1.setMaxAgeSeconds(MAX_AGE_SECONDS);
         rule1.setExposedHeaders(EXPOSE_HEADER, EXPOSE_HEADER + "1");
@@ -79,27 +79,27 @@ public class BucketCrossOriginConfigurationIntegrationTest extends S3Integration
         rule1.setAllowedOrigins(ALLOWED_ORIGIN);
         rule1.setAllowedHeaders(ALLOWED_HEADER, ALLOWED_HEADER + "1");
 
-        CORSRule rule2 = new CORSRule();
+        CorsRule rule2 = new CorsRule();
         rule2.setId(ID2);
         rule2.setMaxAgeSeconds(MAX_AGE_SECONDS);
         rule2.setExposedHeaders(EXPOSE_HEADER, EXPOSE_HEADER + "1");
-        rule2.setAllowedMethods(CORSRule.AllowedMethods.PUT, CORSRule.AllowedMethods.DELETE);
+        rule2.setAllowedMethods(CorsRule.AllowedMethods.PUT, CorsRule.AllowedMethods.DELETE);
         rule2.setAllowedOrigins(ALLOWED_ORIGIN);
         rule2.setAllowedHeaders(ALLOWED_HEADER, ALLOWED_HEADER + "1");
         BucketCrossOriginConfiguration config = new BucketCrossOriginConfiguration().withRules(
                 rule1, rule2);
 
-        s3.setBucketCrossOriginConfiguration(bucketName, config);
+        s3.setBucketCrossOriginConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        bucketCrossOriginConfiguration = waitForbucketCrossOriginConfiguration(bucketName);
+        bucketCrossOriginConfiguration = waitForbucketCrossOriginConfiguration(BUCKET_NAME);
         assertNotNull(bucketCrossOriginConfiguration);
         assertEquals(2, bucketCrossOriginConfiguration.getRules().size());
 
-        for (CORSRule rule : bucketCrossOriginConfiguration.getRules()) {
+        for (CorsRule rule : bucketCrossOriginConfiguration.getRules()) {
             if (rule.getId().equals(ID1)) {
-                assertTrue(rule.getAllowedMethods().contains(CORSRule.AllowedMethods.GET));
-                assertTrue(rule.getAllowedMethods().contains(CORSRule.AllowedMethods.POST));
+                assertTrue(rule.getAllowedMethods().contains(CorsRule.AllowedMethods.GET));
+                assertTrue(rule.getAllowedMethods().contains(CorsRule.AllowedMethods.POST));
                 assertEquals(MAX_AGE_SECONDS, rule.getMaxAgeSeconds());
                 System.out.println(rule.getAllowedHeaders().size());
                 assertTrue(rule.getAllowedHeaders().contains(ALLOWED_HEADER));
@@ -108,8 +108,8 @@ public class BucketCrossOriginConfigurationIntegrationTest extends S3Integration
                 assertTrue(rule.getExposedHeaders().contains(EXPOSE_HEADER + "1"));
                 assertEquals(ALLOWED_ORIGIN, rule.getAllowedOrigins().get(0));
             } else if (rule.getId().equals(ID2)) {
-                assertTrue(rule.getAllowedMethods().contains(CORSRule.AllowedMethods.PUT));
-                assertTrue(rule.getAllowedMethods().contains(CORSRule.AllowedMethods.DELETE));
+                assertTrue(rule.getAllowedMethods().contains(CorsRule.AllowedMethods.PUT));
+                assertTrue(rule.getAllowedMethods().contains(CorsRule.AllowedMethods.DELETE));
                 assertEquals(MAX_AGE_SECONDS, rule.getMaxAgeSeconds());
                 assertTrue(rule.getAllowedHeaders().contains(ALLOWED_HEADER));
                 assertTrue(rule.getAllowedHeaders().contains(ALLOWED_HEADER + "1"));
@@ -122,8 +122,8 @@ public class BucketCrossOriginConfigurationIntegrationTest extends S3Integration
         }
 
         // Delete the config
-        s3.deleteBucketCrossOriginConfiguration(bucketName);
-        assertNull(waitForbucketCrossOriginConfigurationDeleted(bucketName));
+        s3.deleteBucketCrossOriginConfiguration(BUCKET_NAME);
+        assertNull(waitForbucketCrossOriginConfigurationDeleted(BUCKET_NAME));
     }
 
 

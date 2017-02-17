@@ -23,10 +23,10 @@ import software.amazon.awssdk.annotation.ThreadSafe;
 @ThreadSafe
 public class ProgressSupport extends Progress {
     private static final Object lock = new Object();
-    /* Request transfer progress */
+    /* Request transfer progress. */
     private volatile long requestContentLength = -1;
     private volatile long requestBytesTransferred;
-    /* Response transfer progress */
+    /* Response transfer progress. */
     private volatile long responseContentLength = -1;
     private volatile long responseBytesTransferred;
 

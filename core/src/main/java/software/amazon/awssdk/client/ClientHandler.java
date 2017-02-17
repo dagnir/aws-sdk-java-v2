@@ -28,12 +28,11 @@ public abstract class ClientHandler {
      * underlying HTTP call(s).
      *
      * @param executionParams Parameters specific to this invocation of an API.
-     * @param <Input>         Input POJO type
-     * @param <Output>        Output POJO type
+     * @param <InputT>         Input POJO type
+     * @param <OutputT>        Output POJO type
      * @return Unmarshalled output POJO type.
      */
-    public abstract <Input, Output> Output execute(
-            ClientExecutionParams<Input, Output> executionParams);
+    public abstract <InputT, OutputT> OutputT execute(ClientExecutionParams<InputT, OutputT> executionParams);
 
     /**
      * Shutdown and release any underlying resources.

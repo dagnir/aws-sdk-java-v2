@@ -27,7 +27,6 @@ public class MaxAttemptsRetryStrategy implements PollingStrategy.RetryStrategy {
      * Constructs a new MaxAttemptsRetryStrategy with the given
      * default number of attempts
      *
-     * @param defaultMaxAttempts
      */
     public MaxAttemptsRetryStrategy(int defaultMaxAttempts) {
         this.defaultMaxAttempts = defaultMaxAttempts;

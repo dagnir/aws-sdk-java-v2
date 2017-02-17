@@ -25,7 +25,7 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.MetricType;
-import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AWSMetricTransformerFactory;
+import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AwsMetricTransformerFactory;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.RequestMetricTransformer;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
@@ -41,7 +41,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.ConsumedCapacity;
  * This class is loaded only if there are Amazon DyanmoDB specific predefined
  * metrics to be processed.
  *
- * @see AWSMetricTransformerFactory
+ * @see AwsMetricTransformerFactory
  */
 @ThreadSafe
 public class DynamoDBRequestMetricTransformer implements RequestMetricTransformer {
@@ -50,9 +50,8 @@ public class DynamoDBRequestMetricTransformer implements RequestMetricTransforme
                                           Request<?> request, Response<?> response) {
         try {
             return toMetricData0(metricType, request, response);
-        } catch (SecurityException e) {
-        } catch (NoSuchMethodException e) {
-        } catch (IllegalAccessException e) {
+        } catch (SecurityException | NoSuchMethodException | IllegalAccessException e) {
+            // Ignored or expected.
         } catch (InvocationTargetException e) {
             LogFactory.getLog(getClass()).debug("", e.getCause());
         } catch (Exception e) {

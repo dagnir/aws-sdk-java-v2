@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder._;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.paren;
 
 import software.amazon.awssdk.annotation.Beta;
 
@@ -43,7 +43,7 @@ public final class NegationCondition extends Condition {
     @Override
     String asSubstituted(SubstitutionContext context) {
         if (this.precedence() > condition.precedence()) {
-            return "NOT " + _(condition).asSubstituted(context);
+            return "NOT " + paren(condition).asSubstituted(context);
         } else {
             return "NOT " + condition.asSubstituted(context);
         }

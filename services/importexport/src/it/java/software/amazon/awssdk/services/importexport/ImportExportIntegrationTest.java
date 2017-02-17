@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.importexport;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +53,7 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
             "/software/amazon/awssdk/services/importexport/sampleImportManifest.yml";
     private static final String EXPORT_MANIFEST_PATH =
             "/software/amazon/awssdk/services/importexport/sampleExportManifest.yml";
-    /** ID of the job we create, so we can cancel it later */
+    /** ID of the job we create, so we can cancel it later. */
     private String createdJobId;
 
     @AfterClass
@@ -61,13 +76,14 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
         }
     }
 
-    /** Releases resources used by tests */
+    /** Releases resources used by tests. */
     @After
     public void tearDown() throws Exception {
         if (createdJobId != null) {
             try {
                 ie.cancelJob(new CancelJobRequest().withJobId(createdJobId));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
     }
@@ -184,7 +200,7 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
         ensureBucketHasAtLeastOneFileBecauseOfSomeWeirdImportExportRequirement(existingBucketName);
 
         manifest = manifest.replaceAll("@BUCKET@", existingBucketName);
-        manifest = manifest.replaceAll("@ACCESS_KEY_ID@", credentials.getAWSAccessKeyId());
+        manifest = manifest.replaceAll("@ACCESS_KEY_ID@", credentials.getAwsAccessKeyId());
 
         return manifest;
     }

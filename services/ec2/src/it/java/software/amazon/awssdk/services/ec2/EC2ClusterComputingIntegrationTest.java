@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -56,13 +56,12 @@ public class EC2ClusterComputingIntegrationTest extends EC2IntegrationTestBase {
         HVM_AMI_ID = findPublicHvmAmiId();
     }
 
-    /** Release all resources acquired during tests */
+    /** Release all resources acquired during tests. */
     @AfterClass
     public static void tearDown() {
         try {
             ec2.terminateInstances(new TerminateInstancesRequest()
-                                           .withInstanceIds(createdInstanceId)
-                                  );
+                                           .withInstanceIds(createdInstanceId));
             waitForInstanceToTransitionToState(
                     createdInstanceId, InstanceStateName.Terminated);
         } catch (Exception e) {
@@ -71,8 +70,7 @@ public class EC2ClusterComputingIntegrationTest extends EC2IntegrationTestBase {
 
         try {
             ec2.deletePlacementGroup(new DeletePlacementGroupRequest()
-                                             .withGroupName(PLACEMENT_GROUP_NAME)
-                                    );
+                                             .withGroupName(PLACEMENT_GROUP_NAME));
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

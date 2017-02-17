@@ -56,14 +56,14 @@ public class PropertiesFileCredentialsProviderIntegrationTest {
         }
     }
 
-    /** Tests that the credentials provider loads credentials appropriately */
+    /** Tests that the credentials provider loads credentials appropriately. */
     @Test
     public void testPropertiesCredentialsMethod() throws Exception {
         PropertiesFileCredentialsProvider provider = new PropertiesFileCredentialsProvider(
                 file.getAbsolutePath());
 
         assertNotNull(provider.getCredentials());
-        assertEquals(provider.getCredentials().getAWSAccessKeyId(), "testKey");
-        assertEquals(provider.getCredentials().getAWSSecretKey(), "secretKey");
+        assertEquals(provider.getCredentials().getAwsAccessKeyId(), "testKey");
+        assertEquals(provider.getCredentials().getAwsSecretKey(), "secretKey");
     }
 }

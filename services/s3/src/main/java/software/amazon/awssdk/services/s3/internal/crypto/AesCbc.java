@@ -37,7 +37,7 @@ class AesCbc extends ContentCryptoScheme {
     }
 
     @Override
-    int getIVLengthInBytes() {
+    int getIvLengthInBytes() {
         return 16;
     }
 

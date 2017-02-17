@@ -51,7 +51,7 @@ public enum ProgressEventType {
      */
     RESPONSE_BYTE_DISCARD_EVENT,
 
-    /* Generic request progress events */
+    /* Generic request progress events. */
 
     /**
      * Event indicating that the client has started sending the AWS API request.
@@ -119,7 +119,7 @@ public enum ProgressEventType {
 
     //////////////////////////////////////////////////////////////////////////
     // Transfer Event:
-    // Progress events that are used by S3 and Glacier client */
+    // Progress events that are used by S3 and Glacier client. */
     //////////////////////////////////////////////////////////////////////////
     TRANSFER_PREPARING_EVENT,
     TRANSFER_STARTED_EVENT,

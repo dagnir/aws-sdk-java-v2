@@ -19,7 +19,7 @@ import java.io.File;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
@@ -165,7 +165,7 @@ public class IntegrationTestBase {
         }
     }
 
-    protected static AWSCredentials awsTestCredentials() {
+    protected static AwsCredentials awsTestCredentials() {
         try {
             return new PropertiesCredentials(new File(
                     System.getProperty("user.home")

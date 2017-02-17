@@ -46,8 +46,8 @@ import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.GeneratePresignedUrlRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.SSEAlgorithm;
-import software.amazon.awssdk.services.s3.model.SSEAwsKeyManagementParams;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParams;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.model.StorageClass;
 import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.IOUtils;
@@ -135,7 +135,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
         {
             GeneratePresignedUrlRequest genreq = new GeneratePresignedUrlRequest(
                     BUCKET, KEY, HttpMethod.PUT);
-            genreq.setSSECustomerKey(new SSECustomerKey(secretKey));
+            genreq.setSSECustomerKey(new SseCustomerKey(secretKey));
             URL url = s3SigV4.generatePresignedUrl(genreq);
             System.err.println("Presigned PUT URL for SSE-C (with key): " + url);
 
@@ -158,7 +158,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
         {
             GeneratePresignedUrlRequest genreq = new GeneratePresignedUrlRequest(
                     BUCKET, KEY, HttpMethod.GET);
-            genreq.setSSECustomerKey(new SSECustomerKey(secretKey));
+            genreq.setSSECustomerKey(new SseCustomerKey(secretKey));
             URL url = s3SigV4.generatePresignedUrl(genreq);
             System.err.println("Presigned GET URL for SSE-C (with key): " + url);
 
@@ -180,7 +180,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
         {
             GeneratePresignedUrlRequest genreq = new GeneratePresignedUrlRequest(
                     BUCKET, KEY, HttpMethod.GET);
-            genreq.setSSECustomerKey(new SSECustomerKey(secretKey));
+            genreq.setSSECustomerKey(new SseCustomerKey(secretKey));
             URL url = s3SigV2.generatePresignedUrl(genreq);
             System.err.println("Presigned GET URL for SSE-C (with key): " + url);
 
@@ -302,7 +302,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
         {
             GeneratePresignedUrlRequest req = new GeneratePresignedUrlRequest(
                     BUCKET, KEY, HttpMethod.PUT);
-            SSEAwsKeyManagementParams kmsParam = new SSEAwsKeyManagementParams(
+            SseAwsKeyManagementParams kmsParam = new SseAwsKeyManagementParams(
                     nonDefaultKmsKeyId);
             req.withSSEAlgorithm(kmsParam.getEncryption())
                .withKmsCmkId(kmsParam.getAwsKmsKeyId());
@@ -358,7 +358,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
             System.err.println("Presigned PUT URL for SSE KMS: " + url);
 
             HttpPut putreq = new HttpPut(URI.create(url.toExternalForm()));
-            SSEAwsKeyManagementParams kmsParam = new SSEAwsKeyManagementParams(
+            SseAwsKeyManagementParams kmsParam = new SseAwsKeyManagementParams(
                     KmsTestKeyCache.getInstance(Regions.US_EAST_1, credentials).getNonDefaultKeyId());
             putreq.addHeader(new BasicHeader(Headers.SERVER_SIDE_ENCRYPTION,
                                              kmsParam.getEncryption()));
@@ -413,7 +413,7 @@ public class PresignedUrlSigV4IntegrationTest extends S3IntegrationTestBase {
     public void presignedPutGet_SSE_KMS_withExplicitDefaultCmkId()
             throws IOException {
         final String KEY = "SSE_KMS-explicitDefaultCmkId-" + file.getName();
-        SSEAwsKeyManagementParams kmsParam = new SSEAwsKeyManagementParams(
+        SseAwsKeyManagementParams kmsParam = new SseAwsKeyManagementParams(
                 "alias/aws/s3");
         // Generate presigned PUT URL with use of SSE-KMS
         {

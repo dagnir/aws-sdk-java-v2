@@ -25,7 +25,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardBeanProperties.Bean;
 
 /**
- * Reflection assistant for {@link DynamoDBMapper}
+ * Reflection assistant for {@link DynamoDbMapper}
  *
  * @deprecated Replaced by {@link StandardBeanProperties}/{@link StandardModelFactories}
  */

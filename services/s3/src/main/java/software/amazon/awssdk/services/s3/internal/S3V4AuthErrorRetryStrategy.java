@@ -83,12 +83,12 @@ public class S3V4AuthErrorRetryStrategy implements AuthErrorRetryStrategy {
     }
 
     private boolean canUseVirtualAddressing() {
-        return BucketNameUtils.isDNSBucketName(endpointResolver.getBucketName());
+        return BucketNameUtils.isDnsBucketName(endpointResolver.getBucketName());
     }
 
     private AuthRetryParameters redirectToRegionInHeader(Request<?> request, HttpResponse response) {
         final String region = getServingRegionHeader(response);
-        AWSS3V4Signer v4Signer = buildSigV4Signer(region);
+        AwsS3V4Signer v4Signer = buildSigV4Signer(region);
         endpointResolver.resolveRequestEndpoint(request, region);
         return buildRetryParams(v4Signer, request.getEndpoint());
     }
@@ -97,10 +97,9 @@ public class S3V4AuthErrorRetryStrategy implements AuthErrorRetryStrategy {
      * If the response doesn't have the x-amz-region header we have to resort to sending a request
      * to s3-external-1
      *
-     * @return
      */
     private AuthRetryParameters redirectToS3External() {
-        AWSS3V4Signer v4Signer = buildSigV4Signer(Regions.US_EAST_1.getName());
+        AwsS3V4Signer v4Signer = buildSigV4Signer(Regions.US_EAST_1.getName());
         try {
             URI bucketEndpoint = new URI(
                     String.format("https://%s.s3-external-1.amazonaws.com", endpointResolver.getBucketName()));
@@ -111,14 +110,14 @@ public class S3V4AuthErrorRetryStrategy implements AuthErrorRetryStrategy {
         }
     }
 
-    private AWSS3V4Signer buildSigV4Signer(final String region) {
-        AWSS3V4Signer v4Signer = new AWSS3V4Signer();
+    private AwsS3V4Signer buildSigV4Signer(final String region) {
+        AwsS3V4Signer v4Signer = new AwsS3V4Signer();
         v4Signer.setRegionName(region);
         v4Signer.setServiceName(AmazonS3Client.S3_SERVICE_NAME);
         return v4Signer;
     }
 
-    private AuthRetryParameters buildRetryParams(AWSS3V4Signer signer, URI endpoint) {
+    private AuthRetryParameters buildRetryParams(AwsS3V4Signer signer, URI endpoint) {
         log.warn("Attempting to re-send the request to " + endpoint.getHost() + " with AWS V4 authentication. "
                  + "To avoid this warning in the future, " + V4_REGION_WARNING);
         return new AuthRetryParameters(signer, endpoint);

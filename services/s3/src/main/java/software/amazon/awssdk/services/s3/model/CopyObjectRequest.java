@@ -44,11 +44,11 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * @see CopyObjectResult
  */
 public class CopyObjectRequest extends AmazonWebServiceRequest implements
-                                                               SSEAwsKeyManagementParamsProvider,
+                                                               SseAwsKeyManagementParamsProvider,
                                                                Serializable,
                                                                S3AccelerateUnsupported {
 
-    /** The name of the bucket containing the object to be copied */
+    /** The name of the bucket containing the object to be copied. */
     private String sourceBucketName;
 
     /**
@@ -67,7 +67,7 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      */
     private String sourceVersionId;
 
-    /** The name of the bucket to contain the copy of the source object */
+    /** The name of the bucket to contain the copy of the source object. */
     private String destinationBucketName;
 
     /**
@@ -85,10 +85,10 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      */
     private String storageClass;
 
-    /** Optional field specifying the object metadata for the new object */
+    /** Optional field specifying the object metadata for the new object. */
     private ObjectMetadata newObjectMetadata;
 
-    /** Optional field specifying the ACL for the new object */
+    /** Optional field specifying the ACL for the new object. */
     private CannedAccessControlList cannedACL;
 
     /**
@@ -123,26 +123,26 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      */
     private Date modifiedSinceConstraint;
 
-    /** Optional field specifying the redirect location for the new object */
+    /** Optional field specifying the redirect location for the new object. */
     private String redirectLocation;
 
     /**
      * The optional customer-provided server-side encryption key to use to
      * decrypt the source object being copied.
      */
-    private SSECustomerKey sourceSSECustomerKey;
+    private SseCustomerKey sourceSseCustomerKey;
 
     /**
      * The optional customer-provided server-side encryption key to use to
      * encrypt the destination object being copied.
      */
-    private SSECustomerKey destinationSSECustomerKey;
+    private SseCustomerKey destinationSseCustomerKey;
 
     /**
      * The optional AWS Key Management system parameters to be used to encrypt
      * the the object on the server side.
      */
-    private SSEAwsKeyManagementParams sseAwsKeyManagementParams;
+    private SseAwsKeyManagementParams sseAwsKeyManagementParams;
 
     /**
      * If enabled, the requester is charged for conducting this operation from
@@ -196,7 +196,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      *            The key in the destination bucket under which the new object
      *            will be copied.
      *
-     * @see CopyObjectRequest#CopyObjectRequest(String sourceBucketName, String sourceKey, String destinationBucketName, String destinationKey)
+     * @see CopyObjectRequest#CopyObjectRequest(String sourceBucketName, String sourceKey,
+     *                                          String destinationBucketName, String destinationKey)
      */
     public CopyObjectRequest(String sourceBucketName, String sourceKey, String sourceVersionId,
                              String destinationBucketName, String destinationKey) {
@@ -493,24 +494,6 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
     /**
      * <p>
      * Sets the optional Amazon S3 storage class to use when storing the newly
-     * copied object. If not specified, the default standard storage class
-     * is used.
-     * </p>
-     * <p>
-     * For more information on Amazon S3 storage classes and available values,
-     * see the {@link StorageClass} enumeration.
-     * </p>
-     *
-     * @see CopyObjectRequest#getStorageClass()
-     * @see CopyObjectRequest#setStorageClass(String)
-     */
-    public void setStorageClass(StorageClass storageClass) {
-        this.storageClass = storageClass.toString();
-    }
-
-    /**
-     * <p>
-     * Sets the optional Amazon S3 storage class to use when storing the newly
      * copied object. If not specified, the default standard storage class is
      * used.
      * </p>
@@ -524,6 +507,24 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      */
     public void setStorageClass(String storageClass) {
         this.storageClass = storageClass;
+    }
+
+    /**
+     * <p>
+     * Sets the optional Amazon S3 storage class to use when storing the newly
+     * copied object. If not specified, the default standard storage class
+     * is used.
+     * </p>
+     * <p>
+     * For more information on Amazon S3 storage classes and available values,
+     * see the {@link StorageClass} enumeration.
+     * </p>
+     *
+     * @see CopyObjectRequest#getStorageClass()
+     * @see CopyObjectRequest#setStorageClass(String)
+     */
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass.toString();
     }
 
     /**
@@ -1004,8 +1005,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * @return The optional customer-provided server-side encryption key to use
      *         to decrypt the source object being copied.
      */
-    public SSECustomerKey getSourceSSECustomerKey() {
-        return sourceSSECustomerKey;
+    public SseCustomerKey getSourceSseCustomerKey() {
+        return sourceSseCustomerKey;
     }
 
     /**
@@ -1016,8 +1017,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      *            The optional customer-provided server-side encryption key to
      *            use to decrypt the source object being copied.
      */
-    public void setSourceSSECustomerKey(SSECustomerKey sseKey) {
-        this.sourceSSECustomerKey = sseKey;
+    public void setSourceSseCustomerKey(SseCustomerKey sseKey) {
+        this.sourceSseCustomerKey = sseKey;
     }
 
     /**
@@ -1032,8 +1033,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public CopyObjectRequest withSourceSSECustomerKey(SSECustomerKey sseKey) {
-        setSourceSSECustomerKey(sseKey);
+    public CopyObjectRequest withSourceSseCustomerKey(SseCustomerKey sseKey) {
+        setSourceSseCustomerKey(sseKey);
         return this;
     }
 
@@ -1044,8 +1045,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * @return The optional customer-provided server-side encryption key to use
      *         to encrypt the destination object being copied.
      */
-    public SSECustomerKey getDestinationSSECustomerKey() {
-        return destinationSSECustomerKey;
+    public SseCustomerKey getDestinationSseCustomerKey() {
+        return destinationSseCustomerKey;
     }
 
     /**
@@ -1056,12 +1057,12 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      *            The optional customer-provided server-side encryption key to
      *            use to encrypt the destination object being copied.
      */
-    public void setDestinationSSECustomerKey(SSECustomerKey sseKey) {
+    public void setDestinationSseCustomerKey(SseCustomerKey sseKey) {
         if (sseKey != null && this.sseAwsKeyManagementParams != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
-        this.destinationSSECustomerKey = sseKey;
+        this.destinationSseCustomerKey = sseKey;
     }
 
     /**
@@ -1076,8 +1077,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public CopyObjectRequest withDestinationSSECustomerKey(SSECustomerKey sseKey) {
-        setDestinationSSECustomerKey(sseKey);
+    public CopyObjectRequest withDestinationSseCustomerKey(SseCustomerKey sseKey) {
+        setDestinationSseCustomerKey(sseKey);
         return this;
     }
 
@@ -1086,7 +1087,7 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * object on server side.
      */
     @Override
-    public SSEAwsKeyManagementParams getSSEAwsKeyManagementParams() {
+    public SseAwsKeyManagementParams getSseAwsKeyManagementParams() {
         return sseAwsKeyManagementParams;
     }
 
@@ -1094,8 +1095,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * Sets the AWS Key Management System parameters used to encrypt the object
      * on server side.
      */
-    public void setSSEAwsKeyManagementParams(SSEAwsKeyManagementParams params) {
-        if (params != null && this.destinationSSECustomerKey != null) {
+    public void setSseAwsKeyManagementParams(SseAwsKeyManagementParams params) {
+        if (params != null && this.destinationSseCustomerKey != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
         }
@@ -1108,9 +1109,8 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      *
      * @return returns the update CopyObjectRequest
      */
-    public CopyObjectRequest withSSEAwsKeyManagementParams(
-            SSEAwsKeyManagementParams sseAwsKeyManagementParams) {
-        setSSEAwsKeyManagementParams(sseAwsKeyManagementParams);
+    public CopyObjectRequest withSseAwsKeyManagementParams(SseAwsKeyManagementParams sseAwsKeyManagementParams) {
+        setSseAwsKeyManagementParams(sseAwsKeyManagementParams);
         return this;
     }
 

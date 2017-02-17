@@ -53,8 +53,10 @@ public class BucketAnalyticsSaxUnmarshallerTest {
         assertEquals("foo", ((AnalyticsTagPredicate) operands.get(1)).getTag().getKey());
         assertEquals("bar", ((AnalyticsTagPredicate) operands.get(1)).getTag().getValue());
 
-        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(), storageClassAnalysis.getDataExport().getOutputSchemaVersion());
-        AnalyticsS3BucketDestination s3BucketDestination = storageClassAnalysis.getDataExport().getDestination().getS3BucketDestination();
+        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(),
+                     storageClassAnalysis.getDataExport().getOutputSchemaVersion());
+        AnalyticsS3BucketDestination s3BucketDestination =
+                storageClassAnalysis.getDataExport().getDestination().getS3BucketDestination();
         assertEquals(AnalyticsS3ExportFileFormat.CSV.toString(), s3BucketDestination.getFormat());
         assertEquals("123456789", s3BucketDestination.getBucketAccountId());
         assertEquals("arn:aws:s3:::destination-bucket", s3BucketDestination.getBucketArn());
@@ -84,8 +86,10 @@ public class BucketAnalyticsSaxUnmarshallerTest {
         assertEquals("documents/", ((AnalyticsPrefixPredicate) operands.get(0)).getPrefix());
         assertEquals("foo", ((AnalyticsTagPredicate) operands.get(1)).getTag().getKey());
         assertEquals("bar", ((AnalyticsTagPredicate) operands.get(1)).getTag().getValue());
-        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(), storageClassAnalysis.getDataExport().getOutputSchemaVersion());
-        AnalyticsS3BucketDestination s3BucketDestination = storageClassAnalysis.getDataExport().getDestination().getS3BucketDestination();
+        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(),
+                     storageClassAnalysis.getDataExport().getOutputSchemaVersion());
+        AnalyticsS3BucketDestination s3BucketDestination =
+                storageClassAnalysis.getDataExport().getDestination().getS3BucketDestination();
         assertEquals(AnalyticsS3ExportFileFormat.CSV.toString(), s3BucketDestination.getFormat());
         assertEquals("123456789", s3BucketDestination.getBucketAccountId());
         assertEquals("arn:aws:s3:::destination-bucket", s3BucketDestination.getBucketArn());

@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Rule;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.Headers;
@@ -51,7 +51,7 @@ public abstract class S3WireMockTestBase {
     }
 
     protected AmazonS3 buildClient() {
-        AmazonS3Client s3 = new AmazonS3Client(new BasicAWSCredentials("akid", "skid"));
+        AmazonS3Client s3 = new AmazonS3Client(new BasicAwsCredentials("akid", "skid"));
         s3.setEndpoint(getEndpoint());
         s3.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
         return s3;

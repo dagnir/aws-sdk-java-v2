@@ -86,6 +86,7 @@ public class ConvenientMapSetterTest {
                     new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", new AttributeValue().withS("1")));
             fail("Should throw IllegalArgumentException.");
         } catch (IllegalArgumentException iae) {
+            // Ignored or expected.
         }
     }
 }

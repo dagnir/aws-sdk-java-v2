@@ -47,7 +47,7 @@ public abstract class PaginatedList<T> implements List<T> {
      * Reference to the DynamoDB mapper for marshalling DynamoDB attributes back
      * into objects
      */
-    protected final DynamoDBMapper mapper;
+    protected final DynamoDbMapper mapper;
 
     /**
      * The class annotated with DynamoDB tags declaring how to load/store
@@ -55,8 +55,12 @@ public abstract class PaginatedList<T> implements List<T> {
      */
     protected final Class<T> clazz;
 
-    /** The client for working with DynamoDB */
+    /** The client for working with DynamoDB. */
     protected final AmazonDynamoDB dynamo;
+
+    /** Tracks if all results have been loaded yet or not. */
+    protected boolean allResultsLoaded = false;
+
     /**
      * All currently loaded results for this list.
      *
@@ -64,12 +68,10 @@ public abstract class PaginatedList<T> implements List<T> {
      * loaded results, and all previous results will be cleared from the memory.
      */
     protected final List<T> allResults;
-    /** Lazily loaded next results waiting to be added into allResults */
+    /** Lazily loaded next results waiting to be added into allResults. */
     protected final List<T> nextResults = new LinkedList<T>();
     /** The pagination loading strategy for this paginated list **/
     private final PaginationLoadingStrategy paginationLoadingStrategy;
-    /** Tracks if all results have been loaded yet or not */
-    protected boolean allResultsLoaded = false;
     /**
      * Keeps track on whether an iterator of the list has been retrieved.
      * Only updated and checked when the list is in ITERATION_ONLY mode.
@@ -79,7 +81,7 @@ public abstract class PaginatedList<T> implements List<T> {
     /**
      * Constructs a PaginatedList instance using the default PaginationLoadingStrategy
      */
-    public PaginatedList(DynamoDBMapper mapper, Class<T> clazz, AmazonDynamoDB dynamo) {
+    public PaginatedList(DynamoDbMapper mapper, Class<T> clazz, AmazonDynamoDB dynamo) {
         this(mapper, clazz, dynamo, null);
     }
 
@@ -98,7 +100,7 @@ public abstract class PaginatedList<T> implements List<T> {
      *            set in the mapper is not accessible here. If null value is
      *            provided, LAZY_LOADING will be set by default.
      */
-    public PaginatedList(DynamoDBMapper mapper, Class<T> clazz, AmazonDynamoDB dynamo,
+    public PaginatedList(DynamoDbMapper mapper, Class<T> clazz, AmazonDynamoDB dynamo,
                          PaginationLoadingStrategy paginationLoadingStrategy) {
         this.mapper = mapper;
         this.clazz = clazz;
@@ -465,7 +467,7 @@ public abstract class PaginatedList<T> implements List<T> {
          * have more results to process and need to re-sync allResultsCopy with allResults.
          *
          * @return True if more results are available in allResults then what we have currently
-         * snapshoted in the iterator, false otherwise.
+         *     snapshoted in the iterator, false otherwise.
          */
         private boolean shouldSyncWithAllResultsList() {
             return !iterationOnly && allResults.size() > allResultsCopy.size();
@@ -487,7 +489,7 @@ public abstract class PaginatedList<T> implements List<T> {
                     if (!nextResultsAvailable()) {
                         throw new NoSuchElementException();
                     }
-                    /* Clear previous results if it's in ITERATION_ONLY mode */
+                    /* Clear previous results if it's in ITERATION_ONLY mode. */
                     boolean clearPreviousResults = iterationOnly;
                     moveNextResults(clearPreviousResults);
                 }

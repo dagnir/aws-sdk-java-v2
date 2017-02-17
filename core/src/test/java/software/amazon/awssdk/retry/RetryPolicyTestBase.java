@@ -46,7 +46,7 @@ import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.util.StringInputStream;
 
-/** Some utility class and method for testing RetryCondition */
+/** Some utility class and method for testing RetryCondition. */
 public class RetryPolicyTestBase {
 
     protected static final AmazonWebServiceRequest originalRequest = new TestAmazonWebServiceRequest();
@@ -263,8 +263,8 @@ public class RetryPolicyTestBase {
 
     }
 
-    /** A base abstract class for fake HttpClient implementations */
-    public static abstract class MockHttpClient implements ConnectionManagerAwareHttpClient {
+    /** A base abstract class for fake HttpClient implementations. */
+    public abstract static class MockHttpClient implements ConnectionManagerAwareHttpClient {
 
         @Override
         public abstract HttpResponse execute(HttpUriRequest request) throws IOException,

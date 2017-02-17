@@ -60,7 +60,7 @@ public abstract class Comparator implements JmesPathExpression {
      * @param lhs Lhs expression
      * @param rhs Rhs expression
      * @return True if the comparison is evaluated to true;
-     * False otherwise
+     *     False otherwise
      */
     public abstract boolean matches(JsonNode lhs, JsonNode rhs);
 }

@@ -26,8 +26,6 @@ public interface ClientExecutionAbortTask extends Runnable {
 
     /**
      * Client Execution timer task needs to abort the current running HTTP request when executed.
-     *
-     * @param newRequest
      */
     public void setCurrentHttpRequest(HttpRequestBase newRequest);
 

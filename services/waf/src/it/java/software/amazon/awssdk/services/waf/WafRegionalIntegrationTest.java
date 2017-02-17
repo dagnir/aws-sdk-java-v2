@@ -16,13 +16,13 @@
 package software.amazon.awssdk.services.waf;
 
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.waf.model.ListResourcesForWebACLRequest;
 import software.amazon.awssdk.services.waf.model.WAFNonexistentItemException;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class WafRegionalIntegrationTest extends AWSIntegrationTestBase {
+public class WafRegionalIntegrationTest extends AwsIntegrationTestBase {
 
     /**
      * Calls an operation specific to WAF Regional. If we get a modeled exception back then we called the
@@ -31,7 +31,7 @@ public class WafRegionalIntegrationTest extends AWSIntegrationTestBase {
     @Test(expected = WAFNonexistentItemException.class)
     public void smokeTest() {
         final AWSWAFRegional client = AWSWAFRegionalClientBuilder.standard()
-                                                                 .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                                                                 .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                                                                  .withRegion(Regions.US_WEST_2)
                                                                  .build();
         client.listResourcesForWebACL(new ListResourcesForWebACLRequest().withWebACLId("foo"));

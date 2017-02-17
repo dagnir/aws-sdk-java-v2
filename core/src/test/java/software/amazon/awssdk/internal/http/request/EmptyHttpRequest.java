@@ -25,7 +25,7 @@ import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 public class EmptyHttpRequest implements Request<Object> {
 
@@ -148,12 +148,12 @@ public class EmptyHttpRequest implements Request<Object> {
     }
 
     @Override
-    public AWSRequestMetrics getAWSRequestMetrics() {
+    public AwsRequestMetrics getAWSRequestMetrics() {
         return null;
     }
 
     @Override
-    public void setAWSRequestMetrics(AWSRequestMetrics metrics) {
+    public void setAwsRequestMetrics(AwsRequestMetrics metrics) {
     }
 
     @Override

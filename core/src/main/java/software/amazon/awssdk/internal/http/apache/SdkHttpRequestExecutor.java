@@ -26,8 +26,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestExecutor;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.net.SdkMetricsSocket;
-import software.amazon.awssdk.internal.net.SdkSSLMetricsSocket;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.internal.net.SdkSslMetricsSocket;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * Used to capture the http send-request and receive-response latency metrics
@@ -41,8 +41,8 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
             final HttpClientConnection conn,
             final HttpContext context)
             throws IOException, HttpException {
-        AWSRequestMetrics awsRequestMetrics = (AWSRequestMetrics) context
-                .getAttribute(AWSRequestMetrics.class.getSimpleName());
+        AwsRequestMetrics awsRequestMetrics = (AwsRequestMetrics) context
+                .getAttribute(AwsRequestMetrics.class.getSimpleName());
 
         if (awsRequestMetrics == null) {
             return super.doSendRequest(request, conn, context);
@@ -53,16 +53,16 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
             if (sock instanceof SdkMetricsSocket) {
                 SdkMetricsSocket sdkMetricsSocket = (SdkMetricsSocket) sock;
                 sdkMetricsSocket.setMetrics(awsRequestMetrics);
-            } else if (sock instanceof SdkSSLMetricsSocket) {
-                SdkSSLMetricsSocket sdkSSLMetricsSocket = (SdkSSLMetricsSocket) sock;
+            } else if (sock instanceof SdkSslMetricsSocket) {
+                SdkSslMetricsSocket sdkSSLMetricsSocket = (SdkSslMetricsSocket) sock;
                 sdkSSLMetricsSocket.setMetrics(awsRequestMetrics);
             }
         }
-        awsRequestMetrics.startEvent(AWSRequestMetrics.Field.HttpClientSendRequestTime);
+        awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpClientSendRequestTime);
         try {
             return super.doSendRequest(request, conn, context);
         } finally {
-            awsRequestMetrics.endEvent(AWSRequestMetrics.Field.HttpClientSendRequestTime);
+            awsRequestMetrics.endEvent(AwsRequestMetrics.Field.HttpClientSendRequestTime);
         }
     }
 
@@ -72,16 +72,16 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
             final HttpClientConnection conn,
             final HttpContext context)
             throws HttpException, IOException {
-        AWSRequestMetrics awsRequestMetrics = (AWSRequestMetrics) context
-                .getAttribute(AWSRequestMetrics.class.getSimpleName());
+        AwsRequestMetrics awsRequestMetrics = (AwsRequestMetrics) context
+                .getAttribute(AwsRequestMetrics.class.getSimpleName());
         if (awsRequestMetrics == null) {
             return super.doReceiveResponse(request, conn, context);
         }
-        awsRequestMetrics.startEvent(AWSRequestMetrics.Field.HttpClientReceiveResponseTime);
+        awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpClientReceiveResponseTime);
         try {
             return super.doReceiveResponse(request, conn, context);
         } finally {
-            awsRequestMetrics.endEvent(AWSRequestMetrics.Field.HttpClientReceiveResponseTime);
+            awsRequestMetrics.endEvent(AwsRequestMetrics.Field.HttpClientReceiveResponseTime);
         }
     }
 }

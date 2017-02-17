@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.glacier;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +53,7 @@ public class ArchiveIntegrationTest extends GlacierIntegrationTestBase {
     private static final String START_POSITION = "1048576";
     private static final String END_POSITION = "2097151";
 
-    private static final boolean cleanup = true;
+    private static final boolean CLEANUP = true;
     private File randomTempFile;
 
     @Before
@@ -49,7 +64,7 @@ public class ArchiveIntegrationTest extends GlacierIntegrationTestBase {
 
     @After
     public void teanDown() {
-        if (cleanup) {
+        if (CLEANUP) {
             randomTempFile.delete();
         }
     }
@@ -122,13 +137,15 @@ public class ArchiveIntegrationTest extends GlacierIntegrationTestBase {
         //        ResettableInputStream is = new ResettableInputStream(randomTempFile)
         //                .disableClose();
         // UploadArchive
-        UploadArchiveResult uploadArchiveResult = glacier.uploadArchive(new UploadArchiveRequest()
-                                                                                .withAccountId(accountId)
-                                                                                .withArchiveDescription("archiveDescription")
-                                                                                .withVaultName(vaultName)
-                                                                                .withChecksum(TreeHashGenerator.calculateTreeHash(randomTempFile))
-                                                                                .withContentLength(CONTENT_LENGTH)
-                                                                                .withBody(is));
+        UploadArchiveRequest request = new UploadArchiveRequest()
+                .withAccountId(accountId)
+                .withArchiveDescription("archiveDescription")
+                .withVaultName(vaultName)
+                .withChecksum(TreeHashGenerator.calculateTreeHash(randomTempFile))
+                .withContentLength(CONTENT_LENGTH)
+                .withBody(is);
+
+        UploadArchiveResult uploadArchiveResult = glacier.uploadArchive(request);
         is.close();
         System.out.println("Uploaded: " + uploadArchiveResult);
         String archiveId = parseResourceId(uploadArchiveResult.getLocation());
@@ -178,14 +195,14 @@ public class ArchiveIntegrationTest extends GlacierIntegrationTestBase {
         drainInputStream(getJobOutputResult.getBody());
 
         // InitiateArchiveRangeRetrieval
-        initiateArchiveRetrievalResult =
-                glacier.initiateJob(new InitiateJobRequest()
-                                            .withAccountId(accountId)
-                                            .withVaultName(vaultName)
-                                            .withJobParameters(new JobParameters()
-                                                                       .withRetrievalByteRange(START_POSITION + "-" + END_POSITION)
-                                                                       .withArchiveId(archiveId)
-                                                                       .withType("archive-retrieval")));
+        InitiateJobRequest initiateJobRequest = new InitiateJobRequest()
+                .withAccountId(accountId)
+                .withVaultName(vaultName)
+                .withJobParameters(new JobParameters()
+                                           .withRetrievalByteRange(START_POSITION + "-" + END_POSITION)
+                                           .withArchiveId(archiveId)
+                                           .withType("archive-retrieval"));
+        initiateArchiveRetrievalResult = glacier.initiateJob(initiateJobRequest);
         System.out.println("Initiated: " + initiateArchiveRetrievalResult);
         jobId = parseResourceId(initiateArchiveRetrievalResult.getLocation());
         assertNotNull(initiateArchiveRetrievalResult.getJobId());
@@ -198,12 +215,16 @@ public class ArchiveIntegrationTest extends GlacierIntegrationTestBase {
                                                           .withVaultName(vaultName)
                                                           .withJobId(jobId));
 
-        DescribeJobResult describeJobResult = glacier.describeJob(new DescribeJobRequest().withAccountId(accountId).withVaultName(vaultName).withJobId(jobId));
+        DescribeJobResult describeJobResult = glacier.describeJob(new DescribeJobRequest().withAccountId(accountId)
+                                                                                          .withVaultName(vaultName)
+                                                                                          .withJobId(jobId));
         assertEquals(START_POSITION + "-" + END_POSITION, describeJobResult.getRetrievalByteRange());
         drainInputStream(getJobOutputResult.getBody());
 
         // Delete the archive.
-        glacier.deleteArchive(new DeleteArchiveRequest().withAccountId(accountId).withArchiveId(archiveId).withVaultName(vaultName));
+        glacier.deleteArchive(new DeleteArchiveRequest().withAccountId(accountId)
+                                                        .withArchiveId(archiveId)
+                                                        .withVaultName(vaultName));
 
 
     }

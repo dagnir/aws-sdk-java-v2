@@ -1,11 +1,26 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.sts;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
@@ -58,38 +73,38 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
         try {
             deleteAccessKeysForUser(userName);
         } catch (Exception e) {
-
+            // Ignore.
         }
         try {
             deleteUserPoliciesForUser(userName);
         } catch (Exception e) {
-
+            // Ignore.
         }
         try {
             iam.deleteLoginProfile(new DeleteLoginProfileRequest()
                                            .withUserName(userName));
         } catch (Exception e) {
-
+            // Ignore.
         }
         try {
             iam.deleteUser(new DeleteUserRequest().withUserName(userName));
         } catch (Exception e) {
-
+            // Ignore.
         }
     }
 
     /** Tests that we can call assumeRole successfully. */
     @Test
     public void testAssumeRole() throws InterruptedException {
+        Statement statement = new Statement(Effect.Allow)
+                .withActions(SecurityTokenServiceActions.AllSecurityTokenServiceActions)
+                .withResources(new Resource("*"));
         AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest()
                 .withDurationSeconds(SESSION_DURATION)
                 .withRoleArn(ROLE_ARN)
                 .withRoleSessionName("Name")
-                .withPolicy(new Policy()
-                                    .withStatements(new Statement(Effect.Allow)
-                                                            .withActions(SecurityTokenServiceActions.AllSecurityTokenServiceActions)
-                                                            .withResources(new Resource("*")))
-                                    .toJson());
+                .withPolicy(new Policy().withStatements(statement)
+                                        .toJson());
 
         AWSSecurityTokenService sts = getIamClient();
         Thread.sleep(1000 * 60);
@@ -110,9 +125,11 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
                                         .withResources(new Resource("*")))
                 .toJson();
 
-        iam.putUserPolicy(new PutUserPolicyRequest().withPolicyDocument(policyDoc).withUserName(USER_NAME).withPolicyName("assume-role"));
+        iam.putUserPolicy(new PutUserPolicyRequest().withPolicyDocument(policyDoc)
+                                                    .withUserName(USER_NAME).withPolicyName("assume-role"));
         CreateAccessKeyResult createAccessKeyResult = iam.createAccessKey(new CreateAccessKeyRequest().withUserName(USER_NAME));
-        AWSCredentials credentials = new BasicAWSCredentials(createAccessKeyResult.getAccessKey().getAccessKeyId(), createAccessKeyResult.getAccessKey().getSecretAccessKey());
+        AwsCredentials credentials = new BasicAwsCredentials(createAccessKeyResult.getAccessKey().getAccessKeyId(),
+                                                             createAccessKeyResult.getAccessKey().getSecretAccessKey());
         return new AWSSecurityTokenServiceClient(credentials);
     }
 }

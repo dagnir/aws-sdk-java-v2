@@ -37,18 +37,18 @@ public final class OrCondition implements NAryCondition {
     }
 
     /**
+     * @return Builder instance to construct a {@link OrCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return List of conditions contained in the OR expression.
      */
     @Override
     public List<Condition> getConditions() {
         return conditions;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link OrCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

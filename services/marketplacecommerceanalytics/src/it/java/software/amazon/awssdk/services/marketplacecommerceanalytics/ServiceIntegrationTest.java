@@ -33,9 +33,9 @@ import software.amazon.awssdk.services.marketplacecommerceanalytics.model.DataSe
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.GenerateDataSetRequest;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.sns.AmazonSNSClient;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class ServiceIntegrationTest extends AWSIntegrationTestBase {
+public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String POLICY_NAME = "MarketplaceCommerceAnalyticsPolicy";
 

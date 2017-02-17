@@ -18,8 +18,8 @@ package software.amazon.awssdk.auth.profile.internal;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
 import software.amazon.awssdk.util.StringUtils;
@@ -31,13 +31,13 @@ import software.amazon.awssdk.util.StringUtils;
  */
 @SdkInternalApi
 @Immutable
-public class ProfileAssumeRoleCredentialsProvider implements AWSCredentialsProvider {
+public class ProfileAssumeRoleCredentialsProvider implements AwsCredentialsProvider {
 
 
     private final AllProfiles allProfiles;
     private final BasicProfile profile;
     private final ProfileCredentialsService profileCredentialsService;
-    private final AWSCredentialsProvider assumeRoleCredentialsProvider;
+    private final AwsCredentialsProvider assumeRoleCredentialsProvider;
 
     public ProfileAssumeRoleCredentialsProvider(ProfileCredentialsService profileCredentialsService,
                                                 AllProfiles allProfiles, BasicProfile profile) {
@@ -48,7 +48,7 @@ public class ProfileAssumeRoleCredentialsProvider implements AWSCredentialsProvi
     }
 
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         return assumeRoleCredentialsProvider.getCredentials();
     }
 
@@ -56,7 +56,7 @@ public class ProfileAssumeRoleCredentialsProvider implements AWSCredentialsProvi
     public void refresh() {
     }
 
-    private AWSCredentialsProvider fromAssumeRole() {
+    private AwsCredentialsProvider fromAssumeRole() {
         if (StringUtils.isNullOrEmpty(profile.getRoleSourceProfile())) {
             throw new SdkClientException(String.format(
                     "Unable to load credentials from profile [%s]: Source profile name is not specified",
@@ -70,7 +70,7 @@ public class ProfileAssumeRoleCredentialsProvider implements AWSCredentialsProvi
                     "Unable to load source profile [%s]: Source profile was not found [%s]",
                     profile.getProfileName(), profile.getRoleSourceProfile()));
         }
-        AWSCredentials sourceCredentials = new ProfileStaticCredentialsProvider(sourceProfile)
+        AwsCredentials sourceCredentials = new ProfileStaticCredentialsProvider(sourceProfile)
                 .getCredentials();
 
 

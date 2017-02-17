@@ -44,14 +44,14 @@ public class Encrypt20Test {
         //        String expectedCipherText = "ff95730978565c563e7ef4e189c7a82e3322408e72e06d3c98e8bec238487ade8c18e27c181cb62318b23846246853912029a28bead7125e0e0c6c91d8784f69a7bcf609cd20e17b219ad1a3c4d384e4f7d12d75";
         // Encrypt with GCM
         CipherLite gcm = CryptoTestUtils.createTestCipher(AES_GCM,
-                                                          AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
+                                                          AES_GCM.getIvLengthInBytes(), Cipher.ENCRYPT_MODE);
         byte[] ct_ctr = gcm.doFinal(pt);
         String ct_ctr_str = encodeHexString(ct_ctr);
         System.err.println("ct_ctr_str : " + ct_ctr_str);
         assertEquals(expectedCipherText, ct_ctr_str);
         {
             GCMCipherLite gcm2 = (GCMCipherLite) CryptoTestUtils.createTestCipher(AES_GCM,
-                                                                                  AES_GCM.getIVLengthInBytes(), Cipher.ENCRYPT_MODE);
+                                                                                  AES_GCM.getIvLengthInBytes(), Cipher.ENCRYPT_MODE);
             // ff95730978565c563e7ef4e189c7a82e
             long marked = gcm2.mark();
             byte[] ba = gcm2.update(pt, 0, 20);

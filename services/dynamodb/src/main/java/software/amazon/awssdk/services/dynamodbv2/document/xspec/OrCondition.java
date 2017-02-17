@@ -41,7 +41,7 @@ public final class OrCondition extends Condition {
 
     @Override
     public AndCondition and(Condition that) {
-        return new AndCondition(ExpressionSpecBuilder._(this), that.atomic() ? that : ExpressionSpecBuilder._(that));
+        return new AndCondition(ExpressionSpecBuilder.paren(this), that.atomic() ? that : ExpressionSpecBuilder.paren(that));
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.auth.policy.Resource;
@@ -62,7 +62,7 @@ public class JobStatusMonitor {
     private String queueUrl;
     private String topicArn;
 
-    public JobStatusMonitor(AWSCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
+    public JobStatusMonitor(AwsCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
         sqs = new AmazonSQSClient(credentialsProvider, clientConfiguration);
         sns = new AmazonSNSClient(credentialsProvider, clientConfiguration);
         setupQueueAndTopic();
@@ -158,6 +158,7 @@ public class JobStatusMonitor {
         try {
             sqs.deleteMessage(new DeleteMessageRequest(queueUrl, message.getReceiptHandle()));
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

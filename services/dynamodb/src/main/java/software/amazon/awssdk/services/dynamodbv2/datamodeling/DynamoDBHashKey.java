@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @DynamoDB
 @DynamoDBKeyed(software.amazon.awssdk.services.dynamodbv2.model.KeyType.HASH)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBHashKey {
 
     /**

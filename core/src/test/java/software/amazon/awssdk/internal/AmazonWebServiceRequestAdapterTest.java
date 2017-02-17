@@ -29,9 +29,9 @@ import java.util.Map;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestClientOptions;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import utils.model.EmptyAmazonWebServiceRequest;
@@ -137,7 +137,7 @@ public class AmazonWebServiceRequestAdapterTest {
     @Test
     public void customCredentialsProviderSetInBaseRequest_IsSetOnAdapter() {
         EmptyAmazonWebServiceRequest request = new EmptyAmazonWebServiceRequest();
-        AWSCredentialsProvider credentialsProvider = mock(AWSCredentialsProvider.class);
+        AwsCredentialsProvider credentialsProvider = mock(AwsCredentialsProvider.class);
         request.setRequestCredentialsProvider(credentialsProvider);
         AmazonWebServiceRequestAdapter adapter = new AmazonWebServiceRequestAdapter(request);
 
@@ -147,13 +147,13 @@ public class AmazonWebServiceRequestAdapterTest {
     @Test
     public void customCredentialsSetInBaseRequest_IsSetOnAdapter() {
         EmptyAmazonWebServiceRequest request = new EmptyAmazonWebServiceRequest();
-        AWSCredentials credentials = new BasicAWSCredentials("akid", "skid");
+        AwsCredentials credentials = new BasicAwsCredentials("akid", "skid");
         request.setRequestCredentials(credentials);
         AmazonWebServiceRequestAdapter adapter = new AmazonWebServiceRequestAdapter(request);
 
-        AWSCredentials adaptedCredentials = adapter.getCredentialsProvider().getCredentials();
-        assertEquals("akid", adaptedCredentials.getAWSAccessKeyId());
-        assertEquals("skid", adaptedCredentials.getAWSSecretKey());
+        AwsCredentials adaptedCredentials = adapter.getCredentialsProvider().getCredentials();
+        assertEquals("akid", adaptedCredentials.getAwsAccessKeyId());
+        assertEquals("skid", adaptedCredentials.getAwsSecretKey());
     }
 
     @Test

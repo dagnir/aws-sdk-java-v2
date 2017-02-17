@@ -16,9 +16,9 @@
 package software.amazon.awssdk.auth.profile.internal.securitytoken;
 
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 
 @SdkProtectedApi
 public class RoleInfo implements Cloneable {
@@ -68,7 +68,7 @@ public class RoleInfo implements Cloneable {
      * Provides the credentials that are used to assume the role.
      * </p>
      */
-    private AWSCredentialsProvider longLivedCredentialsProvider;
+    private AwsCredentialsProvider longLivedCredentialsProvider;
 
     /**
      * Default constructor for RoleInfo object. Callers should use the setter
@@ -318,7 +318,7 @@ public class RoleInfo implements Cloneable {
      * </p>
      * @return long lived credentials provider
      */
-    public AWSCredentialsProvider getLongLivedCredentialsProvider() {
+    public AwsCredentialsProvider getLongLivedCredentialsProvider() {
         return this.longLivedCredentialsProvider;
     }
 
@@ -328,7 +328,7 @@ public class RoleInfo implements Cloneable {
      * </p>
      * @param longLivedCredentialsProvider long lived credentials provider
      */
-    public void setLongLivedCredentialsProvider(AWSCredentialsProvider longLivedCredentialsProvider) {
+    public void setLongLivedCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider) {
         this.longLivedCredentialsProvider = longLivedCredentialsProvider;
     }
 
@@ -340,7 +340,7 @@ public class RoleInfo implements Cloneable {
      * @return Returns a reference to this object so that method calls can be
      *         chained together.
      */
-    public RoleInfo withLongLivedCredentialsProvider(AWSCredentialsProvider longLivedCredentialsProvider) {
+    public RoleInfo withLongLivedCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider) {
         setLongLivedCredentialsProvider(longLivedCredentialsProvider);
         return this;
     }
@@ -353,8 +353,8 @@ public class RoleInfo implements Cloneable {
      * @return Returns a reference to this object so that method calls can be
      *         chained together.
      */
-    public RoleInfo withLongLivedCredentials(AWSCredentials longLivedCredentials) {
-        setLongLivedCredentialsProvider(new AWSStaticCredentialsProvider(longLivedCredentials));
+    public RoleInfo withLongLivedCredentials(AwsCredentials longLivedCredentials) {
+        setLongLivedCredentialsProvider(new AwsStaticCredentialsProvider(longLivedCredentials));
         return this;
     }
 

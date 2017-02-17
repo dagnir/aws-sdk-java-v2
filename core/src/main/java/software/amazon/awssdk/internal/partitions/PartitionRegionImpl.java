@@ -155,8 +155,7 @@ public class PartitionRegionImpl implements RegionImpl {
      */
     @Override
     public boolean isServiceSupported(String serviceName) {
-        return isServiceSupportedInRegion(serviceName) || isServicePartitionWide
-                (serviceName);
+        return isServiceSupportedInRegion(serviceName) || isServicePartitionWide(serviceName);
     }
 
     /**

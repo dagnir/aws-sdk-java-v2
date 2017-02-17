@@ -47,6 +47,7 @@ public class RestoreObjectTest extends S3WireMockTestBase {
             s3.restoreObject(new RestoreObjectRequest(BUCKET_NAME, KEY, 1)
                                      .withGlacierJobParameters(new GlacierJobParameters().withTier(Tier.Bulk)));
         } catch (Exception expected) {
+            // Ignored or expected.
         }
 
         verify(postRequestedFor(urlEqualTo(String.format("/%s/%s?restore", BUCKET_NAME, KEY)))

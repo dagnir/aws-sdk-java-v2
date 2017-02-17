@@ -71,9 +71,9 @@ import software.amazon.awssdk.util.json.Jackson;
 public class S3InstFileIntegrationTest implements Headers {
 
     private static final String TEST_BUCKET = CryptoTestUtils.tempBucketName(S3InstFileIntegrationTest.class);
-    private final static Map<String, AmazonS3EncryptionClient> cryptoClientMap =
+    private static final Map<String, AmazonS3EncryptionClient> cryptoClientMap =
             new HashMap<String, AmazonS3EncryptionClient>();
-    private final static SimpleMaterialProvider[] materialProviders = new SimpleMaterialProvider[2];
+    private static final SimpleMaterialProvider[] materialProviders = new SimpleMaterialProvider[2];
     /**
      * True to clean up the temp S3 objects created during test; false
      * otherwise.
@@ -148,7 +148,7 @@ public class S3InstFileIntegrationTest implements Headers {
             c = new S3CryptoTestClient(
                     awsTestCredentials(),
                     materialProvider,
-                    new ClientConfiguration().withConnectionTTL(1),
+                    new ClientConfiguration().withConnectionTtl(1),
                     new CryptoConfiguration()
                             .withStorageMode(storageMode)
                             .withCryptoMode(cryptoMode)

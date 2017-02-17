@@ -102,7 +102,6 @@ public class StaxUnmarshallerContext {
      * Returns the text contents of the current element being parsed.
      *
      * @return The text contents of the current element being parsed.
-     * @throws XMLStreamException
      */
     public String readText() throws XMLStreamException {
         if (isInsideResponseHeader()) {
@@ -203,7 +202,6 @@ public class StaxUnmarshallerContext {
      *
      * @return The next XML event for the document being parsed.
      *
-     * @throws XMLStreamException
      */
     public XMLEvent nextEvent() throws XMLStreamException {
         if (attributeIterator != null && attributeIterator.hasNext()) {

@@ -56,7 +56,7 @@ public class BucketNotificationPrefixIntegrationTest extends S3IntegrationTestBa
         sns = new AmazonSNSClient(credentials);
         s3.createBucket(BUCKET_NAME);
         topicArn = sns.createTopic(TOPIC_NAME).getTopicArn();
-        BucketNotificationTestUtils.authorizeS3ToSendToSNS(sns, topicArn, BUCKET_NAME);
+        BucketNotificationTestUtils.authorizeS3ToSendToSns(sns, topicArn, BUCKET_NAME);
     }
 
     @AfterClass
@@ -67,24 +67,23 @@ public class BucketNotificationPrefixIntegrationTest extends S3IntegrationTestBa
 
     @Test(expected = AmazonClientException.class)
     public void putBucketConfiguration_WithFilterButNoFilterCriteria_ThrowsAmazonClientException() {
-        NotificationConfiguration notifConfig = createNotificationConfiguration(null);
+        NotificationConfiguration config = createNotificationConfiguration(null);
         s3.setBucketNotificationConfiguration(BUCKET_NAME,
-                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
+                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", config));
     }
 
     @Test(expected = AmazonClientException.class)
     public void putBucketConfiguration_WithFilterCriteriaButNullFilterRules_ThrowsAmazonClientException() {
-        NotificationConfiguration notifConfig = createNotificationConfiguration(new S3KeyFilter());
+        NotificationConfiguration config = createNotificationConfiguration(new S3KeyFilter());
         s3.setBucketNotificationConfiguration(BUCKET_NAME,
-                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
+                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", config));
     }
 
     @Test(expected = AmazonClientException.class)
     public void putBucketConfiguration_WithFilterCriteriaButEmptyFilterRules_ThrowsAmazonClientException() {
-        NotificationConfiguration notifConfig = createNotificationConfiguration(new S3KeyFilter()
-                                                                                        .withFilterRules(new ArrayList<FilterRule>()));
+        NotificationConfiguration config = createNotificationConfiguration(new S3KeyFilter().withFilterRules(new ArrayList<>()));
         s3.setBucketNotificationConfiguration(BUCKET_NAME,
-                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", notifConfig));
+                                              new BucketNotificationConfiguration().addConfiguration("invalid-config", config));
     }
 
     @Test
@@ -176,10 +175,6 @@ public class BucketNotificationPrefixIntegrationTest extends S3IntegrationTestBa
      * Create multiple {@link NotificationConfiguration}'s, each with a set of {@link Filter}
      * criteria
      *
-     * @param suffix
-     *            Value to use for {@link FilterRuleName#Suffix} rules
-     * @param prefix
-     *            Value to use for {@link FilterRuleName#Prefix} rules
      * @return Map of {@link NotificationConfiguration}'s created
      */
     private Map<String, NotificationConfiguration> getMultipleNotificationConfiguration() {

@@ -37,7 +37,7 @@ import software.amazon.awssdk.util.IOUtils;
 
 class AddWaiters {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final Waiters waiters;
     private final Map<String, OperationModel> operations;
@@ -96,7 +96,7 @@ class AddWaiters {
                 throw new RuntimeException(IOUtils.toString(p.getErrorStream()));
             }
 
-            JsonNode jsonNode = mapper.readTree(IOUtils.toString(p.getInputStream()));
+            JsonNode jsonNode = MAPPER.readTree(IOUtils.toString(p.getInputStream()));
             JmesPathExpression ast = AstJsonToAstJava.fromAstJsonToAstJava(jsonNode);
 
             argumentToAstMap.put(argument, ast);

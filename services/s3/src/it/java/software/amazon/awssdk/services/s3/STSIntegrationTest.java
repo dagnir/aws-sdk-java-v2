@@ -46,16 +46,16 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 public class STSIntegrationTest extends S3IntegrationTestBase {
 
     private static final boolean ANDROID_TESTING = false;
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String bucketName = "java-sts-integ-test-" + new Date().getTime();
-    /** The key used in these tests */
+    /** The key used in these tests. */
     private static final String key = "key";
     // Override parent s3 to not impact other tests
     private static AmazonS3Client s3;
-    /** The file containing the test data uploaded to S3 */
+    /** The file containing the test data uploaded to S3. */
     private static File file = null;
 
-    /** The inputStream containing the test data uploaded to S3 */
+    /** The inputStream containing the test data uploaded to S3. */
     private static byte[] tempData;
 
     @AfterClass

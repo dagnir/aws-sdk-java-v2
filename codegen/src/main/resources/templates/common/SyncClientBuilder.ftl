@@ -27,7 +27,7 @@ public final class ${metadata.syncClientBuilderClassName}
     }
 
     /**
-     * @return Default client using the {@link software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain}
+     * @return Default client using the {@link software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain}
      * and {@link software.amazon.awssdk.regions.DefaultAwsRegionProviderChain} chain
      */
     public static ${metadata.syncInterface} defaultClient() {

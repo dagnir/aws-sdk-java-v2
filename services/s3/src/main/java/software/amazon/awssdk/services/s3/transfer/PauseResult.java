@@ -19,7 +19,7 @@ package software.amazon.awssdk.services.s3.transfer;
  * The result of a pause operation.
  *
  * @param <T> information that can be used to resume the paused operation;
- * can be null if the pause failed.
+ *     can be null if the pause failed.
  */
 public final class PauseResult<T> {
     private final PauseStatus pauseStatus;

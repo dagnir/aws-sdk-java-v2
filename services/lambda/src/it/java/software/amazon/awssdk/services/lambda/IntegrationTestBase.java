@@ -38,9 +38,9 @@ import software.amazon.awssdk.services.kinesis.AmazonKinesisClient;
 import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.StreamDescription;
 import software.amazon.awssdk.services.kinesis.model.StreamStatus;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class IntegrationTestBase extends AWSTestBase {
+public class IntegrationTestBase extends AwsTestBase {
 
     private static final String HELLOWORLD_JS = "helloworld.js";
     private static final String LAMBDA_SERVICE_ROLE_NAME = "lambda-java-sdk-test-role-" + System.currentTimeMillis();
@@ -136,6 +136,7 @@ public class IntegrationTestBase extends AWSTestBase {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
+                // Ignored or expected.
             }
 
             description = kinesis.describeStream(KINESIS_STREAM_NAME).getStreamDescription();

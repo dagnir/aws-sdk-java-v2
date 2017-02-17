@@ -27,11 +27,6 @@ public class ObjectSetUnmarshaller extends LUnmarshaller {
 
     private static final ObjectSetUnmarshaller INSTANCE =
             new ObjectSetUnmarshaller();
-
-    public static ObjectSetUnmarshaller instance() {
-        return INSTANCE;
-    }
-
     private final ArgumentUnmarshaller memberUnmarshaller;
 
     private ObjectSetUnmarshaller() {
@@ -43,6 +38,10 @@ public class ObjectSetUnmarshaller extends LUnmarshaller {
             throw new NullPointerException("memberUnmarshaller");
         }
         this.memberUnmarshaller = memberUnmarshaller;
+    }
+
+    public static ObjectSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

@@ -25,14 +25,14 @@ public class InventoryDestination implements Serializable {
     /**
      * Contains the S3 destination information of where inventory results are published.
      */
-    private InventoryS3BucketDestination S3BucketDestination;
+    private InventoryS3BucketDestination s3BucketDestination;
 
     /**
      * Returns the {@link InventoryS3BucketDestination} which contains S3 bucket destination information
      * of where inventory results are published.
      */
     public InventoryS3BucketDestination getS3BucketDestination() {
-        return S3BucketDestination;
+        return s3BucketDestination;
     }
 
     /**
@@ -40,7 +40,7 @@ public class InventoryDestination implements Serializable {
      * of where inventory results are published.
      */
     public void setS3BucketDestination(InventoryS3BucketDestination s3BucketDestination) {
-        S3BucketDestination = s3BucketDestination;
+        this.s3BucketDestination = s3BucketDestination;
     }
 
     /**

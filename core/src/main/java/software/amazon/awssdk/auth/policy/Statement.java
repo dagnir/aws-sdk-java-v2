@@ -65,6 +65,7 @@ public class Statement {
     private List<Action> actions = new ArrayList<Action>();
     private List<Resource> resources;
     private List<Condition> conditions = new ArrayList<Condition>();
+
     /**
      * Constructs a new access control policy statement with the specified
      * effect.
@@ -361,8 +362,8 @@ public class Statement {
      * @param principals
      *            The list of principals associated with this policy statement.
      */
-    public void setPrincipals(Principal... principals) {
-        setPrincipals(new ArrayList<Principal>(Arrays.asList(principals)));
+    public void setPrincipals(Collection<Principal> principals) {
+        this.principals = new ArrayList<Principal>(principals);
     }
 
     /**
@@ -376,8 +377,8 @@ public class Statement {
      * @param principals
      *            The list of principals associated with this policy statement.
      */
-    public void setPrincipals(Collection<Principal> principals) {
-        this.principals = new ArrayList<Principal>(principals);
+    public void setPrincipals(Principal... principals) {
+        setPrincipals(new ArrayList<Principal>(Arrays.asList(principals)));
     }
 
     /**

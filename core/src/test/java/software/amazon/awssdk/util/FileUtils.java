@@ -38,9 +38,7 @@ public class FileUtils {
      * Returns a reference to the file created with the given file name in the
      * System's temporary directory.
      *
-     * @param fileName
      * @return a reference to the file
-     * @throws IOException
      */
     public static File createTempFileForTesting(String fileName) throws IOException {
         return File.createTempFile(String.valueOf(System.currentTimeMillis()),
@@ -52,10 +50,8 @@ public class FileUtils {
      * Creates a file with the given name in the System's temporary directory.
      * Adds the data to the given file and returns the reference to the file.
      *
-     * @param fileName
      * @param data
      * @return reference to the file.
-     * @throws IOException
      */
     public static File createTempFileForTesting(String fileName, String data)
             throws IOException {
@@ -68,10 +64,8 @@ public class FileUtils {
      * Appends the given data to the file specified in the input and returns the
      * reference to the file.
      *
-     * @param file
      * @param dataToAppend
      * @return reference to the file.
-     * @throws IOException
      */
     public static File appendDataToTempFile(File file, String dataToAppend)
             throws IOException {

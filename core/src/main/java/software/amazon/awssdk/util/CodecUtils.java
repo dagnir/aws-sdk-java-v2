@@ -106,12 +106,11 @@ public enum CodecUtils {
      * Sanity check the last decoded position is a possible value.
      *
      * @throws IllegalArgumentException if the given decoded position is
-     * not a possible value produced via the respective encoding 
+     *     not a possible value produced via the respective encoding
      */
     static void sanityCheckLastPos(int pos, int mask) {
         if ((pos & mask) != 0) {
-            throw new IllegalArgumentException
-                    ("Invalid last non-pad character detected");
+            throw new IllegalArgumentException("Invalid last non-pad character detected");
         }
     }
 }

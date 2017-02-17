@@ -25,10 +25,10 @@ import software.amazon.awssdk.services.s3.transfer.internal.AbstractTransfer;
  * transfer is done when COMPLETE event is fired.
  */
 final class CompleteEventTestListener extends SyncProgressListener {
-    private final AbstractTransfer transfer;
     public volatile boolean seenCompleteEvent;
     public volatile boolean transferIsDoneUponCompleteEvent;
     public volatile boolean duplicateCompleteEvent;
+    private final AbstractTransfer transfer;
 
     public CompleteEventTestListener(AbstractTransfer transfer) {
         this.transfer = transfer;

@@ -61,6 +61,7 @@ public class BucketMetricsConfigurationMarshallerTest extends S3WireMockTestBase
         try {
             s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
         } catch (Exception expected) {
+            // Expected.
         }
 
         verify(putRequestedFor(urlEqualTo(String.format("/%s/?metrics&id=%s", BUCKET_NAME, configId)))

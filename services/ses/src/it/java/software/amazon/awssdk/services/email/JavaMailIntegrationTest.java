@@ -29,7 +29,7 @@ import javax.mail.internet.MimeMessage;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.services.simpleemail.AWSJavaMailTransport;
+import software.amazon.awssdk.services.simpleemail.AwsJavaMailTransport;
 
 /**
  * Integration test for JavaMail interface on top of AWS E-mail Service. Tests
@@ -55,8 +55,8 @@ public class JavaMailIntegrationTest extends IntegrationTestBase {
         // Get JavaMail Properties and Setup Session
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "aws");
-        props.setProperty("mail.aws.user", credentials.getAWSAccessKeyId());
-        props.setProperty("mail.aws.password", credentials.getAWSSecretKey());
+        props.setProperty("mail.aws.user", credentials.getAwsAccessKeyId());
+        props.setProperty("mail.aws.password", credentials.getAwsSecretKey());
         props.setProperty("mail.debug", "true");
         session = Session.getInstance(props);
     }
@@ -67,9 +67,9 @@ public class JavaMailIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testMultipleMessagesWithOneConnect() throws Exception {
-        Transport t = new AWSJavaMailTransport(session, null);
-        t.connect(credentials.getAWSAccessKeyId(), credentials
-                .getAWSSecretKey());
+        Transport t = new AwsJavaMailTransport(session, null);
+        t.connect(credentials.getAwsAccessKeyId(), credentials
+                .getAwsSecretKey());
         Address[] a = {new InternetAddress(ADDITIONAL_DESTINATION)};
         t.sendMessage(getTestTextEmail(true), null);
         t.sendMessage(getTestMimeEmail(true), a);

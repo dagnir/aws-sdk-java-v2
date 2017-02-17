@@ -24,7 +24,7 @@ public class EnumModel {
 
     /** The value for the enum field.*/
     private final String value;
-    /** The name of the enum field */
+    /** The name of the enum field. */
     private String name;
 
     public EnumModel(

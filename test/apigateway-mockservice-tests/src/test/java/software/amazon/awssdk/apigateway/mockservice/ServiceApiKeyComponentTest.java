@@ -29,9 +29,9 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.apigateway.mockservice.MyService;
 import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
 import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
@@ -72,8 +72,8 @@ public class ServiceApiKeyComponentTest {
                         .iamCredentials(createCredentialsProvider());
     }
 
-    private AWSCredentialsProvider createCredentialsProvider() {
+    private AwsCredentialsProvider createCredentialsProvider() {
         String key = randomAlphanumeric(10), secret = randomAlphanumeric(10);
-        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(key, secret));
+        return new AwsStaticCredentialsProvider(new BasicAwsCredentials(key, secret));
     }
 }

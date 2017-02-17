@@ -43,6 +43,13 @@ public final class NumericLessThanOrEqualCondition implements BinaryCondition<St
     }
 
     /**
+     * @return Builder instance to construct a {@link NumericLessThanOrEqualCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -57,13 +64,6 @@ public final class NumericLessThanOrEqualCondition implements BinaryCondition<St
     @Override
     public String getExpectedValue() {
         return expectedValue.asText();
-    }
-
-    /**
-     * @return Builder instance to construct a {@link NumericLessThanOrEqualCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

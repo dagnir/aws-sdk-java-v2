@@ -24,7 +24,7 @@ import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 
-final public class SendEmptyAutoConstructedListAsEmptyListProcessor implements
+public final class SendEmptyAutoConstructedListAsEmptyListProcessor implements
                                                                     CodegenCustomizationProcessor {
 
     private Map<String, List<String>> sendEmptyQueryString;

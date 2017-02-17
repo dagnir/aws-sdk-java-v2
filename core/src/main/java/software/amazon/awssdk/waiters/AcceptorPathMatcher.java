@@ -23,14 +23,14 @@ public class AcceptorPathMatcher {
 
     /**
      * PathAll matcher that checks if each element of the final
-     * result matches the expected result
+     * result matches the expected result.
      *
      * @param expectedResult Expected result given by the waiter definition
      * @param finalResult    Final result of the resource got by the execution
      *                       of the JmesPath expression given by the waiter
      *                       definition
      * @return True if all elements of the final result matches
-     * the expected result, False otherwise
+     *         the expected result, False otherwise
      */
     public static boolean pathAll(JsonNode expectedResult, JsonNode finalResult) {
         if (finalResult.isNull()) {
@@ -49,14 +49,14 @@ public class AcceptorPathMatcher {
 
     /**
      * PathAny matcher that checks if any element of the final
-     * result matches the expected result
+     * result matches the expected result.
      *
      * @param expectedResult Expected result given by the waiter definition
      * @param finalResult    Final result of the resource got by the execution
      *                       of the JmesPath expression given by the waiter
      *                       definition
      * @return True if any single element of the final result matches
-     * the expected result, False if none matched
+     *         the expected result, False if none matched
      */
     public static boolean pathAny(JsonNode expectedResult, JsonNode finalResult) {
         if (finalResult.isNull()) {
@@ -76,14 +76,14 @@ public class AcceptorPathMatcher {
 
     /**
      * Path matcher that checks if the final result
-     * matches the expected result
+     * matches the expected result.
      *
      * @param expectedResult Expected result given by the waiter definition
      * @param finalResult    Final result of the resource got by the execution
      *                       of the JmesPath expression given by the waiter
      *                       definition
      * @return True if the final result matches the expected result,
-     * False otherwise
+     *         False otherwise
      */
     public static boolean path(JsonNode expectedResult, JsonNode finalResult) {
         return finalResult.equals(expectedResult);

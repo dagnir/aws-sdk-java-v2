@@ -30,6 +30,16 @@
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>
 
+    <dependencies>
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>cognitoidentity</artifactId>
+            <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

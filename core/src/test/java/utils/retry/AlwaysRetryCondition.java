@@ -20,7 +20,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.retry.RetryPolicy.RetryCondition;
 
 /**
- * {@link RetryCondition} used in tests to always retry regardless of exception
+ * {@link RetryCondition} used in tests to always retry regardless of exception.
  */
 public final class AlwaysRetryCondition implements RetryCondition {
 

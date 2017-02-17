@@ -32,7 +32,7 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 
@@ -86,7 +86,7 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
             NumberSetAttributeClass x = util.load(NumberSetAttributeClass.class, attr.get(KEY_NAME).getS());
@@ -112,7 +112,7 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (NumberSetAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -131,7 +131,7 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (NumberSetAttributeClass obj : objs) {
             util.save(obj);
         }

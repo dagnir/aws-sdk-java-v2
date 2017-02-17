@@ -15,11 +15,12 @@
 
 package software.amazon.awssdk.opensdk.protect.auth;
 
+import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.RequestSigner;
 
 /**
  * An interface used to represent the default
- * AWS RequestSigner (typically {@link software.amazon.awssdk.auth.AWS4Signer})
+ * AWS RequestSigner (typically {@link Aws4Signer})
  * used for requests that require IAM authorization
  */
 public interface IamRequestSigner extends RequestSigner {

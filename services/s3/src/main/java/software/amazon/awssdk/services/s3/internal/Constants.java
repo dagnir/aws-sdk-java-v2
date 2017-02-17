@@ -27,33 +27,33 @@ import software.amazon.awssdk.services.s3.model.SSEAlgorithm;
  */
 public class Constants {
 
-    /** Default hostname for the S3 service endpoint */
+    /** Default hostname for the S3 service endpoint. */
     public static final String S3_HOSTNAME = "s3.amazonaws.com";
-    /** Hostname for the s3-external-1 service endpoint */
+    /** Hostname for the s3-external-1 service endpoint. */
     public static final String S3_EXTERNAL_1_HOSTNAME = "s3-external-1.amazonaws.com";
-    /** Service hostname for accessing accelerated S3 buckets */
+    /** Service hostname for accessing accelerated S3 buckets. */
     public static final String S3_ACCELERATE_HOSTNAME = "s3-accelerate.amazonaws.com";
     public static final String S3_ACCELERATE_DUALSTACK_HOSTNAME = "s3-accelerate.dualstack.amazonaws.com";
 
-    /** Dualstack qualifier for S3 */
+    /** Dualstack qualifier for S3. */
     public static final String S3_DUALSTACK_QUALIFIER = "dualstack";
 
     /** Service display name for Amazon S3 (not to be used in SigV4 signing) */
     public static final String S3_SERVICE_DISPLAY_NAME = "Amazon S3";
 
-    /** Default encoding used for text data */
+    /** Default encoding used for text data. */
     public static final String DEFAULT_ENCODING = "UTF-8";
 
-    /** URL encoding for s3 object keys */
+    /** URL encoding for s3 object keys. */
     public static final String URL_ENCODING = "url";
 
-    /** HMAC/SHA1 Algorithm per RFC 2104, used when signing S3 requests */
+    /** HMAC/SHA1 Algorithm per RFC 2104, used when signing S3 requests. */
     public static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
-    /** XML namespace URL used when sending S3 requests containing XML */
+    /** XML namespace URL used when sending S3 requests containing XML. */
     public static final String XML_NAMESPACE = "http://s3.amazonaws.com/doc/2006-03-01/";
 
-    /** Represents a null S3 version ID */
+    /** Represents a null S3 version ID. */
     public static final String NULL_VERSION_ID = "null";
 
     /**
@@ -62,13 +62,13 @@ public class Constants {
      */
     public static final int FAILED_PRECONDITION_STATUS_CODE = 412;
 
-    /** Kilobytes */
+    /** Kilobytes. */
     public static final int KB = 1024;
 
-    /** Megabytes */
+    /** Megabytes. */
     public static final int MB = 1024 * KB;
 
-    /** Gigabytes */
+    /** Gigabytes. */
     public static final long GB = 1024 * MB;
 
     /** The maximum allowed parts in a multipart upload. */
@@ -90,7 +90,7 @@ public class Constants {
     public static final String REQUESTER_PAYS = "requester";
     public static final String SSE_AWS_KMS_ENCRYPTION_SCHEME =
             SSEAlgorithm.KMS.getAlgorithm();
-    /** Shared logger for client events */
+    /** Shared logger for client events. */
     private static Log log = LogFactory.getLog(AmazonS3Client.class);
 
     /**

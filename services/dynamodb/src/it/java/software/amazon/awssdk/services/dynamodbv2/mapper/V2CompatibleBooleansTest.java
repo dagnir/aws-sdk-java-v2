@@ -35,12 +35,12 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.ConversionSchema;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ConversionSchemas;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTyped;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemResult;
@@ -63,26 +63,26 @@ public class V2CompatibleBooleansTest {
     /**
      * Mapper with default config.
      */
-    private DynamoDBMapper defaultMapper;
+    private DynamoDbMapper defaultMapper;
 
     /**
      * Mapper explicitly using {@link ConversionSchemas#V2_COMPATIBLE}
      */
-    private DynamoDBMapper v2CompatMapper;
+    private DynamoDbMapper v2CompatMapper;
 
     /**
      * Mapper explicitly using {@link ConversionSchemas#V1}
      */
-    private DynamoDBMapper v1Mapper;
+    private DynamoDbMapper v1Mapper;
 
     /**
      * Mapper explicitly using {@link ConversionSchemas#V2}
      */
-    private DynamoDBMapper v2Mapper;
+    private DynamoDbMapper v2Mapper;
 
     @Before
     public void setup() {
-        defaultMapper = new DynamoDBMapper(ddb);
+        defaultMapper = new DynamoDbMapper(ddb);
         v2CompatMapper = buildMapper(ConversionSchemas.V2_COMPATIBLE);
         v1Mapper = buildMapper(ConversionSchemas.V1);
         v2Mapper = buildMapper(ConversionSchemas.V2);
@@ -90,8 +90,8 @@ public class V2CompatibleBooleansTest {
         when(ddb.updateItem(any(UpdateItemRequest.class))).thenReturn(new UpdateItemResult());
     }
 
-    private DynamoDBMapper buildMapper(ConversionSchema schema) {
-        return new DynamoDBMapper(ddb, DynamoDBMapperConfig.builder()
+    private DynamoDbMapper buildMapper(ConversionSchema schema) {
+        return new DynamoDbMapper(ddb, DynamoDBMapperConfig.builder()
                                                            .withConversionSchema(schema)
                                                            .build());
     }
@@ -148,7 +148,7 @@ public class V2CompatibleBooleansTest {
         saveCoercedNativeBoolean_MarshallsIntoNativeBoolean(v2Mapper);
     }
 
-    private void saveCoercedNativeBoolean_MarshallsIntoNativeBoolean(DynamoDBMapper mapper) {
+    private void saveCoercedNativeBoolean_MarshallsIntoNativeBoolean(DynamoDbMapper mapper) {
         mapper.save(new UnitTestPojo().setNativeBoolean(true).setHashKey(HASH_KEY));
         verifyAttributeUpdatedWithValue("nativeBoolean", new AttributeValue().withBOOL(true));
     }
@@ -176,7 +176,7 @@ public class V2CompatibleBooleansTest {
         saveCoercedNumericBoolean_MarshallsIntoNumericBoolean(v2Mapper);
     }
 
-    private void saveCoercedNumericBoolean_MarshallsIntoNumericBoolean(DynamoDBMapper mapper) {
+    private void saveCoercedNumericBoolean_MarshallsIntoNumericBoolean(DynamoDbMapper mapper) {
         mapper.save(new UnitTestPojo().setNumericBoolean(true).setHashKey(HASH_KEY));
         verifyAttributeUpdatedWithValue("numericBoolean", new AttributeValue().withN("1"));
     }
@@ -292,13 +292,13 @@ public class V2CompatibleBooleansTest {
         assertFalse(pojo.getBooleanList().get(1));
     }
 
-    private UnitTestPojoWithList loadListPojo(DynamoDBMapper mapper) {
+    private UnitTestPojoWithList loadListPojo(DynamoDbMapper mapper) {
         UnitTestPojoWithList pojo = new UnitTestPojoWithList();
         pojo.setHashKey(HASH_KEY);
         return mapper.load(pojo);
     }
 
-    private UnitTestPojo loadPojo(DynamoDBMapper mapper) {
+    private UnitTestPojo loadPojo(DynamoDbMapper mapper) {
         return mapper.load(new UnitTestPojo().setHashKey(HASH_KEY));
     }
 

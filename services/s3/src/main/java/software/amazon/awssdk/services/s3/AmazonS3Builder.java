@@ -23,14 +23,16 @@ import software.amazon.awssdk.function.SdkFunction;
 import software.amazon.awssdk.regions.AwsRegionProvider;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest;
 
 @NotThreadSafe
-public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBuild extends AmazonS3>
-        extends AwsSyncClientBuilder<Subclass, TypeToBuild> {
+public abstract class AmazonS3Builder<SubclassT extends AmazonS3Builder, TypeToBuildT extends AmazonS3>
+        extends AwsSyncClientBuilder<SubclassT, TypeToBuildT> {
 
     private static final AmazonS3ClientConfigurationFactory CLIENT_CONFIG_FACTORY = new AmazonS3ClientConfigurationFactory();
 
-    private static final SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> DEFAULT_CLIENT_FACTORY = new SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3>() {
+    private static final SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> DEFAULT_CLIENT_FACTORY =
+            new SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3>() {
         @Override
         public AmazonS3 apply(AmazonS3ClientParamsWrapper params) {
             return new AmazonS3Client(params);
@@ -99,7 +101,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      * @param pathStyleAccessEnabled True to always use path-style access.
      * @return This object for method chaining.
      */
-    public Subclass withPathStyleAccessEnabled(Boolean pathStyleAccessEnabled) {
+    public SubclassT withPathStyleAccessEnabled(Boolean pathStyleAccessEnabled) {
         setPathStyleAccessEnabled(pathStyleAccessEnabled);
         return getSubclass();
     }
@@ -118,7 +120,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      *
      * @return This object for method chaining.
      */
-    public Subclass enablePathStyleAccess() {
+    public SubclassT enablePathStyleAccess() {
         setPathStyleAccessEnabled(Boolean.TRUE);
         return getSubclass();
     }
@@ -163,7 +165,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      * @param chunkedEncodingDisabled True to disable chunked encoding.
      * @return this Builder instance that can be used for method chaining
      */
-    public Subclass withChunkedEncodingDisabled(Boolean chunkedEncodingDisabled) {
+    public SubclassT withChunkedEncodingDisabled(Boolean chunkedEncodingDisabled) {
         setChunkedEncodingDisabled(chunkedEncodingDisabled);
         return getSubclass();
     }
@@ -182,7 +184,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      *
      * @return this Builder instance that can be used for method chaining
      */
-    public Subclass disableChunkedEncoding() {
+    public SubclassT disableChunkedEncoding() {
         setChunkedEncodingDisabled(Boolean.TRUE);
         return getSubclass();
     }
@@ -199,11 +201,10 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      *
      * <p>A bucket by default cannot be accessed in accelerate mode. If you wish to do so, you need
      * to enable the accelerate configuration for the bucket in advance. To enable accelerate mode
-     * see {@link software.amazon.awssdk.services.s3.AmazonS3Client#setBucketAccelerateConfiguration(software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest)}.
+     * see {@link AmazonS3Client#setBucketAccelerateConfiguration(SetBucketAccelerateConfigurationRequest)}.
      * </p>
      *
      * @param accelerateModeEnabled True to enable accelerate mode.
-     * @return This object for method chaining.
      */
     public void setAccelerateModeEnabled(Boolean accelerateModeEnabled) {
         this.accelerateModeEnabled = accelerateModeEnabled;
@@ -214,13 +215,13 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      *
      * <p>A bucket by default cannot be accessed in accelerate mode. If you wish to do so, you need
      * to enable the accelerate configuration for the bucket in advance. To enable accelerate mode
-     * see {@link software.amazon.awssdk.services.s3.AmazonS3Client#setBucketAccelerateConfiguration(software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest)}.
+     * see {@link AmazonS3Client#setBucketAccelerateConfiguration(SetBucketAccelerateConfigurationRequest)}.
      * </p>
      *
      * @param accelerateModeEnabled True to enable accelerate mode.
      * @return This object for method chaining.
      */
-    public Subclass withAccelerateModeEnabled(Boolean accelerateModeEnabled) {
+    public SubclassT withAccelerateModeEnabled(Boolean accelerateModeEnabled) {
         setAccelerateModeEnabled(accelerateModeEnabled);
         return getSubclass();
     }
@@ -230,12 +231,12 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      *
      * <p>A bucket by default cannot be accessed in accelerate mode. If you wish to do so, you need
      * to enable the accelerate configuration for the bucket in advance. To enable accelerate mode
-     * see {@link software.amazon.awssdk.services.s3.AmazonS3Client#setBucketAccelerateConfiguration(software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest)}.
+     * see {@link AmazonS3Client#setBucketAccelerateConfiguration(SetBucketAccelerateConfigurationRequest)}.
      * </p>
      *
      * @return This object for method chaining.
      */
-    public Subclass enableAccelerateMode() {
+    public SubclassT enableAccelerateMode() {
         setAccelerateModeEnabled(Boolean.TRUE);
         return getSubclass();
     }
@@ -278,7 +279,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      * @param payloadSigningEnabled True to explicitly enable payload signing in all situations
      * @return This object for method chaining.
      */
-    public Subclass withPayloadSigningEnabled(Boolean payloadSigningEnabled) {
+    public SubclassT withPayloadSigningEnabled(Boolean payloadSigningEnabled) {
         setPayloadSigningEnabled(payloadSigningEnabled);
         return getSubclass();
     }
@@ -296,7 +297,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      *
      * @return This object for method chaining.
      */
-    public Subclass enablePayloadSigning() {
+    public SubclassT enablePayloadSigning() {
         setPayloadSigningEnabled(Boolean.TRUE);
         return getSubclass();
     }
@@ -324,7 +325,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      * @param dualstackEnabled True to enable dualstack mode.
      * @return This object for method chaining.
      */
-    public Subclass withDualstackEnabled(Boolean dualstackEnabled) {
+    public SubclassT withDualstackEnabled(Boolean dualstackEnabled) {
         setDualstackEnabled(dualstackEnabled);
         return getSubclass();
     }
@@ -334,7 +335,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
 
      * @return This object for method chaining.
      */
-    public Subclass enableDualstack() {
+    public SubclassT enableDualstack() {
         setDualstackEnabled(Boolean.TRUE);
         return getSubclass();
     }
@@ -385,7 +386,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      * @param forceGlobalBucketAccessEnabled Whether global bucket access should be enabled.
      * @return This object for method chaining.
      */
-    public Subclass withForceGlobalBucketAccessEnabled(Boolean forceGlobalBucketAccessEnabled) {
+    public SubclassT withForceGlobalBucketAccessEnabled(Boolean forceGlobalBucketAccessEnabled) {
         setForceGlobalBucketAccessEnabled(forceGlobalBucketAccessEnabled);
         return getSubclass();
     }
@@ -396,7 +397,7 @@ public abstract class AmazonS3Builder<Subclass extends AmazonS3Builder, TypeToBu
      * @see #setForceGlobalBucketAccessEnabled(Boolean)
      * @return This object for method chaining.
      */
-    public Subclass enableForceGlobalBucketAccess() {
+    public SubclassT enableForceGlobalBucketAccess() {
         setForceGlobalBucketAccessEnabled(Boolean.TRUE);
         return getSubclass();
     }

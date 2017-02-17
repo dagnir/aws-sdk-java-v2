@@ -22,20 +22,20 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class BaseResultIntegrationTest extends AWSIntegrationTestBase {
+public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
 
     private AmazonDynamoDB dynamoDB;
 
     @Before
     public void setup() {
         dynamoDB = AmazonDynamoDBClientBuilder.standard()
-                                              .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                                              .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                                               .withRegion(Regions.US_WEST_2)
                                               .build();
     }

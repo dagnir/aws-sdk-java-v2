@@ -23,19 +23,19 @@ import java.io.Serializable;
  * you can can specify a different error code to return.
  */
 public class RedirectRule implements Serializable {
-    /** The protocol to use in the redirect request */
+    /** The protocol to use in the redirect request. */
     private String protocol;
 
-    /** The host name to use in the redirect request */
+    /** The host name to use in the redirect request. */
     private String hostName;
 
-    /** The object prefix key to use in the redirect request */
+    /** The object prefix key to use in the redirect request. */
     private String replaceKeyPrefixWith;
 
-    /** The specific key to use in the redirect request */
+    /** The specific key to use in the redirect request. */
     private String replaceKeyWith;
 
-    /** The HTTP code to use in the redirect response */
+    /** The HTTP code to use in the redirect response. */
     private String httpRedirectCode;
 
     /**

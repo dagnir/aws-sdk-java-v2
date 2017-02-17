@@ -23,9 +23,9 @@ import org.junit.Test;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsResult;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class BaseResultIntegrationTest extends AWSIntegrationTestBase {
+public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
 
     private AmazonSimpleDBClient simpleDB;
 

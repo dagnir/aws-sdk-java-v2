@@ -34,8 +34,8 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.FailedBatch;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodbv2.pojos.BinaryAttributeByteBufferClass;
 import software.amazon.awssdk.services.dynamodbv2.pojos.RangeKeyClass;
 
@@ -63,7 +63,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
             objs.add(obj);
         }
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         List<FailedBatch> failedBatches = mapper.batchSave(objs);
 
         assertEquals(0, failedBatches.size());
@@ -82,7 +82,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
             objs.add(obj);
         }
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         NumberSetAttributeClass[] objsArray = objs.toArray(new NumberSetAttributeClass[objs.size()]);
         mapper.batchSave((Object[]) objsArray);
 
@@ -100,7 +100,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
             objs.add(obj);
         }
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         NumberSetAttributeClass[] objsArray = objs.toArray(new NumberSetAttributeClass[objs.size()]);
         mapper.batchSave(Arrays.asList(objsArray));
 
@@ -118,7 +118,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
             objs.add(obj);
         }
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         mapper.batchSave(objs);
 
         for (NumberSetAttributeClass obj : objs) {
@@ -156,7 +156,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
             objs.add(obj);
         }
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         mapper.batchSave(objs);
 
         for (NumberSetAttributeClass obj : objs) {
@@ -213,7 +213,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
         }
         Collections.shuffle(objs);
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         List<FailedBatch> failedBatches = mapper.batchSave(objs);
         assertEquals(failedBatches.size(), 0);
 
@@ -304,7 +304,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
             objs.add(obj);
         }
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         // The failed batch
         List<FailedBatch> failedBatches = mapper.batchSave(objs);
@@ -342,7 +342,7 @@ public class BatchWriteIntegrationTest extends DynamoDBMapperIntegrationTestBase
             objs.add(obj);
         }
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         List<FailedBatch> failedBatches = mapper.batchSave(objs);
         assertEquals(0, failedBatches.size());
 

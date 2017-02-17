@@ -64,22 +64,22 @@ public class ServiceUtils {
     private static final SkipMd5CheckStrategy skipMd5CheckStrategy = SkipMd5CheckStrategy.INSTANCE;
 
     public static Date parseIso8601Date(String dateString) {
-        return DateUtils.parseISO8601Date(dateString);
+        return DateUtils.parseIso8601Date(dateString);
     }
 
     public static String formatIso8601Date(Date date) {
-        return DateUtils.formatISO8601Date(date);
+        return DateUtils.formatIso8601Date(date);
     }
 
     public static Date parseRfc822Date(String dateString) {
         if (StringUtils.isNullOrEmpty(dateString)) {
             return null;
         }
-        return DateUtils.parseRFC822Date(dateString);
+        return DateUtils.parseRfc822Date(dateString);
     }
 
     public static String formatRfc822Date(Date date) {
-        return DateUtils.formatRFC822Date(date);
+        return DateUtils.formatRfc822Date(date);
     }
 
     /**
@@ -337,7 +337,6 @@ public class ServiceUtils {
 
     /**
      * Creates the parent directory for a file if it doesn't already exist.
-     * @param file
      * @throws SdkClientException when creation of parent directory failed.
      */
     public static void createParentDirectoryIfNecessary(final File file) {
@@ -478,9 +477,9 @@ public class ServiceUtils {
      * Returns the part count of the object represented by the getObjectRequest.
      *
      * @param getObjectRequest
-     * 					The request to check.
+     *                     The request to check.
      * @param s3
-     * 					The Amazon s3 client.
+     *                     The Amazon s3 client.
      *
      * @return The number of parts in the object if it is multipart object, otherwise returns null.
      */

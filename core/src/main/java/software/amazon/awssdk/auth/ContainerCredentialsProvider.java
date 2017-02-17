@@ -25,7 +25,7 @@ import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
 
 /**
  * <p>
- * {@link AWSCredentialsProvider} implementation that loads credentials
+ * {@link AwsCredentialsProvider} implementation that loads credentials
  * from an Amazon Elastic Container.
  * </p>
  * <p>
@@ -33,7 +33,7 @@ import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
  * "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" in the container's environment.
  * </p>
  */
-public class ContainerCredentialsProvider implements AWSCredentialsProvider {
+public class ContainerCredentialsProvider implements AwsCredentialsProvider {
 
     /** Environment variable to get the Amazon ECS credentials resource path. */
     static final String ECS_CONTAINER_CREDENTIALS_PATH = "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI";
@@ -44,7 +44,7 @@ public class ContainerCredentialsProvider implements AWSCredentialsProvider {
     private final EC2CredentialsFetcher credentialsFetcher;
 
     public ContainerCredentialsProvider() {
-        this(new ECSCredentialsEndpointProvider());
+        this(new EcsCredentialsEndpointProvider());
     }
 
     @SdkInternalApi
@@ -53,7 +53,7 @@ public class ContainerCredentialsProvider implements AWSCredentialsProvider {
     }
 
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         return credentialsFetcher.getCredentials();
     }
 
@@ -67,7 +67,7 @@ public class ContainerCredentialsProvider implements AWSCredentialsProvider {
     }
 
 
-    private static class ECSCredentialsEndpointProvider extends CredentialsEndpointProvider {
+    private static class EcsCredentialsEndpointProvider extends CredentialsEndpointProvider {
         @Override
         public URI getCredentialsEndpoint() throws URISyntaxException {
             String path = System.getenv(ECS_CONTAINER_CREDENTIALS_PATH);

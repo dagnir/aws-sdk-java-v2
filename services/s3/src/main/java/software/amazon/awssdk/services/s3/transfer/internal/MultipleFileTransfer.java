@@ -77,10 +77,10 @@ public abstract class MultipleFileTransfer<T extends Transfer> extends AbstractT
                 break;
             case InProgress:
                 if (subTransferStarted.compareAndSet(false, true)) {
-                /* The first InProgress signal */
+                    /* The first InProgress signal. */
                     fireProgressEvent(ProgressEventType.TRANSFER_STARTED_EVENT);
                 }
-            /* Don't need any event code update for subsequent InProgress signals */
+                /* Don't need any event code update for subsequent InProgress signals. */
                 break;
             case Completed:
                 fireProgressEvent(ProgressEventType.TRANSFER_COMPLETED_EVENT);

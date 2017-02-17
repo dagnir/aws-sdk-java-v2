@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.s3.transfer.TransferManager;
  */
 public class CopyResult {
 
-    /** The name of the bucket containing the object to be copied */
+    /** The name of the bucket containing the object to be copied. */
     private String sourceBucketName;
 
     /**
@@ -36,7 +36,7 @@ public class CopyResult {
      */
     private String sourceKey;
 
-    /** The name of the bucket to contain the copy of the source object */
+    /** The name of the bucket to contain the copy of the source object. */
     private String destinationBucketName;
 
     /**

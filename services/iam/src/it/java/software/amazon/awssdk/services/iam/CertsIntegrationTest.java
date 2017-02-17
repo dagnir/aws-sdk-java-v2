@@ -1,6 +1,23 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.iam;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -91,12 +108,12 @@ public class CertsIntegrationTest extends IntegrationTestBase {
                                               + "-----END CERTIFICATE-----";
 
     @Before
-    public void TestSetup() {
+    public void testSetup() {
         IAMUtil.deleteUsersAndGroupsInTestNameSpace();
     }
 
     @Test
-    public void TestUploadCertificate() {
+    public void testUploadCertificate() {
         String username = IAMUtil.createTestUser();
 
         try {
@@ -115,7 +132,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
     }
 
     @Test(expected = MalformedCertificateException.class)
-    public void TestMalformedCertificateException() {
+    public void testMalformedCertificateException() {
         String username = IAMUtil.createTestUser();
 
         try {
@@ -128,7 +145,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    public void TestListCerts() {
+    public void testListCerts() {
         String username = IAMUtil.createTestUser();
         String[] certs = {SAMPLE_CERT, SAMPLE_CERT_2};
         String[] certId = new String[2];
@@ -170,7 +187,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
     }
 
     @Test(expected = LimitExceededException.class)
-    public void TestLimitExceededException() {
+    public void testLimitExceededException() {
         String username = IAMUtil.createTestUser();
         String[] certs = {SAMPLE_CERT, SAMPLE_CERT_2, SAMPLE_CERT_3};
 
@@ -185,7 +202,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    public void TestUpdateCert() {
+    public void testUpdateCert() {
         String username = IAMUtil.createTestUser();
 
         try {

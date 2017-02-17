@@ -89,9 +89,9 @@ import software.amazon.awssdk.util.json.Jackson;
 public class S3InstFileKMSIntegrationTest extends S3IntegrationTestBase implements Headers {
 
     private static final String TEST_BUCKET = CryptoTestUtils.tempBucketName(S3InstFileKMSIntegrationTest.class);
-    private final static Map<String, AmazonS3EncryptionClient> cryptoClientMap =
+    private static final Map<String, AmazonS3EncryptionClient> cryptoClientMap =
             new HashMap<String, AmazonS3EncryptionClient>();
-    private final static SimpleMaterialProvider[] materialProviders = new SimpleMaterialProvider[3];
+    private static final SimpleMaterialProvider[] materialProviders = new SimpleMaterialProvider[3];
     private static String nonDefaultKmsKeyId;
     private static JmxInfoProviderSupport jmx = new JmxInfoProviderSupport();
     private static AmazonS3Client s3;
@@ -203,7 +203,7 @@ public class S3InstFileKMSIntegrationTest extends S3IntegrationTestBase implemen
                     kms,
                     awsTestCredentials(),
                     materialProvider,
-                    new ClientConfiguration().withConnectionTTL(1),
+                    new ClientConfiguration().withConnectionTtl(1),
                     new CryptoConfiguration()
                             .withStorageMode(storageMode)
                             .withCryptoMode(cryptoMode)

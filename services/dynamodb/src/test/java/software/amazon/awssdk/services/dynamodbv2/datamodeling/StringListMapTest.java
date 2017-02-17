@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.StringListMap;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper.StringListMap;
 
 /**
  * Unit tests for {@link StringListMap}.

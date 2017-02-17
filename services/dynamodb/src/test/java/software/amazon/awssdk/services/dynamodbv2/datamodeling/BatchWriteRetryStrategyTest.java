@@ -31,8 +31,8 @@ import org.easymock.IExpectationSetters;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.BatchWriteRetryStrategy;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchWriteItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchWriteItemResult;
@@ -59,12 +59,12 @@ public class BatchWriteRetryStrategyTest {
     }
 
     private AmazonDynamoDB ddbMock;
-    private DynamoDBMapper mapper;
+    private DynamoDbMapper mapper;
 
     @Before
     public void setup() {
         ddbMock = createMock(AmazonDynamoDB.class);
-        mapper = new DynamoDBMapper(
+        mapper = new DynamoDbMapper(
                 ddbMock,
                 getConfigWithCustomBatchWriteRetryStrategy(
                         new BatchWriteRetryStrategyWithNoDelay(MAX_RETRY)));

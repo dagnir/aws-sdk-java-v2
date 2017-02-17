@@ -30,7 +30,7 @@ import software.amazon.awssdk.regions.Region;
 @SdkProtectedApi
 public class DefaultServiceEndpointBuilder extends ServiceEndpointBuilder {
 
-    private static final Log log = LogFactory.getLog(DefaultServiceEndpointBuilder.class);
+    private static final Log LOG = LogFactory.getLog(DefaultServiceEndpointBuilder.class);
 
     private final String serviceName;
     private final String protocol;
@@ -57,12 +57,12 @@ public class DefaultServiceEndpointBuilder extends ServiceEndpointBuilder {
 
             serviceEndpoint = String.format("%s.%s.%s", serviceName, region.getName(), region.getDomain());
 
-            log.info("{" + serviceName + ", " + region.getName() + "} was not "
+            LOG.info("{" + serviceName + ", " + region.getName() + "} was not "
                      + "found in region metadata, trying to construct an "
                      + "endpoint using the standard pattern for this region: '" + serviceEndpoint + "'.");
 
         }
-        return toURI(stripProtocol(serviceEndpoint));
+        return toUri(stripProtocol(serviceEndpoint));
     }
 
     private String stripProtocol(final String endpoint) {
@@ -70,7 +70,7 @@ public class DefaultServiceEndpointBuilder extends ServiceEndpointBuilder {
         return protocolIndex >= 0 ? endpoint.substring(protocolIndex + "://".length()) : endpoint;
     }
 
-    private URI toURI(String endpoint) throws IllegalArgumentException {
+    private URI toUri(String endpoint) throws IllegalArgumentException {
         try {
             return new URI(String.format("%s://%s", protocol, endpoint));
         } catch (URISyntaxException e) {

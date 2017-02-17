@@ -43,13 +43,10 @@ public class ContentLanguageUnitTest {
 
     @Test
     public void object_metadata_returns_contentlanguage_when_header_is_set_in_response() {
-        Mockito.when(httpResponse.getHeaders()).thenReturn(ImmutableMapParameter.of
-                (Headers.CONTENT_LANGUAGE,
-                 CONTENT_LANGUAGE));
+        Mockito.when(httpResponse.getHeaders()).thenReturn(ImmutableMapParameter.of(Headers.CONTENT_LANGUAGE, CONTENT_LANGUAGE));
 
         try {
-            AmazonWebServiceResponse<S3Object> response = new S3ObjectResponseHandler().handle
-                    (httpResponse);
+            AmazonWebServiceResponse<S3Object> response = new S3ObjectResponseHandler().handle(httpResponse);
             ObjectMetadata metadata = response.getResult().getObjectMetadata();
             Assert.assertNotNull(metadata.getContentLanguage());
             Assert.assertEquals(CONTENT_LANGUAGE, metadata.getContentLanguage());
@@ -61,13 +58,11 @@ public class ContentLanguageUnitTest {
     }
 
     @Test
-    public void object_metadata_returns_null_for_content_language_when_header_is_not_set_in_response
-            () {
+    public void object_metadata_returns_null_for_content_language_when_header_is_not_set_in_response() {
         Mockito.when(httpResponse.getHeaders()).thenReturn(new HashMap<String, String>());
 
         try {
-            AmazonWebServiceResponse<S3Object> response = new S3ObjectResponseHandler().handle
-                    (httpResponse);
+            AmazonWebServiceResponse<S3Object> response = new S3ObjectResponseHandler().handle(httpResponse);
             ObjectMetadata metadata = response.getResult().getObjectMetadata();
             Assert.assertNull(metadata.getContentLanguage());
 

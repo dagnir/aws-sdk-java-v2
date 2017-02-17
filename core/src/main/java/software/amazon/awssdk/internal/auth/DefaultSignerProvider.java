@@ -34,7 +34,7 @@ public class DefaultSignerProvider extends SignerProvider {
     @Override
     public Signer getSigner(SignerProviderContext context) {
         if (context.isRedirect()) {
-            return awsClient.getSignerByURI(context.getUri());
+            return awsClient.getSignerByUri(context.getUri());
         }
         return signer;
     }

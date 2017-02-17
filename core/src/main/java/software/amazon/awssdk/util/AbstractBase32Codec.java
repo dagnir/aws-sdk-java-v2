@@ -49,7 +49,8 @@ abstract class AbstractBase32Codec implements Codec {
         }
 
         byte[] dest = new byte[(num5bytes + 1) * 8];
-        int s = 0, d = 0;
+        int s = 0;
+        int d = 0;
 
         for (; s < src.length - remainder; s += 5, d += 8) {
             encode5bytes(src, s, dest, d);
@@ -234,8 +235,7 @@ abstract class AbstractBase32Codec implements Codec {
     @Override
     public final byte[] decode(byte[] src, final int length) {
         if (length % 8 != 0) {
-            throw new IllegalArgumentException
-                    ("Input is expected to be encoded in multiple of 8 bytes but found: " + length);
+            throw new IllegalArgumentException("Input is expected to be encoded in multiple of 8 bytes but found: " + length);
         }
 
         int pads = 0;
@@ -270,7 +270,8 @@ abstract class AbstractBase32Codec implements Codec {
                 throw new IllegalArgumentException("Invalid number of paddings " + pads);
         }
         final byte[] dest = new byte[length / 8 * 5 - (5 - fq)];
-        int s = 0, d = 0;
+        int s = 0;
+        int d = 0;
 
         // % has a higher precedence than - than <
         for (; d < dest.length - fq % 5; s += 8, d += 5) {

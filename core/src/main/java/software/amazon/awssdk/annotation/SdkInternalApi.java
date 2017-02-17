@@ -24,6 +24,6 @@ import java.lang.annotation.Target;
  * and the generated clients themselves should not depend on any packages, types, fields,
  * constructors, or methods with this annotation.
  */
-@Target( {ElementType.PACKAGE, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD})
+@Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD})
 public @interface SdkInternalApi {
 }

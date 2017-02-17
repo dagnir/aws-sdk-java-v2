@@ -49,10 +49,10 @@ import software.amazon.awssdk.services.s3.util.UnreliableRepeatableFileInputStre
 public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationTestBase {
     private static final boolean cleanup = true;
 
-    /** Length of the random temp file to upload */
+    /** Length of the random temp file to upload. */
     private static final int RANDOM_OBJECT_DATA_LENGTH = 1024;
 
-    /** Name of the test bucket these tests will create, test, delete, etc */
+    /** Name of the test bucket these tests will create, test, delete, etc. */
     private String bucket;
 
     /** The temporary file to be uploaded, and the temporary file to be retrieved. */
@@ -189,6 +189,7 @@ public abstract class S3LastPartUploadIntegrationTestBase extends S3IntegrationT
                                                                 .withUploadId(uploadId));
                 fail();
             } catch (AmazonClientException expected) {
+                // Ignored or expected.
             } finally {
                 is.release();
             }

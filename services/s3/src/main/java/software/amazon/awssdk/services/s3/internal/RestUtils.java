@@ -38,17 +38,17 @@ public class RestUtils {
      * string to sign.
      */
     private static final List<String> SIGNED_PARAMETERS = Arrays.asList(new String[] {
-            "acl", "torrent", "logging", "location", "policy", "requestPayment", "versioning",
-            "versions", "versionId", "notification", "uploadId", "uploads", "partNumber", "website",
-            "delete", "lifecycle", "tagging", "cors", "restore", "replication", "accelerate",
-            "inventory", "analytics", "metrics",
-            ResponseHeaderOverrides.RESPONSE_HEADER_CACHE_CONTROL,
-            ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_DISPOSITION,
-            ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_ENCODING,
-            ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_LANGUAGE,
-            ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_TYPE,
-            ResponseHeaderOverrides.RESPONSE_HEADER_EXPIRES,
-            });
+        "acl", "torrent", "logging", "location", "policy", "requestPayment", "versioning",
+        "versions", "versionId", "notification", "uploadId", "uploads", "partNumber", "website",
+        "delete", "lifecycle", "tagging", "cors", "restore", "replication", "accelerate",
+        "inventory", "analytics", "metrics",
+        ResponseHeaderOverrides.RESPONSE_HEADER_CACHE_CONTROL,
+        ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_DISPOSITION,
+        ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_ENCODING,
+        ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_LANGUAGE,
+        ResponseHeaderOverrides.RESPONSE_HEADER_CONTENT_TYPE,
+        ResponseHeaderOverrides.RESPONSE_HEADER_EXPIRES,
+    });
 
     /**
      * Calculate the canonical string for a REST/HTTP request to S3 by only
@@ -187,8 +187,7 @@ public class RestUtils {
             if (!SIGNED_PARAMETERS.contains(parameterName)
                 &&
                 (additionalQueryParamsToSign == null ||
-                 !additionalQueryParamsToSign.contains(parameterName))
-                    ) {
+                 !additionalQueryParamsToSign.contains(parameterName))) {
                 continue;
             }
 

@@ -64,11 +64,11 @@ import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PartETag;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.transfer.Transfer.TransferState;
 import software.amazon.awssdk.services.s3.transfer.model.CopyResult;
 import software.amazon.awssdk.services.s3.transfer.model.UploadResult;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
 /**
@@ -76,7 +76,7 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  * client is used for certain cases where copy request involves large files.
  */
 @Category(S3Categories.Slow.class)
-public class TransferManagerCopyIntegrationTest extends AWSTestBase {
+public class TransferManagerCopyIntegrationTest extends AwsTestBase {
 
     /** Source bucket name from where the Amazon S3 object is to be copied. */
     private static final String sourceBucketName = "java-sdk-src-bucket-tm-copy-"
@@ -179,6 +179,7 @@ public class TransferManagerCopyIntegrationTest extends AWSTestBase {
                 smallFile.delete();
             }
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
     }
@@ -318,12 +319,12 @@ public class TransferManagerCopyIntegrationTest extends AWSTestBase {
      */
     @Test
     public void testCopyObjectWithSSECustomerKey() throws Exception {
-        SSECustomerKey sseCustomerKey = new SSECustomerKey(generateSecretKey());
+        SseCustomerKey sseCustomerKey = new SseCustomerKey(generateSecretKey());
 
         CopyObjectRequest copyObjectRequest =
                 new CopyObjectRequest(sourceBucketName, sourceKey,
                                       destinationBucketName, destinationKey)
-                        .withDestinationSSECustomerKey(sseCustomerKey);
+                        .withDestinationSseCustomerKey(sseCustomerKey);
         Copy result = tm.copy(copyObjectRequest);
         result.waitForCopyResult();
 
@@ -337,7 +338,7 @@ public class TransferManagerCopyIntegrationTest extends AWSTestBase {
         copyObjectRequest =
                 new CopyObjectRequest(destinationBucketName, destinationKey,
                                       destinationBucketName, destinationKey)
-                        .withSourceSSECustomerKey(sseCustomerKey);
+                        .withSourceSseCustomerKey(sseCustomerKey);
         result = tm.copy(copyObjectRequest);
         result.waitForCopyResult();
 

@@ -38,6 +38,13 @@ public final class StringLessThanCondition implements BinaryCondition<String> {
     }
 
     /**
+     * @return Builder instance to construct a {@link StringLessThanCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -51,13 +58,6 @@ public final class StringLessThanCondition implements BinaryCondition<String> {
     @Override
     public String getExpectedValue() {
         return expectedValue;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link StringLessThanCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

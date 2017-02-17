@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.opensdk.protect.client;
 
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 
 public abstract class SdkSyncClientParams {
 
-    public abstract AWSCredentialsProvider getCredentials();
+    public abstract AwsCredentialsProvider getCredentials();
 
 }

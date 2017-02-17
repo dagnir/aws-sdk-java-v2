@@ -25,8 +25,8 @@ import software.amazon.awssdk.annotation.Immutable;
  * "http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_AttributeValue.html"
  * >specific type</a> in DynamoDB.
  * <p>
- * Use {@link ExpressionSpecBuilder#S(String)},
- * {@link ExpressionSpecBuilder#N(String)}, etc. to instantiate path operands to
+ * Use {@link ExpressionSpecBuilder#s(String)},
+ * {@link ExpressionSpecBuilder#n(String)}, etc. to instantiate path operands to
  * refer to attributes of specific data types. You can also use
  * {@link ExpressionSpecBuilder#attribute(String)} to instantiate a path operand
  * with an unspecified data type.

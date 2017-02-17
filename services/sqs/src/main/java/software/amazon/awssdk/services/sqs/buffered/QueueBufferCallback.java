@@ -25,12 +25,12 @@ import software.amazon.awssdk.handlers.AsyncHandler;
  * have to store it in the classes that do actual work. Those classes tend to forget about the
  * request objects as soon as the required data was extracted from them.
  */
-class QueueBufferCallback<RequestType extends AmazonWebServiceRequest, ResultType> {
+class QueueBufferCallback<RequestT extends AmazonWebServiceRequest, ResultT> {
 
-    private final AsyncHandler<RequestType, ResultType> handler;
-    private final RequestType request;
+    private final AsyncHandler<RequestT, ResultT> handler;
+    private final RequestT request;
 
-    public QueueBufferCallback(AsyncHandler<RequestType, ResultType> paramHandler, RequestType request) {
+    public QueueBufferCallback(AsyncHandler<RequestT, ResultT> paramHandler, RequestT request) {
         this.handler = paramHandler;
         this.request = request;
     }
@@ -41,7 +41,7 @@ class QueueBufferCallback<RequestType extends AmazonWebServiceRequest, ResultTyp
         }
     }
 
-    public void onSuccess(ResultType result) {
+    public void onSuccess(ResultT result) {
         if (null != handler) {
             handler.onSuccess(request, result);
         }

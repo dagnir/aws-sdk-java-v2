@@ -68,19 +68,19 @@ public class RenameShapesProcessor implements CodegenCustomizationProcessor {
             String shapeName = entry.getKey();
             Shape shape = entry.getValue();
 
-            preprocess_RenameMemberShapes(shapeName, shape);
+            preprocessRenameMemberShapes(shapeName, shape);
         }
         for (Operation operation : serviceModel.getOperations().values()) {
 
             if (operation.getInput() != null) {
-                preprocess_RenameInputShape(operation.getInput());
+                preprocessRenameInputShape(operation.getInput());
             }
             if (operation.getOutput() != null) {
-                preprocess_RenameOutputShape(operation.getOutput());
+                preprocessRenameOutputShape(operation.getOutput());
             }
             if (operation.getErrors() != null) {
                 for (ErrorMap error : operation.getErrors()) {
-                    preprocess_RenameErrorShape(error);
+                    preprocessRenameErrorShape(error);
                 }
             }
         }
@@ -101,42 +101,42 @@ public class RenameShapesProcessor implements CodegenCustomizationProcessor {
     /**
      * Rename all the member shapes within this shape
      */
-    private void preprocess_RenameMemberShapes(String shapeName, Shape shape) {
+    private void preprocessRenameMemberShapes(String shapeName, Shape shape) {
         if (shape.getListMember() != null) {
-            preprocess_RenameMemberShape(shape.getListMember());
+            preprocessRenameMemberShape(shape.getListMember());
         }
         if (shape.getMapKeyType() != null) {
-            preprocess_RenameMemberShape(shape.getMapKeyType());
+            preprocessRenameMemberShape(shape.getMapKeyType());
         }
         if (shape.getMapValueType() != null) {
-            preprocess_RenameMemberShape(shape.getMapValueType());
+            preprocessRenameMemberShape(shape.getMapValueType());
         }
         if (shape.getMembers() != null) {
             for (Entry<String, Member> entry : shape.getMembers().entrySet()) {
-                preprocess_RenameMemberShape(entry.getValue());
+                preprocessRenameMemberShape(entry.getValue());
             }
         }
     }
 
-    private void preprocess_RenameMemberShape(Member member) {
+    private void preprocessRenameMemberShape(Member member) {
         if (renameShapes.containsKey(member.getShape())) {
             member.setShape(renameShapes.get(member.getShape()));
         }
     }
 
-    private void preprocess_RenameErrorShape(ErrorMap error) {
+    private void preprocessRenameErrorShape(ErrorMap error) {
         if (renameShapes.containsKey(error.getShape())) {
             error.setShape(renameShapes.get(error.getShape()));
         }
     }
 
-    private void preprocess_RenameOutputShape(Output output) {
+    private void preprocessRenameOutputShape(Output output) {
         if (renameShapes.containsKey(output.getShape())) {
             output.setShape(renameShapes.get(output.getShape()));
         }
     }
 
-    private void preprocess_RenameInputShape(Input input) {
+    private void preprocessRenameInputShape(Input input) {
         if (renameShapes.containsKey(input.getShape())) {
             input.setShape(renameShapes.get(input.getShape()));
         }

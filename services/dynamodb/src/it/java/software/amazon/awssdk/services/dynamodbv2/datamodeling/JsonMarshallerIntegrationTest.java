@@ -32,7 +32,7 @@ public class JsonMarshallerIntegrationTest extends DynamoDBMapperIntegrationTest
 
     @Test
     public void testMarshalling() {
-        final DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        final DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         final TestObject object1 = new TestObject();
         object1.setOneItem(new TestObject.OneItem());
@@ -81,16 +81,16 @@ public class JsonMarshallerIntegrationTest extends DynamoDBMapperIntegrationTest
     public static class TestObject {
         private String key;
 
-        ;
+
         private OneItem aitem;
 
-        ;
+
         private List<OneItem> oneItems;
 
-        ;
+
         private TwoItem bitem;
 
-        ;
+
         private List<TwoItem> twoItems;
 
         @DynamoDBHashKey

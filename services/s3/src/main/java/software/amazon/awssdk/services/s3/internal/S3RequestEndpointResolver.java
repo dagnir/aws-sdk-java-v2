@@ -123,7 +123,7 @@ public class S3RequestEndpointResolver {
     }
 
     private boolean shouldUseVirtualAddressing(final URI endpoint) {
-        return !isPathStyleAccess && BucketNameUtils.isDNSBucketName(bucketName)
+        return !isPathStyleAccess && BucketNameUtils.isDnsBucketName(bucketName)
                && !isValidIpV4Address(endpoint.getHost());
     }
 

@@ -29,19 +29,19 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  */
 public class S3VersionSummary implements Serializable {
 
-    /** The name of the bucket in which this version is stored */
+    /** The name of the bucket in which this version is stored. */
     protected String bucketName;
 
-    /** The key under which this version is stored */
+    /** The key under which this version is stored. */
     private String key;
 
-    /** The version ID uniquely identifying this version of an object */
+    /** The version ID uniquely identifying this version of an object. */
     private String versionId;
 
-    /** True if this is the latest version of the associated object */
+    /** True if this is the latest version of the associated object. */
     private boolean isLatest;
 
-    /** The date, according to Amazon S3, when this version was last modified */
+    /** The date, according to Amazon S3, when this version was last modified. */
     private Date lastModified;
 
     /**
@@ -50,16 +50,16 @@ public class S3VersionSummary implements Serializable {
      */
     private Owner owner;
 
-    /** Hex encoded MD5 hash of this version's contents, as computed by Amazon S3 */
+    /** Hex encoded MD5 hash of this version's contents, as computed by Amazon S3. */
     private String eTag;
 
-    /** The size of this version, in bytes */
+    /** The size of this version, in bytes. */
     private long size;
 
-    /** The class of storage used by Amazon S3 to store this version */
+    /** The class of storage used by Amazon S3 to store this version. */
     private String storageClass;
 
-    /** True if this object represents a delete marker */
+    /** True if this object represents a delete marker. */
     private boolean isDeleteMarker;
 
 
@@ -148,7 +148,7 @@ public class S3VersionSummary implements Serializable {
      * for the associated object.
      *
      * @return The value <code>true</code> if this version is the 
-     * latest version for the associated object; returns the value
+     *     latest version for the associated object; returns the value
      * <code>false</code> if otherwise.
      */
     public boolean isLatest() {
@@ -255,8 +255,8 @@ public class S3VersionSummary implements Serializable {
      * the <code>isDeleteMarker</code> property to record if this is a delete marker or not.
      *
      * @param isDeleteMarker
-     *            Specify <code>true<code> if this version summary represents a delete marker,
-     *            otherwise <code>false<code> if it is a regular version summary.
+     *            Specify <code>true</code> if this version summary represents a delete marker,
+     *            otherwise <code>false</code> if it is a regular version summary.
      */
     public void setIsDeleteMarker(boolean isDeleteMarker) {
         this.isDeleteMarker = isDeleteMarker;

@@ -34,9 +34,9 @@ import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodbv2.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodbv2.util.TableUtils;
 import software.amazon.awssdk.services.dynamodbv2.util.TableUtils.TableNeverTransitionedToStateException;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class GzipConfigurationIntegrationTest extends AWSIntegrationTestBase {
+public class GzipConfigurationIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String TABLE_NAME = "test-gzip-" + System.currentTimeMillis();
     private static final String KEY_NAME = "key";

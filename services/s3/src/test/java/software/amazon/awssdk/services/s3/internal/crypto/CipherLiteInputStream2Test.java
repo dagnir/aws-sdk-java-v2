@@ -33,7 +33,7 @@ import software.amazon.awssdk.runtime.io.ResettableInputStream;
  * @author hchar
  */
 public class CipherLiteInputStream2Test {
-    private static final Random rand = new Random();
+    private static final Random RAND = new Random();
     private static final boolean CLEAN_UP = true;
     private static final int MAX_TEST_SECONDS = 10;
 
@@ -47,7 +47,7 @@ public class CipherLiteInputStream2Test {
     @Test
     public void test() throws Exception {
         // Generate a file
-        File file = generateRandomAsciiFile(1024 * 1024 + rand.nextInt(100),
+        File file = generateRandomAsciiFile(1024 * 1024 + RAND.nextInt(100),
                                             CLEAN_UP);
         System.out.println("file: " + file + ", len=" + file.length());
         final long pt_len = file.length();
@@ -118,7 +118,7 @@ public class CipherLiteInputStream2Test {
     @Test
     public void test2() throws Exception {
         // Generate a file
-        File file = generateRandomAsciiFile(10 * 1024 * 1024 + rand.nextInt(100),
+        File file = generateRandomAsciiFile(10 * 1024 * 1024 + RAND.nextInt(100),
                                             CLEAN_UP);
         System.out.println("file: " + file + ", len=" + file.length());
         final long pt_len = file.length();
@@ -138,7 +138,7 @@ public class CipherLiteInputStream2Test {
         s3is1.close();
 
         byte[] buf2 = new byte[512];
-        int delta = (rand.nextInt(100) + 201);
+        int delta = (RAND.nextInt(100) + 201);
         System.out.println("delta=" + delta);
         long startNano = System.nanoTime();
         for (int count = 0; count < pt_len; count += 512 * delta) {
@@ -173,7 +173,7 @@ public class CipherLiteInputStream2Test {
                     s3is2.mark(0);
                     int remainingBlocks = (int) (pt_len - offset) / 512;
                     if (remainingBlocks > 0) {
-                        resetOffset = offset + rand.nextInt(remainingBlocks) * 512;
+                        resetOffset = offset + RAND.nextInt(remainingBlocks) * 512;
                     }
                     marked = true;
                     System.out.println("marked at " + offset + " with resetOffset set to " + resetOffset);

@@ -43,10 +43,10 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String BUCKET_NAME = "java-bucket-metrics-integ-test-" + new Date().getTime();
 
-    /** The key used in these tests */
+    /** The key used in these tests. */
     private static final String KEY = "key";
 
     @BeforeClass
@@ -85,9 +85,11 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
         String configId1 = "id1";
         String configId2 = "id2";
         String prefix = "prefix";
+        MetricsPrefixPredicate predicate = new MetricsPrefixPredicate(prefix);
+
         MetricsConfiguration config1 = new MetricsConfiguration().withId(configId1);
         MetricsConfiguration config2 = new MetricsConfiguration().withId(configId2)
-                                                                 .withFilter(new MetricsFilter().withPredicate(new MetricsPrefixPredicate(prefix)));
+                                                                 .withFilter(new MetricsFilter().withPredicate(predicate));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config1));
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config2));
@@ -113,8 +115,8 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
     public void testOnlyPrefix() throws Exception {
         String configId = "id";
         String prefix = "prefix";
-        MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                                                                .withFilter(new MetricsFilter(new MetricsPrefixPredicate(prefix)));
+        MetricsFilter filter = new MetricsFilter(new MetricsPrefixPredicate(prefix));
+        MetricsConfiguration config = new MetricsConfiguration().withId(configId).withFilter(filter);
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
 
@@ -130,10 +132,12 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
     @Test
     public void testOnlyTag() throws Exception {
         String configId = "id";
-        String key = "key", value = "value";
+        String key = "key";
+        String value = "value";
 
+        MetricsTagPredicate predicate = new MetricsTagPredicate(new Tag(key, value));
         MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                                                                .withFilter(new MetricsFilter(new MetricsTagPredicate(new Tag(key, value))));
+                                                                .withFilter(new MetricsFilter(predicate));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
 
@@ -151,7 +155,8 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
     public void testOnlyAndOperator() throws Exception {
         String configId = "id";
         String prefix = "prefix";
-        String key = "key", value = "value";
+        String key = "key";
+        String value = "value";
         List<MetricsFilterPredicate> operands = new ArrayList<MetricsFilterPredicate>();
         operands.add(new MetricsPrefixPredicate(prefix));
         operands.add(new MetricsTagPredicate(new Tag(key, value)));
@@ -186,8 +191,9 @@ public class BucketMetricsConfigurationIntegrationTest extends S3IntegrationTest
     public void testEmptyPrefix() throws Exception {
         String configId = "id";
         String prefix = "";
+        MetricsPrefixPredicate predicate = new MetricsPrefixPredicate(prefix);
         MetricsConfiguration config = new MetricsConfiguration().withId(configId)
-                                                                .withFilter(new MetricsFilter(new MetricsPrefixPredicate(prefix)));
+                                                                .withFilter(new MetricsFilter(predicate));
 
         s3.setBucketMetricsConfiguration(new SetBucketMetricsConfigurationRequest(BUCKET_NAME, config));
     }

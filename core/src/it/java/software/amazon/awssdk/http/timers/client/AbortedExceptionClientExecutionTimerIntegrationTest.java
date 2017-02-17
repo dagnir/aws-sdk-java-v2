@@ -40,11 +40,7 @@ import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManager
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
 
-/**
- *
- */
-public class AbortedExceptionClientExecutionTimerIntegrationTest extends
-                                                                 MockServerTestBase {
+public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockServerTestBase {
 
     private AmazonHttpClient httpClient;
 
@@ -61,17 +57,13 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends
     }
 
     @Test(expected = AbortedException.class)
-    public void
-    clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_not_expired()
-            throws Exception {
+    public void clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_not_expired() throws Exception {
         ClientConfiguration config = new ClientConfiguration()
                 .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
                 .withMaxErrorRetry(0);
-        ConnectionManagerAwareHttpClient rawHttpClient =
-                createRawHttpClientSpy(config);
+        ConnectionManagerAwareHttpClient rawHttpClient = createRawHttpClientSpy(config);
 
-        doThrow(new AbortedException()).when(rawHttpClient).execute(any
-                                                                            (HttpRequestBase.class), any(HttpContext.class));
+        doThrow(new AbortedException()).when(rawHttpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
 
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
@@ -79,9 +71,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends
     }
 
     @Test(expected = ClientExecutionTimeoutException.class)
-    public void
-    clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_expired()
-            throws Exception {
+    public void clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_expired() throws Exception {
         ClientConfiguration config = new ClientConfiguration()
                 .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
                 .withMaxErrorRetry(0);
@@ -90,8 +80,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends
 
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
-        execute(httpClient, new EmptyHttpRequest(server.getEndpoint(),
-                                                 HttpMethodName.PUT, new SdkBufferedInputStream(new InputStream() {
+        SdkBufferedInputStream payload = new SdkBufferedInputStream(new InputStream() {
             @Override
             public int read() throws IOException {
                 // Sleeping here to avoid OOM issues from a limitless InputStream
@@ -102,6 +91,8 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends
                 }
                 return 1;
             }
-        })));
+        });
+        
+        execute(httpClient, new EmptyHttpRequest(server.getEndpoint(), HttpMethodName.PUT, payload));
     }
 }

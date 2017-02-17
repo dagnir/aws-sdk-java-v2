@@ -23,7 +23,7 @@ package software.amazon.awssdk.services.glacier.transfer;
  */
 public class UploadResult {
 
-    /** The ID of the uploaded archive */
+    /** The ID of the uploaded archive. */
     private final String archiveId;
 
     /**

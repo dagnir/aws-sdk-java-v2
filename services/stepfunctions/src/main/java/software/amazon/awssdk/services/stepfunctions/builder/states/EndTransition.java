@@ -32,16 +32,16 @@ public final class EndTransition implements Transition {
     private EndTransition() {
     }
 
-    @Override
-    public boolean isTerminal() {
-        return true;
-    }
-
     /**
      * @return Builder instance to construct a {@link EndTransition}.
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public boolean isTerminal() {
+        return true;
     }
 
     /**

@@ -82,8 +82,7 @@ public class Endpoint {
 
         merged.setSignatureVersions(override.getSignatureVersions() != null
                                     ? override.getSignatureVersions()
-                                    : defaults.getSignatureVersions()
-                                   );
+                                    : defaults.getSignatureVersions());
 
         return merged;
 

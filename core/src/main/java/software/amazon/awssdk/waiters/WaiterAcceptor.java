@@ -19,7 +19,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
-public abstract class WaiterAcceptor<Output> {
+public abstract class WaiterAcceptor<OutputT> {
 
     /**
      * Default method definition that matches the response
@@ -28,10 +28,10 @@ public abstract class WaiterAcceptor<Output> {
      *
      * @param output Response got by the execution of the operation
      * @return False by default.
-     * When overriden, returns True if it matches, False
-     * otherwise
+     *     When overriden, returns True if it matches, False
+     *     otherwise
      */
-    public boolean matches(Output output) {
+    public boolean matches(OutputT output) {
         return false;
     }
 
@@ -42,8 +42,7 @@ public abstract class WaiterAcceptor<Output> {
      *
      * @param output Exception thrown by the execution of the operation
      * @return False by default.
-     * When overriden, returns True if it matches, False
-     * otherwise
+     *     When overriden, returns True if it matches, False otherwise
      */
     public boolean matches(AmazonServiceException output) {
         return false;

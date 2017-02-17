@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
+import software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState;
 
 /**
- * Represents the logical AND of multiple conditions. May be used in a {@link software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState}.
+ * Represents the logical AND of multiple conditions. May be used in a {@link ChoiceState}.
  *
  * @see <a href="https://states-language.net/spec.html#choice-state">https://states-language.net/spec.html#choice-state</a>
  * @see software.amazon.awssdk.services.stepfunctions.builder.states.Choice
@@ -37,18 +38,18 @@ public final class AndCondition implements NAryCondition {
     }
 
     /**
+     * @return Builder instance to construct a {@link AndCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return List of conditions contained in the AND expression.
      */
     @Override
     public List<Condition> getConditions() {
         return conditions;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link AndCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**
@@ -64,7 +65,7 @@ public final class AndCondition implements NAryCondition {
         /**
          * Adds a condition to the AND expression. May be another composite condition or a simple condition.
          *
-         * @param conditionBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition.Builder}.
+         * @param conditionBuilder Instance of {@link Builder}.
          *                         Note that the
          *                         {@link Condition} object is not built until the {@link AndCondition} is built so any
          *                         modifications on the state builder will be reflected in this object.
@@ -78,7 +79,7 @@ public final class AndCondition implements NAryCondition {
         /**
          * Adds the conditions to the AND expression. May be other composite conditions or simple conditions.
          *
-         * @param conditionBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition.Builder}.
+         * @param conditionBuilders Instances of {@link Builder}.
          *                          Note that the
          *                          {@link Condition} object is not built until the {@link AndCondition} is built so any
          *                          modifications on the state builder will be reflected in this object.

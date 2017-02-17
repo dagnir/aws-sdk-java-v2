@@ -90,7 +90,7 @@ public interface ${metadata.syncInterface} {
      *            region where the service is available.
      *
      * @see Region#getRegion(software.amazon.awssdk.regions.Regions)
-     * @see Region#createClient(Class, software.amazon.awssdk.auth.AWSCredentialsProvider, ClientConfiguration)
+     * @see Region#createClient(Class, software.amazon.awssdk.auth.AwsCredentialsProvider, ClientConfiguration)
      * @see ${regionClassType}#isServiceSupported(String)
      * @deprecated use {@link AwsClientBuilder#setRegion(String)}
      */

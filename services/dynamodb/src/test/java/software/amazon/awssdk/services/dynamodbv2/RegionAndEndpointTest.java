@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodbv2;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWS4Signer;
+import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.util.AwsHostNameUtils;
@@ -37,7 +37,7 @@ public class RegionAndEndpointTest {
 
         Assert.assertEquals(endpoint, client.getEndpointHost());
 
-        AWS4Signer signer = client.getSigner();
+        Aws4Signer signer = client.getSigner();
         Assert.assertEquals(DYNAMODB, signer.getServiceName());
         // Current don't have a better way to verify the signer region
         Assert.assertEquals(US_WEST_2,
@@ -54,7 +54,7 @@ public class RegionAndEndpointTest {
 
         Assert.assertEquals(endpoint, client.getEndpointHost());
 
-        AWS4Signer signer = client.getSigner();
+        Aws4Signer signer = client.getSigner();
         Assert.assertEquals(DYNAMODB, signer.getServiceName());
         Assert.assertEquals("non-standard-region", signer.getRegionName());
     }
@@ -67,7 +67,7 @@ public class RegionAndEndpointTest {
 
         Assert.assertEquals("streams.dynamodb.us-west-2.amazonaws.com", client.getEndpointHost());
 
-        AWS4Signer signer = client.getSigner();
+        Aws4Signer signer = client.getSigner();
         Assert.assertEquals(DYNAMODB, signer.getServiceName());
         // Current don't have a better way to verify the signer region
         Assert.assertEquals(US_WEST_2,
@@ -82,7 +82,7 @@ public class RegionAndEndpointTest {
 
         Assert.assertEquals("streams.dynamodb.cn-north-1.amazonaws.com.cn", client.getEndpointHost());
 
-        AWS4Signer signer = client.getSigner();
+        Aws4Signer signer = client.getSigner();
         Assert.assertEquals(DYNAMODB, signer.getServiceName());
         // Current don't have a better way to verify the signer region
         Assert.assertEquals(CN_NORTH_1,
@@ -94,8 +94,8 @@ public class RegionAndEndpointTest {
      * fields that we need for testing.
      */
     static class TestAmazonDynamoDBStreamsClient extends AmazonDynamoDBStreamsClient {
-        public AWS4Signer getSigner() {
-            return (AWS4Signer) super.getSigner();
+        public Aws4Signer getSigner() {
+            return (Aws4Signer) super.getSigner();
         }
 
         public String getEndpointHost() {

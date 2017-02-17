@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.AWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentialsProviderChain;
 
 /**
  * Composite {@link AwsRegionProvider} that sequentially delegates to a chain of providers looking
@@ -29,7 +29,7 @@ import software.amazon.awssdk.auth.AWSCredentialsProviderChain;
  */
 public class AwsRegionProviderChain extends AwsRegionProvider {
 
-    private static final Log LOG = LogFactory.getLog(AWSCredentialsProviderChain.class);
+    private static final Log LOG = LogFactory.getLog(AwsCredentialsProviderChain.class);
 
     private final List<AwsRegionProvider> providers;
 

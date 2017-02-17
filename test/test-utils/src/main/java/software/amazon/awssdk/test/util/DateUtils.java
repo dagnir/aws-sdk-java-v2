@@ -23,7 +23,7 @@ public class DateUtils {
     /**
      * Returns the current time in yyMMdd-hhmmss format.
      */
-    public static String yyMMdd_hhmmss() {
+    public static String yyMMddhhmmss() {
         return DateTimeFormat.forPattern("yyMMdd-hhmmss").print(new DateTime());
     }
 }

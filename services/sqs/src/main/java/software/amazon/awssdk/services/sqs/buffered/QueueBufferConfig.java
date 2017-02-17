@@ -22,22 +22,22 @@ public class QueueBufferConfig {
     public static final int MAX_BATCH_SIZE_DEFAULT = 10;
     /** Updated as the service now supports messages of size max 256 KiB. */
     public static final long SERVICE_MAX_BATCH_SIZE_BYTES = 256 * 1024 - 1;
-    /** 200 milliseconds */
+    /** 200 milliseconds. */
     public static final long MAX_BATCH_OPEN_MS_DEFAULT = 200;
-    /** 5 batches */
+    /** 5 batches. */
     public static final int MAX_INFLIGHT_OUTBOUND_BATCHES_DEFAULT = 5;
-    /** 10 batches */
+    /** 10 batches. */
     public static final int MAX_INFLIGHT_RECEIVE_BATCHES_DEFAULT = 10;
-    /** 10 batches */
+    /** 10 batches. */
     public static final int MAX_DONE_RECEIVE_BATCHES_DEFAULT = 10;
-    /** 256 kilobytes */
+    /** 256 kilobytes. */
     public static final long MAX_BATCH_SIZE_BYTES_DEFAULT = SERVICE_MAX_BATCH_SIZE_BYTES;
-    /** -1, which means use the visibility timeout of the queue */
+    /** -1, which means use the visibility timeout of the queue. */
     public static final int VISIBILITY_TIMEOUT_SECONDS_DEFAULT = -1;
     public static final int LONGPOLL_WAIT_TIMEOUT_SECONDS_DEFAULT = 20;
-    /** true */
+    /** true. */
     private static final boolean LONG_POLL_DEFAULT = true;
-    /** the maximum number of entries in a batch command */
+    /** the maximum number of entries in a batch command. */
     private int maxBatchSize;
     /**
      * The maximum time (milliseconds) a send batch is held open for additional outbound requests.
@@ -120,7 +120,7 @@ public class QueueBufferConfig {
              VISIBILITY_TIMEOUT_SECONDS_DEFAULT, LONGPOLL_WAIT_TIMEOUT_SECONDS_DEFAULT, MAX_BATCH_SIZE_DEFAULT);
     }
 
-    /** copy constructor */
+    /** copy constructor. */
     public QueueBufferConfig(QueueBufferConfig other) {
         longPoll = other.longPoll;
         longPollWaitTimeoutSeconds = other.longPollWaitTimeoutSeconds;

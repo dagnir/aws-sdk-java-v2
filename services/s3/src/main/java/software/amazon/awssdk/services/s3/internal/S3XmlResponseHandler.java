@@ -29,11 +29,11 @@ import software.amazon.awssdk.runtime.transform.Unmarshaller;
  */
 public class S3XmlResponseHandler<T> extends AbstractS3ResponseHandler<T> {
 
-    /** Shared logger for profiling information */
+    /** Shared logger for profiling information. */
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.request");
-    /** The SAX unmarshaller to use when handling the response from S3 */
+    /** The SAX unmarshaller to use when handling the response from S3. */
     private Unmarshaller<T, InputStream> responseUnmarshaller;
-    /** Response headers from the processed response */
+    /** Response headers from the processed response. */
     private Map<String, String> responseHeaders;
 
     /**

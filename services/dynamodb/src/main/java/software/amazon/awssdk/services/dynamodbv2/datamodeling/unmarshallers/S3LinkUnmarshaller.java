@@ -22,13 +22,8 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 public class S3LinkUnmarshaller extends SUnmarshaller {
 
     private static final S3LinkUnmarshaller INSTANCE = new S3LinkUnmarshaller();
-
-    public static S3LinkUnmarshaller instance() {
-        return INSTANCE;
-    }
-
-
     private final S3ClientCache clientCache;
+
 
     private S3LinkUnmarshaller() {
         this(null);
@@ -36,6 +31,10 @@ public class S3LinkUnmarshaller extends SUnmarshaller {
 
     public S3LinkUnmarshaller(S3ClientCache clientCache) {
         this.clientCache = clientCache;
+    }
+
+    public static S3LinkUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.model.CryptoMode.StrictAuthenticatedEncryption;
 
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
@@ -32,7 +32,7 @@ class S3CryptoModuleAEStrict extends S3CryptoModuleAE {
      * @param cryptoConfig a read-only copy of the crypto configuration.
      */
     S3CryptoModuleAEStrict(AWSKMS kms, S3Direct s3,
-                           AWSCredentialsProvider credentialsProvider,
+                           AwsCredentialsProvider credentialsProvider,
                            EncryptionMaterialsProvider encryptionMaterialsProvider,
                            CryptoConfiguration cryptoConfig) {
         super(kms, s3, credentialsProvider, encryptionMaterialsProvider,

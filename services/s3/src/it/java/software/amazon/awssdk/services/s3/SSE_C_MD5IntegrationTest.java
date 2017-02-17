@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.s3.internal.AmazonS3TestClient;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.transfer.Download;
 import software.amazon.awssdk.services.s3.transfer.TransferManager;
 import software.amazon.awssdk.util.Md5Utils;
@@ -55,8 +55,8 @@ public class SSE_C_MD5IntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void test() throws Exception {
-        SSECustomerKey sse_c = new SSECustomerKey(CryptoTestUtils.getTestSecretKey());
-        s3.putObject(new PutObjectRequest(bucketName, key, file).withSSECustomerKey(sse_c));
+        SseCustomerKey sse_c = new SseCustomerKey(CryptoTestUtils.getTestSecretKey());
+        s3.putObject(new PutObjectRequest(bucketName, key, file).withSseCustomerKey(sse_c));
 
         TransferManager tm = new TransferManager(s3);
         File dest = new File("/tmp", UUID.randomUUID().toString());

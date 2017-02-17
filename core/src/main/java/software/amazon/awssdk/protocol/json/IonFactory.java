@@ -34,7 +34,7 @@ class IonFactory extends JsonFactory {
 
     // TODO IonReaderBuilder will soon be available for constructing IonReaders
     // without an IonSystem. This should use an IonReaderBuilder.
-    private transient final IonSystem ionSystem;
+    private final transient IonSystem ionSystem;
 
     public IonFactory(IonSystem ionSystem) {
         this.ionSystem = ionSystem;

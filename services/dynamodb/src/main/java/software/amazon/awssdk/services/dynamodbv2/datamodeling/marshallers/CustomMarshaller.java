@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling.marshallers;
 
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.StringAttributeMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMarshaller;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**
@@ -26,19 +26,19 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  */
 public class CustomMarshaller implements StringAttributeMarshaller {
 
-    private final Class<? extends DynamoDBMarshaller<?>> marshallerClass;
+    private final Class<? extends DynamoDbMarshaller<?>> marshallerClass;
 
     public CustomMarshaller(
-            Class<? extends DynamoDBMarshaller<?>> marshallerClass) {
+            Class<? extends DynamoDbMarshaller<?>> marshallerClass) {
 
         this.marshallerClass = marshallerClass;
     }
 
     @SuppressWarnings("unchecked")
-    private static DynamoDBMarshaller<Object> createMarshaller(Class<?> clazz) {
+    private static DynamoDbMarshaller<Object> createMarshaller(Class<?> clazz) {
         try {
 
-            return (DynamoDBMarshaller<Object>) clazz.newInstance();
+            return (DynamoDbMarshaller<Object>) clazz.newInstance();
 
         } catch (InstantiationException e) {
             throw new DynamoDBMappingException(
@@ -59,7 +59,7 @@ public class CustomMarshaller implements StringAttributeMarshaller {
         // do that now without a breaking change; user's marshalers might
         // not all be thread-safe.
 
-        DynamoDBMarshaller<Object> marshaler =
+        DynamoDbMarshaller<Object> marshaler =
                 createMarshaller(marshallerClass);
 
         String stringValue = marshaler.marshall(obj);

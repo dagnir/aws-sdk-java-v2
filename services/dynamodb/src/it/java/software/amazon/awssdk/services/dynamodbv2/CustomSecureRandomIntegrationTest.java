@@ -23,9 +23,9 @@ import java.security.SecureRandom;
 import org.junit.Test;
 import org.mockito.Mockito;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class CustomSecureRandomIntegrationTest extends AWSIntegrationTestBase {
+public class CustomSecureRandomIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void customSecureRandomConfigured_UsesCustomImplementation() {

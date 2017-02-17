@@ -48,6 +48,13 @@ public final class Catcher {
     }
 
     /**
+     * @return Builder instance to construct a {@link Catcher}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return List of error codes this catcher handles.
      */
     public List<String> getErrorEquals() {
@@ -56,8 +63,8 @@ public final class Catcher {
 
     /**
      * @return JSON Path expression that can be used to combine the error output with the input to the state. If not specified the
-     * result will solely consist of the error output. See <a href="https://states-language.net/spec.html#filters">https://states-language.net/spec.html#filters</a>
-     * for more information.
+     *     result will solely consist of the error output. See <a href="https://states-language.net/spec.html#filters">
+     *     https://states-language.net/spec.html#filters</a> for more information.
      */
     public String getResultPath() {
         return resultPath;
@@ -65,17 +72,10 @@ public final class Catcher {
 
     /**
      * @return The {@link Transition} that will occur if this catcher is evaluated (i.e. the error code
-     * matches a code in {@link #getErrorEquals()}.
+     *     matches a code in {@link #getErrorEquals()}.
      */
     public Transition getTransition() {
         return transition;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link Catcher}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

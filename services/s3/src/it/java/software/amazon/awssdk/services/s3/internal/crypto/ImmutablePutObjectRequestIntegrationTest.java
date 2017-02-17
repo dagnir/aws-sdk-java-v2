@@ -70,6 +70,7 @@ public class ImmutablePutObjectRequestIntegrationTest {
             meta.addUserMetadata("name", "value");
             fail();
         } catch (UnsupportedOperationException expected) {
+            // Ignored or expected.
         }
         meta.setContentLength(bytes.length);
         PutObjectRequest req = new PutObjectRequest(TEST_BUCKET, key, is, meta);

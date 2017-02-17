@@ -30,8 +30,8 @@ import software.amazon.awssdk.SignableRequest;
  * Signer implementation responsible for signing an AWS query string request
  * according to the various signature versions and hashing algorithms.
  */
-public class QueryStringSigner extends AbstractAWSSigner implements Signer {
-    /** Date override for testing only */
+public class QueryStringSigner extends AbstractAwsSigner implements Signer {
+    /** Date override for testing only. */
     private Date overriddenDate;
 
     /**
@@ -45,7 +45,7 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
      * @param credentials
      *            The credentials used to use to sign the request.
      */
-    public void sign(SignableRequest<?> request, AWSCredentials credentials)
+    public void sign(SignableRequest<?> request, AwsCredentials credentials)
             throws SdkClientException {
         sign(request, SignatureVersion.V2, SigningAlgorithm.HmacSHA256, credentials);
     }
@@ -65,22 +65,22 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
      *            signature algorithm. "HmacSHA256" is recommended.
      */
     public void sign(SignableRequest<?> request, SignatureVersion version,
-                     SigningAlgorithm algorithm, AWSCredentials credentials)
+                     SigningAlgorithm algorithm, AwsCredentials credentials)
             throws SdkClientException {
         // annonymous credentials, don't sign
-        if (credentials instanceof AnonymousAWSCredentials) {
+        if (credentials instanceof AnonymousAwsCredentials) {
             return;
         }
 
-        AWSCredentials sanitizedCredentials = sanitizeCredentials(credentials);
-        request.addParameter("AWSAccessKeyId", sanitizedCredentials.getAWSAccessKeyId());
+        AwsCredentials sanitizedCredentials = sanitizeCredentials(credentials);
+        request.addParameter("AWSAccessKeyId", sanitizedCredentials.getAwsAccessKeyId());
         request.addParameter("SignatureVersion", version.toString());
 
         int timeOffset = request.getTimeOffset();
         request.addParameter("Timestamp", getFormattedTimestamp(timeOffset));
 
-        if (sanitizedCredentials instanceof AWSSessionCredentials) {
-            addSessionCredentials(request, (AWSSessionCredentials) sanitizedCredentials);
+        if (sanitizedCredentials instanceof AwsSessionCredentials) {
+            addSessionCredentials(request, (AwsSessionCredentials) sanitizedCredentials);
         }
 
         String stringToSign = null;
@@ -94,7 +94,7 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
         }
 
         String signatureValue = signAndBase64Encode(stringToSign,
-                                                    sanitizedCredentials.getAWSSecretKey(), algorithm);
+                                                    sanitizedCredentials.getAwsSecretKey(), algorithm);
         request.addParameter("Signature", signatureValue);
     }
 
@@ -198,7 +198,7 @@ public class QueryStringSigner extends AbstractAWSSigner implements Signer {
     }
 
     @Override
-    protected void addSessionCredentials(SignableRequest<?> request, AWSSessionCredentials credentials) {
+    protected void addSessionCredentials(SignableRequest<?> request, AwsSessionCredentials credentials) {
         request.addParameter("SecurityToken", credentials.getSessionToken());
     }
 }

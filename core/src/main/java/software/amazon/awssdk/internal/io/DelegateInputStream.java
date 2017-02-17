@@ -35,11 +35,11 @@ public class DelegateInputStream extends InputStream {
         return in.read();
     }
 
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
         return in.read(b);
     }
 
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         return in.read(b, off, len);
     }
 

@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  */
 public class VersionListing implements Serializable {
 
-    /** A list of summary information describing the versions stored in the bucket */
+    /** A list of summary information describing the versions stored in the bucket. */
     private List<S3VersionSummary> versionSummaries =
             new ArrayList<S3VersionSummary>();
 
@@ -42,7 +42,7 @@ public class VersionListing implements Serializable {
      */
     private List<String> commonPrefixes = new ArrayList<String>();
 
-    /** The name of the Amazon S3 bucket containing the listed versions */
+    /** The name of the Amazon S3 bucket containing the listed versions. */
     private String bucketName;
 
     /**
@@ -67,7 +67,7 @@ public class VersionListing implements Serializable {
     private boolean isTruncated;
 
 
-    /* Original Request Parameters */
+    /* Original Request Parameters. */
 
     /**
      * The prefix parameter originally specified by the caller when this version
@@ -404,7 +404,7 @@ public class VersionListing implements Serializable {
      * is complete, indicating if additional calls to Amazon S3 are needed to obtain
      * complete version listing results.
      *
-     * @return The value <code>true</code> if this version listing is <b>not complete<b>, indicating
+     * @return The value <code>true</code> if this version listing is <b>not complete</b>, indicating
      *         additional calls to Amazon S3 are needed to obtain
      *         complete version listing results. Returns the value <code>false</code> if otherwise.
      */

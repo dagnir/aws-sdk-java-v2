@@ -32,9 +32,9 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
 import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class DynamoDBTestBase extends AWSTestBase {
+public class DynamoDBTestBase extends AwsTestBase {
 
     protected static final String ENDPOINT = "http://dynamodb.us-east-1.amazonaws.com/";
 
@@ -71,6 +71,7 @@ public class DynamoDBTestBase extends AWSTestBase {
             try {
                 Thread.sleep(1000 * 20);
             } catch (Exception e) {
+                // Ignored or expected.
             }
             try {
                 DescribeTableRequest request = new DescribeTableRequest().withTableName(tableName);

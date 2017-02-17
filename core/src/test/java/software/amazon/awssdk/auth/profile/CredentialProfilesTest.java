@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.auth.profile.internal.Profile;
 
 public class CredentialProfilesTest {
@@ -57,16 +57,16 @@ public class CredentialProfilesTest {
         ProfilesConfigFile profile = new ProfilesConfigFile(
                 ProfileResourceLoader.profilesWithSameProfileName().asFile());
 
-        AWSCredentials defaultCred = profile.getCredentials(DEFAULT_PROFILE_NAME);
+        AwsCredentials defaultCred = profile.getCredentials(DEFAULT_PROFILE_NAME);
         assertNotNull(defaultCred);
-        assertTrue(defaultCred instanceof BasicAWSCredentials);
+        assertTrue(defaultCred instanceof BasicAwsCredentials);
 
-        AWSCredentials testCred = profile.getCredentials(PROFILE_NAME_TEST);
+        AwsCredentials testCred = profile.getCredentials(PROFILE_NAME_TEST);
         assertNotNull(testCred);
-        assertTrue(testCred instanceof AWSSessionCredentials);
-        AWSSessionCredentials testSessionCred = (AWSSessionCredentials) testCred;
-        assertEquals(testSessionCred.getAWSAccessKeyId(), "testProfile2");
-        assertEquals(testSessionCred.getAWSSecretKey(), "testProfile2");
+        assertTrue(testCred instanceof AwsSessionCredentials);
+        AwsSessionCredentials testSessionCred = (AwsSessionCredentials) testCred;
+        assertEquals(testSessionCred.getAwsAccessKeyId(), "testProfile2");
+        assertEquals(testSessionCred.getAwsSecretKey(), "testProfile2");
         assertEquals(testSessionCred.getSessionToken(), "testProfile2");
 
     }
@@ -172,9 +172,9 @@ public class CredentialProfilesTest {
 
         assertNotNull(profile.getCredentials(PROFILE_NAME_TEST));
 
-        assertEquals(profile.getCredentials(PROFILE_NAME_TEST).getAWSAccessKeyId(), "test");
+        assertEquals(profile.getCredentials(PROFILE_NAME_TEST).getAwsAccessKeyId(), "test");
 
-        assertEquals(profile.getCredentials(PROFILE_NAME_TEST).getAWSSecretKey(), "test key");
+        assertEquals(profile.getCredentials(PROFILE_NAME_TEST).getAwsSecretKey(), "test key");
     }
 
     /**
@@ -189,24 +189,25 @@ public class CredentialProfilesTest {
                                                                      .toArray(new Profile[1]));
 
         ProfilesConfigFile test = new ProfilesConfigFile(modifiable);
-        AWSCredentials orig = test.getCredentials(DEFAULT_PROFILE_NAME);
-        assertEquals("defaultAccessKey", orig.getAWSAccessKeyId());
-        assertEquals("defaultSecretAccessKey", orig.getAWSSecretKey());
+        AwsCredentials orig = test.getCredentials(DEFAULT_PROFILE_NAME);
+        assertEquals("defaultAccessKey", orig.getAwsAccessKeyId());
+        assertEquals("defaultSecretAccessKey", orig.getAwsSecretKey());
         //Sleep to ensure that the timestamp on the file (when we modify it) is
         //distinguishably later from the original write.
         try {
             Thread.sleep(2000);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         Profile newProfile = new Profile(DEFAULT_PROFILE_NAME,
-                                         new BasicAWSCredentials("newAccessKey", "newSecretKey"));
+                                         new BasicAwsCredentials("newAccessKey", "newSecretKey"));
         ProfilesConfigFileWriter.modifyOneProfile(modifiable, DEFAULT_PROFILE_NAME, newProfile);
 
         test.refresh();
-        AWSCredentials updated = test.getCredentials(DEFAULT_PROFILE_NAME);
-        assertEquals("newAccessKey", updated.getAWSAccessKeyId());
-        assertEquals("newSecretKey", updated.getAWSSecretKey());
+        AwsCredentials updated = test.getCredentials(DEFAULT_PROFILE_NAME);
+        assertEquals("newAccessKey", updated.getAwsAccessKeyId());
+        assertEquals("newSecretKey", updated.getAwsSecretKey());
     }
 
     /**

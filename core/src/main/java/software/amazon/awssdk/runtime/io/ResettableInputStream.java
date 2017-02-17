@@ -79,10 +79,6 @@ public class ResettableInputStream extends ReleasableInputStream {
     }
 
     /**
-     * @param fis
-     *            file input stream; must not be null. Upon successful
-     *            construction the input stream will be automatically marked at
-     *            the current position of the given file input stream.
      * <p>
      * Note the creation of a {@link ResettableInputStream} would entail
      * physically opening a file. If the opened file is meant to be closed only
@@ -95,6 +91,11 @@ public class ResettableInputStream extends ReleasableInputStream {
      * explicitly disable the accidental closing via
      * {@link ResettableInputStream#disableClose()}, so that the release method
      * becomes the only way to truly close the opened file.
+     *
+     * @param fis
+     *            file input stream; must not be null. Upon successful
+     *            construction the input stream will be automatically marked at
+     *            the current position of the given file input stream.
      */
     public ResettableInputStream(FileInputStream fis) throws IOException {
         this(fis, null);
@@ -231,11 +232,11 @@ public class ResettableInputStream extends ReleasableInputStream {
      * {@link ResettableInputStream#disableClose()}, so that the release method
      * becomes the only way to truly close the opened file.
      *
-     * @param _
+     * @param ignored
      *            ignored
      */
     @Override
-    public void mark(int _) {
+    public void mark(int ignored) {
         abortIfNeeded();
         try {
             markPos = fileChannel.position();

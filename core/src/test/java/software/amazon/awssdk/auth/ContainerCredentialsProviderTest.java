@@ -40,14 +40,15 @@ import software.amazon.awssdk.internal.CredentialsEndpointProvider;
  * Tests for the ContainerCredentialsProvider.
  */
 public class ContainerCredentialsProviderTest {
-    /** Environment variable name for the AWS ECS Container credentials path */
+    @ClassRule
+    public static WireMockRule mockServer = new WireMockRule(0);
+
+    /** Environment variable name for the AWS ECS Container credentials path. */
     private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
     private static final String ACCESS_KEY_ID = "ACCESS_KEY_ID";
     private static final String SECRET_ACCESS_KEY = "SECRET_ACCESS_KEY";
     private static final String TOKEN = "TOKEN_TOKEN_TOKEN";
     private static final String EXPIRATION_DATE = "3000-05-03T04:55:54Z";
-    @ClassRule
-    public static WireMockRule mockServer = new WireMockRule(0);
     private static ContainerCredentialsProvider containerCredentialsProvider;
 
     @BeforeClass
@@ -80,8 +81,8 @@ public class ContainerCredentialsProviderTest {
 
         BasicSessionCredentials credentials = (BasicSessionCredentials) containerCredentialsProvider.getCredentials();
 
-        Assert.assertEquals(ACCESS_KEY_ID, credentials.getAWSAccessKeyId());
-        Assert.assertEquals(SECRET_ACCESS_KEY, credentials.getAWSSecretKey());
+        Assert.assertEquals(ACCESS_KEY_ID, credentials.getAwsAccessKeyId());
+        Assert.assertEquals(SECRET_ACCESS_KEY, credentials.getAwsSecretKey());
         Assert.assertEquals(TOKEN, credentials.getSessionToken());
         Assert.assertEquals(new DateTime(EXPIRATION_DATE).toDate(), containerCredentialsProvider.getCredentialsExpiration());
     }
@@ -121,13 +122,15 @@ public class ContainerCredentialsProviderTest {
 
     private void stubForSuccessResponse() {
         stubFor(
-                get(urlPathEqualTo(CREDENTIALS_PATH))
-                        .willReturn(aResponse()
-                                            .withStatus(200)
-                                            .withHeader("Content-Type", "application/json")
-                                            .withHeader("charset", "utf-8")
-                                            .withBody("{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\",\"Token\":\"TOKEN_TOKEN_TOKEN\","
-                                                      + "\"Expiration\":\"3000-05-03T04:55:54Z\"}")));
+            get(urlPathEqualTo(CREDENTIALS_PATH))
+                .willReturn(aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withHeader("charset", "utf-8")
+                                .withBody("{\"AccessKeyId\":\"ACCESS_KEY_ID\"," +
+                                          "\"SecretAccessKey\":\"SECRET_ACCESS_KEY\"," +
+                                          "\"Token\":\"TOKEN_TOKEN_TOKEN\"," +
+                                          "\"Expiration\":\"3000-05-03T04:55:54Z\"}")));
     }
 
     private void stubForErrorResponse(int statusCode) {

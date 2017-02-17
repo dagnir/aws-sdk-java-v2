@@ -45,11 +45,9 @@ public class EC2RequestHandler extends AbstractRequestHandler {
             String publicKeyMaterial = importKeyPairRequest.getPublicKeyMaterial();
             String encodedKeyMaterial = Base64.encodeAsString(publicKeyMaterial.getBytes());
             request.addParameter("PublicKeyMaterial", encodedKeyMaterial);
-        }
-
-        // Request -> Query string marshalling for RequestSpotInstancesRequest is a little tricky since
-        // the query string params follow a different form than the XML responses, so we manually set the parameters here.
-        else if (originalRequest instanceof RequestSpotInstancesRequest) {
+        } else if (originalRequest instanceof RequestSpotInstancesRequest) {
+            // Request -> Query string marshalling for RequestSpotInstancesRequest is a little tricky since
+            // the query string params follow a different form than the XML responses, so we manually set the parameters here.
             RequestSpotInstancesRequest requestSpotInstancesRequest = (RequestSpotInstancesRequest) originalRequest;
 
             // Marshall the security groups specified only by name
@@ -81,20 +79,16 @@ public class EC2RequestHandler extends AbstractRequestHandler {
             for (String key : keysToRemove) {
                 request.getParameters().remove(key);
             }
-        }
-
-        // If a RunInstancesRequest doesn't specify a ClientToken, fill one in, otherwise
-        // retries could result in unwanted instances being launched in the customer's account.
-        else if (originalRequest instanceof RunInstancesRequest) {
+        } else if (originalRequest instanceof RunInstancesRequest) {
+            // If a RunInstancesRequest doesn't specify a ClientToken, fill one in, otherwise
+            // retries could result in unwanted instances being launched in the customer's account.
             RunInstancesRequest runInstancesRequest = (RunInstancesRequest) originalRequest;
             if (runInstancesRequest.getClientToken() == null) {
                 request.addParameter("ClientToken", UUID.randomUUID().toString());
             }
-        }
-
-        // If a ModifyReservedInstancesRequest doesn't specify a ClientToken, fill one in, otherwise
-        // retries could result in duplicate requests.
-        else if (originalRequest instanceof ModifyReservedInstancesRequest) {
+        } else if (originalRequest instanceof ModifyReservedInstancesRequest) {
+            // If a ModifyReservedInstancesRequest doesn't specify a ClientToken, fill one in, otherwise
+            // retries could result in duplicate requests.
             ModifyReservedInstancesRequest modifyReservedInstancesRequest = (ModifyReservedInstancesRequest) originalRequest;
             if (modifyReservedInstancesRequest.getClientToken() == null) {
                 request.addParameter("ClientToken", UUID.randomUUID().toString());

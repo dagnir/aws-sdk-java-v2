@@ -73,7 +73,7 @@ public class MultiPartUploadsBufferedIntegrationTest extends S3IntegrationTestBa
     private final String RIDIRECT_LOCATION = "/redirecting...";
     private String uploadId;
 
-    /** Releases all resources created in these tests */
+    /** Releases all resources created in these tests. */
     @After
     public void tearDown() throws Exception {
         // Clear the system property by setting to blank
@@ -81,11 +81,13 @@ public class MultiPartUploadsBufferedIntegrationTest extends S3IntegrationTestBa
         try {
             new TransferManager(s3).abortMultipartUploads(bucketName, new Date());
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             deleteBucketAndAllContents(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
@@ -179,7 +181,7 @@ public class MultiPartUploadsBufferedIntegrationTest extends S3IntegrationTestBa
         disableVersioning(bucketName);
     }
 
-    /** Tests server-side encryption */
+    /** Tests server-side encryption. */
     @Test
     public void testServerSideEncryption() throws Exception {
         s3.createBucket(bucketName);

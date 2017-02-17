@@ -28,7 +28,7 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
      * update.
      */
     @Test
-    public void testClockSkewSDB() {
+    public void testClockSkewSdb() {
         SDKGlobalTime.setGlobalTimeOffset(3600);
         AmazonSimpleDBClient clockSkewClient = new AmazonSimpleDBClient(credentials);
         clockSkewClient.listDomains();

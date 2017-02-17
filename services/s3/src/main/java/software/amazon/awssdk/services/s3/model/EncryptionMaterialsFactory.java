@@ -28,7 +28,7 @@ public interface EncryptionMaterialsFactory {
      * rotated.
      *
      * @return EncryptionMaterials which the caller can use to encrypt or
-     * decrypt data.
+     *     decrypt data.
      */
     public EncryptionMaterials getEncryptionMaterials();
 }

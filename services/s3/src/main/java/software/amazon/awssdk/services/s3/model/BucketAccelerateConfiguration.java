@@ -22,7 +22,7 @@ import java.io.Serializable;
  */
 public class BucketAccelerateConfiguration implements Serializable {
 
-    /** The current accelerate configuration status */
+    /** The current accelerate configuration status. */
     private String status;
 
     /**
@@ -62,8 +62,8 @@ public class BucketAccelerateConfiguration implements Serializable {
      *            The desired bucket accelerate status for this configuration object. See
      *            {@link BucketAccelerateStatus} for a list of valid values.
      */
-    public void setStatus(BucketAccelerateStatus status) {
-        setStatus(status.toString());
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**
@@ -73,8 +73,8 @@ public class BucketAccelerateConfiguration implements Serializable {
      *            The desired bucket accelerate status for this configuration object. See
      *            {@link BucketAccelerateStatus} for a list of valid values.
      */
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(BucketAccelerateStatus status) {
+        setStatus(status.toString());
     }
 
     /**

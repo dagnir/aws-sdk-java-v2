@@ -165,6 +165,7 @@ public class EC2MetadataServiceMock {
                     try {
                         outputStream.close();
                     } catch (Exception e) {
+                        // Ignored or expected.
                     }
                 }
             }

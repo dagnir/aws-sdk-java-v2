@@ -27,11 +27,11 @@ public class StringSetUnmarshaller extends SSUnmarshaller {
     private static final StringSetUnmarshaller INSTANCE =
             new StringSetUnmarshaller();
 
-    public static StringSetUnmarshaller instance() {
-        return INSTANCE;
+    private StringSetUnmarshaller() {
     }
 
-    private StringSetUnmarshaller() {
+    public static StringSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

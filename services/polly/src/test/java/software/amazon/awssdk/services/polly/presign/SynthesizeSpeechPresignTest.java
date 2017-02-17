@@ -30,10 +30,10 @@ import java.util.TimeZone;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWS4Signer;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.Aws4Signer;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.auth.SdkClock;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.auth.presign.PresignerParams;
@@ -51,8 +51,8 @@ public class SynthesizeSpeechPresignTest {
 
     private static final SdkClock CLOCK = new SdkClock.MockClock(SIGNER_DATE);
 
-    private static final AWSCredentialsProvider CREDENTIALS = new AWSStaticCredentialsProvider(
-            new BasicAWSCredentials("akid", "skid"));
+    private static final AwsCredentialsProvider CREDENTIALS = new AwsStaticCredentialsProvider(
+            new BasicAwsCredentials("akid", "skid"));
 
     private AmazonPollyPresigners presigners;
 
@@ -77,7 +77,7 @@ public class SynthesizeSpeechPresignTest {
     }
 
     private SignerProvider createSigner() {
-        final AWS4Signer signer = new AWS4Signer(CLOCK);
+        final Aws4Signer signer = new Aws4Signer(CLOCK);
         signer.setOverrideDate(SIGNER_DATE);
         signer.setServiceName("polly");
         return new StaticSignerProvider(signer);

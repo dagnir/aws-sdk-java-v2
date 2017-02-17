@@ -38,10 +38,10 @@ import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.ClientConfigurationFactory;
 import software.amazon.awssdk.PredefinedClientConfigurations;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
@@ -68,7 +68,7 @@ public class AwsClientBuilderTest {
     public void syncClientBuilder() {
         final List<RequestHandler2> requestHandlers = createRequestHandlerList(
                 new ConcreteRequestHandler(), new ConcreteRequestHandler());
-        final AWSCredentialsProvider credentials = mock(AWSCredentialsProvider.class);
+        final AwsCredentialsProvider credentials = mock(AwsCredentialsProvider.class);
         final RequestMetricCollector metrics = mock(RequestMetricCollector.class);
 
         //@formatter:off
@@ -93,13 +93,13 @@ public class AwsClientBuilderTest {
     public void credentialsNotExplicitlySet_UsesDefaultCredentialChain() throws Exception {
         AwsAsyncClientParams params = builderWithRegion().build().getAsyncParams();
         assertThat(params.getCredentialsProvider(),
-                   instanceOf(DefaultAWSCredentialsProviderChain.class));
+                   instanceOf(DefaultAwsCredentialsProviderChain.class));
     }
 
     @Test
     public void credentialsExplicitlySet_UsesExplicitCredentials() throws Exception {
-        AWSCredentialsProvider provider = new AWSStaticCredentialsProvider(
-                new BasicAWSCredentials("akid", "skid"));
+        AwsCredentialsProvider provider = new AwsStaticCredentialsProvider(
+                new BasicAwsCredentials("akid", "skid"));
         AwsAsyncClientParams params = builderWithRegion().withCredentials(provider).build()
                                                          .getAsyncParams();
         assertEquals(provider, params.getCredentialsProvider());
@@ -210,10 +210,10 @@ public class AwsClientBuilderTest {
         final int customExecutorThreadCount = 15;
         final ExecutorService customExecutor = Executors
                 .newFixedThreadPool(customExecutorThreadCount);
-        ExecutorService actualExecutor = builderWithRegion().withClientConfiguration(
-                new ClientConfiguration().withMaxConnections(clientConfigMaxConns))
-                                                            .withExecutorFactory(new StaticExecutorFactory(customExecutor)).build()
-                                                            .getAsyncParams().getExecutor();
+        ClientConfiguration config = new ClientConfiguration().withMaxConnections(clientConfigMaxConns);
+        ExecutorService actualExecutor = builderWithRegion().withClientConfiguration(config)
+                                                            .withExecutorFactory(new StaticExecutorFactory(customExecutor))
+                                                            .build().getAsyncParams().getExecutor();
         assertThat(actualExecutor, instanceOf(ThreadPoolExecutor.class));
         assertEquals(customExecutor, actualExecutor);
         assertEquals(customExecutorThreadCount,

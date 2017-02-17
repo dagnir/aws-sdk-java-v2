@@ -73,7 +73,6 @@ public abstract class JsonUnmarshallerContext {
      *
      * @return The text of the current token. Returns null by default.
      *
-     * @throws IOException
      */
     public String readText() throws IOException {
         return null;

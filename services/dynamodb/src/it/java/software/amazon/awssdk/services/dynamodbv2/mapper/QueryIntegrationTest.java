@@ -29,9 +29,9 @@ import java.util.Random;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.Condition;
@@ -45,14 +45,14 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     private static final long HASH_KEY = System.currentTimeMillis();
     private static final int TEST_ITEM_NUMBER = 500;
     private static RangeKeyClass hashKeyObject;
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
 
     @BeforeClass
     public static void setUp() throws Exception {
         setUpTableWithRangeAttribute();
 
         DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(DynamoDBMapperConfig.ConsistentReads.CONSISTENT);
-        mapper = new DynamoDBMapper(dynamo, mapperConfig);
+        mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         putTestData(mapper, TEST_ITEM_NUMBER);
 
@@ -64,7 +64,7 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
      * Use BatchSave to put some test data into the tested table. Each item is
      * hash-keyed by the same value, and range-keyed by numbers starting from 0.
      */
-    private static void putTestData(DynamoDBMapper mapper, int itemNumber) {
+    private static void putTestData(DynamoDbMapper mapper, int itemNumber) {
         List<RangeKeyClass> objs = new ArrayList<RangeKeyClass>();
         for (int i = 0; i < itemNumber; i++) {
             RangeKeyClass obj = new RangeKeyClass();
@@ -161,7 +161,7 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     @Test
     public void testUnnecessaryIndexNameException() {
         try {
-            DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+            DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
             long hashKey = System.currentTimeMillis();
             RangeKeyClass keyObject = new RangeKeyClass();
             keyObject.setKey(hashKey);

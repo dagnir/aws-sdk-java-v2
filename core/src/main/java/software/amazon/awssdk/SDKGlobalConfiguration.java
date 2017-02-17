@@ -45,10 +45,10 @@ public class SDKGlobalConfiguration {
     public static final String DEFAULT_METRICS_SYSTEM_PROPERTY =
             "software.amazon.awssdk.sdk.enableDefaultMetrics";
 
-    /** System property name for the AWS access key ID */
+    /** System property name for the AWS access key ID. */
     public static final String ACCESS_KEY_SYSTEM_PROPERTY = "aws.accessKeyId";
 
-    /** System property name for the AWS secret key */
+    /** System property name for the AWS secret key. */
     public static final String SECRET_KEY_SYSTEM_PROPERTY = "aws.secretKey";
 
     /**
@@ -171,8 +171,6 @@ public class SDKGlobalConfiguration {
             "software.amazon.awssdk.sdk.enableInRegionOptimizedMode";
 
     /**
-     * @deprecated with {@link AmazonWebServiceRequest#getRequestClientOptions()}
-     * and {@link RequestClientOptions#setReadLimit(int)}.
      * <p>
      * The default size of the buffer when uploading data from a stream. A
      * buffer of this size will be created and filled with the first bytes from
@@ -181,34 +179,37 @@ public class SDKGlobalConfiguration {
      * intervention.
      * <p>
      * If not set, the default value of 128 KB will be used.
+     *
+     * @deprecated with {@link AmazonWebServiceRequest#getRequestClientOptions()}
+     *     and {@link RequestClientOptions#setReadLimit(int)}.
      */
     @Deprecated
     public static final String DEFAULT_S3_STREAM_BUFFER_SIZE =
             "software.amazon.awssdk.sdk.s3.defaultStreamBufferSize";
 
     /**
-     * @deprecated by {@link #DEFAULT_METRICS_SYSTEM_PROPERTY}.
-     *
      * Internal system property to enable timing info collection.
+     *
+     * @deprecated by {@link #DEFAULT_METRICS_SYSTEM_PROPERTY}.
      */
     @Deprecated
     public static final String PROFILING_SYSTEM_PROPERTY =
             "software.amazon.awssdk.sdk.enableRuntimeProfiling";
 
     /////////////////////// Environment Variables ///////////////////////
-    /** Environment variable name for the AWS access key ID */
+    /** Environment variable name for the AWS access key ID. */
     public static final String ACCESS_KEY_ENV_VAR = "AWS_ACCESS_KEY_ID";
 
-    /** Alternate environment variable name for the AWS access key ID */
+    /** Alternate environment variable name for the AWS access key ID. */
     public static final String ALTERNATE_ACCESS_KEY_ENV_VAR = "AWS_ACCESS_KEY";
 
-    /** Environment variable name for the AWS secret key */
+    /** Environment variable name for the AWS secret key. */
     public static final String SECRET_KEY_ENV_VAR = "AWS_SECRET_KEY";
 
-    /** Alternate environment variable name for the AWS secret key */
+    /** Alternate environment variable name for the AWS secret key. */
     public static final String ALTERNATE_SECRET_KEY_ENV_VAR = "AWS_SECRET_ACCESS_KEY";
 
-    /** Environment variable name for the AWS session token */
+    /** Environment variable name for the AWS session token. */
     public static final String AWS_SESSION_TOKEN_ENV_VAR = "AWS_SESSION_TOKEN";
 
     /**

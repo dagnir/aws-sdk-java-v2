@@ -19,7 +19,7 @@ import java.util.concurrent.Future;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public interface Waiter<Input extends AmazonWebServiceRequest> {
+public interface Waiter<InputT extends AmazonWebServiceRequest> {
 
     /**
      * Polls synchronously until it is determined that the resource
@@ -33,7 +33,7 @@ public interface Waiter<Input extends AmazonWebServiceRequest> {
      * @throws WaiterTimedOutException      If the resource doesn't transition into the desired state
      *                                      even after a certain number of retries.
      */
-    void run(WaiterParameters<Input> waiterParameters)
+    void run(WaiterParameters<InputT> waiterParameters)
             throws AmazonServiceException, WaiterTimedOutException, WaiterUnrecoverableException;
 
     /**
@@ -45,8 +45,8 @@ public interface Waiter<Input extends AmazonWebServiceRequest> {
      *                         optional custom polling strategy
      * @param callback         Custom callback
      * @return Future object that holds the result of an asynchronous
-     * computation of waiter
+     *     computation of waiter
      */
-    Future<Void> runAsync(final WaiterParameters<Input> waiterParameters, final WaiterHandler callback)
+    Future<Void> runAsync(final WaiterParameters<InputT> waiterParameters, final WaiterHandler callback)
             throws AmazonServiceException, WaiterTimedOutException, WaiterUnrecoverableException;
 }

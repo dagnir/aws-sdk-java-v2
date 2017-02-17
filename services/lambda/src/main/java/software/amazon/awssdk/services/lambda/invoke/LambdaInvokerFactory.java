@@ -107,7 +107,7 @@ public final class LambdaInvokerFactory {
 
     /**
      * @return An instance of {@link Builder} to configure an invoker factory and build proxies for
-     * invoking remote lambda functions.
+     *     invoking remote lambda functions.
      */
     public static Builder builder() {
         return new Builder();
@@ -337,7 +337,7 @@ public final class LambdaInvokerFactory {
          * @param method       Method being proxied
          * @param invokeResult Result from AWS Lambda.
          * @return Exception to throw back to the caller. May either be a custom exception declared in the interface, a generic
-         * exception unmarshalled from the payload, or a very generic exception if we can't unmarshall the payload.
+         *     exception unmarshalled from the payload, or a very generic exception if we can't unmarshall the payload.
          */
         private Throwable getExceptionFromPayload(Method method, InvokeResult invokeResult) {
             try {
@@ -359,7 +359,7 @@ public final class LambdaInvokerFactory {
          * @param method Interface method we are proxying
          * @param error  Unmarshalled error payload
          * @return A custom exception if the error matches any thrown by the interface method or the original {@link
-         * LambdaFunctionException} if none matches.
+         *     LambdaFunctionException} if none matches.
          */
         private Throwable getExceptionToThrow(Method method, LambdaFunctionException error) {
             final String type = error.getType();

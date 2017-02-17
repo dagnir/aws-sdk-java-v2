@@ -38,13 +38,13 @@ import software.amazon.awssdk.services.dynamodbv2.model.ScanResult;
  */
 public class PaginatedParallelScanList<T> extends PaginatedList<T> {
 
-    /** The current parallel scan task which contains all the information about the scan request */
+    /** The current parallel scan task which contains all the information about the scan request. */
     private final ParallelScanTask parallelScanTask;
 
     private final DynamoDBMapperConfig config;
 
     public PaginatedParallelScanList(
-            DynamoDBMapper mapper,
+            DynamoDbMapper mapper,
             Class<T> clazz,
             AmazonDynamoDB dynamo,
             ParallelScanTask parallelScanTask,

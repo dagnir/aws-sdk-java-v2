@@ -98,7 +98,7 @@ public final class StateMachine {
 
     /**
      * @return Timeout, in seconds, that a state machine is allowed to run. If the machine execution runs longer than this timeout
-     * the execution fails with a {@link ErrorCodes#TIMEOUT} error
+     *     the execution fails with a {@link ErrorCodes#TIMEOUT} error
      */
     public Integer getTimeoutSeconds() {
         return timeoutSeconds;
@@ -113,7 +113,7 @@ public final class StateMachine {
 
     /**
      * @return Compact JSON representation of this StateMachine. May be provided to API calls (see {@link
-     * software.amazon.awssdk.services.stepfunctions.AWSStepFunctions}).
+     *     software.amazon.awssdk.services.stepfunctions.AWSStepFunctions}).
      */
     public String toJson() {
         try {
@@ -125,7 +125,7 @@ public final class StateMachine {
 
     /**
      * @return Formatted JSON representation of this StateMachine. May be provided to API calls (see {@link
-     * software.amazon.awssdk.services.stepfunctions.AWSStepFunctions}).
+     *     software.amazon.awssdk.services.stepfunctions.AWSStepFunctions}).
      */
     public String toPrettyJson() {
         try {

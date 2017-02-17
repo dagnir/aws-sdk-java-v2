@@ -38,7 +38,7 @@ public class BucketWebsiteIntegrationTest extends S3IntegrationTestBase {
 
     private static final String ERROR_DOCUMENT = "/errors/error.html";
     private static final String INDEX_DOCUMENT_SUFFIX = "index.html";
-    private static final String bucketName = "java-sdk-website-test-" + System.currentTimeMillis();
+    private static final String BUCKET_NAME = "java-sdk-website-test-" + System.currentTimeMillis();
     private static final String PREFIX = "user-profiles\\";
     private static final String ERROR_CODE = "404";
     private static final String PROTOCOL = "https";
@@ -51,7 +51,7 @@ public class BucketWebsiteIntegrationTest extends S3IntegrationTestBase {
     /** Releases all resources created by this test. */
     @After
     public void tearDown() throws Exception {
-        super.deleteBucketAndAllContents(bucketName);
+        super.deleteBucketAndAllContents(BUCKET_NAME);
     }
 
     /** Tests that we can get, set, and delete a bucket's website configuration. */
@@ -59,10 +59,10 @@ public class BucketWebsiteIntegrationTest extends S3IntegrationTestBase {
     public void testBucketWebsites() throws Exception {
 
         // create a test bucket
-        s3.createBucket(bucketName);
+        s3.createBucket(BUCKET_NAME);
 
         // get website bucketWebsiteConfiguration for new bucket
-        BucketWebsiteConfiguration bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(bucketName);
+        BucketWebsiteConfiguration bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(BUCKET_NAME);
         System.out.println("bucketWebsiteConfiguration: " + bucketWebsiteConfiguration);
 
         // set website configuration
@@ -81,15 +81,16 @@ public class BucketWebsiteIntegrationTest extends S3IntegrationTestBase {
         rule.setRedirect(new RedirectRule().withReplaceKeyWith(NEW_KEY));
         rules.add(rule);
         bucketWebsiteConfiguration.setRoutingRules(rules);
-        s3.setBucketWebsiteConfiguration(bucketName, bucketWebsiteConfiguration);
+        s3.setBucketWebsiteConfiguration(BUCKET_NAME, bucketWebsiteConfiguration);
 
         // get again
-        bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(bucketName);
+        bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(BUCKET_NAME);
         assertEquals(INDEX_DOCUMENT_SUFFIX, bucketWebsiteConfiguration.getIndexDocumentSuffix());
         assertEquals(ERROR_DOCUMENT, bucketWebsiteConfiguration.getErrorDocument());
         assertEquals(3, bucketWebsiteConfiguration.getRoutingRules().size());
         assertEquals(bucketWebsiteConfiguration.getRoutingRules().get(0).getCondition().getKeyPrefixEquals(), PREFIX);
-        assertEquals(bucketWebsiteConfiguration.getRoutingRules().get(0).getCondition().getHttpErrorCodeReturnedEquals(), ERROR_CODE);
+        assertEquals(bucketWebsiteConfiguration.getRoutingRules().get(0).getCondition().getHttpErrorCodeReturnedEquals(),
+                     ERROR_CODE);
         assertEquals(bucketWebsiteConfiguration.getRoutingRules().get(0).getRedirect().getprotocol(), PROTOCOL);
         assertEquals(bucketWebsiteConfiguration.getRoutingRules().get(0).getRedirect().getHostName(), HOST_NAME);
         assertEquals(bucketWebsiteConfiguration.getRoutingRules().get(0).getRedirect().getHttpRedirectCode(), REDIRECT_CODE);
@@ -102,18 +103,18 @@ public class BucketWebsiteIntegrationTest extends S3IntegrationTestBase {
         // Test RedirectAllRequestsTo
         bucketWebsiteConfiguration = new BucketWebsiteConfiguration();
         bucketWebsiteConfiguration.setRedirectAllRequestsTo(new RedirectRule().withHostName(HOST_NAME).withProtocol(PROTOCOL));
-        s3.setBucketWebsiteConfiguration(bucketName, bucketWebsiteConfiguration);
-        bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(bucketName);
+        s3.setBucketWebsiteConfiguration(BUCKET_NAME, bucketWebsiteConfiguration);
+        bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(BUCKET_NAME);
         assertNotNull(bucketWebsiteConfiguration.getRedirectAllRequestsTo());
         assertEquals(HOST_NAME, bucketWebsiteConfiguration.getRedirectAllRequestsTo().getHostName());
         assertEquals(PROTOCOL, bucketWebsiteConfiguration.getRedirectAllRequestsTo().getprotocol());
 
         // delete
-        s3.deleteBucketWebsiteConfiguration(bucketName);
+        s3.deleteBucketWebsiteConfiguration(BUCKET_NAME);
         Thread.sleep(1000 * 60 * 1);
 
         // get again
-        bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(bucketName);
+        bucketWebsiteConfiguration = s3.getBucketWebsiteConfiguration(BUCKET_NAME);
         assertNull(bucketWebsiteConfiguration);
     }
 }

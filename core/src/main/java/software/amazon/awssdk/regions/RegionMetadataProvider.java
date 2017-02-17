@@ -57,12 +57,12 @@ public interface RegionMetadataProvider {
      *
      * @param endpoint The endpoint for any service residing in the desired region.
      * @return The region containing any service running at the specified
-     * endpoint, otherwise an exception is thrown if no region is found
-     * with a service at the specified endpoint.
+     *     endpoint, otherwise an exception is thrown if no region is found
+     *     with a service at the specified endpoint.
      * @throws IllegalArgumentException If the given URL is malformed, or if the one of the service
      *                                  URLs on record is malformed.
      * @deprecated sdk no longer holds the complete endpoint for every service in the region.
-     * It now uses the partition metadata to compute the endpoints dynamically for new regions and services.
+     *     It now uses the partition metadata to compute the endpoints dynamically for new regions and services.
      */
     @Deprecated
     Region getRegionByEndpoint(final String endpoint);

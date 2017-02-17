@@ -27,8 +27,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.shorea.ApiGatewayProtocol;
 import software.amazon.awssdk.services.shorea.model.ApiGatewayProtocolException;
 import software.amazon.awssdk.services.shorea.model.NoModeledExceptionsRequest;
@@ -43,7 +43,7 @@ public class ApiGatewayExceptionTests {
         return ApiGatewayProtocol.builder()
                                  .endpoint("http://localhost:" + wireMock.port())
                                  .iamCredentials(
-                                         new AWSStaticCredentialsProvider(new BasicAWSCredentials("akid", "skid")))
+                                         new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
                                  .build();
     }
 

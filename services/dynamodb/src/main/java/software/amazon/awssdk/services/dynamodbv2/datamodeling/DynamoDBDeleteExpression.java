@@ -25,14 +25,14 @@ import software.amazon.awssdk.services.dynamodbv2.model.ExpectedAttributeValue;
 /**
  * Enables adding options to a delete operation.
  * For example, you may want to delete only if an attribute has a particular value.
- * @see DynamoDBMapper#delete(Object, DynamoDBDeleteExpression)
+ * @see DynamoDbMapper#delete(Object, DynamoDBDeleteExpression)
  */
 public class DynamoDBDeleteExpression {
 
-    /** Optional expected attributes */
+    /** Optional expected attributes. */
     private Map<String, ExpectedAttributeValue> expectedAttributes;
 
-    /** The logical operator on the expected attribute conditions */
+    /** The logical operator on the expected attribute conditions. */
     private String conditionalOperator;
 
     /**
@@ -114,16 +114,16 @@ public class DynamoDBDeleteExpression {
      * Sets the logical operator on the expected attribute conditions of this
      * delete operation.
      */
-    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
-        setConditionalOperator(conditionalOperator.toString());
+    public void setConditionalOperator(String conditionalOperator) {
+        this.conditionalOperator = conditionalOperator;
     }
 
     /**
      * Sets the logical operator on the expected attribute conditions of this
      * delete operation.
      */
-    public void setConditionalOperator(String conditionalOperator) {
-        this.conditionalOperator = conditionalOperator;
+    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
+        setConditionalOperator(conditionalOperator.toString());
     }
 
     /**

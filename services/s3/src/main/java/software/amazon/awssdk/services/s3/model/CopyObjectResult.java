@@ -38,10 +38,10 @@ import software.amazon.awssdk.services.s3.internal.SSEResultBase;
 public class CopyObjectResult extends SSEResultBase
         implements ObjectExpirationResult, S3RequesterChargedResult, S3VersionResult, Serializable {
 
-    /** The ETag value of the new object */
+    /** The ETag value of the new object. */
     private String etag;
 
-    /** The last modified date for the new object */
+    /** The last modified date for the new object. */
     private Date lastModifiedDate;
 
     /**
@@ -51,10 +51,10 @@ public class CopyObjectResult extends SSEResultBase
      */
     private String versionId;
 
-    /** The time this object expires, or null if it has no expiration */
+    /** The time this object expires, or null if it has no expiration. */
     private Date expirationTime;
 
-    /** The expiration rule for this object */
+    /** The expiration rule for this object. */
     private String expirationTimeRuleId;
 
     /**

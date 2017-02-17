@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.buffered.AmazonSQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.AmazonSqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -56,16 +56,17 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResult;
 public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
 
     private static final int MESSAGE_ATTRIBUTES_PER_MESSAGE = 10;
-    private static final Map<String, MessageAttributeValue> ATTRIBUTES = createRandomAttributeValues(MESSAGE_ATTRIBUTES_PER_MESSAGE);
+    private static final Map<String, MessageAttributeValue> ATTRIBUTES =
+            createRandomAttributeValues(MESSAGE_ATTRIBUTES_PER_MESSAGE);
     private static final int NUM_MESSAGES = 50;
     private static final int NUM_OF_CONSUMERS = 5;
 
-    private AmazonSQSBufferedAsyncClient buffSqs;
+    private AmazonSqsBufferedAsyncClient buffSqs;
     private String queueUrl;
 
     @Before
     public void setup() {
-        buffSqs = new AmazonSQSBufferedAsyncClient(createSqsAyncClient(),
+        buffSqs = new AmazonSqsBufferedAsyncClient(createSqsAyncClient(),
                                                    new QueueBufferConfig().withLongPollWaitTimeoutSeconds(60));
         queueUrl = createQueue(buffSqs);
     }

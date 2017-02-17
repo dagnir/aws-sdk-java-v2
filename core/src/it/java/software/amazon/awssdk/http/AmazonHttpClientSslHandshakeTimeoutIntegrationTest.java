@@ -57,7 +57,8 @@ public class AmazonHttpClientSslHandshakeTimeoutIntegrationTest extends Unrespon
             /**
              * Http client catches the SocketTimeoutException and throws a
              * ConnectTimeoutException.
-             * {@link org.apache.http.impl.conn.DefaultHttpClientConnectionOperator#connect(ManagedHttpClientConnection, HttpHost, InetSocketAddress, int, SocketConfig, HttpContext)}
+             * {@link DefaultHttpClientConnectionOperator#connect(ManagedHttpClientConnection, HttpHost,
+             * InetSocketAddress, int, SocketConfig, HttpContext)}
              */
             Assert.assertTrue(e.getCause() instanceof ConnectTimeoutException);
 

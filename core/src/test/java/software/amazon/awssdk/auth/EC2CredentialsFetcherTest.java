@@ -40,12 +40,12 @@ import software.amazon.awssdk.util.IOUtils;
 
 public class EC2CredentialsFetcherTest {
 
-    /** One minute (in milliseconds) */
-    private static final long ONE_MINUTE = 1000L * 60;
-    /** Environment variable name for the AWS ECS Container credentials path */
-    private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
     @ClassRule
     public static WireMockRule mockServer = new WireMockRule(0);
+    /** One minute (in milliseconds) */
+    private static final long ONE_MINUTE = 1000L * 60;
+    /** Environment variable name for the AWS ECS Container credentials path. */
+    private static final String CREDENTIALS_PATH = "/dummy/credentials/path";
     private static String successResponse;
 
     private static String successResponseWithInvalidBody;
@@ -57,24 +57,24 @@ public class EC2CredentialsFetcherTest {
     }
 
 
-    /** Tests that the credentials provider reloads credentials appropriately */
+    /** Tests that the credentials provider reloads credentials appropriately. */
     @Test
     public void testNeedsToLoadCredentialsMethod() throws Exception {
         TestCredentialsProvider credentialsProvider = new TestCredentialsProvider();
 
         // The provider should not refresh credentials when they aren't close to expiring and are recent
-        stubForSuccessResonseWithCustomExpirationDate(200, DateUtils.formatISO8601Date(new Date(System.currentTimeMillis() + ONE_MINUTE * 60 * 24)).toString());
+        stubForSuccessResonseWithCustomExpirationDate(200, DateUtils.formatIso8601Date(new Date(System.currentTimeMillis() + ONE_MINUTE * 60 * 24)).toString());
         credentialsProvider.getCredentials();
         assertFalse(credentialsProvider.needsToLoadCredentials());
 
         // The provider should refresh credentials when they aren't close to expiring, but are more than an hour old
-        stubForSuccessResonseWithCustomExpirationDate(200, DateUtils.formatISO8601Date(new Date(System.currentTimeMillis() + ONE_MINUTE * 16)).toString());
+        stubForSuccessResonseWithCustomExpirationDate(200, DateUtils.formatIso8601Date(new Date(System.currentTimeMillis() + ONE_MINUTE * 16)).toString());
         credentialsProvider.getCredentials();
         credentialsProvider.setLastInstanceProfileCheck(new Date(System.currentTimeMillis() - ONE_MINUTE * 61));
         assertTrue(credentialsProvider.needsToLoadCredentials());
 
         // The provider should refresh credentials when they are close to expiring
-        stubForSuccessResonseWithCustomExpirationDate(200, DateUtils.formatISO8601Date(new Date(System.currentTimeMillis() + ONE_MINUTE * 14)).toString());
+        stubForSuccessResonseWithCustomExpirationDate(200, DateUtils.formatIso8601Date(new Date(System.currentTimeMillis() + ONE_MINUTE * 14)).toString());
         credentialsProvider.getCredentials();
         assertTrue(credentialsProvider.needsToLoadCredentials());
     }
@@ -87,10 +87,10 @@ public class EC2CredentialsFetcherTest {
         stubForSuccessResponseWithCustomBody(200, successResponse);
 
         TestCredentialsProvider credentialsProvider = new TestCredentialsProvider();
-        AWSSessionCredentials credentials = (AWSSessionCredentials) credentialsProvider.getCredentials();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
-        assertEquals("ACCESS_KEY_ID", credentials.getAWSAccessKeyId());
-        assertEquals("SECRET_ACCESS_KEY", credentials.getAWSSecretKey());
+        assertEquals("ACCESS_KEY_ID", credentials.getAwsAccessKeyId());
+        assertEquals("SECRET_ACCESS_KEY", credentials.getAwsSecretKey());
         assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
     }
 

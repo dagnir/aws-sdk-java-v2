@@ -150,6 +150,7 @@ public class S3InterruptIntegrationTest {
                     s3.getObject(req, destfile);
                     fail("GET should have been aborted");
                 } catch (AbortedException expected) {
+                    // Ignored or expected.
                 }
             }
         });
@@ -191,6 +192,7 @@ public class S3InterruptIntegrationTest {
                     }
                     return;
                 } catch (AbortedException expected) {
+                    // Ignored or expected.
                 }
                 synchronized (success) {
                     success[0] = Boolean.TRUE;

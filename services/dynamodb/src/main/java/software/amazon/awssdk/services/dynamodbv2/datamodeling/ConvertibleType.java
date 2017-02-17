@@ -37,7 +37,10 @@ final class ConvertibleType<T> {
     private final Class<T> targetType;
 
     @Deprecated
-    private final Method getter, setter;
+    private final Method getter;
+
+    @Deprecated
+    private final Method setter;
 
     /**
      * Constructs a new parameter type.
@@ -151,8 +154,8 @@ final class ConvertibleType<T> {
     /**
      * Gets the scalar parameter types.
      */
-    final <t> ConvertibleType<t> param(final int index) {
-        return this.params.length > index ? (ConvertibleType<t>) this.params[index] : null;
+    final <U> ConvertibleType<U> param(final int index) {
+        return this.params.length > index ? (ConvertibleType<U>) this.params[index] : null;
     }
 
     /**

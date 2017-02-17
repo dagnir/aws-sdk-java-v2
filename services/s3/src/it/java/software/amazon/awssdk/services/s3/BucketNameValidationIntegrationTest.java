@@ -18,8 +18,8 @@ package software.amazon.awssdk.services.s3;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 
 /**
  * Tests to validate that the AWS S3 Java client restricts bucket names to
@@ -29,12 +29,11 @@ import software.amazon.awssdk.auth.BasicAWSCredentials;
  * <a href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?BucketRestrictions.html">
  * http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?BucketRestrictions.html</a>
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class BucketNameValidationIntegrationTest {
 
-    private AWSCredentials fakeCredentials =
-            new BasicAWSCredentials("fakeAccessKey", "fakeSecretKey");
+    private AwsCredentials fakeCredentials = new BasicAwsCredentials("fakeAccessKey", "fakeSecretKey");
     private AmazonS3 s3 = new AmazonS3Client(fakeCredentials);
 
     /**
@@ -53,43 +52,28 @@ public class BucketNameValidationIntegrationTest {
      */
     @Test
     public void testIllegalBucketNames() {
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets_cant_contain_underscores");
-        assertIllegalArgumentExceptionForBucketName
-                ("bucket-names-cannot-be-longer-than-sixty-three-characters-" +
-                 "otherwise-they-dont-conform-with-dns-requirements");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets-cant-end-with-a-dash-");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets-cant-have-..-adjacent-periods");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets-.cant-.have-.dashes-.next-.to-.periods");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets.-cant.-have.-dashes.-next.-to.-periods");
-        assertIllegalArgumentExceptionForBucketName
-                ("Buckets-Cant-Have-Uppercase-Characters");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets-cannot-have- -white-space");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets-cannot-have-\n-white-space");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets-cannot-have-\t-white-space");
-        assertIllegalArgumentExceptionForBucketName
-                ("buckets-cannot-have-/-slash");
-        assertIllegalArgumentExceptionForBucketName
-                ("bucket-cannot-have-\\-back-slash");
-        assertIllegalArgumentExceptionForBucketName
-                (".bucket.cannot.start.with.period");
-        assertIllegalArgumentExceptionForBucketName
-                ("bucket.cannot.end.with.period.");
+        assertIllegalArgumentExceptionForBucketName("buckets_cant_contain_underscores");
+        assertIllegalArgumentExceptionForBucketName("bucket-names-cannot-be-longer-than-sixty-three-characters-" +
+                                                    "otherwise-they-dont-conform-with-dns-requirements");
+        assertIllegalArgumentExceptionForBucketName("buckets-cant-end-with-a-dash-");
+        assertIllegalArgumentExceptionForBucketName("buckets-cant-have-..-adjacent-periods");
+        assertIllegalArgumentExceptionForBucketName("buckets-.cant-.have-.dashes-.next-.to-.periods");
+        assertIllegalArgumentExceptionForBucketName("buckets.-cant.-have.-dashes.-next.-to.-periods");
+        assertIllegalArgumentExceptionForBucketName("Buckets-Cant-Have-Uppercase-Characters");
+        assertIllegalArgumentExceptionForBucketName("buckets-cannot-have- -white-space");
+        assertIllegalArgumentExceptionForBucketName("buckets-cannot-have-\n-white-space");
+        assertIllegalArgumentExceptionForBucketName("buckets-cannot-have-\t-white-space");
+        assertIllegalArgumentExceptionForBucketName("buckets-cannot-have-/-slash");
+        assertIllegalArgumentExceptionForBucketName("bucket-cannot-have-\\-back-slash");
+        assertIllegalArgumentExceptionForBucketName(".bucket.cannot.start.with.period");
+        assertIllegalArgumentExceptionForBucketName("bucket.cannot.end.with.period.");
     }
 
     /**
      * Asserts that calling createBucket with the specified bucket name triggers
      * an InvalidArgumentException.
      *
-     * @param bucketName
-     *            The name of the bucket to try creating.
+     * @param bucketName The name of the bucket to try creating.
      */
     private void assertIllegalArgumentExceptionForBucketName(String bucketName) {
         try {

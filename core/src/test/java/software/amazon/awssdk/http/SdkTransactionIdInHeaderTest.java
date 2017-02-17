@@ -60,9 +60,11 @@ public class SdkTransactionIdInHeaderTest extends WireMockTestBase {
     private void executeRequest() throws Exception {
         AmazonHttpClient httpClient = new AmazonHttpClient(new ClientConfiguration());
         try {
-            httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler()).execute();
+            httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler())
+                      .execute();
             fail("Expected exception");
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
     }
 

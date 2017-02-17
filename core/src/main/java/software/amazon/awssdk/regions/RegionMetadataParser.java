@@ -87,6 +87,7 @@ public class RegionMetadataParser {
             try {
                 input.close();
             } catch (IOException exception) {
+                // Ignored or expected.
             }
         }
 

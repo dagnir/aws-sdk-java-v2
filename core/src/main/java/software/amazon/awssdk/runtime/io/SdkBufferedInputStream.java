@@ -73,7 +73,7 @@ public class SdkBufferedInputStream extends BufferedInputStream implements
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         abortIfNeeded();
         return super.read(b, off, len);
     }

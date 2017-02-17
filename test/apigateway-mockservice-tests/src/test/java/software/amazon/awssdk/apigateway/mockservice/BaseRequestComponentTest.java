@@ -99,13 +99,11 @@ public class BaseRequestComponentTest {
     @Test
     public void customRequestTimeoutSetInBaseRequest_IsHonoredByRuntime() {
         final int expectedTimeout = 100;
-        assertRequestTimeoutTriggered(expectedTimeout, () ->
-                                              client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(
-                                                      SdkRequestConfig.builder()
-                                                                      .httpRequestTimeout(expectedTimeout)
-                                                                      .build()
-                                                                                                                    ))
-                                     );
+        Runnable runnable = () -> {
+            SdkRequestConfig requestConfig = SdkRequestConfig.builder().httpRequestTimeout(expectedTimeout).build();
+            client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(requestConfig));
+        };
+        assertRequestTimeoutTriggered(expectedTimeout, runnable);
     }
 
     /**
@@ -115,13 +113,11 @@ public class BaseRequestComponentTest {
     @Test
     public void customClientExecutionSetInBaseRequest_IsHonoredByRuntime() {
         final int expectedTimeout = 100;
-        assertClientExecutionTimeoutTriggered(expectedTimeout, () ->
-                                                      client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(
-                                                              SdkRequestConfig.builder()
-                                                                              .totalExecutionTimeout(expectedTimeout)
-                                                                              .build()
-                                                                                                                            ))
-                                             );
+        Runnable runnable = () -> {
+            SdkRequestConfig requestConfig = SdkRequestConfig.builder().totalExecutionTimeout(expectedTimeout).build();
+            client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(requestConfig));
+        };
+        assertClientExecutionTimeoutTriggered(expectedTimeout, runnable);
     }
 
     @Test
@@ -131,15 +127,17 @@ public class BaseRequestComponentTest {
     }
 
     private void assertRequestTimeoutTriggered(int expectedTimeout, Runnable runnable) {
-        assertTimeoutExceptionTriggered(expectedTimeout, runnable,
-                                        e -> assertThat(e.getCause(), instanceOf(
-                                                HttpRequestTimeoutException.class)));
+        assertTimeoutExceptionTriggered(
+            expectedTimeout, runnable,
+            e -> assertThat(e.getCause(), instanceOf(HttpRequestTimeoutException.class))
+        );
     }
 
     private void assertClientExecutionTimeoutTriggered(int expectedTimeout, Runnable runnable) {
-        assertTimeoutExceptionTriggered(expectedTimeout, runnable,
-                                        e -> assertThat(e, instanceOf(
-                                                ClientExecutionTimeoutException.class)));
+        assertTimeoutExceptionTriggered(
+            expectedTimeout, runnable,
+            e -> assertThat(e, instanceOf(ClientExecutionTimeoutException.class))
+        );
     }
 
     /**

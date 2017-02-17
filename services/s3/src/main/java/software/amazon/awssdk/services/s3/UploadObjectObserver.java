@@ -91,7 +91,7 @@ public class UploadObjectObserver {
                 req.getBucketName(), req.getKey(), req.getMetadata())
                 .withMaterialsDescription(req.getMaterialsDescription())
                 .withRedirectLocation(req.getRedirectLocation())
-                .withSSEAwsKeyManagementParams(req.getSSEAwsKeyManagementParams())
+                .withSSEAwsKeyManagementParams(req.getSseAwsKeyManagementParams())
                 .withSSECustomerKey(req.getSSECustomerKey())
                 .withStorageClass(req.getStorageClass())
                 .withAccessControlList(req.getAccessControlList())

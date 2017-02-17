@@ -38,6 +38,7 @@ public class ExtraMaterialsDescription implements Serializable {
      * {@link ConflictResolution#FAIL_FAST}.
      */
     private final ConflictResolution resolve;
+
     public ExtraMaterialsDescription(Map<String, String> matdesc) {
         this(matdesc, ConflictResolution.FAIL_FAST);
     }
@@ -74,8 +75,8 @@ public class ExtraMaterialsDescription implements Serializable {
      *            the core material descriptions to be supplemented;
      *            assumed to be unmodifiable.
      * @return the merged material descriptions; never null.
-     * The returned map is always unmodifiable, assuming the passed in core
-     * material descriptions are unmodifiable.
+     *     The returned map is always unmodifiable, assuming the passed in core
+     *     material descriptions are unmodifiable.
      *
      * @throws IllegalArgumentException
      *             if this supplemental material descriptions contains

@@ -26,7 +26,7 @@ import software.amazon.awssdk.annotation.Immutable;
  * "http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_AttributeValue.html"
  * >binary</a> attribute in DynamoDB; used for building expressions.
  * <p>
- * Use {@link ExpressionSpecBuilder#B(String)} to instantiate this class.
+ * Use {@link ExpressionSpecBuilder#b(String)} to instantiate this class.
  */
 @Beta
 @Immutable

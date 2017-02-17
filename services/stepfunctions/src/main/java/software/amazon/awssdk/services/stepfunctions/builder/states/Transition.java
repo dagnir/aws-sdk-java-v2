@@ -28,19 +28,6 @@ import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
 public interface Transition {
 
     /**
-     * @return True if this transition represents a terminal transition (i.e. one that would cause the state machine to exit).
-     * False if this is a non terminal transition (i.e. to another state in the state machine).
-     */
-    @JsonIgnore
-    boolean isTerminal();
-
-    /**
-     * Builder interface for {@link Transition}s.
-     */
-    interface Builder extends Buildable<Transition> {
-    }
-
-    /**
      * No-op builder that always returns null.
      */
     @SdkInternalApi
@@ -50,4 +37,17 @@ public interface Transition {
             return null;
         }
     };
+
+    /**
+     * @return True if this transition represents a terminal transition (i.e. one that would cause the state machine to exit).
+     *     False if this is a non terminal transition (i.e. to another state in the state machine).
+     */
+    @JsonIgnore
+    boolean isTerminal();
+
+    /**
+     * Builder interface for {@link Transition}s.
+     */
+    interface Builder extends Buildable<Transition> {
+    }
 }

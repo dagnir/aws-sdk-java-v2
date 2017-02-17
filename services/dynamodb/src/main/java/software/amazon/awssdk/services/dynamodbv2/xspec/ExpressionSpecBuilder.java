@@ -375,7 +375,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @param operand
      *            default value if the attribute doesn't exist
      */
-    static <T> IfNotExistsFunction<T> if_not_exists(
+    static <T> IfNotExistsFunction<T> ifNotExists(
             PathOperand pathOperand, Operand operand) {
         return new IfNotExistsFunction<T>(pathOperand, operand);
     }
@@ -400,9 +400,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for number (N) attribute.
      */
-    public static IfNotExistsFunction<N> if_not_exists(String path,
-                                                       Number defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<N> ifNotExists(String path,
+                                                     Number defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -426,9 +426,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for binary (B) attribute.
      */
-    public static IfNotExistsFunction<B> if_not_exists(String path,
-                                                       byte[] defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<B> ifNotExists(String path,
+                                                     byte[] defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -452,9 +452,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for binary (B) attribute.
      */
-    public static IfNotExistsFunction<B> if_not_exists(String path,
-                                                       ByteBuffer defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<B> ifNotExists(String path,
+                                                     ByteBuffer defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -478,9 +478,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for boolean (BOOL) attribute.
      */
-    public static IfNotExistsFunction<BOOL> if_not_exists(String path,
-                                                          boolean defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<Bool> ifNotExists(String path,
+                                                        boolean defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -504,9 +504,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for binary set (BS) attribute.
      */
-    public static IfNotExistsFunction<BS> if_not_exists(String path,
-                                                        byte[]... defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<Bs> ifNotExists(String path,
+                                                      byte[]... defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -530,9 +530,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for binary set (BS) attribute.
      */
-    public static IfNotExistsFunction<BS> if_not_exists(String path,
-                                                        ByteBuffer... defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<Bs> ifNotExists(String path,
+                                                      ByteBuffer... defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -556,9 +556,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for list (L) attribute.
      */
-    public static IfNotExistsFunction<L> if_not_exists(String path,
-                                                       List<?> defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<L> ifNotExists(String path,
+                                                     List<?> defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -582,9 +582,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for map (M) attribute.
      */
-    public static IfNotExistsFunction<M> if_not_exists(String path,
-                                                       Map<String, ?> defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<M> ifNotExists(String path,
+                                                     Map<String, ?> defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -608,9 +608,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for number set (NS) attribute.
      */
-    public static IfNotExistsFunction<NS> if_not_exists(String path,
-                                                        Number... defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<NS> ifNotExists(String path,
+                                                      Number... defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -634,9 +634,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for string (S) attribute.
      */
-    public static IfNotExistsFunction<S> if_not_exists(String path,
-                                                       String defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<S> ifNotExists(String path,
+                                                     String defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -660,9 +660,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *
      * @return an <code>IfNotExists</code> object for string set (SS) attribute.
      */
-    public static IfNotExistsFunction<SS> if_not_exists(String path,
-                                                        String... defaultValue) {
-        return if_not_exists(new PathOperand(path), new LiteralOperand(
+    public static IfNotExistsFunction<SS> ifNotExists(String path,
+                                                      String... defaultValue) {
+        return ifNotExists(new PathOperand(path), new LiteralOperand(
                 defaultValue));
     }
 
@@ -683,10 +683,10 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @param value
      *            single value to be appended to the list attribute
      */
-    public static <T> ListAppendFunction list_append(String path, T value) {
+    public static <T> ListAppendFunction listAppend(String path, T value) {
         LinkedList<T> list = new LinkedList<T>();
         list.add(value);
-        return list_append(path, list);
+        return listAppend(path, list);
     }
 
     /**
@@ -706,9 +706,9 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @param value
      *            list of values to be appended to the list attribute
      */
-    public static <T> ListAppendFunction list_append(String path,
-                                                     List<? extends T> value) {
-        return new ListAppendFunction(L(path), new ListLiteralOperand(new LinkedList<T>(
+    public static <T> ListAppendFunction listAppend(String path,
+                                                    List<? extends T> value) {
+        return new ListAppendFunction(l(path), new ListLiteralOperand(new LinkedList<T>(
                 value)));
     }
 
@@ -729,10 +729,10 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * @param path
      *            document path to a list attribute
      */
-    public static <T> ListAppendFunction list_append(List<? extends T> value,
-                                                     String path) {
+    public static <T> ListAppendFunction listAppend(List<? extends T> value,
+                                                    String path) {
         return new ListAppendFunction(new ListLiteralOperand(new LinkedList<T>(value)),
-                                      L(path));
+                                      l(path));
     }
 
     /**
@@ -741,7 +741,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * >function condition</a> (that evaluates to true if the attribute of the
      * specified path operand exists) for building condition expression.
      */
-    public static <T> FunctionCondition attribute_exists(
+    public static <T> FunctionCondition attributeExists(
             PathOperand pathOperand) {
         return new FunctionCondition("attribute_exists", pathOperand);
     }
@@ -754,8 +754,8 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * >function condition</a> (that evaluates to true if the attribute at the
      * specified path exists) for building condition expression.
      */
-    public static <T> FunctionCondition attribute_exists(String path) {
-        return attribute_exists(new PathOperand(path));
+    public static <T> FunctionCondition attributeExists(String path) {
+        return attributeExists(new PathOperand(path));
     }
 
     /**
@@ -764,7 +764,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * >function condition</a> (that evaluates to true if the attribute of the
      * specified path operand does not exist) for building condition expression.
      */
-    public static FunctionCondition attribute_not_exists(
+    public static FunctionCondition attributeNotExists(
             PathOperand pathOperand) {
         return new FunctionCondition("attribute_not_exists", pathOperand);
     }
@@ -775,8 +775,8 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * >function condition</a> (that evaluates to true if the attribute at the
      * specified path does not exist) for building condition expression.
      */
-    public static FunctionCondition attribute_not_exists(String path) {
-        return attribute_not_exists(new PathOperand(path));
+    public static FunctionCondition attributeNotExists(String path) {
+        return attributeNotExists(new PathOperand(path));
     }
 
     /**
@@ -825,8 +825,8 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static BOOL BOOL(String path) {
-        return new BOOL(path);
+    public static Bool bool(String path) {
+        return new Bool(path);
     }
 
     /**
@@ -839,7 +839,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static NULL NULL(String path) {
+    public static NULL null0(String path) {
         return new NULL(path);
     }
 
@@ -853,7 +853,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static B B(String path) {
+    public static B b(String path) {
         return new B(path);
     }
 
@@ -867,7 +867,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static N N(String path) {
+    public static N n(String path) {
         return new N(path);
     }
 
@@ -881,7 +881,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static S S(String path) {
+    public static S s(String path) {
         return new S(path);
     }
 
@@ -895,8 +895,8 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static BS BS(String path) {
-        return new BS(path);
+    public static Bs bs(String path) {
+        return new Bs(path);
     }
 
     /**
@@ -909,7 +909,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static NS NS(String path) {
+    public static NS ns(String path) {
         return new NS(path);
     }
 
@@ -923,7 +923,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static SS SS(String path) {
+    public static SS ss(String path) {
         return new SS(path);
     }
 
@@ -937,7 +937,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static L L(String path) {
+    public static L l(String path) {
         return new L(path);
     }
 
@@ -953,7 +953,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *            are assumed to be delimited by either "." or array indexing
      *            such as "[1]".
      */
-    public static M M(String path) {
+    public static M m(String path) {
         return new M(path);
     }
 
@@ -961,7 +961,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * Returns an explicitly parenthesized condition, ie '(' condition ')' used
      * in building condition expressions.
      *
-     * @see #_(Condition)
+     * @see #paren(Condition)
      */
     public static <T> ParenthesizedCondition parenthesize(Condition condition) {
         return ParenthesizedCondition.getInstance(condition);
@@ -971,7 +971,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * A short hand for calling {@link #parenthesize(Condition)} to explicitly
      * parenthesize a given condition for building condition expressions.
      */
-    public static <T> ParenthesizedCondition _(Condition condition) {
+    public static <T> ParenthesizedCondition paren(Condition condition) {
         return parenthesize(condition);
     }
 
@@ -990,6 +990,7 @@ public final class ExpressionSpecBuilder implements Cloneable {
      *     .addUpdate(
      *         S("string-attr").set("string-value")
      * )
+     * </pre>
      */
     public ExpressionSpecBuilder addUpdate(UpdateAction updateAction) {
         final String operator = updateAction.getOperator();

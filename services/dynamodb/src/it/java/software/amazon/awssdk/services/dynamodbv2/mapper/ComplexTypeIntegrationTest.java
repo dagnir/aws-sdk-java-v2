@@ -34,11 +34,11 @@ import java.util.List;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedJson;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 
 /**
  * Tests of the configuration object
@@ -52,7 +52,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
     @Test
     public void testComplexTypes() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         ComplexClass obj = getUniqueObject();
         util.save(obj);
@@ -105,7 +105,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
         obj.setKey(key);
         obj.setOtherAttribute("" + start++);
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         mapper.save(obj);
         ComplexKey loaded = mapper.load(ComplexKey.class, obj.getKey());

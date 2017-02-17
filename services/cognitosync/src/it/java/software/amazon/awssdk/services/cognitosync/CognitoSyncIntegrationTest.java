@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
 
 package software.amazon.awssdk.services.cognitosync;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,7 +32,6 @@ import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolR
 import software.amazon.awssdk.services.cognitoidentity.model.DeleteIdentityPoolRequest;
 import software.amazon.awssdk.services.cognitoidentity.model.GetIdRequest;
 import software.amazon.awssdk.services.cognitoidentity.model.GetIdResult;
-import software.amazon.awssdk.services.cognitosync.AmazonCognitoSyncClient;
 import software.amazon.awssdk.services.cognitosync.model.Dataset;
 import software.amazon.awssdk.services.cognitosync.model.DeleteDatasetRequest;
 import software.amazon.awssdk.services.cognitosync.model.DescribeDatasetRequest;
@@ -48,9 +49,9 @@ import software.amazon.awssdk.services.cognitosync.model.Record;
 import software.amazon.awssdk.services.cognitosync.model.RecordPatch;
 import software.amazon.awssdk.services.cognitosync.model.UpdateRecordsRequest;
 import software.amazon.awssdk.services.cognitosync.model.UpdateRecordsResult;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class CognitoSyncIntegrationTest extends AWSTestBase {
+public class CognitoSyncIntegrationTest extends AwsTestBase {
 
     /**
      * Identity pool name created for testing.
@@ -65,7 +66,7 @@ public class CognitoSyncIntegrationTest extends AWSTestBase {
     /**
      * AWS account id for which the identity id's are generated.
      */
-    private static final String awsAccountId = "599169622985";
+    private static final String AWS_ACCOUNT_ID = "599169622985";
     /**
      * Provider supported by the identity pool and associated with the
      * identities.
@@ -110,7 +111,7 @@ public class CognitoSyncIntegrationTest extends AWSTestBase {
 
         GetIdResult getIdResult = identity
                 .getId(new GetIdRequest().withIdentityPoolId(identityPoolId)
-                                         .withAccountId(awsAccountId));
+                                         .withAccountId(AWS_ACCOUNT_ID));
         identityId = getIdResult.getIdentityId();
 
     }

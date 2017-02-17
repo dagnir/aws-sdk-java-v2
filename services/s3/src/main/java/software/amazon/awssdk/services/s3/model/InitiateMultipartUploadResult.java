@@ -30,13 +30,13 @@ import software.amazon.awssdk.services.s3.internal.SSEResultBase;
 public class InitiateMultipartUploadResult extends SSEResultBase
         implements S3RequesterChargedResult, Serializable {
 
-    /** The name of the bucket in which the new multipart upload was initiated */
+    /** The name of the bucket in which the new multipart upload was initiated. */
     private String bucketName;
 
-    /** The object key for which the multipart upload was initiated */
+    /** The object key for which the multipart upload was initiated. */
     private String key;
 
-    /** The unique ID of the new multipart upload */
+    /** The unique ID of the new multipart upload. */
     private String uploadId;
 
     /** Date when multipart upload will become eligible for abort operation by lifecycle. */

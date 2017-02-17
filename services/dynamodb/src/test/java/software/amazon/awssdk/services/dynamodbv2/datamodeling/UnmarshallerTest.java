@@ -16,13 +16,13 @@
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.lang.reflect.Method;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 public class UnmarshallerTest extends StandardModelFactoriesV2UnconvertTest {
 
     private static final ItemConverter CONVERTER = CONFIG.getConversionSchema().getConverter(
-            new ConversionSchema.Dependencies().with(S3ClientCache.class, new S3ClientCache((AWSCredentialsProvider) null)));
+            new ConversionSchema.Dependencies().with(S3ClientCache.class, new S3ClientCache((AwsCredentialsProvider) null)));
 
     @Override
     protected <T> Object unconvert(Class<T> clazz, Method getter, Method setter, AttributeValue value) {

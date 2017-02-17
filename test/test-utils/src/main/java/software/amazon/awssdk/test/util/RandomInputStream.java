@@ -23,22 +23,22 @@ import java.util.Random;
  * Test utility InputStream implementation that generates random ASCII data when
  * read, up to the size specified when constructed.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class RandomInputStream extends InputStream {
 
-    /** Shared Random number generator to generate data */
+    /** Shared Random number generator to generate data. */
     private static final Random RANDOM = new Random();
-    /** The minimum ASCII code contained in the data in this stream */
+    /** The minimum ASCII code contained in the data in this stream. */
     private static final int MIN_CHAR_CODE = 32;
-    /** The maximum ASCII code contained in the data in this stream */
+    /** The maximum ASCII code contained in the data in this stream. */
     private static final int MAX_CHAR_CODE = 125;
-    /** The requested amount of data contained in this random stream */
-    protected final long lengthInBytes;
-    /** Flag controlling whether binary or character data is used */
-    private final boolean binaryData;
-    /** The number of bytes of data remaining in this random stream */
+    /** The number of bytes of data remaining in this random stream. */
     protected long remainingBytes;
+    /** The requested amount of data contained in this random stream. */
+    protected final long lengthInBytes;
+    /** Flag controlling whether binary or character data is used. */
+    private final boolean binaryData;
 
 
     /**

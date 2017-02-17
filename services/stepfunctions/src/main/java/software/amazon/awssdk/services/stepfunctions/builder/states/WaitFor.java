@@ -25,12 +25,6 @@ import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
 public interface WaitFor {
 
     /**
-     * Builder interface for {@link WaitState}
-     */
-    interface Builder extends Buildable<WaitFor> {
-    }
-
-    /**
      * No-op builder that always returns null.
      */
     Builder NULL_BUILDER = new Builder() {
@@ -39,5 +33,11 @@ public interface WaitFor {
             return null;
         }
     };
+
+    /**
+     * Builder interface for {@link WaitState}
+     */
+    interface Builder extends Buildable<WaitFor> {
+    }
 
 }

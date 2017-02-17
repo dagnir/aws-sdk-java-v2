@@ -38,20 +38,20 @@ import software.amazon.awssdk.services.s3.model.SetBucketLoggingConfigurationReq
  * virtual host style addressing can still be used successfully with the S3 Java
  * client.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class V1BucketAddressingIntegrationTest extends S3IntegrationTestBase {
 
-    /** A non-V2 compatible bucket name used by these tests */
+    /** A non-V2 compatible bucket name used by these tests. */
     private String bucketName = "Java_v1_Bucket_Addressing_Integ_Test.." + new Date().getTime();
 
-    /** The object key used by these tests */
+    /** The object key used by these tests. */
     private String key = "key";
 
-    /** Temp file with random test data for uploading to S3 */
+    /** Temp file with random test data for uploading to S3. */
     private File file;
 
-    /** Releases all resources used in this test */
+    /** Releases all resources used in this test. */
     @After
     public void tearDown() {
         deleteBucketAndAllContents(bucketName);

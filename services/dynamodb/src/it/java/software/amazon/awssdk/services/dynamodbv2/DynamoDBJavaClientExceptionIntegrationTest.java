@@ -25,12 +25,12 @@ import software.amazon.awssdk.services.dynamodbv2.model.ResourceNotFoundExceptio
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
 import software.amazon.awssdk.services.securitytoken.model.Credentials;
 import software.amazon.awssdk.services.securitytoken.model.GetFederationTokenRequest;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Simple smoke test to make sure the new JSON error unmarshaller works as expected.
  */
-public class DynamoDBJavaClientExceptionIntegrationTest extends AWSTestBase {
+public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
 
     private static AmazonDynamoDB ddb;
 

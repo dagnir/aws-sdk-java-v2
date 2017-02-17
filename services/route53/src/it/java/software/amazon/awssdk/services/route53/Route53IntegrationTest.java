@@ -68,13 +68,13 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     private static final String TYPE = "TCP";
     private static final String IP_ADDRESS = "12.12.12.12";
 
-    /** The ID of the zone we created in this test */
+    /** The ID of the zone we created in this test. */
     private static String createdZoneId;
 
-    /** The ID of the change that created our test zone */
+    /** The ID of the change that created our test zone. */
     private String createdZoneChangeId;
 
-    /** the ID of the health check */
+    /** the ID of the health check. */
     private String healthCheckId;
 
 
@@ -84,6 +84,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
         try {
             route53.deleteHostedZone(new DeleteHostedZoneRequest(createdZoneId));
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

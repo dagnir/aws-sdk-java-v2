@@ -37,19 +37,19 @@ import software.amazon.awssdk.util.StringUtils;
  * file.
  * <p>
  * The format for mime type setting documents is:
- * <code>mimetype <Space | Tab>+ extension (<Space|Tab>+ extension)*</code>. Any
+ * <code>mimetype &lt;Space | Tab&gt;+ extension (&lt;Space|Tab&gt;+ extension)*</code>. Any
  * blank lines in the file are ignored, as are lines starting with
  * <code>#</code> which are considered comments. Lines that have a mimetype but
  * no associated extensions are also ignored.
  */
 public class Mimetypes {
-    /** The default XML mimetype: application/xml */
+    /** The default XML mimetype: application/xml. */
     public static final String MIMETYPE_XML = "application/xml";
-    /** The default HTML mimetype: text/html */
+    /** The default HTML mimetype: text/html. */
     public static final String MIMETYPE_HTML = "text/html";
-    /** The default binary mimetype: application/octet-stream */
+    /** The default binary mimetype: application/octet-stream. */
     public static final String MIMETYPE_OCTET_STREAM = "application/octet-stream";
-    /** The default gzip mimetype: application/x-gzip */
+    /** The default gzip mimetype: application/x-gzip. */
     public static final String MIMETYPE_GZIP = "application/x-gzip";
     private static final Log log = LogFactory.getLog(Mimetypes.class);
     private static Mimetypes mimetypes = null;
@@ -65,7 +65,7 @@ public class Mimetypes {
     /**
      * Loads MIME type info from the file 'mime.types' in the classpath, if it's available.
      */
-    public synchronized static Mimetypes getInstance() {
+    public static synchronized Mimetypes getInstance() {
         if (mimetypes != null) {
             return mimetypes;
         }
@@ -102,9 +102,7 @@ public class Mimetypes {
      * text from an InputStream. If a mime type setting already exists when this method is run,
      * the mime type value is replaced with the newer one.
      *
-     * @param is
      *
-     * @throws IOException
      */
     public void loadAndReplaceMimetypes(InputStream is) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is,
@@ -190,10 +188,10 @@ public class Mimetypes {
      * Guesses the mimetype of file data based on the file's extension.
      *
      * @param file
-     * the file whose extension may match a known mimetype.
+     *     the file whose extension may match a known mimetype.
      *
      * @return
-     * the file's mimetype based on its extension, or a default value of
+     *     the file's mimetype based on its extension, or a default value of
      * <code>application/octet-stream</code> if a mime type value cannot be found.
      */
     public String getMimetype(File file) {

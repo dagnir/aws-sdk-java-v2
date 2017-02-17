@@ -42,7 +42,7 @@ import org.junit.Test;
  * in use.
  */
 public class CipherLiteInputStreamTest {
-    private static final Random rand = new Random();
+    private static final Random RAND = new Random();
     private static final boolean CLEAN_UP = true;
 
     @BeforeClass
@@ -53,11 +53,11 @@ public class CipherLiteInputStreamTest {
     @Test
     public void test() throws Exception {
         // Generate a file
-        File file = generateRandomAsciiFile(1024 * 1024 + rand.nextInt(100), CLEAN_UP);
+        File file = generateRandomAsciiFile(1024 * 1024 + RAND.nextInt(100), CLEAN_UP);
         System.out.println("file: " + file + ", len=" + file.length());
         long pt_len = file.length();
         InputStream is = new FileInputStream(file);
-        byte[] pt = IOUtils.toByteArray(is);
+        final byte[] pt = IOUtils.toByteArray(is);
         is.close();
         // Encrypt it
         CipherLite cipherWrapper = createTestCipherLite(Cipher.ENCRYPT_MODE,

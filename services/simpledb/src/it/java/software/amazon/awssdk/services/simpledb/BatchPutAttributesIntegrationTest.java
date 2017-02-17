@@ -40,9 +40,10 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
     public void testBatchPutAttributesDuplicateItemNameException() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest();
 
-        ReplaceableItem item = new ReplaceableItem("foo",
-                                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "bar",
-                                                                                                                                    Boolean.TRUE)}));
+        ReplaceableAttribute[] attributes = {
+            new ReplaceableAttribute("foo", "bar", Boolean.TRUE)
+        };
+        ReplaceableItem item = new ReplaceableItem("foo", newReplaceableAttributeList(attributes));
         request.setItems(newReplaceableItemList(new ReplaceableItem[] {item, item}));
 
         try {
@@ -60,9 +61,10 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
     @Test
     public void testBatchPutAttributesMissingParameterException() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest();
-        ReplaceableItem item = new ReplaceableItem("foo",
-                                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "foo",
-                                                                                                                                    Boolean.TRUE)}));
+        ReplaceableAttribute[] attributes = {
+            new ReplaceableAttribute("foo", "foo", Boolean.TRUE)
+        };
+        ReplaceableItem item = new ReplaceableItem("foo", newReplaceableAttributeList(attributes));
         request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         try {
             sdb.batchPutAttributes(request);
@@ -72,22 +74,8 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
         }
 
         request = new BatchPutAttributesRequest();
-        item = new ReplaceableItem("foo",
-                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", null,
-                                                                                                                    Boolean.TRUE)}));
-        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
-        request.setDomainName("foo");
-        try {
-            sdb.batchPutAttributes(request);
-            fail("Expected MissingParameterException, but wasn't thrown");
-        } catch (MissingParameterException e) {
-            assertValidException(e);
-        }
-
-        request = new BatchPutAttributesRequest();
-        item = new ReplaceableItem("foo",
-                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute(null, "bar",
-                                                                                                                    Boolean.TRUE)}));
+        attributes[0] = new ReplaceableAttribute("foo", null, Boolean.TRUE);
+        item = new ReplaceableItem("foo", newReplaceableAttributeList(attributes));
         request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         request.setDomainName("foo");
         try {
@@ -98,9 +86,20 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
         }
 
         request = new BatchPutAttributesRequest();
-        item = new ReplaceableItem(null,
-                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "bar",
-                                                                                                                    Boolean.TRUE)}));
+        attributes[0] = new ReplaceableAttribute(null, "bar", Boolean.TRUE);
+        item = new ReplaceableItem("foo", newReplaceableAttributeList(attributes));
+        request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
+        request.setDomainName("foo");
+        try {
+            sdb.batchPutAttributes(request);
+            fail("Expected MissingParameterException, but wasn't thrown");
+        } catch (MissingParameterException e) {
+            assertValidException(e);
+        }
+
+        request = new BatchPutAttributesRequest();
+        attributes[0] = new ReplaceableAttribute("foo", "bar", Boolean.TRUE);
+        item = new ReplaceableItem(null, newReplaceableAttributeList(attributes));
         request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         request.setDomainName("foo");
         try {
@@ -118,9 +117,10 @@ public class BatchPutAttributesIntegrationTest extends IntegrationTestBase {
     @Test
     public void testBatchPutAttributesNoSuchDomainException() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest();
-        ReplaceableItem item = new ReplaceableItem("foo",
-                                                   newReplaceableAttributeList(new ReplaceableAttribute[] {new ReplaceableAttribute("foo", "foo",
-                                                                                                                                    Boolean.TRUE)}));
+        ReplaceableAttribute[] attributes = {
+            new ReplaceableAttribute("foo", "foo", Boolean.TRUE)
+        };
+        ReplaceableItem item = new ReplaceableItem("foo", newReplaceableAttributeList(attributes));
         request.setDomainName("ADomainNameThatDoesntExist");
         request.setItems(newReplaceableItemList(new ReplaceableItem[] {item}));
         try {

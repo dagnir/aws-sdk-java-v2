@@ -37,11 +37,21 @@ import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ResourceInUseException;
 import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 import software.amazon.awssdk.util.ImmutableMapParameter.Builder;
 
-public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
+public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
+
+    /**
+     * Reference to the mapper used for this testing
+     */
+    protected static DynamoDbMapper mapper;
+
+    /**
+     * Reference to the client being used by the mapper.
+     */
+    protected static AmazonDynamoDBClient client;
 
     /**
      * Table name to be used for this testing
@@ -82,22 +92,12 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
     private static final String ADDRESS_TYPE_HOME = "home";
     private static final String ADDRESS_TYPE_WORK = "work";
 
-    /**
-     * Reference to the mapper used for this testing
-     */
-    protected static DynamoDBMapper mapper;
-
-    /**
-     * Reference to the client being used by the mapper.
-     */
-    protected static AmazonDynamoDBClient client;
-
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException,
                                       InterruptedException {
         setUpCredentials();
         client = new AmazonDynamoDBClient(credentials);
-        mapper = new DynamoDBMapper(client);
+        mapper = new DynamoDbMapper(client);
         try {
             client.createTable(new CreateTableRequest()
                                        .withTableName(TABLENAME)
@@ -159,6 +159,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
                 client.deleteTable(TABLENAME);
             }
         } catch (Exception e) {
+            // Ignored or expected.
         } finally {
             if (client != null) {
                 client.shutdown();
@@ -204,7 +205,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
         Customer customer = new Customer();
         customer.setCustomerId(Long.valueOf(FIRST_CUSTOMER_ID));
 
-        DynamoDBQueryExpression<Customer> qxp =
+        DynamoDBQueryExpression<Customer> query =
                 new DynamoDBQueryExpression<Customer>()
                         .withKeyConditionExpression(
                                 "customerId = :customerId AND addressType = :addressType");
@@ -213,17 +214,16 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AWSTestBase {
         builder.put(":customerId", new AttributeValue().withN(FIRST_CUSTOMER_ID))
                .put(":addressType", new AttributeValue(ADDRESS_TYPE_HOME))
         ;
-        qxp.withExpressionAttributeValues(builder.build());
+        query.withExpressionAttributeValues(builder.build());
 
-        PaginatedQueryList<Customer> results = mapper.query(Customer.class, qxp);
+        PaginatedQueryList<Customer> results = mapper.query(Customer.class, query);
         assertTrue(results.size() == 1);
 
         builder.put(":zipcode", new AttributeValue().withN("98109"));
-        qxp.withFilterExpression("zipcode = :zipcode")
-           .withExpressionAttributeValues(builder.build())
-        ;
+        query.withFilterExpression("zipcode = :zipcode")
+             .withExpressionAttributeValues(builder.build());
 
-        results = mapper.query(Customer.class, qxp);
+        results = mapper.query(Customer.class, query);
         assertTrue(results.size() == 0);
     }
 

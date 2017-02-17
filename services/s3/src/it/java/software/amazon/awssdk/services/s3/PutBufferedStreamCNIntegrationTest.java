@@ -36,7 +36,7 @@ import software.amazon.awssdk.test.util.UnreliableRandomInputStream;
  * Integration tests for uploading objects to Amazon S3 through caller provided
  * InputStreams.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 @Category(S3Categories.Slow.class)
 public class PutBufferedStreamCNIntegrationTest extends S3IntegrationTestBase {
@@ -44,7 +44,7 @@ public class PutBufferedStreamCNIntegrationTest extends S3IntegrationTestBase {
     private String bucketName = "put-stream-object-integ-test-" + new Date().getTime();
     private String key = "key";
 
-    /** Releases all resources created by this test */
+    /** Releases all resources created by this test. */
     @After
     public void tearDown() {
         // Clear the system property by setting to blank
@@ -52,10 +52,12 @@ public class PutBufferedStreamCNIntegrationTest extends S3IntegrationTestBase {
         try {
             cnS3.deleteObject(bucketName, key);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             cnS3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

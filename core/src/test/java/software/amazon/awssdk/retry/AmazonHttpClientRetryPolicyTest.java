@@ -26,7 +26,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * Tests that {@link AmazonHttpClient#executeHelper()} method passes the correct
@@ -35,10 +35,10 @@ import software.amazon.awssdk.util.AWSRequestMetrics;
 public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
 
     private static final int EXPECTED_RETRY_COUNT = 5;
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
     private AmazonHttpClient testedClient;
 
-    /** Reset the RetryPolicy and restart collecting context data */
+    /** Reset the RetryPolicy and restart collecting context data. */
     @Before
     public void resetContextData() {
         retryCondition = new ContextDataCollectionRetryCondition();
@@ -58,7 +58,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      */
     @Test
     public void testServiceExceptionHandling() {
-        int random500StatusCode = 500 + random.nextInt(100);
+        int random500StatusCode = 500 + RANDOM.nextInt(100);
         String randomErrorCode = UUID.randomUUID().toString();
 
         // A mock HttpClient that always returns the specified status and error code.
@@ -100,7 +100,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         Assert.assertEquals(
                 EXPECTED_RETRY_COUNT + 1, // request count = retries + 1
                 context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AWSRequestMetrics.Field.RequestCount.toString()).intValue());
+                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
     }
 
     /**
@@ -108,10 +108,10 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      * executing the http request when the request payload is repeatable.
      */
     @Test
-    public void testIOExceptioinHandling() {
+    public void testIoExceptionHandling() {
         // A mock HttpClient that always throws the specified IOException object
-        IOException simulatedIOException = new IOException("fake IOException");
-        injectMockHttpClient(testedClient, new ThrowingExceptionHttpClient(simulatedIOException));
+        IOException simulatedIoException = new IOException("fake IOException");
+        injectMockHttpClient(testedClient, new ThrowingExceptionHttpClient(simulatedIoException));
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
@@ -129,7 +129,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
                         .execute();
             Assert.fail("AmazonClientException is expected.");
         } catch (AmazonClientException ace) {
-            Assert.assertTrue(simulatedIOException == ace.getCause());
+            Assert.assertTrue(simulatedIoException == ace.getCause());
             expectedClientException = ace;
         }
 
@@ -147,7 +147,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         Assert.assertEquals(
                 EXPECTED_RETRY_COUNT + 1, // request count = retries + 1
                 context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AWSRequestMetrics.Field.RequestCount.toString()).intValue());
+                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
     }
 
     /**
@@ -156,7 +156,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      */
     @Test
     public void testServiceExceptionHandlingWithNonRepeatableRequestContent() {
-        int random500StatusCode = 500 + random.nextInt(100);
+        int random500StatusCode = 500 + RANDOM.nextInt(100);
         String randomErrorCode = UUID.randomUUID().toString();
 
         // A mock HttpClient that always returns the specified status and error code.
@@ -194,7 +194,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         Assert.assertEquals(
                 EXPECTED_RETRY_COUNT + 1,   // request count = retries + 1
                 context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AWSRequestMetrics.Field.RequestCount.toString()).intValue());
+                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
     }
 
     /**
@@ -202,7 +202,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      * request payload is not repeatable.
      */
     @Test
-    public void testIOExceptionHandlingWithNonRepeatableRequestContent() {
+    public void testIoExceptionHandlingWithNonRepeatableRequestContent() {
         // A mock HttpClient that always throws the specified IOException object
         IOException simulatedIOException = new IOException("fake IOException");
         injectMockHttpClient(testedClient, new ThrowingExceptionHttpClient(simulatedIOException));
@@ -240,7 +240,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         Assert.assertEquals(
                 EXPECTED_RETRY_COUNT + 1, // request count = retries + 1
                 context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AWSRequestMetrics.Field.RequestCount.toString()).intValue());
+                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
     }
 
     /**
@@ -285,6 +285,6 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         Assert.assertEquals(
                 1,
                 context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AWSRequestMetrics.Field.RequestCount.toString()).intValue());
+                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
     }
 }

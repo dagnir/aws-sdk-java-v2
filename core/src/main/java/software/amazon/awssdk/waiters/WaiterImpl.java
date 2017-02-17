@@ -24,17 +24,17 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.ValidationUtils;
 
 @SdkProtectedApi
-public class WaiterImpl<Input extends AmazonWebServiceRequest, Output> implements Waiter<Input> {
+public class WaiterImpl<InputT extends AmazonWebServiceRequest, OutputT> implements Waiter<InputT> {
 
     /**
      * Represents the operation function
      */
-    private final SdkFunction<Input, Output> sdkFunction;
+    private final SdkFunction<InputT, OutputT> sdkFunction;
 
     /**
      * List of acceptors
      */
-    private final List<WaiterAcceptor<Output>> acceptors;
+    private final List<WaiterAcceptor<OutputT>> acceptors;
 
     /**
      * Represents the default polling strategy
@@ -51,7 +51,7 @@ public class WaiterImpl<Input extends AmazonWebServiceRequest, Output> implement
      *                      polling strategy parameters.
      */
     @SdkProtectedApi
-    public WaiterImpl(WaiterBuilder<Input, Output> waiterBuilder) {
+    public WaiterImpl(WaiterBuilder<InputT, OutputT> waiterBuilder) {
         this.sdkFunction = ValidationUtils.assertNotNull(waiterBuilder.getSdkFunction(), "sdkFunction");
         this.acceptors = ValidationUtils.assertNotNull(waiterBuilder.getAcceptor(), "acceptors");
         this.defaultPollingStrategy = ValidationUtils.assertNotNull(waiterBuilder.getDefaultPollingStrategy(), "defaultPollingStrategy");
@@ -70,14 +70,14 @@ public class WaiterImpl<Input extends AmazonWebServiceRequest, Output> implement
      * @throws WaiterTimedOutException      If the resource doesn't transition into the desired state
      *                                      even after a certain number of retries.
      */
-    public void run(WaiterParameters<Input> waiterParameters)
+    public void run(WaiterParameters<InputT> waiterParameters)
             throws AmazonServiceException, WaiterTimedOutException, WaiterUnrecoverableException {
 
         ValidationUtils.assertNotNull(waiterParameters, "waiterParameters");
         @SuppressWarnings("unchecked")
-        Input request = (Input) ValidationUtils.assertNotNull(waiterParameters.getRequest(), "request").clone();
+        InputT request = (InputT) ValidationUtils.assertNotNull(waiterParameters.getRequest(), "request").clone();
         request.getRequestClientOptions().appendUserAgent("waiter-request");
-        WaiterExecution<Input, Output> waiterExecution = new WaiterExecutionBuilder<Input, Output>()
+        WaiterExecution<InputT, OutputT> waiterExecution = new WaiterExecutionBuilder<InputT, OutputT>()
                 .withRequest(request)
                 .withPollingStrategy(waiterParameters.getPollingStrategy() != null ? waiterParameters.getPollingStrategy() : defaultPollingStrategy)
                 .withAcceptors(acceptors)
@@ -97,9 +97,9 @@ public class WaiterImpl<Input extends AmazonWebServiceRequest, Output> implement
      *                         optional custom polling strategy
      * @param callback         Custom callback
      * @return Future object that holds the result of an asynchronous
-     * computation of waiter
+     *     computation of waiter
      */
-    public Future<Void> runAsync(final WaiterParameters<Input> waiterParameters, final WaiterHandler callback)
+    public Future<Void> runAsync(final WaiterParameters<InputT> waiterParameters, final WaiterHandler callback)
             throws AmazonServiceException, WaiterTimedOutException, WaiterUnrecoverableException {
 
         return executorService.submit(new java.util.concurrent.Callable<Void>() {

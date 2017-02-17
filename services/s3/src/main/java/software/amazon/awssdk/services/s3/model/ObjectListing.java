@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  */
 public class ObjectListing implements Serializable {
 
-    /** A list of summary information describing the objects stored in the bucket */
+    /** A list of summary information describing the objects stored in the bucket. */
     private List<S3ObjectSummary> objectSummaries = new ArrayList<S3ObjectSummary>();
 
     /**
@@ -43,7 +43,7 @@ public class ObjectListing implements Serializable {
      */
     private List<String> commonPrefixes = new ArrayList<String>();
 
-    /** The name of the Amazon S3 bucket containing the listed objects */
+    /** The name of the Amazon S3 bucket containing the listed objects. */
     private String bucketName;
 
     /**
@@ -61,7 +61,7 @@ public class ObjectListing implements Serializable {
     private boolean isTruncated;
     
     
-    /* Original Request Parameters */
+    /* Original Request Parameters. */
 
     /**
      * The prefix parameter originally specified by the caller when this object

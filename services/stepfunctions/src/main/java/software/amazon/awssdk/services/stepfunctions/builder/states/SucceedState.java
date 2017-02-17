@@ -42,6 +42,13 @@ public final class SucceedState implements State {
     }
 
     /**
+     * @return Builder instance to construct a {@link SucceedState}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Type identifier of {@link SucceedState}.
      */
     @Override
@@ -83,13 +90,6 @@ public final class SucceedState implements State {
     @Override
     public <T> T accept(StateVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    /**
-     * @return Builder instance to construct a {@link SucceedState}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

@@ -50,10 +50,10 @@ public class CompleteMultipartUploadResult extends SSEResultBase
      */
     private String versionId;
 
-    /** The time this object expires, or null if it has no expiration */
+    /** The time this object expires, or null if it has no expiration. */
     private Date expirationTime;
 
-    /** The expiration rule for this object */
+    /** The expiration rule for this object. */
     private String expirationTimeRuleId;
 
     /**

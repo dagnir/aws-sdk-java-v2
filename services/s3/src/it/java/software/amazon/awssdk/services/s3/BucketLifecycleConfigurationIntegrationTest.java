@@ -58,27 +58,27 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
 
     private static final boolean ANDROID_TESTING = false;
 
-    /** The bucket created and used by these tests */
-    private static final String bucketName = "java-bucket-lifecycle-integ-test-" + new Date().getTime();
+    /** The bucket created and used by these tests. */
+    private static final String BUCKET_NAME = "java-bucket-lifecycle-integ-test-" + new Date().getTime();
 
-    /** The key used in these tests */
-    private static final String key = "key";
-    /** The expiration date of an object in Java Date format for the tests */
+    /** The key used in these tests. */
+    private static final String KEY = "key";
+    /** The expiration date of an object in Java Date format for the tests. */
     private static final String EXPIRATION_DATE = "2012-06-01T00:00:00.000Z";
-    /** The transition date of an object (change the storage class) in Java Date format for the tests */
+    /** The transition date of an object (change the storage class) in Java Date format for the tests. */
     private static final String TRANSITION_DATE = "2012-05-31T00:00:00.000Z";
-    /** The time in days from  object's creation to its expiration used in the tests */
+    /** The time in days from  object's creation to its expiration used in the tests. */
     private static final int EXPIRATION_IN_DAYS = 10;
-    /** The time in days from an object's creation to the transition time(change the storage class) used in the tests */
+    /** The time in days from an object's creation to the transition time(change the storage class) used in the tests. */
     private static final int TRANSITION_TIME_IN_DAYS = 5;
-    /** The file containing the test data uploaded to S3 */
+    /** The file containing the test data uploaded to S3. */
     private static File file = null;
-    /** The inputStream containing the test data uploaded to S3 */
+    /** The inputStream containing the test data uploaded to S3. */
     private static byte[] tempData;
 
     @AfterClass
     public static void tearDownFixture() throws Exception {
-        deleteBucketAndAllContents(bucketName);
+        deleteBucketAndAllContents(BUCKET_NAME);
 
         if (file != null) {
             file.delete();
@@ -99,13 +99,13 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
 
         tempData = tempDataBuffer(1000);
 
-        s3.createBucket(bucketName);
-        waitForBucketCreation(bucketName);
+        s3.createBucket(BUCKET_NAME);
+        waitForBucketCreation(BUCKET_NAME);
 
         ObjectMetadata metadata = null;
         if (!ANDROID_TESTING) {
             file = new RandomTempFile("get-object-integ-test", 1000L);
-            s3.putObject(bucketName, key, file);
+            s3.putObject(BUCKET_NAME, KEY, file);
         } else {
             file = S3IntegrationTestBase.getRandomTempFile("foo", 1000L);
             ByteArrayInputStream bais = new ByteArrayInputStream(tempData);
@@ -113,7 +113,7 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
             metadata = new ObjectMetadata();
             metadata.setContentLength(1000);
 
-            s3.putObject(new PutObjectRequest(bucketName, key, bais, metadata));
+            s3.putObject(new PutObjectRequest(BUCKET_NAME, KEY, bais, metadata));
             bais.close();
         }
 
@@ -122,14 +122,14 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
     @Before
     public void setup() throws Exception {
         // Check the bucket for its existing lifecycle config
-        assertNull(s3.getBucketLifecycleConfiguration(bucketName));
+        assertNull(s3.getBucketLifecycleConfiguration(BUCKET_NAME));
     }
 
     @After
     public void teardown() throws Exception {
         // Delete the config
-        s3.deleteBucketLifecycleConfiguration(bucketName);
-        assertNull(waitForBucketLifecycleConfigurationDelete(bucketName));
+        s3.deleteBucketLifecycleConfiguration(BUCKET_NAME);
+        assertNull(waitForBucketLifecycleConfigurationDelete(BUCKET_NAME));
     }
 
     @Test
@@ -159,13 +159,14 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
 
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule1, rule2);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(bucketName);
+        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(BUCKET_NAME);
         assertNotNull(bucketLifecycleConfiguration);
         assertEquals(2, bucketLifecycleConfiguration.getRules().size());
-        boolean seen1 = false, seen2 = false;
+        boolean seen1 = false;
+        boolean seen2 = false;
         for (Rule rule : bucketLifecycleConfiguration.getRules()) {
             if (rule.getId().equals(ruleId)) {
                 seen1 = true;
@@ -191,12 +192,12 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
 
         // Now put some objects and see if they have the right headers returned
         String expiringKey = "prefixKey";
-        s3.putObject(bucketName, expiringKey, file);
-        ObjectMetadata metadataExpriringKey = waitForObjectWithExpirationKeyExist(bucketName, expiringKey);
+        s3.putObject(BUCKET_NAME, expiringKey, file);
+        ObjectMetadata metadataExpriringKey = waitForObjectWithExpirationKeyExist(BUCKET_NAME, expiringKey);
 
         String nonExpiringKey = "anotherKey";
-        s3.putObject(bucketName, nonExpiringKey, file);
-        ObjectMetadata metadataNonExpriringKey = waitForObjectWithNonExpirationKeyExist(bucketName, nonExpiringKey);
+        s3.putObject(BUCKET_NAME, nonExpiringKey, file);
+        ObjectMetadata metadataNonExpriringKey = waitForObjectWithNonExpirationKeyExist(BUCKET_NAME, nonExpiringKey);
 
         assertNotNull(metadataExpriringKey.getExpirationTime());
         assertEquals(ruleId, metadataExpriringKey.getExpirationTimeRuleId());
@@ -207,24 +208,24 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
 
         // There are several APIs that are affected by this header; test them
         ObjectMetadata copyObjectMetadata = null;
-        s3.copyObject(new CopyObjectRequest(bucketName, expiringKey, bucketName, expiringKey + "2"));
-        copyObjectMetadata = waitForObjectWithExpirationKeyExist(bucketName, expiringKey + "2");
+        s3.copyObject(new CopyObjectRequest(BUCKET_NAME, expiringKey, BUCKET_NAME, expiringKey + "2"));
+        copyObjectMetadata = waitForObjectWithExpirationKeyExist(BUCKET_NAME, expiringKey + "2");
 
         assertNotNull(copyObjectMetadata.getExpirationTime());
         assertEquals(ruleId, copyObjectMetadata.getExpirationTimeRuleId());
 
-        s3.copyObject(new CopyObjectRequest(bucketName, nonExpiringKey, bucketName, nonExpiringKey + "2"));
-        copyObjectMetadata = waitForObjectWithNonExpirationKeyExist(bucketName, nonExpiringKey + "2");
+        s3.copyObject(new CopyObjectRequest(BUCKET_NAME, nonExpiringKey, BUCKET_NAME, nonExpiringKey + "2"));
+        copyObjectMetadata = waitForObjectWithNonExpirationKeyExist(BUCKET_NAME, nonExpiringKey + "2");
 
         assertNull(copyObjectMetadata.getExpirationTime());
         assertNull(copyObjectMetadata.getExpirationTimeRuleId());
 
 
-        metadataExpriringKey = waitForObjectWithExpirationKeyExist(bucketName, expiringKey);
+        metadataExpriringKey = waitForObjectWithExpirationKeyExist(BUCKET_NAME, expiringKey);
         assertNotNull(metadataExpriringKey.getExpirationTime());
         assertEquals(ruleId, metadataExpriringKey.getExpirationTimeRuleId());
 
-        metadataNonExpriringKey = waitForObjectWithNonExpirationKeyExist(bucketName, nonExpiringKey);
+        metadataNonExpriringKey = waitForObjectWithNonExpirationKeyExist(BUCKET_NAME, nonExpiringKey);
         assertNull(metadataNonExpriringKey.getExpirationTime());
         assertNull(metadataNonExpriringKey.getExpirationTimeRuleId());
 
@@ -239,10 +240,10 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         rule.setFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(bucketName);
+        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(BUCKET_NAME);
         assertNotNull(bucketLifecycleConfiguration);
         assertEquals(1, bucketLifecycleConfiguration.getRules().size());
 
@@ -259,14 +260,15 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         rule.setFilter(new LifecycleFilter().withPredicate(new LifecycleTagPredicate(new Tag("key", "value"))));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(bucketName);
+        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(BUCKET_NAME);
         assertNotNull(bucketLifecycleConfiguration);
         assertEquals(1, bucketLifecycleConfiguration.getRules().size());
 
-        LifecycleTagPredicate filterCriteria = (LifecycleTagPredicate) bucketLifecycleConfiguration.getRules().get(0).getFilter().getPredicate();
+        LifecycleTagPredicate filterCriteria =
+                (LifecycleTagPredicate) bucketLifecycleConfiguration.getRules().get(0).getFilter().getPredicate();
         assertEquals("key", filterCriteria.getTag().getKey());
         assertEquals("value", filterCriteria.getTag().getValue());
     }
@@ -281,10 +283,10 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         rule.setFilter(new LifecycleFilter().withPredicate(new LifecycleAndOperator(andOperands)));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(bucketName);
+        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(BUCKET_NAME);
         assertNotNull(bucketLifecycleConfiguration);
         assertEquals(1, bucketLifecycleConfiguration.getRules().size());
 
@@ -301,10 +303,10 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         rule.setFilter(new LifecycleFilter());
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(bucketName);
+        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(BUCKET_NAME);
         assertNotNull(bucketLifecycleConfiguration);
         assertEquals(1, bucketLifecycleConfiguration.getRules().size());
 
@@ -319,10 +321,10 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         rule.setFilter(new LifecycleFilter(new LifecyclePrefixPredicate("")));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(bucketName);
+        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(BUCKET_NAME);
         assertNotNull(bucketLifecycleConfiguration);
         assertEquals(1, bucketLifecycleConfiguration.getRules().size());
 
@@ -338,7 +340,7 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         rule.setFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
     }
 
     /**
@@ -353,7 +355,7 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
         rule.setFilter(new LifecycleFilter().withPredicate(new LifecycleAndOperator(andOperands)));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
     }
 
     /**
@@ -364,10 +366,10 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
     public void testBucketLifecycle_With_NoPrefix_And_NoFilter() throws Exception {
         Rule rule = getRuleWithoutPrefixAndFilter();
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
 
         // Check reading it back
-        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(bucketName);
+        BucketLifecycleConfiguration bucketLifecycleConfiguration = waitForBucketLifecycleConfiguration(BUCKET_NAME);
         assertNotNull(bucketLifecycleConfiguration);
         assertEquals(1, bucketLifecycleConfiguration.getRules().size());
 
@@ -382,19 +384,22 @@ public class BucketLifecycleConfigurationIntegrationTest extends S3IntegrationTe
     @Test(expected = AmazonS3Exception.class)
     public void testBucketLifecycle_With_MultipleRules_Using_BothOldAndNewLifeCycleConfigFormat() throws Exception {
         Rule rule1 = getRuleWithoutPrefixAndFilter().withPrefix("prefix1");
-        Rule rule2 = getRuleWithoutPrefixAndFilter().withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
+        Rule rule2 = getRuleWithoutPrefixAndFilter()
+                .withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule1, rule2);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
     }
 
     @Test
     public void testBucketLifecycle_With_TwoRules_HavingSamePrefix() throws Exception {
-        Rule rule1 = getRuleWithoutPrefixAndFilter().withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
-        Rule rule2 = getRuleWithoutPrefixAndFilter().withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
+        Rule rule1 = getRuleWithoutPrefixAndFilter()
+                .withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
+        Rule rule2 = getRuleWithoutPrefixAndFilter()
+                .withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate("prefix")));
 
         BucketLifecycleConfiguration config = new BucketLifecycleConfiguration().withRules(rule1, rule2);
-        s3.setBucketLifecycleConfiguration(bucketName, config);
+        s3.setBucketLifecycleConfiguration(BUCKET_NAME, config);
     }
 
     private Rule getRuleWithoutPrefixAndFilter() {

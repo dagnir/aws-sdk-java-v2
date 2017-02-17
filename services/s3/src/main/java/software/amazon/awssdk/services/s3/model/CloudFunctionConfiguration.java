@@ -74,14 +74,14 @@ public class CloudFunctionConfiguration extends NotificationConfiguration implem
     /**
      * Returns the invocation role associated with this configuration.
      */
-    public String getInvocationRoleARN() {
+    public String getInvocationRoleArn() {
         return invocationRoleARN;
     }
 
     /**
      * Returns the ARN of the cloud function to be invoked.
      */
-    public String getCloudFunctionARN() {
+    public String getCloudFunctionArn() {
         return cloudFunctionARN;
     }
 

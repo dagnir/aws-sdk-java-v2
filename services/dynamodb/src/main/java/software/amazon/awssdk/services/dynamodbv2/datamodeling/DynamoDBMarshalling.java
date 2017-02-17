@@ -31,7 +31,7 @@ import java.util.Set;
  * field, the corresponding getter and setter must be declared in the same
  * class.
  *
- * @see DynamoDBMarshaller
+ * @see DynamoDbMarshaller
  * @see JsonMarshaller
  *
  * @deprecated Replaced by {@link DynamoDBTypeConverted}
@@ -63,24 +63,24 @@ import java.util.Set;
 @DynamoDBTypeConverted(converter = DynamoDBMarshalling.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBMarshalling {
 
     /**
      * The class of the Marshaller that converts this property to and from a
      * String.
      */
-    Class<? extends DynamoDBMarshaller<? extends Object>> marshallerClass();
+    Class<? extends DynamoDbMarshaller<? extends Object>> marshallerClass();
 
     /**
      * Marshalling type converter.
      */
     static final class Converter<T> implements DynamoDBTypeConverter<String, T> {
-        private final Class<DynamoDBMarshaller<T>> marshallerClass;
+        private final Class<DynamoDbMarshaller<T>> marshallerClass;
         private final Class<T> targetType;
 
         public Converter(final Class<T> targetType, final DynamoDBMarshalling annotation) {
-            this.marshallerClass = (Class<DynamoDBMarshaller<T>>) annotation.marshallerClass();
+            this.marshallerClass = (Class<DynamoDbMarshaller<T>>) annotation.marshallerClass();
             this.targetType = targetType;
         }
 
@@ -94,7 +94,7 @@ public @interface DynamoDBMarshalling {
             return marshaller().unmarshall(targetType, object);
         }
 
-        private DynamoDBMarshaller<T> marshaller() {
+        private DynamoDbMarshaller<T> marshaller() {
             try {
                 return marshallerClass.newInstance();
             } catch (final Exception e) {

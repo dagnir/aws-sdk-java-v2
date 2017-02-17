@@ -44,20 +44,20 @@ import software.amazon.awssdk.util.StringUtils;
 public abstract class AbstractS3ResponseHandler<T>
         implements HttpResponseHandler<AmazonWebServiceResponse<T>> {
 
-    /** Shared logger */
-    private static final Log log = LogFactory.getLog(S3MetadataResponseHandler.class);
+    /** Shared logger. */
+    private static final Log LOG = LogFactory.getLog(S3MetadataResponseHandler.class);
 
-    /** The set of response headers that aren't part of the object's metadata */
-    private static final Set<String> ignoredHeaders;
+    /** The set of response headers that aren't part of the object's metadata. */
+    private static final Set<String> IGNORED_HEADERS;
 
     static {
-        ignoredHeaders = new HashSet<String>();
-        ignoredHeaders.add(Headers.DATE);
-        ignoredHeaders.add(Headers.SERVER);
-        ignoredHeaders.add(Headers.REQUEST_ID);
-        ignoredHeaders.add(Headers.EXTENDED_REQUEST_ID);
-        ignoredHeaders.add(Headers.CLOUD_FRONT_ID);
-        ignoredHeaders.add(Headers.CONNECTION);
+        IGNORED_HEADERS = new HashSet<>();
+        IGNORED_HEADERS.add(Headers.DATE);
+        IGNORED_HEADERS.add(Headers.SERVER);
+        IGNORED_HEADERS.add(Headers.REQUEST_ID);
+        IGNORED_HEADERS.add(Headers.EXTENDED_REQUEST_ID);
+        IGNORED_HEADERS.add(Headers.CLOUD_FRONT_ID);
+        IGNORED_HEADERS.add(Headers.CONNECTION);
     }
 
     /**
@@ -73,13 +73,13 @@ public abstract class AbstractS3ResponseHandler<T>
 
     /**
      * Parses the S3 response metadata (ex: AWS request ID) from the specified
-     * response, and returns a AmazonWebServiceResponse<T> object ready for the
+     * response, and returns a AmazonWebServiceResponse&lt;T&gt; object ready for the
      * result to be plugged in.
      *
      * @param response
      *            The response containing the response metadata to pull out.
      *
-     * @return A new, populated AmazonWebServiceResponse<T> object, ready for
+     * @return A new, populated AmazonWebServiceResponse&lt;T&gt; object, ready for
      *         the result to be plugged in.
      */
     protected AmazonWebServiceResponse<T> parseResponseMetadata(HttpResponse response) {
@@ -113,13 +113,13 @@ public abstract class AbstractS3ResponseHandler<T>
             if (StringUtils.beginsWithIgnoreCase(key, Headers.S3_USER_METADATA_PREFIX)) {
                 key = key.substring(Headers.S3_USER_METADATA_PREFIX.length());
                 metadata.addUserMetadata(key, header.getValue());
-            } else if (ignoredHeaders.contains(key)) {
+            } else if (IGNORED_HEADERS.contains(key)) {
                 // ignore...
             } else if (key.equalsIgnoreCase(Headers.LAST_MODIFIED)) {
                 try {
                     metadata.setHeader(key, ServiceUtils.parseRfc822Date(header.getValue()));
                 } catch (Exception pe) {
-                    log.warn("Unable to parse last modified date: " + header.getValue(), pe);
+                    LOG.warn("Unable to parse last modified date: " + header.getValue(), pe);
                 }
             } else if (key.equalsIgnoreCase(Headers.CONTENT_LENGTH)) {
                 try {
@@ -132,9 +132,9 @@ public abstract class AbstractS3ResponseHandler<T>
                 metadata.setHeader(key, ServiceUtils.removeQuotes(header.getValue()));
             } else if (key.equalsIgnoreCase(Headers.EXPIRES)) {
                 try {
-                    metadata.setHttpExpiresDate(DateUtils.parseRFC822Date(header.getValue()));
+                    metadata.setHttpExpiresDate(DateUtils.parseRfc822Date(header.getValue()));
                 } catch (Exception pe) {
-                    log.warn("Unable to parse http expiration date: " + header.getValue(), pe);
+                    LOG.warn("Unable to parse http expiration date: " + header.getValue(), pe);
                 }
             } else if (key.equalsIgnoreCase(Headers.EXPIRATION)) {
                 new ObjectExpirationHeaderHandler<ObjectMetadata>().handle(metadata, response);

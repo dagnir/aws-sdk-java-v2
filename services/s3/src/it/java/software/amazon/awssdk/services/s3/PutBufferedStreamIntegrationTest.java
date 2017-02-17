@@ -33,16 +33,18 @@ public class PutBufferedStreamIntegrationTest extends S3IntegrationTestBase {
     private String bucketName = "put-stream-object-integ-test-" + new Date().getTime();
     private String key = "key";
 
-    /** Releases all resources created by this test */
+    /** Releases all resources created by this test. */
     @After
     public void tearDown() {
         try {
             s3.deleteObject(bucketName, key);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             s3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

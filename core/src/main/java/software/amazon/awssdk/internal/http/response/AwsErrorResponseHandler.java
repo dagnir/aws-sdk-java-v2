@@ -19,7 +19,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * Wrapper around protocol specific error handler to deal with some default scenarios and fill in common information.
@@ -28,10 +28,10 @@ import software.amazon.awssdk.util.AWSRequestMetrics;
 public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServiceException> {
 
     private final HttpResponseHandler<AmazonServiceException> delegate;
-    private final AWSRequestMetrics awsRequestMetrics;
+    private final AwsRequestMetrics awsRequestMetrics;
 
     public AwsErrorResponseHandler(HttpResponseHandler<AmazonServiceException> errorResponseHandler,
-                                   AWSRequestMetrics awsRequestMetrics) {
+                                   AwsRequestMetrics awsRequestMetrics) {
         this.delegate = errorResponseHandler;
         this.awsRequestMetrics = awsRequestMetrics;
     }
@@ -41,9 +41,9 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServic
         final AmazonServiceException ase = handleAse(response);
         ase.setStatusCode(response.getStatusCode());
         ase.setServiceName(response.getRequest().getServiceName());
-        awsRequestMetrics.addPropertyWith(AWSRequestMetrics.Field.AWSRequestID, ase.getRequestId())
-                         .addPropertyWith(AWSRequestMetrics.Field.AWSErrorCode, ase.getErrorCode())
-                         .addPropertyWith(AWSRequestMetrics.Field.StatusCode, ase.getStatusCode());
+        awsRequestMetrics.addPropertyWith(AwsRequestMetrics.Field.AWSRequestID, ase.getRequestId())
+                         .addPropertyWith(AwsRequestMetrics.Field.AWSErrorCode, ase.getErrorCode())
+                         .addPropertyWith(AwsRequestMetrics.Field.StatusCode, ase.getStatusCode());
         return ase;
     }
 

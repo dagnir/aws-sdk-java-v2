@@ -76,7 +76,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     //    private static final long INTERRUUPT_SIZE = 10 * MB;
     //    private static final long END_BYTE = TEST_OBJECT_CONTENT_LENTH - 1000;
 
-    //    /** The name of the Object in Amazon S3 */
+    //    /** The name of the Object in Amazon S3. */
     //    private static final String key = "key";
 
     /** The bucket name in Amazon S3 used by the test cases. */
@@ -95,7 +95,6 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
     /**
      * Creates an empty state file and download file for all test cases.
      *
-     * @throws Exception
      */
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -112,6 +111,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             try {
                 deleteBucketAndAllContents(bucketName);
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
     }
@@ -274,6 +274,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             upload.pause();
             fail("An exception should be thrown here saying that operation pause is not possible as the state cannot be captured in this case.");
         } catch (AmazonClientException ace) {
+            // Ignored or expected.
         }
     }
 
@@ -317,6 +318,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             upload.waitForCompletion();
             fail("An amazon service exception must be thrown as the upload id given is not present in the s3 server side");
         } catch (AmazonServiceException ace) {
+            // Ignored or expected.
         }
     }
 
@@ -345,6 +347,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             s3.getObject(bucketName, key);
             fail("The object should not be in Amazon S3 as the upload was aborted");
         } catch (AmazonServiceException ase) {
+            // Ignored or expected.
         }
     }
 
@@ -378,6 +381,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             encS3.getObject(bucketName, key);
             fail("The object should not be in Amazon S3 as the upload was aborted");
         } catch (AmazonServiceException ase) {
+            // Ignored or expected.
         }
 
     }
@@ -387,7 +391,6 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
      * threshold for multi-part upload. Tries to pause the upload. The transfers
      * must be aborted and the state capture must fail.
      *
-     * @throws InterruptedException
      */
     @Test
     public void testTryPauseOnUploadWithFileSizeLessThanUploadThreshold()
@@ -410,6 +413,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             s3.getObject(bucketName, key);
             fail("The object should not be available in Amazon S3 as the upload was aborted");
         } catch (AmazonServiceException e) {
+            // Ignored or expected.
         }
     }
 
@@ -931,6 +935,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             download.waitForCompletion();
             fail("A security Exception must be thrown here as we are trying to do a range get in Strict Authenticated Encryption mode");
         } catch (AmazonClientException e) {
+            // Ignored or expected.
         }
     }
 
@@ -987,6 +992,7 @@ public class TransferManagerPauseAndResumeIntegrationTest extends
             s3.getObject(bucketName, key);
             fail("The object should not be available in Amazon S3 as the upload was aborted");
         } catch (AmazonServiceException e) {
+            // Ignored or expected.
         }
 
     }

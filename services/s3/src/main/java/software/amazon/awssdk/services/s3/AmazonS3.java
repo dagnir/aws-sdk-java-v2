@@ -25,6 +25,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.internal.S3DirectSpi;
@@ -251,8 +252,8 @@ public interface AmazonS3 extends S3DirectSpi {
      *             If any errors occurred in Amazon S3 while processing the
      *             request.
      * @deprecated this operation will not retain the ACL's or SSE parameters
-     * associated with the given Amazon S3 object. Use {@link #copyObject(CopyObjectRequest)}
-     * instead.
+     *     associated with the given Amazon S3 object. Use {@link #copyObject(CopyObjectRequest)}
+     *     instead.
      */
     @Deprecated
     void changeObjectStorageClass(String bucketName, String key, StorageClass newStorageClass)
@@ -276,8 +277,8 @@ public interface AmazonS3 extends S3DirectSpi {
      *             If any errors occurred in Amazon S3 while processing the
      *             request.
      * @deprecated this operation will not retain the ACL's or SSE parameters
-     * associated with the given Amazon S3 object. Use {@link #copyObject(CopyObjectRequest)}
-     * instead.
+     *     associated with the given Amazon S3 object. Use {@link #copyObject(CopyObjectRequest)}
+     *     instead.
      */
     @Deprecated
     void setObjectRedirectLocation(String bucketName, String key, String newRedirectLocation)
@@ -347,10 +348,10 @@ public interface AmazonS3 extends S3DirectSpi {
      * <p>
      * For example, consider a bucket that contains the following keys:
      * <ul>
-     * 	<li>"foo/bar/baz"</li>
-     * 	<li>"foo/bar/bash"</li>
-     * 	<li>"foo/bar/bang"</li>
-     * 	<li>"foo/boo"</li>
+     *     <li>"foo/bar/baz"</li>
+     *     <li>"foo/bar/bash"</li>
+     *     <li>"foo/bar/bang"</li>
+     *     <li>"foo/boo"</li>
      * </ul>
      * If calling <code>listObjects</code> with
      * a <code>prefix</code> value of "foo/" and a <code>delimiter</code> value of "/"
@@ -372,7 +373,7 @@ public interface AmazonS3 extends S3DirectSpi {
      *            beginning with the specified prefix. Use prefixes to
      *            separate a bucket into different sets of keys,
      *            similar to how a file system organizes files
-     * 		      into directories.
+     *               into directories.
      *
      * @return A listing of the objects in the specified bucket, along with any
      *         other associated information, such as common prefixes (if a
@@ -422,10 +423,10 @@ public interface AmazonS3 extends S3DirectSpi {
      * <p>
      * For example, consider a bucket that contains the following keys:
      * <ul>
-     * 	<li>"foo/bar/baz"</li>
-     * 	<li>"foo/bar/bash"</li>
-     * 	<li>"foo/bar/bang"</li>
-     * 	<li>"foo/boo"</li>
+     *     <li>"foo/bar/baz"</li>
+     *     <li>"foo/bar/bash"</li>
+     *     <li>"foo/bar/bang"</li>
+     *     <li>"foo/boo"</li>
      * </ul>
      * If calling <code>listObjects</code> with
      * a prefix value of "foo/" and a delimiter value of "/"
@@ -595,7 +596,7 @@ public interface AmazonS3 extends S3DirectSpi {
      *            beginning with the specified prefix. Use prefixes to
      *            separate a bucket into different sets of keys,
      *            similar to how a file system organizes files
-     * 		      into directories.
+     *               into directories.
      *
      * @return A listing of the versions in the specified bucket, along with any
      *         other associated information and original request parameters.
@@ -745,18 +746,18 @@ public interface AmazonS3 extends S3DirectSpi {
      * <p>
      * For example, consider a bucket that contains the following keys:
      * <ul>
-     * 	<li>"foo/bar/baz"</li>
-     * 	<li>"foo/bar/bash"</li>
-     * 	<li>"foo/bar/bang"</li>
-     * 	<li>"foo/boo"</li>
+     *     <li>"foo/bar/baz"</li>
+     *     <li>"foo/bar/bash"</li>
+     *     <li>"foo/bar/bang"</li>
+     *     <li>"foo/boo"</li>
      * </ul>
      * If calling <code>listVersions</code> with
      * a <code>prefix</code> value of "foo/" and a <code>delimiter</code> value of "/"
      * on this bucket, a <code>VersionListing</code> is returned that contains:
-     * 	<ul>
-     * 		<li>all the versions for one key ("foo/boo")</li>
-     * 		<li>one entry in the common prefixes list ("foo/bar/")</li>
-     * 	</ul>
+     *     <ul>
+     *         <li>all the versions for one key ("foo/boo")</li>
+     *         <li>one entry in the common prefixes list ("foo/bar/")</li>
+     *     </ul>
      * </p>
      * <p>
      * To see deeper into the virtual hierarchy, make
@@ -777,7 +778,7 @@ public interface AmazonS3 extends S3DirectSpi {
      *            begin with the specified prefix. Use prefixes to
      *            separate a bucket into different sets of keys,
      *            similar to how a file system organizes files
-     * 		      into directories.
+     *               into directories.
      * @param keyMarker
      *            Optional parameter indicating where in the sorted list of all
      *            versions in the specified bucket to begin returning results.
@@ -2049,7 +2050,8 @@ public interface AmazonS3 extends S3DirectSpi {
      * </p>
      * <ul>
      * <li>Use the data from the input stream in Amazon S3 object as soon as possible</li>
-     * <li>Read all data from the stream (use {@link GetObjectRequest#setRange(long, long)} to request only the bytes you need)</li>
+     * <li>Read all data from the stream (use {@link GetObjectRequest#setRange(long, long)} to request
+     *     only the bytes you need)</li>
      * <li>Close the input stream in Amazon S3 object as soon as possible</li>
      * </ul>
      * If these rules are not followed, the client can run out of resources by
@@ -2113,7 +2115,8 @@ public interface AmazonS3 extends S3DirectSpi {
      * </p>
      * <ul>
      * <li>Use the data from the input stream in Amazon S3 object as soon as possible</li>
-     * <li>Read all data from the stream (use {@link GetObjectRequest#setRange(long, long)} to request only the bytes you need)</li>
+     * <li>Read all data from the stream (use {@link GetObjectRequest#setRange(long, long)} to request
+     *     only the bytes you need)</li>
      * <li>Close the input stream in Amazon S3 object as soon as possible</li>
      * </ul>
      * If these rules are not followed, the client can run out of resources by
@@ -2271,7 +2274,7 @@ public interface AmazonS3 extends S3DirectSpi {
      *            the tags for the specified object.
      *
      * @return a {@link DeleteObjectTaggingResult} object containing the
-     * information returned by S3 for the the tag deletion.
+     *     information returned by S3 for the the tag deletion.
      * @see <a href="http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/DeleteObjectTagging">AWS API Documentation</a>
      */
     public DeleteObjectTaggingResult deleteObjectTagging(DeleteObjectTaggingRequest deleteObjectTaggingRequest);
@@ -3372,7 +3375,7 @@ public interface AmazonS3 extends S3DirectSpi {
      *            The name of the bucket for which to retrieve cross origin
      *            configuration.
      * @param bucketCrossOriginConfiguration
-     * 			  The new cross origin configuration for this bucket, which
+     *               The new cross origin configuration for this bucket, which
      *            completely replaces any existing configuration.
      * @see <a href="http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/PutBucketCors">AWS API Documentation</a>
      */
@@ -4751,8 +4754,7 @@ public interface AmazonS3 extends S3DirectSpi {
      * @see AmazonS3#getBucketReplicationConfiguration(String)
      * @see AmazonS3#deleteBucketReplicationConfiguration(String)
      */
-    void deleteBucketReplicationConfiguration
-    (DeleteBucketReplicationConfigurationRequest request)
+    void deleteBucketReplicationConfiguration(DeleteBucketReplicationConfigurationRequest request)
             throws AmazonServiceException, SdkClientException;
 
     /**
@@ -5064,8 +5066,7 @@ public interface AmazonS3 extends S3DirectSpi {
      *
      * @param listBucketInventoryConfigurationsRequest
      *              The request object to list the inventory configurations in a bucket.
-     * @return
-     *              An {@link ListBucketInventoryConfigurationsResult} object containing the list of {@link InventoryConfiguration}s.
+     * @return An {@link ListBucketInventoryConfigurationsResult} object containing the list of {@link InventoryConfiguration}s.
      */
     public ListBucketInventoryConfigurationsResult listBucketInventoryConfigurations(
             ListBucketInventoryConfigurationsRequest listBucketInventoryConfigurationsRequest)
@@ -5101,16 +5102,16 @@ public interface AmazonS3 extends S3DirectSpi {
      *             available in the given region. See
      *             {@link software.amazon.awssdk.regions.Region#isServiceSupported(String)}
      * @see software.amazon.awssdk.regions.Region#getRegion(software.amazon.awssdk.regions.Regions)
-     * @see software.amazon.awssdk.regions.Region#createClient(Class, software.amazon.awssdk.auth.AWSCredentialsProvider, ClientConfiguration)
+     * @see software.amazon.awssdk.regions.Region#createClient(Class, AwsCredentialsProvider, ClientConfiguration)
      */
     public void setRegion(software.amazon.awssdk.regions.Region region) throws IllegalArgumentException;
 
     /**
      * Returns a string representation of the region with which this
-     * client is configured
+     * client is configured.
      *
      * @return String value representing the region this client will
-     * communicate with
+     *     communicate with
      */
     String getRegionName();
 

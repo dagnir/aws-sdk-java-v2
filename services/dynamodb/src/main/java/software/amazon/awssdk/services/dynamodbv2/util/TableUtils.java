@@ -33,9 +33,9 @@ import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
  * <pre class="brush: java">
  * // ... create DynamoDB table ...
  * try {
- * 	waitUntilActive(dynamoDB, myTableName());
+ *     waitUntilActive(dynamoDB, myTableName());
  * } catch (AmazonClientException e) {
- * 	// table didn't become active
+ *     // table didn't become active
  * }
  * // ... start making calls to table ...
  * </pre>
@@ -176,7 +176,6 @@ public class TableUtils {
      * @return Null if DescribeTables never returns a result, otherwise the
      *         result of the last poll attempt (which may or may not have the
      *         desired state)
-     * @throws InterruptedException
      * @throws {@link
      *             IllegalArgumentException} If timeout or interval is invalid
      */

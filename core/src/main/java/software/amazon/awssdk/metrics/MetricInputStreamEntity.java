@@ -30,7 +30,7 @@ import software.amazon.awssdk.runtime.MetricAware;
  * stack to minimize runtime overhead.
  */
 public class MetricInputStreamEntity extends InputStreamEntity {
-    private final static int BUFFER_SIZE = 2048;
+    private static final int BUFFER_SIZE = 2048;
     private final ByteThroughputHelper helper;
 
     public MetricInputStreamEntity(ThroughputMetricType metricType,

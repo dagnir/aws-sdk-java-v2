@@ -49,7 +49,7 @@ public class QueryResultPage<T> {
      * is the last page of results.
      *
      * @return The key-value pairs which map from the attribute name of each component
-     * 			of the primary key to its value.
+     *             of the primary key to its value.
      */
     public Map<String, AttributeValue> getLastEvaluatedKey() {
         return lastEvaluatedKey;

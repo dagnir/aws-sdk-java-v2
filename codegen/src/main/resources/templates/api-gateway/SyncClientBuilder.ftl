@@ -6,7 +6,7 @@ import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.opensdk.protect.client.SdkSyncClientBuilder;
 import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfigurationFactory;
 <#if metadata.requiresIamSigners>
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
 </#if>
 <#list customAuthorizers?values as customSigner>
@@ -63,24 +63,24 @@ public final class ${metadata.syncClientBuilderClassName}
 
     <#if metadata.requiresIamSigners>
     /**
-     * Specify an implementation of {@link AWSCredentialsProvider} to be used
+     * Specify an implementation of {@link AwsCredentialsProvider} to be used
      * when signing IAM auth'd requests
      *
      * @param iamCredentials the credential provider
      */
     @Override
-    public void setIamCredentials(AWSCredentialsProvider iamCredentials) {
+    public void setIamCredentials(AwsCredentialsProvider iamCredentials) {
         super.setIamCredentials(iamCredentials);
     }
 
     /**
-     * Specify an implementation of {@link AWSCredentialsProvider} to be used
+     * Specify an implementation of {@link AwsCredentialsProvider} to be used
      * when signing IAM auth'd requests
      *
      * @param iamCredentials the credential provider
      * @return This object for method chaining.
      */
-    public ${metadata.syncClientBuilderClassName} iamCredentials(AWSCredentialsProvider iamCredentials) {
+    public ${metadata.syncClientBuilderClassName} iamCredentials(AwsCredentialsProvider iamCredentials) {
         setIamCredentials(iamCredentials);
         return this;
     }

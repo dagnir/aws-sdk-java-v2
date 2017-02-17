@@ -29,13 +29,13 @@ import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.MetricType;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AWSMetricTransformerFactory;
+import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AwsMetricTransformerFactory;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
-import software.amazon.awssdk.util.AWSRequestMetrics;
-import software.amazon.awssdk.util.AWSRequestMetrics.Field;
+import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics.Field;
 import software.amazon.awssdk.util.TimingInfo;
 
 /**
@@ -47,7 +47,7 @@ import software.amazon.awssdk.util.TimingInfo;
  * >http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/
  * publishingMetrics.html</a>
  *
- * @see AWSRequestMetrics
+ * @see AwsRequestMetrics
  * @see RequestMetricCollector
  */
 @ThreadSafe
@@ -96,7 +96,7 @@ public class PredefinedMetricTransformer {
             }
         }
         // Predefined metrics for specific service clients
-        for (AWSMetricTransformerFactory aws : AWSMetricTransformerFactory.values()) {
+        for (AwsMetricTransformerFactory aws : AwsMetricTransformerFactory.values()) {
             if (metricType.name().startsWith(aws.name())) {
                 List<MetricDatum> metricData = aws.getRequestMetricTransformer()
                                                   .toMetricData(metricType, request, response);
@@ -126,7 +126,7 @@ public class PredefinedMetricTransformer {
      */
     protected List<MetricDatum> metricOfRequestOrRetryCount(
             Field metricType, Request<?> req, Object resp) {
-        AWSRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAWSRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         // Always retrieve the request count even for retry which is equivalent
         // to the number of requests minus one.
@@ -162,7 +162,7 @@ public class PredefinedMetricTransformer {
 
     protected List<MetricDatum> metricOfCount(
             Field metricType, Request<?> req, Object resp) {
-        AWSRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAWSRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         Number counter = ti.getCounter(metricType.name());
         if (counter == null) {
@@ -195,7 +195,7 @@ public class PredefinedMetricTransformer {
      */
     protected List<MetricDatum> latencyMetricOf(MetricType metricType,
                                                 Request<?> req, Object response, boolean includesRequestType) {
-        AWSRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAWSRequestMetrics();
         TimingInfo root = m.getTimingInfo();
         final String metricName = metricType.name();
         List<TimingInfo> subMeasures =
@@ -237,7 +237,7 @@ public class PredefinedMetricTransformer {
      * root into account.
      */
     protected List<MetricDatum> latencyOfClientExecuteTime(Request<?> req, Object response) {
-        AWSRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAWSRequestMetrics();
         TimingInfo root = m.getTimingInfo();
         final String metricName = Field.ClientExecuteTime.name();
         if (root.isEndTimeKnown()) { // being defensive
@@ -276,7 +276,7 @@ public class PredefinedMetricTransformer {
      */
     protected List<MetricDatum> counterMetricOf(MetricType type,
                                                 Request<?> req, Object resp, boolean includesRequestType) {
-        AWSRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAWSRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         final String metricName = type.name();
         Number counter = ti.getCounter(metricName);

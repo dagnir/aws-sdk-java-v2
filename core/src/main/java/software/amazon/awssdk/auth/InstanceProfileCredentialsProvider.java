@@ -33,7 +33,7 @@ import software.amazon.awssdk.util.EC2MetadataUtils;
  * Credentials provider implementation that loads credentials from the Amazon
  * EC2 Instance Metadata Service.
  */
-public class InstanceProfileCredentialsProvider implements AWSCredentialsProvider {
+public class InstanceProfileCredentialsProvider implements AwsCredentialsProvider {
 
     private static final Log LOG = LogFactory.getLog(InstanceProfileCredentialsProvider.class);
 
@@ -130,17 +130,10 @@ public class InstanceProfileCredentialsProvider implements AWSCredentialsProvide
         LOG.error(t.getMessage(), t);
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        if (executor != null) {
-            executor.shutdownNow();
-        }
-    }
-
 
     @Override
-    public AWSCredentials getCredentials() {
-        AWSCredentials creds = credentialsFetcher.getCredentials();
+    public AwsCredentials getCredentials() {
+        AwsCredentials creds = credentialsFetcher.getCredentials();
         shouldRefresh = true;
         return creds;
     }

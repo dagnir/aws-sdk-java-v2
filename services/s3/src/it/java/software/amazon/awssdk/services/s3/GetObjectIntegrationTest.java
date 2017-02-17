@@ -51,30 +51,30 @@ import software.amazon.awssdk.util.StringInputStream;
  * Integration tests for the advanced options to the getObject operations (i.e.
  * ranges and constraints).
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class GetObjectIntegrationTest extends S3IntegrationTestBase {
 
     //    private static final Random RANDOM = new Random();
     private static final boolean ANDROID_TESTING = false;
 
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String bucketName = "java-get-object-integ-test-" + new Date().getTime();
 
-    /** The key used in these tests */
+    /** The key used in these tests. */
     private static final String key = "key";
     private static final long sleepTimeInMillis = 3000;
-    /** A date earlier than the uploaded object's last modified date */
+    /** A date earlier than the uploaded object's last modified date. */
     private static Date earlierDate;
-    /** A date after the uploaded object's last modified date */
+    /** A date after the uploaded object's last modified date. */
     private static Date laterDate;
-    /** The ETag of the uploaded object being retrieved */
+    /** The ETag of the uploaded object being retrieved. */
     private static String etag;
-    /** The file containing the test data uploaded to S3 */
+    /** The file containing the test data uploaded to S3. */
     private static File file;
-    /** The file size of the file containing the test data uploaded to S3*/
+    /** The file size of the file containing the test data uploaded to S3.*/
     private static long fileSize = 100000L;
-    /** The inputStream containing the test data uploaded to S3 */
+    /** The inputStream containing the test data uploaded to S3. */
     private static byte[] tempData;
 
     @AfterClass
@@ -489,6 +489,7 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
             s3.putObject(putObjectRequest);
             fail("Expected exception");
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
     }
 
@@ -571,7 +572,6 @@ public class GetObjectIntegrationTest extends S3IntegrationTestBase {
      * as part of the forum issue
      * https://forums.aws.amazon.com/thread.jspa?messageID=438171#
      *
-     * @throws Exception
      */
     @Test
     public void testGetObjectWithClientSetToNullBeforeReadingFromInputStream()

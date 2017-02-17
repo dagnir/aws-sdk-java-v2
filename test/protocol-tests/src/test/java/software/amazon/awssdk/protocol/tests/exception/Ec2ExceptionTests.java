@@ -22,18 +22,19 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocol.ec2.AmazonProtocolEc2Client;
 import software.amazon.awssdk.services.protocol.ec2.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocol.ec2.model.AmazonProtocolEc2Exception;
 
 public class Ec2ExceptionTests {
-
     private static final String PATH = "/";
-    private final AmazonProtocolEc2Client client = new AmazonProtocolEc2Client(
-            new BasicAWSCredentials("akid", "skid"));
+
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
+
+    private final AmazonProtocolEc2Client client = new AmazonProtocolEc2Client(
+            new BasicAwsCredentials("akid", "skid"));
 
     @Before
     public void setup() {

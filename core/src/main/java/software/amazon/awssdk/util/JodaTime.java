@@ -63,14 +63,15 @@ public enum JodaTime {
                    && checkParseRfc822Date()
                     ;
         } catch (Exception ignore) {
+            // Ignored or expected.
         }
         return false;
     }
 
     private static boolean checkTT0031561767() throws ParseException {
         String input = "Fri, 16 May 2014 23:56:46 GMT";
-        Date date = new Date(DateUtils.rfc822DateFormat.parseMillis(input));
-        return input.equals(DateUtils.rfc822DateFormat.print(date.getTime()));
+        Date date = new Date(DateUtils.RFC_822_DATE_FORMAT.parseMillis(input));
+        return input.equals(DateUtils.RFC_822_DATE_FORMAT.print(date.getTime()));
     }
 
     private static boolean checkFormatIso8601Date() throws ParseException {
@@ -79,10 +80,10 @@ public enum JodaTime {
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String expected = sdf.format(date);
-        String actual = DateUtils.iso8601DateFormat.print(date.getTime());
+        String actual = DateUtils.ISO_8601_DATE_FORMAT.print(date.getTime());
         if (expected.equals(actual)) {
             Date expectedDate = sdf.parse(expected);
-            Date actualDate = DateUtils.doParseISO8601Date(actual);
+            Date actualDate = DateUtils.doParseIso8601Date(actual);
             return expectedDate.equals(actualDate);
         }
         return false;
@@ -94,10 +95,10 @@ public enum JodaTime {
                 "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String expected = sdf.format(date);
-        String actual = DateUtils.rfc822DateFormat.print(date.getTime());
+        String actual = DateUtils.RFC_822_DATE_FORMAT.print(date.getTime());
         if (expected.equals(actual)) {
             Date expectedDate = sdf.parse(expected);
-            Date actualDate2 = new Date(DateUtils.rfc822DateFormat.parseMillis(actual));
+            Date actualDate2 = new Date(DateUtils.RFC_822_DATE_FORMAT.parseMillis(actual));
             return expectedDate.equals(actualDate2);
         }
         return false;
@@ -109,7 +110,7 @@ public enum JodaTime {
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
         Date expected = sdf.parse(formatted);
-        Date actual = new Date(DateUtils.compressedIso8601DateFormat.parseMillis(formatted));
+        Date actual = new Date(DateUtils.COMPRESSED_ISO_8601_DATE_FORMAT.parseMillis(formatted));
         return expected.equals(actual);
     }
 
@@ -120,7 +121,7 @@ public enum JodaTime {
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
         Date expected = sdf.parse(formatted);
-        Date actual2 = new Date(DateUtils.rfc822DateFormat.parseMillis(formatted));
+        Date actual2 = new Date(DateUtils.RFC_822_DATE_FORMAT.parseMillis(formatted));
         return expected.equals(actual2);
     }
 
@@ -130,10 +131,10 @@ public enum JodaTime {
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
-        String alternative = DateUtils.iso8601DateFormat.print(date.getTime());
+        String alternative = DateUtils.ISO_8601_DATE_FORMAT.print(date.getTime());
         if (formatted.equals(alternative)) {
             Date expectedDate = sdf.parse(formatted);
-            Date actualDate = DateUtils.doParseISO8601Date(formatted);
+            Date actualDate = DateUtils.doParseIso8601Date(formatted);
             return expectedDate.equals(actualDate);
         }
         return false;
@@ -145,11 +146,11 @@ public enum JodaTime {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
-        String alternative = DateUtils.alternateIso8601DateFormat.print(date
+        String alternative = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.print(date
                                                                                 .getTime());
         if (formatted.equals(alternative)) {
             Date expectedDate = sdf.parse(formatted);
-            Date actualDate = DateUtils.parseISO8601Date(formatted);
+            Date actualDate = DateUtils.parseIso8601Date(formatted);
             return expectedDate.equals(actualDate);
         }
         return false;
@@ -160,11 +161,11 @@ public enum JodaTime {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String expected = sdf.format(date);
-        String actual = DateUtils.alternateIso8601DateFormat.print(date
+        String actual = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.print(date
                                                                            .getTime());
         if (expected.equals(actual)) {
             Date expectedDate = sdf.parse(expected);
-            DateTime actualDateTime = DateUtils.alternateIso8601DateFormat
+            DateTime actualDateTime = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT
                     .parseDateTime(actual);
             return expectedDate.getTime() == actualDateTime.getMillis();
         }
@@ -174,9 +175,10 @@ public enum JodaTime {
     private static boolean checkInvalidDate() {
         final String input = "2014-03-06T14:28:58.000Z.000Z";
         try {
-            DateUtils.doParseISO8601Date(input);
+            DateUtils.doParseIso8601Date(input);
             return false;
         } catch (RuntimeException expected) {
+            // Ignored or expected.
         }
         return true;
     }

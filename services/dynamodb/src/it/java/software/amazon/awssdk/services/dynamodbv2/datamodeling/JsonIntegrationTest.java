@@ -32,22 +32,22 @@ import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodbv2.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class JsonIntegrationTest extends AWSTestBase {
+public class JsonIntegrationTest extends AwsTestBase {
 
     private static final String TABLE_NAME = "test-table-"
                                              + UUID.randomUUID().toString();
 
     private static AmazonDynamoDBClient client;
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
 
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
         client = new AmazonDynamoDBClient(credentials);
 
-        mapper = new DynamoDBMapper(
+        mapper = new DynamoDbMapper(
                 client,
                 new DynamoDBMapperConfig.Builder()
                         .withConversionSchema(ConversionSchemas.V2)
@@ -88,6 +88,7 @@ public class JsonIntegrationTest extends AWSTestBase {
         try {
             client.deleteTable(TABLE_NAME);
         } catch (ResourceNotFoundException e) {
+            // Ignored or expected.
         }
     }
 

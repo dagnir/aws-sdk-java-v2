@@ -75,7 +75,7 @@ public final class TransferManagerBuilder {
 
     /**
      * @return Default TransferManager with default configuration. Uses {@link
-     * AmazonS3ClientBuilder} to create a default {@link AmazonS3} client implementation.
+     *     AmazonS3ClientBuilder} to create a default {@link AmazonS3} client implementation.
      */
     public static TransferManager defaultTransferManager() {
         return standard().build();
@@ -148,7 +148,7 @@ public final class TransferManagerBuilder {
 
     /**
      * @return Current configured option on how thread pools should be managed when transfer manager
-     * is shut down.
+     *     is shut down.
      */
     public final Boolean isShutDownThreadPools() {
         return shutDownThreadPools;

@@ -46,8 +46,6 @@ public class BucketLifecycleConfiguration implements Serializable {
     /**
      * Constructs a new {@link BucketLifecycleConfiguration} object with the
      * rules given.
-     *
-     * @param rules
      */
     public BucketLifecycleConfiguration(List<Rule> rules) {
         this.rules = rules;
@@ -129,7 +127,8 @@ public class BucketLifecycleConfiguration implements Serializable {
         private List<NoncurrentVersionTransition> noncurrentVersionTransitions;
 
         /**
-         * Specifies the days since the initiation of an Incomplete Multipart Upload that Lifecycle will wait before permanently removing all parts of the upload.
+         * Specifies the days since the initiation of an Incomplete Multipart Upload that Lifecycle will wait before permanently
+         * removing all parts of the upload.
          */
         private AbortIncompleteMultipartUpload abortIncompleteMultipartUpload;
 
@@ -338,7 +337,7 @@ public class BucketLifecycleConfiguration implements Serializable {
          * different storage classes in Amazon S3. Bucket Life cycle
          * configuration can now accept multiple transitions in a rule.
          * @Deprecated in favor of {@link #withTransitions(List)}
-         * Returns an updated reference of this object.
+         * @return an updated reference of this object.
          */
         @Deprecated
         public Rule withTransition(Transition transition) {
@@ -484,8 +483,7 @@ public class BucketLifecycleConfiguration implements Serializable {
             this.abortIncompleteMultipartUpload = abortIncompleteMultipartUpload;
         }
 
-        public Rule withAbortIncompleteMultipartUpload
-                (AbortIncompleteMultipartUpload abortIncompleteMultipartUpload) {
+        public Rule withAbortIncompleteMultipartUpload(AbortIncompleteMultipartUpload abortIncompleteMultipartUpload) {
             setAbortIncompleteMultipartUpload(abortIncompleteMultipartUpload);
             return this;
         }
@@ -526,7 +524,6 @@ public class BucketLifecycleConfiguration implements Serializable {
          * Fluent method for setting the value of the ExpiredObjectDeleteMarkers attributes. See
          * {@link #setExpiredObjectDeleteMarker(boolean)}
          *
-         * @param expiredObjectDeleteMarker
          * @return This object for method chaining
          */
         public Rule withExpiredObjectDeleteMarker(boolean expiredObjectDeleteMarker) {

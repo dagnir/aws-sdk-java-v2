@@ -35,6 +35,6 @@ public final class DateTimeJsonSerializer extends JsonSerializer<DateTime> {
             JsonGenerator jgen,
             SerializerProvider provider) throws IOException {
 
-        jgen.writeString(DateUtils.formatISO8601Date(value));
+        jgen.writeString(DateUtils.formatIso8601Date(value));
     }
 }

@@ -20,14 +20,14 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 /**
  * Adapter interface to convert one type to another
  *
- * @param <Source>
+ * @param <SourceT>
  *            Source type
- * @param <Destination>
+ * @param <DestinationT>
  *            Destination type
  */
 @SdkInternalApi
-public interface TypeAdapter<Source, Destination> {
+public interface TypeAdapter<SourceT, DestinationT> {
 
-    Destination adapt(Source source);
+    DestinationT adapt(SourceT source);
 
 }

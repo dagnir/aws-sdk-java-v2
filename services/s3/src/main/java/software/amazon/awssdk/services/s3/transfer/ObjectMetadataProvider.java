@@ -30,10 +30,10 @@ public interface ObjectMetadataProvider {
      * and gives an opportunity to specify the metadata for the file.
      *
      * @param file
-     * 			The file being uploaded.
+     *             The file being uploaded.
      *
      * @param metadata
-     * 			The default metadata for the file. You can modify this object to specify
+     *             The default metadata for the file. You can modify this object to specify
      * your own metadata.
      */
     public void provideObjectMetadata(final File file, final ObjectMetadata metadata);

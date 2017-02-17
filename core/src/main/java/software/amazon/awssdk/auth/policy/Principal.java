@@ -183,7 +183,7 @@ public class Principal {
      * role's policy. The returned credentials consist of an Access Key ID, a
      * Secret Access Key, and a security token.
      */
-    static public enum Services {
+    public enum Services {
 
         AWSDataPipeline("datapipeline.amazonaws.com"),
         AmazonElasticTranscoder("elastictranscoder.amazonaws.com"),
@@ -225,7 +225,7 @@ public class Principal {
     /**
      * Web identity providers, such as Login with Amazon, Facebook, or Google.
      */
-    static public enum WebIdentityProviders {
+    public static enum WebIdentityProviders {
 
         Facebook("graph.facebook.com"),
         Google("accounts.google.com"),

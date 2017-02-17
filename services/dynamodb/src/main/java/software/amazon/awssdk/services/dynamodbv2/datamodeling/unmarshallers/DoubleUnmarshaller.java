@@ -25,11 +25,11 @@ public class DoubleUnmarshaller extends NUnmarshaller {
     private static final DoubleUnmarshaller INSTANCE =
             new DoubleUnmarshaller();
 
-    public static DoubleUnmarshaller instance() {
-        return INSTANCE;
+    private DoubleUnmarshaller() {
     }
 
-    private DoubleUnmarshaller() {
+    public static DoubleUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

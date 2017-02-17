@@ -155,7 +155,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     /**
      * Returns the count of items accumulated so far.
      * @deprecated This method returns the accumulated count and not the total count.
-     * Use {@link #getAccumulatedItemCount} instead.
+     *     Use {@link #getAccumulatedItemCount} instead.
      */
     @Deprecated
     public int getTotalCount() {
@@ -172,7 +172,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     /**
      * Returns the scanned count accumulated so far.
      * @deprecated This method returns the accumulated count and not the total count.
-     * Use {@link #getAccumulatedScannedCount} instead.
+     *     Use {@link #getAccumulatedScannedCount} instead.
      */
     @Deprecated
     public int getTotalScannedCount() {
@@ -189,7 +189,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     /**
      * Returns the consumed capacity accumulated so far.
      * @deprecated This method returns the accumulated consumed capacity and not the total.
-     * Use {@link #getAccumulatedScannedCount} instead.
+     *     Use {@link #getAccumulatedScannedCount} instead.
      */
     @Deprecated
     public ConsumedCapacity getTotalConsumedCapacity() {

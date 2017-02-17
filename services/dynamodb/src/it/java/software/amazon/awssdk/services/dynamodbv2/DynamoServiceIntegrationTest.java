@@ -73,7 +73,7 @@ import utils.test.util.DynamoDBTestBase;
 
 
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources( {
+@RequiredResources({
                             @RequiredResource(resource = BasicTempTable.class,
                                               creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
                                               retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS),
@@ -328,7 +328,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
 
         // Update an item
         Map<String, AttributeValueUpdate> itemUpdates = new HashMap<String, AttributeValueUpdate>();
-        itemUpdates.put("1", new AttributeValueUpdate(new AttributeValue("\u00A2"), AttributeAction.PUT.toString()));
+        itemUpdates.put("1", new AttributeValueUpdate(new AttributeValue("¢"), AttributeAction.PUT.toString()));
         itemUpdates.put("foos", new AttributeValueUpdate(new AttributeValue().withSS("foo"), AttributeAction.PUT.toString()));
         itemUpdates.put("S", new AttributeValueUpdate(new AttributeValue().withSS("THREE"), AttributeAction.ADD.toString()));
         itemUpdates.put("age", new AttributeValueUpdate(new AttributeValue().withN("10"), AttributeAction.ADD.toString()));
@@ -344,7 +344,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
 
         UpdateItemResult updateItemResult = dynamo.updateItem(updateItemRequest);
 
-        assertEquals("\u00A2", updateItemResult.getAttributes().get("1").getS());
+        assertEquals("¢", updateItemResult.getAttributes().get("1").getS());
         assertEquals(1, updateItemResult.getAttributes().get("foos").getSS().size());
         assertTrue(updateItemResult.getAttributes().get("foos").getSS().contains("foo"));
         assertEquals(3, updateItemResult.getAttributes().get("S").getSS().size());

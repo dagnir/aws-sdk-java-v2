@@ -113,9 +113,11 @@ public class MockedClientTests {
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
         try {
-            ClientExecutionAndRequestTimerTestUtils.execute(httpClient, ClientExecutionAndRequestTimerTestUtils.createMockGetRequest());
+            ClientExecutionAndRequestTimerTestUtils
+                    .execute(httpClient, ClientExecutionAndRequestTimerTestUtils.createMockGetRequest());
             fail("Exception expected");
         } catch (AmazonClientException e) {
+            // Ignored or expected.
         }
 
         ClientExecutionAndRequestTimerTestUtils.assertResponseWasNotBuffered(responseProxy);
@@ -133,9 +135,11 @@ public class MockedClientTests {
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
         try {
-            httpClient.requestExecutionBuilder().request(ClientExecutionAndRequestTimerTestUtils.createMockGetRequest()).execute(new ErrorDuringUnmarshallingResponseHandler().leaveConnectionOpen());
+            httpClient.requestExecutionBuilder().request(ClientExecutionAndRequestTimerTestUtils.createMockGetRequest())
+                      .execute(new ErrorDuringUnmarshallingResponseHandler().leaveConnectionOpen());
             fail("Exception expected");
         } catch (AmazonClientException e) {
+            // Ignored or expected.
         }
 
         ClientExecutionAndRequestTimerTestUtils.assertResponseWasNotBuffered(responseProxy);

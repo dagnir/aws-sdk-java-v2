@@ -17,7 +17,7 @@ package software.amazon.awssdk.util;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestConfig;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 
 public class CredentialUtils {
 
@@ -27,9 +27,9 @@ public class CredentialUtils {
      *  takes precedence over the credentials/credentials provider set in the
      *  client.
      */
-    public static AWSCredentialsProvider getCredentialsProvider(
+    public static AwsCredentialsProvider getCredentialsProvider(
             AmazonWebServiceRequest req,
-            AWSCredentialsProvider base) {
+            AwsCredentialsProvider base) {
 
         if (req != null && req.getRequestCredentialsProvider() != null) {
             return req.getRequestCredentialsProvider();
@@ -37,9 +37,9 @@ public class CredentialUtils {
         return base;
     }
 
-    public static AWSCredentialsProvider getCredentialsProvider(
+    public static AwsCredentialsProvider getCredentialsProvider(
             RequestConfig requestConfig,
-            AWSCredentialsProvider base) {
+            AwsCredentialsProvider base) {
 
         if (requestConfig.getCredentialsProvider() != null) {
             return requestConfig.getCredentialsProvider();

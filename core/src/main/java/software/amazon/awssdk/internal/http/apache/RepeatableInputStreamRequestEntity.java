@@ -44,11 +44,11 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
 
     private static final Log log = LogFactory
             .getLog(RepeatableInputStreamRequestEntity.class);
-    /** True if the request entity hasn't been written out yet */
+    /** True if the request entity hasn't been written out yet. */
     private boolean firstAttempt = true;
-    /** The underlying InputStreamEntity being delegated to */
+    /** The underlying InputStreamEntity being delegated to. */
     private InputStreamEntity inputStreamRequestEntity;
-    /** The InputStream containing the content to write out */
+    /** The InputStream containing the content to write out. */
     private InputStream content;
     /**
      * Record the original exception if we do attempt a retry, so that if the

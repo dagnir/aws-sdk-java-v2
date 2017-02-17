@@ -39,21 +39,22 @@ import software.amazon.awssdk.util.Base64;
  */
 public class SignatureChecker {
 
-    private final String NOTIFICATION_TYPE = "Notification";
-    private final String SUBSCRIBE_TYPE = "SubscriptionConfirmation";
-    private final String UNSUBSCRIBE_TYPE = "UnsubscribeConfirmation";
-    private final String TYPE = "Type";
-    private final String SUBSCRIBE_URL = "SubscribeURL";
-    private final String MESSAGE = "Message";
-    private final String TIMESTAMP = "Timestamp";
-    private final String SIGNATURE_VERSION = "SignatureVersion";
-    private final String SIGNATURE = "Signature";
-    private final String MESSAGE_ID = "MessageId";
-    private final String SUBJECT = "Subject";
-    private final String TOPIC = "TopicArn";
-    private final String TOKEN = "Token";
-    private final Set<String> INTERESTING_FIELDS = new HashSet<String>(Arrays.asList(TYPE, SUBSCRIBE_URL, MESSAGE,
-                                                                                     TIMESTAMP, SIGNATURE, SIGNATURE_VERSION, MESSAGE_ID, SUBJECT, TOPIC, TOKEN));
+    private static final String NOTIFICATION_TYPE = "Notification";
+    private static final String SUBSCRIBE_TYPE = "SubscriptionConfirmation";
+    private static final String UNSUBSCRIBE_TYPE = "UnsubscribeConfirmation";
+    private static final String TYPE = "Type";
+    private static final String SUBSCRIBE_URL = "SubscribeURL";
+    private static final String MESSAGE = "Message";
+    private static final String TIMESTAMP = "Timestamp";
+    private static final String SIGNATURE_VERSION = "SignatureVersion";
+    private static final String SIGNATURE = "Signature";
+    private static final String MESSAGE_ID = "MessageId";
+    private static final String SUBJECT = "Subject";
+    private static final String TOPIC = "TopicArn";
+    private static final String TOKEN = "Token";
+    private static final Set<String> INTERESTING_FIELDS = new HashSet<String>(Arrays.asList(TYPE, SUBSCRIBE_URL, MESSAGE, TIMESTAMP,
+                                                                                     SIGNATURE, SIGNATURE_VERSION, MESSAGE_ID,
+                                                                                     SUBJECT, TOPIC, TOKEN));
     private Signature sigChecker;
 
     /**
@@ -124,7 +125,6 @@ public class SignatureChecker {
      *            signing string is the entire post body
      * @param signature
      *            Base64-encoded signature of the message
-     * @return
      */
     public boolean verifySignature(String message, String signature, PublicKey publicKey) {
         boolean result = false;

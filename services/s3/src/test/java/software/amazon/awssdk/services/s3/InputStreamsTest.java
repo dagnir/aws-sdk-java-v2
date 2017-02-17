@@ -57,7 +57,7 @@ public class InputStreamsTest {
         assertEquals("1234567890", new String(in.getBlock()));
     }
 
-    /** Tests the simple use case for InputSubstream */
+    /** Tests the simple use case for InputSubstream. */
     @Test
     public void testSimple() throws Exception {
         InputSubstream in = new InputSubstream(new ByteArrayInputStream(sampleData.getBytes()), 10, 10, true);

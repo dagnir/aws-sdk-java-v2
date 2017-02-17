@@ -94,11 +94,13 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
     public void testControlPlanOperationsUnderAccelerateMode() throws Exception {
         enableAccelerateOnBucket(US_BUCKET_NAME);
 
+        TagSet tags = new TagSet(new HashMap<String, String>() {
+            {
+                put("foo", "bar");
+            }
+        });
         accelerateClient.setBucketTaggingConfiguration(US_BUCKET_NAME,
-                                                       new BucketTaggingConfiguration().withTagSets(new TagSet(
-                                                               new HashMap<String, String>() {{
-                                                                   put("foo", "bar");
-                                                               }})));
+                                                       new BucketTaggingConfiguration().withTagSets(tags));
         accelerateClient.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(US_BUCKET_NAME,
                                                             new BucketVersioningConfiguration()
@@ -134,14 +136,12 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
         }
         assertEquals(
                 BucketAccelerateStatus.Enabled.toString(),
-                s3.getBucketAccelerateConfiguration(US_BUCKET_NAME).getStatus()
-                    );
+                s3.getBucketAccelerateConfiguration(US_BUCKET_NAME).getStatus());
 
         disableAccelerateOnBucket(US_BUCKET_NAME);
         assertEquals(
                 BucketAccelerateStatus.Suspended.toString(),
-                s3.getBucketAccelerateConfiguration(US_BUCKET_NAME).getStatus()
-                    );
+                s3.getBucketAccelerateConfiguration(US_BUCKET_NAME).getStatus());
     }
 
     @Test

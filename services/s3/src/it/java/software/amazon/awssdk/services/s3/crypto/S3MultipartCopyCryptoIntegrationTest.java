@@ -51,17 +51,17 @@ import software.amazon.awssdk.test.util.RandomInputStream;
 public class S3MultipartCopyCryptoIntegrationTest extends S3IntegrationTestBase {
     private static final boolean cleanup = true;
 
-    /** Length of the random temp file to upload */
+    /** Length of the random temp file to upload. */
     private static final long RANDOM_OBJECT_DATA_LENGTH = 6 * GB;
     private final String BUFFER_MULTIPART_UPLOAD_PROPERTY = "software.amazon.awssdk.services.s3.transfer.bufferMultipartUploads";
     TransferManager tm;
-    /** Name of the source bucket we copy from */
+    /** Name of the source bucket we copy from. */
     private String sourceBucketName = "java-sdk-crypto-integ-source-bucket-" + System.currentTimeMillis();
-    /** Name of the target bucket we copy to */
+    /** Name of the target bucket we copy to. */
     private String targetBucketName = "java-sdk-crypto-integ-target-bucket-" + System.currentTimeMillis();
-    /** Name of the source Object we copy from */
+    /** Name of the source Object we copy from. */
     private String sourceObject = "integ-test-source-object-" + new Date().getTime();
-    /** Name of the target Object we copy to */
+    /** Name of the target Object we copy to. */
     private String targetObject = "integ-test-target-object-" + new Date().getTime();
     /** Encryption client using object metadata for crypto metadata storage. */
     private AmazonS3 s3_metadata;

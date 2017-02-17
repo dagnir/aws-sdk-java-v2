@@ -84,7 +84,7 @@ public interface State {
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
             property = PropertyNames.TYPE)
-    @JsonSubTypes( {
+    @JsonSubTypes({
                            @JsonSubTypes.Type(value = ChoiceState.Builder.class, name = CHOICE),
                            @JsonSubTypes.Type(value = FailState.Builder.class, name = FAIL),
                            @JsonSubTypes.Type(value = ParallelState.Builder.class, name = PARALLEL),

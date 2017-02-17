@@ -94,7 +94,6 @@ abstract class NotificationConfigurationStaxUnmarshaller<T extends NotificationC
      *            expected depth for this level of unmarshalling
      * @return True if event has been handled and super class should move on to the next event,
      *         false otherwise
-     * @throws Exception
      */
     protected abstract boolean handleXmlEvent(T config, StaxUnmarshallerContext context, int targetDepth)
             throws Exception;

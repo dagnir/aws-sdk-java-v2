@@ -40,16 +40,16 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  */
 public class CompleteMultipartUploadRequest extends AmazonWebServiceRequest implements Serializable {
 
-    /** The name of the bucket containing the multipart upload to complete */
+    /** The name of the bucket containing the multipart upload to complete. */
     private String bucketName;
 
-    /** The key of the multipart upload to complete */
+    /** The key of the multipart upload to complete. */
     private String key;
 
-    /** The ID of the multipart upload to complete */
+    /** The ID of the multipart upload to complete. */
     private String uploadId;
 
-    /** The list of part numbers and ETags to use when completing the multipart upload */
+    /** The list of part numbers and ETags to use when completing the multipart upload. */
     private List<PartETag> partETags = new ArrayList<PartETag>();
 
     /**

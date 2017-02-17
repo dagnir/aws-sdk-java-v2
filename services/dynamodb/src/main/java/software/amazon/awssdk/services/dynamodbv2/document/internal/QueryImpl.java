@@ -98,15 +98,14 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
     protected ItemCollection<QueryOutcome> doQuery(QuerySpec spec) {
         // set the table name
         String tableName = getTable().getTableName();
-        QueryRequest req = spec.getRequest().withTableName(tableName);
+        QueryRequest request = spec.getRequest().withTableName(tableName);
         // hash key
         final KeyAttribute hashKey = spec.getHashKey();
         if (hashKey != null) {
-            req.addKeyConditionsEntry(hashKey.getName(),
+            request.addKeyConditionsEntry(hashKey.getName(),
                                       new Condition()
                                               .withComparisonOperator(ComparisonOperator.EQ)
-                                              .withAttributeValueList(InternalUtils.toAttributeValue(hashKey.getValue()))
-                                     );
+                                              .withAttributeValueList(InternalUtils.toAttributeValue(hashKey.getValue())));
         }
         // range key condition
         RangeKeyCondition rangeKeyCond = spec.getRangeKeyCondition();
@@ -119,30 +118,28 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
             if (values == null) {
                 throw new IllegalArgumentException("key condition values not specified in range key condition");
             }
-            req.addKeyConditionsEntry(rangeKeyCond.getAttrName(),
+            request.addKeyConditionsEntry(rangeKeyCond.getAttrName(),
                                       new Condition()
                                               .withComparisonOperator(keyCond.toComparisonOperator())
-                                              .withAttributeValueList(InternalUtils.toAttributeValues(values))
-                                     );
+                                              .withAttributeValueList(InternalUtils.toAttributeValues(values)));
         }
         // query filters;
         Collection<QueryFilter> filters = spec.getQueryFilters();
         if (filters != null) {
-            req.setQueryFilter(InternalUtils.toAttributeConditionMap(filters));
+            request.setQueryFilter(InternalUtils.toAttributeConditionMap(filters));
         }
 
         // set up the start key, if any
         Collection<KeyAttribute> startKey = spec.getExclusiveStartKey();
         if (startKey != null) {
-            req.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
+            request.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
         }
 
         // set up the value map, if any (when expression API is used)
         final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up expressions, if any
-        req.withExpressionAttributeNames(spec.getNameMap())
-           .withExpressionAttributeValues(attrValMap)
-        ;
+        request.withExpressionAttributeNames(spec.getNameMap())
+               .withExpressionAttributeValues(attrValMap);
         return new QueryCollection(getClient(), spec);
     }
 

@@ -50,7 +50,7 @@ class CipherLite {
     /**
      * A no-op implementation.
      */
-    static final CipherLite Null = new CipherLite() {
+    static final CipherLite NULL = new CipherLite() {
         @Override
         CipherLite createAuxiliary(long startingBytePos) {
             return this;
@@ -93,7 +93,7 @@ class CipherLite {
      * Creates a new instance of CipherLite from the current one, but using
      * the given IV.
      */
-    CipherLite createUsingIV(byte[] iv) {
+    CipherLite createUsingIv(byte[] iv) {
         return scheme.createCipherLite(secreteKey, iv, this.cipherMode,
                                        cipher.getProvider());
     }
@@ -344,10 +344,10 @@ class CipherLite {
      * decryption, where the IV is derived from a user-supplied password.
      *
      * @return the initialization vector in a new buffer, or null if the
-     * underlying algorithm does not use an IV, or if the IV has not yet
-     * been set.
+     *     underlying algorithm does not use an IV, or if the IV has not yet
+     *     been set.
      */
-    final byte[] getIV() {
+    final byte[] getIv() {
         return cipher.getIV();
     }
 
@@ -355,7 +355,7 @@ class CipherLite {
      * Returns the block size (in bytes).
      *
      * @return the block size (in bytes), or 0 if the underlying algorithm is
-     * not a block cipher
+     *     not a block cipher
      */
     final int getBlockSize() {
         return cipher.getBlockSize();

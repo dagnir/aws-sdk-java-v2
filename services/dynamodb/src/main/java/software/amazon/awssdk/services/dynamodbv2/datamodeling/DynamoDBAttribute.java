@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * the name of the property declared in the class. When they differ, use this
  * annotation with the attributeName() parameter to specify which DynamoDB
  * attribute this property corresponds to. Furthermore, the
- * {@link DynamoDBMapper} class assumes Java naming conventions, and will
+ * {@link DynamoDbMapper} class assumes Java naming conventions, and will
  * lower-case the first character of a getter method's property name to
  * determine the name of the property. E.g., a method getValue() will map to the
  * DynamoDB attribute "value". Similarly, a method isValid() maps to the
@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  */
 @DynamoDB
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBAttribute {
 
     /**

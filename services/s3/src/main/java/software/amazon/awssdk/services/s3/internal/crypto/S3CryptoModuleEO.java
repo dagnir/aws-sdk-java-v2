@@ -18,8 +18,8 @@ package software.amazon.awssdk.services.s3.internal.crypto;
 import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly;
 
 import java.io.File;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
@@ -39,7 +39,7 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
      * @param cryptoConfig a read-only copy of the crypto configuration
      */
     S3CryptoModuleEO(AWSKMS kms, S3Direct s3,
-                     AWSCredentialsProvider credentialsProvider,
+                     AwsCredentialsProvider credentialsProvider,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
         super(kms, s3, credentialsProvider, encryptionMaterialsProvider,
@@ -55,7 +55,7 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
     S3CryptoModuleEO(S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(null, s3, new DefaultAWSCredentialsProviderChain(),
+        this(null, s3, new DefaultAwsCredentialsProviderChain(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 
@@ -65,7 +65,7 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
     S3CryptoModuleEO(AWSKMS kms, S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(kms, s3, new DefaultAWSCredentialsProviderChain(),
+        this(kms, s3, new DefaultAwsCredentialsProviderChain(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 
@@ -90,7 +90,7 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
             ContentCryptoMaterial cekMaterial) {
         MultipartUploadCbcContext encryptedUploadContext = new MultipartUploadCbcContext(
                 req.getBucketName(), req.getKey(), cekMaterial);
-        byte[] iv = cekMaterial.getCipherLite().getIV();
+        byte[] iv = cekMaterial.getCipherLite().getIv();
         encryptedUploadContext.setNextInitializationVector(iv);
         return encryptedUploadContext;
     }
@@ -137,7 +137,7 @@ class S3CryptoModuleEO extends S3CryptoModuleBase<MultipartUploadCbcContext> {
             MultipartUploadCbcContext uploadContext) {
         CipherLite cipherLite = uploadContext.getCipherLite();
         byte[] nextIV = uploadContext.getNextInitializationVector();
-        return cipherLite.createUsingIV(nextIV);
+        return cipherLite.createUsingIv(nextIV);
     }
 
     /*

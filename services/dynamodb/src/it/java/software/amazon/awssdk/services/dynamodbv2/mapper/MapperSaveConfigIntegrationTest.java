@@ -42,7 +42,9 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
     public static void teatDown() throws Exception {
         try {
             //            dynamo.deleteTable(new DeleteTableRequest(tableName));
+
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
@@ -107,7 +109,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         /* First put a new item (with non-key attribute)*/
         TestItem testItem = putRandomUniqueItem("foo", null);
 
-        /* Put an key-only object with the same key */
+        /* Put an key-only object with the same key. */
         testItem.setNonKeyAttribute(null);
 
         dynamoMapper.save(testItem, defaultConfig);
@@ -213,14 +215,14 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         /* First put a new item (with non-key attribute)*/
         TestItem testItem = putRandomUniqueItem("foo", null);
 
-        /* Put an key-only object with the same key */
+        /* Put an key-only object with the same key. */
         testItem.setNonKeyAttribute(null);
 
         dynamoMapper.save(testItem, updateSkipNullConfig);
 
         TestItem returnedObject = (TestItem) dynamoMapper.load(testItem);
 
-        /* The non-key attribute should not be removed */
+        /* The non-key attribute should not be removed. */
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
@@ -329,7 +331,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         Set<String> randomSet = generateRandomStringSet(3);
         TestItem testItem = putRandomUniqueItem("foo", randomSet);
 
-        /* Put an key-only object with the same key */
+        /* Put an key-only object with the same key. */
         testItem.setNonKeyAttribute(null);
         testItem.setStringSetAttribute(null);
 
@@ -337,7 +339,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
 
         TestItem returnedObject = (TestItem) dynamoMapper.load(testItem);
 
-        /* The non-key attribute should not be removed */
+        /* The non-key attribute should not be removed. */
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
@@ -407,7 +409,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
         assertTrue(assertSetEquals(testItem.getStringSetAttribute(), returnedObject.getStringSetAttribute()));
 
-        /* Override nonKeyAttribute and append stringSetAttribute */
+        /* Override nonKeyAttribute and append stringSetAttribute. */
         testItem.setNonKeyAttribute("blabla");
         Set<String> appendSetAttribute = generateRandomStringSet(3);
         testItem.setStringSetAttribute(appendSetAttribute);
@@ -422,7 +424,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         stringSetAttributeValue.addAll(appendSetAttribute);
         assertTrue(assertSetEquals(stringSetAttributeValue, returnedObject.getStringSetAttribute()));
 
-        /* Append on an existing scalar attribute would result in an exception */
+        /* Append on an existing scalar attribute would result in an exception. */
         TestAppendToScalarItem testAppendToScalarItem = new TestAppendToScalarItem();
         testAppendToScalarItem.setHashKey(testItem.getHashKey());
         testAppendToScalarItem.setRangeKey(testItem.getRangeKey());
@@ -466,7 +468,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
     @Test
     public void testClobberWithOnlyKeyAttributesSpecifiedRecordInTable()
             throws Exception {
-        /* Put the item with non-key attribute */
+        /* Put the item with non-key attribute. */
         TestItem testItem = putRandomUniqueItem("foo", null);
 
         /* Override the item by saving a key-only object. */
@@ -507,7 +509,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
     @Test
     public void testClobberWithKeyAndNonKeyAttributesSpecifiedRecordInTable()
             throws Exception {
-        /* Put the item with non-key attribute */
+        /* Put the item with non-key attribute. */
         TestItem testItem = putRandomUniqueItem("foo", null);
 
         /* Override the item. */

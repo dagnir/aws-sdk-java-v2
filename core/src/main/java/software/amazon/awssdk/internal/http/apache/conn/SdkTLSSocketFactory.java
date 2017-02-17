@@ -38,9 +38,9 @@ import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.internal.http.conn.ssl.MasterSecretValidators;
 import software.amazon.awssdk.internal.http.conn.ssl.ShouldClearSslSessionPredicate;
 import software.amazon.awssdk.internal.net.SdkMetricsSocket;
-import software.amazon.awssdk.internal.net.SdkSSLMetricsSocket;
-import software.amazon.awssdk.internal.net.SdkSSLSocket;
 import software.amazon.awssdk.internal.net.SdkSocket;
+import software.amazon.awssdk.internal.net.SdkSslMetricsSocket;
+import software.amazon.awssdk.internal.net.SdkSslSocket;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.util.JavaVersionParser;
 
@@ -132,8 +132,7 @@ public class SdkTLSSocketFactory extends SSLConnectionSocketFactory {
         }
         Socket connectedSocket;
         try {
-            connectedSocket = super.connectSocket
-                    (connectTimeout, socket, host, remoteAddress, localAddress, context);
+            connectedSocket = super.connectSocket(connectTimeout, socket, host, remoteAddress, localAddress, context);
             if (!masterSecretValidator.isMasterSecretValid(connectedSocket)) {
                 throw log(new IllegalStateException("Invalid SSL master secret"));
             }
@@ -149,8 +148,8 @@ public class SdkTLSSocketFactory extends SSLConnectionSocketFactory {
         }
 
         if (connectedSocket instanceof SSLSocket) {
-            SdkSSLSocket sslSocket = new SdkSSLSocket((SSLSocket) connectedSocket);
-            return AwsSdkMetrics.isHttpSocketReadMetricEnabled() ? new SdkSSLMetricsSocket(sslSocket) : sslSocket;
+            SdkSslSocket sslSocket = new SdkSslSocket((SSLSocket) connectedSocket);
+            return AwsSdkMetrics.isHttpSocketReadMetricEnabled() ? new SdkSslMetricsSocket(sslSocket) : sslSocket;
         }
         SdkSocket sdkSocket = new SdkSocket(connectedSocket);
         return AwsSdkMetrics.isHttpSocketReadMetricEnabled() ? new SdkMetricsSocket(sdkSocket) : sdkSocket;

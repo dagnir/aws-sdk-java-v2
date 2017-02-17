@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
  */
 @ThreadSafe
 public class ServiceMetricCollectorSupport extends ServiceMetricCollector {
-    protected final static Log log = LogFactory.getLog(ServiceMetricCollectorSupport.class);
+    protected static final Log log = LogFactory.getLog(ServiceMetricCollectorSupport.class);
     static final double NANO_PER_SEC = TimeUnit.SECONDS.toNanos(1);
     private final BlockingQueue<MetricDatum> queue;
 

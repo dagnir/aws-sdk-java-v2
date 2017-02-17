@@ -402,7 +402,7 @@ public class GCMCipherLiteTest {
 
     public void testDecryptMarkAndReset(int fileSize) throws Exception {
         File file = CryptoTestUtils
-                .generateRandomGCMEncryptedAsciiFile(fileSize);
+                .generateRandomGcmEncryptedAsciiFile(fileSize);
         CipherLite w1 = ContentCryptoScheme.AES_GCM.createCipherLite(
                 CryptoTestUtils.getTestSecretKey(), new byte[12],
                 Cipher.DECRYPT_MODE);

@@ -235,8 +235,8 @@ public class PutObjectRequest extends AbstractPutObjectRequest implements Serial
 
     @Override
     @SuppressWarnings("unchecked")
-    public PutObjectRequest withSSECustomerKey(SSECustomerKey sseKey) {
-        return super.withSSECustomerKey(sseKey);
+    public PutObjectRequest withSseCustomerKey(SseCustomerKey sseKey) {
+        return super.withSseCustomerKey(sseKey);
     }
 
     public PutObjectRequest withTagging(ObjectTagging tagSet) {
@@ -254,9 +254,9 @@ public class PutObjectRequest extends AbstractPutObjectRequest implements Serial
 
     @Override
     @SuppressWarnings("unchecked")
-    public PutObjectRequest withSSEAwsKeyManagementParams(
-            SSEAwsKeyManagementParams sseAwsKeyManagementParams) {
-        return super.withSSEAwsKeyManagementParams(sseAwsKeyManagementParams);
+    public PutObjectRequest withSseAwsKeyManagementParams(
+            SseAwsKeyManagementParams sseAwsKeyManagementParams) {
+        return super.withSseAwsKeyManagementParams(sseAwsKeyManagementParams);
     }
 
     /**

@@ -63,7 +63,7 @@ public interface QueryApi {
      * a filter expression string.
      *
      * @param filterExpression filter expression
-     * example: "(#a > :a) AND (#c > :c OR #e < :e)"
+     *     example: "(#a > :a) AND (#c > :c OR #e < :e)"
      *
      * @param nameMap actual values for the attribute-name place holders;
      *                can be null if there is no attribute-name placeholder.
@@ -87,10 +87,10 @@ public interface QueryApi {
      * a filter expression and a projection expression.
      *
      * @param filterExpression filter expression
-     * example: "(#a > :a) AND (#c > :c OR #e < :e)"
+     *     example: "(#a > :a) AND (#c > :c OR #e < :e)"
      *
      * @param projectionExpression projection expression
-     * example: "a.b, c[0].e"
+     *     example: "a.b, c[0].e"
      *
      * @param nameMap actual values for the attribute-name place holders;
      *                can be null if there is no attribute-name placeholder.
@@ -109,10 +109,10 @@ public interface QueryApi {
      * a filter expression and a projection expression.
      *
      * @param filterExpression filter expression
-     * example: "(#a > :a) AND (#c > :c OR #e < :e)"
+     *     example: "(#a > :a) AND (#c > :c OR #e < :e)"
      *
      * @param projectionExpression projection expression
-     * example: "a.b, c[0].e"
+     *     example: "a.b, c[0].e"
      *
      * @param nameMap actual values for the attribute-name place holders;
      *                can be null if there is no attribute-name placeholder.

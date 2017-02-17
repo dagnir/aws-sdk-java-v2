@@ -24,7 +24,7 @@ import software.amazon.awssdk.regions.*;
 import software.amazon.awssdk.runtime.transform.*;
 import software.amazon.awssdk.util.*;
 import software.amazon.awssdk.protocol.json.*;
-import software.amazon.awssdk.util.AWSRequestMetrics.Field;
+import software.amazon.awssdk.util.AwsRequestMetrics.Field;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientHandler;

@@ -35,7 +35,8 @@ public class ByteRangeCapturingInputStream extends SdkFilterInputStream {
         super(in);
 
         if (startingPosition >= endingPosition) {
-            throw new IllegalArgumentException("Invalid byte range specified: the starting position must be less than the ending position");
+            throw new IllegalArgumentException("Invalid byte range specified: the starting position must be less than the " +
+                                               "ending position");
         }
 
         this.startingPosition = startingPosition;

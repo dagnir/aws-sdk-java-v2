@@ -37,7 +37,7 @@ class AesCtr extends ContentCryptoScheme {
     }
 
     @Override
-    int getIVLengthInBytes() {
+    int getIvLengthInBytes() {
         return 16;
     }
 
@@ -47,7 +47,7 @@ class AesCtr extends ContentCryptoScheme {
     }
 
     @Override
-    byte[] adjustIV(byte[] iv, long byteOffset) {
+    byte[] adjustIv(byte[] iv, long byteOffset) {
         // currently only support iv of length 12 for AES/GCM.
         // Anything else is quite a bit complicated.
         if (iv.length != 12) {
@@ -61,8 +61,8 @@ class AesCtr extends ContentCryptoScheme {
                     + blockOffset + ", blockSize=" + blockSize
                     + ", byteOffset=" + byteOffset);
         }
-        byte[] J0 = computeJ0(iv);
-        return incrementBlocks(J0, blockOffset);
+        byte[] j0 = computeJ0(iv);
+        return incrementBlocks(j0, blockOffset);
     }
 
     /**
@@ -77,9 +77,9 @@ class AesCtr extends ContentCryptoScheme {
      */
     private byte[] computeJ0(byte[] nonce) {
         final int blockSize = getBlockSizeInBytes();
-        byte[] J0 = new byte[blockSize];
-        System.arraycopy(nonce, 0, J0, 0, nonce.length);
-        J0[blockSize - 1] = 0x01;
-        return incrementBlocks(J0, 1);
+        byte[] j0 = new byte[blockSize];
+        System.arraycopy(nonce, 0, j0, 0, nonce.length);
+        j0[blockSize - 1] = 0x01;
+        return incrementBlocks(j0, 1);
     }
 }

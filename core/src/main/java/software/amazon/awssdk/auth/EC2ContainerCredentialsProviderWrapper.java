@@ -20,23 +20,23 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
- * {@link AWSCredentialsProvider} that loads credentials from Amazon EC2 Container Service
+ * {@link AwsCredentialsProvider} that loads credentials from Amazon EC2 Container Service
  * if "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" environment variable is set and
  * security manager has permission to access the variable,
  * otherwise loads credentials from Amazon EC2 Instance Metadata Service.
  * </p>
  */
-public class EC2ContainerCredentialsProviderWrapper implements AWSCredentialsProvider {
+public class EC2ContainerCredentialsProviderWrapper implements AwsCredentialsProvider {
 
     private static final Log LOG = LogFactory.getLog(EC2ContainerCredentialsProviderWrapper.class);
 
-    private final AWSCredentialsProvider provider;
+    private final AwsCredentialsProvider provider;
 
     public EC2ContainerCredentialsProviderWrapper() {
         provider = initializeProvider();
     }
 
-    private AWSCredentialsProvider initializeProvider() {
+    private AwsCredentialsProvider initializeProvider() {
         try {
             return System.getenv(ContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH) != null
                    ? new ContainerCredentialsProvider() : InstanceProfileCredentialsProvider.getInstance();
@@ -48,7 +48,7 @@ public class EC2ContainerCredentialsProviderWrapper implements AWSCredentialsPro
     }
 
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         return provider.getCredentials();
     }
 

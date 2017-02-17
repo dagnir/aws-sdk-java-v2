@@ -39,7 +39,7 @@ public interface DynamoDBTypeConverter<S extends Object, T extends Object> {
      * An abstract converter with additional general purpose functions.
      */
     @SdkInternalApi
-    static abstract class AbstractConverter<S, T> implements DynamoDBTypeConverter<S, T> {
+    abstract static class AbstractConverter<S, T> implements DynamoDBTypeConverter<S, T> {
         public static <S, U, T> ExtendedConverter<S, U, T> join(DynamoDBTypeConverter<S, U> source,
                                                                 DynamoDBTypeConverter<U, T> target) {
             return new ExtendedConverter<S, U, T>(source, target);

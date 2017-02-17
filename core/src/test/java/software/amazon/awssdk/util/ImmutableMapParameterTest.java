@@ -79,6 +79,7 @@ public class ImmutableMapParameterTest {
                     .build();
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException iae) {
+            // Ignored or expected.
         } catch (Exception e) {
             fail("IllegalArgumentException expected.");
         }
@@ -105,6 +106,7 @@ public class ImmutableMapParameterTest {
             builtMap.clear();
             fail("UnsupportedOperationException expected.");
         } catch (UnsupportedOperationException iae) {
+            // Ignored or expected.
         } catch (Exception e) {
             fail("UnsupportedOperationException expected.");
         }
@@ -112,6 +114,7 @@ public class ImmutableMapParameterTest {
             builtMap.put(4, "four");
             fail("UnsupportedOperationException expected.");
         } catch (UnsupportedOperationException iae) {
+            // Ignored or expected.
         } catch (Exception e) {
             fail("UnsupportedOperationException expected.");
         }
@@ -119,6 +122,7 @@ public class ImmutableMapParameterTest {
             builtMap.putAll(Collections.singletonMap(4, "four"));
             fail("UnsupportedOperationException expected.");
         } catch (UnsupportedOperationException iae) {
+            // Ignored or expected.
         } catch (Exception e) {
             fail("UnsupportedOperationException expected.");
         }
@@ -126,6 +130,7 @@ public class ImmutableMapParameterTest {
             builtMap.remove(1);
             fail("UnsupportedOperationException expected.");
         } catch (UnsupportedOperationException iae) {
+            // Ignored or expected.
         } catch (Exception e) {
             fail("UnsupportedOperationException expected.");
         }

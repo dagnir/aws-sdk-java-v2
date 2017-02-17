@@ -72,8 +72,8 @@ public class CopyPartRequestFactory {
                 .withSourceVersionId(origReq.getSourceVersionId())
                 .withFirstByte(Long.valueOf(offset))
                 .withLastByte(Long.valueOf(offset + partSize - 1))
-                .withSourceSSECustomerKey(origReq.getSourceSSECustomerKey())
-                .withDestinationSSECustomerKey(origReq.getDestinationSSECustomerKey())
+                .withSourceSseCustomerKey(origReq.getSourceSseCustomerKey())
+                .withDestinationSseCustomerKey(origReq.getDestinationSseCustomerKey())
                 .withRequesterPays(origReq.isRequesterPays())
                 // other meta data
                 .withMatchingETagConstraints(origReq.getMatchingETagConstraints())

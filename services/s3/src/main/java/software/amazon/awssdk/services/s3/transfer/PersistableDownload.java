@@ -41,7 +41,7 @@ public final class PersistableDownload extends PersistableTransfer {
     @JsonProperty
     private final String versionId;
 
-    /** Optional member indicating the byte range of data to retrieve */
+    /** Optional member indicating the byte range of data to retrieve. */
     @JsonProperty
     private final long[] range;
 

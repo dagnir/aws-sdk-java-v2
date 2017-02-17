@@ -16,9 +16,9 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.Date;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSRefreshableSessionCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsRefreshableSessionCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
@@ -29,8 +29,8 @@ import software.amazon.awssdk.services.securitytoken.model.GetSessionTokenResult
 /**
  * Session credentials periodically refreshed by AWS SecurityTokenService.
  * <p>
- * Calls to {@link STSSessionCredentials#getAWSAccessKeyId()},
- * {@link STSSessionCredentials#getAWSSecretKey()}, and
+ * Calls to {@link STSSessionCredentials#getAwsAccessKeyId()},
+ * {@link STSSessionCredentials#getAwsSecretKey()}, and
  * {@link STSSessionCredentials#getSessionToken()} should be synchronized on
  * this object to prevent races on the boundary of session expiration.
  * Alternately, clients can call
@@ -41,7 +41,7 @@ import software.amazon.awssdk.services.securitytoken.model.GetSessionTokenResult
  * Instead, use {@link STSSessionCredentialsProvider}.
  */
 @Deprecated
-public class STSSessionCredentials implements AWSRefreshableSessionCredentials {
+public class STSSessionCredentials implements AwsRefreshableSessionCredentials {
 
     public static final int DEFAULT_DURATION_SECONDS = 3600;
     private final AWSSecurityTokenService securityTokenService;
@@ -55,7 +55,7 @@ public class STSSessionCredentials implements AWSRefreshableSessionCredentials {
      * @param credentials
      *            Primary AWS account credentials.
      */
-    public STSSessionCredentials(AWSCredentials credentials) {
+    public STSSessionCredentials(AwsCredentials credentials) {
         this(credentials, DEFAULT_DURATION_SECONDS);
     }
 
@@ -68,7 +68,7 @@ public class STSSessionCredentials implements AWSRefreshableSessionCredentials {
      * @param sessionDurationSeconds
      *            The duration, in seconds, for each session to last.
      */
-    public STSSessionCredentials(AWSCredentials credentials, int sessionDurationSeconds) {
+    public STSSessionCredentials(AwsCredentials credentials, int sessionDurationSeconds) {
         this.securityTokenService = new AWSSecurityTokenServiceClient(credentials);
         this.sessionDurationSeconds = sessionDurationSeconds;
     }
@@ -106,7 +106,7 @@ public class STSSessionCredentials implements AWSRefreshableSessionCredentials {
      * {@link RenewableAWSSessionCredentials#getImmutableCredentials()} as a proxy to this method.
      */
     @Override
-    public synchronized String getAWSAccessKeyId() {
+    public synchronized String getAwsAccessKeyId() {
         return getSessionCredentials().getAccessKeyId();
     }
 
@@ -118,7 +118,7 @@ public class STSSessionCredentials implements AWSRefreshableSessionCredentials {
      * {@link RenewableAWSSessionCredentials#getImmutableCredentials()} as a proxy to this method.
      */
     @Override
-    public synchronized String getAWSSecretKey() {
+    public synchronized String getAwsSecretKey() {
         return getSessionCredentials().getSecretAccessKey();
     }
 
@@ -137,7 +137,7 @@ public class STSSessionCredentials implements AWSRefreshableSessionCredentials {
     /**
      * Returns immutable session credentials for this session, beginning a new one if necessary.
      */
-    public synchronized AWSSessionCredentials getImmutableCredentials() {
+    public synchronized AwsSessionCredentials getImmutableCredentials() {
         Credentials creds = getSessionCredentials();
         return new BasicSessionCredentials(creds.getAccessKeyId(), creds.getSecretAccessKey(), creds.getSessionToken());
     }

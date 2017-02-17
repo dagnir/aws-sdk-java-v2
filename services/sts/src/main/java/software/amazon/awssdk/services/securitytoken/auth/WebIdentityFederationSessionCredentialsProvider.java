@@ -17,9 +17,9 @@ package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.Date;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentialsProvider;
-import software.amazon.awssdk.auth.AnonymousAWSCredentials;
+import software.amazon.awssdk.auth.AnonymousAwsCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentialsProvider;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
@@ -31,22 +31,22 @@ import software.amazon.awssdk.services.securitytoken.model.Credentials;
  * AWSCredentialsProvider implementation that uses the AWS Security Token
  * Service to create temporary, short-lived sessions to use for authentication.
  */
-public class WebIdentityFederationSessionCredentialsProvider implements AWSSessionCredentialsProvider {
+public class WebIdentityFederationSessionCredentialsProvider implements AwsSessionCredentialsProvider {
 
-    /** Default duration for started sessions */
+    /** Default duration for started sessions. */
     public static final int DEFAULT_DURATION_SECONDS = 3600;
 
-    /** Default threshold for refreshing session credentials */
+    /** Default threshold for refreshing session credentials. */
     public static final int DEFAULT_THRESHOLD_SECONDS = 500;
 
-    /** The client for starting STS sessions */
+    /** The client for starting STS sessions. */
     private final AWSSecurityTokenService securityTokenService;
     private final String wifToken;
     private final String wifProvider;
     private final String roleArn;
-    /** The current session credentials */
-    private AWSSessionCredentials sessionCredentials;
-    /** The expiration time for the current session credentials */
+    /** The current session credentials. */
+    private AwsSessionCredentials sessionCredentials;
+    /** The expiration time for the current session credentials. */
     private Date sessionCredentialsExpiration;
     private int sessionDuration;
     private int refreshThreshold;
@@ -88,7 +88,7 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
      */
     public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn,
                                                            ClientConfiguration clientConfiguration) {
-        this(wifToken, wifProvider, roleArn, new AWSSecurityTokenServiceClient(new AnonymousAWSCredentials(), clientConfiguration));
+        this(wifToken, wifProvider, roleArn, new AWSSecurityTokenServiceClient(new AnonymousAwsCredentials(), clientConfiguration));
     }
 
     /**
@@ -118,7 +118,7 @@ public class WebIdentityFederationSessionCredentialsProvider implements AWSSessi
     }
 
     @Override
-    public AWSSessionCredentials getCredentials() {
+    public AwsSessionCredentials getCredentials() {
         if (needsNewSession()) {
             startSession();
         }

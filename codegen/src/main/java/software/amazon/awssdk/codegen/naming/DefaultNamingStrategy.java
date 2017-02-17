@@ -42,34 +42,36 @@ import software.amazon.awssdk.util.StringUtils;
  */
 public class DefaultNamingStrategy implements NamingStrategy {
 
-    private final static Set<String> reservedKeywords = new HashSet<String>() {{
-        add("return");
-        add("public");
-        add("private");
-        add("class");
-        add("static");
-        add("protected");
-        add("string");
-        add("boolean");
-        add("integer");
-        add("int");
-        add("char");
-        add("null");
-        add("double");
-        add("object");
-        add("short");
-        add("long");
-        add("float");
-        add("byte");
-        add("bigDecimal");
-        add("bigInteger");
-        add("protected");
-        add("inputStream");
-        add("bytebuffer");
-        add("date");
-        add("list");
-        add("map");
-    }};
+    private static final Set<String> RESERVED_KEYWORDS = new HashSet<String>() {
+        {
+            add("return");
+            add("public");
+            add("private");
+            add("class");
+            add("static");
+            add("protected");
+            add("string");
+            add("boolean");
+            add("integer");
+            add("int");
+            add("char");
+            add("null");
+            add("double");
+            add("object");
+            add("short");
+            add("long");
+            add("float");
+            add("byte");
+            add("bigDecimal");
+            add("bigInteger");
+            add("protected");
+            add("inputStream");
+            add("bytebuffer");
+            add("date");
+            add("list");
+            add("map");
+        }
+    };
 
     private final ServiceModel serviceModel;
     private final BasicCodeGenConfig codeGenConfig;
@@ -83,8 +85,8 @@ public class DefaultNamingStrategy implements NamingStrategy {
     }
 
     private static boolean isJavaKeyword(String word) {
-        return reservedKeywords.contains(word) ||
-               reservedKeywords.contains(StringUtils.lowerCase(word));
+        return RESERVED_KEYWORDS.contains(word) ||
+               RESERVED_KEYWORDS.contains(StringUtils.lowerCase(word));
     }
 
     @Override

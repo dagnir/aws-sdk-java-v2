@@ -160,6 +160,7 @@ public class SignerUtils {
                 try {
                     is.close();
                 } catch (IOException ignore) {
+                    // Ignored or expected.
                 }
             }
         } else if (StringUtils.lowerCase(privateKeyFile.getAbsolutePath()).endsWith(".der")) {
@@ -170,6 +171,7 @@ public class SignerUtils {
                 try {
                     is.close();
                 } catch (IOException ignore) {
+                    // Ignored or expected.
                 }
             }
         } else {

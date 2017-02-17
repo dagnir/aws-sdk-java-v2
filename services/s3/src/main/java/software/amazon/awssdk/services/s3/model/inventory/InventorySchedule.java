@@ -36,15 +36,15 @@ public class InventorySchedule implements Serializable {
     /**
      * Sets the frequency for producing inventory results.
      */
-    public void setFrequency(InventoryFrequency frequency) {
-        setFrequency(frequency == null ? (String) null : frequency.toString());
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
     }
 
     /**
      * Sets the frequency for producing inventory results.
      */
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
+    public void setFrequency(InventoryFrequency frequency) {
+        setFrequency(frequency == null ? (String) null : frequency.toString());
     }
 
     /**

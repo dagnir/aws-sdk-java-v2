@@ -33,7 +33,7 @@ import software.amazon.awssdk.internal.http.timers.TimeoutThreadPoolBuilder;
 @ThreadSafe
 public class ClientExecutionTimer {
 
-    private static final String threadNamePrefix = "AwsSdkClientExecutionTimerThread";
+    private static final String THREAD_NAME_PREFIX = "AwsSdkClientExecutionTimerThread";
 
     private volatile ScheduledThreadPoolExecutor executor;
 
@@ -61,7 +61,7 @@ public class ClientExecutionTimer {
      */
     private synchronized void initializeExecutor() {
         if (executor == null) {
-            executor = TimeoutThreadPoolBuilder.buildDefaultTimeoutThreadPool(threadNamePrefix);
+            executor = TimeoutThreadPoolBuilder.buildDefaultTimeoutThreadPool(THREAD_NAME_PREFIX);
         }
     }
 

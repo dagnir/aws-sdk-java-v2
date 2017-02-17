@@ -71,7 +71,7 @@ public class SdkFilterInputStream extends FilterInputStream implements
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         abortIfNeeded();
         return in.read(b, off, len);
     }

@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.not;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.parenthesize;
 
@@ -30,7 +30,7 @@ public class Condition2Test {
     @Test
     public void case1() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                parenthesize(N("a").eq(1)).and(N("b").eq(2).and(N("c").eq(3)))
+                parenthesize(n("a").eq(1)).and(n("b").eq(2).and(n("c").eq(3)))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -47,7 +47,7 @@ public class Condition2Test {
     @Test
     public void case2() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(1).or(N("b").eq(2).and(N("c").eq(3)))
+                n("a").eq(1).or(n("b").eq(2).and(n("c").eq(3)))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -63,7 +63,7 @@ public class Condition2Test {
     @Test
     public void case2a() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(1).or(N("b").eq(2)).and(N("c").eq(3))
+                n("a").eq(1).or(n("b").eq(2)).and(n("c").eq(3))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -79,7 +79,7 @@ public class Condition2Test {
     @Test
     public void case3() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                parenthesize(N("a").eq(1))
+                parenthesize(n("a").eq(1))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -95,7 +95,7 @@ public class Condition2Test {
     @Test
     public void case4() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                parenthesize(parenthesize(N("a").eq(1)))
+                parenthesize(parenthesize(n("a").eq(1)))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -111,7 +111,7 @@ public class Condition2Test {
     @Test
     public void case5() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                not(N("a").eq(10).and(N("b").lt(20)))
+                not(n("a").eq(10).and(n("b").lt(20)))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -127,7 +127,7 @@ public class Condition2Test {
     @Test
     public void case6() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                not(N("a").eq(10)).and(N("b").lt(20))
+                not(n("a").eq(10)).and(n("b").lt(20))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -143,7 +143,7 @@ public class Condition2Test {
     @Test
     public void case7() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(10).and(N("b").lt(20).and(N("c").gt(30)))
+                n("a").eq(10).and(n("b").lt(20).and(n("c").gt(30)))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -159,7 +159,7 @@ public class Condition2Test {
     @Test
     public void case8() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(10).and(N("b").lt(20).or(N("c").gt(30)))
+                n("a").eq(10).and(n("b").lt(20).or(n("c").gt(30)))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -175,7 +175,7 @@ public class Condition2Test {
     @Test
     public void case9() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(10).and(N("b").lt(20)).or(N("c").gt(30))
+                n("a").eq(10).and(n("b").lt(20)).or(n("c").gt(30))
                                                                                   ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -192,17 +192,17 @@ public class Condition2Test {
     public void case10() {
         // Nesting structure: a == 10 AND (d = 40 AND (b < 20 OR c > 30))
         UpdateItemExpressionSpec exprs1 = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(10)
-                      .and(N("d").eq(40)
-                                 .and(N("b").lt(20).or(N("c").gt(30))))
+                n("a").eq(10)
+                      .and(n("d").eq(40)
+                                 .and(n("b").lt(20).or(n("c").gt(30))))
                                                                                    ).buildForUpdate();
         String c1 = exprs1.getConditionExpression();
         System.out.println("c1: " + c1);
         // Flat structure: a == 10 AND d = 40 AND (b < 20 OR c > 30)
         UpdateItemExpressionSpec exprs2 = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(10)
-                      .and(N("d").eq(40))
-                      .and(N("b").lt(20).or(N("c").gt(30)))
+                n("a").eq(10)
+                      .and(n("d").eq(40))
+                      .and(n("b").lt(20).or(n("c").gt(30)))
                                                                                    ).buildForUpdate();
         String c2 = exprs2.getConditionExpression();
         System.out.println("c2: " + c2);
@@ -212,9 +212,9 @@ public class Condition2Test {
 
         // Explicit parenthesis: a == 10 AND (d = 40 AND (b < 20 OR c > 30))
         UpdateItemExpressionSpec exprs3 = new ExpressionSpecBuilder().withCondition(
-                N("a").eq(10)
-                      .and(parenthesize(N("d").eq(40)
-                                              .and(N("b").lt(20).or(N("c").gt(30)))))
+                n("a").eq(10)
+                      .and(parenthesize(n("d").eq(40)
+                                              .and(n("b").lt(20).or(n("c").gt(30)))))
                                                                                    ).buildForUpdate();
         String c3 = exprs3.getConditionExpression();
         System.out.println("c3: " + c3);

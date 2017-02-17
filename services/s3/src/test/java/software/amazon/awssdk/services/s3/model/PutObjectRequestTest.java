@@ -33,8 +33,8 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestClientOptions.Marker;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.SyncProgressListener;
@@ -59,7 +59,7 @@ public class PutObjectRequestTest {
     }
 
     private static void verifyBaseAfterCopy(final ProgressListener listener,
-                                            final AWSCredentials credentials,
+                                            final AwsCredentials credentials,
                                             final RequestMetricCollector collector,
                                             final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
         RequestClientOptions toOptions;
@@ -159,7 +159,7 @@ public class PutObjectRequestTest {
             public void progressChanged(ProgressEvent progressEvent) {
             }
         };
-        final AWSCredentials credentials = new BasicAWSCredentials("accesskey",
+        final AwsCredentials credentials = new BasicAwsCredentials("accesskey",
                                                                    "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override
@@ -178,14 +178,14 @@ public class PutObjectRequestTest {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.addUserMetadata("um_k1", "um_v1");
         metadata.addUserMetadata("um_k2", "um_v2");
-        SSECustomerKey sseKey = new SSECustomerKey(new byte[32]);
+        SseCustomerKey sseKey = new SseCustomerKey(new byte[32]);
 
         // Fill it up - the rest
         from.setAccessControlList(accessControlList);
         from.setCannedAcl(CannedAccessControlList.Private);
         from.setInputStream(System.in);
         from.setMetadata(metadata);
-        from.setSSECustomerKey(sseKey);
+        from.setSseCustomerKey(sseKey);
         from.setRedirectLocation("redirectLocation");
         from.setStorageClass(StorageClass.Standard);
 

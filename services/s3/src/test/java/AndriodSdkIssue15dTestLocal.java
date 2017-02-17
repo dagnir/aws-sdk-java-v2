@@ -56,7 +56,7 @@ public class AndriodSdkIssue15dTestLocal {
     }
 
     @Test
-    public void testBC() throws Exception {
+    public void testBc() throws Exception {
         enableBouncyCastle();
         PublicKey publicKey = loadPublicKey("BC");
         PrivateKey privatekey = loadPrivateKey("BC");

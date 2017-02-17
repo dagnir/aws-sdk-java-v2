@@ -144,7 +144,8 @@ public enum CloudFrontCookieSigner {
      *                          <tt>"https://"</tt>. RTMP resources do not take the form of a
      *                          URL, and instead the resource path is nothing but the stream's
      *                          name.
-     * @param keyPairId         Identifier of a public/private certificate keypair already configured in your Amazon Web Services account.
+     * @param keyPairId         Identifier of a public/private certificate keypair already configured in your Amazon Web Services
+     *                          account.
      * @param privateKeyFile    The RSA private key data that corresponding to the certificate keypair identified by keyPairId.
      * @param expiresOn         The expiration date till which content can be accessed using the generated cookies.
      * @return The signed cookies.
@@ -170,7 +171,8 @@ public enum CloudFrontCookieSigner {
      *                          (may also include URL parameters. For distributions with the
      *                          HTTPS required protocol, the resource URL must start with
      *                          <tt>"https://"</tt>.
-     * @param keyPairId         Identifier of a public/private certificate keypair already configured in your Amazon Web Services account.
+     * @param keyPairId         Identifier of a public/private certificate keypair already configured in your Amazon Web Services
+     *                          account.
      * @param privateKey        The RSA private key data that corresponding to the certificate keypair identified by keyPairId.
      * @param expiresOn         The expiration date till which content can be accessed using the generated cookies.
      * @return The signed cookies.
@@ -204,7 +206,8 @@ public enum CloudFrontCookieSigner {
      * @param keyPairId          The key pair id corresponding to the private key file given.
      * @param expiresOn          The expiration date till which content can be accessed using the generated cookies.
      * @param activeFrom         The date from which content can be accessed using the generated cookies.
-     * @param ipRange            The allowed IP address range of the client making the GET request, in CIDR form (e.g. 192.168.0.1/24).
+     * @param ipRange            The allowed IP address range of the client making the GET request, in CIDR form
+     *                           (e.g. 192.168.0.1/24).
      * @return The signed cookies.
      */
     public static CookiesForCustomPolicy getCookiesForCustomPolicy(Protocol protocol,
@@ -216,7 +219,8 @@ public enum CloudFrontCookieSigner {
                                                                    Date activeFrom,
                                                                    String ipRange) throws InvalidKeySpecException, IOException {
         PrivateKey privateKey = loadPrivateKey(privateKeyFile);
-        return getCookiesForCustomPolicy(protocol, distributionDomain, privateKey, resourcePath, keyPairId, expiresOn, activeFrom, ipRange);
+        return getCookiesForCustomPolicy(protocol, distributionDomain, privateKey, resourcePath, keyPairId,
+                                         expiresOn, activeFrom, ipRange);
     }
 
     /**
@@ -229,7 +233,8 @@ public enum CloudFrontCookieSigner {
      * @param keyPairId          The key pair id corresponding to the private key file given.
      * @param expiresOn          The expiration date till which content can be accessed using the generated cookies.
      * @param activeFrom         The date from which content can be accessed using the generated cookies.
-     * @param ipRange            The allowed IP address range of the client making the GET request, in CIDR form (e.g. 192.168.0.1/24).
+     * @param ipRange            The allowed IP address range of the client making the GET request, in CIDR form
+     *                           (e.g. 192.168.0.1/24).
      * @return The signed cookies.
      */
     public static CookiesForCustomPolicy getCookiesForCustomPolicy(Protocol protocol,
@@ -253,7 +258,8 @@ public enum CloudFrontCookieSigner {
      * @param keyPairId         The key pair id corresponding to the private key file given.
      * @param expiresOn         The expiration date till which content can be accessed using the generated cookies.
      * @param activeFrom        The date from which content can be accessed using the generated cookies.
-     * @param ipRange           The allowed IP address range of the client making the GET request, in CIDR form (e.g. 192.168.0.1/24).
+     * @param ipRange           The allowed IP address range of the client making the GET request, in CIDR form
+     *                          (e.g. 192.168.0.1/24).
      * @return The signed cookies.
      */
     public static CookiesForCustomPolicy getCookiesForCustomPolicy(String resourceUrlOrPath,
@@ -287,7 +293,8 @@ public enum CloudFrontCookieSigner {
      * @param resourcePath       The path for the resource.
      * @param keyPairId          The key pair id corresponding to the private key file given.
      * @param expiresOn          The expiration date till which content can be accessed using the generated cookies.
-     * @param ipRange            The allowed IP address range of the client making the GET request, in CIDR form (e.g. 192.168.0.1/24).
+     * @param ipRange            The allowed IP address range of the client making the GET request, in CIDR form
+     *                           (e.g. 192.168.0.1/24).
      * @return The signed cookies.
      */
     public static CookiesForCustomPolicy getCookiesForCustomPolicy(Protocol protocol,

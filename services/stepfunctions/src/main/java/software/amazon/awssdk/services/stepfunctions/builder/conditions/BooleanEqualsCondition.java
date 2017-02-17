@@ -39,6 +39,13 @@ public final class BooleanEqualsCondition implements BinaryCondition<Boolean> {
     }
 
     /**
+     * @return Builder instance to construct a {@link BooleanEqualsCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -52,13 +59,6 @@ public final class BooleanEqualsCondition implements BinaryCondition<Boolean> {
     @Override
     public Boolean getExpectedValue() {
         return expectedValue;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link BooleanEqualsCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

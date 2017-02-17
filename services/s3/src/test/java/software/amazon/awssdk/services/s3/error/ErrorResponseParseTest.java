@@ -323,7 +323,7 @@ public class ErrorResponseParseTest {
 
     /**
      * Tests error parsing where the xml is having an element that is same as
-     * the <Error> tag.
+     * the &lt;Error&gt; tag.
      */
     @Test
     public void testErrorResponseWithChildTagError()

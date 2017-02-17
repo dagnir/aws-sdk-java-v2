@@ -53,7 +53,7 @@ import software.amazon.awssdk.services.s3.model.VersionListing;
  * one JUnit test to avoid having to repeat expensive data setup (S3 bucket
  * creation, versioning configuration, etc).
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 @Category(S3Categories.Slow.class)
 public class VersioningIntegrationTest extends S3IntegrationTestBase {
@@ -70,12 +70,13 @@ public class VersioningIntegrationTest extends S3IntegrationTestBase {
     private String deletedKey = "deletedKey";
     private Map<String, String> fileContentsByVersionId;
 
-    /** Releases all resources created by these tests */
+    /** Releases all resources created by these tests. */
     @After
     public void tearDown() throws Exception {
         try {
             deleteBucketAndAllVersionedContents(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

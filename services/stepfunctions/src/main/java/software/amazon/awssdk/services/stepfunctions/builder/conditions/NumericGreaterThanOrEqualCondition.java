@@ -43,6 +43,13 @@ public final class NumericGreaterThanOrEqualCondition implements BinaryCondition
     }
 
     /**
+     * @return Builder instance to construct a {@link NumericGreaterThanOrEqualCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -57,13 +64,6 @@ public final class NumericGreaterThanOrEqualCondition implements BinaryCondition
     @Override
     public String getExpectedValue() {
         return expectedValue.asText();
-    }
-
-    /**
-     * @return Builder instance to construct a {@link NumericGreaterThanOrEqualCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

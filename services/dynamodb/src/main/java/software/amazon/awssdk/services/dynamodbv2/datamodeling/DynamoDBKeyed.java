@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
  */
 @DynamoDB
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface DynamoDBKeyed {
 
     /**

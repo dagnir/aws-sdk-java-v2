@@ -27,13 +27,13 @@ import software.amazon.awssdk.services.storagegateway.model.DeleteGatewayRequest
 import software.amazon.awssdk.services.storagegateway.model.InvalidGatewayRequestException;
 import software.amazon.awssdk.services.storagegateway.model.ListGatewaysRequest;
 import software.amazon.awssdk.services.storagegateway.model.ListGatewaysResult;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Tests service methods in storage gateway. Because of the non-trivial amount of set-up required,
  * this is more of a spot check than an exhaustive test.
  */
-public class ServiceIntegrationTest extends AWSTestBase {
+public class ServiceIntegrationTest extends AwsTestBase {
 
     private static AWSStorageGatewayClient sg;
 

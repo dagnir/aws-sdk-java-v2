@@ -37,7 +37,7 @@ import java.io.Serializable;
  */
 public class BucketPolicy implements Serializable {
 
-    /** The raw, policy JSON text, as returned by Amazon S3 */
+    /** The raw, policy JSON text, as returned by Amazon S3. */
     private String policyText;
 
     /**

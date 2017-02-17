@@ -23,9 +23,9 @@ import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 
 /**
  * Tests inheritance behavior in DynamoDB mapper.
@@ -41,7 +41,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (Object obj : objs) {
             util.save(obj);
             assertEquals(util.load(SubClass.class, ((SubClass) obj).getKey()), obj);
@@ -58,7 +58,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (SubSubClass obj : objs) {
             util.save(obj);
             assertEquals(util.load(SubSubClass.class, obj.getKey()), obj);
@@ -76,7 +76,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
         }
 
         // Saving new objects with a null version field should populate it
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (Interface obj : objs) {
             util.save(obj);
             assertEquals(util.load(Implementation.class, obj.getKey()), obj);

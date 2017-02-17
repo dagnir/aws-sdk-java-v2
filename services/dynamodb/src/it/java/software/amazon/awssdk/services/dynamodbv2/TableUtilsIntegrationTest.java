@@ -36,9 +36,9 @@ import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
 import software.amazon.awssdk.services.dynamodbv2.util.TableUtils;
 import software.amazon.awssdk.services.dynamodbv2.util.TableUtils.TableNeverTransitionedToStateException;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class TableUtilsIntegrationTest extends AWSIntegrationTestBase {
+public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
 
     private static final int CUSTOM_TIMEOUT = 5 * 1000;
 

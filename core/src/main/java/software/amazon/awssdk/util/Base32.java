@@ -24,7 +24,7 @@ package software.amazon.awssdk.util;
  */
 public enum Base32 {
     ;
-    private static final Base32Codec codec = new Base32Codec();
+    private static final Base32Codec CODEC = new Base32Codec();
 
     /**
      * Returns a base 32 encoded string of the given bytes.
@@ -33,14 +33,14 @@ public enum Base32 {
         if (bytes == null) {
             return null;
         }
-        return bytes.length == 0 ? "" : CodecUtils.toStringDirect(codec.encode(bytes));
+        return bytes.length == 0 ? "" : CodecUtils.toStringDirect(CODEC.encode(bytes));
     }
 
     /**
      * Returns a 32 encoded byte array of the given bytes.
      */
     public static byte[] encode(byte[] bytes) {
-        return bytes == null || bytes.length == 0 ? bytes : codec.encode(bytes);
+        return bytes == null || bytes.length == 0 ? bytes : CODEC.encode(bytes);
     }
 
     /**
@@ -56,13 +56,13 @@ public enum Base32 {
         }
         byte[] buf = new byte[b32.length()];
         int len = CodecUtils.sanitize(b32, buf);
-        return codec.decode(buf, len);
+        return CODEC.decode(buf, len);
     }
 
     /**
      * Decodes the given base 32 encoded bytes.
      */
     public static byte[] decode(byte[] b32) {
-        return b32 == null || b32.length == 0 ? b32 : codec.decode(b32, b32.length);
+        return b32 == null || b32.length == 0 ? b32 : CODEC.decode(b32, b32.length);
     }
 }

@@ -25,7 +25,7 @@ import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
@@ -33,7 +33,7 @@ import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.CredentialUtils;
 
 /**
@@ -44,7 +44,7 @@ import software.amazon.awssdk.util.CredentialUtils;
 @SdkProtectedApi
 public class ClientHandlerImpl extends ClientHandler {
 
-    private final AWSCredentialsProvider awsCredentialsProvider;
+    private final AwsCredentialsProvider awsCredentialsProvider;
     private final SignerProvider signerProvider;
     private final URI endpoint;
     private final List<RequestHandler2> requestHandler2s;
@@ -71,23 +71,22 @@ public class ClientHandlerImpl extends ClientHandler {
     }
 
     @Override
-    public <Input, Output> Output execute(
-            ClientExecutionParams<Input, Output> executionParams) {
-        final Input input = executionParams.getInput();
+    public <InputT, OutputT> OutputT execute(ClientExecutionParams<InputT, OutputT> executionParams) {
+        final InputT inputT = executionParams.getInput();
         ExecutionContext executionContext = createExecutionContext(
                 executionParams.getRequestConfig());
-        AWSRequestMetrics awsRequestMetrics = executionContext.getAwsRequestMetrics();
-        awsRequestMetrics.startEvent(AWSRequestMetrics.Field.ClientExecuteTime);
-        Request<Input> request = null;
-        Response<Output> response = null;
+        AwsRequestMetrics awsRequestMetrics = executionContext.getAwsRequestMetrics();
+        awsRequestMetrics.startEvent(AwsRequestMetrics.Field.ClientExecuteTime);
+        Request<InputT> request = null;
+        Response<OutputT> response = null;
 
         try {
-            awsRequestMetrics.startEvent(AWSRequestMetrics.Field.RequestMarshallTime);
+            awsRequestMetrics.startEvent(AwsRequestMetrics.Field.RequestMarshallTime);
             try {
-                request = executionParams.getMarshaller().marshall(input);
-                request.setAWSRequestMetrics(awsRequestMetrics);
+                request = executionParams.getMarshaller().marshall(inputT);
+                request.setAwsRequestMetrics(awsRequestMetrics);
             } finally {
-                awsRequestMetrics.endEvent(AWSRequestMetrics.Field.RequestMarshallTime);
+                awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RequestMarshallTime);
             }
 
             response = invoke(request,
@@ -126,7 +125,7 @@ public class ClientHandlerImpl extends ClientHandler {
      * otherwise.
      */
     private boolean isRequestMetricsEnabled(RequestConfig requestConfig) {
-        return hasRequestMetricsCollector(requestConfig) || isRMCEnabledAtClientOrSdkLevel();
+        return hasRequestMetricsCollector(requestConfig) || isRmcEnabledAtClientOrSdkLevel();
     }
 
     private boolean hasRequestMetricsCollector(RequestConfig requestConfig) {
@@ -138,7 +137,7 @@ public class ClientHandlerImpl extends ClientHandler {
      * Returns true if request metric collection is enabled at the service client or AWS SDK level
      * request; false otherwise.
      */
-    private boolean isRMCEnabledAtClientOrSdkLevel() {
+    private boolean isRmcEnabledAtClientOrSdkLevel() {
         RequestMetricCollector collector = requestMetricCollector();
         return collector != null && collector.isEnabled();
     }
@@ -173,11 +172,11 @@ public class ClientHandlerImpl extends ClientHandler {
      * Normal invoke with authentication. Credentials are required and may be overriden at the
      * request level.
      **/
-    private <Output, Input> Response<Output> invoke(Request<Input> request,
-                                                    RequestConfig requestConfig,
-                                                    ExecutionContext executionContext,
-                                                    HttpResponseHandler<Output> responseHandler,
-                                                    HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
+    private <OutputT, InputT> Response<OutputT> invoke(Request<InputT> request,
+                                                       RequestConfig requestConfig,
+                                                       ExecutionContext executionContext,
+                                                       HttpResponseHandler<OutputT> responseHandler,
+                                                       HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
 
         executionContext.setCredentialsProvider(CredentialUtils.getCredentialsProvider(
                 requestConfig, awsCredentialsProvider));
@@ -190,11 +189,11 @@ public class ClientHandlerImpl extends ClientHandler {
      * Invoke the request using the http client. Assumes credentials (or lack thereof) have been
      * configured in the ExecutionContext beforehand.
      **/
-    private <Output, Input> Response<Output> doInvoke(Request<Input> request,
-                                                      RequestConfig requestConfig,
-                                                      ExecutionContext executionContext,
-                                                      HttpResponseHandler<Output> responseHandler,
-                                                      HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
+    private <OutputT, InputT> Response<OutputT> doInvoke(Request<InputT> request,
+                                                         RequestConfig requestConfig,
+                                                         ExecutionContext executionContext,
+                                                         HttpResponseHandler<OutputT> responseHandler,
+                                                         HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
         request.setEndpoint(endpoint);
         return client.requestExecutionBuilder()
                      .request(request)
@@ -207,12 +206,12 @@ public class ClientHandlerImpl extends ClientHandler {
     /**
      * Convenient method to end the client execution without logging the awsRequestMetrics.
      */
-    private void endClientExecution(AWSRequestMetrics awsRequestMetrics,
+    private void endClientExecution(AwsRequestMetrics awsRequestMetrics,
                                     RequestConfig requestConfig,
                                     Request<?> request,
                                     Response<?> response) {
         if (request != null) {
-            awsRequestMetrics.endEvent(AWSRequestMetrics.Field.ClientExecuteTime);
+            awsRequestMetrics.endEvent(AwsRequestMetrics.Field.ClientExecuteTime);
             awsRequestMetrics.getTimingInfo().endTiming();
             RequestMetricCollector metricCollector = findRequestMetricCollector(requestConfig);
             metricCollector.collectMetrics(request, response);

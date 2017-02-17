@@ -67,7 +67,7 @@ public class BucketNotificationTestUtils {
     /**
      * Configure the given SNS topic so that the S3 bucket can send event notifications to it.
      */
-    public static void authorizeS3ToSendToSNS(AmazonSNS sns, String topicArn, String bucketName) {
+    public static void authorizeS3ToSendToSns(AmazonSNS sns, String topicArn, String bucketName) {
         Policy policy = getSnsPolicy(sns, topicArn);
         Statement s3AccessStatement = createAllowS3AccessToResourcePolicyStatement(bucketName, topicArn,
                                                                                    SNSActions.Publish);

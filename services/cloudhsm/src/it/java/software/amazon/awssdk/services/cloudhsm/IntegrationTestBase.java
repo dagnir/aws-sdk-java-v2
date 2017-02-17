@@ -16,9 +16,9 @@
 package software.amazon.awssdk.services.cloudhsm;
 
 import org.junit.BeforeClass;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class IntegrationTestBase extends AWSTestBase {
+public class IntegrationTestBase extends AwsTestBase {
 
     protected static AWSCloudHSMClient client;
 

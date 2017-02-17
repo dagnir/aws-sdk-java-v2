@@ -41,7 +41,7 @@ public final class NegationCondition extends Condition {
     @Override
     String asSubstituted(SubstitutionContext context) {
         if (this.precedence() > condition.precedence()) {
-            return "NOT " + ExpressionSpecBuilder._(condition).asSubstituted(context);
+            return "NOT " + ExpressionSpecBuilder.paren(condition).asSubstituted(context);
         } else {
             return "NOT " + condition.asSubstituted(context);
         }

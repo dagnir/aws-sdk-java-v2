@@ -50,13 +50,13 @@ public abstract class Filter<T extends Filter<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    protected T _withValues(Object... values) {
+    protected T withValues(Object... values) {
         this.values = values.clone();
         return (T) this;
     }
 
     @SuppressWarnings("unchecked")
-    private T _withComparisonOperator(ComparisonOperator op) {
+    private T withComparisonOperator(ComparisonOperator op) {
         this.op = op;
         return (T) this;
     }
@@ -66,33 +66,33 @@ public abstract class Filter<T extends Filter<T>> {
      * value.
      */
     public T eq(Object val) {
-        return _withComparisonOperator(ComparisonOperator.EQ)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.EQ).withValues(val);
     }
 
     public T ne(Object val) {
-        return _withComparisonOperator(ComparisonOperator.NE)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.NE).withValues(val);
     }
 
     /**
      * Expects the attribute be an existing attribute.
      */
     public T exists() {
-        return _withComparisonOperator(ComparisonOperator.NOT_NULL);
+        return withComparisonOperator(ComparisonOperator.NOT_NULL);
     }
 
     /**
      * Expects the attribute be non-existing.
      */
     public T notExist() {
-        return _withComparisonOperator(ComparisonOperator.NULL);
+        return withComparisonOperator(ComparisonOperator.NULL);
     }
 
     public T contains(Object val) {
-        return _withComparisonOperator(ComparisonOperator.CONTAINS)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.CONTAINS).withValues(val);
     }
 
     public T notContains(Object val) {
-        return _withComparisonOperator(ComparisonOperator.NOT_CONTAINS)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.NOT_CONTAINS).withValues(val);
     }
 
     /**
@@ -100,7 +100,7 @@ public abstract class Filter<T extends Filter<T>> {
      * with the given value.
      */
     public T beginsWith(String val) {
-        return _withComparisonOperator(ComparisonOperator.BEGINS_WITH)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.BEGINS_WITH).withValues(val);
     }
 
     public T in(Object... values) {
@@ -108,7 +108,7 @@ public abstract class Filter<T extends Filter<T>> {
             throw new IllegalArgumentException("values must not be null or empty.");
         }
 
-        return _withComparisonOperator(ComparisonOperator.IN)._withValues(values);
+        return withComparisonOperator(ComparisonOperator.IN).withValues(values);
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class Filter<T extends Filter<T>> {
      * the given values.
      */
     public T between(Object low, Object hi) {
-        return _withComparisonOperator(ComparisonOperator.BETWEEN)._withValues(low, hi);
+        return withComparisonOperator(ComparisonOperator.BETWEEN).withValues(low, hi);
     }
 
     /**
@@ -124,7 +124,7 @@ public abstract class Filter<T extends Filter<T>> {
      * equal to the given value.
      */
     public T ge(Object val) {
-        return _withComparisonOperator(ComparisonOperator.GE)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.GE).withValues(val);
     }
 
     /**
@@ -132,7 +132,7 @@ public abstract class Filter<T extends Filter<T>> {
      * given value.
      */
     public T gt(Object val) {
-        return _withComparisonOperator(ComparisonOperator.GT)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.GT).withValues(val);
     }
 
     /**
@@ -140,7 +140,7 @@ public abstract class Filter<T extends Filter<T>> {
      * to the given value.
      */
     public T le(Object val) {
-        return _withComparisonOperator(ComparisonOperator.LE)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.LE).withValues(val);
     }
 
     /**
@@ -148,6 +148,6 @@ public abstract class Filter<T extends Filter<T>> {
      * given value.
      */
     public T lt(Object val) {
-        return _withComparisonOperator(ComparisonOperator.LT)._withValues(val);
+        return withComparisonOperator(ComparisonOperator.LT).withValues(val);
     }
 }

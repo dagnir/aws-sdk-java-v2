@@ -60,7 +60,6 @@ public class SkipMd5CheckStrategy {
     /**
      * Helper method to avoid long chains of non null checks
      *
-     * @param items
      * @return True if any of the provided items is not null. False if all items are null.
      */
     private static boolean containsNonNull(Object... items) {
@@ -278,10 +277,9 @@ public class SkipMd5CheckStrategy {
     }
 
     /**
-     * @param request
      * @return True if {@link PutObjectRequest} has been configured to use SSE-C or SSE-KMS
      */
     private boolean putRequestInvolvesSse(PutObjectRequest request) {
-        return containsNonNull(request.getSSECustomerKey(), request.getSSEAwsKeyManagementParams());
+        return containsNonNull(request.getSSECustomerKey(), request.getSseAwsKeyManagementParams());
     }
 }

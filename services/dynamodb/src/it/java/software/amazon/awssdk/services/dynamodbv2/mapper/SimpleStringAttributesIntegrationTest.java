@@ -27,11 +27,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.pojos.StringAttributeClass;
@@ -70,7 +70,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
             StringAttributeClass x = util.load(StringAttributeClass.class, attr.get(KEY_NAME).getS());
@@ -89,7 +89,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (StringAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -107,7 +107,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
     public void testIncompleteObject() {
         StringAttributeClass obj = getUniqueObject();
         obj.setStringAttribute(null);
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.save(obj);
 
         assertEquals(obj, util.load(StringAttributeClass.class, obj.getKey()));
@@ -127,7 +127,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (StringAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -145,7 +145,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
     public void testSaveOnlyKey() {
         KeyOnly obj = new KeyOnly();
         obj.setKey("" + startKey++);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         mapper.save(obj);
 
         KeyOnly loaded = mapper.load(KeyOnly.class, obj.getKey(), new DynamoDBMapperConfig(ConsistentReads.CONSISTENT));
@@ -159,7 +159,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
     public void testSaveOnlyKeyClobber() {
         KeyOnly obj = new KeyOnly();
         obj.setKey("" + startKey++);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         mapper.save(obj, new DynamoDBMapperConfig(SaveBehavior.CLOBBER));
 
         KeyOnly loaded = mapper.load(KeyOnly.class, obj.getKey(), new DynamoDBMapperConfig(ConsistentReads.CONSISTENT));

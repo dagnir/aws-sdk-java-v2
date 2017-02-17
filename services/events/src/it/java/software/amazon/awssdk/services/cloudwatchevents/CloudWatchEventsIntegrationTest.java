@@ -19,8 +19,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.cloudwatchevents.AmazonCloudWatchEvents;
-import software.amazon.awssdk.services.cloudwatchevents.AmazonCloudWatchEventsClient;
 import software.amazon.awssdk.services.cloudwatchevents.model.DeleteRuleRequest;
 import software.amazon.awssdk.services.cloudwatchevents.model.DescribeRuleRequest;
 import software.amazon.awssdk.services.cloudwatchevents.model.DescribeRuleResult;
@@ -28,9 +26,9 @@ import software.amazon.awssdk.services.cloudwatchevents.model.DisableRuleRequest
 import software.amazon.awssdk.services.cloudwatchevents.model.EnableRuleRequest;
 import software.amazon.awssdk.services.cloudwatchevents.model.PutRuleRequest;
 import software.amazon.awssdk.services.cloudwatchevents.model.RuleState;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class CloudWatchEventsIntegrationTest extends AWSIntegrationTestBase {
+public class CloudWatchEventsIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String RULE_NAME = "rule";
     private static final String RULE_DESCRIPTION = "ruleDescription";
@@ -47,7 +45,7 @@ public class CloudWatchEventsIntegrationTest extends AWSIntegrationTestBase {
                                .withName(RULE_NAME)
                                .withDescription(RULE_DESCRIPTION)
                                .withEventPattern(EVENT_PATTERN)
-                      );
+        );
 
         // By default, a newly created rule is enabled
         Assert.assertEquals(RuleState.ENABLED.toString(),

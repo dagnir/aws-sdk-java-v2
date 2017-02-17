@@ -52,7 +52,7 @@ import utils.test.util.DynamoDBTestBase;
  * DynamoDB integration tests for LSI & GSI.
  */
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources( {
+@RequiredResources({
                             @RequiredResource(resource = TempTableWithSecondaryIndexes.class,
                                               creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
                                               retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
@@ -302,6 +302,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                           .withSelect(Select.ALL_PROJECTED_ATTRIBUTES));
             fail("Should trigger exception when using both Select and AttributeToGet.");
         } catch (AmazonServiceException ase) {
+            // Ignored or expected.
         }
 
         /**
@@ -450,6 +451,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                           .withSelect(Select.ALL_PROJECTED_ATTRIBUTES));
             fail("Should trigger exception when using both Select and AttributeToGet.");
         } catch (AmazonServiceException ase) {
+            // Ignored or expected.
         }
 
         /**

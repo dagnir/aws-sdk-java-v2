@@ -26,24 +26,8 @@ import org.junit.Test;
 public class Base64CodecTest {
     @Test
     public void testVectorsPerRfc4648() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String[] testVectors = {
-                "",
-                "f",
-                "fo",
-                "foo",
-                "foob",
-                "fooba",
-                "foobar",
-                };
-        String[] expected = {
-                "",
-                "Zg==",
-                "Zm8=",
-                "Zm9v",
-                "Zm9vYg==",
-                "Zm9vYmE=",
-                "Zm9vYmFy",
-                };
+        String[] testVectors = {"", "f", "fo", "foo", "foob", "fooba", "foobar"};
+        String[] expected = {"", "Zg==", "Zm8=", "Zm9v", "Zm9vYg==", "Zm9vYmE=", "Zm9vYmFy"};
 
         for (int i = 0; i < testVectors.length; i++) {
             String data = testVectors[i];
@@ -71,12 +55,7 @@ public class Base64CodecTest {
 
     @Test
     public void testImpossibleCases() {
-        final String[] BASE64_IMPOSSIBLE_CASES = {
-                "ZE==",
-                "ZmC=",
-                "Zm9vYE==",
-                "Zm9vYmC=",
-                };
+        final String[] BASE64_IMPOSSIBLE_CASES = {"ZE==", "ZmC=", "Zm9vYE==", "Zm9vYmC="};
 
         for (String s : BASE64_IMPOSSIBLE_CASES) {
             try {

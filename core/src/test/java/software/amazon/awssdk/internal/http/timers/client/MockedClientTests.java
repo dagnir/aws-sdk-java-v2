@@ -89,9 +89,11 @@ public class MockedClientTests {
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
         try {
-            ClientExecutionAndRequestTimerTestUtils.execute(httpClient, ClientExecutionAndRequestTimerTestUtils.createMockGetRequest());
+            ClientExecutionAndRequestTimerTestUtils
+                    .execute(httpClient, ClientExecutionAndRequestTimerTestUtils.createMockGetRequest());
             fail("Exception expected");
         } catch (AmazonClientException e) {
+            // Ignored or expected.
         }
 
         ClientExecutionAndRequestTimerTestUtils.assertResponseWasNotBuffered(responseProxy);
@@ -100,7 +102,8 @@ public class MockedClientTests {
     @Test
     public void clientExecutionTimeoutEnabled_RequestCompletesWithinTimeout_EntityNotBufferedForStreamedResponse()
             throws Exception {
-        ClientConfiguration config = new ClientConfiguration().withClientExecutionTimeout(TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT);
+        ClientConfiguration config =
+                new ClientConfiguration().withClientExecutionTimeout(TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT);
         ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
 
         HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpResponseProxySpy();
@@ -109,9 +112,11 @@ public class MockedClientTests {
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);
 
         try {
-            httpClient.requestExecutionBuilder().request(ClientExecutionAndRequestTimerTestUtils.createMockGetRequest()).execute(new ErrorDuringUnmarshallingResponseHandler().leaveConnectionOpen());
+            httpClient.requestExecutionBuilder().request(ClientExecutionAndRequestTimerTestUtils.createMockGetRequest())
+                      .execute(new ErrorDuringUnmarshallingResponseHandler().leaveConnectionOpen());
             fail("Exception expected");
         } catch (AmazonClientException e) {
+            // Ignored or expected.
         }
 
         ClientExecutionAndRequestTimerTestUtils.assertResponseWasNotBuffered(responseProxy);

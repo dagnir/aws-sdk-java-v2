@@ -77,8 +77,9 @@ public class AstJsonToAstJava {
                 return jsonToFunctionExpression(jsonNode);
             case "literal":
                 return jsonToLiteral(jsonNode);
+            default:
+                throw new InvalidTypeException("JsonNode type not found");
         }
-        throw new InvalidTypeException("JsonNode type not found");
     }
 
     private static JmesPathExpression jsonToLiteral(JsonNode jsonNode) {
@@ -101,8 +102,9 @@ public class AstJsonToAstJava {
                 return new JmesPathLengthFunction(args);
             case "contains":
                 return new JmesPathContainsFunction(args);
+            default:
+                return null;
         }
-        return null;
     }
 
     private static JmesPathExpression jsonToFilterProjection(JsonNode jsonNode) {

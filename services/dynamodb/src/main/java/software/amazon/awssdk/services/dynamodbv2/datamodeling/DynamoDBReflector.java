@@ -28,7 +28,7 @@ import software.amazon.awssdk.annotation.GuardedBy;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
- * Reflection assistant for {@link DynamoDBMapper}
+ * Reflection assistant for {@link DynamoDbMapper}
  *
  * @deprecated This class is internal only and should not be used. It will be removed in the next
  *             major version of the SDK.

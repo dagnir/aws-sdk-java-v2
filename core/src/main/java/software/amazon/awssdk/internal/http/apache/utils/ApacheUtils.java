@@ -96,17 +96,16 @@ public class ApacheUtils {
     /**
      * Returns a new Credentials Provider for use with proxy authentication.
      */
-    public static CredentialsProvider newProxyCredentialsProvider
-    (HttpClientSettings settings) {
+    public static CredentialsProvider newProxyCredentialsProvider(HttpClientSettings settings) {
         final CredentialsProvider provider = new BasicCredentialsProvider();
-        provider.setCredentials(newAuthScope(settings), newNTCredentials(settings));
+        provider.setCredentials(newAuthScope(settings), newNtCredentials(settings));
         return provider;
     }
 
     /**
      * Returns a new instance of NTCredentials used for proxy authentication.
      */
-    private static Credentials newNTCredentials(HttpClientSettings settings) {
+    private static Credentials newNtCredentials(HttpClientSettings settings) {
         return new NTCredentials(settings.getProxyUsername(),
                                  settings.getProxyPassword(),
                                  settings.getProxyWorkstation(),

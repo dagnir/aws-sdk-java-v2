@@ -24,11 +24,11 @@ package software.amazon.awssdk.services.dynamodbv2.document;
  */
 public abstract class LowLevelResultListener<R> {
     public static final LowLevelResultListener<?> NONE =
-            new LowLevelResultListener<Object>() {
-                @Override
-                public void onLowLevelResult(Object result) {
-                }
-            };
+        new LowLevelResultListener<Object>() {
+            @Override
+            public void onLowLevelResult(Object result) {
+            }
+        };
 
     @SuppressWarnings("unchecked")
     public static <T> LowLevelResultListener<T> none() {

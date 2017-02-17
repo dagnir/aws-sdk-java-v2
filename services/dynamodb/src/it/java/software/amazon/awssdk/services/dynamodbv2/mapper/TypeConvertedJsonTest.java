@@ -25,9 +25,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedJson;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemResult;
@@ -43,7 +43,7 @@ public class TypeConvertedJsonTest {
 
     @Test
     public void responseWithUnmappedField_IgnoresUnknownFieldAndUnmarshallsCorrectly() {
-        final DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+        final DynamoDbMapper mapper = new DynamoDbMapper(ddb);
         when(ddb.getItem(any(GetItemRequest.class)))
                 .thenReturn(new GetItemResult().withItem(
                         ImmutableMapParameter.of("hashKey", new AttributeValue(HASH_KEY),

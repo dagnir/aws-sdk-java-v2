@@ -26,13 +26,13 @@ import software.amazon.awssdk.services.simpleemail.AmazonSimpleEmailService;
 import software.amazon.awssdk.services.simpleemail.AmazonSimpleEmailServiceClient;
 import software.amazon.awssdk.services.simpleemail.model.ListVerifiedEmailAddressesResult;
 import software.amazon.awssdk.services.simpleemail.model.VerifyEmailAddressRequest;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Base class for AWS Email integration tests; responsible for loading AWS account credentials for
  * running the tests, instantiating clients, etc.
  */
-public abstract class IntegrationTestBase extends AWSTestBase {
+public abstract class IntegrationTestBase extends AwsTestBase {
 
     public static final String HUDSON_EMAIL_LIST = "aws-dr-tools-scripts@amazon.com";
     protected static final String RAW_MESSAGE_FILE_PATH = "/software/amazon/awssdk/services/email/rawMimeMessage.txt";

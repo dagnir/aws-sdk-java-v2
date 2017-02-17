@@ -34,7 +34,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param subExpression JmesPath subexpression type
      * @param input         Input json node against which evaluation is done
      * @return Result of the subexpression evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathSubExpression subExpression, JsonNode input) throws InvalidTypeException {
@@ -73,7 +72,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param jmesPathProjection JmesPath list projection type
      * @param input              Input json node against which evaluation is done
      * @return Result of the projection evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathProjection jmesPathProjection, JsonNode input) throws InvalidTypeException {
@@ -106,7 +104,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param flatten JmesPath flatten type
      * @param input   Input json node against which evaluation is done
      * @return Result of the flatten evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathFlatten flatten, JsonNode input) throws InvalidTypeException {
@@ -157,7 +154,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param valueProjection JmesPath value projection type
      * @param input           Input json node against which evaluation is done
      * @return Result of the value projection evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathValueProjection valueProjection, JsonNode input) throws InvalidTypeException {
@@ -188,7 +184,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param function JmesPath function type
      * @param input    Input json node against which evaluation is done
      * @return Result of the function evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathFunction function, JsonNode input) throws InvalidTypeException {
@@ -224,7 +219,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param filter JmesPath filter type
      * @param input  Input json node against which evaluation is done
      * @return Result of the filter expression evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathFilter filter, JsonNode input) throws InvalidTypeException {
@@ -274,7 +268,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param notExpression JmesPath not-expression type
      * @param input         Input json node against which evaluation is done
      * @return Negation of the evaluated expression
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathNotExpression notExpression, JsonNode input) throws InvalidTypeException {
@@ -295,7 +288,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param andExpression JmesPath and-expression type
      * @param input         Input json node against which evaluation is done
      * @return Result of the and-expression evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathAndExpression andExpression, JsonNode input) throws InvalidTypeException {
@@ -319,7 +311,6 @@ public class JmesPathEvaluationVisitor implements JmesPathVisitor<JsonNode, Json
      * @param multiSelectList JmesPath multiselect list type
      * @param input           Input json node against which evaluation is done
      * @return Result of the multiselect list evaluation
-     * @throws InvalidTypeException
      */
     @Override
     public JsonNode visit(JmesPathMultiSelectList multiSelectList, JsonNode input) throws InvalidTypeException {

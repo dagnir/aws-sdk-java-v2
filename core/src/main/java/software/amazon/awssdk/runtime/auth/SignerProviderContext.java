@@ -61,6 +61,7 @@ public class SignerProviderContext {
         private boolean isRedirect;
         private Request<?> request;
         private RequestConfig requestConfig;
+
         private Builder() {
         }
 

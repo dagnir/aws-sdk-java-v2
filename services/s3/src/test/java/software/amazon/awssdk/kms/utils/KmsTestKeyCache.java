@@ -17,7 +17,7 @@ package software.amazon.awssdk.kms.utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.regions.Regions;
 
 /**
@@ -32,7 +32,7 @@ public class KmsTestKeyCache {
     private final String nonDefaultKeyId;
     private final String s3DefaultKeyId;
 
-    public KmsTestKeyCache(Regions region, AWSCredentials awsCredentials) {
+    public KmsTestKeyCache(Regions region, AwsCredentials awsCredentials) {
         KmsClientTestExtensions kmsClient = new KmsClientTestExtensions(awsCredentials);
         kmsClient.configureRegion(region);
         this.nonDefaultKeyId = kmsClient.getNonDefaultKeyId();
@@ -48,7 +48,7 @@ public class KmsTestKeyCache {
      *            Credentials of test account being used
      * @return Singleton KmsKeyCache instance for given region
      */
-    public synchronized static KmsTestKeyCache getInstance(Regions region, AWSCredentials awsCredentials) {
+    public synchronized static KmsTestKeyCache getInstance(Regions region, AwsCredentials awsCredentials) {
         if (!instances.containsKey(region)) {
             instances.put(region, new KmsTestKeyCache(region, awsCredentials));
         }

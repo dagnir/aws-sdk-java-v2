@@ -55,44 +55,44 @@ import software.amazon.awssdk.util.StringInputStream;
  */
 public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests */
-    private final static String BUCKET_NAME = "java-get-object-crypto-integ-test-" + new Date().getTime();
+    /** The bucket created and used by these tests. */
+    private static final String BUCKET_NAME = "java-get-object-crypto-integ-test-" + new Date().getTime();
 
-    /** The key used for testing nonMultiPart object */
-    private final static String NON_MULTIPART_OBJECT_KEY = "nonMultiPartCryptoKey";
+    /** The key used for testing nonMultiPart object. */
+    private static final String NON_MULTIPART_OBJECT_KEY = "nonMultiPartCryptoKey";
 
-    /** Length of the random nonMultiPartObject file to upload */
+    /** Length of the random nonMultiPartObject file to upload. */
     private static final long RANDOM_FILE_DATA_LENGTH = 1 * MB;
 
-    /** Begin and End values in the range */
+    /** Begin and End values in the range. */
     private static final long RANGE_BEGIN = 5;
     private static final long RANGE_END = RANDOM_FILE_DATA_LENGTH - 20;
 
-    /** The key used for testing MultiPart object */
-    private final static String MULTIPART_OBJECT_KEY = "multiPartkeyCryptoKey";
-    /** The minimum size of a part in MultiPartObject */
-    private final static long MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
-    /** The test content that is used for testing part 2 of MultiPartObject. Contains only ASCII characters */
-    private final static String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
+    /** The key used for testing MultiPart object. */
+    private static final String MULTIPART_OBJECT_KEY = "multiPartkeyCryptoKey";
+    /** The minimum size of a part in MultiPartObject. */
+    private static final long MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
+    /** The test content that is used for testing part 2 of MultiPartObject. Contains only ASCII characters. */
+    private static final String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
     /** The size of the TEST_STRING **/
-    private final static long TEST_STRING_LENGTH = TEST_STRING.length();
-    /** The name of the file containing the nonMultiPartObject data uploaded to S3 */
+    private static final long TEST_STRING_LENGTH = TEST_STRING.length();
+    /** The name of the file containing the nonMultiPartObject data uploaded to S3. */
     private static final String nonMultiPartDataFileName = "nonMultiPartObject";
-    /** The unique Id that is returned when we initiate a MultipartUpload */
+    /** The unique Id that is returned when we initiate a MultipartUpload. */
     private static String uploadId;
-    /** Encryption provider with StrictAuthenticatedEncryption */
+    /** Encryption provider with StrictAuthenticatedEncryption. */
     private static AmazonS3EncryptionClient strictAEClient;
-    /** The file containing the nonMultiPartObject data uploaded to S3 */
+    /** The file containing the nonMultiPartObject data uploaded to S3. */
     private static File nonMultiPartDataFile;
-    /** The file containing the first part data of MultiPartObject uploaded to S3 */
+    /** The file containing the first part data of MultiPartObject uploaded to S3. */
     private static File firstPartDataFile;
-    /** The name of the file containing the first part data of MultiPartObject uploaded to S3 */
+    /** The name of the file containing the first part data of MultiPartObject uploaded to S3. */
     private static String firstPartDataFileName = "multiPartObject";
 
-    /** The byte array containing the nonMultiPartObject data uploaded to S3 */
+    /** The byte array containing the nonMultiPartObject data uploaded to S3. */
     private static byte[] nonMultiPartByteData;
 
-    /** The byte array containing the first part data of MultiPartObject uploaded to S3 */
+    /** The byte array containing the first part data of MultiPartObject uploaded to S3. */
     private static byte[] firstPartByteData;
 
     /**
@@ -130,7 +130,6 @@ public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
 
     /**
      * Uploads a full object without parts
-     * @throws Exception
      */
     private static void doNonMultiPartUpload() throws Exception {
         strictAEClient.putObject(new PutObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY, nonMultiPartDataFile));
@@ -138,7 +137,6 @@ public class S3GetObjectCryptoIntegrationTest extends S3IntegrationTestBase {
 
     /**
      * Uploads a two part object to s3.
-     * @throws Exception
      */
     private static void doMultiPartUpload() throws Exception {
         InitiateMultipartUploadResult initiateResult = strictAEClient.initiateMultipartUpload(

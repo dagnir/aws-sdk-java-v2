@@ -25,10 +25,10 @@ import software.amazon.awssdk.services.s3.internal.SSEResultBase;
  */
 public class CopyPartResult extends SSEResultBase implements Serializable {
 
-    /** The ETag value of the new part */
+    /** The ETag value of the new part. */
     private String etag;
 
-    /** The last modified date for the new part */
+    /** The last modified date for the new part. */
     private Date lastModifiedDate;
 
     /**

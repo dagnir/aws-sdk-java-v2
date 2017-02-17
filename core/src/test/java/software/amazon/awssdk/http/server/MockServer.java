@@ -110,7 +110,7 @@ public class MockServer {
     }
 
     private static class MockServerListenerThread extends Thread {
-        /** The server socket which this thread listens and responds to */
+        /** The server socket which this thread listens and responds to. */
         private final ServerSocket serverSocket;
         private final ServerBehaviorStrategy behaviorStrategy;
 
@@ -150,6 +150,7 @@ public class MockServer {
                             out.writeBytes("Hi.");
                         }
                     } catch (SocketException se) {
+                        // Ignored or expected.
                     }
                 }
             } catch (IOException e) {
@@ -196,6 +197,7 @@ public class MockServer {
             try {
                 this.content = IOUtils.toString(response.getEntity().getContent());
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
 
@@ -235,6 +237,7 @@ public class MockServer {
                         System.out.println(builder.toString());
                         out.writeBytes(builder.toString());
                     } catch (SocketException se) {
+                        // Ignored or expected.
                     }
                 }
             } catch (IOException e) {

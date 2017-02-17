@@ -57,8 +57,11 @@ public class ResponseHeaderOverrides implements Serializable {
      */
     @SuppressWarnings("unused")
     private static final String[] PARAMETER_ORDER = new String[] {RESPONSE_HEADER_CACHE_CONTROL,
-                                                                  RESPONSE_HEADER_CONTENT_DISPOSITION, RESPONSE_HEADER_CONTENT_ENCODING, RESPONSE_HEADER_CONTENT_LANGUAGE,
-                                                                  RESPONSE_HEADER_CONTENT_TYPE, RESPONSE_HEADER_EXPIRES,};
+                                                                  RESPONSE_HEADER_CONTENT_DISPOSITION,
+                                                                  RESPONSE_HEADER_CONTENT_ENCODING,
+                                                                  RESPONSE_HEADER_CONTENT_LANGUAGE,
+                                                                  RESPONSE_HEADER_CONTENT_TYPE,
+                                                                  RESPONSE_HEADER_EXPIRES};
     private String contentType;
     private String contentLanguage;
     private String expires;

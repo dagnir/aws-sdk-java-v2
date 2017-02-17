@@ -16,7 +16,7 @@
 package software.amazon.awssdk.opensdk.internal.auth;
 
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.CanHandleNullCredentials;
 import software.amazon.awssdk.auth.RequestSigner;
 import software.amazon.awssdk.auth.Signer;
@@ -56,7 +56,7 @@ public final class SignerProviderAdapter extends SignerProvider {
         }
 
         @Override
-        public void sign(SignableRequest<?> request, AWSCredentials credentials) {
+        public void sign(SignableRequest<?> request, AwsCredentials credentials) {
             authorizer.sign(request);
         }
     }

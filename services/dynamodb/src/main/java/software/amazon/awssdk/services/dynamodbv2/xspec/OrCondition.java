@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder._;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.paren;
 
 import software.amazon.awssdk.annotation.Beta;
 
@@ -43,7 +43,7 @@ public final class OrCondition extends Condition {
 
     @Override
     public AndCondition and(Condition that) {
-        return new AndCondition(_(this), that.atomic() ? that : _(that));
+        return new AndCondition(paren(this), that.atomic() ? that : paren(that));
     }
 
     @Override

@@ -17,9 +17,9 @@ package software.amazon.awssdk.services.directory;
 
 import org.junit.BeforeClass;
 import software.amazon.awssdk.services.ec2.AmazonEC2Client;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class IntegrationTestBase extends AWSIntegrationTestBase {
+public class IntegrationTestBase extends AwsIntegrationTestBase {
 
     protected static AWSDirectoryServiceClient dsClient;
     protected static AmazonEC2Client ec2Client;

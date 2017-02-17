@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import software.amazon.awssdk.internal.io.MetricsInputStream;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * A wrapper to Socket with metrics feature to record socket read time.
@@ -33,9 +33,9 @@ public class SdkMetricsSocket extends DelegateSocket {
     }
 
     /**
-     * {@link AWSRequestMetrics} is set per request.
+     * {@link AwsRequestMetrics} is set per request.
      */
-    public void setMetrics(AWSRequestMetrics metrics) {
+    public void setMetrics(AwsRequestMetrics metrics) {
         if (metricsIS == null) {
             throw new IllegalStateException(
                     "The underlying input stream must be initialized!");

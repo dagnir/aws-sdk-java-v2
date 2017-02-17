@@ -29,7 +29,7 @@ import software.amazon.awssdk.util.DateUtils;
  * Collection of StAX unmarshallers for simple data types.
  */
 public class SimpleTypeStaxUnmarshallers {
-    /** Shared logger */
+    /** Shared logger. */
     private static Log log = LogFactory.getLog(SimpleTypeStaxUnmarshallers.class);
 
     /**
@@ -188,7 +188,7 @@ public class SimpleTypeStaxUnmarshallers {
             }
 
             try {
-                return DateUtils.parseISO8601Date(dateString);
+                return DateUtils.parseIso8601Date(dateString);
             } catch (Exception e) {
                 log.warn("Unable to parse date '" + dateString + "':  " + e.getMessage(), e);
                 return null;

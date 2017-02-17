@@ -29,11 +29,11 @@ public class BigIntegerSetUnmarshaller extends NSUnmarshaller {
     private static final BigIntegerSetUnmarshaller INSTANCE =
             new BigIntegerSetUnmarshaller();
 
-    public static BigIntegerSetUnmarshaller instance() {
-        return INSTANCE;
+    private BigIntegerSetUnmarshaller() {
     }
 
-    private BigIntegerSetUnmarshaller() {
+    public static BigIntegerSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

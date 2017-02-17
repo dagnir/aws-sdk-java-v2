@@ -17,9 +17,9 @@ package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.N;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder._;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.paren;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute_not_exists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.not;
 
@@ -39,15 +39,15 @@ public class ConditionTest {
     public void explicitBracketingForJava_850() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .withCondition(
-                        _(_(attribute_not_exists("item_version")
+                        paren(paren(attribute_not_exists("item_version")
                                     .and(attribute_not_exists("config_id"))
                                     .and(attribute_not_exists("config_version"))
-                           ).or(_(N("item_version").lt(123)))
-                            .or(_(N("item_version").eq(123)
-                                                   .and(N("config_id").lt(456))))
-                            .or(_(N("item_version").eq(123)
-                                                   .and(N("config_id").eq(456))
-                                                   .and(N("config_version").lt(999))))))
+                                   ).or(paren(n("item_version").lt(123)))
+                            .or(paren(n("item_version").eq(123)
+                                                       .and(n("config_id").lt(456))))
+                            .or(paren(n("item_version").eq(123)
+                                                       .and(n("config_id").eq(456))
+                                                       .and(n("config_version").lt(999))))))
                 .buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -74,7 +74,8 @@ public class ConditionTest {
 
     /*
      * <pre>
-        attribute_not_exists(item_version) AND attribute_not_exists(config_id) AND (attribute_not_exists(config_version) OR item_version < :item_version) OR 
+        attribute_not_exists(item_version) AND attribute_not_exists(config_id) AND (attribute_not_exists(config_version) OR
+        item_version < :item_version) OR
         item_version = :item_version AND config_id < :config_id OR
         item_version = :item_version AND config_id = :config_id AND config_version < :config_version     
      * </pre>
@@ -86,12 +87,12 @@ public class ConditionTest {
                         attribute_not_exists("item_version")
                                 .and(attribute_not_exists("config_id"))
                                 .and(attribute_not_exists("config_version")
-                                             .or(N("item_version").lt(123)))
-                                .or(N("item_version").eq(123)
-                                                     .and(N("config_id").lt(456)))
-                                .or(N("item_version").eq(123)
-                                                     .and(N("config_id").eq(456))
-                                                     .and(N("config_version").lt(999))))
+                                             .or(n("item_version").lt(123)))
+                                .or(n("item_version").eq(123)
+                                                     .and(n("config_id").lt(456)))
+                                .or(n("item_version").eq(123)
+                                                     .and(n("config_id").eq(456))
+                                                     .and(n("config_version").lt(999))))
                 .buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -121,8 +122,8 @@ public class ConditionTest {
     public void anotherExample() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .withCondition(
-                        N("Price").between(100, 200)
-                                  .and(S("ProductCategory").in("category1", "category2", "category3")))
+                        n("Price").between(100, 200)
+                                  .and(s("ProductCategory").in("category1", "category2", "category3")))
                 .buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -149,8 +150,8 @@ public class ConditionTest {
     public void someComplexConditions() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .withCondition(
-                        _(N("a").eq(1).and(N("b").eq(2).or(N("c").eq(3))).or(N("d").ne(4)))
-                                .and(N("e").eq(5).and(N("f").eq(6).or(N("g").eq(7).or(N("h").eq(N("i")).and(N("j").eq(8))))))
+                        paren(n("a").eq(1).and(n("b").eq(2).or(n("c").eq(3))).or(n("d").ne(4)))
+                                .and(n("e").eq(5).and(n("f").eq(6).or(n("g").eq(7).or(n("h").eq(n("i")).and(n("j").eq(8))))))
                               ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -187,8 +188,8 @@ public class ConditionTest {
     public void negation() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .withCondition(
-                        not(N("a").eq(1).and(N("b").eq(2).or(N("c").eq(3))).and(N("d").ne(4)))
-                                .and(not(N("e").eq(5).and(N("f").eq(6).or(N("g").eq(7).or(N("h").eq(N("i")).and(N("j").eq(8)))))))
+                        not(n("a").eq(1).and(n("b").eq(2).or(n("c").eq(3))).and(n("d").ne(4)))
+                                .and(not(n("e").eq(5).and(n("f").eq(6).or(n("g").eq(7).or(n("h").eq(n("i")).and(n("j").eq(8)))))))
                               ).buildForUpdate();
         String c = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();

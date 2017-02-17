@@ -40,6 +40,7 @@ final class IonParser extends JsonParser {
     private JsonToken lastClearedToken;
     private boolean shouldSkipContainer;
     private boolean closed;
+
     public IonParser(IonReader reader, boolean shouldCloseReader) {
         super(Feature.collectDefaults());
         this.reader = reader;
@@ -123,6 +124,8 @@ final class IonParser extends JsonParser {
                     }
                     shouldSkipContainer = false;
                     continue;
+                default:
+                    // Ignore.
             }
         }
     }

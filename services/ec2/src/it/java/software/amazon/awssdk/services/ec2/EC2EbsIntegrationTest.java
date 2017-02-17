@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -49,13 +49,13 @@ import software.amazon.awssdk.services.ec2.model.VolumeType;
  */
 public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
-    /** We need to use this specific zone because it supports consistent iops */
+    /** We need to use this specific zone because it supports consistent iops. */
     private static final String US_EAST_1_B = "us-east-1b";
     private static final Integer VOLUME_SIZE = 4; // GB
     private static final Integer PROVISIONED_IOPS = 100; // per second
     private String volumeId;
 
-    /** Release resources used in testing */
+    /** Release resources used in testing. */
     @After
     public void tearDown() {
         if (volumeId != null) {

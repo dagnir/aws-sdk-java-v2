@@ -353,6 +353,7 @@ public class LambdaInvokerFactoryTest {
             invoker.broken(new BrokenPojo());
             fail("Expected LambdaSerializationException");
         } catch (LambdaSerializationException expected) {
+            // Ignored or expected.
         }
     }
 
@@ -368,6 +369,7 @@ public class LambdaInvokerFactoryTest {
             invoker.broken();
             fail("Expected LambdaSerializationException");
         } catch (LambdaSerializationException expected) {
+            // Ignored or expected.
         }
     }
 

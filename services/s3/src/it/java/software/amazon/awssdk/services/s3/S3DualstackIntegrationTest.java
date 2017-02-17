@@ -39,7 +39,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.HttpMethod;
-import software.amazon.awssdk.auth.AWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.PropertiesFileCredentialsProvider;
 import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
@@ -56,30 +56,30 @@ import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.Permission;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.services.s3.model.SSEAlgorithm;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.Md5Utils;
 
 public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
 
-    /** Default Properties Credentials file path */
+    /** Default Properties Credentials file path. */
     private static final String propertiesFilePath = System.getProperty("user.home")
                                                      + "/.aws/awsTestAccount.properties";
 
     private static final String TEST_CREDENTIALS_PROFILE_NAME = "aws-java-sdk-test";
 
-    private static final AWSCredentialsProviderChain chain = new AWSCredentialsProviderChain(
+    private static final AwsCredentialsProviderChain chain = new AwsCredentialsProviderChain(
             new PropertiesFileCredentialsProvider(propertiesFilePath),
             new ProfileCredentialsProvider(TEST_CREDENTIALS_PROFILE_NAME), new EnvironmentVariableCredentialsProvider(),
             new SystemPropertiesCredentialsProvider());
 
-    /** Object contents to use/expect when we get/put a test object */
+    /** Object contents to use/expect when we get/put a test object. */
     private static final String EXPECTED_OBJECT_CONTENTS = "Hello S3 Java client world!!!";
 
-    /** Name of the test bucket these tests will create, test, delete, etc */
+    /** Name of the test bucket these tests will create, test, delete, etc. */
     private static final String expectedBucketName = "integ-test-bucket-" + new Date().getTime();
 
-    /** Name of the test key these tests will create, test, delete, etc */
+    /** Name of the test key these tests will create, test, delete, etc. */
     private static final String expectedKey = "integ-test-key-" + new Date().getTime();
     protected static AmazonS3 s3dualstack;
     private static File file;
@@ -165,7 +165,7 @@ public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
         // customer key
         GeneratePresignedUrlRequest genreq = new GeneratePresignedUrlRequest(
                 expectedBucketName, KEY, HttpMethod.PUT);
-        genreq.setSSECustomerKey(new SSECustomerKey(secretKey));
+        genreq.setSSECustomerKey(new SseCustomerKey(secretKey));
         URL url = s3dualstack.generatePresignedUrl(genreq);
         System.err.println("Presigned PUT URL for SSE-C (with key): " + url);
 

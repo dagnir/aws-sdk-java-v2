@@ -58,11 +58,11 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResult;
  */
 public class SendQueueBuffer {
     private static Log log = LogFactory.getLog(SendQueueBuffer.class);
-    /** Config settings for this buffer */
+    /** Config settings for this buffer. */
     private final QueueBufferConfig config;
 
-    ;
-    /** Url of our queue */
+
+    /** Url of our queue. */
     private final String qUrl;
     /**
      * The {@code AmazonSQS} client to use for this buffer's operations.
@@ -163,17 +163,16 @@ public class SendQueueBuffer {
      * @return new {@code OutboundBatchTask} of appropriate type, never null
      */
     @SuppressWarnings("unchecked")
-    private <R extends AmazonWebServiceRequest, Result> OutboundBatchTask<R, Result> newOutboundBatchTask(R request) {
+    private <R extends AmazonWebServiceRequest, ResultT> OutboundBatchTask<R, ResultT> newOutboundBatchTask(R request) {
 
         if (request instanceof SendMessageRequest) {
-            return (OutboundBatchTask<R, Result>) new SendMessageBatchTask();
+            return (OutboundBatchTask<R, ResultT>) new SendMessageBatchTask();
         } else if (request instanceof DeleteMessageRequest) {
-            return (OutboundBatchTask<R, Result>) new DeleteMessageBatchTask();
+            return (OutboundBatchTask<R, ResultT>) new DeleteMessageBatchTask();
         } else if (request instanceof ChangeMessageVisibilityRequest) {
-            return (OutboundBatchTask<R, Result>) new ChangeMessageVisibilityBatchTask();
-        } else
-        // this should never happen
-        {
+            return (OutboundBatchTask<R, ResultT>) new ChangeMessageVisibilityBatchTask();
+        } else {
+            // this should never happen
             throw new IllegalArgumentException("Unsupported request type " + request.getClass().getName());
         }
     }
@@ -223,18 +222,18 @@ public class SendQueueBuffer {
      *             (see the various outbound calls for details)
      */
     @SuppressWarnings("unchecked")
-    <OBT extends OutboundBatchTask<R, Result>, R extends AmazonWebServiceRequest, Result> QueueBufferFuture<R, Result> submitOutboundRequest(
-            Object operationLock,
-            OBT[] openOutboundBatchTask,
-            R request,
-            final Semaphore inflightOperationBatches,
-            QueueBufferCallback<R, Result> callback) {
+    <OBT extends OutboundBatchTask<R, ResultT>, R extends AmazonWebServiceRequest, ResultT>
+        QueueBufferFuture<R, ResultT> submitOutboundRequest(Object operationLock,
+                                                            OBT[] openOutboundBatchTask,
+                                                            R request,
+                                                            final Semaphore inflightOperationBatches,
+                                                            QueueBufferCallback<R, ResultT> callback) {
         /*
          * Callers add requests to a single batch task (openOutboundBatchTask) until it is full or
          * maxBatchOpenMs elapses. The total number of batch task in flight is controlled by the
          * inflightOperationBatch semaphore capped at maxInflightOutboundBatches.
          */
-        QueueBufferFuture<R, Result> theFuture = null;
+        QueueBufferFuture<R, ResultT> theFuture = null;
         try {
             synchronized (operationLock) {
                 if (openOutboundBatchTask[0] == null
@@ -246,9 +245,9 @@ public class SendQueueBuffer {
 
                     // Register a listener for the event signaling that the
                     // batch task has completed (successfully or not).
-                    openOutboundBatchTask[0].setOnCompleted(new Listener<OutboundBatchTask<R, Result>>() {
+                    openOutboundBatchTask[0].setOnCompleted(new Listener<OutboundBatchTask<R, ResultT>>() {
                         @Override
-                        public void invoke(OutboundBatchTask<R, Result> task) {
+                        public void invoke(OutboundBatchTask<R, ResultT> task) {
                             inflightOperationBatches.release();
                         }
                     });
@@ -296,24 +295,24 @@ public class SendQueueBuffer {
      *
      * @param <R>
      *            the type of the SQS request to batch
-     * @param <Result>
+     * @param <ResultT>
      *            the type of result he futures issued by this task will return
      */
-    private abstract class OutboundBatchTask<R extends AmazonWebServiceRequest, Result> implements Runnable {
+    private abstract class OutboundBatchTask<R extends AmazonWebServiceRequest, ResultT> implements Runnable {
 
         protected final List<R> requests;
-        protected final ArrayList<QueueBufferFuture<R, Result>> futures;
+        protected final ArrayList<QueueBufferFuture<R, ResultT>> futures;
 
         private boolean closed;
 
-        private volatile Listener<OutboundBatchTask<R, Result>> onCompleted;
+        private volatile Listener<OutboundBatchTask<R, ResultT>> onCompleted;
 
         public OutboundBatchTask() {
             this.requests = new ArrayList<R>(config.getMaxBatchSize());
-            this.futures = new ArrayList<QueueBufferFuture<R, Result>>(config.getMaxBatchSize());
+            this.futures = new ArrayList<QueueBufferFuture<R, ResultT>>(config.getMaxBatchSize());
         }
 
-        public void setOnCompleted(Listener<OutboundBatchTask<R, Result>> value) {
+        public void setOnCompleted(Listener<OutboundBatchTask<R, ResultT>> value) {
             onCompleted = value;
         }
 
@@ -323,13 +322,13 @@ public class SendQueueBuffer {
          * @return the future that can be used to get the results of the execution, or null if the
          *         addition failed.
          */
-        public synchronized QueueBufferFuture<R, Result> addRequest(R request, QueueBufferCallback<R, Result> callback) {
+        public synchronized QueueBufferFuture<R, ResultT> addRequest(R request, QueueBufferCallback<R, ResultT> callback) {
 
             if (closed) {
                 return null;
             }
 
-            QueueBufferFuture<R, Result> theFuture = addIfAllowed(request, callback);
+            QueueBufferFuture<R, ResultT> theFuture = addIfAllowed(request, callback);
 
             // if the addition did not work, or this addition made us full,
             // we can close the request.
@@ -345,17 +344,16 @@ public class SendQueueBuffer {
          * Adds the request to the batch if capacity allows it. Called by {@code addRequest} with a
          * lock on {@code this} held.
          *
-         * @param request
          * @return the future that will be signaled when the request is completed and can be used to
          *         retrieve the result. Can be null if the addition could not be done
          */
-        private QueueBufferFuture<R, Result> addIfAllowed(R request, QueueBufferCallback<R, Result> callback) {
+        private QueueBufferFuture<R, ResultT> addIfAllowed(R request, QueueBufferCallback<R, ResultT> callback) {
 
             if (isOkToAdd(request)) {
 
                 requests.add(request);
 
-                QueueBufferFuture<R, Result> theFuture = new QueueBufferFuture<R, Result>(callback);
+                QueueBufferFuture<R, ResultT> theFuture = new QueueBufferFuture<R, ResultT>(callback);
 
                 futures.add(theFuture);
                 onRequestAdded(request);
@@ -404,7 +402,7 @@ public class SendQueueBuffer {
          * However, it's passed a local copy of both the {@code requests} and {@code futures} lists
          * made while holding the lock.
          */
-        protected abstract void process(List<R> requests, List<QueueBufferFuture<R, Result>> futures);
+        protected abstract void process(List<R> requests, List<QueueBufferFuture<R, ResultT>> futures);
 
         @Override
         public final void run() {
@@ -415,7 +413,7 @@ public class SendQueueBuffer {
                 long t = TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
 
                 List<R> requests;
-                List<QueueBufferFuture<R, Result>> futures;
+                List<QueueBufferFuture<R, ResultT>> futures;
 
                 synchronized (this) {
                     while (!closed && (t < deadlineMs)) {
@@ -429,7 +427,7 @@ public class SendQueueBuffer {
                     closed = true;
 
                     requests = new ArrayList<R>(this.requests);
-                    futures = new ArrayList<QueueBufferFuture<R, Result>>(this.futures);
+                    futures = new ArrayList<QueueBufferFuture<R, ResultT>>(this.futures);
                 }
 
                 process(requests, futures);
@@ -447,7 +445,7 @@ public class SendQueueBuffer {
             } finally {
                 // make a copy of the listener since it (theoretically) can be
                 // modified from the outside.
-                Listener<OutboundBatchTask<R, Result>> listener = onCompleted;
+                Listener<OutboundBatchTask<R, ResultT>> listener = onCompleted;
                 if (listener != null) {
                     listener.invoke(this);
                 }
@@ -455,7 +453,7 @@ public class SendQueueBuffer {
         }
 
         private void failAll(Exception e) {
-            for (QueueBufferFuture<R, Result> f : futures) {
+            for (QueueBufferFuture<R, ResultT> f : futures) {
                 f.setFailure(e);
             }
         }
@@ -490,7 +488,7 @@ public class SendQueueBuffer {
             }
 
             SendMessageBatchRequest batchRequest = new SendMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, AmazonSQSBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
 
             List<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>(requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
@@ -538,7 +536,7 @@ public class SendQueueBuffer {
             }
 
             DeleteMessageBatchRequest batchRequest = new DeleteMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, AmazonSQSBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
 
             List<DeleteMessageBatchRequestEntry> entries = new ArrayList<DeleteMessageBatchRequestEntry>(
                     requests.size());
@@ -585,7 +583,7 @@ public class SendQueueBuffer {
 
             ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
                     .withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, AmazonSQSBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
 
             List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                     requests.size());

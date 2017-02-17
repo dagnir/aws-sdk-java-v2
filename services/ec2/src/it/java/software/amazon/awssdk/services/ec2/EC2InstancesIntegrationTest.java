@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -84,13 +84,13 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     private static final String US_EAST_1_A = "us-east-1a";
     private static final String USER_DATA = "foobarbazbar";
     private static final String INSTANCE_TYPE = InstanceType.T1Micro.toString();
-    /** The name of an existing security group for tests to use */
+    /** The name of an existing security group for tests to use. */
     private static String existingGroupName;
-    /** The name of an existing key pair for tests to use */
+    /** The name of an existing key pair for tests to use. */
     private static String existingKeyPairName;
-    /** The ARN of an existing instance profile for tests to use */
+    /** The ARN of an existing instance profile for tests to use. */
     private static String existingInstanceProfileArn;
-    /** Test EC2 instance for all tests to share */
+    /** Test EC2 instance for all tests to share. */
     private static Instance testInstance;
     /**
      * The reservation ID used in later tests, captured when launching our test
@@ -169,8 +169,7 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
         ec2.reportInstanceStatus(new ReportInstanceStatusRequest()
                                          .withInstances(testInstance.getInstanceId())
                                          .withReasonCodes("other")
-                                         .withStatus("ok")
-                                );
+                                         .withStatus("ok"));
     }
 
     /**
@@ -369,6 +368,7 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
             try {
                 Thread.sleep(30 * 1000);
             } catch (InterruptedException e) {
+                // Ignored or expected.
             }
         }
 
@@ -424,7 +424,7 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     }
 
 
-    /* Private test utilities */
+    /* Private test utilities. */
 
     /**
      * Tests that the instances are correctly returned when we use a filter.

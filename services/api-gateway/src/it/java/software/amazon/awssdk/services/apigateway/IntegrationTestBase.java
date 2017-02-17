@@ -17,9 +17,9 @@ package software.amazon.awssdk.services.apigateway;
 
 import java.io.IOException;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class IntegrationTestBase extends AWSTestBase {
+public class IntegrationTestBase extends AwsTestBase {
 
     protected static AmazonApiGateway apiGateway;
 

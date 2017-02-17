@@ -26,7 +26,7 @@ import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
  * they are read and calculates and MD5 digest.
  */
 public class MD5DigestCalculatingInputStream extends SdkFilterInputStream {
-    /** The MD5 message digest being calculated by this input stream */
+    /** The MD5 message digest being calculated by this input stream. */
     private MessageDigest digest;
     /**
      * The MD5 message digest as at the time when the last {@link #mark(int)}

@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.UUID;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.dynamodbv2.pojos.S3LinksTestClass;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -31,23 +31,23 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
-    private final long OBJECT_SIZE = 123;
+    private static final long OBJECT_SIZE = 123;
 
     @Test
     public void testCredentialContext() throws Exception {
-        tryCreateItem(new DynamoDBMapper(dynamo, new AWSStaticCredentialsProvider(credentials)));
+        tryCreateItem(new DynamoDbMapper(dynamo, new AwsStaticCredentialsProvider(credentials)));
     }
 
     @Test
     public void testManuallyFilledContext() throws Exception {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new AWSStaticCredentialsProvider(credentials));
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new AwsStaticCredentialsProvider(credentials));
         S3ClientCache s3cc = mapper.getS3ClientCache();
         s3cc.useClient(s3East);
         s3cc.useClient(s3West);
         tryCreateItem(mapper);
     }
 
-    public void tryCreateItem(DynamoDBMapper mapper) throws Exception {
+    public void tryCreateItem(DynamoDbMapper mapper) throws Exception {
         String westKey = UUID.randomUUID().toString();
         String eastKey = UUID.randomUUID().toString();
 

@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
@@ -35,14 +35,14 @@ import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
 import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodbv2.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.waiters.WaiterHandler;
 import software.amazon.awssdk.waiters.WaiterParameters;
 
 /**
  * Created by meghbyar on 6/15/16.
  */
-public class DynamoDBWaiterIntegrationTest extends AWSIntegrationTestBase {
+public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
 
     private String tableName;
     private AmazonDynamoDB client;
@@ -52,7 +52,7 @@ public class DynamoDBWaiterIntegrationTest extends AWSIntegrationTestBase {
         tableName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
         client = AmazonDynamoDBClientBuilder
                 .standard()
-                .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                 .withRegion(Regions.US_WEST_2)
                 .build();
         client.createTable(new CreateTableRequest().withTableName(tableName)
@@ -76,6 +76,7 @@ public class DynamoDBWaiterIntegrationTest extends AWSIntegrationTestBase {
             client.describeTable(tableName);
             fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException re) {
+            // Ignored or expected.
         }
     }
 

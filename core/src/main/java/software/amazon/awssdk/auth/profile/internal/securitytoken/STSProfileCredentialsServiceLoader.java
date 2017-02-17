@@ -16,7 +16,7 @@
 package software.amazon.awssdk.auth.profile.internal.securitytoken;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 
 /**
  * Loads <code>software.amazon.awssdk.services.securitytoken.internal.STSProfileCredentialsService</code>
@@ -34,7 +34,7 @@ public class STSProfileCredentialsServiceLoader implements ProfileCredentialsSer
     }
 
     @Override
-    public AWSCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
+    public AwsCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
         return new STSProfileCredentialsServiceProvider(targetRoleInfo);
     }
 }

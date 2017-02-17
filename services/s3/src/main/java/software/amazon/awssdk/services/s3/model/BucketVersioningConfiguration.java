@@ -87,7 +87,7 @@ public class BucketVersioningConfiguration implements Serializable {
     public static final String ENABLED = "Enabled";
 
 
-    /** The current status of versioning */
+    /** The current status of versioning. */
     private String status;
 
     /**

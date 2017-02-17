@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.util.StringUtils;
 
 /**
@@ -38,13 +38,13 @@ import software.amazon.awssdk.util.StringUtils;
  * automatically loads AWS credentials from a properties file on disk and instantiates clients for
  * the individual tests to use.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
-public class IntegrationTestBase extends AWSTestBase {
+public class IntegrationTestBase extends AwsTestBase {
 
     /** Random number used for naming message attributes. */
     private static final Random random = new Random(System.currentTimeMillis());
-    /** The SQS client for all tests to use */
+    /** The SQS client for all tests to use. */
     private static AmazonSQSAsyncClient sqs;
     /**
      * Account ID of the AWS Account identified by the credentials provider setup in AWSTestBase.
@@ -159,7 +159,7 @@ public class IntegrationTestBase extends AWSTestBase {
      * cause subsequent tests to fail.
      */
     private static class SharedSqsClient extends AmazonSQSAsyncClient {
-        public SharedSqsClient(AWSCredentials credentials) {
+        public SharedSqsClient(AwsCredentials credentials) {
             super(credentials);
         }
 

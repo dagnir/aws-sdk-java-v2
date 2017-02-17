@@ -36,8 +36,8 @@ import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
 import software.amazon.awssdk.services.s3.model.SetBucketVersioningConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.transfer.Transfer.TransferState;
 import software.amazon.awssdk.services.s3.transfer.exception.PauseException;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadPartCallable;
@@ -48,54 +48,54 @@ import software.amazon.awssdk.test.util.TestExecutors;
 @Category(S3Categories.Slow.class)
 public class TransferManagerParallelDownloadsIntegrationTest extends
                                                              S3IntegrationTestBase {
-    /** Default upload threshold for multipart uploads */
+    /** Default upload threshold for multipart uploads. */
     protected static final long DEFAULT_MULTIPART_UPLOAD_THRESHOLD = 15 * MB;
-    /** Default part size for multipart uploads */
+    /** Default part size for multipart uploads. */
     protected static final long DEFAULT_MULTIPART_UPLOAD_PART_SIZE = 5 * MB;
-    /** The bucket used for these tests */
-    private final static String BUCKET_NAME = "java-parallel-downloads-integ-test" + new Date().getTime();
+    /** The bucket used for these tests. */
+    private static final String BUCKET_NAME = "java-parallel-downloads-integ-test" + new Date().getTime();
 
-    /** The versioning enabled bucket used for these tests */
-    private final static String VERSION_ENABLED_BUCKET_NAME = "java-parallel-downloads-versioning-integ-test"
+    /** The versioning enabled bucket used for these tests. */
+    private static final String VERSION_ENABLED_BUCKET_NAME = "java-parallel-downloads-versioning-integ-test"
                                                               + new Date().getTime();
 
-    /** The key used for testing multipart object */
-    private final static String MULTIPART_OBJECT_KEY = "multiPartkey";
+    /** The key used for testing multipart object. */
+    private static final String MULTIPART_OBJECT_KEY = "multiPartkey";
 
-    /** The key used for testing non multipart object */
-    private final static String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
+    /** The key used for testing non multipart object. */
+    private static final String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
 
-    /** The key used for testing multipart object with Server-side encryption */
-    private final static String MULTIPART_OBJECT_KEY_WITH_SSE = "multiPartkey-sse";
+    /** The key used for testing multipart object with Server-side encryption. */
+    private static final String MULTIPART_OBJECT_KEY_WITH_SSE = "multiPartkey-sse";
 
-    /** The key used for testing non multipart object with Server-side encryption */
-    private final static String NON_MULTIPART_OBJECT_KEY_WITH_SSE = "nonMultiPartkey-sse";
+    /** The key used for testing non multipart object with Server-side encryption. */
+    private static final String NON_MULTIPART_OBJECT_KEY_WITH_SSE = "nonMultiPartkey-sse";
 
-    /** The customer provided server-side encryption key */
-    private static final SSECustomerKey SSE_KEY = new SSECustomerKey(CryptoTestUtils.getTestSecretKey());
+    /** The customer provided server-side encryption key. */
+    private static final SseCustomerKey SSE_KEY = new SseCustomerKey(CryptoTestUtils.getTestSecretKey());
 
-    /** The size of the multipart object uploaded to S3 */
-    private final static long MULTIPART_OBJECT_SIZE = 20 * MB;
+    /** The size of the multipart object uploaded to S3. */
+    private static final long MULTIPART_OBJECT_SIZE = 20 * MB;
 
-    /** The size of the non multipart object uploaded to S3 */
-    private final static long NON_MULTIPART_OBJECT_SIZE = 12 * MB;
-    /** Default size used for interrupting downloads */
+    /** The size of the non multipart object uploaded to S3. */
+    private static final long NON_MULTIPART_OBJECT_SIZE = 12 * MB;
+    /** Default size used for interrupting downloads. */
     private static final long INTERRUPT_SIZE = 10 * MB;
-    /** Start of Range */
+    /** Start of Range. */
     private static final long START_BYTE = 100;
-    /** End of Range */
+    /** End of Range. */
     private static final long END_BYTE = MULTIPART_OBJECT_SIZE - 1000;
     private static final File TEMP_DIR = new File(System.getProperty("java.io.tmpdir"));
-    /** Reference to the Transfer manager instance used for testing */
+    /** Reference to the Transfer manager instance used for testing. */
     private static TransferManager tm;
     private static TransferManagerConfiguration tmConfig;
-    /** File that contains the multipart data uploaded to S3 */
+    /** File that contains the multipart data uploaded to S3. */
     private static File multiPartFile;
 
-    /** File that contains the non multipart data uploaded to S3 */
+    /** File that contains the non multipart data uploaded to S3. */
     private static File nonMultiPartFile;
 
-    /** File that contains the data downloaded from S3 */
+    /** File that contains the data downloaded from S3. */
     private static File downloadFile;
 
     /**
@@ -140,7 +140,7 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
         myUpload.waitForCompletion();
 
         // Upload object with Server-side encryption
-        myUpload = tm.upload(new PutObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY_WITH_SSE, nonMultiPartFile).withSSECustomerKey(SSE_KEY));
+        myUpload = tm.upload(new PutObjectRequest(BUCKET_NAME, NON_MULTIPART_OBJECT_KEY_WITH_SSE, nonMultiPartFile).withSseCustomerKey(SSE_KEY));
         myUpload.waitForCompletion();
     }
 
@@ -154,7 +154,7 @@ public class TransferManagerParallelDownloadsIntegrationTest extends
         myUpload.waitForCompletion();
 
         // Upload object with Server-side encryption
-        myUpload = tm.upload(new PutObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY_WITH_SSE, multiPartFile).withSSECustomerKey(SSE_KEY));
+        myUpload = tm.upload(new PutObjectRequest(BUCKET_NAME, MULTIPART_OBJECT_KEY_WITH_SSE, multiPartFile).withSseCustomerKey(SSE_KEY));
         myUpload.waitForCompletion();
     }
 

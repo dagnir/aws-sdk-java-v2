@@ -18,9 +18,9 @@ package software.amazon.awssdk.services.workspaces;
 import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class IntegrationTestBase extends AWSTestBase {
+public class IntegrationTestBase extends AwsTestBase {
 
     protected static AmazonWorkspaces client;
 

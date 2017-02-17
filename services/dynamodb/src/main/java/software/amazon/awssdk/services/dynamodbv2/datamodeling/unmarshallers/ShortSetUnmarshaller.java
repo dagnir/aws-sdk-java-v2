@@ -28,11 +28,11 @@ public class ShortSetUnmarshaller extends NSUnmarshaller {
     private static final ShortSetUnmarshaller INSTANCE =
             new ShortSetUnmarshaller();
 
-    public static ShortSetUnmarshaller instance() {
-        return INSTANCE;
+    private ShortSetUnmarshaller() {
     }
 
-    private ShortSetUnmarshaller() {
+    public static ShortSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

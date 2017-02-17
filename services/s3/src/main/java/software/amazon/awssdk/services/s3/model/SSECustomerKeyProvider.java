@@ -26,5 +26,5 @@ public interface SSECustomerKeyProvider {
      * @return The optional customer-provided server-side encryption key to use
      *         to encrypt the uploaded object.
      */
-    public SSECustomerKey getSSECustomerKey();
+    public SseCustomerKey getSSECustomerKey();
 }

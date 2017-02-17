@@ -19,7 +19,7 @@ import java.net.URI;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.SdkClock;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 
@@ -31,12 +31,12 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 public class PresignerParams {
 
     private final URI endpoint;
-    private final AWSCredentialsProvider credentialsProvider;
+    private final AwsCredentialsProvider credentialsProvider;
     private final SignerProvider signerProvider;
     private final SdkClock clock;
 
     public PresignerParams(URI endpoint,
-                           AWSCredentialsProvider credentialsProvider,
+                           AwsCredentialsProvider credentialsProvider,
                            SignerProvider signerProvider,
                            SdkClock clock) {
         this.endpoint = endpoint;
@@ -53,7 +53,7 @@ public class PresignerParams {
         return endpoint;
     }
 
-    public AWSCredentialsProvider credentialsProvider() {
+    public AwsCredentialsProvider credentialsProvider() {
         return credentialsProvider;
     }
 
@@ -71,7 +71,7 @@ public class PresignerParams {
     public static class Builder {
 
         private URI endpoint;
-        private AWSCredentialsProvider credentialsProvider;
+        private AwsCredentialsProvider credentialsProvider;
         private SignerProvider signerProvider;
         private SdkClock clock;
 
@@ -83,7 +83,7 @@ public class PresignerParams {
             return this;
         }
 
-        public Builder credentialsProvider(AWSCredentialsProvider credentialsProvider) {
+        public Builder credentialsProvider(AwsCredentialsProvider credentialsProvider) {
             this.credentialsProvider = credentialsProvider;
             return this;
         }

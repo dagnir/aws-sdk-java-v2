@@ -94,6 +94,7 @@ public class CipherLiteInputStream4Test {
                                           false, false);
                 fail();
             } catch (IllegalArgumentException expected) {
+                // Expected.
             }
         }
     }
@@ -103,10 +104,10 @@ public class CipherLiteInputStream4Test {
     @Test
     public void testZeroReturnLen() throws Exception {
         ContentCryptoScheme[] schemes = {
-                ContentCryptoScheme.AES_CBC,
-                ContentCryptoScheme.AES_GCM,
-                ContentCryptoScheme.AES_CTR,
-                };
+            ContentCryptoScheme.AES_CBC,
+            ContentCryptoScheme.AES_GCM,
+            ContentCryptoScheme.AES_CTR,
+        };
         for (ContentCryptoScheme scheme : schemes) {
             try {
                 readWithBuffer(scheme);
@@ -122,10 +123,10 @@ public class CipherLiteInputStream4Test {
     @Test
     public void testZeroReturnLenNoBuffer() throws Exception {
         ContentCryptoScheme[] schemes = {
-                ContentCryptoScheme.AES_CBC,
-                ContentCryptoScheme.AES_GCM,
-                ContentCryptoScheme.AES_CTR,
-                };
+            ContentCryptoScheme.AES_CBC,
+            ContentCryptoScheme.AES_GCM,
+            ContentCryptoScheme.AES_CTR,
+        };
         for (ContentCryptoScheme scheme : schemes) {
             try {
                 readWithNoBuffer(scheme);

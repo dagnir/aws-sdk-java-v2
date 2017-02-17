@@ -37,17 +37,17 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  * out of resources and start failing requests, and that the client can safely
  * be used from multiple threads.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class MultiThreadedDownloadIntegrationTest extends S3IntegrationTestBase {
 
-    /** The total number of GET object requests made to Amazon S3 */
+    /** The total number of GET object requests made to Amazon S3. */
     private static final int TOTAL_REQUESTS = 1000;
 
-    /** The total number of threads used to send GET object requests */
+    /** The total number of threads used to send GET object requests. */
     private static final int TOTAL_THREADS = 20;
 
-    /** The size of the file uploaded, and retrieved, from S3 */
+    /** The size of the file uploaded, and retrieved, from S3. */
     private static final long CONTENT_LENGTH = 231L;
 
     private String bucketName = "download-stress-integ-test-" + new Date().getTime();
@@ -56,16 +56,18 @@ public class MultiThreadedDownloadIntegrationTest extends S3IntegrationTestBase 
     private ExecutorService threadPool = Executors.newFixedThreadPool(TOTAL_THREADS);
 
 
-    /** Releases all resources created by this test */
+    /** Releases all resources created by this test. */
     @After
     public void tearDown() {
         try {
             s3.deleteObject(bucketName, key);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         try {
             s3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
@@ -105,7 +107,7 @@ public class MultiThreadedDownloadIntegrationTest extends S3IntegrationTestBase 
      * indicate that any of our tests failed, and then check that in the main
      * JUnit thread with an assert.
      *
-     * @author Jason Fulghum <fulghum@amazon.com>
+     * @author Jason Fulghum fulghum@amazon.com
      */
     private class TimedGetObjectCallable implements Callable<Integer> {
         /** @see java.util.concurrent.Callable#call() */

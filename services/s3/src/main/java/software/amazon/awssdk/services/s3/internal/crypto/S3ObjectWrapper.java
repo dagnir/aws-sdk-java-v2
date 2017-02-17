@@ -78,11 +78,11 @@ class S3ObjectWrapper implements Closeable {
         return s3obj.getObjectContent();
     }
 
-    void setObjectContent(InputStream objectContent) {
+    void setObjectContent(S3ObjectInputStream objectContent) {
         s3obj.setObjectContent(objectContent);
     }
 
-    void setObjectContent(S3ObjectInputStream objectContent) {
+    void setObjectContent(InputStream objectContent) {
         s3obj.setObjectContent(objectContent);
     }
 
@@ -172,11 +172,11 @@ class S3ObjectWrapper implements Closeable {
     ContentCryptoScheme encryptionSchemeOf(Map<String, String> instructionFile) {
         if (instructionFile != null) {
             String cekAlgo = instructionFile.get(Headers.CRYPTO_CEK_ALGORITHM);
-            return ContentCryptoScheme.fromCEKAlgo(cekAlgo);
+            return ContentCryptoScheme.fromCekAlgo(cekAlgo);
         }
         ObjectMetadata meta = s3obj.getObjectMetadata();
         Map<String, String> userMeta = meta.getUserMetadata();
         String cekAlgo = userMeta.get(Headers.CRYPTO_CEK_ALGORITHM);
-        return ContentCryptoScheme.fromCEKAlgo(cekAlgo);
+        return ContentCryptoScheme.fromCekAlgo(cekAlgo);
     }
 }

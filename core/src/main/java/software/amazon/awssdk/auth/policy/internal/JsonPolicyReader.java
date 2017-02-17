@@ -95,7 +95,7 @@ public class JsonPolicyReader {
     }
 
     /**
-     * Creates a <code>Statement<code> instance from the statement node.
+     * Creates a <code>Statement</code> instance from the statement node.
      *
      * A statement consists of an Effect, id (optional), principal, action, resource,
      * and conditions.

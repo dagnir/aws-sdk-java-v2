@@ -19,9 +19,9 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
 import org.junit.Test;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class SecurityManagerIntegrationTest extends AWSIntegrationTestBase {
+public class SecurityManagerIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String JAVA_SECURITY_POLICY_PROPERTY = "java.security.policy";
 

@@ -31,9 +31,9 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.opensdk.protect.auth.RequestSignerNotFoundException;
 import software.amazon.awssdk.services.apigateway.mockservice.MyService;
 import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
@@ -67,7 +67,8 @@ public class AuthorizationComponentTest {
 
     @Test
     public void signersRegistryIsImmutableAfterClientCreation() {
-        String correctToken = "correct", wrongToken = "mutated";
+        String correctToken = "correct";
+        String wrongToken = "mutated";
         MyServiceClientBuilder builder = createServiceBuilder()
                 .signer(r -> correctToken);
         MyService service = builder.build();
@@ -89,9 +90,10 @@ public class AuthorizationComponentTest {
 
     @Test
     public void awsIamSignerIsIncludedWhenCredentialsAreSpecified() {
-        String key = randomAlphanumeric(10), secret = randomAlphanumeric(10);
-        AWSCredentialsProvider provider = new AWSStaticCredentialsProvider(
-                new BasicAWSCredentials(key, secret));
+        String key = randomAlphanumeric(10);
+        String secret = randomAlphanumeric(10);
+        AwsCredentialsProvider provider = new AwsStaticCredentialsProvider(
+                new BasicAwsCredentials(key, secret));
         MyService service = createServiceBuilder().iamCredentials(provider).build();
 
         service.putIamauthScalars(new PutIamauthScalarsRequest());

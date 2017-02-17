@@ -47,10 +47,9 @@ public class ApacheDefaultHttpRequestFactoryTest {
 
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String USER_AGENT = "User-Agent";
-    private static final HttpRequestFactory<HttpRequestBase> requestFactory =
-            new ApacheHttpRequestFactory();
-    private final String SERVICE_NAME = "fooService";
-    private final String ENDPOINT = "https://aws.amazon.com";
+    private static final HttpRequestFactory<HttpRequestBase> REQUEST_FACTORY = new ApacheHttpRequestFactory();
+    private static final String SERVICE_NAME = "fooService";
+    private static final String ENDPOINT = "https://aws.amazon.com";
     private final HttpClientSettings settings = HttpClientSettings.adapt(new ClientConfiguration());
 
     public static byte[] drainInputStream(InputStream inputStream) {
@@ -76,18 +75,17 @@ public class ApacheDefaultHttpRequestFactoryTest {
         final Request<Object> request = newDefaultRequest(HttpMethodName.GET);
         request.setResourcePath("//foo");
         request.setEndpoint(new URI(ENDPOINT));
-        HttpRequestBase requestBase = requestFactory.create(request, settings);
+        HttpRequestBase requestBase = REQUEST_FACTORY.create(request, settings);
         URI expectredUri = requestBase.getURI();
         Assert.assertEquals("/%2Ffoo", expectredUri.getRawPath());
     }
 
     @Test
-    public void query_parameters_moved_to_payload_for_post_request_with_no_payload
-            () throws IOException, URISyntaxException {
+    public void query_parameters_moved_to_payload_for_post_request_with_no_payload() throws IOException, URISyntaxException {
         final Request<Object> request = newDefaultRequest(HttpMethodName.POST);
         request.withParameter("foo", "bar")
                .withParameter("alpha", "beta");
-        HttpRequestBase requestBase = requestFactory.create(request, settings);
+        HttpRequestBase requestBase = REQUEST_FACTORY.create(request, settings);
         Assert.assertThat(requestBase, Matchers.instanceOf(HttpPost
                                                                    .class));
         HttpPost post = (HttpPost) requestBase;
@@ -100,7 +98,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
     public void query_parameters_in_uri_for_all_non_post_requests() throws IOException, URISyntaxException {
         final Request<Object> request = newDefaultRequest(HttpMethodName.GET);
         request.withParameter("foo", "bar");
-        HttpRequestBase requestBase = requestFactory.create(request, settings);
+        HttpRequestBase requestBase = REQUEST_FACTORY.create(request, settings);
         Assert.assertEquals("foo=bar", requestBase.getURI().getQuery());
     }
 
@@ -110,7 +108,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
         request.withParameter("foo", "bar");
         final String payload = "dummy string stream";
         request.setContent(new StringInputStream(payload));
-        HttpRequestBase requestBase = requestFactory.create(request, settings);
+        HttpRequestBase requestBase = REQUEST_FACTORY.create(request, settings);
         Assert.assertThat(requestBase, Matchers.instanceOf(HttpPost
                                                                    .class));
         Assert.assertEquals("foo=bar", requestBase.getURI().getQuery());
@@ -122,28 +120,28 @@ public class ApacheDefaultHttpRequestFactoryTest {
     @Test
     public void get_request_returns_correct_apache_requests() throws IOException, URISyntaxException {
         final Request<Object> request = newDefaultRequest(HttpMethodName.GET);
-        Assert.assertThat(requestFactory.create(request, settings), Matchers.instanceOf(HttpGet
+        Assert.assertThat(REQUEST_FACTORY.create(request, settings), Matchers.instanceOf(HttpGet
                                                                                                 .class));
     }
 
     @Test
     public void patch_request_returns_correct_apache_requests() throws IOException, URISyntaxException {
         final Request<Object> request = newDefaultRequest(HttpMethodName.PATCH);
-        Assert.assertThat(requestFactory.create(request, settings), Matchers.instanceOf(HttpPatch
+        Assert.assertThat(REQUEST_FACTORY.create(request, settings), Matchers.instanceOf(HttpPatch
                                                                                                 .class));
     }
 
     @Test
     public void delete_request_returns_correct_apache_requests() throws IOException, URISyntaxException {
         final Request<Object> request = newDefaultRequest(HttpMethodName.DELETE);
-        Assert.assertThat(requestFactory.create(request, settings), Matchers.instanceOf(HttpDelete
+        Assert.assertThat(REQUEST_FACTORY.create(request, settings), Matchers.instanceOf(HttpDelete
                                                                                                 .class));
     }
 
     @Test
     public void head_request_returns_correct_apache_requests() throws IOException, URISyntaxException {
         final Request<Object> request = newDefaultRequest(HttpMethodName.HEAD);
-        Assert.assertThat(requestFactory.create(request, settings), Matchers.instanceOf(HttpHead
+        Assert.assertThat(REQUEST_FACTORY.create(request, settings), Matchers.instanceOf(HttpHead
                                                                                                 .class));
     }
 
@@ -152,7 +150,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
                                                                                       URISyntaxException {
         final Request<Object> request = newDefaultRequest(HttpMethodName.POST);
         request.setContent(new StringInputStream("dummy string stream"));
-        HttpRequestBase requestBase = requestFactory.create(request, settings);
+        HttpRequestBase requestBase = REQUEST_FACTORY.create(request, settings);
         assertContentTypeContains("application/x-www-form-urlencoded",
                                   requestBase.getHeaders(CONTENT_TYPE));
     }
@@ -165,7 +163,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
         final String testContentype = "testContentType";
         request.addHeader(HttpHeaders.CONTENT_TYPE, testContentype);
         request.setContent(new StringInputStream("dummy string stream"));
-        HttpRequestBase requestBase = requestFactory.create(request, settings);
+        HttpRequestBase requestBase = REQUEST_FACTORY.create(request, settings);
         assertContentTypeContains(testContentype,
                                   requestBase.getHeaders(CONTENT_TYPE));
 
@@ -182,8 +180,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
     private DefaultRequest<Object> newDefaultRequest(HttpMethodName httpMethod) throws
                                                                                 URISyntaxException {
 
-        final DefaultRequest<Object> request = new DefaultRequest<Object>
-                (null, SERVICE_NAME);
+        final DefaultRequest<Object> request = new DefaultRequest<Object>(null, SERVICE_NAME);
         request.setEndpoint(new URI(ENDPOINT));
         request.setHttpMethod(httpMethod);
         return request;

@@ -59,7 +59,7 @@ public class ResponseMetadataCacheTest {
         assertEquals(metadata4, cache.get(key4));
     }
 
-    /** Tests that the cache works correctly with size=0  */
+    /** Tests that the cache works correctly with size=0.  */
     @Test
     public void TestEmpty() {
         ResponseMetadataCache cache = new ResponseMetadataCache(0);

@@ -27,7 +27,6 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * predefined S3 metrics.
  */
 public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricType {
-    static final String SERVICE_NAME_PREFIX = "S3";
     public static final S3ServiceMetric S3DownloadByteCount = new S3ServiceMetric(
             metricName(DOWNLOAD_BYTE_COUNT_NAME_SUFFIX));
     public static final S3ThroughputMetric S3DownloadThroughput = new S3ThroughputMetric(
@@ -46,11 +45,12 @@ public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricTy
             return S3UploadByteCount;
         }
     };
+    static final String SERVICE_NAME_PREFIX = "S3";
     private static final S3ServiceMetric[] values = {
-            S3DownloadThroughput,
-            S3DownloadByteCount,
-            S3UploadThroughput,
-            S3UploadByteCount
+        S3DownloadThroughput,
+        S3DownloadByteCount,
+        S3UploadThroughput,
+        S3UploadByteCount
     };
     private final String name;
 
@@ -91,7 +91,7 @@ public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricTy
         return Constants.S3_SERVICE_DISPLAY_NAME;
     }
 
-    private static abstract class S3ThroughputMetric extends S3ServiceMetric
+    private abstract static class S3ThroughputMetric extends S3ServiceMetric
             implements ThroughputMetricType {
         private S3ThroughputMetric(String name) {
             super(name);

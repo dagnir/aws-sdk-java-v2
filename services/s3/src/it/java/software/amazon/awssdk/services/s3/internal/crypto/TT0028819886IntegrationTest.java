@@ -92,7 +92,7 @@ public class TT0028819886IntegrationTest extends S3IntegrationTestBase {
                 doTestInconsistentLength(s3, 16, 17);
                 fail();
             } catch (AmazonClientException expected) {
-
+                // Ignored or expected.
             }
         }
     }
@@ -105,6 +105,7 @@ public class TT0028819886IntegrationTest extends S3IntegrationTestBase {
                 doTestInconsistentLength(s3, 16, 15);
                 fail();
             } catch (AmazonClientException expected) {
+                // Ignored or expected.
             }
         }
     }

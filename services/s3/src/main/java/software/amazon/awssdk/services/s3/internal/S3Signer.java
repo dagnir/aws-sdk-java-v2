@@ -24,9 +24,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
-import software.amazon.awssdk.auth.AbstractAWSSigner;
+import software.amazon.awssdk.auth.AbstractAwsSigner;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SigningAlgorithm;
 import software.amazon.awssdk.services.s3.Headers;
@@ -36,9 +36,9 @@ import software.amazon.awssdk.util.SdkHttpUtils;
  * Implementation of the {@linkplain Signer} interface specific to S3's signing
  * algorithm.
  */
-public class S3Signer extends AbstractAWSSigner {
+public class S3Signer extends AbstractAwsSigner {
 
-    /** Shared log for signing debug output */
+    /** Shared log for signing debug output. */
     private static final Log log = LogFactory.getLog(S3Signer.class);
 
     /**
@@ -54,8 +54,8 @@ public class S3Signer extends AbstractAWSSigner {
     private final String httpVerb;
 
     /**
-     * The canonical resource path portion of the S3 string to sign. Examples:
-     * "/", "/<bucket name>/", or "/<bucket name>/<key>"
+     * The canonical resource path portion of the S3 string to sign.
+     * Examples: "/", "/&lt;bucket name&gt;/", or "/&lt;bucket name&gt;/&lt;key&gt;"
      *
      * TODO: We don't want to hold the resource path as member data in the S3
      * signer, but we need access to it and can't get it through the request
@@ -94,8 +94,7 @@ public class S3Signer extends AbstractAWSSigner {
      *            The HTTP verb (GET, PUT, POST, HEAD, DELETE) the request is
      *            using.
      * @param resourcePath
-     *            The canonical S3 resource path (ex: "/", "/<bucket name>/", or
-     *            "/<bucket name>/<key>".
+     *            The canonical S3 resource path (ex: "/", "/&lt;bucket name&gt;/", or "/&lt;bucket name&gt;/&lt;key&gt;").
      */
     public S3Signer(String httpVerb, String resourcePath) {
         this(httpVerb, resourcePath, null);
@@ -109,8 +108,7 @@ public class S3Signer extends AbstractAWSSigner {
      *            The HTTP verb (GET, PUT, POST, HEAD, DELETE) the request is
      *            using.
      * @param resourcePath
-     *            The canonical S3 resource path (ex: "/", "/<bucket name>/", or
-     *            "/<bucket name>/<key>".
+     *            The canonical S3 resource path (ex: "/", "/&lt;bucket name&gt;/", or "/&lt;bucket name&gt;/&lt;key&gt;").
      * @param additionalQueryParamsToSign
      *            A collection of user-specified query parameters that should be
      *            included in the canonical request, in addition to those
@@ -134,7 +132,7 @@ public class S3Signer extends AbstractAWSSigner {
     }
 
     @Override
-    public void sign(SignableRequest<?> request, AWSCredentials credentials) {
+    public void sign(SignableRequest<?> request, AwsCredentials credentials) {
 
         if (resourcePath == null) {
             throw new UnsupportedOperationException(
@@ -142,15 +140,15 @@ public class S3Signer extends AbstractAWSSigner {
                     + "no resource path");
         }
 
-        if (credentials == null || credentials.getAWSSecretKey() == null) {
+        if (credentials == null || credentials.getAwsSecretKey() == null) {
             log.debug("Canonical string will not be signed, as no AWS Secret Key was provided");
             return;
         }
 
-        AWSCredentials sanitizedCredentials = sanitizeCredentials(credentials);
-        if (sanitizedCredentials instanceof AWSSessionCredentials) {
+        AwsCredentials sanitizedCredentials = sanitizeCredentials(credentials);
+        if (sanitizedCredentials instanceof AwsSessionCredentials) {
             addSessionCredentials(request,
-                                  (AWSSessionCredentials) sanitizedCredentials);
+                                  (AwsSessionCredentials) sanitizedCredentials);
         }
 
         /*
@@ -172,16 +170,16 @@ public class S3Signer extends AbstractAWSSigner {
         log.debug("Calculated string to sign:\n\"" + canonicalString + "\"");
 
         String signature = super.signAndBase64Encode(canonicalString,
-                                                     sanitizedCredentials.getAWSSecretKey(),
+                                                     sanitizedCredentials.getAwsSecretKey(),
                                                      SigningAlgorithm.HmacSHA1);
         request.addHeader("Authorization",
-                          "AWS " + sanitizedCredentials.getAWSAccessKeyId() + ":"
+                          "AWS " + sanitizedCredentials.getAwsAccessKeyId() + ":"
                           + signature);
     }
 
     @Override
     protected void addSessionCredentials(SignableRequest<?> request,
-                                         AWSSessionCredentials credentials) {
+                                         AwsSessionCredentials credentials) {
         request.addHeader("x-amz-security-token", credentials.getSessionToken());
     }
 }

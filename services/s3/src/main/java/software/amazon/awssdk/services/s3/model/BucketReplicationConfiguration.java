@@ -34,7 +34,7 @@ public class BucketReplicationConfiguration implements Serializable {
     /**
      * Returns the IAM role associated with this replication configuration.
      */
-    public String getRoleARN() {
+    public String getRoleArn() {
         return roleARN;
     }
 
@@ -44,7 +44,7 @@ public class BucketReplicationConfiguration implements Serializable {
      * @param role
      *            The IAM role for this configuration.
      */
-    public void setRoleARN(String roleARN) {
+    public void setRoleArn(String roleARN) {
         this.roleARN = roleARN;
     }
 
@@ -56,8 +56,8 @@ public class BucketReplicationConfiguration implements Serializable {
      *            The IAM role for this configuration.
      * @return The updated {@link BucketReplicationConfiguration} object.
      */
-    public BucketReplicationConfiguration withRoleARN(String roleARN) {
-        setRoleARN(roleARN);
+    public BucketReplicationConfiguration withRoleArn(String roleARN) {
+        setRoleArn(roleARN);
         return this;
     }
 
@@ -104,9 +104,9 @@ public class BucketReplicationConfiguration implements Serializable {
      *
      * @param rules
      *            the replication rules for the Amazon S3 bucket.
+     * @return the updated {@link BucketReplicationConfiguration} object.
      * @throws IllegalArgumentException
      *             if the rules are null.
-     * @return the updated {@link BucketReplicationConfiguration} object.
      */
     public BucketReplicationConfiguration withRules(
             Map<String, ReplicationRule> rules) {
@@ -122,9 +122,9 @@ public class BucketReplicationConfiguration implements Serializable {
      *            the id for the rule.
      * @param rule
      *            the replication rule for the Amazon S3 bucket.
+     * @return the updated {@link BucketReplicationConfiguration} object.
      * @throws IllegalArgumentException
      *             if the given id or rule is null.
-     * @return the updated {@link BucketReplicationConfiguration} object.
      */
     public BucketReplicationConfiguration addRule(String id,
                                                   ReplicationRule rule) {

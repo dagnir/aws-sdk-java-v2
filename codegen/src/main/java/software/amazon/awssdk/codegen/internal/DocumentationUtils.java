@@ -84,12 +84,9 @@ public class DocumentationUtils {
             int startTagIndex = documentation.indexOf(">");
             final int closingTagIndex = documentation.lastIndexOf("<");
             if (closingTagIndex > startTagIndex) {
-                documentation = stripHTMLTags(documentation.substring
-                        (startTagIndex + 1,
-                         closingTagIndex));
+                documentation = stripHTMLTags(documentation.substring(startTagIndex + 1, closingTagIndex));
             } else {
-                documentation = stripHTMLTags(documentation.substring
-                        (startTagIndex + 1));
+                documentation = stripHTMLTags(documentation.substring(startTagIndex + 1));
             }
         }
 

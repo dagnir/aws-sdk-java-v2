@@ -60,9 +60,10 @@ final class StandardAnnotationMaps {
         Field declaredField = null;
         try {
             declaredField = getter.getDeclaringClass().getDeclaredField(fieldName);
+        } catch (final NoSuchFieldException no) {
+            // Ignored or expected.
         } catch (final SecurityException e) {
             throw new DynamoDBMappingException("no access to field for " + getter, e);
-        } catch (final NoSuchFieldException no) {
         }
 
         if (defaultName == null) {
@@ -86,11 +87,13 @@ final class StandardAnnotationMaps {
                 try {
                     return clazz.getConstructor(Class.class, annotation.annotationType()).newInstance(targetType, annotation);
                 } catch (final NoSuchMethodException no) {
+                    // Ignored or expected.
                 }
             }
             try {
                 return clazz.getConstructor(Class.class).newInstance(targetType);
             } catch (final NoSuchMethodException no) {
+                // Ignored or expected.
             }
             return clazz.newInstance();
         } catch (final Exception e) {
@@ -101,7 +104,7 @@ final class StandardAnnotationMaps {
     /**
      * Common type-conversions properties.
      */
-    private static abstract class AbstractAnnotationMap {
+    private abstract static class AbstractAnnotationMap {
         private final Annotations map = new Annotations();
 
         /**
@@ -134,7 +137,7 @@ final class StandardAnnotationMaps {
     /**
      * Common type-conversions properties.
      */
-    static abstract class TypedMap<T> extends AbstractAnnotationMap {
+    abstract static class TypedMap<T> extends AbstractAnnotationMap {
         private final Class<T> targetType;
 
         private TypedMap(final Class<T> targetType) {

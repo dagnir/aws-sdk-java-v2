@@ -22,7 +22,7 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.s3.model.Region;
 
 public class ConfigureS3LinksTest {
@@ -31,7 +31,7 @@ public class ConfigureS3LinksTest {
 
     @Before
     public void setUp() throws Exception {
-        s3cc = new S3ClientCache(new BasicAWSCredentials("mock", "mock"));
+        s3cc = new S3ClientCache(new BasicAwsCredentials("mock", "mock"));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ConfigureS3LinksTest {
     @Test
     public void testManyS3LinksClass() {
         ManyS3LinksTestClass obj = new ManyS3LinksTestClass();
-        assertNull(obj.getS3_1());
+        assertNull(obj.getS31());
     }
 
     @DynamoDBTable(tableName = "nonexisting-test-tablename")
@@ -83,12 +83,12 @@ public class ConfigureS3LinksTest {
     public static class ManyS3LinksTestClass {
 
         private String hk;
-        private S3Link s3_1;
-        private S3Link s3_2;
-        private S3Link s3_3;
-        private S3Link s3_4;
-        private S3Link s3_5;
-        private S3Link s3_6;
+        private S3Link s31;
+        private S3Link s32;
+        private S3Link s33;
+        private S3Link s34;
+        private S3Link s35;
+        private S3Link s36;
 
         public ManyS3LinksTestClass() {
         }
@@ -102,52 +102,52 @@ public class ConfigureS3LinksTest {
             this.hk = hk;
         }
 
-        public S3Link getS3_1() {
-            return s3_1;
+        public S3Link getS31() {
+            return s31;
         }
 
-        public void setS3_1(S3Link s3_1) {
-            this.s3_1 = s3_1;
+        public void setS31(S3Link s31) {
+            this.s31 = s31;
         }
 
-        public S3Link getS3_2() {
-            return s3_2;
+        public S3Link getS32() {
+            return s32;
         }
 
-        public void setS3_2(S3Link s3_2) {
-            this.s3_2 = s3_2;
+        public void setS32(S3Link s32) {
+            this.s32 = s32;
         }
 
-        public S3Link getS3_3() {
-            return s3_3;
+        public S3Link getS33() {
+            return s33;
         }
 
-        public void setS3_3(S3Link s3_3) {
-            this.s3_3 = s3_3;
+        public void setS33(S3Link s33) {
+            this.s33 = s33;
         }
 
-        public S3Link getS3_4() {
-            return s3_4;
+        public S3Link getS34() {
+            return s34;
         }
 
-        public void setS3_4(S3Link s3_4) {
-            this.s3_4 = s3_4;
+        public void setS34(S3Link s34) {
+            this.s34 = s34;
         }
 
-        public S3Link getS3_5() {
-            return s3_5;
+        public S3Link getS35() {
+            return s35;
         }
 
-        public void setS3_5(S3Link s3_5) {
-            this.s3_5 = s3_5;
+        public void setS35(S3Link s35) {
+            this.s35 = s35;
         }
 
-        public S3Link getS3_6() {
-            return s3_6;
+        public S3Link getS36() {
+            return s36;
         }
 
-        public void setS3_6(S3Link s3_6) {
-            this.s3_6 = s3_6;
+        public void setS36(S3Link s36) {
+            this.s36 = s36;
         }
     }
 }

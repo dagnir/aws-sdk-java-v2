@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.simpledb.model.ReplaceableAttribute;
 import software.amazon.awssdk.services.simpledb.model.ReplaceableItem;
 import software.amazon.awssdk.services.simpledb.model.SelectRequest;
 import software.amazon.awssdk.services.simpledb.model.SelectResult;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Base class for SimpleDB integration tests; responsible for loading AWS account info for running
@@ -50,7 +50,7 @@ import software.amazon.awssdk.test.AWSTestBase;
  *
  * @author fulghum@amazon.com
  */
-public abstract class IntegrationTestBase extends AWSTestBase {
+public abstract class IntegrationTestBase extends AwsTestBase {
     private static final Log log = LogFactory.getLog(IntegrationTestBase.class);
     /**
      * System property allowing users to explicitly override where the AWS account info should be
@@ -58,17 +58,16 @@ public abstract class IntegrationTestBase extends AWSTestBase {
      */
     private static final String AWS_ACCOUNT_PROPERTIES_FILE = "awsTestAccountPropertiesFile";
 
-    /** Shared SimpleDB client for all tests to use */
+    /** Shared SimpleDB client for all tests to use. */
     protected static AmazonSimpleDBClient sdb;
 
-    /** Shared SimpleDB async client for tests to use */
+    /** Shared SimpleDB async client for tests to use. */
     protected static AmazonSimpleDBAsyncClient sdbAsync;
 
     /**
      * Loads the AWS account info for the integration tests and creates a SimpleDB client for tests
      * to use.
      *
-     * @throws FileNotFoundException
      * @throws IOException
      */
     @BeforeClass
@@ -209,6 +208,7 @@ public abstract class IntegrationTestBase extends AWSTestBase {
         try {
             Thread.sleep(4 * 1000);
         } catch (InterruptedException e) {
+            // Ignored or expected.
         }
 
         SelectRequest request = new SelectRequest();

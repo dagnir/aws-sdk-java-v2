@@ -33,11 +33,11 @@ public class BooleanSetUnmarshaller implements ArgumentUnmarshaller {
     private static final BooleanSetUnmarshaller INSTANCE =
             new BooleanSetUnmarshaller();
 
-    public static BooleanSetUnmarshaller instance() {
-        return INSTANCE;
+    private BooleanSetUnmarshaller() {
     }
 
-    private BooleanSetUnmarshaller() {
+    public static BooleanSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class BooleanSetUnmarshaller implements ArgumentUnmarshaller {
         if (value.getL() != null) {
             return unmarshallList(value.getL());
         } else {
-            return unmarshallNS(value.getNS());
+            return unmarshallNs(value.getNS());
         }
     }
 
@@ -83,7 +83,7 @@ public class BooleanSetUnmarshaller implements ArgumentUnmarshaller {
         return result;
     }
 
-    private Set<Boolean> unmarshallNS(List<String> values) {
+    private Set<Boolean> unmarshallNs(List<String> values) {
         Set<Boolean> result = new HashSet<Boolean>();
 
         for (String s : values) {

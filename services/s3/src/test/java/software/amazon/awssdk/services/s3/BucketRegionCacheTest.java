@@ -23,7 +23,7 @@ import software.amazon.awssdk.regions.Regions;
 public class BucketRegionCacheTest {
 
     private static final String FAKE_BUCKET_NAME = "fake-bucket-name";
-    private final String REGION_ENDPOINT = "s3.eu-central-1.amazonaws.com";
+    private static final String REGION_ENDPOINT = "s3.eu-central-1.amazonaws.com";
 
     @Test
     public void testBucketRegionCacheWithRegionSpecificEndpoint_ReturnsRegionEndpoint() {
@@ -53,7 +53,7 @@ public class BucketRegionCacheTest {
     }
 
     @Test
-    public void testBucketRegionCacheWithBucketRegionNotInRegionXML_ReturnsEndpointConfigured() {
+    public void testBucketRegionCacheWithBucketRegionNotInRegionXml_ReturnsEndpointConfigured() {
         final String futureEndpoint = "s3-future-region.amazonaws.com";
         AmazonS3Client s3 = new AmazonS3Client();
         s3.setEndpoint(futureEndpoint);

@@ -21,11 +21,11 @@ import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTableMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodbv2.pojos.GsiWithAlwaysUpdateTimestamp;
@@ -42,10 +42,10 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
     @Before
     public void setup() {
         ddb = AmazonDynamoDBClientBuilder.standard()
-                                         .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                                         .withCredentials(new AwsStaticCredentialsProvider(credentials))
                                          .withRegion(Regions.US_WEST_2)
                                          .build();
-        mapper = new DynamoDBMapper(ddb, DynamoDBMapperConfig.builder()
+        mapper = new DynamoDbMapper(ddb, DynamoDBMapperConfig.builder()
                                                              .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(TABLE_NAME))
                                                              .build()).newTableMapper(GsiWithAlwaysUpdateTimestamp.class);
         mapper.createTable(new ProvisionedThroughput(5L, 5L));

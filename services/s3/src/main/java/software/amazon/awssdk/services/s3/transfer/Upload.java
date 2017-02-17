@@ -58,7 +58,7 @@ public interface Upload extends Transfer {
      *
      * Upload cannot be paused in the following cases.
      * <ul>
-     * 	<li>The data source is an input stream.</li>
+     *     <li>The data source is an input stream.</li>
      *  <li>Client side encryption is used.</li>
      *  <li>Server Side Encryption with customer provided key is used.</li>
      *  <li>Size of the file being uploaded is less than the {@link TransferManagerConfiguration#getMultipartUploadThreshold()}.</li>
@@ -80,7 +80,7 @@ public interface Upload extends Transfer {
      *
      * Upload cannot be paused in the following cases.
      * <ul>
-     * 	<li>The data source is an input stream.</li>
+     *     <li>The data source is an input stream.</li>
      *  <li>Client side encryption is used.</li>
      *  <li>Server Side Encryption with customer provided key is used.</li>
      *  <li>Size of the file being uploaded is less than the {@link TransferManagerConfiguration#getMultipartUploadThreshold()}.</li>

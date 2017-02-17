@@ -19,9 +19,7 @@ import java.util.Random;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
@@ -34,7 +32,7 @@ import software.amazon.awssdk.util.RetryTestUtils;
  */
 public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
 
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
     private AmazonHttpClient testedClient;
 
     @Before
@@ -48,13 +46,13 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
      */
     @Test
     public void testDefaultMaxErrorRetry() {
-        /* SDK default */
+        /* SDK default. */
         Assert.assertTrue(clientConfiguration.getRetryPolicy() == PredefinedRetryPolicies.DEFAULT);
 
         // Don't change any of the default settings in ClientConfiguration
         testActualRetries(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY);
     
-        /* DynamoDB default */
+        /* DynamoDB default. */
         // Change to dynamodb default policy.
         clientConfiguration.setRetryPolicy(PredefinedRetryPolicies.DYNAMODB_DEFAULT);
         testActualRetries(PredefinedRetryPolicies.DYNAMODB_DEFAULT_MAX_ERROR_RETRY);
@@ -66,7 +64,7 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
      */
     @Test
     public void testClientConfigLevelMaxErrorRetry() {
-        int CLIENT_CONFIG_LEVEL_MAX_RETRY = random.nextInt(3);
+        int CLIENT_CONFIG_LEVEL_MAX_RETRY = RANDOM.nextInt(3);
         clientConfiguration.setMaxErrorRetry(CLIENT_CONFIG_LEVEL_MAX_RETRY);
 
         // SDK default policy should honor the ClientConfig level maxErrorRetry
@@ -98,7 +96,7 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
     @Test
     public void testRetryPolicyLevelMaxErrorRetry() {
         // This should be ignored
-        clientConfiguration.setMaxErrorRetry(random.nextInt(3));
+        clientConfiguration.setMaxErrorRetry(RANDOM.nextInt(3));
 
         // A custom policy that doesn't honor the ClientConfig level maxErrorRetry
         int RETRY_POLICY_LEVEL_MAX_ERROR_RETRY = 5;
@@ -107,18 +105,9 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
 
         // A custom policy that "honors" the ClientConfig level maxErrorRetry,
         // but actually denies any retry in its condition.
-        clientConfiguration.setRetryPolicy(new RetryPolicy(
-                                                   new RetryPolicy.RetryCondition() {
-
-                                                       @Override
-                                                       public boolean shouldRetry(
-                                                               AmazonWebServiceRequest originalRequest,
-                                                               AmazonClientException exception,
-                                                               int retriesAttempted) {
-                                                           return false;
-                                                       }
-                                                   }, null, RETRY_POLICY_LEVEL_MAX_ERROR_RETRY, true)
-                                          );
+        RetryPolicy.RetryCondition retryCondition = (originalRequest, exception, retriesAttempted) -> false;
+        clientConfiguration.setRetryPolicy(new RetryPolicy(retryCondition, null,
+                                                           RETRY_POLICY_LEVEL_MAX_ERROR_RETRY, true));
         // No retry is expected
         testActualRetries(0);
     }
@@ -140,6 +129,7 @@ public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
                         .execute();
             Assert.fail("AmazonServiceException is expected.");
         } catch (AmazonServiceException ase) {
+            // Ignored.
         }
 
         RetryTestUtils.assertExpectedRetryCount(expectedRetryAttempts, context);

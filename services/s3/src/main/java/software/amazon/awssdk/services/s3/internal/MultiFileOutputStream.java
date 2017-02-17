@@ -62,7 +62,7 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
      */
     public MultiFileOutputStream() {
         root = new File(System.getProperty("java.io.tmpdir"));
-        namePrefix = yyMMdd_hhmmss() + "." + UUID.randomUUID();
+        namePrefix = yyMMddhhmmss() + "." + UUID.randomUUID();
     }
 
     /**
@@ -84,7 +84,7 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
         this.namePrefix = namePrefix;
     }
 
-    static String yyMMdd_hhmmss() {
+    static String yyMMddhhmmss() {
         return DateTimeFormat.forPattern("yyMMdd-hhmmss").print(new DateTime());
     }
 

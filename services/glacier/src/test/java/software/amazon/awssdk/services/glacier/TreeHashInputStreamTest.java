@@ -29,7 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.junit.Test;
 import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.IOUtils;
@@ -37,7 +37,7 @@ import software.amazon.awssdk.util.IOUtils;
 /**
  * Tests of the TreeHashInputStream class.
  */
-public class TreeHashInputStreamTest extends AWSTestBase {
+public class TreeHashInputStreamTest extends AwsTestBase {
 
     private static final int MB = 1024 * 1024;
 

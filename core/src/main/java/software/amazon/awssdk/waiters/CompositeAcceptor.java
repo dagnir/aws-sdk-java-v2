@@ -22,12 +22,12 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.ValidationUtils;
 
 @SdkInternalApi
-class CompositeAcceptor<Output> {
+class CompositeAcceptor<OutputT> {
 
     /**
      * List of acceptors defined for each waiter
      */
-    private List<WaiterAcceptor<Output>> acceptors = new ArrayList<WaiterAcceptor<Output>>();
+    private List<WaiterAcceptor<OutputT>> acceptors = new ArrayList<WaiterAcceptor<OutputT>>();
 
     /**
      * Constructs a new Composite Acceptor with the given list of acceptors.
@@ -36,14 +36,14 @@ class CompositeAcceptor<Output> {
      * @param acceptors List of acceptors defined for each waiter. It shouldn't
      *                  be null or empty
      */
-    public CompositeAcceptor(List<WaiterAcceptor<Output>> acceptors) {
+    public CompositeAcceptor(List<WaiterAcceptor<OutputT>> acceptors) {
         this.acceptors = ValidationUtils.assertNotEmpty(acceptors, "acceptors");
     }
 
     /**
      * @return List of acceptors defined for each waiter
      */
-    public List<WaiterAcceptor<Output>> getAcceptors() {
+    public List<WaiterAcceptor<OutputT>> getAcceptors() {
         return this.acceptors;
     }
 
@@ -55,10 +55,10 @@ class CompositeAcceptor<Output> {
      * @param response Response object got by executing the specified
      *                 waiter operation
      * @return (Enum) Corresponding waiter state defined by the acceptor or
-     * retry state if none matched
+     *     retry state if none matched
      */
-    public WaiterState accepts(Output response) {
-        for (WaiterAcceptor<Output> acceptor : acceptors) {
+    public WaiterState accepts(OutputT response) {
+        for (WaiterAcceptor<OutputT> acceptor : acceptors) {
             if (acceptor.matches(response)) {
                 return acceptor.getState();
             }
@@ -75,11 +75,10 @@ class CompositeAcceptor<Output> {
      * @param exception Exception thrown by executing the specified
      *                  waiter operation
      * @return (Enum) Corresponding waiter state defined by the acceptor or
-     * rethrows the exception back to the caller if none matched
-     * @throws Exception
+     *     rethrows the exception back to the caller if none matched
      */
     public WaiterState accepts(AmazonServiceException exception) throws AmazonServiceException {
-        for (WaiterAcceptor<Output> acceptor : acceptors) {
+        for (WaiterAcceptor<OutputT> acceptor : acceptors) {
             if (acceptor.matches(exception)) {
                 return acceptor.getState();
             }

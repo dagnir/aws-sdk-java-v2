@@ -21,7 +21,7 @@ package software.amazon.awssdk.util;
  * @author Hanson Char
  */
 class Base16Codec implements Codec {
-    private static final int OFFSET_OF_a = 'a' - 10;
+    private static final int OFFSET_OF_LITTLE_A = 'a' - 10;
     private static final int OFFSET_OF_A = 'A' - 10;
     private static final int MASK_4BITS = (1 << 4) - 1;
     private final byte[] alphabets;
@@ -90,7 +90,7 @@ class Base16Codec implements Codec {
                 } else if (i >= 'A' && i <= 'F') {
                     dest[i] = (byte) (i - OFFSET_OF_A);
                 } else if (i >= 'a' && i <= 'f') {
-                    dest[i] = (byte) (i - OFFSET_OF_a);
+                    dest[i] = (byte) (i - OFFSET_OF_LITTLE_A);
                 } else {
                     dest[i] = -1;
                 }

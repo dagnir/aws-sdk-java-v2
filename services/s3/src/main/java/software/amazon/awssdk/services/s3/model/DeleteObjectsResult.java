@@ -69,7 +69,7 @@ public class DeleteObjectsResult implements Serializable, S3RequesterChargedResu
     /**
      * A successfully deleted object.
      */
-    static public class DeletedObject implements Serializable {
+    public static class DeletedObject implements Serializable {
 
         private String key;
         private String versionId;

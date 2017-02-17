@@ -19,7 +19,7 @@ import software.amazon.awssdk.SignableRequest;
 
 /**
  * Used to explicitly indicate that a {@link Signer} can gracefully handle
- * credentials being null when calling {@link Signer#sign(SignableRequest, AWSCredentials)}
+ * credentials being null when calling {@link Signer#sign(SignableRequest, AwsCredentials)}
  */
 public interface CanHandleNullCredentials {
 }

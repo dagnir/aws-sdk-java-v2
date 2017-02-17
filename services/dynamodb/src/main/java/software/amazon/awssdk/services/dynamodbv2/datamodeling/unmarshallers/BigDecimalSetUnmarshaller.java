@@ -29,11 +29,11 @@ public class BigDecimalSetUnmarshaller extends NSUnmarshaller {
     private static final BigDecimalSetUnmarshaller INSTANCE =
             new BigDecimalSetUnmarshaller();
 
-    public static BigDecimalSetUnmarshaller instance() {
-        return INSTANCE;
+    private BigDecimalSetUnmarshaller() {
     }
 
-    private BigDecimalSetUnmarshaller() {
+    public static BigDecimalSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

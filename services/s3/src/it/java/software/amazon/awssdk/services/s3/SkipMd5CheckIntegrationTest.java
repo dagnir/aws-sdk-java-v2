@@ -35,7 +35,7 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.s3.internal.SkipMd5CheckStrategy;
@@ -46,11 +46,11 @@ import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.util.IOUtils;
 import software.amazon.awssdk.util.StringInputStream;
 
-public class SkipMd5CheckIntegrationTest extends AWSIntegrationTestBase {
+public class SkipMd5CheckIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String BUCKET = "skip-md5-check-integ-" + System.currentTimeMillis();
     private static final String GET_KEY = "some-key";
@@ -69,7 +69,7 @@ public class SkipMd5CheckIntegrationTest extends AWSIntegrationTestBase {
         normalS3.createBucket(BUCKET);
         normalS3.putObject(new PutObjectRequest(BUCKET, GET_KEY, getContent(), null));
 
-        md5TamperingS3 = new AmazonS3Client(new AWSStaticCredentialsProvider(getCredentials()), new ClientConfiguration(),
+        md5TamperingS3 = new AmazonS3Client(new AwsStaticCredentialsProvider(getCredentials()), new ClientConfiguration(),
                                             null, mockStrategy);
         md5TamperingS3.addRequestHandler(new RequestHandler2() {
             @Override

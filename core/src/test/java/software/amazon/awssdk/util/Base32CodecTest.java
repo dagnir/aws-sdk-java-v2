@@ -88,24 +88,8 @@ public class Base32CodecTest {
 
     @Test
     public void testVectorsPerRfc4648() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String[] testVectors = {
-                "",
-                "f",
-                "fo",
-                "foo",
-                "foob",
-                "fooba",
-                "foobar",
-                };
-        String[] expected = {
-                "",
-                "MY======",
-                "MZXQ====",
-                "MZXW6===",
-                "MZXW6YQ=",
-                "MZXW6YTB",
-                "MZXW6YTBOI======",
-                };
+        String[] testVectors = { "", "f", "fo", "foo", "foob", "fooba", "foobar" };
+        String[] expected = { "", "MY======", "MZXQ====", "MZXW6===", "MZXW6YQ=", "MZXW6YTB", "MZXW6YTBOI======" };
 
         for (int i = 0; i < testVectors.length; i++) {
             String data = testVectors[i];
@@ -139,13 +123,7 @@ public class Base32CodecTest {
 
     @Test
     public void testImpossibleCases() {
-        final String[] INVALIDLY_ENCODED = {
-                "MC======",
-                "MZXE====",
-                "MZXWB===",
-                "MZXW6YB=",
-                "MZXW6YTBOC======",
-                };
+        final String[] INVALIDLY_ENCODED = { "MC======", "MZXE====", "MZXWB===", "MZXW6YB=", "MZXW6YTBOC======" };
         for (String s : INVALIDLY_ENCODED) {
             try {
                 Base32.decode(s);

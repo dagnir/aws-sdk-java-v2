@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
+import software.amazon.awssdk.codegen.model.config.customization.ModifyModelShapeModifier;
 import software.amazon.awssdk.codegen.model.config.customization.ShapeModifier;
-import software.amazon.awssdk.codegen.model.config.customization.ShapeModifier_ModifyModel;
 import software.amazon.awssdk.codegen.model.config.customization.ShapeSubstitution;
 import software.amazon.awssdk.codegen.model.intermediate.Example;
 import software.amazon.awssdk.codegen.model.intermediate.ServiceExamples;
@@ -235,19 +235,18 @@ public class ExamplesCustomizer {
             }
         });
         // Apply property renames
-        final List<Map<String, ShapeModifier_ModifyModel>> modify = modifier.getModify() != null ? modifier.getModify() : Collections.emptyList();
+        final List<Map<String, ModifyModelShapeModifier>> modify = modifier.getModify() != null ? modifier.getModify() : Collections.emptyList();
         modify.forEach(memberMods ->
                                memberMods.entrySet().forEach(memberMod -> {
                                    String memberName = memberMod.getKey();
-                                   ShapeModifier_ModifyModel modelModify = memberMod.getValue();
+                                   ModifyModelShapeModifier modelModify = memberMod.getValue();
                                    if (modelModify.getEmitPropertyName() != null) {
                                        String newName = modelModify.getEmitPropertyName();
                                        modified.set(newName, modified.get(memberName));
                                        modified.remove(memberName);
                                        memberName = newName;
                                    }
-                               })
-                      );
+                               }));
 
         return modified;
     }

@@ -35,7 +35,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.pojos.SubClass;
 import software.amazon.awssdk.services.dynamodbv2.pojos.TestClass;
@@ -362,12 +362,13 @@ public class StandardModelFactoriesV2Test {
 
             Assert.fail("Expected DynamoDBMappingException");
         } catch (DynamoDBMappingException e) {
+            // Ignored or expected.
         }
     }
 
     @Test
     public void testS3Link() {
-        S3ClientCache cache = new S3ClientCache((AWSCredentialsProvider) null);
+        S3ClientCache cache = new S3ClientCache((AwsCredentialsProvider) null);
         S3Link link = new S3Link(cache, "bucket", "key");
 
         assertEquals("{\"s3\":{"

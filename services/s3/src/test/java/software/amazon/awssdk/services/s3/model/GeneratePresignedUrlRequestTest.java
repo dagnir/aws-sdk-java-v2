@@ -60,7 +60,7 @@ public class GeneratePresignedUrlRequestTest {
                 .withSSECustomerKeyAlgorithm(SSEAlgorithm.getDefault())
                 .withSSEAlgorithm(SSEAlgorithm.getDefault())
                 .rejectIllegalArguments();
-        ;
+
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -69,7 +69,7 @@ public class GeneratePresignedUrlRequestTest {
                 .withSSECustomerKeyAlgorithm(SSEAlgorithm.getDefault())
                 .withKmsCmkId("kms_cmk_id")
                 .rejectIllegalArguments();
-        ;
+
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -92,7 +92,7 @@ public class GeneratePresignedUrlRequestTest {
                 .withSSEAlgorithm(SSEAlgorithm.KMS)
                 .withKmsCmkId("kms_cmk_id")
                 .rejectIllegalArguments();
-        ;
+
     }
 
     @Test(expected = IllegalArgumentException.class)

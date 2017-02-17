@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotatio
 import software.amazon.awssdk.util.StringUtils;
 
 /**
- * Reflection assistant for {@link DynamoDBMapper}
+ * Reflection assistant for {@link DynamoDbMapper}
  */
 @SdkInternalApi
 final class StandardBeanProperties {
@@ -118,7 +118,8 @@ final class StandardBeanProperties {
      * Get/set reflection operations.
      */
     static final class MethodReflect<T, V> implements Reflect<T, V> {
-        private final Method getter, setter;
+        private final Method getter;
+        private final Method setter;
 
         private MethodReflect(Method getter) {
             this.setter = setterOf(getter);
@@ -130,6 +131,7 @@ final class StandardBeanProperties {
                 final String name = "set" + getter.getName().replaceFirst("^(get|is)", "");
                 return getter.getDeclaringClass().getMethod(name, getter.getReturnType());
             } catch (final Exception no) {
+                // Ignored or expected.
             }
             return null;
         }

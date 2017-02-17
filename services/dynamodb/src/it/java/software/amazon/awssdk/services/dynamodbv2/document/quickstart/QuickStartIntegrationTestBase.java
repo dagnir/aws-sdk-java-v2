@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 import java.io.File;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.dynamodbv2.document.DynamoDB;
@@ -47,7 +47,7 @@ public class QuickStartIntegrationTestBase {
         //        System.setProperty("javax.net.debug", "ssl");
         AmazonDynamoDBClient client = new AmazonDynamoDBClient(awsTestCredentials());
         dynamo = new DynamoDB(client);
-        new A_CreateTableIntegrationTest().howToCreateTable();
+        new CreateTableIntegrationTest().howToCreateTable();
     }
 
     @AfterClass
@@ -55,7 +55,7 @@ public class QuickStartIntegrationTestBase {
         dynamo.shutdown();
     }
 
-    protected static AWSCredentials awsTestCredentials() {
+    protected static AwsCredentials awsTestCredentials() {
         try {
             return new PropertiesCredentials(new File(
                     System.getProperty("user.home")

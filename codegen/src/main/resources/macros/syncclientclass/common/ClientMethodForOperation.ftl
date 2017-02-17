@@ -9,7 +9,7 @@
     public ${operationModel.syncReturnType} ${operationModel.methodName}(${operationModel.input.variableType} ${operationModel.input.variableName}) {
 
         ExecutionContext executionContext = createExecutionContext(${operationModel.input.variableName});
-        AWSRequestMetrics awsRequestMetrics = executionContext.getAwsRequestMetrics();
+        AwsRequestMetrics awsRequestMetrics = executionContext.getAwsRequestMetrics();
         awsRequestMetrics.startEvent(Field.ClientExecuteTime);
         Request<${operationModel.input.variableType}> request = null;
         Response<${operationModel.syncReturnType?cap_first}> response = null;
@@ -23,7 +23,7 @@
                 request = <@RequestMarshallerCreation.content operationModel />.marshall(
                     super.beforeMarshalling(${operationModel.input.variableName}));
                 // Binds the request metrics to the current request.
-                request.setAWSRequestMetrics(awsRequestMetrics);
+                request.setAwsRequestMetrics(awsRequestMetrics);
             } finally {
                   awsRequestMetrics.endEvent(Field.RequestMarshallTime);
             }

@@ -26,10 +26,10 @@ package software.amazon.awssdk;
  */
 public class AmazonWebServiceResponse<T> {
 
-    /** The result contained by this response */
+    /** The result contained by this response. */
     private T result;
 
-    /** Additional AWS metadata for this response */
+    /** Additional AWS metadata for this response. */
     private ResponseMetadata responseMetadata;
 
     /**

@@ -144,7 +144,6 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
      * This tests tries to initiate a TransferManager on a thread pool that is
      * already shutdown. Asserts that no events have been fired from the
      * transfer manager.
-     * @throws IOException
      */
     @Test
     public void testTransferProgressThreadpoolShutdown() throws IOException {
@@ -160,6 +159,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
             tm.upload(new PutObjectRequest(bucketName, "key", file), listener);
             fail("Upload cannot be scheduled as the thread pool is already shutdown");
         } catch (RejectedExecutionException expected) {
+            // Ignored or expected.
         }
 
         assertFalse(listener.transferStarted);
@@ -218,6 +218,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         try {
             upload.waitForUploadResult();
         } catch (AmazonS3Exception expected) {
+            // Ignored or expected.
         }
 
         assertTrue(listener.transferStarted);
@@ -254,6 +255,7 @@ public class TransferFileManagerIntegrationTest extends TransferManagerTestBase 
         try {
             upload.waitForException();
         } catch (CancellationException expected) {
+            // Ignored or expected.
         }
 
         assertTrue(listener.transferStarted);

@@ -101,7 +101,7 @@ public class Metadata {
 
     /**
      * @return The default implementation of exception unmarshallers to use when no custom one is
-     * provided through {@link software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig}
+     *     provided through {@link software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig}
      */
     public String getProtocolDefaultExceptionUmarshallerImpl() {
         return protocolMetadataProvider.getExceptionUnmarshallerImpl();

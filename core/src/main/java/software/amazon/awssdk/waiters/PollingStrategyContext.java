@@ -34,9 +34,6 @@ public class PollingStrategyContext {
     /**
      * Constructs a new polling strategy context with the given
      * request and retries attempted required for custom polling
-     *
-     * @param originalRequest
-     * @param retriesAttempted
      */
     PollingStrategyContext(AmazonWebServiceRequest originalRequest, int retriesAttempted) {
         this.originalRequest = originalRequest;

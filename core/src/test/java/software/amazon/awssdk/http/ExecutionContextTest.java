@@ -32,7 +32,7 @@ public class ExecutionContextTest {
         ExecutionContext executionContext = new ExecutionContext(null, false, webServiceClient);
         URI testUri = new URI("http://foo.amazon.com");
         executionContext.getSigner(SignerProviderContext.builder().withUri(testUri).build());
-        verify(webServiceClient, times(1)).getSignerByURI(testUri);
+        verify(webServiceClient, times(1)).getSignerByUri(testUri);
     }
 
 }

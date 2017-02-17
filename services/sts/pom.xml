@@ -30,6 +30,21 @@
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>
 
+    <dependencies>
+        <!-- Test Dependencies -->
+        <dependency>
+            <artifactId>iam</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

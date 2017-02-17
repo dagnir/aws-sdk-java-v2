@@ -33,13 +33,13 @@ import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodbv2.util.TableUtils;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * DynamoDB supports nested attributes up to 32 levels deep.
  * http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html
  */
-public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
+public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
 
     private static final String TABLE = "java-sdk-nested-json-document-" + System.currentTimeMillis();
     private static final String HASH = "hash";
@@ -109,6 +109,7 @@ public class NestedJsonDocumentIntegrationTest extends AWSTestBase {
                                 .withItem(item_OverLimit));
             Assert.fail("ValidationException is expected, since the depth exceeds the service limit.");
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
     }
 

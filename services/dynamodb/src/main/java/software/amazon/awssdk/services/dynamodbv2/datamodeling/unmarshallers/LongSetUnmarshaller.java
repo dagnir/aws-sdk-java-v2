@@ -28,11 +28,11 @@ public class LongSetUnmarshaller extends NSUnmarshaller {
     private static final LongSetUnmarshaller INSTANCE =
             new LongSetUnmarshaller();
 
-    public static LongSetUnmarshaller instance() {
-        return INSTANCE;
+    private LongSetUnmarshaller() {
     }
 
-    private LongSetUnmarshaller() {
+    public static LongSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

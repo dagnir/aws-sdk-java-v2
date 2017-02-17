@@ -31,18 +31,14 @@ import software.amazon.awssdk.annotation.Beta;
  * <ul>
  * <li>If the attribute does not already exist, add the new attribute and its
  * value(s) to the item.</li>
- *
  * <li>If the attribute already exists, then the behavior of ADD depends on the
  * attribute's data type:
- * <ul>
  * <li>If the attribute is a number, and the value you are adding is also a number,
  * then the value is mathematically added to the existing attribute. (If the
  * value is a negative number, then it is subtracted from the existing
  * attribute.)</li>
- *
  * <li>If the attribute is a set, and the value you are adding is also a set, then
  * the value is appended to the existing set.</li>
- * <ul>
  * </ul>
  * <p>
  * This object is as immutable (or unmodifiable) as the underlying value (of

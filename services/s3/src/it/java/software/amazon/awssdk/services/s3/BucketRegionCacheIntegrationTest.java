@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
  */
 public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
 
-    private static final Map<String, String> cache = AmazonS3Client.getBucketRegionCache();
+    private static final Map<String, String> REGION_CACHE = AmazonS3Client.getBucketRegionCache();
 
     private static final String US_EAST_BUCKET = "useast-java-sdk-bucket" + new Date().getTime();
 
@@ -54,13 +54,13 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         s3.deleteBucket(US_EAST_BUCKET);
-        assertNull(cache.get(US_EAST_BUCKET));
+        assertNull(REGION_CACHE.get(US_EAST_BUCKET));
 
         euS3.deleteBucket(EU_WEST_1_BUCKET);
-        assertNull(cache.get(EU_WEST_1_BUCKET));
+        assertNull(REGION_CACHE.get(EU_WEST_1_BUCKET));
 
         s3.deleteBucket(AP_NORTHEAST_1_BUCKET);
-        assertNull(cache.get(AP_NORTHEAST_1_BUCKET));
+        assertNull(REGION_CACHE.get(AP_NORTHEAST_1_BUCKET));
     }
 
     /**
@@ -68,19 +68,19 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
      */
     @Test
     public void testCacheIsNotUpdatedWhenRegionIsConfigured() {
-        cache.remove(EU_WEST_1_BUCKET);
-        int size = cache.size();
+        REGION_CACHE.remove(EU_WEST_1_BUCKET);
+        int size = REGION_CACHE.size();
 
         euS3.headBucket(new HeadBucketRequest(EU_WEST_1_BUCKET));
-        assertTrue(cache.size() == size);
-        assertFalse(cache.containsKey(EU_WEST_1_BUCKET));
+        assertTrue(REGION_CACHE.size() == size);
+        assertFalse(REGION_CACHE.containsKey(EU_WEST_1_BUCKET));
 
         euS3.listObjects(EU_WEST_1_BUCKET);
-        assertTrue(cache.size() == size);
+        assertTrue(REGION_CACHE.size() == size);
 
         euS3.listBuckets();
-        assertTrue(cache.size() == size);
-        assertFalse(cache.containsKey(EU_WEST_1_BUCKET));
+        assertTrue(REGION_CACHE.size() == size);
+        assertFalse(REGION_CACHE.containsKey(EU_WEST_1_BUCKET));
     }
 
     /**
@@ -89,22 +89,22 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
      */
     @Test
     public void testCacheIsUpdatedWhenRegionIsNotConfigured() throws InterruptedException {
-        cache.remove(US_EAST_BUCKET);
-        assertFalse(cache.containsKey(US_EAST_BUCKET));
+        REGION_CACHE.remove(US_EAST_BUCKET);
+        assertFalse(REGION_CACHE.containsKey(US_EAST_BUCKET));
 
-        int size = cache.size();
+        int size = REGION_CACHE.size();
 
         s3.headBucket(new HeadBucketRequest(US_EAST_BUCKET));
-        assertTrue(cache.size() == size + 1);
-        assertEquals("us-east-1", cache.get(US_EAST_BUCKET));
+        assertTrue(REGION_CACHE.size() == size + 1);
+        assertEquals("us-east-1", REGION_CACHE.get(US_EAST_BUCKET));
 
         s3.listObjects(US_EAST_BUCKET);
-        assertTrue(cache.size() == size + 1);
-        assertEquals("us-east-1", cache.get(US_EAST_BUCKET));
+        assertTrue(REGION_CACHE.size() == size + 1);
+        assertEquals("us-east-1", REGION_CACHE.get(US_EAST_BUCKET));
 
         s3.listBuckets();
-        assertTrue(cache.size() == size + 1);
-        assertEquals("us-east-1", cache.get(US_EAST_BUCKET));
+        assertTrue(REGION_CACHE.size() == size + 1);
+        assertEquals("us-east-1", REGION_CACHE.get(US_EAST_BUCKET));
     }
 
     /**
@@ -113,22 +113,22 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
      */
     @Test
     public void testCacheWhlieAccessingBucketsInDifferentRegion() {
-        int size = cache.size();
-        assertFalse(cache.containsKey(AP_NORTHEAST_1_BUCKET));
+        int size = REGION_CACHE.size();
+        assertFalse(REGION_CACHE.containsKey(AP_NORTHEAST_1_BUCKET));
 
         s3.headBucket(new HeadBucketRequest(AP_NORTHEAST_1_BUCKET));
-        assertTrue(cache.size() == size + 1);
-        assertEquals("ap-northeast-1", cache.get(AP_NORTHEAST_1_BUCKET));
+        assertTrue(REGION_CACHE.size() == size + 1);
+        assertEquals("ap-northeast-1", REGION_CACHE.get(AP_NORTHEAST_1_BUCKET));
 
         s3.listObjects(AP_NORTHEAST_1_BUCKET);
-        assertTrue(cache.size() == size + 1);
-        assertEquals("ap-northeast-1", cache.get(AP_NORTHEAST_1_BUCKET));
+        assertTrue(REGION_CACHE.size() == size + 1);
+        assertEquals("ap-northeast-1", REGION_CACHE.get(AP_NORTHEAST_1_BUCKET));
     }
 
     @Test(expected = AmazonS3Exception.class)
     public void testNonExistentBucketWithEntryInCache() {
         String bucketName = "random-java-bucket" + new Date().getTime();
-        cache.put(bucketName, "eu-west-1");
+        REGION_CACHE.put(bucketName, "eu-west-1");
 
         s3.headBucket(new HeadBucketRequest(bucketName));
     }
@@ -152,14 +152,14 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testCacheHasWrongRegionAndRegionIsNotProvided() {
         //Bucket created in us-east-1 but cache entry is eu-central-1
-        cache.put(US_EAST_BUCKET, "eu-central-1");
+        REGION_CACHE.put(US_EAST_BUCKET, "eu-central-1");
 
-        assertEquals("eu-central-1", cache.get(US_EAST_BUCKET));
+        assertEquals("eu-central-1", REGION_CACHE.get(US_EAST_BUCKET));
         try {
             s3.headBucket(new HeadBucketRequest(US_EAST_BUCKET));
         } catch (AmazonS3Exception ase) {
             assertEquals(301, ase.getStatusCode());
-            assertEquals("us-east-1", cache.get(US_EAST_BUCKET));
+            assertEquals("us-east-1", REGION_CACHE.get(US_EAST_BUCKET));
         }
 
         // Subsequent requests after updating the cache should succeed.
@@ -179,8 +179,8 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void testCacheHasWrongRegionAndRegionIsProvided() {
         //Bucket created in eu-west-1 but cache entry is us-west-2
-        cache.put(EU_WEST_1_BUCKET, "us-west-2");
-        assertEquals("us-west-2", cache.get(EU_WEST_1_BUCKET));
+        REGION_CACHE.put(EU_WEST_1_BUCKET, "us-west-2");
+        assertEquals("us-west-2", REGION_CACHE.get(EU_WEST_1_BUCKET));
 
         AmazonS3Client apClient = new AmazonS3Client();
         apClient.configureRegion(Regions.AP_NORTHEAST_1);
@@ -188,7 +188,7 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
             apClient.headBucket(new HeadBucketRequest(EU_WEST_1_BUCKET));
         } catch (AmazonS3Exception ase) {
             assertEquals(301, ase.getStatusCode());
-            assertEquals("eu-west-1", cache.get(EU_WEST_1_BUCKET));
+            assertEquals("eu-west-1", REGION_CACHE.get(EU_WEST_1_BUCKET));
             return;
         }
 
@@ -197,7 +197,7 @@ public class BucketRegionCacheIntegrationTest extends S3IntegrationTestBase {
             apClient.headBucket(new HeadBucketRequest(EU_WEST_1_BUCKET));
         } catch (AmazonS3Exception ase) {
             assertEquals(301, ase.getStatusCode());
-            assertEquals("us-west-1", cache.get(EU_WEST_1_BUCKET));
+            assertEquals("us-west-1", REGION_CACHE.get(EU_WEST_1_BUCKET));
             return;
         }
     }

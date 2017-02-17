@@ -49,6 +49,13 @@ public final class Choice {
     }
 
     /**
+     * @return Builder instance to construct a {@link Choice}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Condition for the choice rule.
      */
     public Condition getCondition() {
@@ -63,17 +70,10 @@ public final class Choice {
     }
 
     /**
-     * @return Builder instance to construct a {@link Choice}.
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Builder for a {@link Choice}.
      */
     @JsonDeserialize(using = Choice.ChoiceDeserializer.class)
-    public final static class Builder implements Buildable<Choice> {
+    public static final class Builder implements Buildable<Choice> {
 
         private Condition.Builder condition = Condition.NULL_BUILDER;
         private Transition.Builder transition = Transition.NULL_BUILDER;
@@ -84,11 +84,8 @@ public final class Choice {
         /**
          * REQUIRED. Sets the condition for this choice rule.
          *
-         * @param conditionBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition.Builder}.
-         *                         Note that the
-         *                         {@link State} object is not built until the {@link Choice} is built so any modifications on
-         *                         the
-         *                         state builder will be reflected in this object.
+         * @param conditionBuilder Instance of {@link Builder}. Note that the {@link State} object is not built until the
+         *     {@link Choice} is built so any modifications on the state builder will be reflected in this object.
          * @return This object for method chaining.
          */
         public Builder condition(Condition.Builder conditionBuilder) {

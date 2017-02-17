@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class ListObjectsV2Result implements Serializable {
 
-    /** A list of summary information describing the objects stored in the bucket */
+    /** A list of summary information describing the objects stored in the bucket. */
     private List<S3ObjectSummary> objectSummaries = new ArrayList<S3ObjectSummary>();
 
     /**
@@ -40,10 +40,10 @@ public class ListObjectsV2Result implements Serializable {
      */
     private boolean isTruncated;
 
-    /** The name of the Amazon S3 bucket containing the listed objects */
+    /** The name of the Amazon S3 bucket containing the listed objects. */
     private String bucketName;
 
-    /** KeyCount is the number of keys returned with this response */
+    /** KeyCount is the number of keys returned with this response. */
     private int keyCount;
 
     /**
@@ -53,7 +53,7 @@ public class ListObjectsV2Result implements Serializable {
      */
     private String nextContinuationToken;
 
-    /* Original Request Parameters */
+    /* Original Request Parameters. */
 
     /**
      * The prefix parameter originally specified by the caller when this object

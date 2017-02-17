@@ -20,8 +20,8 @@ import java.util.Date;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
 
 /**
- * {@link WaitFor} implementation that can be used in a {@link WaitState}. Corresponds to the "{@value
- * PropertyNames#TIMESTAMP}" field in the JSON document.
+ * {@link WaitFor} implementation that can be used in a {@link WaitState}. Corresponds to the
+ * "{@value PropertyNames#TIMESTAMP}" field in the JSON document.
  *
  * @see <a href="https://states-language.net/spec.html#wait-state">https://states-language.net/spec.html#wait-state</a>
  */
@@ -35,17 +35,17 @@ public final class WaitForTimestamp implements WaitFor {
     }
 
     /**
-     * @return The date that the {@link WaitState} should wait until before proceeding.
-     */
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    /**
      * @return Builder instance to construct a {@link WaitForTimestamp}.
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * @return The date that the {@link WaitState} should wait until before proceeding.
+     */
+    public Date getTimestamp() {
+        return timestamp;
     }
 
     /**

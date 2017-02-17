@@ -26,13 +26,13 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  * QueueBufferFuture class is used to deliver asynchronous results of various QueueBuffer
  * operations. QueueBufferFutures are not cancellable
  */
-class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Future<Res> {
+class QueueBufferFuture<ReqT extends AmazonWebServiceRequest, ResT> implements Future<ResT> {
     /**
      * callback we should call after the future is done. may be null
      */
 
-    private final QueueBufferCallback<Req, Res> callback;
-    private Res result = null;
+    private final QueueBufferCallback<ReqT, ResT> callback;
+    private ResT result = null;
     private Exception e = null;
     private boolean done = false;
     /**
@@ -46,14 +46,14 @@ class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Fut
         this(null);
     }
 
-    public QueueBufferFuture(QueueBufferCallback<Req, Res> cb) {
+    public QueueBufferFuture(QueueBufferCallback<ReqT, ResT> cb) {
         callback = cb;
     }
 
     /**
      * Report that the task this future represents has succeeded.
      */
-    public synchronized void setSuccess(Res paramResult) {
+    public synchronized void setSuccess(ResT paramResult) {
         if (done) {
             return; // can't mark done twice
         }
@@ -112,7 +112,7 @@ class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Fut
     }
 
     @Override
-    public Res get() throws InterruptedException, ExecutionException {
+    public ResT get() throws InterruptedException, ExecutionException {
         while (true) {
             try {
                 return get(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
@@ -125,8 +125,8 @@ class QueueBufferFuture<Req extends AmazonWebServiceRequest, Res> implements Fut
     }
 
     @Override
-    public synchronized Res get(long timeout, TimeUnit tu) throws InterruptedException, ExecutionException,
-                                                                  TimeoutException {
+    public synchronized ResT get(long timeout, TimeUnit tu) throws InterruptedException, ExecutionException,
+                                                                   TimeoutException {
 
         long waitStartMs = TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
         long timeoutMs = TimeUnit.MILLISECONDS.convert(timeout, tu);

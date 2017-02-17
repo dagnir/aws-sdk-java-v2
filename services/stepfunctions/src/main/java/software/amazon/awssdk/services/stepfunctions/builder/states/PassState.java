@@ -74,6 +74,13 @@ public final class PassState extends TransitionState {
     }
 
     /**
+     * @return Builder instance to construct a {@link PassState}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Type identifier of {@link PassState}.
      */
     @Override
@@ -131,13 +138,6 @@ public final class PassState extends TransitionState {
     @Override
     public <T> T accept(StateVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    /**
-     * @return Builder instance to construct a {@link PassState}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

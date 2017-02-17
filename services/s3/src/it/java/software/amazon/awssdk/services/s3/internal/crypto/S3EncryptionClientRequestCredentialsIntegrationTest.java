@@ -24,8 +24,8 @@ import java.security.spec.InvalidKeySpecException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -50,7 +50,7 @@ public class S3EncryptionClientRequestCredentialsIntegrationTest extends S3Integ
         SimpleMaterialProvider materialsProvider = new SimpleMaterialProvider()
                 .withLatest(new EncryptionMaterials(CryptoTestUtils.getTestKeyPair()));
         // The client credentials should not be used in this test.
-        s3EncryptionClient = new AmazonS3EncryptionClient(new BasicAWSCredentials("invalid", "invalid"),
+        s3EncryptionClient = new AmazonS3EncryptionClient(new BasicAwsCredentials("invalid", "invalid"),
                                                           materialsProvider);
     }
 
@@ -67,7 +67,7 @@ public class S3EncryptionClientRequestCredentialsIntegrationTest extends S3Integ
     @Test
     public void credentialsOveriddenInRequest_TakesPrecedenceOverClient() throws IOException {
         // This is the override credentials to be used.
-        AWSCredentials overrideCrentials = credentials;
+        AwsCredentials overrideCrentials = credentials;
 
         // Put Object with credentials overridden
         File toUpload = CryptoTestUtils.generateRandomAsciiFile(100);

@@ -32,9 +32,9 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.PaginatedParallelScanList;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.PaginatedScanList;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ScanResultPage;
@@ -64,7 +64,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     private static final int PARALLEL_SCAN_SEGMENTS = 5;
 
     private static void createTestData() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (int i = 0; i < 500; i++) {
             util.save(new SimpleClass(Integer.toString(i), Integer.toString(i)));
         }
@@ -91,7 +91,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
     @Test
     public void testScan() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
@@ -124,7 +124,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
      */
     @Test
     public void testScanWithConditionalOperator() {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
                 .withLimit(SCAN_LIMIT)
@@ -144,7 +144,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
     @Test
     public void testParallelScan() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
@@ -182,7 +182,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
     @Test
     public void testParallelScanPerformance() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
@@ -206,7 +206,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
     @Test
     public void testParallelScanExceptionHandling() {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         int INVALID_LIMIT = 0;
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withLimit(INVALID_LIMIT);
         try {
@@ -225,7 +225,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
     @Test
     public void testScanPage() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         scanExpression.addFilterCondition("value",

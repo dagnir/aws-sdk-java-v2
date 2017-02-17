@@ -31,23 +31,42 @@ import software.amazon.awssdk.annotation.Immutable;
  */
 @Immutable
 public class ProgressEvent {
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PREPARING_EVENT} */
-    @Deprecated public static final int PREPARING_EVENT_CODE = 1;
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_STARTED_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_PREPARING_EVENT}
+     */
+    @Deprecated
+    public static final int PREPARING_EVENT_CODE = 1;
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_STARTED_EVENT}
+     */
     @Deprecated public static final int STARTED_EVENT_CODE = 2;
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_COMPLETED_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_COMPLETED_EVENT}
+     */
     @Deprecated public static final int COMPLETED_EVENT_CODE = 4;
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_FAILED_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_FAILED_EVENT}
+     */
     @Deprecated public static final int FAILED_EVENT_CODE = 8;
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_CANCELED_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_CANCELED_EVENT}
+     */
     @Deprecated public static final int CANCELED_EVENT_CODE = 16;
-    /** @deprecated Replaced by {@link ProgressEventType#HTTP_REQUEST_CONTENT_RESET_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#HTTP_REQUEST_CONTENT_RESET_EVENT}
+     */
     @Deprecated public static final int RESET_EVENT_CODE = 32;
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_STARTED_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_STARTED_EVENT}
+     */
     @Deprecated public static final int PART_STARTED_EVENT_CODE = 1024;
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_COMPLETED_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_COMPLETED_EVENT}
+     */
     @Deprecated public static final int PART_COMPLETED_EVENT_CODE = 2048;
-    /** @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_FAILED_EVENT} */
+    /**
+     * @deprecated Replaced by {@link ProgressEventType#TRANSFER_PART_FAILED_EVENT}
+     */
     @Deprecated public static final int PART_FAILED_EVENT_CODE = 4096;
 
     // Deprecated integer event codes

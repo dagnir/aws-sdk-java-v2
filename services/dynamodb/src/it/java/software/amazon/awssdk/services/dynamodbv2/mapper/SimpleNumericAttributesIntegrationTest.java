@@ -33,7 +33,7 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemResult;
@@ -111,7 +111,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
             NumberAttributeClass x = util.load(getKeyObject(attr.get(KEY_NAME).getS()));
@@ -148,7 +148,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (NumberAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -168,7 +168,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (NumberAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -200,7 +200,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (NumberAttributeClass obj : objs) {
             assertNull(obj.getKey());
             util.save(obj);
@@ -218,7 +218,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
     @Test
     public void testDelete() throws Exception {
         NumberAttributeClass obj = getUniqueObject();
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.save(obj);
 
         NumberAttributeClass loaded = util.load(NumberAttributeClass.class, obj.getKey());
@@ -232,7 +232,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
     @Test
     public void performanceTest() throws Exception {
         NumberAttributeClass obj = getUniqueObject();
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         mapper.save(obj);
 
         GetItemResult item = dynamo.getItem(new GetItemRequest().withTableName("aws-java-sdk-util").withKey(

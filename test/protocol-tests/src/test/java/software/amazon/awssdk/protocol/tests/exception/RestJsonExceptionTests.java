@@ -27,7 +27,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocol.restjson.model.AmazonProtocolRestJsonException;
@@ -42,7 +42,7 @@ public class RestJsonExceptionTests {
 
     private static final String ALL_TYPES_PATH = "/2016-03-11/allTypes";
     private final AmazonProtocolRestJsonClient client = new AmazonProtocolRestJsonClient(
-            new BasicAWSCredentials("akid", "skid"));
+            new BasicAwsCredentials("akid", "skid"));
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 

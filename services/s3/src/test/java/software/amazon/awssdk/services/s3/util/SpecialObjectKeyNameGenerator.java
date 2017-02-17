@@ -26,14 +26,14 @@ public class SpecialObjectKeyNameGenerator {
 
     /** Each special key name pattern will be tested. **/
     private static final String[] specialKeyPatterns = new String[] {
-        /* Leading slash */
+        /* Leading slash. */
         "/foo",
         "//foo",
         "///foo",
         "////foo",
         "%2Ffoo",
         "/%2F/foo",
-        /* Slash in the middle */
+        /* Slash in the middle. */
         "foo/bar",
         "foo//bar",
         "foo///bar",

@@ -27,11 +27,12 @@ import java.lang.annotation.Target;
  * may put the object into an invalid state, regardless of the interleaving of those actions
  * by the runtime, and without requiring any additional synchronization or coordination on the
  * part of the caller.
- * @see NotThreadSafe
  * <p>
  * Based on code developed by Brian Goetz and Tim Peierls and concepts
  * published in 'Java Concurrency in Practice' by Brian Goetz, Tim Peierls,
  * Joshua Bloch, Joseph Bowbeer, David Holmes and Doug Lea.
+ *
+ * @see NotThreadSafe
  */
 @Documented
 @Target(ElementType.TYPE)

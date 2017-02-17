@@ -83,16 +83,16 @@ public class S3V4AuthErrorRetryStrategyTest {
         AuthRetryParameters authParams = retryStrategy.shouldRetryWithAuthParam(request, httpResponse, null);
 
         Mockito.verify(endpointResolver).resolveRequestEndpoint(request, REGION);
-        assertThat(authParams.getSignerForRetry(), Matchers.instanceOf(AWSS3V4Signer.class));
-        assertEquals(REGION, ((AWSS3V4Signer) authParams.getSignerForRetry()).getRegionName());
+        assertThat(authParams.getSignerForRetry(), Matchers.instanceOf(AwsS3V4Signer.class));
+        assertEquals(REGION, ((AwsS3V4Signer) authParams.getSignerForRetry()).getRegionName());
     }
 
     @Test
     public void isRetryable_RegionHeaderMissing_ReturnsRedirectToS3External() {
         AuthRetryParameters authParams = retryStrategy.shouldRetryWithAuthParam(request, httpResponse, null);
 
-        assertThat(authParams.getSignerForRetry(), Matchers.instanceOf(AWSS3V4Signer.class));
-        assertEquals(Regions.US_EAST_1.getName(), ((AWSS3V4Signer) authParams
+        assertThat(authParams.getSignerForRetry(), Matchers.instanceOf(AwsS3V4Signer.class));
+        assertEquals(Regions.US_EAST_1.getName(), ((AwsS3V4Signer) authParams
                 .getSignerForRetry()).getRegionName());
         assertEquals("https://" + BUCKET_NAME + ".s3-external-1.amazonaws.com", authParams.getEndpointForRetry()
                                                                                           .toString());

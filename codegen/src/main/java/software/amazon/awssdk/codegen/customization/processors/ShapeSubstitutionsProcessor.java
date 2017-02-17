@@ -73,7 +73,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
         // Make sure the substituted shapes are not referenced by any operation
         // as the input, output or error shape
         for (Operation operation : serviceModel.getOperations().values()) {
-            preprocess_AssertNoSubstitutedShapeReferenceInOperation(operation);
+            preprocessAssertNoSubstitutedShapeReferenceInOperation(operation);
         }
 
         // Substitute references from within shape members
@@ -81,7 +81,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
             String shapeName = entry.getKey();
             Shape shape = entry.getValue();
 
-            preprocess_SubstituteShapeReferencesInShape(shapeName, shape, serviceModel);
+            preprocessSubstituteShapeReferencesInShape(shapeName, shape, serviceModel);
         }
     }
 
@@ -93,11 +93,11 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
         }
 
         for (ShapeModel shapeModel : intermediateModel.getShapes().values()) {
-            postprocess_HandleEmitAsMember(shapeModel, intermediateModel);
+            postprocessHandleEmitAsMember(shapeModel, intermediateModel);
         }
     }
 
-    private void preprocess_AssertNoSubstitutedShapeReferenceInOperation(Operation operation) {
+    private void preprocessAssertNoSubstitutedShapeReferenceInOperation(Operation operation) {
 
         // Check input
         if (operation.getInput() != null && operation.getInput().getShape() != null) {
@@ -140,7 +140,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
      * handled in post-process stage, after the marshaller/unmarshaller location
      * names are calculated in the intermediate model.
      */
-    private void preprocess_SubstituteShapeReferencesInShape(
+    private void preprocessSubstituteShapeReferencesInShape(
             String shapeName, Shape shape, ServiceModel serviceModel) {
 
         // structure members
@@ -163,9 +163,8 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                         // we will handle the emitFromMember customizations in post-process stage
                         trackListMemberSubstitution(shapeName, memberName, nestedListMemberOriginalShape);
                     }
-                }
-                // Then check if the shape of the member itself is to be substituted
-                else {
+                } else {
+                    // Then check if the shape of the member itself is to be substituted
                     ShapeSubstitution appliedSubstitution = substitueMemberShape(member);
                     if (appliedSubstitution != null &&
                         appliedSubstitution.getEmitFromMember() != null) {
@@ -175,14 +174,12 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                 }
 
             }
-        }
+        } else if (shape.getMapKeyType() != null) {
+            // no need to check if the shape is a list, since a list shape is
+            // always referenced by a top-level structure shape and that's already
+            // handled by the code above
 
-        // no need to check if the shape is a list, since a list shape is
-        // always referenced by a top-level structure shape and that's already
-        // handled by the code above
-
-        // map key is not allowed to be substituted
-        else if (shape.getMapKeyType() != null) {
+            // map key is not allowed to be substituted
             String mapKeyShape = shape.getMapKeyType().getShape();
 
             if (shapeSubstitutions.containsKey(mapKeyShape)) {
@@ -190,9 +187,8 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                         "shapeSubstitution customization found for shape "
                         + mapKeyShape + ", but this shape is the key for a map shape.");
             }
-        }
-        // map value is not allowed to be substituted
-        else if (shape.getMapValueType() != null) {
+        } else if (shape.getMapValueType() != null) {
+            // map value is not allowed to be substituted
             String mapValShape = shape.getMapValueType().getShape();
 
             if (shapeSubstitutions.containsKey(mapValShape)) {
@@ -219,7 +215,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
         return null;
     }
 
-    private void postprocess_HandleEmitAsMember(
+    private void postprocessHandleEmitAsMember(
             ShapeModel shape, IntermediateModel intermediateModel) {
 
         /*
@@ -257,8 +253,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                  * compatiblity of EC2 APIs. This should be removed as part of next major
                  * version bump.
                  */
-                if (!shouldSkipAddingMarshallingPath(shapeSubstitutions.get
-                        (originalShapeC2jName), parentShapeC2jName)) {
+                if (!shouldSkipAddingMarshallingPath(shapeSubstitutions.get(originalShapeC2jName), parentShapeC2jName)) {
                     member.getHttp().setAdditionalMarshallingPath(
                             emitFromMember.getHttp().getMarshallLocationName());
                 }
@@ -304,8 +299,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                  * compatiblity of EC2 APIs. This should be removed as part of next major
                  * version bump.
                  */
-                if (!shouldSkipAddingMarshallingPath(shapeSubstitutions.get
-                        (nestedListMemberOriginalShapeC2jName), parentShapeC2jName)) {
+                if (!shouldSkipAddingMarshallingPath(shapeSubstitutions.get(nestedListMemberOriginalShapeC2jName), parentShapeC2jName)) {
                     listTypeMember.getListModel().setMemberAdditionalMarshallingPath(
                             emitFromMember.getHttp().getMarshallLocationName());
                 }

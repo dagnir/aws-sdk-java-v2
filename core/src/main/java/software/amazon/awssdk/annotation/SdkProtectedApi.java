@@ -26,6 +26,6 @@ import java.lang.annotation.Target;
  * TODO: Write a linter that makes sure generated code only depends on public or
  * {@code @InternalApi} classes.
  */
-@Target( {ElementType.PACKAGE, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD})
+@Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD})
 public @interface SdkProtectedApi {
 }

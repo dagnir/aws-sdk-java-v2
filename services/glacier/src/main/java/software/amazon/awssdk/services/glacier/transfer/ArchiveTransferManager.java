@@ -36,9 +36,9 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
@@ -80,15 +80,15 @@ public class ArchiveTransferManager {
     /** The minimum part size, in bytes, for a Glacier multipart upload. */
     private static final long MINIMUM_PART_SIZE = 1024L * 1024;
 
-    /** Threshold, in bytes, for when to use the multipart upload operations */
+    /** Threshold, in bytes, for when to use the multipart upload operations. */
     private static final long MULTIPART_UPLOAD_SIZE_THRESHOLD = 1024L * 1024L * 100;
 
-    /** Default retry time when downloading in multiple chunks using range retrieval */
+    /** Default retry time when downloading in multiple chunks using range retrieval. */
     private static final int DEFAULT_MAX_RETRIES = 3;
-    private static final Log log = LogFactory.getLog(ArchiveTransferManager.class);
+    private static final Log LOG = LogFactory.getLog(ArchiveTransferManager.class);
     /** Glacier client used for making all requests. */
     private final AmazonGlacier glacier;
-    private final AWSCredentialsProvider credentialsProvider;
+    private final AwsCredentialsProvider credentialsProvider;
     private final ClientConfiguration clientConfiguration;
     private final AmazonSQSClient sqs;
     private final AmazonSNSClient sns;
@@ -100,8 +100,8 @@ public class ArchiveTransferManager {
      * @param credentials
      *            The AWS credentials used to authenticate requests.
      */
-    public ArchiveTransferManager(AWSCredentials credentials) {
-        this(new AWSStaticCredentialsProvider(credentials), new ClientConfiguration());
+    public ArchiveTransferManager(AwsCredentials credentials) {
+        this(new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
     }
 
     /**
@@ -113,7 +113,7 @@ public class ArchiveTransferManager {
      * @param clientConfiguration
      *            Client specific options, such as proxy settings, retries, and timeouts.
      */
-    public ArchiveTransferManager(AWSCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
+    public ArchiveTransferManager(AwsCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
         this(new AmazonGlacierClient(credentialsProvider, clientConfiguration), credentialsProvider, clientConfiguration);
     }
 
@@ -126,7 +126,7 @@ public class ArchiveTransferManager {
      * @param credentialsProvider
      *            The AWS credentials provider used to authenticate requests.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AWSCredentialsProvider credentialsProvider) {
+    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider) {
         this(glacier, credentialsProvider, new ClientConfiguration());
     }
 
@@ -139,8 +139,8 @@ public class ArchiveTransferManager {
      * @param credentials
      *            The AWS credentials used to authenticate requests.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AWSCredentials credentials) {
-        this(glacier, new AWSStaticCredentialsProvider(credentials), new ClientConfiguration());
+    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentials credentials) {
+        this(glacier, new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
     }
 
     /**
@@ -155,7 +155,7 @@ public class ArchiveTransferManager {
      *            Client specific options, such as proxy settings, retries, and
      *            timeouts.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AWSCredentialsProvider credentialsProvider,
+    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider,
                                   ClientConfiguration clientConfiguration) {
         this.credentialsProvider = credentialsProvider;
         this.clientConfiguration = clientConfiguration;
@@ -546,7 +546,7 @@ public class ArchiveTransferManager {
             }
             publishProgress(progressListener, ProgressEventType.TRANSFER_COMPLETED_EVENT);
         } finally {
-            closeQuietly(output, log);
+            closeQuietly(output, LOG);
         }
     }
 
@@ -586,7 +586,7 @@ public class ArchiveTransferManager {
                 } catch (NoSuchAlgorithmException e) {
                     throw failure(e, "Unable to compute hash for data integrity");
                 } finally {
-                    closeQuietly(input, log);
+                    closeQuietly(input, LOG);
                 }
 
                 // Only do tree-hash check when the output checksum is returned from Glacier
@@ -595,13 +595,14 @@ public class ArchiveTransferManager {
                     if (!input.getTreeHash().equalsIgnoreCase(jobOutputResult.getChecksum())) {
                         // Discard the chunk of bytes received 
                         publishResponseBytesDiscarded(progressListener, chunkSize);
-                        if (log.isDebugEnabled()) {
-                            log.debug("reverting " + chunkSize);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("reverting " + chunkSize);
                         }
-                        throw new IOException("Client side computed hash doesn't match server side hash; possible data corruption");
+                        throw new IOException("Client side computed hash doesn't match server side hash; " +
+                                              "possible data corruption");
                     }
                 } else {
-                    log.warn("Cannot validate the downloaded output since no tree-hash checksum is returned from Glacier. "
+                    LOG.warn("Cannot validate the downloaded output since no tree-hash checksum is returned from Glacier. "
                              + "Make sure the InitiateJob and GetJobOutput requests use tree-hash-aligned ranges.");
                 }
                 // Successfully download
@@ -610,8 +611,8 @@ public class ArchiveTransferManager {
             } catch (IOException ioe) {
                 if (retries < DEFAULT_MAX_RETRIES) {
                     retries++;
-                    if (log.isDebugEnabled()) {
-                        log.debug(retries
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(retries
                                   + " retry downloadOneChunk accountId="
                                   + accountId + ", vaultName=" + vaultName
                                   + ", jobId=" + jobId + ", currentPosition="
@@ -678,11 +679,12 @@ public class ArchiveTransferManager {
         publishProgress(progressListener, ProgressEventType.TRANSFER_PREPARING_EVENT);
         String uploadId = null;
         try {
-            InitiateMultipartUploadResult initiateResult = glacier.initiateMultipartUpload(new InitiateMultipartUploadRequest()
-                                                                                                   .withAccountId(accountId)
-                                                                                                   .withArchiveDescription(archiveDescription)
-                                                                                                   .withVaultName(vaultName)
-                                                                                                   .withPartSize(partSizeString));
+            InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest()
+                    .withAccountId(accountId)
+                    .withArchiveDescription(archiveDescription)
+                    .withVaultName(vaultName)
+                    .withPartSize(partSizeString);
+            InitiateMultipartUploadResult initiateResult = glacier.initiateMultipartUpload(request);
             uploadId = initiateResult.getUploadId();
         } catch (Throwable t) {
             publishProgress(progressListener, ProgressEventType.TRANSFER_FAILED_EVENT);
@@ -731,7 +733,7 @@ public class ArchiveTransferManager {
                         failedException = e;
                     } finally {
                         // We opened the file underneath; so need to release it
-                        release(inputSubStream, log);
+                        release(inputSubStream, LOG);
                     }
                 } // end inner while
                 if (!completed && failedException != null) {

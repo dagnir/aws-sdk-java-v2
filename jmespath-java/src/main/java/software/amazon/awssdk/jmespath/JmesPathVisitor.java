@@ -19,38 +19,38 @@ package software.amazon.awssdk.jmespath;
  * Visitor interface for delegating the Jmespath expression to its
  * corresponding type for evaluation
  *
- * @param <Input>  Input type for the visitor
+ * @param <InputT>  Input type for the visitor
  *                 CodeGen visitor: Void
  *                 Evaluation visitor: JsonNode
- * @param <Output> Output type for the visitor
+ * @param <OutputT> Output type for the visitor
  *                 CodeGen visitor: String
  *                 Evaluation visitor: JsonNode
  */
-public interface JmesPathVisitor<Input, Output> {
+public interface JmesPathVisitor<InputT, OutputT> {
 
-    Output visit(JmesPathSubExpression subExpression, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathSubExpression subExpression, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathField fieldNode, Input input);
+    OutputT visit(JmesPathField fieldNode, InputT input);
 
-    Output visit(JmesPathProjection jmesPathProjection, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathProjection jmesPathProjection, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathFlatten flatten, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathFlatten flatten, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathIdentity jmesPathIdentity, Input input);
+    OutputT visit(JmesPathIdentity jmesPathIdentity, InputT input);
 
-    Output visit(JmesPathValueProjection valueProjection, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathValueProjection valueProjection, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathFunction function, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathFunction function, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathLiteral literal, Input input);
+    OutputT visit(JmesPathLiteral literal, InputT input);
 
-    Output visit(JmesPathFilter filter, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathFilter filter, InputT input) throws InvalidTypeException;
 
-    Output visit(Comparator op, Input input) throws InvalidTypeException;
+    OutputT visit(Comparator op, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathNotExpression expression, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathNotExpression expression, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathAndExpression expression, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathAndExpression expression, InputT input) throws InvalidTypeException;
 
-    Output visit(JmesPathMultiSelectList multiSelectList, Input input) throws InvalidTypeException;
+    OutputT visit(JmesPathMultiSelectList multiSelectList, InputT input) throws InvalidTypeException;
 }

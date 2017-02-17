@@ -38,8 +38,8 @@ public class SDKProgressPublisher {
      * Used to deliver a progress event to the given listener.
      *
      * @return the future of a submitted task; or null if the delivery is
-     * synchronous with no future task involved.  Note a listener should never
-     * block, and therefore returning null is the typical case.
+     *     synchronous with no future task involved.  Note a listener should never
+     *     block, and therefore returning null is the typical case.
      */
     public static Future<?> publishProgress(
             final ProgressListener listener,

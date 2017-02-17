@@ -30,9 +30,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJson;
 import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
@@ -45,8 +45,8 @@ public class RestJsonCRC32ChecksumTests {
     private static final String JSON_BODY_CRC32_CHECKSUM = "3049587505";
     private static final String JSON_BODY_GZIP_CRC32_CHECKSUM = "3023995622";
     private static final String RESOURCE_PATH = "/2016-03-11/allTypes";
-    private static final AWSCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new AWSStaticCredentialsProvider(
-            new BasicAWSCredentials("foo", "bar"));
+    private static final AwsCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new AwsStaticCredentialsProvider(
+            new BasicAwsCredentials("foo", "bar"));
     @Rule
     public WireMockRule mockServer = new WireMockRule(WireMockConfiguration.wireMockConfig()
                                                                            .port(0)
@@ -141,12 +141,12 @@ public class RestJsonCRC32ChecksumTests {
 
     private static class AmazonProtocolRestJsonCRC32TestClient extends AmazonProtocolRestJsonClient {
 
-        public AmazonProtocolRestJsonCRC32TestClient(AWSCredentialsProvider credentialsProvider, ClientConfiguration config) {
+        public AmazonProtocolRestJsonCRC32TestClient(AwsCredentialsProvider credentialsProvider, ClientConfiguration config) {
             super(credentialsProvider, config);
         }
 
         @Override
-        public final boolean calculateCRC32FromCompressedData() {
+        public final boolean calculateCrc32FromCompressedData() {
             return true;
         }
     }

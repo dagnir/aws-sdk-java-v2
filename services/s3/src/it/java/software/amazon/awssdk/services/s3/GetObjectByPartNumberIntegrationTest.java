@@ -55,32 +55,32 @@ public class GetObjectByPartNumberIntegrationTest extends S3IntegrationTestBase 
 
     private static final Log LOG = LogFactory.getLog(GetObjectByPartNumberIntegrationTest.class);
 
-    /** The bucket created and used by these tests */
-    private final static String BUCKET_NAME = "java-get-object-partnumber-integ-test-" + new Date().getTime();
+    /** The bucket created and used by these tests. */
+    private static final String BUCKET_NAME = "java-get-object-partnumber-integ-test-" + new Date().getTime();
 
-    /** The key used for testing non multipart objects */
-    private final static String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
-    /** The size of the file containing the test data uploaded to S3 */
-    private final static long FILE_SIZE = 1 * MB;
-    /** The key used for testing multipart object */
-    private final static String MULTIPART_OBJECT_KEY = "multiPartkey";
-    /** The minimum size of a part in multipart object */
-    private final static int MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
+    /** The key used for testing non multipart objects. */
+    private static final String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
+    /** The size of the file containing the test data uploaded to S3. */
+    private static final long FILE_SIZE = 1 * MB;
+    /** The key used for testing multipart object. */
+    private static final String MULTIPART_OBJECT_KEY = "multiPartkey";
+    /** The minimum size of a part in multipart object. */
+    private static final int MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
 
     /**************Variables for testing multi part object***************/
-    /** The test content that is used for testing part 2 of multipart object. Contains only ASCII characters */
-    private final static String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
+    /** The test content that is used for testing part 2 of multipart object. Contains only ASCII characters. */
+    private static final String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
     /** The size of the TEST_STRING **/
-    private final static long TEST_STRING_LENGTH = TEST_STRING.length();
-    /** The start byte used when specifying a range in the request */
-    private final static long START_RANGE = 100;
-    /** The file containing the test nonMultiPartObject data uploaded to S3 */
+    private static final long TEST_STRING_LENGTH = TEST_STRING.length();
+    /** The start byte used when specifying a range in the request. */
+    private static final long START_RANGE = 100;
+    /** The file containing the test nonMultiPartObject data uploaded to S3. */
     private static File file;
-    /** The inputStream containing the test data uploaded to S3 */
+    /** The inputStream containing the test data uploaded to S3. */
     private static byte[] tempData;
-    /** The unique Id that is returned when we initiate a MultipartUpload */
+    /** The unique Id that is returned when we initiate a MultipartUpload. */
     private static String uploadId;
-    /** The input stream that holds the TEST_STRING */
+    /** The input stream that holds the TEST_STRING. */
     private static InputStream inputStream;
 
     /**
@@ -101,7 +101,6 @@ public class GetObjectByPartNumberIntegrationTest extends S3IntegrationTestBase 
     /**
      * Uploads a two part object to s3.
      *
-     * @throws Exception
      */
     private static void doMultiPartUpload() throws Exception {
         InitiateMultipartUploadResult initiateResult = s3.initiateMultipartUpload(
@@ -161,7 +160,6 @@ public class GetObjectByPartNumberIntegrationTest extends S3IntegrationTestBase 
     /**
      * Tests when part number is not set in a non-multipart object,
      * the entire object is returned.
-     * @throws Exception
      */
     @Test
     public void testGetObjectOnNonMultiPartObjectGivenNoPartNumberReturnsEntireObject() throws Exception {
@@ -174,7 +172,6 @@ public class GetObjectByPartNumberIntegrationTest extends S3IntegrationTestBase 
     /**
      * Tests when part number is set as 1 in a non-multipart object,
      * the entire object is returned.
-     * @throws Exception
      */
     @Test
     public void testGetObjectOnNonMultiPartObjectGivenPartNumberAsOneReturnsEntireObject() throws Exception {
@@ -188,7 +185,6 @@ public class GetObjectByPartNumberIntegrationTest extends S3IntegrationTestBase 
     /**
      * Tests when a valid part number between 1 and part count of the multipart object is included in the getObjectRequest,
      * the corresponding part in the multipart object is returned.
-     * @throws Exception
      */
     @Test
     public void testGetObjectOnMultiPartObjectGivenValidPartNumberReturnsCorrespondingPart() throws Exception {

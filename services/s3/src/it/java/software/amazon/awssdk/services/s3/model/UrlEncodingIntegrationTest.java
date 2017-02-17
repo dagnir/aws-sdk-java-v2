@@ -138,8 +138,7 @@ public class UrlEncodingIntegrationTest extends S3IntegrationTestBase {
 
         VersionListing versionListing = s3.listVersions(new
                                                                 ListVersionsRequest()
-                                                                .withBucketName
-                                                                        (BUCKET_WITH_SPECIAL_KEYS).withDelimiter("&"));
+                                                                .withBucketName(BUCKET_WITH_SPECIAL_KEYS).withDelimiter("&"));
 
         Assert.assertEquals(1, versionListing.getCommonPrefixes().size());
         Assert.assertEquals(COMMON_PREFIX, versionListing.getCommonPrefixes()

@@ -49,7 +49,7 @@ public class ContentCryptoMaterialTest {
             assertEquals(scheme.getKeyWrapScheme().getKeyWrapAlgorithm(key),
                          ccm.getKeyWrappingAlgorithm());
             assertEquals(scheme.getContentCryptoScheme(), ccm.getContentCryptoScheme());
-            assertEquals(md, ccm.getKEKMaterialsDescription());
+            assertEquals(md, ccm.getKekMaterialsDescription());
         }
         for (CryptoMode mode : CryptoMode.values()) {
             S3CryptoScheme scheme = S3CryptoScheme.from(mode);
@@ -60,7 +60,7 @@ public class ContentCryptoMaterialTest {
             assertEquals(scheme.getKeyWrapScheme().getKeyWrapAlgorithm(kekNew.getPublic()),
                          ccm.getKeyWrappingAlgorithm());
             assertEquals(scheme.getContentCryptoScheme(), ccm.getContentCryptoScheme());
-            assertEquals(md, ccm.getKEKMaterialsDescription());
+            assertEquals(md, ccm.getKekMaterialsDescription());
         }
     }
 
@@ -80,7 +80,7 @@ public class ContentCryptoMaterialTest {
             assertEquals(scheme.getKeyWrapScheme().getKeyWrapAlgorithm(key),
                          ccm.getKeyWrappingAlgorithm());
             assertEquals(scheme.getContentCryptoScheme(), ccm.getContentCryptoScheme());
-            assertEquals(km.getMaterialsDescription(), ccm.getKEKMaterialsDescription());
+            assertEquals(km.getMaterialsDescription(), ccm.getKekMaterialsDescription());
             Map<String, String> newMD = new StringMapBuilder()
                     .put("scheme", scheme.toString())
                     .put("key", "new")
@@ -91,9 +91,9 @@ public class ContentCryptoMaterialTest {
             assertEquals(scheme.getKeyWrapScheme().getKeyWrapAlgorithm(kekNew.getPublic()),
                          ccmNew.getKeyWrappingAlgorithm());
             assertEquals(scheme.getContentCryptoScheme(), ccmNew.getContentCryptoScheme());
-            assertEquals(newMD, ccmNew.getKEKMaterialsDescription());
-            assertFalse(ccm.getKEKMaterialsDescription().equals(
-                    ccmNew.getKEKMaterialsDescription()));
+            assertEquals(newMD, ccmNew.getKekMaterialsDescription());
+            assertFalse(ccm.getKekMaterialsDescription().equals(
+                    ccmNew.getKekMaterialsDescription()));
         }
     }
 }

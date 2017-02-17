@@ -228,10 +228,8 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
     }
 
     @Override
-    public <T> Unmarshaller<T, JsonUnmarshallerContext> getUnmarshaller
-            (Class<T> type) {
-        return (Unmarshaller<T, JsonUnmarshallerContext>) unmarshallerMap.get
-                (type);
+    public <T> Unmarshaller<T, JsonUnmarshallerContext> getUnmarshaller(Class<T> type) {
+        return (Unmarshaller<T, JsonUnmarshallerContext>) unmarshallerMap.get(type);
     }
 
     @Override

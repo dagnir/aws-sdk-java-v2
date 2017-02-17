@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.ec2;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.ec2.model.AssociateDhcpOptionsRequest;
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayRequest;
@@ -65,11 +65,11 @@ import software.amazon.awssdk.services.ec2.model.VpnGateway;
 @Deprecated
 public class EC2TestHelper {
 
-    /** Shared EC2 client for all tests to use */
+    /** Shared EC2 client for all tests to use. */
     public static AmazonEC2Client EC2;
 
-    /** Shared AWS credentials, loaded from a properties file */
-    public static AWSCredentials CREDENTIALS;
+    /** Shared AWS credentials, loaded from a properties file. */
+    public static AwsCredentials CREDENTIALS;
 
     static {
         try {
@@ -85,6 +85,7 @@ public class EC2TestHelper {
             EC2 = new AmazonEC2Client(CREDENTIALS);
             EC2.setEndpoint("http://ec2-shiraz.amazonaws.com");
         } catch (Exception exception) {
+            // Ignored or expected.
         }
     }
 
@@ -188,12 +189,6 @@ public class EC2TestHelper {
 
     }
 
-    /**
-     *
-     * @param optionKey
-     * @param optionValue
-     * @return
-     */
     public static CreateDhcpOptionsResult createDhcpOptions(String optionKey,
                                                             String... optionValue) {
 
@@ -227,7 +222,6 @@ public class EC2TestHelper {
      *
      * @param dhcpOptionsId
      *            A DHCP options set ID.
-     * @return
      */
     public static DescribeDhcpOptionsResult describeDhcpOptions(String dhcpOptionsId) {
         List<String> ids = new ArrayList<String>();
@@ -381,7 +375,6 @@ public class EC2TestHelper {
      *            The ID of the customer gateway
      * @param vpnGatewayId
      *            The ID of the customer gateway.
-     * @return
      */
     public static CreateVpnConnectionResult createVpnConnection(String type,
                                                                 String customerGatewayId, String vpnGatewayId) {
@@ -534,7 +527,6 @@ public class EC2TestHelper {
      *
      * @param offeringId offering id
      * @param instanceCount how many instances to reserve
-     * @return
      */
     public static PurchaseReservedInstancesOfferingResult purchaseReservedInstancesOffering(
             String offeringId, int instanceCount) {

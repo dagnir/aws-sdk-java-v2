@@ -28,16 +28,16 @@ import software.amazon.awssdk.internal.config.InternalConfig;
  */
 @ThreadSafe
 public class VersionInfoUtils {
-    /** The AWS SDK version info file with SDK versioning info */
+    /** The AWS SDK version info file with SDK versioning info. */
     static final String VERSION_INFO_FILE = "/software/amazon/awssdk/sdk/versionInfo.properties";
-    /** Shared logger for any issues while loading version information */
+    /** Shared logger for any issues while loading version information. */
     private static final Log log = LogFactory.getLog(VersionInfoUtils.class);
     private static final String UNKNOWN = "unknown";
-    /** SDK version info */
+    /** SDK version info. */
     private static volatile String version;
-    /** SDK platform info */
+    /** SDK platform info. */
     private static volatile String platform;
-    /** User Agent info */
+    /** User Agent info. */
     private static volatile String userAgent;
 
     /**
@@ -84,8 +84,8 @@ public class VersionInfoUtils {
 
     /**
      * @return Returns the User Agent string to be used when communicating with
-     * the AWS services.  The User Agent encapsulates SDK, Java, OS and
-     * region information.
+     *     the AWS services.  The User Agent encapsulates SDK, Java, OS and
+     *     region information.
      */
     public static String getUserAgent() {
         if (userAgent == null) {

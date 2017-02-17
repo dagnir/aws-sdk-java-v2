@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 
 public class S3ObjectsIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String bucketName = "java-s3-object-iteration-test-" + new Date().getTime();
 
 

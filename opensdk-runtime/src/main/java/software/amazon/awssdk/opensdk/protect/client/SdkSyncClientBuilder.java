@@ -23,8 +23,8 @@ import java.util.List;
 import org.apache.http.conn.ConnectTimeoutException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.ClientConfigurationFactory;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.NoOpSigner;
 import software.amazon.awssdk.auth.RequestSigner;
 import software.amazon.awssdk.auth.Signer;
@@ -50,10 +50,10 @@ import software.amazon.awssdk.util.VersionInfoUtils;
 /**
  * Base class for all Open SDK client builders.
  *
- * @param <Subclass>    Concrete builder for better fluent setters.
- * @param <TypeToBuild> Type being built by concrete builder.
+ * @param <SubclassT>    Concrete builder for better fluent setters.
+ * @param <TypeToBuildT> Type being built by concrete builder.
  */
-public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder, TypeToBuild> {
+public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilder, TypeToBuildT> {
 
     private static final String USER_AGENT_PREFIX = "apig-java";
     private static final String UA_NAME_VERSION_SEPERATOR = "/";
@@ -64,7 +64,7 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
      * tailored for that service.
      */
     private final ClientConfigurationFactory clientConfigFactory;
-    private AWSCredentialsProvider iamCredentials;
+    private AwsCredentialsProvider iamCredentials;
     private String endpoint;
     private String apiKey;
     private String region = defaultRegion();
@@ -79,7 +79,7 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
         this.apiKey = apiKey;
     }
 
-    protected void setIamCredentials(AWSCredentialsProvider iamCredentials) {
+    protected void setIamCredentials(AwsCredentialsProvider iamCredentials) {
         this.iamCredentials = iamCredentials;
     }
 
@@ -91,7 +91,7 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
         this.endpoint = endpoint;
     }
 
-    public Subclass endpoint(String endpoint) {
+    public SubclassT endpoint(String endpoint) {
         setEndpoint(endpoint);
         return getSubclass();
     }
@@ -111,7 +111,7 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
      * @param proxyConfiguration The proxy configuration of the client.
      * @return This object for method chaining.
      */
-    public Subclass proxyConfiguration(ProxyConfiguration proxyConfiguration) {
+    public SubclassT proxyConfiguration(ProxyConfiguration proxyConfiguration) {
         setProxyConfiguration(proxyConfiguration);
         return getSubclass();
     }
@@ -131,7 +131,7 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
      * @param timeoutConfiguration The {@link TimeoutConfiguration} object with the custom timeouts.
      * @return This object for method chaining.
      */
-    public Subclass timeoutConfiguration(TimeoutConfiguration timeoutConfiguration) {
+    public SubclassT timeoutConfiguration(TimeoutConfiguration timeoutConfiguration) {
         setTimeoutConfiguration(timeoutConfiguration);
         return getSubclass();
     }
@@ -151,7 +151,7 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
      * @param connectionConfiguration The {@link ConnectionConfiguration} object with the custom values.
      * @return This object for method chaining.
      */
-    public Subclass connectionConfiguration(ConnectionConfiguration connectionConfiguration) {
+    public SubclassT connectionConfiguration(ConnectionConfiguration connectionConfiguration) {
         setConnectionConfiguration(connectionConfiguration);
         return getSubclass();
     }
@@ -162,7 +162,7 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
      *
      * @param retryPolicy Custom retry policy to use for the client.
      */
-    public Subclass retryPolicy(RetryPolicy retryPolicy) {
+    public SubclassT retryPolicy(RetryPolicy retryPolicy) {
         this.retryPolicy = retryPolicy;
         return getSubclass();
     }
@@ -189,18 +189,18 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
         return new IamSignerFactory(region);
     }
 
-    public final TypeToBuild build() {
+    public final TypeToBuildT build() {
         return build(new BuilderParams());
     }
 
-    protected abstract TypeToBuild build(AwsSyncClientParams params);
+    protected abstract TypeToBuildT build(AwsSyncClientParams params);
 
     @SuppressWarnings("unchecked")
-    private Subclass getSubclass() {
-        return (Subclass) this;
+    private SubclassT getSubclass() {
+        return (SubclassT) this;
     }
 
-    protected Subclass signer(RequestSigner requestSigner, Class<? extends RequestSigner> signerType) {
+    protected SubclassT signer(RequestSigner requestSigner, Class<? extends RequestSigner> signerType) {
         signerRegistry = signerRegistry.register(requestSigner, signerType);
         return getSubclass();
     }
@@ -217,10 +217,10 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
                                  .build();
     }
 
-    private static class AnonymousCredentialsProvider implements AWSCredentialsProvider {
+    private static class AnonymousCredentialsProvider implements AwsCredentialsProvider {
 
         @Override
-        public AWSCredentials getCredentials() {
+        public AwsCredentials getCredentials() {
             return null;
         }
 
@@ -231,12 +231,12 @@ public abstract class SdkSyncClientBuilder<Subclass extends SdkSyncClientBuilder
 
     private class BuilderParams extends AwsSyncClientParams {
 
-        private AWSCredentialsProvider resolveCredentials() {
+        private AwsCredentialsProvider resolveCredentials() {
             return iamCredentials == null ? new AnonymousCredentialsProvider() : iamCredentials;
         }
 
         @Override
-        public AWSCredentialsProvider getCredentialsProvider() {
+        public AwsCredentialsProvider getCredentialsProvider() {
             return resolveCredentials();
         }
 

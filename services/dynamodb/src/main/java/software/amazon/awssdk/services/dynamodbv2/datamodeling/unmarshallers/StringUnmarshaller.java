@@ -26,11 +26,11 @@ public class StringUnmarshaller extends SUnmarshaller {
     private static final StringUnmarshaller INSTANCE =
             new StringUnmarshaller();
 
-    public static StringUnmarshaller instance() {
-        return INSTANCE;
+    private StringUnmarshaller() {
     }
 
-    private StringUnmarshaller() {
+    public static StringUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

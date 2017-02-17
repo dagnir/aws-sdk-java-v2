@@ -32,8 +32,7 @@ public class ItemEqualityIntegrationTest extends IntegrationTestBase {
                         "{ \"UserID1\": 0}");
         table.putItem(item);
         Item itemGet = table.getItem(new GetItemSpec().withPrimaryKey(new
-                                                                              KeyAttribute
-                                                                              (HASH_KEY_NAME, "user123"))
+                                                                              KeyAttribute(HASH_KEY_NAME, "user123"))
                                                       .withConsistentRead(true));
         assertEquals(item.asMap(), itemGet.asMap());
         assertEquals(Item.fromJSON(item.toJSON()), Item.fromJSON(itemGet.toJSON()));
@@ -50,8 +49,7 @@ public class ItemEqualityIntegrationTest extends IntegrationTestBase {
                         "{ \"UserID1\": 0, \"UserID2\": 0, \"Message\": \"my message\", \"DateTime\": 0}");
         table.putItem(item);
         Item itemGet = table.getItem(new GetItemSpec().withPrimaryKey(new
-                                                                              KeyAttribute
-                                                                              (HASH_KEY_NAME, "user123"))
+                                                                              KeyAttribute(HASH_KEY_NAME, "user123"))
                                                       .withConsistentRead(true));
         assertEquals(item.asMap(), itemGet.asMap());
     }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.cloudfront;
 
 import static org.junit.Assert.assertEquals;
@@ -193,7 +208,7 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
         s3.getObject(new GetObjectRequest(bucketName, "key"), s3Object);
 
         Date dateLessThan = new Date(System.currentTimeMillis() + 10 * 1000);
-        String cannedSignedURL = CloudFrontUrlSigner.getSignedURLWithCannedPolicy(Protocol.https, domainName,
+        String cannedSignedURL = CloudFrontUrlSigner.getSignedUrlWithCannedPolicy(Protocol.https, domainName,
                                                                                   new File("tst/" + PRIVATE_KEY_FILE), "key", PRIVATE_KEY_ID, dateLessThan);
         System.err.println("cannedSignedURL_der: " + cannedSignedURL);
 

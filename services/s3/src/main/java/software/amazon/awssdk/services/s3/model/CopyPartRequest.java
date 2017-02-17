@@ -66,7 +66,7 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      * @see AmazonS3#uploadPart(UploadPartRequest)
      */
     private int partNumber;
-    /** The name of the bucket containing the object to be copied */
+    /** The name of the bucket containing the object to be copied. */
     private String sourceBucketName;
     /**
      * The key in the source bucket under which the object to be copied is
@@ -82,7 +82,7 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      * {@link AmazonS3#withBucketVersioningConfiguration(withBucketVersioningConfigurationRequest)}.
      */
     private String sourceVersionId;
-    /** The name of the bucket to contain the copy of the source object */
+    /** The name of the bucket to contain the copy of the source object. */
     private String destinationBucketName;
     /**
      * The key in the destination bucket under which the source object will be
@@ -117,13 +117,13 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      * The optional customer-provided server-side encryption key to use to
      * decrypt the source object part being copied.
      */
-    private SSECustomerKey sourceSSECustomerKey;
+    private SseCustomerKey sourceSseCustomerKey;
 
     /**
      * The optional customer-provided server-side encryption key to use to
      * encrypt the source object part being copied.
      */
-    private SSECustomerKey destinationSSECustomerKey;
+    private SseCustomerKey destinationSseCustomerKey;
 
     /**
      * If enabled, the requester is charged for conducting this operation from
@@ -826,8 +826,8 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      * @return The optional customer-provided server-side encryption key to use
      *         to decrypt the source object part being copied.
      */
-    public SSECustomerKey getSourceSSECustomerKey() {
-        return sourceSSECustomerKey;
+    public SseCustomerKey getSourceSseCustomerKey() {
+        return sourceSseCustomerKey;
     }
 
     /**
@@ -838,8 +838,8 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      *            The optional customer-provided server-side encryption key to
      *            use to decrypt the source object part being copied.
      */
-    public void setSourceSSECustomerKey(SSECustomerKey sseKey) {
-        this.sourceSSECustomerKey = sseKey;
+    public void setSourceSseCustomerKey(SseCustomerKey sseKey) {
+        this.sourceSseCustomerKey = sseKey;
     }
 
     /**
@@ -854,8 +854,8 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public CopyPartRequest withSourceSSECustomerKey(SSECustomerKey sseKey) {
-        setSourceSSECustomerKey(sseKey);
+    public CopyPartRequest withSourceSseCustomerKey(SseCustomerKey sseKey) {
+        setSourceSseCustomerKey(sseKey);
         return this;
     }
 
@@ -866,8 +866,8 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      * @return The optional customer-provided server-side encryption key to use
      *         to encrypt the source object part being copied.
      */
-    public SSECustomerKey getDestinationSSECustomerKey() {
-        return destinationSSECustomerKey;
+    public SseCustomerKey getDestinationSseCustomerKey() {
+        return destinationSseCustomerKey;
     }
 
     /**
@@ -878,8 +878,8 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      *            The optional customer-provided server-side encryption key to
      *            use to encrypt the source object part being copied.
      */
-    public void setDestinationSSECustomerKey(SSECustomerKey sseKey) {
-        this.destinationSSECustomerKey = sseKey;
+    public void setDestinationSseCustomerKey(SseCustomerKey sseKey) {
+        this.destinationSseCustomerKey = sseKey;
     }
 
     /**
@@ -894,8 +894,8 @@ public class CopyPartRequest extends AmazonWebServiceRequest implements Serializ
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public CopyPartRequest withDestinationSSECustomerKey(SSECustomerKey sseKey) {
-        setDestinationSSECustomerKey(sseKey);
+    public CopyPartRequest withDestinationSseCustomerKey(SseCustomerKey sseKey) {
+        setDestinationSseCustomerKey(sseKey);
         return this;
     }
 

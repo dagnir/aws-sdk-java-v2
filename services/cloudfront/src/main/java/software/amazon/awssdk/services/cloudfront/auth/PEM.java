@@ -123,16 +123,15 @@ public enum PEM {
         try {
             while ((line = reader.readLine()) != null) {
                 if (readingContent) {
-                    if (line.indexOf(endMarker) != -1) {
-                        pemContents.add( // completed reading one PEM object
-                                         new PEMObject(beginMarker, Base64.decode(sb
-                                                                                          .toString())));
+                    if (line.contains(endMarker)) {
+                        // completed reading one PEM object
+                        pemContents.add(new PEMObject(beginMarker, Base64.decode(sb.toString())));
                         readingContent = false;
                     } else {
                         sb.append(line.trim());
                     }
                 } else {
-                    if (line.indexOf(BEGIN_MARKER) != -1) {
+                    if (line.contains(BEGIN_MARKER)) {
                         readingContent = true;
                         beginMarker = line.trim();
                         endMarker = beginMarker.replace("BEGIN", "END");
@@ -145,6 +144,7 @@ public enum PEM {
             try {
                 reader.close();
             } catch (IOException ignore) {
+                // Ignored or expected.
             }
         }
     }

@@ -28,7 +28,7 @@ public class S3ProgressListenerChain extends
      * the specified listeners.
      *
      * @param listeners only listeners of type {@link S3ProgressListener}
-     * will be notified with the S3 transfer events. 
+     *     will be notified with the S3 transfer events.
      */
     public S3ProgressListenerChain(ProgressListener... listeners) {
         super(listeners);

@@ -20,7 +20,8 @@ import java.util.stream.Stream;
 
 public interface ContentProcessor extends Function<String, String> {
     static ContentProcessor chain(ContentProcessor... processors) {
-        return input -> Stream.of(processors).map(p -> (Function<String, String>) p).reduce(Function.identity(), Function::andThen).apply(input);
+        return input -> Stream.of(processors).map(p -> (Function<String, String>) p)
+                              .reduce(Function.identity(), Function::andThen).apply(input);
     }
 
     String apply(String input);

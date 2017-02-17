@@ -20,7 +20,7 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWS4Signer;
+import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.QueryStringSigner;
 import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 
@@ -28,13 +28,12 @@ public class AmazonWebServiceClientTest {
 
     @Test
     public void emptyClient() {
-        AmazonWebServiceClient client =
-                new AmazonWebServiceClient(new ClientConfiguration()) {
-                };
+        AmazonWebServiceClient client = new AmazonWebServiceClient(new ClientConfiguration()) { };
 
         try {
             client.getServiceName();
         } catch (IllegalStateException exception) {
+            // Expected.
         }
     }
 
@@ -43,7 +42,7 @@ public class AmazonWebServiceClientTest {
         AmazonTestClient client = new AmazonTestClient();
 
         Assert.assertEquals("test", client.getServiceName());
-        Assert.assertTrue(client.getSigner() instanceof AWS4Signer);
+        Assert.assertTrue(client.getSigner() instanceof Aws4Signer);
     }
 
     @Test

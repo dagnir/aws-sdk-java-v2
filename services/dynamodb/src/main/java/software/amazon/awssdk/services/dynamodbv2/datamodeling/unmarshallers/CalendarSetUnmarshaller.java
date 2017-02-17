@@ -31,11 +31,11 @@ public class CalendarSetUnmarshaller extends SSUnmarshaller {
     private static final CalendarSetUnmarshaller INSTANCE =
             new CalendarSetUnmarshaller();
 
-    public static CalendarSetUnmarshaller instance() {
-        return INSTANCE;
+    private CalendarSetUnmarshaller() {
     }
 
-    private CalendarSetUnmarshaller() {
+    public static CalendarSetUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class CalendarSetUnmarshaller extends SSUnmarshaller {
 
         for (String s : value.getSS()) {
             Calendar cal = GregorianCalendar.getInstance();
-            cal.setTime(DateUtils.parseISO8601Date(s));
+            cal.setTime(DateUtils.parseIso8601Date(s));
             result.add(cal);
         }
 

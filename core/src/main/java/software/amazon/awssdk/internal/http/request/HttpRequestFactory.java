@@ -36,7 +36,7 @@ public interface HttpRequestFactory<T> {
      * @param request sdk request object.
      * @param settings configuration to be set for the http request.
      * @return an instance of request that is accepted by the underlying
-     * http client that SDK uses.
+     *     http client that SDK uses.
      */
     T create(Request<?> request, HttpClientSettings settings) throws IOException;
 }

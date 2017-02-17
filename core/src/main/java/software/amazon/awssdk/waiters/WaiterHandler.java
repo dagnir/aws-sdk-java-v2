@@ -21,9 +21,9 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  * Callbacks are executed synchronously. That is the same thread the waiter
  * completes on and it's not submitted back to the executor.
  */
-public abstract class WaiterHandler<Input extends AmazonWebServiceRequest> {
+public abstract class WaiterHandler<InputT extends AmazonWebServiceRequest> {
 
-    public abstract void onWaitSuccess(Input request);
+    public abstract void onWaitSuccess(InputT request);
 
     public abstract void onWaitFailure(Exception e);
 }

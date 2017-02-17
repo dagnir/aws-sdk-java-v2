@@ -27,12 +27,12 @@ import software.amazon.awssdk.regions.AwsRegionProvider;
 /**
  * Base class for all service specific async client builders.
  *
- * @param <Subclass> Concrete builder type, used for better fluent methods.
+ * @param <SubclassT> Concrete builder type, used for better fluent methods.
  */
 @NotThreadSafe
 @SdkProtectedApi
-public abstract class AwsAsyncClientBuilder<Subclass extends AwsAsyncClientBuilder, TypeToBuild> extends
-                                                                                                 AwsClientBuilder<Subclass, TypeToBuild> {
+public abstract class AwsAsyncClientBuilder<SubclassT extends AwsAsyncClientBuilder, TypeToBuildT>
+        extends AwsClientBuilder<SubclassT, TypeToBuildT> {
     private ExecutorFactory executorFactory;
 
     protected AwsAsyncClientBuilder(ClientConfigurationFactory clientConfigFactory) {
@@ -70,21 +70,21 @@ public abstract class AwsAsyncClientBuilder<Subclass extends AwsAsyncClientBuild
      * @param executorFactory Factory supplying new instances of {@link ExecutorService}
      * @return This object for method chaining.
      */
-    public final Subclass withExecutorFactory(ExecutorFactory executorFactory) {
+    public final SubclassT withExecutorFactory(ExecutorFactory executorFactory) {
         setExecutorFactory(executorFactory);
         return getSubclass();
     }
 
     @Override
-    public final TypeToBuild build() {
+    public final TypeToBuildT build() {
         return configureMutableProperties(build(getAsyncClientParams()));
     }
 
-    protected abstract TypeToBuild build(AwsAsyncClientParams asyncClientParams);
+    protected abstract TypeToBuildT build(AwsAsyncClientParams asyncClientParams);
 
     /**
      * @return An instance of AwsAsyncClientParams that has all params to be used in the async
-     * client constructor.
+     *     client constructor.
      */
     protected final AwsAsyncClientParams getAsyncClientParams() {
         return new AsyncBuilderParams(executorFactory);
@@ -95,16 +95,16 @@ public abstract class AwsAsyncClientBuilder<Subclass extends AwsAsyncClientBuild
      */
     protected class AsyncBuilderParams extends SyncBuilderParams {
 
-        private final ExecutorService _executorService;
+        private final ExecutorService executorService;
 
         protected AsyncBuilderParams(ExecutorFactory executorFactory) {
-            this._executorService =
+            this.executorService =
                     (executorFactory == null) ? defaultExecutor() : executorFactory.newExecutor();
         }
 
         @Override
         public ExecutorService getExecutor() {
-            return this._executorService;
+            return this.executorService;
         }
 
         /**

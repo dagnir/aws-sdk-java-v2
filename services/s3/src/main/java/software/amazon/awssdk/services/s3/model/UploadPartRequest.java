@@ -50,7 +50,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
      */
     private String bucketName;
 
-    /** The key of the initiated multipart upload */
+    /** The key of the initiated multipart upload. */
     private String key;
 
     /**
@@ -105,7 +105,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
      * The optional customer-provided server-side encryption key to use to
      * encrypt the object part being uploaded.
      */
-    private SSECustomerKey sseCustomerKey;
+    private SseCustomerKey sseCustomerKey;
 
     /**
      * If enabled, the requester is charged for conducting this operation from
@@ -569,7 +569,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
     }
 
     @Override
-    public SSECustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSSECustomerKey() {
         return sseCustomerKey;
     }
 
@@ -581,7 +581,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
      *            The optional customer-provided server-side encryption key to
      *            use to encrypt the object part being uploaded.
      */
-    public void setSSECustomerKey(SSECustomerKey sseKey) {
+    public void setSSECustomerKey(SseCustomerKey sseKey) {
         this.sseCustomerKey = sseKey;
     }
 
@@ -597,7 +597,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public UploadPartRequest withSSECustomerKey(SSECustomerKey sseKey) {
+    public UploadPartRequest withSSECustomerKey(SseCustomerKey sseKey) {
         setSSECustomerKey(sseKey);
         return this;
     }

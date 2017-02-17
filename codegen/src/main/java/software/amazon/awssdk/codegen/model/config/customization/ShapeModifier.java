@@ -27,7 +27,7 @@ public class ShapeModifier {
 
     private boolean excludeShape;
     private List<String> exclude;
-    private List<Map<String, ShapeModifier_ModifyModel>> modify;
+    private List<Map<String, ModifyModelShapeModifier>> modify;
     private List<Map<String, Member>> inject;
 
     /**
@@ -57,11 +57,11 @@ public class ShapeModifier {
      * @return List of singleton maps, each containing the name of a shape
      *         member, and the modifications that we want to apply to it.
      */
-    public List<Map<String, ShapeModifier_ModifyModel>> getModify() {
+    public List<Map<String, ModifyModelShapeModifier>> getModify() {
         return modify;
     }
 
-    public void setModify(List<Map<String, ShapeModifier_ModifyModel>> modify) {
+    public void setModify(List<Map<String, ModifyModelShapeModifier>> modify) {
         this.modify = modify;
     }
 

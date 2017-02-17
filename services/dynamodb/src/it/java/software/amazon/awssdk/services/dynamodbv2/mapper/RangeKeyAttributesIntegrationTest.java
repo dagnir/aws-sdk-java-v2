@@ -27,7 +27,7 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.pojos.RangeKeyClass;
@@ -78,7 +78,7 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
             RangeKeyClass x = util.load(newRangeKey(Long.parseLong(attr.get(KEY_NAME).getN()),
@@ -111,7 +111,7 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (RangeKeyClass obj : objs) {
             util.save(obj);
         }
@@ -130,7 +130,7 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (RangeKeyClass obj : objs) {
             util.save(obj);
         }
@@ -151,6 +151,7 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
                 util.save(replacement);
                 fail("Should have thrown an exception");
             } catch (Exception expected) {
+                // Ignored or expected.
             }
         }
     }

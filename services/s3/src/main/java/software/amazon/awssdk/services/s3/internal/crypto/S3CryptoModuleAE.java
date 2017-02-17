@@ -31,8 +31,8 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Map;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAWSCredentialsProviderChain;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.kms.AWSKMS;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
@@ -63,7 +63,7 @@ class S3CryptoModuleAE extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
      * @param cryptoConfig a read-only copy of the crypto configuration.
      */
     S3CryptoModuleAE(AWSKMS kms, S3Direct s3,
-                     AWSCredentialsProvider credentialsProvider,
+                     AwsCredentialsProvider credentialsProvider,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
         super(kms, s3, credentialsProvider, encryptionMaterialsProvider,
@@ -81,7 +81,7 @@ class S3CryptoModuleAE extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
     S3CryptoModuleAE(S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(null, s3, new DefaultAWSCredentialsProviderChain(),
+        this(null, s3, new DefaultAwsCredentialsProviderChain(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 
@@ -91,7 +91,7 @@ class S3CryptoModuleAE extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
     S3CryptoModuleAE(AWSKMS kms, S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(kms, s3, new DefaultAWSCredentialsProviderChain(),
+        this(kms, s3, new DefaultAwsCredentialsProviderChain(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 
@@ -189,7 +189,7 @@ class S3CryptoModuleAE extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
      * Same as {@link #decipher(GetObjectRequest, long[], long[], S3Object)}
      * but makes use of an instruction file with the specified suffix.
      * @param instFileSuffix never null or empty (which is assumed to have been
-     * sanitized upstream.)
+     *     sanitized upstream.)
      */
     private S3Object decipherWithInstFileSuffix(GetObjectRequest req,
                                                 long[] desiredRange, long[] cryptoRange, S3Object retrieved,

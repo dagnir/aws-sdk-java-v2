@@ -54,6 +54,13 @@ public final class WaitState extends TransitionState {
         this.transition = builder.transition.build();
     }
 
+    /**
+     * @return Builder instance to construct a {@link WaitState}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
     @Override
     public String getType() {
         return "Wait";
@@ -97,13 +104,6 @@ public final class WaitState extends TransitionState {
     @Override
     public <T> T accept(StateVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    /**
-     * @return Builder instance to construct a {@link WaitState}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

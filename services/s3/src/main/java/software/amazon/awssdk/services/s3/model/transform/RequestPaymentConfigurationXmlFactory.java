@@ -31,7 +31,7 @@ public class RequestPaymentConfigurationXmlFactory {
      *
      * Sample XML:
      * <RequestPaymentConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-     * 		<Payer>Requester</Payer>
+     *         <Payer>Requester</Payer>
      * </RequestPaymentConfiguration>
      *
      * @param requestPaymentConfiguration

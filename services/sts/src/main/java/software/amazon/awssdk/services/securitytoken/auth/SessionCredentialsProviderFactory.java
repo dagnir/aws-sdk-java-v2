@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.securitytoken.auth;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 
 /**
  * Session credentials provider factory to share providers across potentially
@@ -43,10 +43,10 @@ public class SessionCredentialsProviderFactory {
      *            Client configuration for the {@link AWSSecurityTokenService}
      *            used to fetch session credentials.
      */
-    public static synchronized STSSessionCredentialsProvider getSessionCredentialsProvider(AWSCredentials longTermCredentials,
+    public static synchronized STSSessionCredentialsProvider getSessionCredentialsProvider(AwsCredentials longTermCredentials,
                                                                                            String serviceEndpoint,
                                                                                            ClientConfiguration stsClientConfiguration) {
-        Key key = new Key(longTermCredentials.getAWSAccessKeyId(), serviceEndpoint);
+        Key key = new Key(longTermCredentials.getAwsAccessKeyId(), serviceEndpoint);
         if (!cache.containsKey(key)) {
             cache.put(key, new STSSessionCredentialsProvider(longTermCredentials, stsClientConfiguration));
         }

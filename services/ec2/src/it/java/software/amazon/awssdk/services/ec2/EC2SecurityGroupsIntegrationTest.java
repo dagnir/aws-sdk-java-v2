@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertEquals;
@@ -99,6 +114,7 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
                     ec2.deleteSecurityGroup(new DeleteSecurityGroupRequest()
                                                     .withGroupId(group.getGroupId()));
                 } catch (Exception ignored) {
+                    // Ignored or expected.
                 }
             }
         }
@@ -252,8 +268,7 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
         ec2.revokeSecurityGroupIngress(revokeRequest);
 
         ResponseMetadata responseMetadata = ec2.getCachedResponseMetadata(revokeRequest);
-        Assert.assertThat(responseMetadata.getRequestId(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
+        Assert.assertThat(responseMetadata.getRequestId(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         assertFalse(doesIpPermissionExist(testGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
     }
@@ -277,6 +292,7 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
             ec2.authorizeSecurityGroupIngress(request);
             fail("Expected exception: group ID required");
         } catch (Exception expected) {
+            // Ignored or expected.
         }
 
         request.withGroupName(null).withGroupId(vpcGroup.getGroupId());
@@ -296,6 +312,7 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
             ec2.revokeSecurityGroupIngress(revoke);
             fail("Expected exception: group ID required");
         } catch (Exception expected) {
+            // Ignored or expected.
         }
 
         revoke.withGroupName(null).withGroupId(vpcGroup.getGroupId());
@@ -502,6 +519,7 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
         try {
             Thread.sleep(1000);
         } catch (Exception e) {
+            // Ignored or expected.
         }
         SecurityGroup group = getSecurityGroup(groupId);
         for (IpPermission permission : group.getIpPermissions()) {
@@ -528,8 +546,7 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
         DescribeSecurityGroupsRequest request = new DescribeSecurityGroupsRequest();
         DescribeSecurityGroupsResult result = ec2.describeSecurityGroups(request.withGroupIds(id));
         ResponseMetadata responseMetadata = ec2.getCachedResponseMetadata(request);
-        Assert.assertThat(responseMetadata.getRequestId(), Matchers.not
-                (Matchers.isEmptyOrNullString()));
+        Assert.assertThat(responseMetadata.getRequestId(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         List<SecurityGroup> groups = result.getSecurityGroups();
         assertEquals(1, groups.size());

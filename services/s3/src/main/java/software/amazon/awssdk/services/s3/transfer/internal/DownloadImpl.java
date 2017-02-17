@@ -123,7 +123,6 @@ public class DownloadImpl extends AbstractTransfer implements Download {
     /**
      * Cancels this download.
      *
-     * @throws IOException
      */
     public synchronized void abort() throws IOException {
 
@@ -138,7 +137,6 @@ public class DownloadImpl extends AbstractTransfer implements Download {
     /**
      * Cancels this download, but skip notifying the state change listeners.
      *
-     * @throws IOException
      */
     public synchronized void abortWithoutNotifyingStateChangeListener() throws IOException {
         this.monitor.getFuture().cancel(true);

@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import static org.junit.Assert.assertEquals;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
 
 import java.util.Map;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class DeleteExpressionTest {
     @Test
     public void test() {
         DeleteItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .withCondition(S("status").eq("inactive"))
+                .withCondition(s("status").eq("inactive"))
                 .buildForDeleteItem();
         String expr = xspec.getConditionExpression();
         Map<String, String> nm = xspec.getNameMap();

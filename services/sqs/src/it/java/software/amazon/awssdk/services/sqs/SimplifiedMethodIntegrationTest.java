@@ -53,7 +53,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
     private final String queueName = getUniqueQueueName();
     private String queueUrl;
 
-    /** Releases all resources used by these tests */
+    /** Releases all resources used by these tests. */
     @After
     public void tearDown() throws Exception {
         sqsClient.deleteQueue(queueUrl);

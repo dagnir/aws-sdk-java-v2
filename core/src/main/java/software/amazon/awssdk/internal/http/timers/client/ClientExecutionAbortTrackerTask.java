@@ -23,8 +23,6 @@ public interface ClientExecutionAbortTrackerTask {
 
     /**
      * Client execution timer task needs to abort the current running HTTP request when executed.
-     *
-     * @param newRequest
      */
     void setCurrentHttpRequest(HttpRequestBase newRequest);
 

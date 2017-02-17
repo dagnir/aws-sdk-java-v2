@@ -67,6 +67,13 @@ public final class ParallelState extends TransitionState {
     }
 
     /**
+     * @return Builder instance to construct a {@link ParallelState}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return Type identifier of {@link ParallelState}.
      */
     @Override
@@ -133,13 +140,6 @@ public final class ParallelState extends TransitionState {
     @Override
     public <T> T accept(StateVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    /**
-     * @return Builder instance to construct a {@link ParallelState}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

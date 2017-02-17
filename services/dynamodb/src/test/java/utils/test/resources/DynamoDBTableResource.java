@@ -145,8 +145,7 @@ public abstract class DynamoDBTableResource implements TestResource {
             // returns AVAILABLE only if table KeySchema + LSIs + GSIs all match.
             if (UnorderedCollectionComparator.equalUnorderedCollections(createRequest.getKeySchema(), table.getKeySchema())
                 && equalUnorderedGsiLists(createRequest.getGlobalSecondaryIndexes(), table.getGlobalSecondaryIndexes())
-                && equalUnorderedLsiLists(createRequest.getLocalSecondaryIndexes(), table.getLocalSecondaryIndexes())
-                    ) {
+                && equalUnorderedLsiLists(createRequest.getLocalSecondaryIndexes(), table.getLocalSecondaryIndexes())) {
                 return ResourceStatus.AVAILABLE;
             } else {
                 return ResourceStatus.EXIST_INCOMPATIBLE_RESOURCE;

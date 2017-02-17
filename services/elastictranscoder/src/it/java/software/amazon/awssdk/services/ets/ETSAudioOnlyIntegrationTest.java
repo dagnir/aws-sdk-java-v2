@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.ets;
 
 import static org.junit.Assert.assertEquals;
@@ -37,22 +52,22 @@ import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 
 public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
-    private final static String PIPE_NAME = "java-sdk-pipeline" + System.currentTimeMillis();
-    private final static String INPUT_BUCKET_NAME = "java-integration-test-input-bucket" + System.currentTimeMillis();
-    private final static String OUTPUT_BUCKET_NAME = "java-integration-test-output-bucket";
-    private final static String INPUT_KEY = "123";
-    private final static String RATIO = "4:3";
-    private final static String CONTAINER = "mp3";
-    private final static String RATE = "15";
-    private final static String RESOLUTION = "auto";
-    private final static String INTERLACED = "auto";
-    private final static String ROTATION = "270";
-    private final static String OUTPUT_KEY = "321";
+    private static final String PIPE_NAME = "java-sdk-pipeline" + System.currentTimeMillis();
+    private static final String INPUT_BUCKET_NAME = "java-integration-test-input-bucket" + System.currentTimeMillis();
+    private static final String OUTPUT_BUCKET_NAME = "java-integration-test-output-bucket";
+    private static final String INPUT_KEY = "123";
+    private static final String RATIO = "4:3";
+    private static final String CONTAINER = "mp3";
+    private static final String RATE = "15";
+    private static final String RESOLUTION = "auto";
+    private static final String INTERLACED = "auto";
+    private static final String ROTATION = "270";
+    private static final String OUTPUT_KEY = "321";
     private static String jobId;
     private static String presetId;
     private static String topicArn;
-    private final String STORAGE_CLASS = "ReducedRedundancy";
-    private final String ROLE = "arn:aws:iam::599169622985:role/role-java-data-pipeline-test";
+    private static final String STORAGE_CLASS = "ReducedRedundancy";
+    private static final String ROLE = "arn:aws:iam::599169622985:role/role-java-data-pipeline-test";
     private String pipelineId;
     private PipelineOutputConfig contentConfig;
     private PipelineOutputConfig thumbnailConfig;
@@ -91,13 +106,13 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         try {
             ets.cancelJob(new CancelJobRequest().withId(jobId));
         } catch (Exception e) {
-
+            // Ignored or expected.
         }
 
         try {
             ets.deletePreset(new DeletePresetRequest().withId(presetId));
         } catch (Exception e) {
-
+            // Ignored or expected.
         }
 
         ListPipelinesResult listPipelineResult = ets.listPipelines();
@@ -106,7 +121,7 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
                 try {
                     ets.deletePipeline(new DeletePipelineRequest().withId(pipeline.getId()));
                 } catch (Exception e) {
-
+                    // Ignored or expected.
                 }
             }
         }
@@ -114,11 +129,13 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         try {
             s3.deleteBucket(INPUT_BUCKET_NAME);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
             s3.deleteBucket(OUTPUT_BUCKET_NAME);
         } catch (Exception e) {
+            // Ignored or expected.
         }
 
         try {
@@ -165,14 +182,6 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         pipelineId = pipeline.getId();
 
         Thread.sleep(1000 * 5);
-
-        JobInput input = new JobInput()
-                .withKey(INPUT_KEY)
-                .withAspectRatio(RATIO)
-                .withContainer(CONTAINER)
-                .withFrameRate(RATE)
-                .withResolution(RESOLUTION)
-                .withInterlaced(INTERLACED);
 
 
         initializePresetParameters();
@@ -223,6 +232,14 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
 
 
         // Create job
+        JobInput input = new JobInput()
+                .withKey(INPUT_KEY)
+                .withAspectRatio(RATIO)
+                .withContainer(CONTAINER)
+                .withFrameRate(RATE)
+                .withResolution(RESOLUTION)
+                .withInterlaced(INTERLACED);
+
         CreateJobResult createJobResult = ets.createJob(new CreateJobRequest()
                                                                 .withPipelineId(pipelineId)
                                                                 .withInput(input)

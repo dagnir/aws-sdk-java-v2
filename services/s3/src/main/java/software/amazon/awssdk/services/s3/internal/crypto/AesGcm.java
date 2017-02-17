@@ -46,7 +46,7 @@ class AesGcm extends ContentCryptoScheme {
     }
 
     @Override
-    int getIVLengthInBytes() {
+    int getIvLengthInBytes() {
         return 12;
     }
 
@@ -79,7 +79,7 @@ class AesGcm extends ContentCryptoScheme {
             throws InvalidKeyException, NoSuchAlgorithmException,
                    NoSuchProviderException, NoSuchPaddingException,
                    InvalidAlgorithmParameterException {
-        byte[] iv = AES_CTR.adjustIV(ivOrig, startingBytePos);
+        byte[] iv = AES_CTR.adjustIv(ivOrig, startingBytePos);
         return AES_CTR.createCipherLite(cek, iv, cipherMode, securityProvider);
     }
 

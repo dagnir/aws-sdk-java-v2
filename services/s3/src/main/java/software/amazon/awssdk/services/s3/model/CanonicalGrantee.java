@@ -38,8 +38,6 @@ public class CanonicalGrantee implements Grantee, Serializable {
     /**
      * Constructs a new {@link CanonicalGrantee} object
      * with the given canonical ID.
-     *
-     * @param identifier
      */
     public CanonicalGrantee(String identifier) {
         this.setIdentifier(identifier);
@@ -92,7 +90,6 @@ public class CanonicalGrantee implements Grantee, Serializable {
      * Sets the display name for this grantee.
      * </p>
      *
-     * @param displayName
      *
      * @see CanonicalGrantee#getDisplayName()
      */

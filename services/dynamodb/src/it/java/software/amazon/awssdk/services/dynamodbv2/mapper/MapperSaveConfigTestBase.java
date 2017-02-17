@@ -24,11 +24,11 @@ import org.junit.BeforeClass;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
@@ -68,13 +68,13 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
     protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = new ProvisionedThroughput()
             .withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(
                     WRITE_CAPACITY);
-    protected static DynamoDBMapper dynamoMapper;
+    protected static DynamoDbMapper dynamoMapper;
 
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
         dynamo = new AmazonDynamoDBClient(credentials);
-        dynamoMapper = new DynamoDBMapper(dynamo);
+        dynamoMapper = new DynamoDbMapper(dynamo);
 
         createTestTable(DEFAULT_PROVISIONED_THROUGHPUT);
         TableUtils.waitUntilActive(dynamo, tableName);
@@ -126,7 +126,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
     }
 
     @DynamoDBTable(tableName = tableName)
-    static public class TestItem {
+    public static class TestItem {
 
         private String hashKey;
         private Long rangeKey;
@@ -172,7 +172,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
     }
 
     @DynamoDBTable(tableName = tableName)
-    static public class TestAppendToScalarItem {
+    public static class TestAppendToScalarItem {
 
         private String hashKey;
         private Long rangeKey;

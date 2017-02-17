@@ -23,11 +23,6 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 public class ObjectUnmarshaller extends MUnmarshaller {
 
     private static final ObjectUnmarshaller INSTANCE = new ObjectUnmarshaller();
-
-    public static ObjectUnmarshaller instance() {
-        return INSTANCE;
-    }
-
     private final ItemConverter converter;
     private final Class<?> clazz;
 
@@ -46,6 +41,10 @@ public class ObjectUnmarshaller extends MUnmarshaller {
 
         this.converter = converter;
         this.clazz = clazz;
+    }
+
+    public static ObjectUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

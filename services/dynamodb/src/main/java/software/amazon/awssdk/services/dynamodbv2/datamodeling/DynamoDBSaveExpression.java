@@ -23,11 +23,11 @@ import software.amazon.awssdk.services.dynamodbv2.model.ExpectedAttributeValue;
 /**
  * Enables adding options to a save operation.
  * For example, you may want to save only if an attribute has a particular value.
- * @see DynamoDBMapper#save(Object, DynamoDBSaveExpression)
+ * @see DynamoDbMapper#save(Object, DynamoDBSaveExpression)
  */
 public class DynamoDBSaveExpression {
 
-    /** Optional expected attributes */
+    /** Optional expected attributes. */
     private Map<String, ExpectedAttributeValue> expectedAttributes;
 
     /**
@@ -98,16 +98,16 @@ public class DynamoDBSaveExpression {
      * Sets the logical operator on the expected value conditions of this save
      * operation.
      */
-    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
-        setConditionalOperator(conditionalOperator.toString());
+    public void setConditionalOperator(String conditionalOperator) {
+        this.conditionalOperator = conditionalOperator;
     }
 
     /**
      * Sets the logical operator on the expected value conditions of this save
      * operation.
      */
-    public void setConditionalOperator(String conditionalOperator) {
-        this.conditionalOperator = conditionalOperator;
+    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
+        setConditionalOperator(conditionalOperator.toString());
     }
 
     /**

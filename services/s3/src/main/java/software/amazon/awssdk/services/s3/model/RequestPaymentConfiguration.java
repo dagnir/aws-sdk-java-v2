@@ -28,7 +28,7 @@ public class RequestPaymentConfiguration implements Serializable {
 
     private Payer payer;
 
-    ;
+
 
     public RequestPaymentConfiguration(Payer payer) {
         this.payer = payer;

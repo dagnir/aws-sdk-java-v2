@@ -58,11 +58,11 @@ class QueueBuffer {
      * the JVM from exiting if only they are still around.
      */
     static ExecutorService executor = Executors.newCachedThreadPool(new DaemonThreadFactory());
+    QueueBufferConfig config;
     private final SendQueueBuffer sendBuffer;
     private final ReceiveQueueBuffer receiveBuffer;
     private final AmazonSQSAsync realSqs;
-    QueueBufferConfig config;
-    ;
+
 
     QueueBuffer(QueueBufferConfig paramConfig, String url, AmazonSQSAsync sqs) {
         realSqs = sqs;
@@ -147,7 +147,6 @@ class QueueBuffer {
     /**
      * Changes visibility of a message in SQS. Does not return until a confirmation from SQS has
      * been received.
-     * @return
      */
     public ChangeMessageVisibilityResult changeMessageVisibilitySync(ChangeMessageVisibilityRequest request) {
         Future<ChangeMessageVisibilityResult> future = sendBuffer.changeMessageVisibility(request, null);
@@ -252,8 +251,8 @@ class QueueBuffer {
      * exceptions that SQS clients expect. This is what we use to turn asynchronous calls into
      * synchronous ones
      */
-    private <ResultType> ResultType waitForFuture(Future<ResultType> future) {
-        ResultType toReturn = null;
+    private <ResultTypeT> ResultTypeT waitForFuture(Future<ResultTypeT> future) {
+        ResultTypeT toReturn = null;
         try {
             toReturn = future.get();
         } catch (InterruptedException ie) {

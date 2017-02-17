@@ -25,9 +25,8 @@ public interface AsyncHandler<REQUEST extends AmazonWebServiceRequest, RESULT> {
 
     /**
      * Invoked after an asynchronous request
-     * @param exception
      */
-    public void onError(Exception exception);
+    void onError(Exception exception);
 
     /**
      * Invoked after an asynchronous request has completed successfully. Callers
@@ -39,6 +38,6 @@ public interface AsyncHandler<REQUEST extends AmazonWebServiceRequest, RESULT> {
      * @param result
      *            The successful result of the executed operation.
      */
-    public void onSuccess(REQUEST request, RESULT result);
+    void onSuccess(REQUEST request, RESULT result);
 
 }

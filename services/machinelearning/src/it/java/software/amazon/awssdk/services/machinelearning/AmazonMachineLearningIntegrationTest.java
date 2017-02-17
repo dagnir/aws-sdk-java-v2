@@ -46,9 +46,9 @@ import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
+public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
     private static final String BUCKET_NAME =
             "aws-java-sdk-eml-test-" + System.currentTimeMillis();
@@ -186,7 +186,7 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
 
         mlModelId = result2.getMLModelId();
 
-        Assert.assertEquals("COMPLETED", waitForMLModel());
+        Assert.assertEquals("COMPLETED", waitForMlModel());
 
 
         client.createRealtimeEndpoint(new CreateRealtimeEndpointRequest()
@@ -198,15 +198,17 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
         // it's necessarily ready. :(
         Thread.sleep(60000);
 
-        Prediction prediction = client.predict(new PredictRequest()
-                                                       .withPredictEndpoint(uri)
-                                                       .withMLModelId(mlModelId)
-                                                       .withRecord(new HashMap<String, String>() {{
-                                                           put("b", "123");
-                                                           put("c", "oop");
-                                                           put("d", "goop");
-                                                       }})).getPrediction();
+        HashMap<String, String> record = new HashMap<String, String>() {
+            {
+                put("b", "123");
+                put("c", "oop");
+                put("d", "goop");
+            }
+        };
 
+        Prediction prediction = client.predict(new PredictRequest().withPredictEndpoint(uri)
+                                                                   .withMLModelId(mlModelId)
+                                                                   .withRecord(record)).getPrediction();
         System.out.println(prediction.getPredictedLabel());
         System.out.println(prediction.getPredictedValue());
         System.out.println(prediction.getPredictedScores());
@@ -243,7 +245,7 @@ public class AmazonMachineLearningIntegrationTest extends AWSTestBase {
         return null;
     }
 
-    private String waitForMLModel() throws InterruptedException {
+    private String waitForMlModel() throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
             GetMLModelResult result =
                     client.getMLModel(new GetMLModelRequest()

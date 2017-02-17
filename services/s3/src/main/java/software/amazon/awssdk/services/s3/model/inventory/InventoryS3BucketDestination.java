@@ -89,15 +89,15 @@ public class InventoryS3BucketDestination implements Serializable {
     /**
      * Sets the output format of the inventory results.
      */
-    public void setFormat(InventoryFormat format) {
-        setFormat(format == null ? (String) null : format.toString());
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     /**
      * Sets the output format of the inventory results.
      */
-    public void setFormat(String format) {
-        this.format = format;
+    public void setFormat(InventoryFormat format) {
+        setFormat(format == null ? (String) null : format.toString());
     }
 
     /**

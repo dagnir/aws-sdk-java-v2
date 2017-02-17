@@ -33,7 +33,7 @@ public abstract class SdkInputStream extends InputStream implements
      * Returns the underlying input stream, if any, from the subclass; or null
      * if there is no underlying input stream.
      */
-    abstract protected InputStream getWrappedInputStream();
+    protected abstract InputStream getWrappedInputStream();
 
     @Override
     public final boolean isMetricActivated() {

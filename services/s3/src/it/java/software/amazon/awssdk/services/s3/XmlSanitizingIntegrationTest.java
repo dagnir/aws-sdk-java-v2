@@ -31,17 +31,17 @@ import software.amazon.awssdk.test.util.RandomInputStream;
  * Integration test covering the use of carriage return and other odd characters
  * in key names.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class XmlSanitizingIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket name created and used by this test */
+    /** The bucket name created and used by this test. */
     private String bucketName = "xml-sanitizing-integ-test-" + new Date().getTime();
 
-    /** The offending key containing a carriage return character */
+    /** The offending key containing a carriage return character. */
     private String key = "first<line\rsecond>line";
 
-    /** Releases all resources used by this test */
+    /** Releases all resources used by this test. */
     @After
     public void tearDown() {
         CryptoTestUtils.deleteBucketAndAllContents(s3, bucketName);

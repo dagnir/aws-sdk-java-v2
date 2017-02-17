@@ -25,7 +25,7 @@ import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 public class ConnectionConfiguration {
 
     private Integer maxConnections;
-    private Long connectionTTL;
+    private Long connectionTtl;
     private Long connectionMaxIdleMillis;
     private Boolean useReaper;
 
@@ -79,13 +79,14 @@ public class ConnectionConfiguration {
      * connections more frequently.
      * </p>
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do not expire.
+     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
+     * not expire.
      * </p>
      *
      * @return The connection TTL, in milliseconds.
      */
-    public Optional<Long> getConnectionTTL() {
-        return Optional.ofNullable(connectionTTL);
+    public Optional<Long> getConnectionTtl() {
+        return Optional.ofNullable(connectionTtl);
     }
 
     /**
@@ -100,13 +101,14 @@ public class ConnectionConfiguration {
      * connections more frequently.
      * </p>
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do not expire.
+     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
+     * not expire.
      * </p>
      *
-     * @param connectionTTL The connection TTL, in milliseconds
+     * @param connectionTtl The connection TTL, in milliseconds
      */
-    public void setConnectionTTL(Long connectionTTL) {
-        this.connectionTTL = connectionTTL;
+    public void setConnectionTtl(Long connectionTtl) {
+        this.connectionTtl = connectionTtl;
     }
 
     /**
@@ -121,20 +123,21 @@ public class ConnectionConfiguration {
      * connections more frequently.
      * </p>
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do not expire.
+     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
+     * not expire.
      * </p>
      *
-     * @param connectionTTL The connection TTL, in milliseconds
+     * @param connectionTtl The connection TTL, in milliseconds
      * @return This object for method chaining.
      */
-    public ConnectionConfiguration connectionTTL(long connectionTTL) {
-        setConnectionTTL(connectionTTL);
+    public ConnectionConfiguration connectionTtl(long connectionTtl) {
+        setConnectionTtl(connectionTtl);
         return this;
     }
 
     /**
-     * Returns an {@link Optional} which contains the maximum amount of time that an idle connection may sit in the connection pool
-     * and still be eligible for reuse. When retrieving a connection from the pool to make a request,
+     * Returns an {@link Optional} which contains the maximum amount of time that an idle connection may sit in the connection
+     * pool and still be eligible for reuse. When retrieving a connection from the pool to make a request,
      * the amount of time the connection has been idle is compared against this value. Connections
      * which have been idle for longer are discarded, and if needed a new connection is created.
      * <p>

@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @deprecated Replaced by {@link DynamoDBTypeConvertedJson}
  */
 @Deprecated
-public class JsonMarshaller<T extends Object> implements DynamoDBMarshaller<T> {
+public class JsonMarshaller<T extends Object> implements DynamoDbMarshaller<T> {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final ObjectWriter writer = mapper.writer();

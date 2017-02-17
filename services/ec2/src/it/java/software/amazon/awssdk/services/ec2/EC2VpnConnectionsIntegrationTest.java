@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -60,9 +60,7 @@ public class EC2VpnConnectionsIntegrationTest extends EC2IntegrationTestBase {
         Assert.assertEquals(String.valueOf(bgpAsn), customerGateway.getBgpAsn());
         Assert.assertEquals(GatewayType.Ipsec1.toString(), customerGateway.getType());
 
-        CreateVpnGatewayResult createVpnGatewayResult = ec2.createVpnGateway
-                (new CreateVpnGatewayRequest().withType
-                        (GatewayType.Ipsec1));
+        CreateVpnGatewayResult createVpnGatewayResult = ec2.createVpnGateway(new CreateVpnGatewayRequest().withType(GatewayType.Ipsec1));
 
         vpnGateway = createVpnGatewayResult.getVpnGateway();
 

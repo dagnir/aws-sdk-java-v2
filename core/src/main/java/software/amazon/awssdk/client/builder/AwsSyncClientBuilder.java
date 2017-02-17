@@ -25,13 +25,13 @@ import software.amazon.awssdk.regions.AwsRegionProvider;
 /**
  * Base class for all service specific sync client builders.
  *
- * @param <Subclass>    Concrete builder type, used for better fluent methods.
- * @param <TypeToBuild> Client interface this builder can build.
+ * @param <SubclassT>    Concrete builder type, used for better fluent methods.
+ * @param <TypeToBuildT> Client interface this builder can build.
  */
 @NotThreadSafe
 @SdkProtectedApi
-public abstract class AwsSyncClientBuilder<Subclass extends AwsSyncClientBuilder, TypeToBuild> extends
-                                                                                               AwsClientBuilder<Subclass, TypeToBuild> {
+public abstract class AwsSyncClientBuilder<SubclassT extends AwsSyncClientBuilder, TypeToBuildT>
+        extends AwsClientBuilder<SubclassT, TypeToBuildT> {
     protected AwsSyncClientBuilder(ClientConfigurationFactory clientConfigFactory) {
         super(clientConfigFactory);
     }
@@ -43,7 +43,7 @@ public abstract class AwsSyncClientBuilder<Subclass extends AwsSyncClientBuilder
 
 
     @Override
-    public final TypeToBuild build() {
+    public final TypeToBuildT build() {
         return configureMutableProperties(build(getSyncClientParams()));
     }
 
@@ -53,6 +53,6 @@ public abstract class AwsSyncClientBuilder<Subclass extends AwsSyncClientBuilder
      * @param clientParams Client Params to create client with
      * @return Built client.
      */
-    protected abstract TypeToBuild build(AwsSyncClientParams clientParams);
+    protected abstract TypeToBuildT build(AwsSyncClientParams clientParams);
 
 }

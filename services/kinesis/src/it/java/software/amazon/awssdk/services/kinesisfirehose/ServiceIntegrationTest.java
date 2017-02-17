@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.kinesisfirehose;
 
 import static org.junit.Assert.assertEquals;
@@ -21,9 +36,9 @@ import software.amazon.awssdk.services.kinesisfirehose.model.PutRecordBatchRespo
 import software.amazon.awssdk.services.kinesisfirehose.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesisfirehose.model.Record;
 import software.amazon.awssdk.services.kinesisfirehose.model.S3DestinationConfiguration;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class ServiceIntegrationTest extends AWSTestBase {
+public class ServiceIntegrationTest extends AwsTestBase {
 
     private static final String DEVLIVERY_STREAM_NAME = "java-sdk-delivery-stream-"
                                                         + System.currentTimeMillis();

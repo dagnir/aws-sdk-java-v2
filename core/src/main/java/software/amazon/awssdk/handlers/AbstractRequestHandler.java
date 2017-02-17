@@ -19,9 +19,9 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.util.TimingInfo;
 
 /**
- * @deprecated by {@link RequestHandler2}.
- * <p>
  * Simple implementation of RequestHandler to stub out required methods.
+ *
+ * @deprecated by {@link RequestHandler2}.
  */
 @Deprecated
 public abstract class AbstractRequestHandler implements RequestHandler {

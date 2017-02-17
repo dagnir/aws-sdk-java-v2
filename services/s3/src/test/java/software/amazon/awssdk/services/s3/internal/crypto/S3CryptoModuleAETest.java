@@ -73,7 +73,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
                 String b64iv = userMD.get(Headers.CRYPTO_IV);
                 assertNotNull(b64iv);
                 byte[] iv = decodeBase64(b64iv);
-                assertTrue(AES_GCM.getIVLengthInBytes() == iv.length);
+                assertTrue(AES_GCM.getIvLengthInBytes() == iv.length);
                 assertEquals(AES_GCM.getCipherAlgorithm(), userMD.get(Headers.CRYPTO_CEK_ALGORITHM));
                 assertEquals(S3KeyWrapScheme.AESWrap, userMD.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
                 assertEquals(String.valueOf(AES_GCM.getTagLengthInBits()), userMD.get(Headers.CRYPTO_TAG_LENGTH));
@@ -130,7 +130,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
                     String b64iv = map.get(Headers.CRYPTO_IV);
                     assertNotNull(b64iv);
                     byte[] iv = decodeBase64(b64iv);
-                    assertTrue(AES_GCM.getIVLengthInBytes() == iv.length);
+                    assertTrue(AES_GCM.getIvLengthInBytes() == iv.length);
                     assertEquals("{}", map.get(Headers.MATERIALS_DESCRIPTION));
                     assertEquals(AES_GCM.getCipherAlgorithm(),
                                  map.get(Headers.CRYPTO_CEK_ALGORITHM));
@@ -152,7 +152,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
         ContentCryptoScheme scheme = inst.getContentCryptoScheme();
         assertTrue(AES_GCM.getBlockSizeInBytes() == scheme.getBlockSizeInBytes());
         assertEquals(AES_GCM.getCipherAlgorithm(), scheme.getCipherAlgorithm());
-        assertTrue(AES_GCM.getIVLengthInBytes() == scheme.getIVLengthInBytes());
+        assertTrue(AES_GCM.getIvLengthInBytes() == scheme.getIvLengthInBytes());
         assertTrue(AES_GCM.getTagLengthInBits() == scheme.getTagLengthInBits());
         assertEquals(AES_GCM.getKeyGeneratorAlgorithm(), scheme.getKeyGeneratorAlgorithm());
         assertTrue(AES_GCM.getKeyLengthInBits() == scheme.getKeyLengthInBits());
@@ -160,13 +160,13 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
 
         String kwa = inst.getKeyWrappingAlgorithm();
         assertEquals(S3KeyWrapScheme.AESWrap, kwa);
-        byte[] encryptedCEK = inst.getEncryptedCEK();
+        byte[] encryptedCEK = inst.getEncryptedCek();
         assertTrue(encryptedCEK.length == 40);
 
         CipherLite cipher = inst.getCipherLite();
         assertEquals(scheme.getCipherAlgorithm(), cipher.getCipherAlgorithm());
         assertTrue(scheme.getBlockSizeInBytes() == cipher.getBlockSize());
-        assertTrue(scheme.getIVLengthInBytes() == cipher.getIV().length);
+        assertTrue(scheme.getIvLengthInBytes() == cipher.getIv().length);
         assertEquals(scheme.getSpecificCipherProvider(), cipher.getCipherProvider().getName());
 
         CipherLite w = inst.getCipherLite();

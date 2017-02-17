@@ -26,9 +26,9 @@ import java.util.Map;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodbv2.model.ExpectedAttributeValue;
@@ -60,7 +60,7 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (HashAndAttribute obj : objs) {
             try {
                 DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
@@ -75,7 +75,7 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
                 util.save(obj, saveExpression);
                 fail("This should fail, expected clause should block an insert.");
             } catch (ConditionalCheckFailedException e) {
-
+                // Ignored or expected.
             }
             assertNull(util.load(HashAndAttribute.class, obj.getKey()));
 

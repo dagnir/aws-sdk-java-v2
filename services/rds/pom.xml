@@ -30,6 +30,22 @@
     </description>
     <url>https://aws.amazon.com/sdkforjava</url>
 
+    <dependencies>
+        <!-- Test Dependencies -->
+        <dependency>
+            <artifactId>sns</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>elasticloadbalancing</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

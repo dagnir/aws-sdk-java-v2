@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * settled.
  */
 @Documented
-@Target( {ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.CLASS)
 public @interface Beta {
 }

@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * to annotate a custom annotation, or directly to the field/getter.</p>
  *
  * <p>Only nullable, integral numeric types (e.g. Integer, Long) can be used as
- * version properties. On a save() operation, the {@link DynamoDBMapper} will
+ * version properties. On a save() operation, the {@link DynamoDbMapper} will
  * attempt to increment the version property and assert that the service's value
  * matches the client's. New objects will be assigned a version of 1 when saved.
  * <p>
@@ -45,7 +45,7 @@ import java.lang.annotation.Target;
 @DynamoDB
 @DynamoDBVersioned
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBVersionAttribute {
 
     /**

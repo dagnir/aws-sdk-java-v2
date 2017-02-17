@@ -23,7 +23,7 @@ import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.auth.NoOpSigner;
 import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.services.s3.internal.AWSS3V4Signer;
+import software.amazon.awssdk.services.s3.internal.AwsS3V4Signer;
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
@@ -38,7 +38,7 @@ public class S3ClientConfigSignerTest {
         req.setEndpoint(client.getEndpoint());
         final Signer signer = client.createSigner(req, "bucket", "key");
         client.shutdown();
-        assertTrue(signer instanceof AWSS3V4Signer);
+        assertTrue(signer instanceof AwsS3V4Signer);
     }
 
     @Test

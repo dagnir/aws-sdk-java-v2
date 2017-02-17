@@ -28,9 +28,9 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 import utils.http.S3WireMockTestBase;
 import utils.metrics.MockRequestMetricsCollector;
 
@@ -47,7 +47,7 @@ public class BucketThrottlingTest extends S3WireMockTestBase {
     @Before
     public void setup() {
         metricsCollector = new MockRequestMetricsCollector();
-        s3client = new AmazonS3Client(new AWSStaticCredentialsProvider(new BasicAWSCredentials("akid", "skid")),
+        s3client = new AmazonS3Client(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")),
                                       new ClientConfiguration().withMaxErrorRetry(MAX_RETRY),
                                       metricsCollector);
         s3client.setEndpoint(getEndpoint());
@@ -60,17 +60,20 @@ public class BucketThrottlingTest extends S3WireMockTestBase {
         try {
             s3client.listBuckets();
         } catch (AmazonServiceException ignored) {
+            // Ignored.
         }
         assertThat(metricsCollector.getMetrics(), hasSize(1));
-        AWSRequestMetrics metric = metricsCollector.getMetrics().get(0);
+        AwsRequestMetrics metric = metricsCollector.getMetrics().get(0);
         Number counter = metric.getTimingInfo()
-                               .getCounter(AWSRequestMetrics.Field.ThrottleException.name());
+                               .getCounter(AwsRequestMetrics.Field.ThrottleException.name());
         assertEquals(counter, Long.valueOf(MAX_RETRY + 1));
 
     }
 
     private void stubSlowDownException() {
-        final String slowDownBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error><Code>SlowDown</Code><Message>Please reduce your request rate.</Message><RequestId>36E5C81B8463E101</RequestId><HostId>FJKdbo9Vbfb+MGbciAgKQ+Dy8mQ70rKNaz7PHvoCNKiZuh0OcKJd9Y9a6g8v1Oec</HostId></Error>";
+        final String slowDownBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error><Code>SlowDown</Code><Message>Please " +
+                                    "reduce your request rate.</Message><RequestId>36E5C81B8463E101</RequestId><HostId>FJKd" +
+                                    "bo9Vbfb+MGbciAgKQ+Dy8mQ70rKNaz7PHvoCNKiZuh0OcKJd9Y9a6g8v1Oec</HostId></Error>";
         stubFor(get(urlEqualTo("/")).willReturn(
                 stubS3ResponseCommon(aResponse().withStatus(503).withBody(slowDownBody))));
     }

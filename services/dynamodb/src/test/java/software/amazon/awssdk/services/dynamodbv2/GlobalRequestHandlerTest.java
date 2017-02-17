@@ -21,8 +21,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAWSCredentials;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.global.handlers.TestGlobalRequestHandler;
 import software.amazon.awssdk.regions.Regions;
 
@@ -36,7 +36,7 @@ public class GlobalRequestHandlerTest {
     @Test
     public void clientCreatedWithConstructor_RegistersGlobalHandlers() {
         assertFalse(TestGlobalRequestHandler.wasCalled());
-        AmazonDynamoDBClient client = new AmazonDynamoDBClient(new BasicAWSCredentials("akid", "skid"));
+        AmazonDynamoDBClient client = new AmazonDynamoDBClient(new BasicAwsCredentials("akid", "skid"));
         callApi(client);
         assertTrue(TestGlobalRequestHandler.wasCalled());
     }
@@ -45,7 +45,7 @@ public class GlobalRequestHandlerTest {
     public void clientCreatedWithBuilder_RegistersGlobalHandlers() {
         assertFalse(TestGlobalRequestHandler.wasCalled());
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                                                           .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("akid", "skid")))
+                                                           .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
                                                            .withRegion(Regions.US_WEST_2)
                                                            .build();
         callApi(client);
@@ -56,6 +56,7 @@ public class GlobalRequestHandlerTest {
         try {
             client.listTables();
         } catch (SdkBaseException expected) {
+            // Ignored or expected.
         }
     }
 }

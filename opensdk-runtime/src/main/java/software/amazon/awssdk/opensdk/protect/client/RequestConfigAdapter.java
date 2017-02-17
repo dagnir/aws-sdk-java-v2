@@ -20,7 +20,7 @@ import java.util.Map;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.opensdk.BaseRequest;
@@ -61,7 +61,7 @@ class RequestConfigAdapter extends RequestConfig {
      * Not applicable for API Gateway.
      */
     @Override
-    public AWSCredentialsProvider getCredentialsProvider() {
+    public AwsCredentialsProvider getCredentialsProvider() {
         return null;
     }
 

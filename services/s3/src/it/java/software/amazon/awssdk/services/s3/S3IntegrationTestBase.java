@@ -24,7 +24,7 @@ import java.util.Random;
 import java.util.Set;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.AmazonS3TestClient;
@@ -50,7 +50,7 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.services.s3.model.S3VersionSummary;
 import software.amazon.awssdk.services.s3.model.VersionListing;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.test.util.RandomInputStream;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
@@ -60,7 +60,7 @@ import software.amazon.awssdk.test.util.RandomTempFile;
  *
  * @author fulghum@amazon.com
  */
-public class S3IntegrationTestBase extends AWSTestBase {
+public class S3IntegrationTestBase extends AwsTestBase {
 
     protected static final String AWS_DR_TOOLS_EMAIL_ADDRESS = "aws-dr-tools-test@amazon.com";
     protected static final String AWS_DR_TOOLS_ACCT_ID = "d25639fbe9c19cd30a4c0f43fbf00e2d3f96400a9aa8dabfbbebe19069d1a5df";
@@ -69,7 +69,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
     private static final int POLL_INTERVAL = 1000;
     /** Android Directory, once set RandomTempFile will use it to create files. */
     public static File androidRootDir;
-    /** The S3 client for all tests to use */
+    /** The S3 client for all tests to use. */
     protected static AmazonS3Client s3;
     protected static AmazonS3Client euS3;
     protected static AmazonS3Client cnS3;
@@ -83,7 +83,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
     public static void setUp() throws Exception {
         setUpCredentials();
 
-        AWSCredentials cnCredentials = new PropertiesCredentials(
+        AwsCredentials cnCredentials = new PropertiesCredentials(
                 new File(new File(System.getProperty("user.home")),
                          ".aws/bjsTestAccount.properties"));
 
@@ -92,7 +92,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
         euS3.configureRegion(Regions.EU_WEST_1);
         cnS3 = new AmazonS3TestClient(cnCredentials);
         cnS3.setEndpoint("s3.cn-north-1.amazonaws.com.cn");
-        AWSCredentials s3GammaCredentials = new PropertiesCredentials(
+        AwsCredentials s3GammaCredentials = new PropertiesCredentials(
                 new File(new File(System.getProperty("user.home")),
                          ".aws/awsTestAccount.properties_s3gamma"));
         s3gamma = new AmazonS3Client(s3GammaCredentials);
@@ -184,6 +184,7 @@ public class S3IntegrationTestBase extends AWSTestBase {
                     s3.deleteVersion(new DeleteVersionRequest(
                             bucketName, version.getKey(), version.getVersionId()));
                 } catch (Exception e) {
+                    // Ignored or expected.
                 }
             }
             versionListing = s3.listNextBatchOfVersions(versionListing);

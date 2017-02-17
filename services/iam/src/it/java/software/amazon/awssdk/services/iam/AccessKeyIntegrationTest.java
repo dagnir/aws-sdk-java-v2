@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.iam;
 
 import static org.junit.Assert.assertEquals;
@@ -31,12 +46,12 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     private static final int MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
     @Before
-    public void TestSetup() {
+    public void testSetup() {
         IAMUtil.deleteUsersAndGroupsInTestNameSpace();
     }
 
     @Test
-    public void TestCreateAccessKey() {
+    public void testCreateAccessKey() {
         String username = IAMUtil.createTestUser();
         String keyId = null;
         try {
@@ -61,13 +76,13 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     }
 
     @Test(expected = NoSuchEntityException.class)
-    public void TestCreateAccessKeyNonExistentUserException() {
+    public void testCreateAccessKeyNonExistentUserException() {
         String username = IAMUtil.uniqueName();
         iam.createAccessKey(new CreateAccessKeyRequest().withUserName(username));
     }
 
     @Test
-    public void TestListAccessKeys() {
+    public void testListAccessKeys() {
         String username = IAMUtil.createTestUser();
         String[] keyIds = new String[2];
         try {
@@ -104,7 +119,7 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
 
     // There is a limit of 2 access keys per user
     @Test(expected = LimitExceededException.class)
-    public void TestLimitExceedException() {
+    public void testLimitExceedException() {
         String username = IAMUtil.createTestUser();
 
         try {
@@ -118,7 +133,7 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    public void TestDeleteAccessKey() {
+    public void testDeleteAccessKey() {
         String username = IAMUtil.createTestUser();
         String[] keyIds = new String[2];
         try {
@@ -154,7 +169,7 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     }
 
     @Test(expected = NoSuchEntityException.class)
-    public void TestDeleteNonExistentAccessKeyException() {
+    public void testDeleteNonExistentAccessKeyException() {
         String username = IAMUtil.createTestUser();
         try {
             CreateAccessKeyResult response = iam

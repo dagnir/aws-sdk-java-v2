@@ -74,9 +74,10 @@ public class UnmarshallerGeneratorTasks extends BaseGeneratorTasks {
                                                    freemarker.getExceptionUnmarshallerTemplate(),
                                                    dataModel);
             }
+            default:
+                // If shape doesn't need an umarshaller generated it should have been filtered out already
+                throw new IllegalStateException(shapeModel.getC2jName() + " is not supported for unmarshaller generation");
         }
-        // If shape doesn't need an umarshaller generated it should have been filtered out already
-        throw new IllegalStateException(shapeModel.getC2jName() + " is not supported for unmarshaller generation");
     }
 
     private boolean shouldGenerate(ShapeModel shapeModel) {
@@ -95,8 +96,9 @@ public class UnmarshallerGeneratorTasks extends BaseGeneratorTasks {
             case Exception:
                 // Generating Exception Unmarshallers is not required for the JSON protocol
                 return !metadata.isJsonProtocol();
+            default:
+                return false;
         }
-        return false;
     }
 
 }

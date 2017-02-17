@@ -55,7 +55,7 @@ public interface DynamoDBAutoGenerator<T extends Object> {
      * A generator which holds the {@link DynamoDBAutoGenerateStrategy}.
      */
     @SdkInternalApi
-    static abstract class AbstractGenerator<T> implements DynamoDBAutoGenerator<T> {
+    abstract static class AbstractGenerator<T> implements DynamoDBAutoGenerator<T> {
         private final DynamoDBAutoGenerateStrategy strategy;
 
         protected AbstractGenerator(DynamoDBAutoGenerateStrategy strategy) {

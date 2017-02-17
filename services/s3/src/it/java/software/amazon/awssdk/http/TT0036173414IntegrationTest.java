@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
@@ -43,7 +43,7 @@ public class TT0036173414IntegrationTest {
     private static final String TEST_KEY = "testkey";
     private static AmazonS3Client s3;
 
-    public static AWSCredentials awsTestCredentials() throws IOException {
+    public static AwsCredentials awsTestCredentials() throws IOException {
         return new PropertiesCredentials(new File(
                 System.getProperty("user.home")
                 + "/.aws/awsTestAccount.properties"));

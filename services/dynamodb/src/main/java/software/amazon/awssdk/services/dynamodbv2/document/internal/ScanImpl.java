@@ -72,26 +72,25 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
     protected ItemCollection<ScanOutcome> doScan(ScanSpec spec) {
         // set the table name
         String tableName = getTable().getTableName();
-        ScanRequest req = spec.getRequest().withTableName(tableName);
+        ScanRequest request = spec.getRequest().withTableName(tableName);
 
         // set up the start key, if any
         Collection<KeyAttribute> startKey = spec.getExclusiveStartKey();
         if (startKey != null) {
-            req.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
+            request.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
         }
 
         // scan filters;
         Collection<ScanFilter> filters = spec.getScanFilters();
         if (filters != null) {
-            req.setScanFilter(InternalUtils.toAttributeConditionMap(filters));
+            request.setScanFilter(InternalUtils.toAttributeConditionMap(filters));
         }
 
         // set up the value map, if any (when expression API is used)
         final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
         // set up expressions, if any
-        req.withExpressionAttributeNames(spec.getNameMap())
-           .withExpressionAttributeValues(attrValMap)
-        ;
+        request.withExpressionAttributeNames(spec.getNameMap())
+               .withExpressionAttributeValues(attrValMap);
         return new ScanCollection(getClient(), spec);
     }
 }

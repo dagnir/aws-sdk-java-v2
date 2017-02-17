@@ -234,7 +234,7 @@ public class Index implements QueryApi, ScanApi {
      * @return the table description when the index has become active
      *
      * @throws IllegalArgumentException if the table is being deleted, or if
-     * the GSI is not being created or updated, or if the GSI doesn't exist
+     *     the GSI is not being created or updated, or if the GSI doesn't exist
      * @throws ResourceNotFoundException if the table doesn't exist
      */
     public TableDescription waitForActive() throws InterruptedException {
@@ -284,7 +284,7 @@ public class Index implements QueryApi, ScanApi {
      *         the underlying table has been deleted.
      *
      * @throws IllegalArgumentException if the table is being deleted, or if the
-     * GSI is not being deleted.
+     *     GSI is not being deleted.
      * @throws ResourceNotFoundException if the table doesn't exist
      */
     public TableDescription waitForDelete() throws InterruptedException {
@@ -322,7 +322,7 @@ public class Index implements QueryApi, ScanApi {
      * description.
      *
      * @return the table description when the index has become either active
-     * or deleted
+     *     or deleted
      *
      * @throws IllegalArgumentException if the table is being deleted
      * @throws ResourceNotFoundException if the table doesn't exist

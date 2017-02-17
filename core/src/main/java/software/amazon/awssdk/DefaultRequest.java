@@ -27,7 +27,7 @@ import software.amazon.awssdk.event.ProgressInputStream;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**
@@ -50,7 +50,7 @@ public class DefaultRequest<T> implements Request<T> {
      */
     private final Map<HandlerContextKey<?>, Object> handlerContext = new
             HashMap<HandlerContextKey<?>, Object>();
-    /** The resource path being requested */
+    /** The resource path being requested. */
     private String resourcePath;
     /**
      * Map of the parameters being sent as part of this request.
@@ -63,20 +63,20 @@ public class DefaultRequest<T> implements Request<T> {
      * null values to be present.
      */
     private Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
-    /** Map of the headers included in this request */
+    /** Map of the headers included in this request. */
     private Map<String, String> headers = new HashMap<String, String>();
-    /** The service endpoint to which this request should be sent */
+    /** The service endpoint to which this request should be sent. */
     private URI endpoint;
-    /** The name of the service to which this request is being sent */
+    /** The name of the service to which this request is being sent. */
     private String serviceName;
     /** The HTTP method to use when sending this request. */
     private HttpMethodName httpMethod = HttpMethodName.POST;
     /** An optional stream from which to read the request payload. */
     private InputStream content;
-    /** An optional time offset to account for clock skew */
+    /** An optional time offset to account for clock skew. */
     private int timeOffset;
     /** All AWS Request metrics are collected into this object. */
-    private AWSRequestMetrics metrics;
+    private AwsRequestMetrics metrics;
 
     /**
      * Constructs a new DefaultRequest with the specified service name and the
@@ -307,12 +307,12 @@ public class DefaultRequest<T> implements Request<T> {
     }
 
     @Override
-    public AWSRequestMetrics getAWSRequestMetrics() {
+    public AwsRequestMetrics getAWSRequestMetrics() {
         return metrics;
     }
 
     @Override
-    public void setAWSRequestMetrics(AWSRequestMetrics metrics) {
+    public void setAwsRequestMetrics(AwsRequestMetrics metrics) {
         if (this.metrics == null) {
             this.metrics = metrics;
         } else {

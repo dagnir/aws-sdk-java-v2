@@ -39,7 +39,7 @@ public final class InCondition extends Condition {
 
     /**
      * @param operands assumed to be allocated on the stack so it will remain
-     * externally unmodifiable
+     *     externally unmodifiable
      */
     InCondition(PathOperand attribute, List<? extends Operand> operands) {
         this.attribute = attribute;

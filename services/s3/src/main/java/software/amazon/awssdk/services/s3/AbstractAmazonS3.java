@@ -698,7 +698,8 @@ public abstract class AbstractAmazonS3 implements AmazonS3 {
     @Override
     public void setBucketCrossOriginConfiguration(String bucketName,
                                                   BucketCrossOriginConfiguration bucketCrossOriginConfiguration) {
-        setBucketCrossOriginConfiguration(new SetBucketCrossOriginConfigurationRequest(bucketName, bucketCrossOriginConfiguration));
+        setBucketCrossOriginConfiguration(new SetBucketCrossOriginConfigurationRequest(bucketName,
+                                                                                       bucketCrossOriginConfiguration));
     }
 
     @Override
@@ -776,7 +777,8 @@ public abstract class AbstractAmazonS3 implements AmazonS3 {
     public void setBucketNotificationConfiguration(String bucketName,
                                                    BucketNotificationConfiguration bucketNotificationConfiguration)
             throws SdkClientException, AmazonServiceException {
-        setBucketNotificationConfiguration(new SetBucketNotificationConfigurationRequest(bucketName, bucketNotificationConfiguration));
+        setBucketNotificationConfiguration(new SetBucketNotificationConfigurationRequest(bucketName,
+                                                                                         bucketNotificationConfiguration));
     }
 
     @Override

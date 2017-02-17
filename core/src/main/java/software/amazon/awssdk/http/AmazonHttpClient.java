@@ -68,8 +68,8 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.CanHandleNullCredentials;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.event.ProgressEventType;
@@ -82,7 +82,6 @@ import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.internal.CRC32MismatchException;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
@@ -108,7 +107,7 @@ import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.runtime.io.ReleasableInputStream;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.CapacityManager;
 import software.amazon.awssdk.util.CollectionUtils;
 import software.amazon.awssdk.util.CountingInputStream;
@@ -134,13 +133,13 @@ public class AmazonHttpClient {
      * etc.
      */
     @SdkInternalApi
-    public static final Log requestLog = LogFactory.getLog("software.amazon.awssdk.request");
+    public static final Log REQUEST_LOG = LogFactory.getLog("software.amazon.awssdk.request");
     /**
      * Logger for more detailed debugging information, that might not be as useful for end users
      * (ex: HTTP client configuration, etc).
      */
-    static final Log log = LogFactory.getLog(AmazonHttpClient.class);
-    private static final HttpClientFactory<ConnectionManagerAwareHttpClient> httpClientFactory = new
+    static final Log LOG = LogFactory.getLog(AmazonHttpClient.class);
+    private static final HttpClientFactory<ConnectionManagerAwareHttpClient> HTTP_CLIENT_FACTORY = new
             ApacheHttpClientFactory();
     /**
      * When throttled retries are enabled, each retry attempt will consume this much capacity.
@@ -168,7 +167,7 @@ public class AmazonHttpClient {
                 .asList("1.6.0_06", "1.6.0_13", "1.6.0_17", "1.6.0_65", "1.7.0_45");
         String jvmVersion = System.getProperty("java.version");
         if (problematicJvmVersions.contains(jvmVersion)) {
-            log.warn("Detected a possible problem with the current JVM version (" + jvmVersion +
+            LOG.warn("Detected a possible problem with the current JVM version (" + jvmVersion +
                      ").  " +
                      "If you experience XML parsing problems using the SDK, try upgrading to a more recent JVM update.");
         }
@@ -186,7 +185,7 @@ public class AmazonHttpClient {
      */
     private final HttpClientSettings httpClientSettings;
     /**
-     * Cache of metadata for recently executed requests for diagnostic purposes
+     * Cache of metadata for recently executed requests for diagnostic purposes.
      */
     private final MetadataCache responseMetadataCache;
     /**
@@ -194,12 +193,12 @@ public class AmazonHttpClient {
      */
     private final HttpRequestTimer httpRequestTimer;
     /**
-     * Retry capacity manager, used to manage throttled retry resource
+     * Retry capacity manager, used to manage throttled retry resource.
      */
     private final CapacityManager retryCapacity;
     /**
      * Timer to enforce timeouts on the whole execution of the request (request handlers, retries,
-     * backoff strategy, unmarshalling, etc)
+     * backoff strategy, unmarshalling, etc).
      */
     private final ClientExecutionTimer clientExecutionTimer;
     /**
@@ -217,7 +216,7 @@ public class AmazonHttpClient {
      **/
     private final Random random = new Random();
     /**
-     * Internal client for sending HTTP requests
+     * Internal client for sending HTTP requests.
      */
     private ConnectionManagerAwareHttpClient httpClient;
     /**
@@ -279,7 +278,7 @@ public class AmazonHttpClient {
      * @param requestMetricCollector           client specific request metric collector, which takes
      *                                         precedence over the one at the AWS SDK level; or null
      *                                         if there is none.
-     * @param calculateCRC32FromCompressedData The flag indicating whether the CRC32 checksum is
+     * @param calculateCrc32FromCompressedData The flag indicating whether the CRC32 checksum is
      *                                         calculated from compressed data or not. It is only
      *                                         applicable when the header "x-amz-crc32" is set in
      *                                         the response.
@@ -287,24 +286,24 @@ public class AmazonHttpClient {
     public AmazonHttpClient(ClientConfiguration config,
                             RequestMetricCollector requestMetricCollector,
                             boolean useBrowserCompatibleHostNameVerifier,
-                            boolean calculateCRC32FromCompressedData) {
+                            boolean calculateCrc32FromCompressedData) {
         this(config,
              null,
              requestMetricCollector,
              useBrowserCompatibleHostNameVerifier,
-             calculateCRC32FromCompressedData);
+             calculateCrc32FromCompressedData);
     }
 
     private AmazonHttpClient(ClientConfiguration config,
                              RetryPolicy retryPolicy,
                              RequestMetricCollector requestMetricCollector,
                              boolean useBrowserCompatibleHostNameVerifier,
-                             boolean calculateCRC32FromCompressedData) {
+                             boolean calculateCrc32FromCompressedData) {
         this(config,
              retryPolicy,
              requestMetricCollector,
-             HttpClientSettings.adapt(config, useBrowserCompatibleHostNameVerifier, calculateCRC32FromCompressedData));
-        this.httpClient = httpClientFactory.create(this.httpClientSettings);
+             HttpClientSettings.adapt(config, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData));
+        this.httpClient = HTTP_CLIENT_FACTORY.create(this.httpClientSettings);
     }
 
     /**
@@ -365,12 +364,6 @@ public class AmazonHttpClient {
         unreliableTestConfig = config;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        this.shutdown();
-        super.finalize();
-    }
-
     /**
      * Shuts down this HTTP client object, releasing any resources that might be held open. This is
      * an optional method, and callers are not expected to call it, but can if they want to
@@ -380,13 +373,12 @@ public class AmazonHttpClient {
     public void shutdown() {
         clientExecutionTimer.shutdown();
         httpRequestTimer.shutdown();
-        IdleConnectionReaper.removeConnectionManager(httpClient
-                                                             .getHttpClientConnectionManager());
+        IdleConnectionReaper.removeConnectionManager(httpClient.getHttpClientConnectionManager());
         httpClient.getHttpClientConnectionManager().shutdown();
     }
 
     /**
-     * Package protected for unit-testing
+     * Package protected for unit-testing.
      */
     @SdkTestInternalApi
     public HttpRequestTimer getHttpRequestTimer() {
@@ -394,7 +386,7 @@ public class AmazonHttpClient {
     }
 
     /**
-     * Package protected for unit-testing
+     * Package protected for unit-testing.
      */
     @SdkTestInternalApi
     public ClientExecutionTimer getClientExecutionTimer() {
@@ -410,7 +402,7 @@ public class AmazonHttpClient {
      * @param request A previously executed AmazonWebServiceRequest object, whose response metadata
      *                is desired.
      * @return The response metadata for the specified request, otherwise null if there is no
-     * response metadata available for the request.
+     *         response metadata available for the request
      */
     public ResponseMetadata getResponseMetadataForRequest(AmazonWebServiceRequest request) {
         return responseMetadataCache.get(request);
@@ -538,10 +530,10 @@ public class AmazonHttpClient {
          *
          * @param responseHandler Response handler that outputs the actual result type which is
          *                        preferred going forward.
-         * @param <Output>        Result type
+         * @param <OutputT>        Result type
          * @return Unmarshalled result type.
          */
-        <Output> Response<Output> execute(HttpResponseHandler<Output> responseHandler);
+        <OutputT> Response<OutputT> execute(HttpResponseHandler<OutputT> responseHandler);
 
         /**
          * Executes the request with the given configuration; not handling response.
@@ -558,7 +550,7 @@ public class AmazonHttpClient {
         private RetryPolicy retryPolicy;
         private RequestMetricCollector requestMetricCollector;
         private boolean useBrowserCompatibleHostNameVerifier;
-        private boolean calculateCRC32FromCompressedData;
+        private boolean calculateCrc32FromCompressedData;
 
         private Builder() {
         }
@@ -583,8 +575,8 @@ public class AmazonHttpClient {
             return this;
         }
 
-        public Builder calculateCRC32FromCompressedData(boolean calculateCRC32FromCompressedData) {
-            this.calculateCRC32FromCompressedData = calculateCRC32FromCompressedData;
+        public Builder calculateCrc32FromCompressedData(boolean calculateCrc32FromCompressedData) {
+            this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
             return this;
         }
 
@@ -593,7 +585,7 @@ public class AmazonHttpClient {
                                         retryPolicy,
                                         requestMetricCollector,
                                         useBrowserCompatibleHostNameVerifier,
-                                        calculateCRC32FromCompressedData);
+                                        calculateCrc32FromCompressedData);
         }
     }
 
@@ -631,14 +623,15 @@ public class AmazonHttpClient {
         }
 
         @Override
-        public <Output> Response<Output> execute(HttpResponseHandler<Output> responseHandler) {
-            RequestConfig config = requestConfig != null ? requestConfig : new AmazonWebServiceRequestAdapter(request.getOriginalRequest());
-            return new RequestExecutor<Output>(request,
-                                               config,
-                                               getNonNullResponseHandler(errorResponseHandler),
-                                               getNonNullResponseHandler(responseHandler),
-                                               executionContext,
-                                               getRequestHandlers()
+        public <OutputT> Response<OutputT> execute(HttpResponseHandler<OutputT> responseHandler) {
+            RequestConfig config = requestConfig != null ? requestConfig
+                                                         : new AmazonWebServiceRequestAdapter(request.getOriginalRequest());
+            return new RequestExecutor<OutputT>(request,
+                                                config,
+                                                getNonNullResponseHandler(errorResponseHandler),
+                                                getNonNullResponseHandler(responseHandler),
+                                                executionContext,
+                                                getRequestHandlers()
             ).execute();
         }
 
@@ -657,18 +650,18 @@ public class AmazonHttpClient {
 
     }
 
-    private class RequestExecutor<Output> {
+    private class RequestExecutor<OutputT> {
         private final Request<?> request;
         private final RequestConfig requestConfig;
         private final HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
-        private final HttpResponseHandler<Output> responseHandler;
+        private final HttpResponseHandler<OutputT> responseHandler;
         private final ExecutionContext executionContext;
         private final List<RequestHandler2> requestHandler2s;
-        private final AWSRequestMetrics awsRequestMetrics;
+        private final AwsRequestMetrics awsRequestMetrics;
 
         private RequestExecutor(Request<?> request, RequestConfig requestConfig,
                                 HttpResponseHandler<? extends SdkBaseException> errorResponseHandler,
-                                HttpResponseHandler<Output> responseHandler,
+                                HttpResponseHandler<OutputT> responseHandler,
                                 ExecutionContext executionContext,
                                 List<RequestHandler2> requestHandler2s) {
             this.request = request;
@@ -683,7 +676,7 @@ public class AmazonHttpClient {
         /**
          * Executes the request and returns the result.
          */
-        private Response<Output> execute() {
+        private Response<OutputT> execute() {
             if (executionContext == null) {
                 throw new SdkClientException(
                         "Internal SDK Error: No execution context parameter specified.");
@@ -702,7 +695,7 @@ public class AmazonHttpClient {
          * that the client execution task is canceled before the InterruptedExecption is handled by
          * {@link #execute()} so * the interrupt status doesn't leak out to the callers code
          */
-        private Response<Output> executeWithTimer() throws InterruptedException {
+        private Response<OutputT> executeWithTimer() throws InterruptedException {
             try {
                 executionContext.setClientExecutionTrackerTask(
                         clientExecutionTimer.startTimer(getClientExecutionTimeout(requestConfig)));
@@ -712,7 +705,7 @@ public class AmazonHttpClient {
             }
         }
 
-        private Response<Output> doExecute() throws InterruptedException {
+        private Response<OutputT> doExecute() throws InterruptedException {
             runBeforeRequestHandlers();
             setSdkTransactionId(request);
             setUserAgent(request);
@@ -723,7 +716,7 @@ public class AmazonHttpClient {
             request.getHeaders().putAll(requestConfig.getCustomRequestHeaders());
             // add custom query parameters
             mergeQueryParameters(requestConfig.getCustomQueryParameters());
-            Response<Output> response = null;
+            Response<OutputT> response = null;
             final InputStream origContent = request.getContent();
             final InputStream toBeClosed = beforeRequest(); // for progress tracking
             // make "notCloseable", so reset would work with retries
@@ -743,13 +736,13 @@ public class AmazonHttpClient {
                 throw e;
             } finally {
                 // Always close so any progress tracking would get the final events propagated.
-                closeQuietly(toBeClosed, log);
+                closeQuietly(toBeClosed, LOG);
                 request.setContent(origContent); // restore the original content
             }
         }
 
         private void runBeforeRequestHandlers() {
-            AWSCredentials credentials = getCredentialsFromContext();
+            AwsCredentials credentials = getCredentialsFromContext();
             request.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, credentials);
             // Apply any additional service specific request handlers that need to be run
             for (RequestHandler2 requestHandler2 : requestHandler2s) {
@@ -767,8 +760,8 @@ public class AmazonHttpClient {
          * purpose.
          *
          * @return {@link ClientExecutionTimeoutException} if the {@link InterruptedException} was
-         * caused by the {@link ClientExecutionTimer}. Otherwise re-interrupts the current thread
-         * and returns a {@link SdkClientException} wrapping an {@link InterruptedException}
+         *     caused by the {@link ClientExecutionTimer}. Otherwise re-interrupts the current thread
+         *     and returns a {@link SdkClientException} wrapping an {@link InterruptedException}
          */
         private RuntimeException handleInterruptedException(InterruptedException e) {
             if (e instanceof SdkInterruptedException) {
@@ -793,8 +786,7 @@ public class AmazonHttpClient {
          *
          * @param ae aborted exception that occurred
          * @return {@link ClientExecutionTimeoutException} if the {@link AbortedException} was
-         * caused by the {@link ClientExecutionTimer}. Otherwise throws the original {@link
-         * AbortedException}
+         *     caused by the {@link ClientExecutionTimer}. Otherwise throws the original {@link AbortedException}
          */
         private RuntimeException handleAbortedException(final AbortedException ae) {
             if (executionContext.getClientExecutionTrackerTask().hasTimeoutExpired()) {
@@ -847,7 +839,7 @@ public class AmazonHttpClient {
          * made mark-and-resettable if possible, for progress tracking purposes.
          *
          * @return an input stream, which will be made mark-and-resettable if possible, for progress
-         * tracking purposes; or null if the request doesn't have an input stream
+         *     tracking purposes; or null if the request doesn't have an input stream
          */
         private InputStream beforeRequest() {
             ProgressListener listener = requestConfig.getProgressListener();
@@ -878,7 +870,7 @@ public class AmazonHttpClient {
                     long contentLength = Long.parseLong(contentLengthStr);
                     publishRequestContentLength(listener, contentLength);
                 } catch (NumberFormatException e) {
-                    log.warn("Cannot parse the Content-Length header of the request.");
+                    LOG.warn("Cannot parse the Content-Length header of the request.");
                 }
             }
         }
@@ -899,8 +891,8 @@ public class AmazonHttpClient {
                         // memory buffering
                         return new ResettableInputStream((FileInputStream) content);
                     } catch (IOException e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("For the record; ignore otherwise", e);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("For the record; ignore otherwise", e);
                         }
                     }
                 }
@@ -969,14 +961,14 @@ public class AmazonHttpClient {
         /**
          * Internal method to execute the HTTP method given.
          */
-        private Response<Output> executeHelper() throws InterruptedException {
-        /*
-         * add the service endpoint to the logs. You can infer service name from service endpoint
-         */
+        private Response<OutputT> executeHelper() throws InterruptedException {
+            /*
+             * add the service endpoint to the logs. You can infer service name from service endpoint
+             */
             awsRequestMetrics
-                    .addPropertyWith(AWSRequestMetrics.Field.RequestType, requestConfig.getRequestType())
-                    .addPropertyWith(AWSRequestMetrics.Field.ServiceName, request.getServiceName())
-                    .addPropertyWith(AWSRequestMetrics.Field.ServiceEndpoint, request.getEndpoint());
+                    .addPropertyWith(AwsRequestMetrics.Field.RequestType, requestConfig.getRequestType())
+                    .addPropertyWith(AwsRequestMetrics.Field.ServiceName, request.getServiceName())
+                    .addPropertyWith(AwsRequestMetrics.Field.ServiceEndpoint, request.getEndpoint());
             // Make a copy of the original request params and headers so that we can
             // permute it in this loop and start over with the original every time.
             final Map<String, List<String>> originalParameters = new LinkedHashMap<String, List<String>>(request.getParameters());
@@ -998,14 +990,14 @@ public class AmazonHttpClient {
                     originalContent.mark(readLimit);
                 }
                 execOneParams.initPerRetry();
-                if (execOneParams.redirectedURI != null) {
-                /*
-                 * [scheme:][//authority][path][?query][#fragment]
-                 */
-                    String scheme = execOneParams.redirectedURI.getScheme();
+                if (execOneParams.redirectedUri != null) {
+                    /*
+                     * [scheme:][//authority][path][?query][#fragment]
+                     */
+                    String scheme = execOneParams.redirectedUri.getScheme();
                     String beforeAuthority = scheme == null ? "" : scheme + "://";
-                    String authority = execOneParams.redirectedURI.getAuthority();
-                    String path = execOneParams.redirectedURI.getPath();
+                    String authority = execOneParams.redirectedUri.getAuthority();
+                    String path = execOneParams.redirectedUri.getPath();
 
                     request.setEndpoint(URI.create(beforeAuthority + authority));
                     request.setResourcePath(SdkHttpUtils.urlEncode(path, true));
@@ -1013,27 +1005,27 @@ public class AmazonHttpClient {
                 if (execOneParams.authRetryParam != null) {
                     request.setEndpoint(execOneParams.authRetryParam.getEndpointForRetry());
                 }
-                awsRequestMetrics.setCounter(AWSRequestMetrics.Field.RequestCount, execOneParams.requestCount);
+                awsRequestMetrics.setCounter(AwsRequestMetrics.Field.RequestCount, execOneParams.requestCount);
                 if (execOneParams.isRetry()) {
                     request.setParameters(originalParameters);
                     request.setHeaders(originalHeaders);
                     request.setContent(originalContent);
                 }
                 try {
-                    Response<Output> response = executeOneRequest(execOneParams);
+                    Response<OutputT> response = executeOneRequest(execOneParams);
                     if (response != null) {
                         return response;
                     }
                 } catch (IOException ioe) {
                     captureExceptionMetrics(ioe);
-                    awsRequestMetrics.addProperty(AWSRequestMetrics.Field.AWSRequestID, null);
+                    awsRequestMetrics.addProperty(AwsRequestMetrics.Field.AWSRequestID, null);
                     SdkClientException sdkClientException = new SdkClientException(
                             "Unable to execute HTTP request: " + ioe.getMessage(), ioe);
                     boolean willRetry = shouldRetry(execOneParams, sdkClientException);
-                    if (log.isTraceEnabled()) {
-                        log.trace(sdkClientException.getMessage() + (willRetry ? " Request will be retried." : ""), ioe);
-                    } else if (log.isDebugEnabled()) {
-                        log.trace(sdkClientException.getMessage() + (willRetry ? " Request will be retried." : ""));
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace(sdkClientException.getMessage() + (willRetry ? " Request will be retried." : ""), ioe);
+                    } else if (LOG.isDebugEnabled()) {
+                        LOG.trace(sdkClientException.getMessage() + (willRetry ? " Request will be retried." : ""));
                     }
                     if (!willRetry) {
                         throw lastReset(sdkClientException);
@@ -1045,20 +1037,20 @@ public class AmazonHttpClient {
                 } catch (Error e) {
                     throw lastReset(captureExceptionMetrics(e));
                 } finally {
-                /*
-                 * Some response handlers need to manually manage the HTTP connection and will take
-                 * care of releasing the connection on their own, but if this response handler
-                 * doesn't need the connection left open, we go ahead and release the it to free up
-                 * resources.
-                 */
+                    /*
+                     * Some response handlers need to manually manage the HTTP connection and will take
+                     * care of releasing the connection on their own, but if this response handler
+                     * doesn't need the connection left open, we go ahead and release the it to free up
+                     * resources.
+                     */
                     if (!execOneParams.leaveHttpConnectionOpen) {
                         if (execOneParams.apacheResponse != null) {
                             HttpEntity entity = execOneParams.apacheResponse.getEntity();
                             if (entity != null) {
                                 try {
-                                    closeQuietly(entity.getContent(), log);
+                                    closeQuietly(entity.getContent(), LOG);
                                 } catch (IOException e) {
-                                    log.warn("Cannot close the response content.", e);
+                                    LOG.warn("Cannot close the response content.", e);
                                 }
                             }
                         }
@@ -1085,7 +1077,7 @@ public class AmazonHttpClient {
                     }
                 }
             } catch (Exception ex) {
-                log.debug("FYI: failed to reset content inputstream before throwing up", ex);
+                LOG.debug("FYI: failed to reset content inputstream before throwing up", ex);
             }
             return t;
         }
@@ -1093,16 +1085,16 @@ public class AmazonHttpClient {
         /**
          * Returns the credentials from the execution if exists. Else returns null.
          */
-        private AWSCredentials getCredentialsFromContext() {
-            final AWSCredentialsProvider credentialsProvider = executionContext.getCredentialsProvider();
+        private AwsCredentials getCredentialsFromContext() {
+            final AwsCredentialsProvider credentialsProvider = executionContext.getCredentialsProvider();
 
-            AWSCredentials credentials = null;
+            AwsCredentials credentials = null;
             if (credentialsProvider != null) {
-                awsRequestMetrics.startEvent(AWSRequestMetrics.Field.CredentialsRequestTime);
+                awsRequestMetrics.startEvent(AwsRequestMetrics.Field.CredentialsRequestTime);
                 try {
                     credentials = credentialsProvider.getCredentials();
                 } finally {
-                    awsRequestMetrics.endEvent(AWSRequestMetrics.Field.CredentialsRequestTime);
+                    awsRequestMetrics.endEvent(AwsRequestMetrics.Field.CredentialsRequestTime);
                 }
             }
             return credentials;
@@ -1111,16 +1103,16 @@ public class AmazonHttpClient {
         /**
          * Returns the response from executing one httpClientSettings request; or null for retry.
          */
-        private Response<Output> executeOneRequest(ExecOneRequestParams execOneParams)
+        private Response<OutputT> executeOneRequest(ExecOneRequestParams execOneParams)
                 throws IOException, InterruptedException {
             if (execOneParams.isRetry()) {
                 resetRequestInputStream(request);
             }
             checkInterrupted();
-            if (requestLog.isDebugEnabled()) {
-                requestLog.debug((execOneParams.isRetry() ? "Retrying " : "Sending ") + "Request: " + request);
+            if (REQUEST_LOG.isDebugEnabled()) {
+                REQUEST_LOG.debug((execOneParams.isRetry() ? "Retrying " : "Sending ") + "Request: " + request);
             }
-            final AWSCredentials credentials = getCredentialsFromContext();
+            final AwsCredentials credentials = getCredentialsFromContext();
             final ProgressListener listener = requestConfig.getProgressListener();
 
             if (execOneParams.isRetry()) {
@@ -1132,7 +1124,7 @@ public class AmazonHttpClient {
             execOneParams.newSigner(request, executionContext);
             if (execOneParams.signer != null &&
                 (credentials != null || execOneParams.signer instanceof CanHandleNullCredentials)) {
-                awsRequestMetrics.startEvent(AWSRequestMetrics.Field.RequestSigningTime);
+                awsRequestMetrics.startEvent(AwsRequestMetrics.Field.RequestSigningTime);
                 try {
                     if (timeOffset != 0) {
                         // Always use the client level timeOffset if it was
@@ -1147,7 +1139,7 @@ public class AmazonHttpClient {
                     }
                     execOneParams.signer.sign(request, credentials);
                 } finally {
-                    awsRequestMetrics.endEvent(AWSRequestMetrics.Field.RequestSigningTime);
+                    awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RequestSigningTime);
                 }
             }
 
@@ -1156,14 +1148,14 @@ public class AmazonHttpClient {
 
             captureConnectionPoolMetrics();
 
-            final HttpClientContext localRequestContext =
-                    ApacheUtils.newClientContext(httpClientSettings, ImmutableMapParameter.of
-                            (AWSRequestMetrics.class.getSimpleName(), awsRequestMetrics));
+            Map<String, AwsRequestMetrics> attributes =
+                    ImmutableMapParameter.of(AwsRequestMetrics.class.getSimpleName(), awsRequestMetrics);
+            final HttpClientContext localRequestContext = ApacheUtils.newClientContext(httpClientSettings, attributes);
 
             execOneParams.resetBeforeHttpRequest();
             publishProgress(listener, ProgressEventType.HTTP_REQUEST_STARTED_EVENT);
-            awsRequestMetrics.startEvent(AWSRequestMetrics.Field.HttpRequestTime);
-            awsRequestMetrics.setCounter(AWSRequestMetrics.Field.RetryCapacityConsumed, retryCapacity.consumedCapacity());
+            awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpRequestTime);
+            awsRequestMetrics.setCounter(AwsRequestMetrics.Field.RetryCapacityConsumed, retryCapacity.consumedCapacity());
 
             /////////// Send HTTP request ////////////
             executionContext.getClientExecutionTrackerTask().setCurrentHttpRequest(execOneParams.apacheRequest);
@@ -1191,51 +1183,51 @@ public class AmazonHttpClient {
                 }
             } finally {
                 requestAbortTaskTracker.cancelTask();
-                awsRequestMetrics.endEvent(AWSRequestMetrics.Field.HttpRequestTime);
+                awsRequestMetrics.endEvent(AwsRequestMetrics.Field.HttpRequestTime);
             }
 
             publishProgress(listener, ProgressEventType.HTTP_REQUEST_COMPLETED_EVENT);
             final StatusLine statusLine = execOneParams.apacheResponse.getStatusLine();
             final int statusCode = statusLine == null ? -1 : statusLine.getStatusCode();
             if (isRequestSuccessful(execOneParams.apacheResponse)) {
-                awsRequestMetrics.addProperty(AWSRequestMetrics.Field.StatusCode, statusCode);
-            /*
-             * If we get back any 2xx status code, then we know we should treat the service call as
-             * successful.
-             */
+                awsRequestMetrics.addProperty(AwsRequestMetrics.Field.StatusCode, statusCode);
+                /*
+                 * If we get back any 2xx status code, then we know we should treat the service call as
+                 * successful.
+                 */
                 execOneParams.leaveHttpConnectionOpen = responseHandler.needsConnectionLeftOpen();
                 HttpResponse httpResponse = createResponse(execOneParams.apacheRequest,
                                                            execOneParams.apacheResponse,
                                                            localRequestContext);
-                Output response = handleResponse(httpResponse);
+                OutputT response = handleResponse(httpResponse);
 
-            /*
-             * If this was a successful retry attempt we'll release the full retry capacity that
-             * the attempt originally consumed.  If this was a successful initial request
-             * we return a lesser amount.
-             */
+                /*
+                 * If this was a successful retry attempt we'll release the full retry capacity that
+                 * the attempt originally consumed.  If this was a successful initial request
+                 * we return a lesser amount.
+                 */
                 if (execOneParams.isRetry() && executionContext.retryCapacityConsumed()) {
                     retryCapacity.release(THROTTLED_RETRY_COST);
                 } else {
                     retryCapacity.release();
                 }
-                return new Response<Output>(response, httpResponse);
+                return new Response<OutputT>(response, httpResponse);
             }
             if (isTemporaryRedirect(execOneParams.apacheResponse)) {
-            /*
-             * S3 sends 307 Temporary Redirects if you try to delete an EU bucket from the US
-             * endpoint. If we get a 307, we'll point the HTTP method to the redirected location,
-             * and let the next retry deliver the request to the right location.
-             */
+                /*
+                 * S3 sends 307 Temporary Redirects if you try to delete an EU bucket from the US
+                 * endpoint. If we get a 307, we'll point the HTTP method to the redirected location,
+                 * and let the next retry deliver the request to the right location.
+                 */
                 Header[] locationHeaders = execOneParams.apacheResponse.getHeaders("location");
                 String redirectedLocation = locationHeaders[0].getValue();
-                if (log.isDebugEnabled()) {
-                    log.debug("Redirecting to: " + redirectedLocation);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Redirecting to: " + redirectedLocation);
                 }
-                execOneParams.redirectedURI = URI.create(redirectedLocation);
-                awsRequestMetrics.addPropertyWith(AWSRequestMetrics.Field.StatusCode, statusCode)
-                                 .addPropertyWith(AWSRequestMetrics.Field.RedirectLocation, redirectedLocation)
-                                 .addPropertyWith(AWSRequestMetrics.Field.AWSRequestID, null);
+                execOneParams.redirectedUri = URI.create(redirectedLocation);
+                awsRequestMetrics.addPropertyWith(AwsRequestMetrics.Field.StatusCode, statusCode)
+                                 .addPropertyWith(AwsRequestMetrics.Field.RedirectLocation, redirectedLocation)
+                                 .addPropertyWith(AwsRequestMetrics.Field.AWSRequestID, null);
                 return null; // => retry
             }
             execOneParams.leaveHttpConnectionOpen = errorResponseHandler.needsConnectionLeftOpen();
@@ -1259,15 +1251,15 @@ public class AmazonHttpClient {
             // Preserve the cause of retry before retrying
             // awsRequestMetrics.addProperty(RetryCause, ase);
             if (RetryUtils.isThrottlingException(exception)) {
-                awsRequestMetrics.incrementCounterWith(AWSRequestMetrics.Field.ThrottleException)
-                                 .addProperty(AWSRequestMetrics.Field.ThrottleException, exception);
+                awsRequestMetrics.incrementCounterWith(AwsRequestMetrics.Field.ThrottleException)
+                                 .addProperty(AwsRequestMetrics.Field.ThrottleException, exception);
             }
             // Cache the retryable exception
             execOneParams.retriedException = exception;
-        /*
-         * Checking for clock skew error again because we don't want to set the global time offset
-         * for every service exception.
-         */
+            /*
+             * Checking for clock skew error again because we don't want to set the global time offset
+             * for every service exception.
+             */
             if (RetryUtils.isClockSkewError(exception)) {
                 int clockSkew = parseClockSkewOffset(execOneParams.apacheResponse, exception);
                 SDKGlobalTime.setGlobalTimeOffset(timeOffset = clockSkew);
@@ -1297,7 +1289,7 @@ public class AmazonHttpClient {
         }
 
         /**
-         * @return True if the {@link HttpEntity} should be wrapped in a {@link BufferedHttpEntity}
+         * @return True if the {@link HttpEntity} should be wrapped in a {@link BufferedHttpEntity}.
          */
         private boolean shouldBufferHttpEntity(final boolean needsConnectionLeftOpen,
                                                final ExecutionContext execContext,
@@ -1320,10 +1312,10 @@ public class AmazonHttpClient {
                         .getHttpClientConnectionManager();
 
                 awsRequestMetrics
-                        .withCounter(AWSRequestMetrics.Field.HttpClientPoolAvailableCount,
+                        .withCounter(AwsRequestMetrics.Field.HttpClientPoolAvailableCount,
                                      control.getTotalStats().getAvailable())
-                        .withCounter(AWSRequestMetrics.Field.HttpClientPoolLeasedCount, control.getTotalStats().getLeased())
-                        .withCounter(AWSRequestMetrics.Field.HttpClientPoolPendingCount,
+                        .withCounter(AwsRequestMetrics.Field.HttpClientPoolLeasedCount, control.getTotalStats().getLeased())
+                        .withCounter(AwsRequestMetrics.Field.HttpClientPoolPendingCount,
                                      control.getTotalStats().getPending());
             }
 
@@ -1333,13 +1325,13 @@ public class AmazonHttpClient {
          * Capture the metrics for the given throwable.
          */
         private <T extends Throwable> T captureExceptionMetrics(T t) {
-            awsRequestMetrics.incrementCounterWith(AWSRequestMetrics.Field.Exception)
-                             .addProperty(AWSRequestMetrics.Field.Exception, t);
+            awsRequestMetrics.incrementCounterWith(AwsRequestMetrics.Field.Exception)
+                             .addProperty(AwsRequestMetrics.Field.Exception, t);
             if (t instanceof AmazonServiceException) {
                 AmazonServiceException ase = (AmazonServiceException) t;
                 if (RetryUtils.isThrottlingException(ase)) {
-                    awsRequestMetrics.incrementCounterWith(AWSRequestMetrics.Field.ThrottleException)
-                                     .addProperty(AWSRequestMetrics.Field.ThrottleException, ase);
+                    awsRequestMetrics.incrementCounterWith(AwsRequestMetrics.Field.ThrottleException)
+                                     .addProperty(AwsRequestMetrics.Field.ThrottleException, ase);
                 }
             }
             return t;
@@ -1402,8 +1394,8 @@ public class AmazonHttpClient {
             if (method instanceof HttpEntityEnclosingRequest) {
                 HttpEntity entity = ((HttpEntityEnclosingRequest) method).getEntity();
                 if (entity != null && !entity.isRepeatable()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Entity not repeatable");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Entity not repeatable");
                     }
                     return false;
                 }
@@ -1414,7 +1406,7 @@ public class AmazonHttpClient {
                 // See if we have enough available retry capacity to be able to execute
                 // this retry attempt.
                 if (!retryCapacity.acquire(THROTTLED_RETRY_COST)) {
-                    awsRequestMetrics.incrementCounter(AWSRequestMetrics.Field.ThrottledRetryCount);
+                    awsRequestMetrics.incrementCounter(AwsRequestMetrics.Field.ThrottledRetryCount);
                     return false;
                 }
                 executionContext.markRetryCapacityConsumed();
@@ -1454,13 +1446,13 @@ public class AmazonHttpClient {
          *                     the HTTP method object.
          */
         @SuppressWarnings("deprecation")
-        private Output handleResponse(HttpResponse httpResponse) throws IOException,
-                                                                        InterruptedException {
+        private OutputT handleResponse(HttpResponse httpResponse) throws IOException,
+                                                                         InterruptedException {
             ProgressListener listener = requestConfig.getProgressListener();
             try {
-            /*
-             * Apply the byte counting stream wrapper if the legacy runtime profiling is enabled.
-             */
+                /*
+                 * Apply the byte counting stream wrapper if the legacy runtime profiling is enabled.
+                 */
                 CountingInputStream countingInputStream = null;
                 InputStream is = httpResponse.getContent();
                 if (is != null) {
@@ -1477,33 +1469,27 @@ public class AmazonHttpClient {
                         long contentLength = Long.parseLong(s);
                         publishResponseContentLength(listener, contentLength);
                     } catch (NumberFormatException e) {
-                        log.warn("Cannot parse the Content-Length header of the response.");
+                        LOG.warn("Cannot parse the Content-Length header of the response.");
                     }
                 }
 
-                Output awsResponse;
-                awsRequestMetrics.startEvent(AWSRequestMetrics.Field.ResponseProcessingTime);
+                OutputT awsResponse;
+                awsRequestMetrics.startEvent(AwsRequestMetrics.Field.ResponseProcessingTime);
                 publishProgress(listener, ProgressEventType.HTTP_RESPONSE_STARTED_EVENT);
                 try {
                     awsResponse = responseHandler
                             .handle(beforeUnmarshalling(httpResponse));
                 } finally {
-                    awsRequestMetrics.endEvent(AWSRequestMetrics.Field.ResponseProcessingTime);
+                    awsRequestMetrics.endEvent(AwsRequestMetrics.Field.ResponseProcessingTime);
                 }
                 publishProgress(listener, ProgressEventType.HTTP_RESPONSE_COMPLETED_EVENT);
 
                 if (countingInputStream != null) {
                     awsRequestMetrics
-                            .setCounter(AWSRequestMetrics.Field.BytesProcessed, countingInputStream.getByteCount());
+                            .setCounter(AwsRequestMetrics.Field.BytesProcessed, countingInputStream.getByteCount());
                 }
                 return awsResponse;
-            } catch (CRC32MismatchException e) {
-                throw e;
-            } catch (IOException e) {
-                throw e;
-            } catch (AmazonClientException e) {
-                throw e; // simply rethrow rather than further wrapping it
-            } catch (InterruptedException e) {
+            } catch (IOException | InterruptedException e) {
                 throw e;
             } catch (Exception e) {
                 String errorMessage =
@@ -1519,7 +1505,7 @@ public class AmazonHttpClient {
          *
          * @param origHttpResponse Original {@link HttpResponse}
          * @return {@link HttpResponse} object to pass to unmarshaller. May have been modified or
-         * replaced by the request handlers
+         *     replaced by the request handlers
          */
         private HttpResponse beforeUnmarshalling(HttpResponse origHttpResponse) {
             HttpResponse toReturn = origHttpResponse;
@@ -1554,8 +1540,8 @@ public class AmazonHttpClient {
             SdkBaseException exception;
             try {
                 exception = errorResponseHandler.handle(response);
-                if (requestLog.isDebugEnabled()) {
-                    requestLog.debug("Received error response: " + exception);
+                if (REQUEST_LOG.isDebugEnabled()) {
+                    REQUEST_LOG.debug("Received error response: " + exception);
                 }
             } catch (InterruptedException e) {
                 throw e;
@@ -1582,7 +1568,7 @@ public class AmazonHttpClient {
          * @param method  The HTTP method that was invoked to get the response.
          * @param context The HTTP context associated with the request and response.
          * @return The new, initialized HttpResponse object ready to be passed to an HTTP response
-         * handler object.
+         *     handler object.
          * @throws IOException If there were any problems getting any response information from the
          *                     HttpClient method object.
          */
@@ -1611,11 +1597,11 @@ public class AmazonHttpClient {
                                       final ProgressListener listener) throws InterruptedException {
             publishProgress(listener, ProgressEventType.CLIENT_REQUEST_RETRY_EVENT);
             // Notify the progress listener of the retry
-            awsRequestMetrics.startEvent(AWSRequestMetrics.Field.RetryPauseTime);
+            awsRequestMetrics.startEvent(AwsRequestMetrics.Field.RetryPauseTime);
             try {
                 doPauseBeforeRetry(execOneParams);
             } finally {
-                awsRequestMetrics.endEvent(AWSRequestMetrics.Field.RetryPauseTime);
+                awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RetryPauseTime);
             }
         }
 
@@ -1635,8 +1621,8 @@ public class AmazonHttpClient {
                 long delay = retryPolicy.computeDelayBeforeNextRetry(context);
                 execOneParams.lastBackoffDelay = delay;
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Retriable error detected, " + "will retry in " + delay +
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Retriable error detected, " + "will retry in " + delay +
                               "ms, attempt number: " + retriesAttempted);
                 }
                 Thread.sleep(delay);
@@ -1682,16 +1668,16 @@ public class AmazonHttpClient {
                     final String errmsg = exception.getMessage();
                     serverDateStr = getServerDateFromException(errmsg);
                     if (serverDateStr == null) {
-                        log.warn("Unable to parse clock skew offset from errmsg: " + errmsg);
+                        LOG.warn("Unable to parse clock skew offset from errmsg: " + errmsg);
                         return 0;
                     }
-                    serverDate = DateUtils.parseCompressedISO8601Date(serverDateStr);
+                    serverDate = DateUtils.parseCompressedIso8601Date(serverDateStr);
                 } else {
                     serverDateStr = responseDateHeader[0].getValue();
-                    serverDate = DateUtils.parseRFC822Date(serverDateStr);
+                    serverDate = DateUtils.parseRfc822Date(serverDateStr);
                 }
             } catch (RuntimeException e) {
-                log.warn("Unable to parse clock skew offset from response: " + serverDateStr, e);
+                LOG.warn("Unable to parse clock skew offset from response: " + serverDateStr, e);
                 return 0;
             }
 
@@ -1701,7 +1687,7 @@ public class AmazonHttpClient {
 
         /**
          * Gets the correct request timeout taking into account precedence of the configuration in
-         * {@link AmazonWebServiceRequest} versus {@link ClientConfiguration}
+         * {@link AmazonWebServiceRequest} versus {@link ClientConfiguration}.
          *
          * @param requestConfig Current request configuration
          * @return Request timeout value or 0 if none is set
@@ -1716,7 +1702,7 @@ public class AmazonHttpClient {
 
         /**
          * Gets the correct client execution timeout taking into account precedence of the
-         * configuration in {@link AmazonWebServiceRequest} versus {@link ClientConfiguration}
+         * configuration in {@link AmazonWebServiceRequest} versus {@link ClientConfiguration}.
          *
          * @param requestConfig Current request configuration
          * @return Client Execution timeout value or 0 if none is set
@@ -1735,13 +1721,13 @@ public class AmazonHttpClient {
         private class ExecOneRequestParams {
             int requestCount; // monotonic increasing
             /**
-             * Last delay between retries
+             * Last delay between retries.
              */
             long lastBackoffDelay = 0;
             SdkBaseException retriedException; // last retryable exception
             HttpRequestBase apacheRequest;
             org.apache.http.HttpResponse apacheResponse;
-            URI redirectedURI;
+            URI redirectedUri;
             AuthRetryParameters authRetryParam;
             /*
              * Depending on which response handler we end up choosing to handle the HTTP response, it
@@ -1751,10 +1737,10 @@ public class AmazonHttpClient {
              */
             boolean leaveHttpConnectionOpen;
             private Signer signer; // cached
-            private URI signerURI;
+            private URI signerUri;
 
             boolean isRetry() {
-                return requestCount > 1 || redirectedURI != null || authRetryParam != null;
+                return requestCount > 1 || redirectedUri != null || authRetryParam != null;
             }
 
             void initPerRetry() {
@@ -1770,25 +1756,25 @@ public class AmazonHttpClient {
                         .withRequest(request)
                         .withRequestConfig(requestConfig);
                 if (authRetryParam != null) {
-                    signerURI = authRetryParam.getEndpointForRetry();
+                    signerUri = authRetryParam.getEndpointForRetry();
                     signer = authRetryParam.getSignerForRetry();
                     // Push the local signer override back to the execution context
                     execContext.setSigner(signer);
-                } else if (redirectedURI != null && !redirectedURI.equals(signerURI)) {
-                    signerURI = redirectedURI;
+                } else if (redirectedUri != null && !redirectedUri.equals(signerUri)) {
+                    signerUri = redirectedUri;
                     signer = execContext.getSigner(signerProviderContext
-                                                           .withUri(signerURI)
+                                                           .withUri(signerUri)
                                                            .withIsRedirect(true)
                                                            .build());
                 } else if (signer == null) {
-                    signerURI = request.getEndpoint();
+                    signerUri = request.getEndpoint();
                     signer = execContext
-                            .getSigner(signerProviderContext.withUri(signerURI).build());
+                            .getSigner(signerProviderContext.withUri(signerUri).build());
                 }
             }
 
             /**
-             * @throws FakeIOException thrown only during test simulation
+             * @throws FakeIOException thrown only during test simulation.
              */
             HttpRequestBase newApacheRequest(
                     final HttpRequestFactory<HttpRequestBase> httpRequestFactory,
@@ -1796,8 +1782,8 @@ public class AmazonHttpClient {
                     final HttpClientSettings options) throws IOException {
 
                 apacheRequest = httpRequestFactory.create(request, options);
-                if (redirectedURI != null) {
-                    apacheRequest.setURI(redirectedURI);
+                if (redirectedUri != null) {
+                    apacheRequest.setURI(redirectedUri);
                 }
                 return apacheRequest;
             }
@@ -1805,7 +1791,7 @@ public class AmazonHttpClient {
             void resetBeforeHttpRequest() {
                 retriedException = null;
                 authRetryParam = null;
-                redirectedURI = null;
+                redirectedUri = null;
             }
 
             private Integer getStatusCode() {

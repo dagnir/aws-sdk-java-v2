@@ -35,18 +35,21 @@ import software.amazon.awssdk.services.s3.transfer.TransferProgress;
  * Abstract transfer implementation.
  */
 public abstract class AbstractTransfer implements Transfer {
-
     /** Hook for adding/removing more progress listeners. */
     protected final ProgressListenerChain listenerChain;
-    /** Collection of listeners to be notified for changes to the state of this transfer via setState() */
+
+    /** Collection of listeners to be notified for changes to the state of this transfer via setState(). */
     protected final Collection<TransferStateChangeListener> stateChangeListeners = new LinkedList<TransferStateChangeListener>();
+
+    /** The current state of this transfer. */
+    protected volatile TransferState state = TransferState.Waiting;
+
+    protected TransferMonitor monitor;
+
     /** The progress of this transfer. */
     private final TransferProgress transferProgress;
 
     private final String description;
-    /** The current state of this transfer. */
-    protected volatile TransferState state = TransferState.Waiting;
-    protected TransferMonitor monitor;
 
     AbstractTransfer(String description, TransferProgress transferProgress, ProgressListenerChain progressListenerChain) {
         this(description, transferProgress, progressListenerChain, null);
@@ -183,6 +186,14 @@ public abstract class AbstractTransfer implements Transfer {
     }
 
     /**
+     * @deprecated Replaced by {@link #addProgressListener(ProgressListener)}.
+     */
+    @Deprecated
+    public synchronized void addProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener listener) {
+        listenerChain.addProgressListener(new LegacyS3ProgressListener(listener));
+    }
+
+    /**
      * Removes the specified progress listener from the list of progress
      * listeners receiving updates about this transfer's progress.
      *
@@ -194,15 +205,7 @@ public abstract class AbstractTransfer implements Transfer {
     }
 
     /**
-     * @deprecated Replaced by {@link #addProgressListener(ProgressListener)}
-     */
-    @Deprecated
-    public synchronized void addProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener listener) {
-        listenerChain.addProgressListener(new LegacyS3ProgressListener(listener));
-    }
-
-    /**
-     * @deprecated Replaced by {@link #removeProgressListener(ProgressListener)}
+     * @deprecated Replaced by {@link #removeProgressListener(ProgressListener)}.
      */
     @Deprecated
     public synchronized void removeProgressListener(software.amazon.awssdk.services.s3.model.ProgressListener listener) {

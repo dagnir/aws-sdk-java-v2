@@ -38,8 +38,7 @@ public class LegacyRegionXmlLoadUtils {
      * @param config configuration for the HTTP client to use to fetch the file
      * @throws IOException any error while reading data.
      */
-    public static RegionMetadata load
-    (final URI uri, final ClientConfiguration config) throws
+    public static RegionMetadata load(final URI uri, final ClientConfiguration config) throws
                                                       IOException {
 
         return RegionMetadataParser.parse(
@@ -52,8 +51,7 @@ public class LegacyRegionXmlLoadUtils {
      * @param file the region metadata to load from
      * @throws IOException any error while reading from file.
      */
-    public static RegionMetadata load
-    (final File file) throws IOException {
+    public static RegionMetadata load(final File file) throws IOException {
         return RegionMetadataParser.parse(new BufferedInputStream(new
                                                                           FileInputStream(file)));
     }
@@ -66,8 +64,7 @@ public class LegacyRegionXmlLoadUtils {
      * @return the loaded region metadata
      * @throws IOException on error reading from the stream
      */
-    public static RegionMetadata load
-    (final InputStream stream) throws IOException {
+    public static RegionMetadata load(final InputStream stream) throws IOException {
 
         return RegionMetadataParser.parse(stream);
     }

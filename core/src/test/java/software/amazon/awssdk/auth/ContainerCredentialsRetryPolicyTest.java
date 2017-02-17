@@ -45,14 +45,18 @@ public class ContainerCredentialsRetryPolicyTest {
     }
 
     @Test
-    public void shouldRetry_ReturnsTrue_ForIOException() {
-        assertTrue(retryPolicy.shouldRetry(1, CredentialsEndpointRetryParameters.builder().withException(new IOException()).build()));
+    public void shouldRetry_ReturnsTrue_ForIoException() {
+        assertTrue(retryPolicy.shouldRetry(1, CredentialsEndpointRetryParameters.builder()
+                                                                                .withException(new IOException()).build()));
+
     }
 
     @Test
-    public void shouldRetry_ReturnsFalse_ForNonIOException() {
-        assertFalse(retryPolicy.shouldRetry(1, CredentialsEndpointRetryParameters.builder().withException(new RuntimeException()).build()));
-        assertFalse(retryPolicy.shouldRetry(1, CredentialsEndpointRetryParameters.builder().withException(new Exception()).build()));
+    public void shouldRetry_ReturnsFalse_ForNonIoException() {
+        assertFalse(retryPolicy.shouldRetry(1, CredentialsEndpointRetryParameters.builder()
+                                                                                 .withException(new RuntimeException()).build()));
+        assertFalse(retryPolicy.shouldRetry(1, CredentialsEndpointRetryParameters.builder()
+                                                                                 .withException(new Exception()).build()));
     }
 
     @Test

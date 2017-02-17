@@ -57,7 +57,7 @@ import java.lang.annotation.Target;
 @DynamoDBTypeConverted(converter = DynamoDBTypeConvertedJson.Converter.class)
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBTypeConvertedJson {
 
     /**

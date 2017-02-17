@@ -36,7 +36,7 @@ public abstract class Condition extends UnitOfExpression {
      * @param that given condition.
      */
     public AndCondition and(Condition that) {
-        return new AndCondition(this, that.atomic() ? that : ExpressionSpecBuilder._(that));
+        return new AndCondition(this, that.atomic() ? that : ExpressionSpecBuilder.paren(that));
     }
 
     /**
@@ -46,7 +46,7 @@ public abstract class Condition extends UnitOfExpression {
      * @param that given condition.
      */
     public OrCondition or(Condition that) {
-        return new OrCondition(this, that.atomic() ? that : ExpressionSpecBuilder._(that));
+        return new OrCondition(this, that.atomic() ? that : ExpressionSpecBuilder.paren(that));
     }
 
     /**

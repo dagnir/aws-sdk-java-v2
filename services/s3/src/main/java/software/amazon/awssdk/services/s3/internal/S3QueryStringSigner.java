@@ -18,12 +18,12 @@ package software.amazon.awssdk.services.s3.internal;
 import java.util.Date;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSSessionCredentials;
-import software.amazon.awssdk.auth.AbstractAWSSigner;
+import software.amazon.awssdk.auth.AbstractAwsSigner;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
 import software.amazon.awssdk.auth.SigningAlgorithm;
 
-public class S3QueryStringSigner extends AbstractAWSSigner {
+public class S3QueryStringSigner extends AbstractAwsSigner {
 
     /**
      * The HTTP verb (GET, PUT, HEAD, DELETE) the request to sign
@@ -41,7 +41,7 @@ public class S3QueryStringSigner extends AbstractAWSSigner {
 
     /**
      * The canonical resource path portion of the S3 string to sign.
-     * Examples: "/", "/<bucket name>/", or "/<bucket name>/<key>"
+     * Examples: "/", "/&lt;bucket name&gt;/", or "/&lt;bucket name&gt;/&lt;key&gt;"
      *
      * TODO: We don't want to hold the resource path as member data in the S3
      *       signer, but we need access to it and can't get it through the
@@ -61,11 +61,11 @@ public class S3QueryStringSigner extends AbstractAWSSigner {
         }
     }
 
-    public void sign(SignableRequest<?> request, AWSCredentials credentials) throws SdkClientException {
-        AWSCredentials sanitizedCredentials = sanitizeCredentials(credentials);
+    public void sign(SignableRequest<?> request, AwsCredentials credentials) throws SdkClientException {
+        AwsCredentials sanitizedCredentials = sanitizeCredentials(credentials);
 
-        if (sanitizedCredentials instanceof AWSSessionCredentials) {
-            addSessionCredentials(request, (AWSSessionCredentials) sanitizedCredentials);
+        if (sanitizedCredentials instanceof AwsSessionCredentials) {
+            addSessionCredentials(request, (AwsSessionCredentials) sanitizedCredentials);
         }
 
         String expirationInSeconds = Long.toString(expiration.getTime() / 1000L);
@@ -73,15 +73,15 @@ public class S3QueryStringSigner extends AbstractAWSSigner {
         String canonicalString = RestUtils.makeS3CanonicalString(
                 httpVerb, resourcePath, request, expirationInSeconds);
 
-        String signature = super.signAndBase64Encode(canonicalString, sanitizedCredentials.getAWSSecretKey(), SigningAlgorithm.HmacSHA1);
+        String signature = super.signAndBase64Encode(canonicalString, sanitizedCredentials.getAwsSecretKey(), SigningAlgorithm.HmacSHA1);
 
-        request.addParameter("AWSAccessKeyId", sanitizedCredentials.getAWSAccessKeyId());
+        request.addParameter("AWSAccessKeyId", sanitizedCredentials.getAwsAccessKeyId());
         request.addParameter("Expires", expirationInSeconds);
         request.addParameter("Signature", signature);
     }
 
     @Override
-    protected void addSessionCredentials(SignableRequest<?> request, AWSSessionCredentials credentials) {
+    protected void addSessionCredentials(SignableRequest<?> request, AwsSessionCredentials credentials) {
         request.addParameter("x-amz-security-token", credentials.getSessionToken());
     }
 }

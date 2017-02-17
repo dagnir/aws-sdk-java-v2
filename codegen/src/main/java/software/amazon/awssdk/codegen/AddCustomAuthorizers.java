@@ -32,7 +32,9 @@ public class AddCustomAuthorizers {
 
     public Map<String, AuthorizerModel> constructAuthorizers() {
         return service.getAuthorizers().values().stream()
-                      .map(a -> new AuthorizerModel(a.getName(), namingStrategy.getAuthorizerClassName(a.getName()), a.getTokenLocation(), a.getTokenName()))
+                      .map(a -> new AuthorizerModel(a.getName(),
+                                                    namingStrategy.getAuthorizerClassName(a.getName()), a.getTokenLocation(),
+                                                    a.getTokenName()))
                       .collect(Collectors.toMap(AuthorizerModel::getName, a -> a));
     }
 }

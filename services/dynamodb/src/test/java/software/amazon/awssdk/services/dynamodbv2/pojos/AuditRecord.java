@@ -22,11 +22,9 @@ import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAutoGener
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBFlattened;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
 
-@DynamoDBFlattened(attributes = {
-        @DynamoDBAttribute(mappedBy = "createdDate", attributeName = "RCD"),
-        @DynamoDBAttribute(mappedBy = "lastModifiedDate", attributeName = "RMD"),
-        @DynamoDBAttribute(mappedBy = "versionNumber", attributeName = "RVN")
-})
+@DynamoDBFlattened(attributes = {@DynamoDBAttribute(mappedBy = "createdDate", attributeName = "RCD"),
+                                 @DynamoDBAttribute(mappedBy = "lastModifiedDate", attributeName = "RMD"),
+                                 @DynamoDBAttribute(mappedBy = "versionNumber", attributeName = "RVN")})
 public class AuditRecord {
 
     private Date createdDate;

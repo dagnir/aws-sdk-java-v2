@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 @Deprecated
 @DynamoDB
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBScalarAttribute {
 
     /**

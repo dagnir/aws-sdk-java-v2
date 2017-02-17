@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.AllProfiles;
 import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
 import software.amazon.awssdk.auth.profile.internal.BasicProfile;
@@ -88,7 +88,7 @@ public class ProfilesConfigFile {
      * difference for basic credentials but for assume role it's more efficient as each assume role
      * provider has it's own async refresh logic.
      */
-    private final ConcurrentHashMap<String, AWSCredentialsProvider> credentialProviderCache = new ConcurrentHashMap<String, AWSCredentialsProvider>();
+    private final ConcurrentHashMap<String, AwsCredentialsProvider> credentialProviderCache = new ConcurrentHashMap<String, AwsCredentialsProvider>();
     private volatile AllProfiles allProfiles;
     private volatile long profileFileLastModified;
 
@@ -156,8 +156,8 @@ public class ProfilesConfigFile {
     /**
      * Returns the AWS credentials for the specified profile.
      */
-    public AWSCredentials getCredentials(String profileName) {
-        final AWSCredentialsProvider provider = credentialProviderCache.get(profileName);
+    public AwsCredentials getCredentials(String profileName) {
+        final AwsCredentialsProvider provider = credentialProviderCache.get(profileName);
         if (provider != null) {
             return provider.getCredentials();
         } else {
@@ -165,7 +165,7 @@ public class ProfilesConfigFile {
             if (profile == null) {
                 throw new IllegalArgumentException("No AWS profile named '" + profileName + "'");
             }
-            final AWSCredentialsProvider newProvider = fromProfile(profile);
+            final AwsCredentialsProvider newProvider = fromProfile(profile);
             credentialProviderCache.put(profileName, newProvider);
             return newProvider.getCredentials();
         }
@@ -193,13 +193,13 @@ public class ProfilesConfigFile {
             final String profileName = entry.getKey();
             legacyProfiles.put(profileName,
                                new Profile(profileName, entry.getValue().getProperties(),
-                                           new AWSStaticCredentialsProvider(
+                                           new AwsStaticCredentialsProvider(
                                                    getCredentials(profileName))));
         }
         return legacyProfiles;
     }
 
-    private AWSCredentialsProvider fromProfile(BasicProfile profile) {
+    private AwsCredentialsProvider fromProfile(BasicProfile profile) {
         if (profile.isRoleBasedProfile()) {
             return new ProfileAssumeRoleCredentialsProvider(profileCredentialsService, allProfiles,
                                                             profile);

@@ -128,7 +128,7 @@ public class ClientConfiguration {
     private int maxErrorRetry = -1;
     /** The retry policy upon failed requests. **/
     private RetryPolicy retryPolicy = DEFAULT_RETRY_POLICY;
-    /** Optionally specifies the local address to bind to */
+    /** Optionally specifies the local address to bind to. */
     private InetAddress localAddress;
     /**
      * The protocol to use when connecting to Amazon Web Services.
@@ -209,7 +209,7 @@ public class ClientConfiguration {
      * retrieved from the connection pool, this parameter is checked to see if the connection can be
      * reused.
      */
-    private long connectionTTL = DEFAULT_CONNECTION_TTL;
+    private long connectionTtl = DEFAULT_CONNECTION_TTL;
     /**
      * The maximum idle time for a connection in the connection pool.
      */
@@ -302,7 +302,7 @@ public class ClientConfiguration {
         this.useExpectContinue = other.useExpectContinue;
         this.apacheHttpClientConfig = new ApacheHttpClientConfig(other.apacheHttpClientConfig);
         this.cacheResponseMetadata = other.cacheResponseMetadata;
-        this.connectionTTL = other.connectionTTL;
+        this.connectionTtl = other.connectionTtl;
         this.connectionMaxIdleMillis = other.connectionMaxIdleMillis;
         this.tcpKeepAlive = other.tcpKeepAlive;
         this.secureRandom = other.secureRandom;
@@ -1566,28 +1566,8 @@ public class ClientConfiguration {
      *
      * @return the connection TTL, in milliseconds
      */
-    public long getConnectionTTL() {
-        return connectionTTL;
-    }
-
-    /**
-     * Sets the expiration time (in milliseconds) for a connection in the connection pool. When
-     * retrieving a connection from the pool to make a request, the total time that the connection
-     * has been open is compared against this value. Connections which have been open for longer are
-     * discarded, and if needed a new connection is created.
-     * <p>
-     * Tuning this setting down (together with an appropriately-low setting for Java's DNS cache
-     * TTL) ensures that your application will quickly rotate over to new IP addresses when the
-     * service begins announcing them through DNS, at the cost of having to re-establish new
-     * connections more frequently.
-     * <p>
-     * By default, it is set to {@code -1], i.e. connections do not expire.
-     *
-     * @param connectionTTL
-     *            the connection TTL, in milliseconds
-     */
-    public void setConnectionTTL(long connectionTTL) {
-        this.connectionTTL = connectionTTL;
+    public long getConnectionTtl() {
+        return connectionTtl;
     }
 
     /**
@@ -1603,12 +1583,31 @@ public class ClientConfiguration {
      * <p>
      * By default, it is set to {@code -1}, i.e. connections do not expire.
      *
-     * @param connectionTTL
+     * @param connectionTtl the connection TTL, in milliseconds
+     */
+    public void setConnectionTtl(long connectionTtl) {
+        this.connectionTtl = connectionTtl;
+    }
+
+    /**
+     * Sets the expiration time (in milliseconds) for a connection in the connection pool. When
+     * retrieving a connection from the pool to make a request, the total time that the connection
+     * has been open is compared against this value. Connections which have been open for longer are
+     * discarded, and if needed a new connection is created.
+     * <p>
+     * Tuning this setting down (together with an appropriately-low setting for Java's DNS cache
+     * TTL) ensures that your application will quickly rotate over to new IP addresses when the
+     * service begins announcing them through DNS, at the cost of having to re-establish new
+     * connections more frequently.
+     * <p>
+     * By default, it is set to {@code -1}, i.e. connections do not expire.
+     *
+     * @param connectionTtl
      *            the connection TTL, in milliseconds
      * @return the updated ClientConfiguration object
      */
-    public ClientConfiguration withConnectionTTL(long connectionTTL) {
-        setConnectionTTL(connectionTTL);
+    public ClientConfiguration withConnectionTtl(long connectionTtl) {
+        setConnectionTtl(connectionTtl);
         return this;
     }
 

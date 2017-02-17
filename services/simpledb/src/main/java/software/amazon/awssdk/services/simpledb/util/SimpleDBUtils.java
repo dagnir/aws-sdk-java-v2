@@ -288,7 +288,7 @@ public class SimpleDBUtils {
      */
     public static String encodeDate(Date date) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat);
-        /* Java doesn't handle ISO8601 nicely: need to add ':' manually */
+        /* Java doesn't handle ISO8601 nicely: need to add ':' manually. */
         String result = dateFormatter.format(date);
         return result.substring(0, result.length() - 2) + ":" + result.substring(result.length() - 2);
     }

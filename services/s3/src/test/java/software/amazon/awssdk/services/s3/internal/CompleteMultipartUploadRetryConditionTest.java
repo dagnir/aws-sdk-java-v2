@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 public class CompleteMultipartUploadRetryConditionTest {
 
     @Test
-    public void NotAnAmazonS3Exception_ReturnsFalse() {
+    public void notAnAmazonS3Exception_ReturnsFalse() {
         CompleteMultipartUploadRetryCondition retryCondition = new
                 CompleteMultipartUploadRetryCondition();
         Assert.assertFalse(retryCondition.shouldRetry(null,
@@ -35,59 +35,52 @@ public class CompleteMultipartUploadRetryConditionTest {
     }
 
     @Test
-    public void AlwaysFalsePredicate_ReturnsFalse() {
-        CompleteMultipartUploadRetryCondition retryCondition = new
-                CompleteMultipartUploadRetryCondition(new
-                                                              SdkPredicate<AmazonS3Exception>() {
-                                                                  @Override
-                                                                  public boolean test(AmazonS3Exception e) {
-                                                                      return false;
-                                                                  }
-                                                              }, 0);
+    public void alwaysFalsePredicate_ReturnsFalse() {
+        SdkPredicate<AmazonS3Exception> predicate = new SdkPredicate<AmazonS3Exception>() {
+            @Override
+            public boolean test(AmazonS3Exception e) {
+                return false;
+            }
+        };
+        CompleteMultipartUploadRetryCondition retryCondition = new CompleteMultipartUploadRetryCondition(predicate, 0);
         Assert.assertFalse(retryCondition.shouldRetry(null,
                                                       new AmazonS3Exception("null"), 0));
 
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void NullPredicate_throwsException() {
+    public void nullPredicate_throwsException() {
         new CompleteMultipartUploadRetryCondition(null, 0);
     }
 
     @Test
-    public void RetryAttemptsExhausted_ReturnsFalse() {
-        AmazonS3Exception s3Exception = new AmazonS3Exception("Please try " +
-                                                              "again");
+    public void retryAttemptsExhausted_ReturnsFalse() {
+        AmazonS3Exception s3Exception = new AmazonS3Exception("Please try again");
         s3Exception.setErrorCode("InternalError");
 
-        CompleteMultipartUploadRetryCondition retryCondition = new
-                CompleteMultipartUploadRetryCondition();
+        CompleteMultipartUploadRetryCondition retryCondition = new CompleteMultipartUploadRetryCondition();
         Assert.assertFalse(retryCondition.shouldRetry(null,
                                                       s3Exception, 4));
     }
 
     @Test
-    public void MaxRetryAttemptsSetToZero_ReturnsFalse() {
-        AmazonS3Exception s3Exception = new AmazonS3Exception("Please try " +
-                                                              "again");
+    public void maxRetryAttemptsSetToZero_ReturnsFalse() {
+        AmazonS3Exception s3Exception = new AmazonS3Exception("Please try again");
         s3Exception.setErrorCode("InternalError");
 
-        CompleteMultipartUploadRetryCondition retryCondition = new
-                CompleteMultipartUploadRetryCondition(new
-                                                              CompleteMultipartUploadRetryablePredicate(), 0);
+        CompleteMultipartUploadRetryCondition retryCondition = new CompleteMultipartUploadRetryCondition(
+                new CompleteMultipartUploadRetryablePredicate(), 0);
         Assert.assertFalse(retryCondition.shouldRetry(null,
                                                       s3Exception, 1));
     }
 
     @Test
-    public void ValidRetryableExceptionRetriesNotExhausted_ReturnsTrue() {
-        AmazonS3Exception s3Exception = new AmazonS3Exception("Please try " +
-                                                              "again");
+    public void validRetryableExceptionRetriesNotExhausted_ReturnsTrue() {
+        AmazonS3Exception s3Exception = new AmazonS3Exception("Please try again");
         s3Exception.setErrorCode("InternalError");
 
-        CompleteMultipartUploadRetryCondition retryCondition = new
-                CompleteMultipartUploadRetryCondition(new
-                                                              CompleteMultipartUploadRetryablePredicate(), 4);
+        CompleteMultipartUploadRetryCondition retryCondition = new CompleteMultipartUploadRetryCondition(
+                new CompleteMultipartUploadRetryablePredicate(), 4);
         Assert.assertFalse(retryCondition.shouldRetry(null,
                                                       s3Exception, 1));
     }

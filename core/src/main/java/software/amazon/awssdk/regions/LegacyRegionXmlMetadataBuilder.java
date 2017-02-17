@@ -70,13 +70,11 @@ public class LegacyRegionXmlMetadataBuilder implements Builder<RegionMetadata> {
      *                               metadata file.
      */
     private RegionMetadata loadFromSystemProperty() {
-        final String overrideFilePath = System.getProperty
-                (REGIONS_FILE_OVERRIDE);
+        final String overrideFilePath = System.getProperty(REGIONS_FILE_OVERRIDE);
 
         if (overrideFilePath != null) {
             try {
-                return LegacyRegionXmlLoadUtils.load(new File
-                                                             (overrideFilePath));
+                return LegacyRegionXmlLoadUtils.load(new File(overrideFilePath));
             } catch (IOException exception) {
                 throw new SdkClientException(
                         "Error parsing region metadata from " + overrideFilePath,

@@ -30,9 +30,9 @@ public class SignerAsRequestSignerTest {
 
     @Mock Signer signer;
 
-    @Mock AWSCredentialsProvider credentialsProvider;
+    @Mock AwsCredentialsProvider credentialsProvider;
 
-    @Mock AWSCredentials credentials;
+    @Mock AwsCredentials credentials;
 
     @Mock SignableRequest request;
 

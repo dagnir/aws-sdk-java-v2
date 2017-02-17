@@ -143,7 +143,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = StringCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target( {ElementType.METHOD, ElementType.TYPE})
+        @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
         }
@@ -213,7 +213,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = StringSetCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target( {ElementType.METHOD, ElementType.TYPE})
+        @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
         }
@@ -263,7 +263,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = DoubleCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target( {ElementType.METHOD, ElementType.TYPE})
+        @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
 
@@ -306,7 +306,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
 
         @DynamoDBTypeConverted(converter = DoubleSetCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
-        @Target( {ElementType.METHOD, ElementType.TYPE})
+        @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
 

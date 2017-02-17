@@ -26,11 +26,11 @@ public class ByteArrayUnmarshaller extends BUnmarshaller {
     private static final ByteArrayUnmarshaller INSTANCE =
             new ByteArrayUnmarshaller();
 
-    public static ByteArrayUnmarshaller instance() {
-        return INSTANCE;
+    private ByteArrayUnmarshaller() {
     }
 
-    private ByteArrayUnmarshaller() {
+    public static ByteArrayUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

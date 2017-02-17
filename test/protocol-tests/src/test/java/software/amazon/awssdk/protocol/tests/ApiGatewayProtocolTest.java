@@ -22,7 +22,7 @@ import software.amazon.awssdk.protocol.runners.ProtocolTestRunner;
 
 public class ApiGatewayProtocolTest {
 
-    private static final ProtocolTestSuiteLoader testSuiteLoader = new ProtocolTestSuiteLoader();
+    private static final ProtocolTestSuiteLoader TEST_SUITE_LOADER = new ProtocolTestSuiteLoader();
     private static ProtocolTestRunner testRunner;
 
     @BeforeClass
@@ -32,6 +32,6 @@ public class ApiGatewayProtocolTest {
 
     @Test
     public void run() throws Exception {
-        testRunner.runTests(testSuiteLoader.load("apigateway-suite.json"));
+        testRunner.runTests(TEST_SUITE_LOADER.load("apigateway-suite.json"));
     }
 }

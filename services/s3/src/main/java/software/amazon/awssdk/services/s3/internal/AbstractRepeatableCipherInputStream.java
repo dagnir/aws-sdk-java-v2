@@ -21,9 +21,6 @@ import java.io.InputStream;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
- * @deprecated this class is no longer used and will be removed in the future
- * <p>
- *
  * Common base class used to wrap an InputStream with a cipher input stream to
  * encrypt it, and handles resets by attempting to reset on the original,
  * unencrypted data InputStream, and recreate an identical Cipher and identical
@@ -40,6 +37,8 @@ import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
  * encryption state of a {@code CipherInputStream} to an arbitrary point. If you
  * call {@code mark} after calling {@code read} or {@code skip}, it will throw
  * an {@code UnsupportedOperationException}.
+ *
+ * @deprecated this class is no longer used and will be removed in the future
  */
 @Deprecated
 public abstract class AbstractRepeatableCipherInputStream<T>

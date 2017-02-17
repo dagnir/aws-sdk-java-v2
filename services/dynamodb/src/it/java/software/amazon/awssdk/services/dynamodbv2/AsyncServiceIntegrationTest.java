@@ -52,7 +52,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
     /**
      * Hashset to record all of the tables created in this test.
      */
-    private static final HashSet<String> createdTableNames = new HashSet<String>();
+    private static final HashSet<String> CREATED_TABLE_NAMES = new HashSet<String>();
     /**
      * Name prefix of all the tables to be created in this test.
      */
@@ -86,7 +86,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
         System.out.println("*****************  AfterClass Procedure  *****************");
         System.out.println("**********************************************************");
         dynamoAsync.getExecutorService().shutdown();
-        for (String tableName : createdTableNames) {
+        for (String tableName : CREATED_TABLE_NAMES) {
             try {
                 TableUtils.waitUntilActive(dynamo, tableName);
                 dynamoAsync.deleteTable(new DeleteTableRequest(tableName));
@@ -102,7 +102,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
      * these temporary tables.
      */
     private static void recordCreatedTestTable(String tableName) {
-        createdTableNames.add(tableName);
+        CREATED_TABLE_NAMES.add(tableName);
     }
 
     /**
@@ -161,49 +161,53 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
 
         // Create a table
         recordCreatedTestTable(TABLE_CALlBACK_SINGLETEST);
+        KeySchemaElement keySchemaElement = new KeySchemaElement().withAttributeName(HASH_KEY_NAME).withKeyType(KeyType.HASH);
+
+        AttributeDefinition attribute = new AttributeDefinition().withAttributeName(HASH_KEY_NAME)
+                                                                 .withAttributeType(ScalarAttributeType.S);
+
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(TABLE_CALlBACK_SINGLETEST)
-                                                                        .withKeySchema(new KeySchemaElement().withAttributeName(HASH_KEY_NAME).withKeyType(KeyType.HASH))
-                                                                        .withAttributeDefinitions(
-                                                                                new AttributeDefinition().withAttributeName(HASH_KEY_NAME).withAttributeType(
-                                                                                        ScalarAttributeType.S));
+                                                                        .withKeySchema(keySchemaElement)
+                                                                        .withAttributeDefinitions(attribute);
         createTableRequest
                 .setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(20L).withWriteCapacityUnits(20L));
 
         final long startTime = System.currentTimeMillis();
+
         // Call the async method to create the table
-        dynamoAsync.createTableAsync(createTableRequest,
-                                     new AsyncHandler<CreateTableRequest, CreateTableResult>() {
+        AsyncHandler<CreateTableRequest, CreateTableResult> asyncHandler =
+                new AsyncHandler<CreateTableRequest, CreateTableResult>() {
+            public void onError(Exception exception) {
+                System.out.println(
+                        "MysteriousException during creating table: [" + TABLE_CALlBACK_SINGLETEST +
+                        "]");
+                fail("Error detail: " + exception.toString());
+            }
 
-                                         public void onError(Exception exception) {
-                                             System.out.println(
-                                                     "MysteriousException during creating table: [" + TABLE_CALlBACK_SINGLETEST +
-                                                     "]");
-                                             fail("Error detail: " + exception.toString());
-                                         }
+            public void onSuccess(CreateTableRequest request, CreateTableResult result) {
+                long endTime = System.currentTimeMillis();
+                long timeForPolling = endTime - startTime;
+                System.out
+                        .println("The callback function is called after " + timeForPolling + "ms.");
 
-                                         public void onSuccess(CreateTableRequest request, CreateTableResult result) {
-                                             long endTime = System.currentTimeMillis();
-                                             long timeForPolling = endTime - startTime;
-                                             System.out
-                                                     .println("The callback function is called after " + timeForPolling + "ms.");
+                // Check whether the table is correctly created
+                TableDescription createdTableDescription = result.getTableDescription();
+                System.out.println("Created Table: " + createdTableDescription);
+                assertEquals(TABLE_CALlBACK_SINGLETEST, createdTableDescription.getTableName());
+                assertNotNull(createdTableDescription.getTableStatus());
+                assertEquals(HASH_KEY_NAME,
+                             createdTableDescription.getKeySchema().get(0).getAttributeName());
+                assertEquals(KeyType.HASH.toString(),
+                             createdTableDescription.getKeySchema().get(0).getKeyType());
+                assertEquals(HASH_KEY_NAME, createdTableDescription.getAttributeDefinitions().get(0)
+                                                                   .getAttributeName());
+                assertEquals(ScalarAttributeType.S.toString(),
+                             createdTableDescription.getAttributeDefinitions().get(0)
+                                                    .getAttributeType());
+            }
+        };
 
-                                             // Check whether the table is correctly created
-                                             TableDescription createdTableDescription = result.getTableDescription();
-                                             System.out.println("Created Table: " + createdTableDescription);
-                                             assertEquals(TABLE_CALlBACK_SINGLETEST, createdTableDescription.getTableName());
-                                             assertNotNull(createdTableDescription.getTableStatus());
-                                             assertEquals(HASH_KEY_NAME,
-                                                          createdTableDescription.getKeySchema().get(0).getAttributeName());
-                                             assertEquals(KeyType.HASH.toString(),
-                                                          createdTableDescription.getKeySchema().get(0).getKeyType());
-                                             assertEquals(HASH_KEY_NAME, createdTableDescription.getAttributeDefinitions().get(0)
-                                                                                                .getAttributeName());
-                                             assertEquals(ScalarAttributeType.S.toString(),
-                                                          createdTableDescription.getAttributeDefinitions().get(0)
-                                                                                 .getAttributeType());
-                                         }
-                                     });
-
+        dynamoAsync.createTableAsync(createTableRequest, asyncHandler);
     }
 
     /**
@@ -213,26 +217,27 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
     public void testServiceExceptionCallback() throws Exception {
         DeleteTableRequest deleteNonexistentTableRequest = new DeleteTableRequest("NONEXISTENT_TABLE");
         try {
+            AsyncHandler<DeleteTableRequest, DeleteTableResult> asyncHandler =
+                    new AsyncHandler<DeleteTableRequest, DeleteTableResult>() {
+                public void onError(
+                        Exception exception) {
+                    assertTrue(
+                            exception instanceof AmazonServiceException);
+
+                    AmazonServiceException ase = (AmazonServiceException) exception;
+                    assertTrue(ase.getErrorCode()
+                                  .equalsIgnoreCase(
+                                          "ResourceNotFoundException"));
+                }
+
+                public void onSuccess(
+                        DeleteTableRequest request,
+                        DeleteTableResult result) {
+                    fail("We are not supposed to be in onCompleted handler!");
+                }
+            };
             Future<DeleteTableResult> futureDeleteTableResult = dynamoAsync.deleteTableAsync(deleteNonexistentTableRequest,
-                                                                                             new AsyncHandler<DeleteTableRequest, DeleteTableResult>() {
-
-                                                                                                 public void onError(
-                                                                                                         Exception exception) {
-                                                                                                     assertTrue(
-                                                                                                             exception instanceof AmazonServiceException);
-
-                                                                                                     AmazonServiceException ase = (AmazonServiceException) exception;
-                                                                                                     assertTrue(ase.getErrorCode()
-                                                                                                                   .equalsIgnoreCase(
-                                                                                                                           "ResourceNotFoundException"));
-                                                                                                 }
-
-                                                                                                 public void onSuccess(
-                                                                                                         DeleteTableRequest request,
-                                                                                                         DeleteTableResult result) {
-                                                                                                     fail("We are not supposed to be in onCompleted handler!");
-                                                                                                 }
-                                                                                             });
+                                                                                             asyncHandler);
             // For backward compatibility, we need to make sure that the ASE is rethrown to the calling thread
             // So... we wait for it!!
             System.out.println("Waiting for the ServiceExeption rethrown into the main thread!");
@@ -256,20 +261,21 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
         // Passing a null request would trigger an AmazonClientExeption by
         CreateTableRequest createTableRequest = null;
         try {
-            Future<CreateTableResult> futureDeleteTableResult = dynamoAsync.createTableAsync(createTableRequest,
-                                                                                             new AsyncHandler<CreateTableRequest, CreateTableResult>() {
-                                                                                                 public void onError(
-                                                                                                         Exception exception) {
-                                                                                                     assertTrue(
-                                                                                                             exception instanceof NullPointerException);
-                                                                                                 }
+            AsyncHandler<CreateTableRequest, CreateTableResult> asyncHandler =
+                    new AsyncHandler<CreateTableRequest, CreateTableResult>() {
+                public void onError(
+                        Exception exception) {
+                    assertTrue(
+                            exception instanceof NullPointerException);
+                }
 
-                                                                                                 public void onSuccess(
-                                                                                                         CreateTableRequest request,
-                                                                                                         CreateTableResult result) {
-                                                                                                     fail("We are not supposed to be in onCompleted handler!");
-                                                                                                 }
-                                                                                             });
+                public void onSuccess(
+                        CreateTableRequest request,
+                        CreateTableResult result) {
+                    fail("We are not supposed to be in onCompleted handler!");
+                }
+            };
+            Future<CreateTableResult> futureDeleteTableResult = dynamoAsync.createTableAsync(createTableRequest, asyncHandler);
             // For backward compatibility, we need to make sure that the ACE is rethrown to the calling thread
             // So... we wait for it!!
             System.out.println("Waiting for the ClientExeption rethrown into the main thread!");
@@ -304,8 +310,9 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                         new AttributeDefinition().withAttributeName(HASH_KEY_NAME).withAttributeType(
                                 ScalarAttributeType.S));
 
-        createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(20L)
-                                                                               .withWriteCapacityUnits((long) STRESS_TEST_REQUEST_NUM));
+        ProvisionedThroughput throughput = new ProvisionedThroughput().withReadCapacityUnits(20L)
+                                                                      .withWriteCapacityUnits((long) STRESS_TEST_REQUEST_NUM);
+        createTableRequest.setProvisionedThroughput(throughput);
 
         TableDescription createdTableDescription = dynamoAsync.createTable(createTableRequest).getTableDescription();
         System.out.println("Created Table: " + createdTableDescription);
@@ -353,46 +360,46 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                 item.put("request_time", new AttributeValue(Long.toString(asyncRequestTime)));
                 PutItemRequest putItemRequest = new PutItemRequest(TABLE_CALLBACK_STRESSTEST, item)
                         .withReturnValues(ReturnValue.ALL_OLD.toString());
-                dynamoAsync.putItemAsync(putItemRequest,
-                                         new AsyncHandler<PutItemRequest, PutItemResult>() {
 
-                                             public void onError(Exception exception) {
-                                                 fail("Unexpected error during updating table [" + TABLE_CALLBACK_STRESSTEST +
-                                                      "].");
-                                             }
+                AsyncHandler<PutItemRequest, PutItemResult> asyncHandler = new AsyncHandler<PutItemRequest, PutItemResult>() {
+                    public void onError(Exception exception) {
+                        fail("Unexpected error during updating table [" + TABLE_CALLBACK_STRESSTEST +
+                             "].");
+                    }
 
-                                             public void onSuccess(PutItemRequest request, PutItemResult result) {
-                                                 // PROCESS THE RESPOND
-                                                 // Check that values in PutItemResult are the same as recorded in initialData
-                                                 int responsedRequestID = Integer
-                                                         .parseInt(result.getAttributes().get(HASH_KEY_NAME).getS());
-                                                 long responsedRequestTime = Long
-                                                         .parseLong(result.getAttributes().get("request_time").getS());
-                                                 assertEquals(responsedRequestTime,
-                                                              initialData.get(responsedRequestID).longValue());
-                                                 // PROCESS THE CONTEXT
-                                                 // Check that we have access to the context of the AsyncHandler
-                                                 assertEquals(responsedRequestID, request_id_context);
-                                                 // Record the time of the response
-                                                 responseTime.put(responsedRequestID, System.currentTimeMillis());
-                                                 // Check whether the stress test is finished
-                                                 if (responseTime.size() == STRESS_TEST_REQUEST_NUM) {
-                                                     long asyncPutResponseTime = System.currentTimeMillis() - asyncStartTime;
-                                                     System.out.println(
-                                                             "***********************************************************************************************************************");
-                                                     System.out.println(
-                                                             asyncPutResponseTime + "ms spent in waiting for all the " +
-                                                             STRESS_TEST_REQUEST_NUM + " responses of putItemAsync requests.");
-                                                     System.out.println(
-                                                             "Time spent on synchronized requests: " + initialPutTime + " ms.");
-                                                     System.out.println(
-                                                             "Time spent on asynchronized requests: " + asyncPutResponseTime +
-                                                             " ms.");
-                                                     System.out.println(
-                                                             "***********************************************************************************************************************");
-                                                 }
-                                             }
-                                         });
+                    public void onSuccess(PutItemRequest request, PutItemResult result) {
+                        // PROCESS THE RESPOND
+                        // Check that values in PutItemResult are the same as recorded in initialData
+                        int responsedRequestID = Integer
+                                .parseInt(result.getAttributes().get(HASH_KEY_NAME).getS());
+                        long responsedRequestTime = Long
+                                .parseLong(result.getAttributes().get("request_time").getS());
+                        assertEquals(responsedRequestTime,
+                                     initialData.get(responsedRequestID).longValue());
+                        // PROCESS THE CONTEXT
+                        // Check that we have access to the context of the AsyncHandler
+                        assertEquals(responsedRequestID, request_id_context);
+                        // Record the time of the response
+                        responseTime.put(responsedRequestID, System.currentTimeMillis());
+                        // Check whether the stress test is finished
+                        if (responseTime.size() == STRESS_TEST_REQUEST_NUM) {
+                            long asyncPutResponseTime = System.currentTimeMillis() - asyncStartTime;
+                            System.out.println(
+                                    "******************************************************************************************");
+                            System.out.println(
+                                    asyncPutResponseTime + "ms spent in waiting for all the " +
+                                    STRESS_TEST_REQUEST_NUM + " responses of putItemAsync requests.");
+                            System.out.println(
+                                    "Time spent on synchronized requests: " + initialPutTime + " ms.");
+                            System.out.println(
+                                    "Time spent on asynchronized requests: " + asyncPutResponseTime +
+                                    " ms.");
+                            System.out.println(
+                                    "******************************************************************************************");
+                        }
+                    }
+                };
+                dynamoAsync.putItemAsync(putItemRequest, asyncHandler);
             }
         } catch (Exception e) {
             fail("Error during updating data by asynchronized method!");

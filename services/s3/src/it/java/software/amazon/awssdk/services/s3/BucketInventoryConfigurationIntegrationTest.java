@@ -45,12 +45,12 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests */
+    /** The bucket created and used by these tests. */
     private static final String BUCKET_NAME = "java-bucket-inventory-integ-test-" + new Date().getTime();
 
     private static final String BUCKET_ARN = "arn:aws:s3:::" + BUCKET_NAME;
 
-    /** The key used in these tests */
+    /** The key used in these tests. */
     private static final String KEY = "key";
 
     @BeforeClass
@@ -109,10 +109,12 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
         String configId = "id";
         String prefix = "prefix";
         String accountId = "test-account";
-        List<String> optionalFields = new ArrayList<String>() {{
-            add(InventoryOptionalField.ETag.toString());
-            add(InventoryOptionalField.Size.toString());
-        }};
+        List<String> optionalFields = new ArrayList<String>() {
+            {
+                add(InventoryOptionalField.ETag.toString());
+                add(InventoryOptionalField.Size.toString());
+            }
+        };
 
         InventoryS3BucketDestination s3BucketDestination = new InventoryS3BucketDestination()
                 .withBucketArn(BUCKET_ARN)

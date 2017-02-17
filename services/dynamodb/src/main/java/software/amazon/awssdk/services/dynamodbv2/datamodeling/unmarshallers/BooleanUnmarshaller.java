@@ -32,11 +32,11 @@ public class BooleanUnmarshaller implements ArgumentUnmarshaller {
     private static final BooleanUnmarshaller INSTANCE =
             new BooleanUnmarshaller();
 
-    public static BooleanUnmarshaller instance() {
-        return INSTANCE;
+    private BooleanUnmarshaller() {
     }
 
-    private BooleanUnmarshaller() {
+    public static BooleanUnmarshaller instance() {
+        return INSTANCE;
     }
 
     @Override

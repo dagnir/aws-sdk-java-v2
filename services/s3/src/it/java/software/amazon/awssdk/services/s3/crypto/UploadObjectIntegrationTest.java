@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
+import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +92,7 @@ public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
         final long start = System.nanoTime();
         // Initiate upload
         final String key = "doTest-" + cryptoConfig.getCryptoMode() + "-"
-                           + cryptoConfig.getStorageMode() + "-" + yyMMdd_hhmmss();
+                           + cryptoConfig.getStorageMode() + "-" + yyMMddhhmmss();
         ObjectMetadata partUploadMetadata = new ObjectMetadata();
         partUploadMetadata.setHeader("testing_upload_part_header", "testing_header_123");
         UploadObjectRequest req =
@@ -184,7 +184,7 @@ public class UploadObjectIntegrationTest extends S3IntegrationTestBase {
     public void testAbort()
             throws IOException, InterruptedException, ExecutionException {
         // Initiate upload
-        final String key = "testAbort-" + yyMMdd_hhmmss();
+        final String key = "testAbort-" + yyMMddhhmmss();
         UploadObjectRequest req =
                 new UploadObjectRequest(TEST_BUCKET, key, plaintextFile)
                         .withPartSize(PART_SIZE);

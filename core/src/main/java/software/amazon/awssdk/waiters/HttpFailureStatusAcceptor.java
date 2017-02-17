@@ -19,7 +19,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
-public class HttpFailureStatusAcceptor<Output> extends WaiterAcceptor<Output> {
+public class HttpFailureStatusAcceptor<OutputT> extends WaiterAcceptor<OutputT> {
 
     private final int expectedStatusCode;
     private final WaiterState waiterState;

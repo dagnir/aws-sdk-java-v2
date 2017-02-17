@@ -38,8 +38,8 @@ public class SdkClientHandler extends ClientHandler {
     }
 
     @Override
-    public <Input, Output> Output execute(
-            ClientExecutionParams<Input, Output> executionParams) {
+    public <InputT, OutputT> OutputT execute(
+            ClientExecutionParams<InputT, OutputT> executionParams) {
         return delegateHandler.execute(addRequestConfig(executionParams));
     }
 
@@ -48,7 +48,8 @@ public class SdkClientHandler extends ClientHandler {
         delegateHandler.shutdown();
     }
 
-    private <Input, Output> ClientExecutionParams<Input, Output> addRequestConfig(ClientExecutionParams<Input, Output> params) {
+    private <InputT, OutputT>
+        ClientExecutionParams<InputT, OutputT> addRequestConfig(ClientExecutionParams<InputT, OutputT> params) {
         return params.withRequestConfig(new RequestConfigAdapter((BaseRequest) params.getInput()));
     }
 

@@ -50,7 +50,8 @@ public class LengthCheckInputStream extends SdkFilterInputStream {
      * marked; False otherwise.
      */
     private boolean resetSinceLastMarked;
-    private int markCount, resetCount;
+    private int markCount;
+    private int resetCount;
 
     /**
      * Constructs an input stream that performs length check to ensure the

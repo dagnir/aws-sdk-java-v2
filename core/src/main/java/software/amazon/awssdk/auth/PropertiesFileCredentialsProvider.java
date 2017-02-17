@@ -20,7 +20,7 @@ import java.io.IOException;
 import software.amazon.awssdk.SdkClientException;
 
 /**
- * {@link AWSCredentialsProvider} implementation that loads AWS security
+ * {@link AwsCredentialsProvider} implementation that loads AWS security
  * credentials from a properties file provided on initialization.
  * <p>
  * The AWS access key ID is expected to be in the <code>accessKey</code>
@@ -28,7 +28,7 @@ import software.amazon.awssdk.SdkClientException;
  * <code>secretKey</code> property.
  */
 public class PropertiesFileCredentialsProvider implements
-                                               AWSCredentialsProvider {
+                                               AwsCredentialsProvider {
 
     private final String credentialsFilePath;
 
@@ -53,7 +53,7 @@ public class PropertiesFileCredentialsProvider implements
         this.credentialsFilePath = credentialsFilePath;
     }
 
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         try {
             return new PropertiesCredentials(new File(this.credentialsFilePath));
         } catch (IOException e) {

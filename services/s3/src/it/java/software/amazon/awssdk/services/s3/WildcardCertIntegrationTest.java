@@ -19,13 +19,13 @@ import java.io.UnsupportedEncodingException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.util.StringInputStream;
 
 /**
@@ -34,7 +34,7 @@ import software.amazon.awssdk.util.StringInputStream;
  * name validation is disabled in the HTTP client for clients created with both the builder and the
  * constructors.
  */
-public class WildcardCertIntegrationTest extends AWSIntegrationTestBase {
+public class WildcardCertIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String BUCKET_NAME =
             "java-sdk.wildcard.cert.integration.test-" + System.currentTimeMillis();
@@ -45,7 +45,7 @@ public class WildcardCertIntegrationTest extends AWSIntegrationTestBase {
     public static void setup() {
         S3 = AmazonS3ClientBuilder.standard()
                                   .withRegion(Regions.US_WEST_2)
-                                  .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                                  .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                                   .build();
         S3.createBucket(BUCKET_NAME);
     }

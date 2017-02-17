@@ -56,13 +56,13 @@ import java.util.Date;
 public class Bucket implements Serializable {
     private static final long serialVersionUID = -8646831898339939580L;
 
-    /** The name of this S3 bucket */
+    /** The name of this S3 bucket. */
     private String name = null;
 
-    /** The details on the owner of this bucket */
+    /** The details on the owner of this bucket. */
     private Owner owner = null;
 
-    /** The date this bucket was created */
+    /** The date this bucket was created. */
     private Date creationDate = null;
 
     /**
@@ -128,7 +128,7 @@ public class Bucket implements Serializable {
      * if the creation date is not known.
      *
      * @return The bucket's creation date, or <code>null</code> 
-     * if not known.
+     *     if not known.
      */
     public Date getCreationDate() {
         return creationDate;

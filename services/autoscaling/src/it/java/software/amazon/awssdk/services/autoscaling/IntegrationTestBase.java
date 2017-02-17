@@ -22,16 +22,16 @@ import software.amazon.awssdk.services.autoscaling.model.CreateAutoScalingGroupR
 import software.amazon.awssdk.services.autoscaling.model.CreateLaunchConfigurationRequest;
 import software.amazon.awssdk.services.sns.AmazonSNS;
 import software.amazon.awssdk.services.sns.AmazonSNSClient;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Base class for AutoScaling integration tests. Provides several convenience methods for creating
  * test data, test data values, and automatically loads the AWS credentials from a properties file
  * on disk and instantiates clients for the test subclasses to use.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
-public abstract class IntegrationTestBase extends AWSTestBase {
+public abstract class IntegrationTestBase extends AwsTestBase {
 
     /*
      * Test data values
@@ -39,11 +39,11 @@ public abstract class IntegrationTestBase extends AWSTestBase {
     protected static final String AVAILABILITY_ZONE = "us-east-1a";
     protected static final String AMI_ID = "ami-1ecae776";
     protected static final String INSTANCE_TYPE = "m1.small";
-    /** Shared Autoscaling client for all tests to use */
+    /** Shared Autoscaling client for all tests to use. */
     protected static AmazonAutoScalingClient autoscaling;
-    /** Shared Autoscaling async client for tests to use */
+    /** Shared Autoscaling async client for tests to use. */
     protected static AmazonAutoScalingAsyncClient autoscalingAsync;
-    /** Shared SNS client for tests to use */
+    /** Shared SNS client for tests to use. */
     protected static AmazonSNS sns;
 
     /**

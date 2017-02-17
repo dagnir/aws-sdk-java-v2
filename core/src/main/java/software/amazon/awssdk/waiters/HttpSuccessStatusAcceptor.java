@@ -18,7 +18,7 @@ package software.amazon.awssdk.waiters;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
-public class HttpSuccessStatusAcceptor<Output> extends WaiterAcceptor<Output> {
+public class HttpSuccessStatusAcceptor<OutputT> extends WaiterAcceptor<OutputT> {
 
     private final WaiterState waiterState;
 
@@ -27,7 +27,7 @@ public class HttpSuccessStatusAcceptor<Output> extends WaiterAcceptor<Output> {
     }
 
     @Override
-    public boolean matches(Output output) {
+    public boolean matches(OutputT output) {
         return true;
     }
 

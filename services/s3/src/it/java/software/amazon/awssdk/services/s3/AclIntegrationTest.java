@@ -45,13 +45,13 @@ import software.amazon.awssdk.services.s3.model.Permission;
  */
 public class AclIntegrationTest extends S3IntegrationTestBase {
 
-    /** The name of the bucket these tests will create, test on and delete */
+    /** The name of the bucket these tests will create, test on and delete. */
     private String bucketName = "acl-integration-test-" + new Date().getTime();
 
-    /** The key of the object these tests will create, test on and delete */
+    /** The key of the object these tests will create, test on and delete. */
     private String key = "key";
 
-    /** Releases all test resources */
+    /** Releases all test resources. */
     @After
     public void tearDown() {
         s3.deleteObject(bucketName, key);
@@ -132,9 +132,9 @@ public class AclIntegrationTest extends S3IntegrationTestBase {
                 AccessControlList bucketAcl = s3.getBucketAcl(bucketName);
                 AccessControlList objectAcl = s3.getObjectAcl(bucketName, key);
                 AccessControlList[] accessControls = new AccessControlList[] {
-                        bucketAcl, objectAcl};
-                for (int index = 0; index < accessControls.length; index++) {
-                    AccessControlList acl = accessControls[index];
+                    bucketAcl, objectAcl
+                };
+                for (AccessControlList acl : accessControls) {
                     assertEquals(bucketOwner, acl.getOwner());
                     assertTrue(doesAclContainGroupGrant(acl, GroupGrantee.AllUsers, Permission.Read));
                     assertEquals(2, acl.getGrantsAsList().size());

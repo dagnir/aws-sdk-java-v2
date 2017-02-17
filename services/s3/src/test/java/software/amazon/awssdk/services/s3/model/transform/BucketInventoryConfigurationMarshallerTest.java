@@ -52,11 +52,13 @@ public class BucketInventoryConfigurationMarshallerTest extends S3WireMockTestBa
     @Test
     public void testSetBucketInventoryConfiguration() {
         String id = "inventory-id";
-        List<String> optionalFields = new ArrayList<String>() {{
-            add(InventoryOptionalField.LastModifiedDate.toString());
-            add(InventoryOptionalField.StorageClass.toString());
-            add(InventoryOptionalField.ReplicationStatus.toString());
-        }};
+        List<String> optionalFields = new ArrayList<String>() {
+            {
+                add(InventoryOptionalField.LastModifiedDate.toString());
+                add(InventoryOptionalField.StorageClass.toString());
+                add(InventoryOptionalField.ReplicationStatus.toString());
+            }
+        };
         InventoryS3BucketDestination s3BucketDestination = new InventoryS3BucketDestination()
                 .withAccountId("accountId")
                 .withBucketArn("arn:aws:s3:::bucket")
@@ -76,6 +78,7 @@ public class BucketInventoryConfigurationMarshallerTest extends S3WireMockTestBa
         try {
             s3.setBucketInventoryConfiguration(new SetBucketInventoryConfigurationRequest(BUCKET_NAME, config));
         } catch (Exception expected) {
+            // Expected.
         }
 
         verify(putRequestedFor(urlEqualTo(String.format("/%s/?inventory&id=%s", BUCKET_NAME, id)))

@@ -87,6 +87,7 @@ public class DeleteItemIntegrationTest extends IntegrationTestBase {
                              new Expected("stringAttr").eq("not bla"));
             Assert.fail();
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
 
         table.deleteItem(HASH_KEY_NAME, "deleteTest", RANGE_KEY_NAME, 0,
@@ -104,6 +105,7 @@ public class DeleteItemIntegrationTest extends IntegrationTestBase {
                              new Expected("stringAttr").in("not bla"));
             Assert.fail();
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
 
         table.deleteItem(new PrimaryKey()
@@ -123,6 +125,7 @@ public class DeleteItemIntegrationTest extends IntegrationTestBase {
                              "stringAttr = :bla", null, new ValueMap().withString(":bla", "not bla"));
             Assert.fail();
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
 
         table.deleteItem(HASH_KEY_NAME, "deleteTest", RANGE_KEY_NAME, 0,

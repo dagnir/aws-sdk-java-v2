@@ -25,7 +25,7 @@ import software.amazon.awssdk.runtime.io.SdkInputStream;
  * A test input stream that always return the same value.
  */
 public class ConstantInputStream extends SdkInputStream {
-    private static final Random rand = new Random();
+    private static final Random RAND = new Random();
     private final byte val;
     private final boolean randomlyReturnZeros;
     private long remaining;
@@ -45,7 +45,7 @@ public class ConstantInputStream extends SdkInputStream {
 
     @Override
     public int read(byte[] b, final int off, int len) throws IOException {
-        if (randomlyReturnZeros && rand.nextBoolean()) {
+        if (randomlyReturnZeros && RAND.nextBoolean()) {
             randomZerosCount++;
             return 0;
         }
@@ -62,7 +62,7 @@ public class ConstantInputStream extends SdkInputStream {
 
     @Override
     public int read() throws IOException {
-        if (randomlyReturnZeros && rand.nextBoolean()) {
+        if (randomlyReturnZeros && RAND.nextBoolean()) {
             randomZerosCount++;
             return 0;
         }

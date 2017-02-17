@@ -56,7 +56,7 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      * cannedAcl will be ignored.
      */
     private AccessControlList accessControlList;
-    /** The optional redirect location about an object */
+    /** The optional redirect location about an object. */
     private String redirectLocation;
     /**
      * The optional Amazon S3 storage class to use when storing the new object.
@@ -290,25 +290,6 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
     /**
      * Sets the optional Amazon S3 storage class to use when storing the new
      * object. If not specified, the default standard storage class will be used
-     * when storing the object.
-     * <p>
-     * For more information on Amazon S3 storage classes and available values,
-     * see the {@link StorageClass} enumeration.
-     * </p>
-     *
-     * @param storageClass
-     *            The storage class to use when storing the new object.
-     *
-     * @see #getStorageClass()
-     * @see #setStorageClass(String)
-     */
-    public void setStorageClass(StorageClass storageClass) {
-        this.storageClass = storageClass.toString();
-    }
-
-    /**
-     * Sets the optional Amazon S3 storage class to use when storing the new
-     * object. If not specified, the default standard storage class will be used
      * when storing the new object.
      * <p>
      * For more information on Amazon S3 storage classes and available values,
@@ -325,6 +306,25 @@ public final class PutInstructionFileRequest extends AmazonWebServiceRequest
      */
     public void setStorageClass(String storageClass) {
         this.storageClass = storageClass;
+    }
+
+    /**
+     * Sets the optional Amazon S3 storage class to use when storing the new
+     * object. If not specified, the default standard storage class will be used
+     * when storing the object.
+     * <p>
+     * For more information on Amazon S3 storage classes and available values,
+     * see the {@link StorageClass} enumeration.
+     * </p>
+     *
+     * @param storageClass
+     *            The storage class to use when storing the new object.
+     *
+     * @see #getStorageClass()
+     * @see #setStorageClass(String)
+     */
+    public void setStorageClass(StorageClass storageClass) {
+        this.storageClass = storageClass.toString();
     }
 
     /**

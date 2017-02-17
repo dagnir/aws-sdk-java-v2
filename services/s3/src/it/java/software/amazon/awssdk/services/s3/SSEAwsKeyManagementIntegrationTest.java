@@ -67,8 +67,8 @@ import software.amazon.awssdk.services.s3.model.PartETag;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResult;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.model.SSEAwsKeyManagementParams;
-import software.amazon.awssdk.services.s3.model.SSECustomerKey;
+import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParams;
+import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.transfer.Copy;
 import software.amazon.awssdk.services.s3.transfer.Download;
@@ -77,11 +77,11 @@ import software.amazon.awssdk.services.s3.transfer.TransferManager;
 import software.amazon.awssdk.services.s3.transfer.TransferManagerConfiguration;
 import software.amazon.awssdk.services.s3.transfer.Upload;
 import software.amazon.awssdk.services.s3.transfer.internal.UploadPartRequestFactory;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
 @Category(S3Categories.Slow.class)
-public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
+public class SSEAwsKeyManagementIntegrationTest extends AwsTestBase {
 
     /**
      * The size of the file being used for this integration testing.
@@ -134,7 +134,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
      * The default Key Id to to be used when performing SSE with Key from AWS
      * Key Management Service
      */
-    private static final SSEAwsKeyManagementParams DEFAULT_KEY_ID = new SSEAwsKeyManagementParams();
+    private static final SseAwsKeyManagementParams DEFAULT_KEY_ID = new SseAwsKeyManagementParams();
     /**
      * The reference to the file in the file system used for integration
      * testing.
@@ -148,11 +148,11 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
      * The non default Key Id to to be used when performing SSE with Key from AWS Key Management
      * Service
      */
-    private static SSEAwsKeyManagementParams nonDefaultKmsKeyId;
+    private static SseAwsKeyManagementParams nonDefaultKmsKeyId;
     /**
      * The SSE-C key to be used for integration testing.
      */
-    private static SSECustomerKey sseKey = null;
+    private static SseCustomerKey sseKey = null;
     /**
      * Reference to Amazon S3 client used for testing purposes.
      */
@@ -185,7 +185,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
 
         kmsClient = new AWSKMSClient(credentials);
         kmsClient.setEndpoint("https://kms.us-west-2.amazonaws.com");
-        nonDefaultKmsKeyId = new SSEAwsKeyManagementParams(KmsTestKeyCache.getInstance(Regions.US_WEST_2, credentials)
+        nonDefaultKmsKeyId = new SseAwsKeyManagementParams(KmsTestKeyCache.getInstance(Regions.US_WEST_2, credentials)
                                                                           .getNonDefaultKeyId());
         tm = new TransferManager(s3Https);
         TransferManagerConfiguration tmConfig = new TransferManagerConfiguration();
@@ -206,18 +206,18 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
                                                randomFile));
 
         SecretKey secretKey = generateSecretKey();
-        sseKey = new SSECustomerKey(secretKey);
+        sseKey = new SseCustomerKey(secretKey);
 
         s3Https.putObject(new PutObjectRequest(BUCKET_NAME,
-                                               SSEC_ENCRYPTED_OBJECT, randomFile).withSSECustomerKey(sseKey));
+                                               SSEC_ENCRYPTED_OBJECT, randomFile).withSseCustomerKey(sseKey));
 
         s3Https.putObject(new PutObjectRequest(BUCKET_NAME,
                                                SSE_AWS_KMS_NON_DEFAULT_KEY_ENCRYPTED_OBJECT, randomFile)
-                                  .withSSEAwsKeyManagementParams(nonDefaultKmsKeyId));
+                                  .withSseAwsKeyManagementParams(nonDefaultKmsKeyId));
 
         s3Https.putObject(new PutObjectRequest(BUCKET_NAME,
                                                SSE_AWS_KMS_DEFAULT_KEY_ENCRYPTED_OBJECT, randomFile)
-                                  .withSSEAwsKeyManagementParams(DEFAULT_KEY_ID));
+                                  .withSseAwsKeyManagementParams(DEFAULT_KEY_ID));
     }
 
     private static DefaultHttpClient constructHTTPClient() throws Exception {
@@ -308,7 +308,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
 
         PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME,
                                                                  ENCRYPTED_OBJECT, randomFile);
-        putObjectRequest.setSSEAwsKeyManagementParams(nonDefaultKmsKeyId);
+        putObjectRequest.setSseAwsKeyManagementParams(nonDefaultKmsKeyId);
         PutObjectResult result = s3Https.putObject(putObjectRequest);
         Assert.assertNotNull(result.getMetadata().getSSEAwsKmsKeyId());
 
@@ -320,7 +320,6 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
      * Tests multipart upload of an object to Amazon S3. Server Side Encryption
      * is enabled with Key being used from AWS KMS default key id. Asserts by
      * retrieving the object and compares it with the content of the file.
-     * @throws InterruptedException
      */
     @Test
     public void multipartUploadSSEAwsKeyManagementDefaultKeyId() throws InterruptedException {
@@ -391,7 +390,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
 
         PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME,
                                                                  ENCRYPTED_OBJECT, randomFile);
-        putObjectRequest.setSSEAwsKeyManagementParams(DEFAULT_KEY_ID);
+        putObjectRequest.setSseAwsKeyManagementParams(DEFAULT_KEY_ID);
         PutObjectResult result = s3Https.putObject(putObjectRequest);
         Assert.assertNotNull(result.getMetadata().getSSEAwsKmsKeyId());
 
@@ -408,7 +407,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
     public void copyUnEncryptedObjectToSSEWithAwsKeyManagementNonDefaultKeyId() {
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               UNENCRYPTED_OBJECT, COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setSSEAwsKeyManagementParams(nonDefaultKmsKeyId);
+        copyRequest.setSseAwsKeyManagementParams(nonDefaultKmsKeyId);
         s3Https.copyObject(copyRequest);
 
         assertResult(randomFile, UNENCRYPTED_OBJECT_CONTENT_LENGTH,
@@ -439,7 +438,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
 
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               UNENCRYPTED_OBJECT, COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setSSEAwsKeyManagementParams(DEFAULT_KEY_ID);
+        copyRequest.setSseAwsKeyManagementParams(DEFAULT_KEY_ID);
         s3Https.copyObject(copyRequest);
 
         assertResult(randomFile, UNENCRYPTED_OBJECT_CONTENT_LENGTH,
@@ -456,8 +455,8 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
 
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               SSEC_ENCRYPTED_OBJECT, COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setSourceSSECustomerKey(sseKey);
-        copyRequest.setSSEAwsKeyManagementParams(nonDefaultKmsKeyId);
+        copyRequest.setSourceSseCustomerKey(sseKey);
+        copyRequest.setSseAwsKeyManagementParams(nonDefaultKmsKeyId);
         s3Https.copyObject(copyRequest);
 
         assertResult(randomFile, UNENCRYPTED_OBJECT_CONTENT_LENGTH,
@@ -474,8 +473,8 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
 
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               SSEC_ENCRYPTED_OBJECT, COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setSourceSSECustomerKey(sseKey);
-        copyRequest.setSSEAwsKeyManagementParams(DEFAULT_KEY_ID);
+        copyRequest.setSourceSseCustomerKey(sseKey);
+        copyRequest.setSseAwsKeyManagementParams(DEFAULT_KEY_ID);
         s3Https.copyObject(copyRequest);
 
         assertResult(randomFile, UNENCRYPTED_OBJECT_CONTENT_LENGTH,
@@ -493,7 +492,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               SSE_AWS_KMS_NON_DEFAULT_KEY_ENCRYPTED_OBJECT,
                                                               COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setDestinationSSECustomerKey(sseKey);
+        copyRequest.setDestinationSseCustomerKey(sseKey);
         s3Https.copyObject(copyRequest);
 
         S3Object s3Object = s3Https.getObject(new GetObjectRequest(
@@ -513,7 +512,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               SSE_AWS_KMS_DEFAULT_KEY_ENCRYPTED_OBJECT,
                                                               COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setDestinationSSECustomerKey(sseKey);
+        copyRequest.setDestinationSseCustomerKey(sseKey);
         s3Https.copyObject(copyRequest);
 
         S3Object s3Object = s3Https.getObject(new GetObjectRequest(
@@ -567,7 +566,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               SSE_AWS_KMS_DEFAULT_KEY_ENCRYPTED_OBJECT,
                                                               COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setSSEAwsKeyManagementParams(nonDefaultKmsKeyId);
+        copyRequest.setSseAwsKeyManagementParams(nonDefaultKmsKeyId);
         s3Https.copyObject(copyRequest);
 
         assertResult(randomFile, UNENCRYPTED_OBJECT_CONTENT_LENGTH,
@@ -585,7 +584,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               SSE_AWS_KMS_NON_DEFAULT_KEY_ENCRYPTED_OBJECT,
                                                               COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setSSEAwsKeyManagementParams(DEFAULT_KEY_ID);
+        copyRequest.setSseAwsKeyManagementParams(DEFAULT_KEY_ID);
         s3Https.copyObject(copyRequest);
 
         assertResult(randomFile, UNENCRYPTED_OBJECT_CONTENT_LENGTH,
@@ -602,10 +601,10 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
         PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME,
                                                                  ENCRYPTED_OBJECT, randomFile);
         s3Client.setEndpoint("http://s3.amazonaws.com");
-        putObjectRequest.setSSEAwsKeyManagementParams(DEFAULT_KEY_ID);
+        putObjectRequest.setSseAwsKeyManagementParams(DEFAULT_KEY_ID);
 
         try {
-            putObjectRequest.setSSECustomerKey(sseKey);
+            putObjectRequest.setSseCustomerKey(sseKey);
             fail("Should throw an error as both SSE-C key and SSE AWS KMS cannot be set");
         } catch (IllegalArgumentException e) {
             // expected
@@ -624,7 +623,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
                                                                  ENCRYPTED_OBJECT, randomFile);
         s3Client.setEndpoint("http://s3.amazonaws.com");
         s3Client.setSignerRegionOverride("us-east-1");
-        putObjectRequest.setSSEAwsKeyManagementParams(DEFAULT_KEY_ID);
+        putObjectRequest.setSseAwsKeyManagementParams(DEFAULT_KEY_ID);
         try {
             s3Client.putObject(putObjectRequest);
             fail("An error must be thrown as request to put the object is tried over HTTP and not HTTPS");
@@ -696,7 +695,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
         try {
             s3Client.copyObject(new CopyObjectRequest(BUCKET_NAME,
                                                       UNENCRYPTED_OBJECT, COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT)
-                                        .withSSEAwsKeyManagementParams(nonDefaultKmsKeyId));
+                                        .withSseAwsKeyManagementParams(nonDefaultKmsKeyId));
             fail("An error must be thrown as request to get the object is tried over HTTP and not HTTPS");
         } catch (IllegalArgumentException e) {
             // expected
@@ -713,7 +712,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
         PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME,
                                                                  ENCRYPTED_OBJECT, randomFile);
         putObjectRequest
-                .setSSEAwsKeyManagementParams(new SSEAwsKeyManagementParams(
+                .setSseAwsKeyManagementParams(new SseAwsKeyManagementParams(
                         "invalid-key-id"));
         try {
             s3Https.putObject(putObjectRequest);
@@ -744,7 +743,6 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
      * Tests retrieving a SSE AWS KMS default key Id encrypted object using a
      * presigned url. Asserts that the data retrieved is same as the random
      * File.
-     * @throws InterruptedException
      */
     @Test
     public void testGetObjectPresignedUrlDefaultKeyId()
@@ -764,7 +762,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
             throws InterruptedException {
         PutObjectRequest putObjectRequest = new PutObjectRequest(BUCKET_NAME,
                                                                  ENCRYPTED_OBJECT, randomFile);
-        putObjectRequest.setSSEAwsKeyManagementParams(nonDefaultKmsKeyId);
+        putObjectRequest.setSseAwsKeyManagementParams(nonDefaultKmsKeyId);
         Upload upload = tm.upload(putObjectRequest);
 
         while (upload.getProgress().getBytesTransferred() < 10 * MB) {
@@ -786,8 +784,8 @@ public class SSEAwsKeyManagementIntegrationTest extends AWSTestBase {
 
         CopyObjectRequest copyRequest = new CopyObjectRequest(BUCKET_NAME,
                                                               SSEC_ENCRYPTED_OBJECT, COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT);
-        copyRequest.setSourceSSECustomerKey(sseKey);
-        copyRequest.setSSEAwsKeyManagementParams(DEFAULT_KEY_ID);
+        copyRequest.setSourceSseCustomerKey(sseKey);
+        copyRequest.setSseAwsKeyManagementParams(DEFAULT_KEY_ID);
 
         Copy copy = tm.copy(copyRequest);
         copy.waitForCompletion();

@@ -42,11 +42,11 @@ import software.amazon.awssdk.util.StringUtils;
 @SdkProtectedApi
 public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServiceResponse<T>> {
 
-    /** Shared logger for profiling information */
+    /** Shared logger for profiling information. */
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.request");
-    /** Shared factory for creating XML event readers */
+    /** Shared factory for creating XML event readers. */
     private static final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-    /** The StAX unmarshaller to use when handling the response */
+    /** The StAX unmarshaller to use when handling the response. */
     private Unmarshaller<T, StaxUnmarshallerContext> responseUnmarshaller;
 
     /**

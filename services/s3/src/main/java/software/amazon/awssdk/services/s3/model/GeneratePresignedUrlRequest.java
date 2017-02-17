@@ -39,19 +39,19 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  */
 public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
         implements SSECustomerKeyProvider, Serializable {
-    /** The HTTP method (GET, PUT, DELETE, HEAD) to be used in this request and when the pre-signed URL is used */
+    /** The HTTP method (GET, PUT, DELETE, HEAD) to be used in this request and when the pre-signed URL is used. */
     private HttpMethod method;
 
-    /** The name of the bucket involved in this request */
+    /** The name of the bucket involved in this request. */
     private String bucketName;
 
-    /** The key of the object involved in this request */
+    /** The key of the object involved in this request. */
     private String key;
 
-    /** The optional Content-Type header that will be sent when the presigned URL is accessed */
+    /** The optional Content-Type header that will be sent when the presigned URL is accessed. */
     private String contentType;
 
-    /** The optional Content-MD5 header that will be sent when the presigned URL is accessed */
+    /** The optional Content-MD5 header that will be sent when the presigned URL is accessed. */
     private String contentMd5;
 
     /**
@@ -85,7 +85,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      * Optional customer-provided server-side encryption key to use as part of
      * the generated pre-signed URL.
      */
-    private SSECustomerKey sseCustomerKey;
+    private SseCustomerKey sseCustomerKey;
 
     /**
      * Used to specify the server side encryption algorithm.  Null means
@@ -182,8 +182,8 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *
      * @param currently supported values: "AES256" or "aws:kms".
      */
-    public void setSSEAlgorithm(SSEAlgorithm sseAlgorithm) {
-        this.sseAlgorithm = sseAlgorithm.getAlgorithm();
+    public void setSSEAlgorithm(String sseAlgorithm) {
+        this.sseAlgorithm = sseAlgorithm;
     }
 
     /**
@@ -191,8 +191,8 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *
      * @param currently supported values: "AES256" or "aws:kms".
      */
-    public void setSSEAlgorithm(String sseAlgorithm) {
-        this.sseAlgorithm = sseAlgorithm;
+    public void setSSEAlgorithm(SSEAlgorithm sseAlgorithm) {
+        this.sseAlgorithm = sseAlgorithm.getAlgorithm();
     }
 
     /**
@@ -503,7 +503,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
     }
 
     @Override
-    public SSECustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSSECustomerKey() {
         return sseCustomerKey;
     }
 
@@ -515,7 +515,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *            The customer-provided server-side encryption key to use as
      *            part of the generated pre-signed URL.
      */
-    public void setSSECustomerKey(SSECustomerKey sseCustomerKey) {
+    public void setSSECustomerKey(SseCustomerKey sseCustomerKey) {
         this.sseCustomerKey = sseCustomerKey;
     }
 
@@ -531,7 +531,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public GeneratePresignedUrlRequest withSSECustomerKey(SSECustomerKey sseKey) {
+    public GeneratePresignedUrlRequest withSSECustomerKey(SseCustomerKey sseKey) {
         setSSECustomerKey(sseKey);
         return this;
     }
@@ -551,7 +551,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
             this.sseCustomerKey = null;
         } else if (sseAlgorithm.getAlgorithm().equals(SSEAlgorithm.AES256.getAlgorithm())) {
             this.sseCustomerKey =
-                    SSECustomerKey.generateSSECustomerKeyForPresignUrl(sseAlgorithm.getAlgorithm());
+                    SseCustomerKey.generateSSECustomerKeyForPresignUrl(sseAlgorithm.getAlgorithm());
         } else {
             throw new IllegalArgumentException(
                     "Currently the only supported Server Side Encryption algorithm is "

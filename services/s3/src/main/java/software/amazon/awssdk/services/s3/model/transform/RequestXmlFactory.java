@@ -77,7 +77,6 @@ public class RequestXmlFactory {
      *
      * @return A byte array containing the data
      *
-     * @throws SdkClientException
      */
     public static byte[] convertToXmlByteArray(RestoreObjectRequest restoreObjectRequest) throws SdkClientException {
         XmlWriter xml = new XmlWriter();

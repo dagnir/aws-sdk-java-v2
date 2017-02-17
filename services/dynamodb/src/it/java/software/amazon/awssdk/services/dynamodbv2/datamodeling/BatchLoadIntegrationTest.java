@@ -54,7 +54,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     private static int start = 1;
     private static int byteStart = 1;
     private static int startKeyDebug = 1;
-    DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new DynamoDBMapperConfig(SaveBehavior.UPDATE,
+    DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new DynamoDBMapperConfig(SaveBehavior.UPDATE,
                                                                                 ConsistentReads.CONSISTENT, null));
 
     @BeforeClass
@@ -67,6 +67,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
         try {
             dynamo.deleteTable(new DeleteTableRequest(TABLE_WITH_RANGE_ATTRIBUTE));
         } catch (Exception e) {
+            // Ignore.
         }
         waitForTableToBecomeDeleted(TABLE_WITH_RANGE_ATTRIBUTE);
     }
@@ -176,14 +177,14 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
             throws NoSuchFieldException, SecurityException,
                    IllegalArgumentException, IllegalAccessException {
         long startTime = System.currentTimeMillis();
-        long maxBackOffTimePerRetry = DynamoDBMapper.MAX_BACKOFF_IN_MILLISECONDS;
-        int NoOfRetries = DynamoDBMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
+        long maxBackOffTimePerRetry = DynamoDbMapper.MAX_BACKOFF_IN_MILLISECONDS;
+        int NoOfRetries = DynamoDbMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
 
         List<Object> objs = new ArrayList<Object>();
         NumberSetAttributeClass obj = getUniqueNumericObject();
         objs.add(obj);
-        DynamoDBMapper mapper = new DynamoDBMapper(
-                new AmazonDymanoDBClientMock());
+        DynamoDbMapper mapper = new DynamoDbMapper(
+                new AmazonDymanoDbClientMock());
         try {
             mapper.batchLoad(objs);
             fail("Expecting an expection due to exceed of number of retries.");
@@ -232,7 +233,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
         return "" + byteStart++ % Byte.MAX_VALUE;
     }
 
-    static class AmazonDymanoDBClientMock extends AmazonDynamoDBClient {
+    static class AmazonDymanoDbClientMock extends AmazonDynamoDBClient {
 
         static final int SLEEP_TIME_IN_MILLIS = 3000;
 

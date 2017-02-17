@@ -52,13 +52,14 @@ import java.lang.annotation.Target;
  * <li>
  * <code>class-name.class</code> : The Class object for the specified class should be used as the lock object.
  * </li>
+ * </ul>
  * <p>
  * Based on code developed by Brian Goetz and Tim Peierls and concepts
  * published in 'Java Concurrency in Practice' by Brian Goetz, Tim Peierls,
  * Joshua Bloch, Joseph Bowbeer, David Holmes and Doug Lea.
  */
 @Documented
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.CLASS) // The original version used RUNTIME
 public @interface GuardedBy {
     String value();

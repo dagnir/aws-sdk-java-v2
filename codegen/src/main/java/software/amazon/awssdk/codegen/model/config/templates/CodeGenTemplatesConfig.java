@@ -55,8 +55,10 @@ public class CodeGenTemplatesConfig {
     private TopLevelTemplate cucumberTest = new TopLevelTemplate("/templates/cucumber/RunCucumberTest.ftl", null);
     private TopLevelTemplate cucumberPropertiesFile = new TopLevelTemplate("/templates/cucumber/cucumberProperties.ftl", null);
     private TopLevelTemplate apiGatewayPomTemplate = new TopLevelTemplate("/templates/api-gateway/maven/pom.xml.ftl", null);
-    private TopLevelTemplate apiGatewayGradleBuildTemplate = new TopLevelTemplate("/templates/api-gateway/gradle/build.gradle.ftl", null);
-    private TopLevelTemplate apiGatewayGradleSettingsTemplate = new TopLevelTemplate("/templates/api-gateway/gradle/settings.gradle.ftl", null);
+    private TopLevelTemplate apiGatewayGradleBuildTemplate =
+            new TopLevelTemplate("/templates/api-gateway/gradle/build.gradle.ftl", null);
+    private TopLevelTemplate apiGatewayGradleSettingsTemplate =
+            new TopLevelTemplate("/templates/api-gateway/gradle/settings.gradle.ftl", null);
     private TopLevelTemplate apiGatewayReadmeTemplate =
             new TopLevelTemplate("/templates/api-gateway/README.md.ftl", Collections.singletonList(
                     new ChildTemplate("/templates/api-gateway/README_Dependencies.ftl", "README_Dependencies")));

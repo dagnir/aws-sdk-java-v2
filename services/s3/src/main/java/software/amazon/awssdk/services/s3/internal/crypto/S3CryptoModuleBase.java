@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.runtime.io.ReleasableInputStream;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
@@ -110,7 +110,7 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
      * @param cryptoConfig a read-only copy of the crypto configuration.
      */
     protected S3CryptoModuleBase(AWSKMS kms, S3Direct s3,
-                                 AWSCredentialsProvider credentialsProvider,
+                                 AwsCredentialsProvider credentialsProvider,
                                  EncryptionMaterialsProvider kekMaterialsProvider,
                                  CryptoConfiguration cryptoConfig) {
         if (!cryptoConfig.isReadOnly()) {
@@ -128,7 +128,7 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
      * For testing purposes only.
      */
     protected S3CryptoModuleBase(S3Direct s3,
-                                 AWSCredentialsProvider credentialsProvider,
+                                 AwsCredentialsProvider credentialsProvider,
                                  EncryptionMaterialsProvider kekMaterialsProvider,
                                  CryptoConfiguration cryptoConfig) {
         this.kekMaterialsProvider = kekMaterialsProvider;
@@ -518,7 +518,7 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
      * material and security providers.
      *
      * @throws SdkClientException if no encryption material can be found from
-     * the given encryption material provider.
+     *     the given encryption material provider.
      */
     private ContentCryptoMaterial newContentCryptoMaterial(
             EncryptionMaterialsProvider kekMaterialProvider,
@@ -562,7 +562,7 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
             EncryptionMaterials materials, Provider provider,
             AmazonWebServiceRequest req) {
         // Randomly generate the IV
-        final byte[] iv = new byte[contentCryptoScheme.getIVLengthInBytes()];
+        final byte[] iv = new byte[contentCryptoScheme.getIvLengthInBytes()];
         cryptoScheme.getSecureRandom().nextBytes(iv);
 
         if (materials.isKMSEnabled()) {

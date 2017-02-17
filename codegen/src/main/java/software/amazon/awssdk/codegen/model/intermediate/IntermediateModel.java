@@ -123,7 +123,7 @@ public class IntermediateModel {
 
     /**
      * @return Exception unmarshaller implementation to use. Currently only needed by XML based
-     * protocols.
+     *     protocols.
      */
     public String getExceptionUnmarshallerImpl() {
         if (customizationConfig.getCustomExceptionUnmarshallerImpl() != null) {

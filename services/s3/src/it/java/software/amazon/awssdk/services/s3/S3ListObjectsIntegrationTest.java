@@ -26,6 +26,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import org.junit.After;
 import org.junit.Test;
@@ -40,35 +41,37 @@ import software.amazon.awssdk.util.SdkHttpUtils;
  * Integration tests for the listObjects operations in the Amazon S3 Java
  * client.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class S3ListObjectsIntegrationTest extends S3IntegrationTestBase {
 
-    /** One hour in milliseconds for verifying that a last modified date is recent */
+    /** One hour in milliseconds for verifying that a last modified date is recent. */
     private static final long ONE_HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
     private static final String KEY_NAME_WITH_SPECIAL_CHARS = "special-chars-@$%";
-    /** Content length for sample keys created by these tests */
+    /** Content length for sample keys created by these tests. */
     private final long CONTENT_LENGTH = 123;
-    /** The name of the bucket created, used, and deleted by these tests */
+    /** The name of the bucket created, used, and deleted by these tests. */
     private String bucketName = "list-objects-integ-test-" + new Date().getTime();
 
-    /** List of all keys created  by these tests */
+    /** List of all keys created  by these tests. */
     private List<String> keys = new ArrayList<String>();
 
 
-    /** Releases all resources created in this test */
+    /** Releases all resources created in this test. */
     @After
     public void tearDown() {
-        for (java.util.Iterator iterator = keys.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = keys.iterator(); iterator.hasNext(); ) {
             String key = (String) iterator.next();
             try {
                 s3.deleteObject(bucketName, key);
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
         try {
             s3.deleteBucket(bucketName);
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 

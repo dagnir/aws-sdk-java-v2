@@ -153,8 +153,7 @@ public class Partition {
      * or if the region matches the {@link #regionRegex} of the partition.
      */
     public boolean hasRegion(String region) {
-        return regions.containsKey(region) || matchesRegionRegex(region) || hasServiceEndpoint
-                (region);
+        return regions.containsKey(region) || matchesRegionRegex(region) || hasServiceEndpoint(region);
     }
 
     private boolean matchesRegionRegex(String region) {
@@ -167,7 +166,7 @@ public class Partition {
      * like s3 having s3-external-1.
      * TODO Remove this support as part of next major version.
      * @Deprecated use the {@link AmazonWebServiceClient#setEndpoint(String)} method
-     * for custom endpoints.
+     *     for custom endpoints.
      */
     @Deprecated
     private boolean hasServiceEndpoint(String endpoint) {

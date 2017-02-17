@@ -17,7 +17,7 @@ package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.util.AWSRequestMetrics;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.TimingInfo;
 
 /**
@@ -45,7 +45,7 @@ final class RequestHandler2Adaptor extends RequestHandler2 {
     @SuppressWarnings("deprecation")
     @Override
     public void afterResponse(Request<?> request, Response<?> response) {
-        AWSRequestMetrics awsRequestMetrics = request == null ? null : request
+        AwsRequestMetrics awsRequestMetrics = request == null ? null : request
                 .getAWSRequestMetrics();
         Object awsResponse = response == null ? null : response
                 .getAwsResponse();

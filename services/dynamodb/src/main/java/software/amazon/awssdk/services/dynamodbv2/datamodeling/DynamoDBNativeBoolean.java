@@ -39,6 +39,6 @@ import java.lang.annotation.Target;
 @DynamoDB
 @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.BOOL)
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface DynamoDBNativeBoolean {
 }

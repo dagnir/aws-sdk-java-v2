@@ -22,7 +22,7 @@ import org.joda.time.DateTime;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.SdkClock;
 import software.amazon.awssdk.auth.presign.PresignerFacade;
 import software.amazon.awssdk.auth.presign.PresignerParams;
@@ -49,8 +49,8 @@ public final class AmazonPollyPresigners {
     }
 
     /**
-     * Presign a {@link SynthesizeSpeechRequest} to be vended to consumers. The expiration time of the presigned URL is {@value
-     * #SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} from generation time.
+     * Presign a {@link SynthesizeSpeechRequest} to be vended to consumers. The expiration time of the presigned URL is
+     * {@value #SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} from generation time.
      */
     public URL getPresignedSynthesizeSpeechUrl(SynthesizeSpeechPresignRequest synthesizeSpeechPresignRequest) {
         Request<?> request = newRequest(synthesizeSpeechPresignRequest.getSigningCredentials());
@@ -91,7 +91,7 @@ public final class AmazonPollyPresigners {
         }
     }
 
-    private Request<?> newRequest(AWSCredentialsProvider credentials) {
+    private Request<?> newRequest(AwsCredentialsProvider credentials) {
         return new DefaultRequest(new PresignerFacade.PresigningRequest().withRequestCredentialsProvider(credentials),
                                   "AmazonPolly");
     }

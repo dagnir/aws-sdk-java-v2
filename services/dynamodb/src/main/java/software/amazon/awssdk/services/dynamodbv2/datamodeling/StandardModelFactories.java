@@ -735,7 +735,7 @@ final class StandardModelFactories {
     /**
      * Basic attribute value conversion functions.
      */
-    private static abstract class AbstractRule<S, T> extends AbstractConverter<AttributeValue, S>
+    private abstract static class AbstractRule<S, T> extends AbstractConverter<AttributeValue, S>
             implements Reflect<AttributeValue, S>, Rule<T> {
         protected final DynamoDBAttributeType attributeType;
         protected final boolean supported;

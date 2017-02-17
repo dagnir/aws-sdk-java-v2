@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * either a type (test class) or a method (test method).
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( {ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface RequiredResources {
 
     /**

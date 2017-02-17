@@ -17,16 +17,16 @@ package software.amazon.awssdk.auth.profile.internal.securitytoken;
 
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 
 @ThreadSafe
-public class STSProfileCredentialsServiceProvider implements AWSCredentialsProvider {
+public class STSProfileCredentialsServiceProvider implements AwsCredentialsProvider {
     private static final String CLASS_NAME = "software.amazon.awssdk.services.securitytoken.internal.STSProfileCredentialsService";
     private static volatile ProfileCredentialsService STS_CREDENTIALS_SERVICE;
 
     private final RoleInfo roleInfo;
-    private volatile AWSCredentialsProvider profileCredentialsProvider;
+    private volatile AwsCredentialsProvider profileCredentialsProvider;
 
     public STSProfileCredentialsServiceProvider(RoleInfo roleInfo) {
         this.roleInfo = roleInfo;
@@ -54,7 +54,7 @@ public class STSProfileCredentialsServiceProvider implements AWSCredentialsProvi
         return STS_CREDENTIALS_SERVICE;
     }
 
-    private AWSCredentialsProvider getProfileCredentialsProvider() {
+    private AwsCredentialsProvider getProfileCredentialsProvider() {
         if (this.profileCredentialsProvider == null) {
             synchronized (STSProfileCredentialsServiceProvider.class) {
                 if (this.profileCredentialsProvider == null) {
@@ -67,7 +67,7 @@ public class STSProfileCredentialsServiceProvider implements AWSCredentialsProvi
     }
 
     @Override
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         return getProfileCredentialsProvider().getCredentials();
     }
 

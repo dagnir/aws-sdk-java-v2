@@ -209,8 +209,7 @@ public class TableKeysAndAttributes {
             this.addPrimaryKey(
                     new PrimaryKey()
                             .addComponent(hashKeyName, hashKeyValue)
-                            .addComponent(rangeKeyName, rangeKeyValue)
-                              );
+                            .addComponent(rangeKeyName, rangeKeyValue));
         }
         return this;
     }
@@ -235,13 +234,17 @@ public class TableKeysAndAttributes {
         return this;
     }
 
-    /** @deprecated by {@link #withAttributeNames(String...)}. */
+    /**
+     * @deprecated by {@link #withAttributeNames(String...)}.
+     */
     @Deprecated
     public TableKeysAndAttributes withAttrbuteNames(String... attributeNames) {
         return withAttributeNames(attributeNames);
     }
 
-    /** @deprecated by {@link #withAttributeNames(List)}. */
+    /**
+     * @deprecated by {@link #withAttributeNames(List)}.
+     */
     @Deprecated
     public TableKeysAndAttributes withAttrbuteNames(List<String> attributeNames) {
         return withAttributeNames(attributeNames);
@@ -252,7 +255,7 @@ public class TableKeysAndAttributes {
      * from the batch get-item operation.
      *
      * @param attributeNames names of the attributes to be retrieved in each
-     * item returned from the batch get-item operation.
+     *     item returned from the batch get-item operation.
      * @return the current instance for method chaining purposes
      */
     public TableKeysAndAttributes withAttributeNames(String... attributeNames) {

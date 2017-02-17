@@ -86,6 +86,11 @@ public class ShapeModel extends DocumentationModel {
         return type;
     }
 
+    @JsonIgnore
+    public void setType(ShapeType shapeType) {
+        setType(shapeType.getValue());
+    }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -93,11 +98,6 @@ public class ShapeModel extends DocumentationModel {
     @JsonIgnore
     public ShapeType getShapeType() {
         return ShapeType.fromValue(type);
-    }
-
-    @JsonIgnore
-    public void setType(ShapeType shapeType) {
-        setType(shapeType.getValue());
     }
 
     public ShapeModel withType(String type) {

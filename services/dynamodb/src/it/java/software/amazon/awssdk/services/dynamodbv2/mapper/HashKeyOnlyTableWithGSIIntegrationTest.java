@@ -26,9 +26,9 @@ import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestB
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
@@ -89,7 +89,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
      */
     @Test
     public void testGSIQuery() throws Exception {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         String status = "foo-status";
 
         User user = new User();

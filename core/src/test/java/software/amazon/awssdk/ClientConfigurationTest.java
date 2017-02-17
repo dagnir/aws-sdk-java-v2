@@ -92,6 +92,7 @@ public class ClientConfigurationTest {
             config.setDnsResolver(null);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException expected) {
+            // Expected.
         }
 
         DnsResolver resolver = new DnsResolver() {
@@ -227,8 +228,10 @@ public class ClientConfigurationTest {
 
     @Test
     public void testHeadersDeepCopyInConstructor() {
-        String key1 = "key1", value1 = "value1";
-        String key2 = "key2", value2 = "value2";
+        String key1 = "key1";
+        String value1 = "value1";
+        String key2 = "key2";
+        String value2 = "value2";
 
         ClientConfiguration source = new ClientConfiguration().withHeader(key1, value1).withHeader(key2, value2);
         ClientConfiguration target = new ClientConfiguration(source);

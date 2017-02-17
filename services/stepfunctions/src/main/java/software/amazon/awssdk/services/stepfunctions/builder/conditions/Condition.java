@@ -26,12 +26,6 @@ import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
 public interface Condition {
 
     /**
-     * Base builder interface for conditions used in {@link software.amazon.awssdk.services.stepfunctions.builder.states.Choice}s.
-     */
-    interface Builder extends Buildable<Condition> {
-    }
-
-    /**
      * No-op builder that always returns null.
      */
     @SdkInternalApi
@@ -41,4 +35,10 @@ public interface Condition {
             return null;
         }
     };
+
+    /**
+     * Base builder interface for conditions used in {@link software.amazon.awssdk.services.stepfunctions.builder.states.Choice}s.
+     */
+    interface Builder extends Buildable<Condition> {
+    }
 }

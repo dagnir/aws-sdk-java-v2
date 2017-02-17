@@ -23,7 +23,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.Presigner;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
@@ -38,7 +38,7 @@ import software.amazon.awssdk.util.RuntimeHttpUtils;
 @SdkProtectedApi
 public final class PresignerFacade {
 
-    private final AWSCredentialsProvider credentialsProvider;
+    private final AwsCredentialsProvider credentialsProvider;
     private final SignerProvider signerProvider;
 
     public PresignerFacade(PresignerParams presignerParams) {
@@ -56,7 +56,7 @@ public final class PresignerFacade {
             addCustomQueryParams(request);
             addCustomHeaders(request);
         }
-        final AWSCredentialsProvider credentialsProvider = resolveCredentials(request);
+        final AwsCredentialsProvider credentialsProvider = resolveCredentials(request);
         presigner.presignRequest(request, credentialsProvider.getCredentials(), expirationDate);
         return RuntimeHttpUtils.convertRequestToUrl(request, true, false);
     }
@@ -81,7 +81,7 @@ public final class PresignerFacade {
         }
     }
 
-    private AWSCredentialsProvider resolveCredentials(Request<?> request) {
+    private AwsCredentialsProvider resolveCredentials(Request<?> request) {
         return CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), this.credentialsProvider);
     }
 
@@ -91,7 +91,7 @@ public final class PresignerFacade {
      */
     public static class PresigningRequest extends AmazonWebServiceRequest {
 
-        public PresigningRequest withRequestCredentialsProvider(AWSCredentialsProvider credentialsProvider) {
+        public PresigningRequest withRequestCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
             setRequestCredentialsProvider(credentialsProvider);
             return this;
         }

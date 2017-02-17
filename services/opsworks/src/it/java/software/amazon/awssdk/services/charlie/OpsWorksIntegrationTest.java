@@ -1,8 +1,24 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk.services.charlie;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
@@ -115,13 +131,13 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         try {
             opsWorks.deleteStack(new DeleteStackRequest().withStackId(stackId));
         } catch (AmazonServiceException e) {
-
+            // Ignored or expected.
         }
 
         try {
             elb.deleteLoadBalancer(new DeleteLoadBalancerRequest().withLoadBalancerName(loadBalancerName));
         } catch (Exception e) {
-
+            // Ignored or expected.
         }
     }
 
@@ -334,6 +350,7 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         try {
             opsWorks.deleteUserProfile(new DeleteUserProfileRequest().withIamUserArn(IAM_ROLE));
         } catch (AmazonServiceException ase) {
+            // Ignored or expected.
         }
 
         // Create user profile.

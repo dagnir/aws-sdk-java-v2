@@ -60,12 +60,12 @@ final class OperationModifiersProcessor implements CodegenCustomizationProcessor
             OperationModifier modifier = entry.getValue();
 
             if (modifier.isExclude()) {
-                preprocess_Exclude(serviceModel, operationName);
+                preprocessExclude(serviceModel, operationName);
                 continue;
             }
 
             if (modifier.isUseWrappingResult()) {
-                String createdWrapperShape = preprocess_CreateResultWrapperShape(
+                String createdWrapperShape = preprocessCreateResultWrapperShape(
                         serviceModel, operationName, modifier);
                 // Keep track of all the wrappers we created
                 createdWrapperShapes.add(createdWrapperShape);
@@ -114,12 +114,12 @@ final class OperationModifiersProcessor implements CodegenCustomizationProcessor
         }
     }
 
-    private void preprocess_Exclude(ServiceModel serviceModel, String operationName) {
+    private void preprocessExclude(ServiceModel serviceModel, String operationName) {
         serviceModel.getOperations().remove(operationName);
     }
 
-    private String preprocess_CreateResultWrapperShape(ServiceModel serviceModel,
-                                                       String operationName, OperationModifier modifier) {
+    private String preprocessCreateResultWrapperShape(ServiceModel serviceModel,
+                                                      String operationName, OperationModifier modifier) {
 
         String wrappedShapeName = modifier.getWrappedResultShape();
         Shape wrappedShape = serviceModel.getShapes().get(wrappedShapeName);

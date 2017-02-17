@@ -63,16 +63,16 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 @Category(S3Categories.Slow.class)
 public class S3MultipartUploadCryptoIntegrationTest extends S3IntegrationTestBase {
     private static final boolean cleanup = true;
-    /** Length of the random temp file to upload */
+    /** Length of the random temp file to upload. */
     private static final int RANDOM_OBJECT_DATA_LENGTH = 10 * 1024 * 1024;
 
-    /** Suffix appended to the end of instruction files */
+    /** Suffix appended to the end of instruction files. */
     private static final String INSTRUCTION_SUFFIX = ".instruction";
 
-    /** Name of the test bucket these tests will create, test, delete, etc */
+    /** Name of the test bucket these tests will create, test, delete, etc. */
     private String expectedBucketName = "java-sdk-crypto-integ-bucket-" + System.currentTimeMillis();
 
-    /** Name of the file that will be temporarily generated on disk, and then stored in S3 */
+    /** Name of the file that will be temporarily generated on disk, and then stored in S3. */
     private String expectedObjectName = "integ-test-file-" + new Date().getTime();
 
     /** The temporary file to be uploaded, and the temporary file to be retrieved. */
@@ -91,7 +91,7 @@ public class S3MultipartUploadCryptoIntegrationTest extends S3IntegrationTestBas
     /** Encryption client using a separate instruction file for crypto metadata storage. */
     private AmazonS3 s3_instructionFile;
 
-    /** Encryption client using a separate instruction file for crypto metadata storage and using materialProvider */
+    /** Encryption client using a separate instruction file for crypto metadata storage and using materialProvider. */
     private AmazonS3 s3_instructionFile_materialProvider;
 
     /**
@@ -230,7 +230,8 @@ public class S3MultipartUploadCryptoIntegrationTest extends S3IntegrationTestBas
      */
     @Test
     public void testBadPartSize() throws Exception {
-        InitiateMultipartUploadResult initiateMultipartUpload = s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
+        InitiateMultipartUploadResult initiateMultipartUpload =
+                s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
         String uploadId = initiateMultipartUpload.getUploadId();
 
         int badPartSize = JceEncryptionConstants.SYMMETRIC_CIPHER_BLOCK_SIZE * 1024 + 1;
@@ -244,6 +245,7 @@ public class S3MultipartUploadCryptoIntegrationTest extends S3IntegrationTestBas
                                            .withUploadId(uploadId));
             fail("Expected an AmazonClientException, but wasn't thrown");
         } catch (AmazonClientException ace) {
+            // Ignored or expected.
         }
     }
 
@@ -282,6 +284,7 @@ public class S3MultipartUploadCryptoIntegrationTest extends S3IntegrationTestBas
                                            .withUploadId(uploadId));
             fail("Expected an AmazonClientException, but wasn't thrown");
         } catch (AmazonClientException ace) {
+            // Ignored or expected.
         }
     }
 
@@ -296,7 +299,8 @@ public class S3MultipartUploadCryptoIntegrationTest extends S3IntegrationTestBas
         long firstPartLength = largeObjectLength - 5 * 1024 * 1024;
         long secondPartLength = largeObjectLength - firstPartLength;
 
-        InitiateMultipartUploadResult initiateMultipartUpload = s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
+        InitiateMultipartUploadResult initiateMultipartUpload =
+                s3_metadata.initiateMultipartUpload(new InitiateMultipartUploadRequest(expectedBucketName, expectedObjectName));
         String uploadId = initiateMultipartUpload.getUploadId();
 
         UploadPartResult uploadPartResult = s3_metadata.uploadPart(new UploadPartRequest()
@@ -321,9 +325,11 @@ public class S3MultipartUploadCryptoIntegrationTest extends S3IntegrationTestBas
         partETags.add(uploadPartResult2.getPartETag());
 
         try {
-            s3_metadata.completeMultipartUpload(new CompleteMultipartUploadRequest(expectedBucketName, expectedObjectName, uploadId, partETags));
+            s3_metadata.completeMultipartUpload(
+                    new CompleteMultipartUploadRequest(expectedBucketName, expectedObjectName, uploadId, partETags));
             fail("Expected an AmazonClientException, but wasn't thrown");
         } catch (AmazonClientException ace) {
+            // Ignored or expected.
         }
     }
 

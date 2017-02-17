@@ -39,8 +39,8 @@ public class DateUtilsTest {
     @Test
     public void tt0031561767() throws ParseException {
         String input = "Fri, 16 May 2014 23:56:46 GMT";
-        Date date = DateUtils.parseRFC822Date(input);
-        assertEquals(input, DateUtils.formatRFC822Date(date));
+        Date date = DateUtils.parseRfc822Date(input);
+        assertEquals(input, DateUtils.formatRfc822Date(date));
     }
 
     @Test
@@ -49,11 +49,11 @@ public class DateUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String expected = sdf.format(date);
-        String actual = DateUtils.formatISO8601Date(date);
+        String actual = DateUtils.formatIso8601Date(date);
         assertEquals(expected, actual);
 
         Date expectedDate = sdf.parse(expected);
-        Date actualDate = DateUtils.parseISO8601Date(actual);
+        Date actualDate = DateUtils.parseIso8601Date(actual);
         assertEquals(expectedDate, actualDate);
     }
 
@@ -63,11 +63,11 @@ public class DateUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String expected = sdf.format(date);
-        String actual = DateUtils.formatRFC822Date(date);
+        String actual = DateUtils.formatRfc822Date(date);
         assertEquals(expected, actual);
 
         Date expectedDate = sdf.parse(expected);
-        Date actualDate = DateUtils.parseRFC822Date(actual);
+        Date actualDate = DateUtils.parseRfc822Date(actual);
         assertEquals(expectedDate, actualDate);
     }
 
@@ -78,7 +78,7 @@ public class DateUtilsTest {
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
         Date expected = sdf.parse(formatted);
-        Date actual = DateUtils.parseCompressedISO8601Date(formatted);
+        Date actual = DateUtils.parseCompressedIso8601Date(formatted);
         assertEquals(expected, actual);
     }
 
@@ -89,7 +89,7 @@ public class DateUtilsTest {
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
         Date expected = sdf.parse(formatted);
-        Date actual = DateUtils.parseRFC822Date(formatted);
+        Date actual = DateUtils.parseRfc822Date(formatted);
         assertEquals(expected, actual);
     }
 
@@ -99,11 +99,11 @@ public class DateUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
-        String alternative = DateUtils.iso8601DateFormat.print(date.getTime());
+        String alternative = DateUtils.ISO_8601_DATE_FORMAT.print(date.getTime());
         assertEquals(formatted, alternative);
 
         Date expectedDate = sdf.parse(formatted);
-        Date actualDate = DateUtils.parseISO8601Date(formatted);
+        Date actualDate = DateUtils.parseIso8601Date(formatted);
         assertEquals(expectedDate, actualDate);
     }
 
@@ -113,11 +113,11 @@ public class DateUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
-        String alternative = DateUtils.alternateIso8601DateFormat.print(date.getTime());
+        String alternative = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.print(date.getTime());
         assertEquals(formatted, alternative);
 
         Date expectedDate = sdf.parse(formatted);
-        Date actualDate = DateUtils.parseISO8601Date(formatted);
+        Date actualDate = DateUtils.parseIso8601Date(formatted);
         assertEquals(expectedDate, actualDate);
     }
 
@@ -127,11 +127,11 @@ public class DateUtilsTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String expected = sdf.format(date);
-        String actual = DateUtils.alternateIso8601DateFormat.print(date.getTime());
+        String actual = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.print(date.getTime());
         assertEquals(expected, actual);
 
         Date expectedDate = sdf.parse(expected);
-        DateTime actualDateTime = DateUtils.alternateIso8601DateFormat.parseDateTime(actual);
+        DateTime actualDateTime = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.parseDateTime(actual);
         assertEquals(expectedDate, new Date(actualDateTime.getMillis()));
     }
 
@@ -146,14 +146,14 @@ public class DateUtilsTest {
     @Test(expected = IllegalArgumentException.class)
     public void invalidDate() throws ParseException {
         final String input = "2014-03-06T14:28:58.000Z.000Z";
-        DateUtils.parseISO8601Date(input);
+        DateUtils.parseIso8601Date(input);
     }
 
     @Test
     public void test() throws ParseException {
         Date date = new Date();
-        System.out.println("         formatISO8601Date: " + DateUtils.formatISO8601Date(date));
-        System.out.println("alternateIso8601DateFormat: " + DateUtils.alternateIso8601DateFormat.print(date.getTime()));
+        System.out.println("         formatISO8601Date: " + DateUtils.formatIso8601Date(date));
+        System.out.println("alternateIso8601DateFormat: " + DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.print(date.getTime()));
     }
 
     @Test
@@ -166,27 +166,27 @@ public class DateUtilsTest {
         if (DEBUG) {
             System.out.println("date: " + expected);
         }
-        String formatted = DateUtils.formatISO8601Date(expected);
+        String formatted = DateUtils.formatIso8601Date(expected);
         if (DEBUG) {
             System.out.println("formatted: " + formatted);
         }
         assertEquals(edgeCase, formatted);
-        Date parsed = DateUtils.parseISO8601Date(edgeCase);
+        Date parsed = DateUtils.parseIso8601Date(edgeCase);
         if (DEBUG) {
             System.out.println("parsed: " + parsed);
         }
         assertEquals(expected, parsed);
-        String reformatted = DateUtils.formatISO8601Date(parsed);
+        String reformatted = DateUtils.formatIso8601Date(parsed);
         assertEquals(edgeCase, reformatted);
     }
 
     @Test(expected = IllegalFieldValueException.class)
     public void testIssue233JodaTimeLimit() throws ParseException {
         // https://github.com/aws/aws-sdk-java/issues/233
-        String s = DateUtils.iso8601DateFormat.print(Long.MAX_VALUE);
+        String s = DateUtils.ISO_8601_DATE_FORMAT.print(Long.MAX_VALUE);
         System.out.println("s: " + s);
         try {
-            DateTime dt = DateUtils.iso8601DateFormat.parseDateTime(s);
+            DateTime dt = DateUtils.ISO_8601_DATE_FORMAT.parseDateTime(s);
             fail("Unexpected success: " + dt);
         } catch (IllegalFieldValueException ex) {
             // expected
@@ -210,13 +210,14 @@ public class DateUtilsTest {
     @Test
     public void testIssue233Overflows() throws ParseException {
         String[] cases = {
-                // 1 milli second passed the max time
-                "292278994-08-17T07:12:55.808Z",
-                // 1 year passed the max year
-                "292278995-01-17T07:12:55.807Z",};
+            // 1 milli second passed the max time
+            "292278994-08-17T07:12:55.808Z",
+            // 1 year passed the max year
+            "292278995-01-17T07:12:55.807Z",
+        };
         for (String edgeCase : cases) {
             try {
-                Date parsed = DateUtils.parseISO8601Date(edgeCase);
+                Date parsed = DateUtils.parseIso8601Date(edgeCase);
                 fail("Unexpected success: " + parsed);
             } catch (IllegalArgumentException ex) {
                 String msg = ex.getMessage();
@@ -231,7 +232,7 @@ public class DateUtilsTest {
      * same before and after marshalling/unmarshalling
      */
     @Test
-    public void testAWSFormatDateUtils() throws Exception {
+    public void testAwsFormatDateUtils() throws Exception {
         testDate(System.currentTimeMillis());
         testDate(1L);
         testDate(0L);

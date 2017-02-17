@@ -19,11 +19,9 @@ import java.net.URI;
 
 
 /**
- * An abstract implementation of {@link RegionMetadataProvider}
+ * An abstract implementation of {@link RegionMetadataProvider}.
  */
-
-public abstract class AbstractRegionMetadataProvider implements
-                                                     RegionMetadataProvider {
+public abstract class AbstractRegionMetadataProvider implements RegionMetadataProvider {
 
     /**
      * Parse the host portion out of an endpoint (which may or may not

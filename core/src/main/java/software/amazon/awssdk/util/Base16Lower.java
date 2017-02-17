@@ -24,7 +24,7 @@ package software.amazon.awssdk.util;
  */
 public enum Base16Lower {
     ;
-    private static final Base16Codec codec = new Base16Codec(false);
+    private static final Base16Codec CODEC = new Base16Codec(false);
 
     /**
      * Returns a base 16 encoded string (in lower case) of the given bytes.
@@ -33,14 +33,14 @@ public enum Base16Lower {
         if (bytes == null) {
             return null;
         }
-        return bytes.length == 0 ? "" : CodecUtils.toStringDirect(codec.encode(bytes));
+        return bytes.length == 0 ? "" : CodecUtils.toStringDirect(CODEC.encode(bytes));
     }
 
     /**
      * Returns a base 16 encoded byte array of the given bytes.
      */
     public static byte[] encode(byte[] bytes) {
-        return bytes == null || bytes.length == 0 ? bytes : codec.encode(bytes);
+        return bytes == null || bytes.length == 0 ? bytes : CODEC.encode(bytes);
     }
 
     /**
@@ -56,13 +56,13 @@ public enum Base16Lower {
         }
         byte[] buf = new byte[b16.length()];
         int len = CodecUtils.sanitize(b16, buf);
-        return codec.decode(buf, len);
+        return CODEC.decode(buf, len);
     }
 
     /**
      * Decodes the given base 16 encoded bytes.
      */
     public static byte[] decode(byte[] b16) {
-        return b16 == null || b16.length == 0 ? b16 : codec.decode(b16, b16.length);
+        return b16 == null || b16.length == 0 ? b16 : CODEC.decode(b16, b16.length);
     }
 }

@@ -35,7 +35,7 @@ public class RetryOnStatusCodeCondition implements RetryCondition {
     /**
      * @param context Context about the state of the last request and information about the number of requests made.
      * @return True if the HTTP status code matches one of the provided status codes. False if it doesn't match or the request
-     * failed for reasons other than an exceptional HTTP response (i.e. IOException).
+     *     failed for reasons other than an exceptional HTTP response (i.e. IOException).
      */
     @Override
     public boolean shouldRetry(RetryPolicyContext context) {

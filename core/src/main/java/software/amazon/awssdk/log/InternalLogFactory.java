@@ -71,7 +71,7 @@ public abstract class InternalLogFactory {
      *         otherwise (ie the log factory is not allowed to be configured
      *         more than once for performance reasons.)
      */
-    public synchronized static boolean configureFactory(
+    public static synchronized boolean configureFactory(
             InternalLogFactory factory) {
         if (factory == null) {
             throw new IllegalArgumentException();

@@ -88,6 +88,7 @@ public class HandlerChainFactory {
                     fileReader.close();
                 }
             } catch (IOException e) {
+                // Ignored or expected.
             }
         }
         return handlers;
@@ -154,6 +155,7 @@ public class HandlerChainFactory {
                     reader.close();
                 }
             } catch (IOException e) {
+                // Ignored or expected.
             }
         }
         return handlers;

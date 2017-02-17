@@ -16,10 +16,10 @@
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import static org.junit.Assert.assertEquals;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.BS;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.NS;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.S;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.SS;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.bs;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.ns;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.ss;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute;
 
 import java.util.Map;
@@ -32,7 +32,7 @@ public class ScanExpressionTest {
     public void test() {
         ScanExpressionSpec xspec = new ExpressionSpecBuilder()
                 .addProjections("attr1", "attr2")
-                .withCondition(attribute("status").exists().and(S("status").eq("inactive")))
+                .withCondition(attribute("status").exists().and(s("status").eq("inactive")))
                 .buildForScan();
         String projectionExpr = xspec.getProjectionExpression();
         String filterExpr = xspec.getFilterExpression();
@@ -58,7 +58,8 @@ public class ScanExpressionTest {
     public void testContains() {
         ScanExpressionSpec xspec = new ExpressionSpecBuilder()
                 .addProjections("attr1", "attr2")
-                .withCondition(S("status").contains("active").or(SS("ss").contains("a")).or(NS("ns").contains(123).or(BS("bs").contains(new byte[0]))))
+                .withCondition(s("status").contains("active").or(ss("ss").contains("a")).or(ns("ns").contains(123).or(
+                        bs("bs").contains(new byte[0]))))
                 .buildForScan();
         String projectionExpr = xspec.getProjectionExpression();
         String filterExpr = xspec.getFilterExpression();

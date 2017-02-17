@@ -52,10 +52,10 @@ public class StringCondition extends Condition {
      * Enumeration of the supported ways a string comparison can be evaluated.
      */
     public static enum StringComparisonType {
-        /** Case-sensitive exact string matching */
+        /** Case-sensitive exact string matching. */
         StringEquals,
 
-        /** Case-insensitive string matching */
+        /** Case-insensitive string matching. */
         StringEqualsIgnoreCase,
 
         /**
@@ -65,13 +65,19 @@ public class StringCondition extends Condition {
          */
         StringLike,
 
-        /** Negated form of {@link #StringEquals} */
+        /**
+         * Negated form of {@link #StringEquals}
+         */
         StringNotEquals,
 
-        /** Negated form of {@link #StringEqualsIgnoreCase} */
+        /**
+         * Negated form of {@link #StringEqualsIgnoreCase}
+         */
         StringNotEqualsIgnoreCase,
 
-        /** Negated form of {@link #StringLike} */
+        /**
+         * Negated form of {@link #StringLike}
+         */
         StringNotLike;
     }
 

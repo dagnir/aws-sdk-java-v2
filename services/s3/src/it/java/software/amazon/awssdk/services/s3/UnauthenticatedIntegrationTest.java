@@ -22,7 +22,7 @@ import static org.junit.Assert.fail;
 import java.util.Date;
 import org.junit.After;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AnonymousAWSCredentials;
+import software.amazon.awssdk.auth.AnonymousAwsCredentials;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
@@ -35,14 +35,14 @@ import software.amazon.awssdk.test.util.RandomInputStream;
  * Integration tests to validate that anonymous clients can send unsigned
  * requests using the Java client library.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 public class UnauthenticatedIntegrationTest extends S3IntegrationTestBase {
 
-    /** The name of the bucket created and used in these tests */
+    /** The name of the bucket created and used in these tests. */
     private String bucketName = "unauth-integ-test-" + new Date().getTime();
 
-    /** Releases all resources used in this tests */
+    /** Releases all resources used in this tests. */
     @After
     public void tearDown() {
         deleteBucketAndAllContents(bucketName);
@@ -64,7 +64,7 @@ public class UnauthenticatedIntegrationTest extends S3IntegrationTestBase {
                 bucketName, "key-2", new RandomInputStream(321L), new ObjectMetadata())
                              .withCannedAcl(CannedAccessControlList.PublicRead));
 
-        AmazonS3 anonymousS3 = new AmazonS3Client(new AnonymousAWSCredentials());
+        AmazonS3 anonymousS3 = new AmazonS3Client(new AnonymousAwsCredentials());
 
         // listObjects
         ObjectListing objectListing = anonymousS3.listObjects(bucketName);

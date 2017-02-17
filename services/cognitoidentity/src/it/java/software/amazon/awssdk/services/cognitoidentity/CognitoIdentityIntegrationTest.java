@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -46,12 +46,12 @@ import software.amazon.awssdk.services.cognitoidentity.model.ListIdentityPoolsRe
 import software.amazon.awssdk.services.cognitoidentity.model.UnlinkIdentityRequest;
 import software.amazon.awssdk.services.cognitoidentity.model.UpdateIdentityPoolRequest;
 import software.amazon.awssdk.services.cognitoidentity.model.UpdateIdentityPoolResult;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * Test suite for Amazon Cognito identity Java Client.
  */
-public class CognitoIdentityIntegrationTest extends AWSTestBase {
+public class CognitoIdentityIntegrationTest extends AwsTestBase {
 
     /**
      * Name of the identity pool created for testing.
@@ -61,7 +61,7 @@ public class CognitoIdentityIntegrationTest extends AWSTestBase {
     /**
      * AWS account id used for generating the identity id.
      */
-    private static final String awsAccountId = "599169622985";
+    private static final String AWS_ACCOUNT_ID = "599169622985";
     /**
      * Provider supported by the identity pool and associated with the
      * identities.
@@ -144,7 +144,7 @@ public class CognitoIdentityIntegrationTest extends AWSTestBase {
 
         GetIdResult result = identity
                 .getId(new GetIdRequest().withIdentityPoolId(identityPoolId)
-                                         .withAccountId(awsAccountId));
+                                         .withAccountId(AWS_ACCOUNT_ID));
         assertNotNull(result.getIdentityId());
         identityId = result.getIdentityId();
     }

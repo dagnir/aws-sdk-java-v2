@@ -70,41 +70,41 @@ import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManageme
 import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
 import software.amazon.awssdk.services.identitymanagement.model.ListServerCertificatesRequest;
 import software.amazon.awssdk.services.identitymanagement.model.ServerCertificateMetadata;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
  * Integration tests for the Elastic Load Balancing client.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
-public class ElbIntegrationTest extends AWSIntegrationTestBase {
+public class ElbIntegrationTest extends AwsIntegrationTestBase {
 
-    /** AMI used for tests that require an EC2 instance */
+    /** AMI used for tests that require an EC2 instance. */
     private static final String AMI_ID = "ami-7f418316";
 
-    /** Protocol value used in LB requests */
+    /** Protocol value used in LB requests. */
     private static final String PROTOCOL = "HTTP";
 
-    /** AZs used for LB requests */
+    /** AZs used for LB requests. */
     private static final String AVAILABILITY_ZONE_1 = "us-east-1a";
     private static final String AVAILABILITY_ZONE_2 = "us-east-1b";
 
-    /** The ELB client used in these tests */
+    /** The ELB client used in these tests. */
     private static AmazonElasticLoadBalancing elb;
 
-    /** The EC2 client used to start an instance for the tests requiring one */
+    /** The EC2 client used to start an instance for the tests requiring one. */
     private static AmazonEC2 ec2;
 
-    /** IAM client used to retrieve certificateArn */
+    /** IAM client used to retrieve certificateArn. */
     private static AmazonIdentityManagement iam;
 
-    /** Existing SSL certificate ARN in IAM */
+    /** Existing SSL certificate ARN in IAM. */
     private static String certificateArn;
 
-    /** The name of a load balancer created and tested by these tests */
+    /** The name of a load balancer created and tested by these tests. */
     private String loadBalancerName;
 
-    /** The ID of an EC2 instance created and used by these tests */
+    /** The ID of an EC2 instance created and used by these tests. */
     private String instanceId;
 
     /**
@@ -148,7 +148,7 @@ public class ElbIntegrationTest extends AWSIntegrationTestBase {
         assertThat(dnsName, not(isEmptyOrNullString()));
     }
 
-    /** Release any resources created by this test */
+    /** Release any resources created by this test. */
     @After
     public void tearDown() throws Exception {
         if (loadBalancerName != null) {
@@ -156,6 +156,7 @@ public class ElbIntegrationTest extends AWSIntegrationTestBase {
                 elb.deleteLoadBalancer(new DeleteLoadBalancerRequest()
                                                .withLoadBalancerName(loadBalancerName));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
         if (instanceId != null) {
@@ -163,6 +164,7 @@ public class ElbIntegrationTest extends AWSIntegrationTestBase {
                 ec2.terminateInstances(new TerminateInstancesRequest()
                                                .withInstanceIds(instanceId));
             } catch (Exception e) {
+                // Ignored or expected.
             }
         }
     }

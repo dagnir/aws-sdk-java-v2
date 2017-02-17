@@ -19,9 +19,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.test.AWSTestBase;
+import software.amazon.awssdk.test.AwsTestBase;
 
-public class IntegrationTestBase extends AWSTestBase {
+public class IntegrationTestBase extends AwsTestBase {
 
     protected static AWSCloudTrailClient cloudTrail;
     protected static AmazonS3Client s3;

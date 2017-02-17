@@ -59,20 +59,20 @@ class EC2CredentialsFetcher {
 
     /** The name of the Json Object that contains the token.*/
     private static final String TOKEN = "Token";
+    /** The time of the last attempt to check for new credentials. */
+    protected volatile Date lastInstanceProfileCheck;
     /** Used to load the endpoint where the credentials are stored. */
     private final CredentialsEndpointProvider credentailsEndpointProvider;
-    /** The time of the last attempt to check for new credentials */
-    protected volatile Date lastInstanceProfileCheck;
-    /** The current instance profile credentials */
-    private volatile AWSCredentials credentials;
-    /** The expiration for the current instance profile credentials */
+    /** The current instance profile credentials. */
+    private volatile AwsCredentials credentials;
+    /** The expiration for the current instance profile credentials. */
     private volatile Date credentialsExpiration;
 
     public EC2CredentialsFetcher(CredentialsEndpointProvider credentailsEndpointProvider) {
         this.credentailsEndpointProvider = credentailsEndpointProvider;
     }
 
-    public AWSCredentials getCredentials() {
+    public AwsCredentials getCredentials() {
         if (needsToLoadCredentials()) {
             fetchCredentials();
         }
@@ -137,7 +137,7 @@ class EC2CredentialsFetcher {
                 credentials = new BasicSessionCredentials(accessKey.asText(),
                                                           secretKey.asText(), token.asText());
             } else {
-                credentials = new BasicAWSCredentials(accessKey.asText(),
+                credentials = new BasicAwsCredentials(accessKey.asText(),
                                                       secretKey.asText());
             }
 
@@ -152,7 +152,7 @@ class EC2CredentialsFetcher {
                 expiration = expiration.replaceAll("\\+0000$", "Z");
 
                 try {
-                    credentialsExpiration = DateUtils.parseISO8601Date(expiration);
+                    credentialsExpiration = DateUtils.parseIso8601Date(expiration);
                 } catch (Exception ex) {
                     handleError("Unable to parse credentials expiration date from Amazon EC2 instance", ex);
                 }

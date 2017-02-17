@@ -1662,7 +1662,7 @@ public class StandardModelFactoriesTest {
     }
 
     @DynamoDBTable(tableName = "")
-    private static abstract class SuperGenericClass<T> {
+    private abstract static class SuperGenericClass<T> {
         private String id;
 
         @DynamoDBHashKey

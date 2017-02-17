@@ -39,11 +39,11 @@ import software.amazon.awssdk.services.s3.model.SetBucketVersioningConfiguration
 public class BucketReplicationIntegrationTest extends
                                               S3IntegrationTestBase {
 
-    /** source bucket name for the replication integration test */
+    /** source bucket name for the replication integration test. */
     private static final String SOURCE_BUCKET_NAME = "bucket-replication-integ-test-"
                                                      + System.currentTimeMillis();
 
-    /** destination bucket name for the replication integration test */
+    /** destination bucket name for the replication integration test. */
     private static final String DESTINATION_BUCKET_NAME = "bucket-dest-replication-integ-test-"
                                                           + System.currentTimeMillis();
 
@@ -110,7 +110,7 @@ public class BucketReplicationIntegrationTest extends
 
         // Setting new configuration and retrieving.
         BucketReplicationConfiguration configuration = new BucketReplicationConfiguration()
-                .withRoleARN(ROLE);
+                .withRoleArn(ROLE);
 
         configuration.addRule(
                 RULE1,
@@ -142,7 +142,7 @@ public class BucketReplicationIntegrationTest extends
         assertEquals("testPrefix1", replRule1.getPrefix());
         assertEquals(DEST_BUCKET_ARN, replRule1.getDestinationConfig()
                                                .getBucketARN());
-        assertEquals(ROLE, retrievedReplicationConfig.getRoleARN());
+        assertEquals(ROLE, retrievedReplicationConfig.getRoleArn());
 
         assertEquals("testPrefix2", replRule2.getPrefix());
         assertEquals(DEST_BUCKET_ARN, replRule2.getDestinationConfig()
@@ -152,7 +152,7 @@ public class BucketReplicationIntegrationTest extends
         replRule2.setStatus(ReplicationRuleStatus.Disabled);
         BucketReplicationConfiguration updatedConfiguration = new BucketReplicationConfiguration()
                 .addRule(RULE1, replRule1).addRule(RULE2, replRule2)
-                .withRoleARN(ROLE);
+                .withRoleArn(ROLE);
         euS3.setBucketReplicationConfiguration(SOURCE_BUCKET_NAME,
                                                updatedConfiguration);
         GetBucketReplicationConfigurationRequest getBucketReplicationConfigurationRequest =

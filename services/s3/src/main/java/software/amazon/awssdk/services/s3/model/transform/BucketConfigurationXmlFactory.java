@@ -33,9 +33,9 @@ import software.amazon.awssdk.services.s3.model.BucketReplicationConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketTaggingConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketVersioningConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketWebsiteConfiguration;
-import software.amazon.awssdk.services.s3.model.CORSRule;
-import software.amazon.awssdk.services.s3.model.CORSRule.AllowedMethods;
 import software.amazon.awssdk.services.s3.model.CloudFunctionConfiguration;
+import software.amazon.awssdk.services.s3.model.CorsRule;
+import software.amazon.awssdk.services.s3.model.CorsRule.AllowedMethods;
 import software.amazon.awssdk.services.s3.model.Filter;
 import software.amazon.awssdk.services.s3.model.FilterRule;
 import software.amazon.awssdk.services.s3.model.LambdaConfiguration;
@@ -167,50 +167,37 @@ public class BucketConfigurationXmlFactory {
      *
      * @return The XML byte array representation.
      */
-    public byte[] convertToXmlByteArray(
-            BucketNotificationConfiguration notificationConfiguration) {
+    public byte[] convertToXmlByteArray(BucketNotificationConfiguration notificationConfiguration) {
         XmlWriter xml = new XmlWriter();
         xml.start("NotificationConfiguration", "xmlns", Constants.XML_NAMESPACE);
-        Map<String, NotificationConfiguration> configurations = notificationConfiguration
-                .getConfigurations();
+        Map<String, NotificationConfiguration> configurations = notificationConfiguration.getConfigurations();
 
-        for (Map.Entry<String, NotificationConfiguration> entry : configurations
-                .entrySet()) {
+        for (Map.Entry<String, NotificationConfiguration> entry : configurations.entrySet()) {
             String configName = entry.getKey();
             NotificationConfiguration config = entry.getValue();
             if (config instanceof TopicConfiguration) {
                 xml.start("TopicConfiguration");
                 xml.start("Id").value(configName).end();
-                xml.start("Topic")
-                   .value(((TopicConfiguration) config).getTopicARN())
-                   .end();
+                xml.start("Topic").value(((TopicConfiguration) config).getTopicARN()).end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof QueueConfiguration) {
                 xml.start("QueueConfiguration");
                 xml.start("Id").value(configName).end();
-                xml.start("Queue")
-                   .value(((QueueConfiguration) config).getQueueARN())
-                   .end();
+                xml.start("Queue").value(((QueueConfiguration) config).getQueueARN()).end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof CloudFunctionConfiguration) {
                 xml.start("CloudFunctionConfiguration");
                 xml.start("Id").value(configName).end();
-                xml.start("InvocationRole")
-                   .value(((CloudFunctionConfiguration) config)
-                                  .getInvocationRoleARN()).end();
-                xml.start("CloudFunction")
-                   .value(((CloudFunctionConfiguration) config).getCloudFunctionARN())
-                   .end();
+                xml.start("InvocationRole").value(((CloudFunctionConfiguration) config).getInvocationRoleArn()).end();
+                xml.start("CloudFunction").value(((CloudFunctionConfiguration) config).getCloudFunctionArn()).end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof LambdaConfiguration) {
                 xml.start("CloudFunctionConfiguration");
                 xml.start("Id").value(configName).end();
-                xml.start("CloudFunction")
-                   .value(((LambdaConfiguration) config).getFunctionARN())
-                   .end();
+                xml.start("CloudFunction").value(((LambdaConfiguration) config).getFunctionARN()).end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             }
@@ -261,13 +248,11 @@ public class BucketConfigurationXmlFactory {
     public byte[] convertToXmlByteArray(BucketReplicationConfiguration replicationConfiguration) {
         XmlWriter xml = new XmlWriter();
         xml.start("ReplicationConfiguration");
-        Map<String, ReplicationRule> rules = replicationConfiguration
-                .getRules();
+        Map<String, ReplicationRule> rules = replicationConfiguration.getRules();
 
-        final String role = replicationConfiguration.getRoleARN();
+        final String role = replicationConfiguration.getRoleArn();
         xml.start("Role").value(role).end();
-        for (Map.Entry<String, ReplicationRule> entry : rules
-                .entrySet()) {
+        for (Map.Entry<String, ReplicationRule> entry : rules.entrySet()) {
             final String ruleId = entry.getKey();
             final ReplicationRule rule = entry.getValue();
 
@@ -363,63 +348,62 @@ public class BucketConfigurationXmlFactory {
      * Converts the specified {@link BucketLifecycleConfiguration} object to an XML fragment that
      * can be sent to Amazon S3.
      *
-     * @param config
-     *            The {@link BucketLifecycleConfiguration}
+     * <LifecycleConfiguration>
+     *     <Rule>
+     *         <ID>logs-rule</ID>
+     *         <Status>Enabled</Status>
+     *         <Transition>
+     *             <Days>30</Days>
+     *             <StorageClass>GLACIER</StorageClass>
+     *         </Transition>
+     *         <Expiration>
+     *             <Days>365</Days>
+     *         </Expiration>
+     *         <NoncurrentVersionTransition>
+     *             <NoncurrentDays>7</NoncurrentDays>
+     *             <StorageClass>GLACIER</StorageClass>
+     *         </NoncurrentVersionTransition>
+     *         <NoncurrentVersionExpiration>
+     *             <NoncurrentDays>14</NoncurrentDays>
+     *         </NoncurrentVersionExpiration>
+     *         <Filter> <!-- A filter can have only one of Prefix, Tag or And. -->
+     *             <Prefix>logs/</Prefix>
+     *             <Tag>
+     *                <Key>key1</Key>
+     *                <Value>value1</Value>
+     *             </Tag>
+     *             <And>
+     *                <Prefix>logs/</Prefix>
+     *                <Tag>
+     *                    <Key>key1</Key>
+     *                    <Value>value1</Value>
+     *                </Tag>
+     *                <Tag>
+     *                    <Key>key1</Key>
+     *                    <Value>value1</Value>
+     *                </Tag>
+     *             </And>
+     *         </Filter>
+     *     </Rule>
+     *     <Rule>
+     *         <ID>image-rule</ID>
+     *         <Prefix>image/</Prefix>
+     *         <Status>Enabled</Status>
+     *         <Transition>
+     *             <Date>2012-12-31T00:00:00.000Z</Date>
+     *             <StorageClass>GLACIER</StorageClass>
+     *         </Transition>
+     *         <Expiration>
+     *             <Date>2020-12-31T00:00:00.000Z</Date>
+     *         </Expiration>
+     *         <AbortIncompleteMultipartUpload>
+     *             <DaysAfterInitiation>10</DaysAfterInitiation>
+     *         </AbortIncompleteMultipartUpload>
+     *     </Rule>
+     * </LifecycleConfiguration>
+     *
+     * @param config The {@link BucketLifecycleConfiguration}
      */
-     /* <LifecycleConfiguration>
-           <Rule>
-               <ID>logs-rule</ID>
-               <Status>Enabled</Status>
-               <Transition>
-                   <Days>30</Days>
-                   <StorageClass>GLACIER</StorageClass>
-               </Transition>
-               <Expiration>
-                   <Days>365</Days>
-               </Expiration>
-               <NoncurrentVersionTransition>
-                   <NoncurrentDays>7</NoncurrentDays>
-                   <StorageClass>GLACIER</StorageClass>
-               </NoncurrentVersionTransition>
-               <NoncurrentVersionExpiration>
-                   <NoncurrentDays>14</NoncurrentDays>
-               </NoncurrentVersionExpiration>
-               <Filter> <!-- A filter can have only one of Prefix, Tag or And. -->
-                 <Prefix>logs/</Prefix>
-                 <Tag>
-                    <Key>key1</Key>
-                    <Value>value1</Value>
-                 </Tag>
-                 <And>
-                    <Prefix>logs/</Prefix>
-                    <Tag>
-                        <Key>key1</Key>
-                        <Value>value1</Value>
-                    </Tag>
-                    <Tag>
-                        <Key>key1</Key>
-                        <Value>value1</Value>
-                    </Tag>
-                 </And>
-           </Filter>
-           </Rule>
-           <Rule>
-               <ID>image-rule</ID>
-               <Prefix>image/</Prefix>
-               <Status>Enabled</Status>
-               <Transition>
-                   <Date>2012-12-31T00:00:00.000Z</Date>
-                   <StorageClass>GLACIER</StorageClass>
-               </Transition>
-               <Expiration>
-                   <Date>2020-12-31T00:00:00.000Z</Date>
-               </Expiration>
-               <AbortIncompleteMultipartUpload>
-                   <DaysAfterInitiation>10</DaysAfterInitiation>
-               </AbortIncompleteMultipartUpload>
-          </Rule>
-    </LifecycleConfiguration>
-    */
     public byte[] convertToXmlByteArray(BucketLifecycleConfiguration config) throws SdkClientException {
 
         XmlWriter xml = new XmlWriter();
@@ -438,25 +422,24 @@ public class BucketConfigurationXmlFactory {
      * Converts the specified {@link BucketCrossOriginConfiguration} object to an XML fragment that
      * can be sent to Amazon S3.
      *
+     * <CORSConfiguration>
+     *     <CORSRule>
+     *         <AllowedOrigin>http://www.foobar.com</AllowedOrigin>
+     *         <AllowedMethod>GET</AllowedMethod>
+     *         <MaxAgeSeconds>3000</MaxAgeSec>
+     *         <ExposeHeader>x-amz-server-side-encryption</ExposeHeader>
+     *     </CORSRule>
+     * </CORSConfiguration>
+     *
      * @param config
      *            The {@link BucketCrossOriginConfiguration}
-     */
-    /*
-     * <CORSConfiguration>
-             <CORSRule>
-               <AllowedOrigin>http://www.foobar.com</AllowedOrigin>
-               <AllowedMethod>GET</AllowedMethod>
-               <MaxAgeSeconds>3000</MaxAgeSec>
-               <ExposeHeader>x-amz-server-side-encryption</ExposeHeader>
-             </CORSRule>
-       </CORSConfiguration>
      */
     public byte[] convertToXmlByteArray(BucketCrossOriginConfiguration config) throws SdkClientException {
 
         XmlWriter xml = new XmlWriter();
         xml.start("CORSConfiguration", "xmlns", Constants.XML_NAMESPACE);
 
-        for (CORSRule rule : config.getRules()) {
+        for (CorsRule rule : config.getRules()) {
             writeRule(xml, rule);
         }
 
@@ -495,18 +478,14 @@ public class BucketConfigurationXmlFactory {
 
         if (rule.getNoncurrentVersionExpirationInDays() != -1) {
             xml.start("NoncurrentVersionExpiration");
-            xml.start("NoncurrentDays")
-               .value(Integer.toString(
-                       rule.getNoncurrentVersionExpirationInDays()))
-               .end();
+            xml.start("NoncurrentDays").value(Integer.toString(rule.getNoncurrentVersionExpirationInDays())).end();
             xml.end(); // </NoncurrentVersionExpiration>
         }
 
         if (rule.getAbortIncompleteMultipartUpload() != null) {
             xml.start("AbortIncompleteMultipartUpload");
-            xml.start("DaysAfterInitiation").
-                    value(Integer.toString(rule.getAbortIncompleteMultipartUpload().getDaysAfterInitiation()))
-               .end();
+            xml.start("DaysAfterInitiation")
+               .value(Integer.toString(rule.getAbortIncompleteMultipartUpload().getDaysAfterInitiation())).end();
             xml.end(); // </AbortIncompleteMultipartUpload>
         }
 
@@ -541,8 +520,7 @@ public class BucketConfigurationXmlFactory {
         }
     }
 
-    private void addNoncurrentTransitions(XmlWriter xml,
-                                          List<NoncurrentVersionTransition> transitions) {
+    private void addNoncurrentTransitions(XmlWriter xml, List<NoncurrentVersionTransition> transitions) {
         if (transitions == null || transitions.isEmpty()) {
             return;
         }
@@ -582,14 +560,13 @@ public class BucketConfigurationXmlFactory {
     }
 
     /**
-     * @param rule
      * @return True if rule has a current expiration (<Expiration/>) policy set
      */
     private boolean hasCurrentExpirationPolicy(Rule rule) {
         return rule.getExpirationInDays() != -1 || rule.getExpirationDate() != null || rule.isExpiredObjectDeleteMarker();
     }
 
-    private void writeRule(XmlWriter xml, CORSRule rule) {
+    private void writeRule(XmlWriter xml, CorsRule rule) {
         xml.start("CORSRule");
         if (rule.getId() != null) {
             xml.start("ID").value(rule.getId()).end();
@@ -617,7 +594,7 @@ public class BucketConfigurationXmlFactory {
                 xml.start("AllowedHeader").value(header).end();
             }
         }
-        xml.end();//</CORSRule>
+        xml.end(); // </CORSRule>
     }
 
     private void writeRule(XmlWriter xml, RoutingRule rule) {
@@ -662,7 +639,7 @@ public class BucketConfigurationXmlFactory {
             }
         }
         xml.end(); // </Redirect>
-        xml.end();// </CORSRule>
+        xml.end(); // </CORSRule>
     }
 
     /**
@@ -704,39 +681,37 @@ public class BucketConfigurationXmlFactory {
      * Converts the specified {@link InventoryConfiguration} object to an XML fragment that
      * can be sent to Amazon S3.
      *
-     * @param config
-     *            The {@link InventoryConfiguration}
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <InventoryConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+     *     <Destination>
+     *         <S3BucketDestination>
+     *             <AccountId>A2OCNCIEQW9MSG</AccountId>
+     *             <Bucket>s3-object-inventory-list-gamma-us-east-1</Bucket>
+     *             <Format>CSV</Format>
+     *             <Prefix>string</Prefix>
+     *         </S3BucketDestination>
+     *     </Destination>
+     *     <IsEnabled>true</IsEnabled>
+     *     <Filter>
+     *         <Prefix>string</Prefix>
+     *     </Filter>
+     *     <Id>configId</Id>
+     *     <IncludedObjectVersions>All</IncludedObjectVersions>
+     *     <OptionalFields>
+     *         <Field>Size</Field>
+     *         <Field>LastModifiedDate</Field>
+     *         <Field>StorageClass</Field>
+     *         <Field>ETag</Field>
+     *         <Field>IsMultipartUploaded</Field>
+     *         <Field>ReplicationStatus</Field>
+     *     </OptionalFields>
+     *     <Schedule>
+     *         <Frequency>Daily</Frequency>
+     *     </Schedule>
+     * </InventoryConfiguration>
+     *
+     * @param config The {@link InventoryConfiguration}
      */
-     /*
-        <?xml version="1.0" encoding="UTF-8"?>
-        <InventoryConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-           <Destination>
-              <S3BucketDestination>
-                 <AccountId>A2OCNCIEQW9MSG</AccountId>
-                 <Bucket>s3-object-inventory-list-gamma-us-east-1</Bucket>
-                 <Format>CSV</Format>
-                 <Prefix>string</Prefix>
-              </S3BucketDestination>
-           </Destination>
-           <IsEnabled>true</IsEnabled>
-           <Filter>
-              <Prefix>string</Prefix>
-           </Filter>
-           <Id>configId</Id>
-           <IncludedObjectVersions>All</IncludedObjectVersions>
-           <OptionalFields>
-              <Field>Size</Field>
-              <Field>LastModifiedDate</Field>
-              <Field>StorageClass</Field>
-              <Field>ETag</Field>
-              <Field>IsMultipartUploaded</Field>
-              <Field>ReplicationStatus</Field>
-           </OptionalFields>
-           <Schedule>
-              <Frequency>Daily</Frequency>
-           </Schedule>
-        </InventoryConfiguration>
-    */
     public byte[] convertToXmlByteArray(InventoryConfiguration config) throws SdkClientException {
         XmlWriter xml = new XmlWriter();
         xml.start("InventoryConfiguration", "xmlns", Constants.XML_NAMESPACE);
@@ -834,35 +809,34 @@ public class BucketConfigurationXmlFactory {
      * Converts the specified {@link software.amazon.awssdk.services.s3.model.analytics.AnalyticsConfiguration} object to an
      * XML fragment that can be sent to Amazon S3.
      *
+     * <AnalyticsConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+     *     <Id>XXX</Id>
+     *     <Filter>
+     *         <And>
+     *             <Prefix>documents/</Prefix>
+     *             <Tag>
+     *                 <Key>foo</Key>
+     *                 <Value>bar</Value>
+     *             </Tag>
+     *         </And>
+     *     </Filter>
+     *     <StorageClassAnalysis>
+     *         <DataExport>
+     *             <OutputSchemaVersion>1</OutputSchemaVersion>
+     *             <Destination>
+     *                 <S3BucketDestination>
+     *                     <Format>CSV</Format>
+     *                     <BucketAccountId>123456789</BucketAccountId>
+     *                     <Bucket>destination-bucket</Bucket>
+     *                     <Prefix>destination-prefix</Prefix>
+     *                 </S3BucketDestination>
+     *             </Destination>
+     *         </DataExport>
+     *     </StorageClassAnalysis>
+     * </AnalyticsConfiguration>
+     *
      * @param config
      *            The {@link software.amazon.awssdk.services.s3.model.analytics.AnalyticsConfiguration}
-     */
-     /*
-      * <AnalyticsConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-           <Id>XXX</Id>
-           <Filter>
-             <And>
-               <Prefix>documents/</Prefix>
-               <Tag>
-                 <Key>foo</Key>
-                 <Value>bar</Value>
-               </Tag>
-             </And>
-           </Filter>
-           <StorageClassAnalysis>
-             <DataExport>
-               <OutputSchemaVersion>1</OutputSchemaVersion>
-               <Destination>
-                 <S3BucketDestination>
-                   <Format>CSV</Format>
-                   <BucketAccountId>123456789</BucketAccountId>
-                   <Bucket>destination-bucket</Bucket>
-                   <Prefix>destination-prefix</Prefix>
-                 </S3BucketDestination>
-               </Destination>
-             </DataExport>
-           </StorageClassAnalysis>
-        </AnalyticsConfiguration>
      */
     public byte[] convertToXmlByteArray(AnalyticsConfiguration config) throws SdkClientException {
         XmlWriter xml = new XmlWriter();
@@ -940,28 +914,26 @@ public class BucketConfigurationXmlFactory {
      * Converts the specified {@link software.amazon.awssdk.services.s3.model.metrics.MetricsConfiguration}
      * object to an XML fragment that can be sent to Amazon S3.
      *
-     * @param config
-     *            The {@link software.amazon.awssdk.services.s3.model.metrics.MetricsConfiguration}.
-     */
-     /*
-      * <MetricsConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-           <Id>metrics-id</Id>
-           <Filter>
-           <!-- A filter should have only one of Prefix, Tag or And-->
-             <Prefix>prefix</Prefix>
-             <Tag>
-                 <Key>Project</Key>
-                 <Value>Foo</Value>
-             </Tag>
-             <And>
-               <Prefix>documents/</Prefix>
-               <Tag>
-                 <Key>foo</Key>
-                 <Value>bar</Value>
-               </Tag>
-             </And>
-           </Filter>
-        </MetricsConfiguration>
+     * <MetricsConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+     *     <Id>metrics-id</Id>
+     *     <Filter>
+     *         <!-- A filter should have only one of Prefix, Tag or And-->
+     *         <Prefix>prefix</Prefix>
+     *         <Tag>
+     *             <Key>Project</Key>
+     *             <Value>Foo</Value>
+     *         </Tag>
+     *         <And>
+     *             <Prefix>documents/</Prefix>
+     *             <Tag>
+     *                 <Key>foo</Key>
+     *                 <Value>bar</Value>
+     *             </Tag>
+     *         </And>
+     *     </Filter>
+     * </MetricsConfiguration>
+     *
+     * @param config The {@link software.amazon.awssdk.services.s3.model.metrics.MetricsConfiguration}.
      */
     public byte[] convertToXmlByteArray(MetricsConfiguration config) throws SdkClientException {
         XmlWriter xml = new XmlWriter();

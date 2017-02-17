@@ -51,7 +51,7 @@ import utils.resources.tables.BasicTempTable;
 import utils.test.util.DynamoDBTestBase;
 
 @RunWith(ResourceCentricBlockJUnit4ClassRunner.class)
-@RequiredResources( {
+@RequiredResources({
                             @RequiredResource(resource = BasicTempTable.class,
                                               creationPolicy = ResourceCreationPolicy.ALWAYS_RECREATE,
                                               retentionPolicy = ResourceRetentionPolicy.DESTROY_AFTER_ALL_TESTS)
@@ -134,6 +134,7 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
             ddb_NoRetry.putItem(request);
             Assert.fail("Exception is expected since the PutItemRequest is invalid.");
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
 
         waitTillListenerCallbacksComplete();
@@ -181,6 +182,7 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
             ddb_OneRetry.putItem(request);
             Assert.fail("Exception is expected since the PutItemRequest is invalid.");
         } catch (AmazonServiceException expected) {
+            // Ignored or expected.
         }
 
         waitTillListenerCallbacksComplete();

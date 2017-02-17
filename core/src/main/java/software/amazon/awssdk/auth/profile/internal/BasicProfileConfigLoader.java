@@ -68,6 +68,7 @@ public class BasicProfileConfigLoader {
                 try {
                     fis.close();
                 } catch (IOException ioe) {
+                    // Ignore.
                 }
             }
         }

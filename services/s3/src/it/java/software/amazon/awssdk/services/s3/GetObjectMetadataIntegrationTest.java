@@ -57,28 +57,28 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
 
     private static final Log LOG = LogFactory.getLog(GetObjectMetadataIntegrationTest.class);
 
-    /** The bucket created and used by these tests */
-    private final static String BUCKET_NAME = "java-get-object-metadata-integ-test-" + new Date().getTime();
+    /** The bucket created and used by these tests. */
+    private static final String BUCKET_NAME = "java-get-object-metadata-integ-test-" + new Date().getTime();
 
-    /** The key used in these tests */
-    private final static String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
-    /** The size of the file containing the test data uploaded to S3 */
-    private final static long FILE_SIZE = 3 * MB;
-    /** The key used for testing multipart object */
-    private final static String MULTIPART_OBJECT_KEY = "multiPartkey";
+    /** The key used in these tests. */
+    private static final String NON_MULTIPART_OBJECT_KEY = "nonMultiPartkey";
+    /** The size of the file containing the test data uploaded to S3. */
+    private static final long FILE_SIZE = 3 * MB;
+    /** The key used for testing multipart object. */
+    private static final String MULTIPART_OBJECT_KEY = "multiPartkey";
 
     /**************Variables for testing multi part object***************/
-    /** The minimum size of a part in multipart object */
-    private final static long MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
-    /** The test content that is used for testing part 2 of multipart object. Contains only ASCII characters */
-    private final static String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
+    /** The minimum size of a part in multipart object. */
+    private static final long MIN_SIZE_FIRST_PART_IN_MB = 5 * MB;
+    /** The test content that is used for testing part 2 of multipart object. Contains only ASCII characters. */
+    private static final String TEST_STRING = "This is the content to be uploaded in part 2 of multipart object";
     /** The size of the TEST_STRING **/
-    private final static long TEST_STRING_LENGTH = TEST_STRING.length();
-    /** The file containing the test data uploaded to S3 */
+    private static final long TEST_STRING_LENGTH = TEST_STRING.length();
+    /** The file containing the test data uploaded to S3. */
     private static File file;
-    /** The unique Id that is returned when we initiate a MultipartUpload */
+    /** The unique Id that is returned when we initiate a MultipartUpload. */
     private static String uploadId;
-    /** The input stream that holds the TEST_STRING */
+    /** The input stream that holds the TEST_STRING. */
     private static InputStream inputStream;
 
     /**
@@ -97,7 +97,6 @@ public class GetObjectMetadataIntegrationTest extends S3IntegrationTestBase {
     /**
      * Uploads a two part object to s3.
      *
-     * @throws Exception
      */
     private static void doMultiPartUpload() throws Exception {
         InitiateMultipartUploadResult initiateResult = s3.initiateMultipartUpload(

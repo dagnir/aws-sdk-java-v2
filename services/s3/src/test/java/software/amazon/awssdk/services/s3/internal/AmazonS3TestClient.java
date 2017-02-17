@@ -18,8 +18,8 @@ package software.amazon.awssdk.services.s3.internal;
 import java.io.File;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.auth.AWSCredentials;
-import software.amazon.awssdk.auth.AWSCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.services.kms.AWSKMSClient;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
@@ -38,28 +38,28 @@ public class AmazonS3TestClient extends AmazonS3Client {
         super();
     }
 
-    public AmazonS3TestClient(AWSCredentials awsCredentials) {
+    public AmazonS3TestClient(AwsCredentials awsCredentials) {
         super(awsCredentials);
     }
 
-    public AmazonS3TestClient(AWSKMSClient kms, AWSCredentials awsCredentials) {
+    public AmazonS3TestClient(AWSKMSClient kms, AwsCredentials awsCredentials) {
         super(awsCredentials);
     }
 
-    public AmazonS3TestClient(AWSCredentials awsCredentials, ClientConfiguration clientConfiguration) {
+    public AmazonS3TestClient(AwsCredentials awsCredentials, ClientConfiguration clientConfiguration) {
         super(awsCredentials, clientConfiguration);
     }
 
-    public AmazonS3TestClient(AWSCredentialsProvider credentialsProvider) {
+    public AmazonS3TestClient(AwsCredentialsProvider credentialsProvider) {
         super(credentialsProvider);
     }
 
-    public AmazonS3TestClient(AWSCredentialsProvider credentialsProvider,
+    public AmazonS3TestClient(AwsCredentialsProvider credentialsProvider,
                               ClientConfiguration clientConfiguration) {
         super(credentialsProvider, clientConfiguration);
     }
 
-    public AmazonS3TestClient(AWSCredentialsProvider credentialsProvider,
+    public AmazonS3TestClient(AwsCredentialsProvider credentialsProvider,
                               ClientConfiguration clientConfiguration,
                               RequestMetricCollector requestMetricCollector) {
         super(credentialsProvider, clientConfiguration, requestMetricCollector);

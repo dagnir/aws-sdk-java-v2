@@ -335,7 +335,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>7.5</version>
+                        <version>7.5.1</version>
                     </dependency>
                     <dependency>
                         <groupId>software.amazon.awssdk</groupId>
@@ -354,10 +354,11 @@
                 </executions>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
-                    <consoleOutput>false</consoleOutput>
-                    <failsOnError>false</failsOnError>
-                    <logViolationsToConsole>false</logViolationsToConsole>
-                    <failOnViolation>false</failOnViolation>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <failOnViolation>true</failOnViolation>
                 </configuration>
             </plugin>
 

@@ -26,9 +26,9 @@ public interface EncryptionMaterialsAccessor {
      * Retrieves encryption materials matching the specified description from some source.
      *
      * @param materialsDescription
-     *      A Map<String, String> whose key-value pairs describe an encryption materials object
+     *      A Map&lt;String, String&gt; whose key-value pairs describe an encryption materials object
      * @return
      *      The encryption materials that match the description, or null if no matching encryption materials found.
      */
-    public EncryptionMaterials getEncryptionMaterials(Map<String, String> materialsDescription);
+    EncryptionMaterials getEncryptionMaterials(Map<String, String> materialsDescription);
 }

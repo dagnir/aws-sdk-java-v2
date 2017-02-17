@@ -55,7 +55,7 @@ public class AmazonServiceException extends SdkClientException {
      * The error message as returned by the service.
      */
     private String errorMessage;
-    /** The HTTP status code that was returned with this error */
+    /** The HTTP status code that was returned with this error. */
     private int statusCode;
     /**
      * The name of the Amazon service that sent this error response.
@@ -188,11 +188,10 @@ public class AmazonServiceException extends SdkClientException {
     /**
      * Sets the human-readable error message provided by the service.
      *
-     * NOTE: errorMessage by default is set to the same as the message value
-     * passed to the constructor of AmazonServiceException.
+     * Note: errorMessage by default is set to the same as the message value passed to the constructor of AmazonServiceException.
      *
      * @see AmazonServiceException#AmazonServiceException(String)
-     * @see AmazonServiceException#AmazonServiceException(String, Exception))
+     * @see AmazonServiceException#AmazonServiceException(String, Exception)
      */
     public void setErrorMessage(String value) {
         errorMessage = value;
@@ -243,8 +242,7 @@ public class AmazonServiceException extends SdkClientException {
      * Sets the raw response content.
      */
     public void setRawResponseContent(String rawResponseContent) {
-        this.rawResponse = rawResponseContent == null ? null : rawResponseContent.getBytes
-                (StringUtils.UTF8);
+        this.rawResponse = rawResponseContent == null ? null : rawResponseContent.getBytes(StringUtils.UTF8);
     }
 
     /**

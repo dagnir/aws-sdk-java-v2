@@ -136,7 +136,7 @@ public class HttpClientSettings {
     }
 
     public long getConnectionPoolTTL() {
-        return config.getConnectionTTL();
+        return config.getConnectionTtl();
     }
 
     public long getMaxIdleConnectionTime() {

@@ -55,17 +55,17 @@ import software.amazon.awssdk.util.BinaryUtils;
 /**
  * Integration tests for pre-signing S3 URLs.
  *
- * @author Jason Fulghum <fulghum@amazon.com>
+ * @author Jason Fulghum fulghum@amazon.com
  */
 @Category(S3Categories.Slow.class)
 public class PresignedUrlIntegrationTest extends S3IntegrationTestBase {
 
     private static final int MAX_RETRIES = 3;
     private static final String S3_REGIONAL_ENDPOINT = "s3-us-west-2.amazonaws.com";
-    /** The buckets created and used by this test */
+    /** The buckets created and used by this test. */
     private static String virtHostBucketName = null;
     private static String pathStyleBucketName = null;
-    /** The file of random data uploaded to S3 by this test */
+    /** The file of random data uploaded to S3 by this test. */
     private static File file;
     private static String contentMd5;
 
@@ -184,6 +184,7 @@ public class PresignedUrlIntegrationTest extends S3IntegrationTestBase {
             cnS3.generatePresignedUrl(request);
             fail("AmazonClientException is expected since the expiration exceeds the 7 day limit.");
         } catch (AmazonClientException expected) {
+            // Ignored or expected.
         } catch (Exception e) {
             fail("AmazonClientException is expected since the expiration exceeds the 7 day limit.");
         }

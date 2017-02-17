@@ -52,17 +52,17 @@ public class BucketRequesterPaysIntegrationTest extends S3IntegrationTestBase {
 
     /** The name of the Amazon S3 bucket used for testing requester pays options.*/
     private static final String REQUESTER_PAYS_BUCKET_NAME = "java-requester-pays-test-" + System.currentTimeMillis();
-    /** The key used in these tests */
+    /** The key used in these tests. */
     private static final String KEY = "key";
-    /** The file size of the file containing the test data uploaded to S3*/
+    /** The file size of the file containing the test data uploaded to S3.*/
     private static final long FILE_SIZE = 100000L;
     private static final long SLEEP_TIME_IN_MILLIS = 3000;
-    /** Additional Credentials file path used for Requester Pays testing*/
+    /** Additional Credentials file path used for Requester Pays testing.*/
     private static final String REQUESTER_PAYS_CREDENTIALS_FILE_PATH = System.getProperty("user.home")
                                                                        + "/.aws/requsterPaysTestAccount.properties";
     /** S3 client for requester while the default S3 client s3 is for owner. */
     private static AmazonS3Client requester;
-    /** The file containing the test data uploaded to S3 */
+    /** The file containing the test data uploaded to S3. */
     private static File file;
 
     @BeforeClass

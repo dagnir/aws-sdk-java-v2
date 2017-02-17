@@ -293,7 +293,7 @@ public class DynamoDBQueryExpression<T> {
      * the table must be specified by attribute name in the map.
      *
      * @param rangeKeyConditions a map from key name to condition
-     * 	        NOTE: The current DynamoDB service only allows up to one
+     *             NOTE: The current DynamoDB service only allows up to one
      *          range key condition per query. Providing more than one
      *          range key condition will result in a SdkClientException.
      */
@@ -324,8 +324,8 @@ public class DynamoDBQueryExpression<T> {
      *   <dt>If the attribute is the primary range key</dt>
      *   <dd>users should NOT set any index name for this query.</dd>
      *   <dt>If the attribute is an index range key</dt>
-     * 	 <dd>
-     *       {@link DynamoDBMapper} will automatically set the index name if the
+     *      <dd>
+     *       {@link DynamoDbMapper} will automatically set the index name if the
      *       range key is annotated as only used by one local secondary index,
      *       otherwise users must set the index name manually by either
      *       {@link DynamoDBQueryExpression#setIndexName(String)} or
@@ -334,11 +334,11 @@ public class DynamoDBQueryExpression<T> {
      * </dl>
      *
      * @param rangeKeyAttributeName
-     * 	        This can be either the primary range key of the table or an
+     *             This can be either the primary range key of the table or an
      *          index range key.
      *
      * @param rangeKeyCondition
-     * 	        Condition specified on the given range key for this query.
+     *             Condition specified on the given range key for this query.
      */
     public DynamoDBQueryExpression<T> withRangeKeyCondition(String rangeKeyAttributeName, Condition rangeKeyCondition) {
         if (rangeKeyConditions == null) {
@@ -431,15 +431,15 @@ public class DynamoDBQueryExpression<T> {
     /**
      * Sets the logical operator on the query filter conditions.
      */
-    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
-        this.conditionalOperator = conditionalOperator.toString();
+    public void setConditionalOperator(String conditionalOperator) {
+        this.conditionalOperator = conditionalOperator;
     }
 
     /**
      * Sets the logical operator on the query filter conditions.
      */
-    public void setConditionalOperator(String conditionalOperator) {
-        this.conditionalOperator = conditionalOperator;
+    public void setConditionalOperator(ConditionalOperator conditionalOperator) {
+        this.conditionalOperator = conditionalOperator.toString();
     }
 
     /**
@@ -1022,8 +1022,8 @@ public class DynamoDBQueryExpression<T> {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.Select
      */
-    public void setSelect(Select select) {
-        this.select = select.toString();
+    public void setSelect(String select) {
+        this.select = select;
     }
 
     /**
@@ -1042,8 +1042,8 @@ public class DynamoDBQueryExpression<T> {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.Select
      */
-    public void setSelect(String select) {
-        this.select = select;
+    public void setSelect(Select select) {
+        this.select = select.toString();
     }
 
     /**
@@ -1225,8 +1225,8 @@ public class DynamoDBQueryExpression<T> {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity
      */
-    public void setReturnConsumedCapacity(ReturnConsumedCapacity returnConsumedCapacity) {
-        this.returnConsumedCapacity = returnConsumedCapacity.toString();
+    public void setReturnConsumedCapacity(String returnConsumedCapacity) {
+        this.returnConsumedCapacity = returnConsumedCapacity;
     }
 
     /**
@@ -1253,8 +1253,8 @@ public class DynamoDBQueryExpression<T> {
      *
      * @see software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity
      */
-    public void setReturnConsumedCapacity(String returnConsumedCapacity) {
-        this.returnConsumedCapacity = returnConsumedCapacity;
+    public void setReturnConsumedCapacity(ReturnConsumedCapacity returnConsumedCapacity) {
+        this.returnConsumedCapacity = returnConsumedCapacity.toString();
     }
 
     /**

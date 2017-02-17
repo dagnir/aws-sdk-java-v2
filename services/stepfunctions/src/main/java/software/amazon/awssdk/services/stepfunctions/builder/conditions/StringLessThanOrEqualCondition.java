@@ -38,6 +38,13 @@ public final class StringLessThanOrEqualCondition implements BinaryCondition<Str
     }
 
     /**
+     * @return Builder instance to construct a {@link StringLessThanOrEqualCondition}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * @return The JSONPath expression that determines which piece of the input document is used for the comparison.
      */
     @Override
@@ -51,13 +58,6 @@ public final class StringLessThanOrEqualCondition implements BinaryCondition<Str
     @Override
     public String getExpectedValue() {
         return expectedValue;
-    }
-
-    /**
-     * @return Builder instance to construct a {@link StringLessThanOrEqualCondition}.
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**

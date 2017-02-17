@@ -51,11 +51,13 @@ abstract class ContentCryptoScheme {
     /**
      * The maximum number of bytes that can be securely encrypted per a single key using AES/CBC.
      */
-    static final long MAX_CBC_BYTES = (1L << 48) << 4;  // 2^48 blocks, assuming an adversary advantage of at most 1/2^32 per Prof. Dan Boneh
+    static final long MAX_CBC_BYTES = (1L << 48) << 4; // 2^48 blocks, assuming an adversary advantage of at most 1/2^32
     /**
      * The maximum number of bytes that can be securely encrypted per a single key using AES/CTR.
+     *
+     * 2^64 blocks, or effectively no limits, assuming an adversary advantage of at most 1/2^32
      */
-    static final long MAX_CTR_BYTES = -1;   // 2^64 blocks, or effectively no limits, assuming an adversary advantage of at most 1/2^32 per Prof. Dan Boneh
+    static final long MAX_CTR_BYTES = -1;
 
     /**
      * Encryption Only (EO) scheme.
@@ -119,11 +121,11 @@ abstract class ContentCryptoScheme {
     /**
      * Returns the content crypto scheme of the given content encryption algorithm.
      */
-    static ContentCryptoScheme fromCEKAlgo(String cekAlgo) {
-        return fromCEKAlgo(cekAlgo, false);
+    static ContentCryptoScheme fromCekAlgo(String cekAlgo) {
+        return fromCekAlgo(cekAlgo, false);
     }
 
-    static ContentCryptoScheme fromCEKAlgo(String cekAlgo, boolean isRangeGet) {
+    static ContentCryptoScheme fromCekAlgo(String cekAlgo, boolean isRangeGet) {
         if (AES_GCM.getCipherAlgorithm().equals(cekAlgo)) {
             return isRangeGet ? AES_CTR : AES_GCM;
         }
@@ -150,13 +152,13 @@ abstract class ContentCryptoScheme {
 
     abstract int getBlockSizeInBytes();
 
-    abstract int getIVLengthInBytes();
+    abstract int getIvLengthInBytes();
 
     int getTagLengthInBits() {
         return 0;
     } // default to zero ie no tag
 
-    byte[] adjustIV(byte[] iv, long startingBytePos) {
+    byte[] adjustIv(byte[] iv, long startingBytePos) {
         return iv;
     }
 
@@ -164,7 +166,7 @@ abstract class ContentCryptoScheme {
     public String toString() {
         return "cipherAlgo=" + getCipherAlgorithm() + ", blockSizeInBytes="
                + getBlockSizeInBytes() + ", ivLengthInBytes="
-               + getIVLengthInBytes() + ", keyGenAlgo="
+               + getIvLengthInBytes() + ", keyGenAlgo="
                + getKeyGeneratorAlgorithm() + ", keyLengthInBits="
                + getKeyLengthInBits() + ", specificProvider="
                + getSpecificCipherProvider() + ", tagLengthInBits="

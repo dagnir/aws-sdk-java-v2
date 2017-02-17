@@ -69,6 +69,7 @@ public class DelegatingDnsResolverTest {
         try {
             testedClient.shutdown();
         } catch (Exception e) {
+            // Ignored or expected.
         }
     }
 
@@ -86,6 +87,7 @@ public class DelegatingDnsResolverTest {
             testedClient.requestExecutionBuilder().request(request).executionContext(context).execute();
             Assert.fail("AmazonClientException is expected.");
         } catch (AmazonClientException ace) {
+            // Ignored or expected.
         }
 
         assertTrue("dnsResolver should have been called at least once",

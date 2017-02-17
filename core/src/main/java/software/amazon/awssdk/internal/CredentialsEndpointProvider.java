@@ -34,14 +34,14 @@ public abstract class CredentialsEndpointProvider {
     /**
      * Returns the URI that contains the credentials.
      * @return
-     * 		URI to retrieve the credentials.
+     *         URI to retrieve the credentials.
      *
      * @throws URISyntaxException
-     * 				If the endpoint string could not be parsed as a URI reference.
+     *                 If the endpoint string could not be parsed as a URI reference.
      *
      * @throws IOException
-     * 				If any problems are encountered while connecting to the
-     *             	service to retrieve the endpoint.
+     *                 If any problems are encountered while connecting to the
+     *                 service to retrieve the endpoint.
      */
     public abstract URI getCredentialsEndpoint() throws URISyntaxException, IOException;
 

@@ -15,29 +15,29 @@
 
 package software.amazon.awssdk.handlers;
 
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 
 /**
  * A special type of
  * <code>RequestHandler2</code> that takes in <code>AWSCredentials</code>.
  *
  * @deprecated Use of this class to retrieve the credentials is unsafe in
- * multithreading scenarios. If a client is used across multiple threads,
- * there's a possibility of running into a race condition where one handler
- * might access the credentials through the reference as another thread is
- * updating it. Retrieve the credentials from the handler context instead using
- * the {@link HandlerContextKey#AWS_CREDENTIALS} key.
+ *     multithreading scenarios. If a client is used across multiple threads,
+ *     there's a possibility of running into a race condition where one handler
+ *     might access the credentials through the reference as another thread is
+ *     updating it. Retrieve the credentials from the handler context instead using
+ *     the {@link HandlerContextKey#AWS_CREDENTIALS} key.
  */
 @Deprecated
 public abstract class CredentialsRequestHandler extends RequestHandler2 {
 
     /** AWSCredentials to be used in the RequestHandler. */
-    protected AWSCredentials awsCredentials;
+    protected AwsCredentials awsCredentials;
 
     /**
      * Sets the AWSCredentials.
      */
-    public void setCredentials(AWSCredentials awsCredentials) {
+    public void setCredentials(AwsCredentials awsCredentials) {
         this.awsCredentials = awsCredentials;
     }
 }

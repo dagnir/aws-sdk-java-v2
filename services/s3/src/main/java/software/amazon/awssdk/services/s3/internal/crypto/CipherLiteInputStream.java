@@ -48,8 +48,8 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
     private boolean eof;
     private byte[] bufin;
     private byte[] bufout;
-    private int curr_pos;
-    private int max_pos;
+    private int currPos;
+    private int maxPos;
 
     public CipherLiteInputStream(InputStream is, CipherLite cipherLite) {
         this(is, cipherLite, DEFAULT_IN_BUFFER_SIZE, false, false);
@@ -77,12 +77,12 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
     }
 
     protected CipherLiteInputStream(InputStream is) {
-        this(is, CipherLite.Null, DEFAULT_IN_BUFFER_SIZE, false, false);
+        this(is, CipherLite.NULL, DEFAULT_IN_BUFFER_SIZE, false, false);
     }
 
     @Override
     public int read() throws IOException {
-        if (curr_pos >= max_pos) {
+        if (currPos >= maxPos) {
             if (eof) {
                 return -1;
             }
@@ -100,20 +100,20 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
                 return -1;
             }
         }
-        return ((int) bufout[curr_pos++] & 0xFF);
+        return ((int) bufout[currPos++] & 0xFF);
     }
 
     ;
 
 
     @Override
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
     @Override
-    public int read(byte buf[], int off, int target_len) throws IOException {
-        if (curr_pos >= max_pos) {
+    public int read(byte[] buf, int off, int targetLen) throws IOException {
+        if (currPos >= maxPos) {
             // all buffered data has been read, let's get some more
             if (eof) {
                 return -1;
@@ -132,37 +132,37 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
                 return -1;
             }
         }
-        if (target_len <= 0) {
+        if (targetLen <= 0) {
             return 0;
         }
-        int len = max_pos - curr_pos;
-        if (target_len < len) {
-            len = target_len;
+        int len = maxPos - currPos;
+        if (targetLen < len) {
+            len = targetLen;
         }
         // if buf == null, will throw NPE as intended per javadoc
-        System.arraycopy(bufout, curr_pos, buf, off, len);
-        curr_pos += len;
+        System.arraycopy(bufout, currPos, buf, off, len);
+        currPos += len;
         return len;
     }
 
     @Override
     public long skip(long n) throws IOException {
         abortIfNeeded();
-        int available = max_pos - curr_pos;
+        int available = maxPos - currPos;
         if (n > available) {
             n = available;
         }
         if (n < 0) {
             return 0;
         }
-        curr_pos += n;
+        currPos += n;
         return n;
     }
 
     @Override
     public int available() {
         abortIfNeeded();
-        return max_pos - curr_pos;
+        return maxPos - currPos;
     }
 
     @Override
@@ -176,12 +176,12 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
                 try {
                     // simulate the RI: throw away the unprocessed data
                     cipherLite.doFinal();
-                } catch (BadPaddingException ex) {
-                } catch (IllegalBlockSizeException ex) {
+                } catch (BadPaddingException | IllegalBlockSizeException ex) {
+                    // Ignore
                 }
             }
         }
-        curr_pos = max_pos = 0;
+        currPos = maxPos = 0;
         abortIfNeeded();
     }
 
@@ -213,7 +213,7 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
     }
 
     final void resetInternal() {
-        curr_pos = max_pos = 0;
+        currPos = maxPos = 0;
         eof = false;
     }
 
@@ -246,8 +246,8 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
                         // javax.crypto.NullCipher 
                         return -1;
                     }
-                    curr_pos = 0;
-                    return max_pos = bufout.length;
+                    currPos = 0;
+                    return maxPos = bufout.length;
                 } catch (IllegalBlockSizeException ignore) {
                     // like the RI
                 } catch (BadPaddingException e) {
@@ -259,8 +259,8 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
             return -1;
         }
         bufout = cipherLite.update(bufin, 0, len);
-        curr_pos = 0;
-        return max_pos = (bufout == null ? 0 : bufout.length);
+        currPos = 0;
+        return maxPos = (bufout == null ? 0 : bufout.length);
     }
 
     void renewCipherLite() {

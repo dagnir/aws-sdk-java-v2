@@ -48,7 +48,7 @@ public class TypeUtils {
 
     public static final String MAP_AUTO_CONSTRUCT_IMPL = "mapAutoConstructImpl";
 
-    private final static Map<String, String> dataTypeMappings = new HashMap<String, String>();
+    private static final Map<String, String> dataTypeMappings = new HashMap<String, String>();
 
     static {
         dataTypeMappings.put("string", String.class.getSimpleName());

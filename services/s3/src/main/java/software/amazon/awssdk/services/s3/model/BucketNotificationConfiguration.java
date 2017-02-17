@@ -100,9 +100,9 @@ public class BucketNotificationConfiguration implements Serializable {
      * {@link AmazonS3#setBucketNotificationConfiguration(String, BucketNotificationConfiguration)}
      * will set the bucket's notification configuration and overwrite any existing configuration.
      * </p>
-     * @deprecated
      * @see BucketNotificationConfiguration#BucketNotificationConfiguration(String, NotificationConfiguration)
      */
+    @Deprecated
     public BucketNotificationConfiguration(Collection<TopicConfiguration> topicConfigurations) {
         this.configurations = new HashMap<String, NotificationConfiguration>();
         if (topicConfigurations != null) {
@@ -207,11 +207,11 @@ public class BucketNotificationConfiguration implements Serializable {
      *            A set of topic configurations.
      *
      * @return The updated {@link BucketNotificationConfiguration} object,
-     * 		   enabling additional method calls to be chained together.
+     *         enabling additional method calls to be chained together.
      *
-     * @deprecated
      * @see BucketNotificationConfiguration#withNotificationConfiguration(Map)
      */
+    @Deprecated
     public BucketNotificationConfiguration withTopicConfigurations(TopicConfiguration... topicConfigurations) {
         setTopicConfigurations(Arrays.asList(topicConfigurations));
         return this;
@@ -231,11 +231,11 @@ public class BucketNotificationConfiguration implements Serializable {
      * BucketNotificationConfiguration#getConfigurations()
      * </p>
      *
-     * @deprecated
      * @see BucketNotificationConfiguration#getConfigurations()
      * @return The list of <code>TopicConfiguration</code> objects contained in
      *         this object. May return an empty list.
      */
+    @Deprecated
     public List<TopicConfiguration> getTopicConfigurations() {
         List<TopicConfiguration> topicConfigs = new ArrayList<BucketNotificationConfiguration.TopicConfiguration>();
         for (Map.Entry<String, NotificationConfiguration> entry : configurations
@@ -259,9 +259,9 @@ public class BucketNotificationConfiguration implements Serializable {
      * @param topicConfigurations
      *            A collection of topic configurations.
      *
-     * @deprecated
      * @see BucketNotificationConfiguration#setConfigurations(Map)
      */
+    @Deprecated
     public void setTopicConfigurations(Collection<TopicConfiguration> topicConfigurations) {
         this.configurations.clear();
 

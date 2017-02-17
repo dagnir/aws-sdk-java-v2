@@ -1,17 +1,17 @@
 /*
-* Copyright 2013-2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License").
-* You may not use this file except in compliance with the License.
-* A copy of the License is located at
-*
-* http://aws.amazon.com/apache2.0
-*
-* or in the "license" file accompanying this file. This file is distributed
-* on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-* express or implied. See the License for the specific language governing
-* permissions and limitations under the License.
-*/
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 
 package software.amazon.awssdk.services.logs;
 
@@ -27,14 +27,14 @@ import software.amazon.awssdk.services.logs.model.DescribeMetricFiltersResult;
 import software.amazon.awssdk.services.logs.model.LogGroup;
 import software.amazon.awssdk.services.logs.model.LogStream;
 import software.amazon.awssdk.services.logs.model.MetricFilter;
-import software.amazon.awssdk.test.AWSIntegrationTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
  * Base class for CloudWatch Logs integration tests.
  */
-public abstract class IntegrationTestBase extends AWSIntegrationTestBase {
+public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
-    /** Shared CloudWatch Logs client for all tests to use */
+    /** Shared CloudWatch Logs client for all tests to use. */
     protected static AWSLogsClient awsLogs;
 
     /**
