@@ -18,6 +18,8 @@ package software.amazon.awssdk.codegen.emitters;
 import static software.amazon.awssdk.codegen.internal.Utils.closeQuietly;
 
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
+
 import java.io.IOException;
 import java.io.Writer;
 
@@ -57,15 +59,16 @@ public class FreemarkerGeneratorTask implements GeneratorTask {
     }
 
     @Override
-    public Void call() throws Exception {
+    public void execute() {
         try {
             // By default , the template calls the flush method on the writer
             // after the template is processed.
             // http://freemarker.org/docs/api/freemarker/template/Template.html#process-java.lang.Object-java.io.Writer-
             template.process(dataModel, writer);
+        } catch (TemplateException | IOException e) {
+            throw new RuntimeException("Error processing template", e);
         } finally {
             closeQuietly(writer);
         }
-        return null;
     }
 }

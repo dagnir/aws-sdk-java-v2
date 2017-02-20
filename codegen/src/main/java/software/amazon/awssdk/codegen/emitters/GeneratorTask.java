@@ -15,10 +15,9 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
-import java.util.concurrent.Callable;
-
 /**
  * Interface for tasks that are submitted to {@link GeneratorTaskExecutor}.
  */
-public interface GeneratorTask extends Callable<Void> {
+public interface GeneratorTask {
+    void execute();
 }
