@@ -280,7 +280,9 @@
                         <excludes>
                             <exclude>**/*CucumberTest.java</exclude>
                             <exclude>**/*IntegrationTest.java</exclude>
+                            <exclude>**/*IntegrationTests.java</exclude>
                             <exclude>**/*IntegTest.java</exclude>
+                            <exclude>**/*IntegrationTestCase.java</exclude>
                         </excludes>
                         <includes>
                             <include>**/Test*.java</include>
