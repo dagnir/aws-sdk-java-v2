@@ -17,11 +17,11 @@ package software.amazon.awssdk.services.dynamodbv2.xspec;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attributeNotExists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.paren;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute_not_exists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.not;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.paren;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
 
 import java.util.Map;
 import org.junit.Test;
@@ -39,9 +39,9 @@ public class ConditionTest {
     public void explicitBracketingForJava_850() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .withCondition(
-                        paren(paren(attribute_not_exists("item_version")
-                                    .and(attribute_not_exists("config_id"))
-                                    .and(attribute_not_exists("config_version"))
+                        paren(paren(attributeNotExists("item_version")
+                                    .and(attributeNotExists("config_id"))
+                                    .and(attributeNotExists("config_version"))
                                    ).or(paren(n("item_version").lt(123)))
                             .or(paren(n("item_version").eq(123)
                                                        .and(n("config_id").lt(456))))
@@ -84,9 +84,9 @@ public class ConditionTest {
     public void minBracketingForJava_850() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .withCondition(
-                        attribute_not_exists("item_version")
-                                .and(attribute_not_exists("config_id"))
-                                .and(attribute_not_exists("config_version")
+                        attributeNotExists("item_version")
+                                .and(attributeNotExists("config_id"))
+                                .and(attributeNotExists("config_version")
                                              .or(n("item_version").lt(123)))
                                 .or(n("item_version").eq(123)
                                                      .and(n("config_id").lt(456)))

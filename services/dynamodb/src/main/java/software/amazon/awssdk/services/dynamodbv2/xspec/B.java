@@ -195,7 +195,7 @@ public final class B extends PathOperand {
      *            used as the operand to the if_not_exists function call.
      */
     public IfNotExistsFunction<B> ifNotExists(B defaultValue) {
-        return ExpressionSpecBuilder.if_not_exists(this, defaultValue);
+        return ExpressionSpecBuilder.ifNotExists(this, defaultValue);
     }
 
     // SET operation

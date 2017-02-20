@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertFalse;
-import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
+import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -386,7 +386,7 @@ public class CryptoTestUtils {
     }
 
     public static String tempBucketName(String prefix) {
-        return StringUtils.lowerCase(prefix) + "-" + yyMMdd_hhmmss();
+        return StringUtils.lowerCase(prefix) + "-" + yyMMddhhmmss();
     }
 
     public static String tempBucketName(Class<?> clazz) {

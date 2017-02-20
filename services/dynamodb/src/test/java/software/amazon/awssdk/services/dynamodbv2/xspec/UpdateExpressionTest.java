@@ -22,8 +22,6 @@ import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBui
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.ss;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.if_not_exists;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.list_append;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.remove;
 
 import java.util.Arrays;
@@ -122,7 +120,7 @@ public class UpdateExpressionTest {
     @Test
     public void ifNotExists() {
         UpdateItemExpressionSpec builder = new ExpressionSpecBuilder()
-                .addUpdate(n("Price").set(if_not_exists("Price", 100)))
+                .addUpdate(n("Price").set(ExpressionSpecBuilder.ifNotExists("Price", 100)))
                 .buildForUpdate();
         String expr = builder.getUpdateExpression();
         Map<String, String> nm = builder.getNameMap();
@@ -141,7 +139,8 @@ public class UpdateExpressionTest {
     @Test
     public void listAppend() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(l("ProductReview.FiveStar").set(list_append("ProductReview.FiveStar", 100)))
+                .addUpdate(l("ProductReview.FiveStar")
+                                   .set(ExpressionSpecBuilder.listAppend("ProductReview.FiveStar", 100)))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();
@@ -162,7 +161,8 @@ public class UpdateExpressionTest {
     public void listAppend2() {
         List<Number> list = Arrays.<Number>asList(100);
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
-                .addUpdate(l("ProductReview.FiveStar").set(list_append(list, "ProductReview.FiveStar")))
+                .addUpdate(l("ProductReview.FiveStar")
+                                   .set(ExpressionSpecBuilder.listAppend(list, "ProductReview.FiveStar")))
                 .buildForUpdate();
         String expr = xspec.getUpdateExpression();
         Map<String, String> nm = xspec.getNameMap();

@@ -388,6 +388,6 @@ public final class N extends PathOperand {
      *            if_not_exists function call.
      */
     public IfNotExistsFunction<N> ifNotExists(N defaultValue) {
-        return ExpressionSpecBuilder.if_not_exists(this, defaultValue);
+        return ExpressionSpecBuilder.ifNotExists(this, defaultValue);
     }
 }

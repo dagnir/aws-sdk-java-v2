@@ -19,9 +19,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attributeExists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.b;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.bool;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.bs;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.ifNotExists;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.l;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.m;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.n;
@@ -29,8 +31,6 @@ import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBui
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.null0;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.s;
 import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.ss;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute_exists;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.if_not_exists;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -90,22 +90,22 @@ public class ExpressionSpecBuilderTest {
     public void testIfNotExists() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .addUpdate(b("binaryAttr").set(
-                        if_not_exists("binaryAttr", "testing".getBytes())))
+                        ifNotExists("binaryAttr", "testing".getBytes())))
                 .addUpdate(bs("bsAttr").set(
-                        if_not_exists("bsAttr", "a".getBytes(), "b".getBytes())))
+                        ifNotExists("bsAttr", "a".getBytes(), "b".getBytes())))
                 .addUpdate(bool("boolAttr").set(
-                        if_not_exists("boolAttr", true)))
+                        ifNotExists("boolAttr", true)))
                 .addUpdate(l("listAttr").set(
-                        if_not_exists("listAttr", Arrays.asList("foo", "bar"))))
+                        ifNotExists("listAttr", Arrays.asList("foo", "bar"))))
                 .addUpdate(m("mapAttr").set(
-                        if_not_exists("mapAttr", new ValueMap().with("foo", "far"))))
-                .addUpdate(n("numericAttr").set(if_not_exists("numericAttr", 123)))
-                .addUpdate(ns("nsAttr").set(if_not_exists("nsAttr", 123, 456)))
-                .addUpdate(s("stringAttr").set(if_not_exists("stringAttr", "foo")))
-                .addUpdate(ss("ssAttr").set(if_not_exists("ssAttr", "foo", "bar")))
-                .addUpdate(b("binaryAttr2").set(if_not_exists("binaryAttr2",
+                        ifNotExists("mapAttr", new ValueMap().with("foo", "far"))))
+                .addUpdate(n("numericAttr").set(ifNotExists("numericAttr", 123)))
+                .addUpdate(ns("nsAttr").set(ifNotExists("nsAttr", 123, 456)))
+                .addUpdate(s("stringAttr").set(ifNotExists("stringAttr", "foo")))
+                .addUpdate(ss("ssAttr").set(ifNotExists("ssAttr", "foo", "bar")))
+                .addUpdate(b("binaryAttr2").set(ifNotExists("binaryAttr2",
                                                               ByteBuffer.wrap("bar".getBytes()))))
-                .addUpdate(bs("bytebufferSetAttr").set(if_not_exists("bytebufferSetAttr",
+                .addUpdate(bs("bytebufferSetAttr").set(ifNotExists("bytebufferSetAttr",
                                                                      ByteBuffer.wrap("a".getBytes()),
                                                                      ByteBuffer.wrap("b".getBytes()))))
                 .buildForUpdate();
@@ -125,7 +125,7 @@ public class ExpressionSpecBuilderTest {
     public void testMisc() {
         UpdateItemExpressionSpec xspec = new ExpressionSpecBuilder()
                 .addUpdate(null0("nullAttr").remove())
-                .withCondition(attribute_exists("someAttr"))
+                .withCondition(attributeExists("someAttr"))
                 .buildForUpdate();
 
         //          p(xspec.getConditionExpression());

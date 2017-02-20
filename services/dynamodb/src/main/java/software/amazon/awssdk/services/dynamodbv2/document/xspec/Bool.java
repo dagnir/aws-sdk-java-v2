@@ -155,7 +155,7 @@ public final class Bool extends PathOperand {
      *            used as the operand to the if_not_exists function call.
      */
     public IfNotExistsFunction<Bool> ifNotExists(Bool defaultValue) {
-        return ExpressionSpecBuilder.if_not_exists(this, defaultValue);
+        return ExpressionSpecBuilder.ifNotExists(this, defaultValue);
     }
 
     /**

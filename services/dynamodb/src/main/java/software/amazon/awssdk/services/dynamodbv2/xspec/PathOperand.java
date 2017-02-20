@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.services.dynamodbv2.xspec;
 
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute_exists;
-import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attribute_not_exists;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attributeExists;
+import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.attributeNotExists;
 
 import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.annotation.Immutable;
@@ -66,7 +66,7 @@ public class PathOperand extends Operand {
      * to by this path operand exists) for building condition expression.
      */
     public final FunctionCondition exists() {
-        return attribute_exists(this);
+        return attributeExists(this);
     }
 
     /**
@@ -77,7 +77,7 @@ public class PathOperand extends Operand {
      * expression.
      */
     public final FunctionCondition notExists() {
-        return attribute_not_exists(this);
+        return attributeNotExists(this);
     }
 
     /**

@@ -63,7 +63,7 @@ public class PathOperand extends Operand {
      * to by this path operand exists) for building condition expression.
      */
     public final FunctionCondition exists() {
-        return ExpressionSpecBuilder.attribute_exists(this);
+        return ExpressionSpecBuilder.attributeExists(this);
     }
 
     /**
@@ -74,7 +74,7 @@ public class PathOperand extends Operand {
      * expression.
      */
     public final FunctionCondition notExists() {
-        return ExpressionSpecBuilder.attribute_not_exists(this);
+        return ExpressionSpecBuilder.attributeNotExists(this);
     }
 
     /**
