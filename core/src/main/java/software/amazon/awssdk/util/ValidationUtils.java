@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.util;
 
+import java.time.Duration;
 import java.util.Collection;
 
 /**
@@ -66,6 +67,21 @@ public class ValidationUtils {
             throw new IllegalArgumentException(String.format("%s must be positive", fieldName));
         }
         return num;
+    }
+
+    /**
+     * Asserts that the given duration is positive (non-negative and non-zero).
+     *
+     * @param duration Number to validate
+     * @param fieldName Field name to display in exception message if not positive.
+     * @return Duration if positive.
+     */
+    public static Duration assertIsPositive(Duration duration, String fieldName) {
+        assertNotNull(duration, fieldName);
+        if (duration.isNegative() || duration.isZero()) {
+            throw new IllegalArgumentException(String.format("%s must be positive", fieldName));
+        }
+        return duration;
     }
 
     public static <T extends Collection<?>> T assertNotEmpty(T collection, String fieldName) throws IllegalArgumentException {

@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.internal.http.apache.client.impl;
 
+import java.time.Duration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponseInterceptor;
@@ -80,7 +81,7 @@ public class ApacheHttpClientFactory implements HttpClientFactory<ConnectionMana
         final ConnectionManagerAwareHttpClient httpClient = new SdkHttpClient(builder.build(), cm);
 
         if (settings.useReaper()) {
-            IdleConnectionReaper.registerConnectionManager(cm, settings.getMaxIdleConnectionTime());
+            IdleConnectionReaper.registerConnectionManager(cm, Duration.ofMillis(settings.getMaxIdleConnectionTime()));
         }
 
         return httpClient;

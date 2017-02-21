@@ -24,6 +24,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpClientConnection;
 import org.apache.http.conn.ConnectionRequest;
@@ -43,7 +44,7 @@ public class IdleConnectionReaperTest {
     public void forceShutdown() throws Exception {
         assertEquals(0, IdleConnectionReaper.size());
         for (int i = 0; i < 3; i++) {
-            assertTrue(IdleConnectionReaper.registerConnectionManager(new TestClientConnectionManager()));
+            assertTrue(IdleConnectionReaper.registerConnectionManager(new TestClientConnectionManager(), Duration.ofSeconds(60)));
             assertEquals(1, IdleConnectionReaper.size());
             assertTrue(IdleConnectionReaper.shutdown());
             assertEquals(0, IdleConnectionReaper.size());
@@ -57,9 +58,9 @@ public class IdleConnectionReaperTest {
         for (int i = 0; i < 3; i++) {
             HttpClientConnectionManager m = new TestClientConnectionManager();
             HttpClientConnectionManager m2 = new TestClientConnectionManager();
-            assertTrue(IdleConnectionReaper.registerConnectionManager(m));
+            assertTrue(IdleConnectionReaper.registerConnectionManager(m, Duration.ofSeconds(60)));
             assertEquals(1, IdleConnectionReaper.size());
-            assertTrue(IdleConnectionReaper.registerConnectionManager(m2));
+            assertTrue(IdleConnectionReaper.registerConnectionManager(m2, Duration.ofSeconds(60)));
             assertEquals(2, IdleConnectionReaper.size());
             assertTrue(IdleConnectionReaper.removeConnectionManager(m));
             assertEquals(1, IdleConnectionReaper.size());
@@ -72,10 +73,22 @@ public class IdleConnectionReaperTest {
     @Test
     public void maxIdle_HonoredOnClose() throws InterruptedException {
         HttpClientConnectionManager connectionManager = mock(HttpClientConnectionManager.class);
-        final long idleTime = 10 * 1000;
-        IdleConnectionReaper.registerConnectionManager(connectionManager, idleTime);
-        verify(connectionManager, timeout(90 * 1000)).closeIdleConnections(eq(idleTime), eq(TimeUnit.MILLISECONDS));
 
+        final Duration idleTime = Duration.ofSeconds(5);
+        IdleConnectionReaper.setPeriod(Duration.ofSeconds(1));
+        IdleConnectionReaper.registerConnectionManager(connectionManager, idleTime);
+        verify(connectionManager, timeout(10_000)).closeIdleConnections(eq(idleTime.toMillis()), eq(TimeUnit.MILLISECONDS));
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void negativePeriodDuration_ThrowsException() {
+        IdleConnectionReaper.setPeriod(Duration.ofMillis(-1));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void negativeConnectionDuration_ThrowsException() {
+        IdleConnectionReaper.registerConnectionManager(mock(HttpClientConnectionManager.class), Duration.ofMillis(-1));
     }
 
     private static class TestClientConnectionManager implements HttpClientConnectionManager {

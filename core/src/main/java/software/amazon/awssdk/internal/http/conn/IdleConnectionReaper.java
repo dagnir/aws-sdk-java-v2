@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.internal.http.conn;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.conn.HttpClientConnectionManager;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Daemon thread to periodically check connection pools for idle connections.
@@ -51,24 +53,33 @@ public final class IdleConnectionReaper extends Thread {
      * Shared log for any errors during connection reaping.
      */
     private static final Log LOG = LogFactory.getLog(IdleConnectionReaper.class);
-    /**
-     * The period between invocations of the idle connection reaper.
-     */
-    private static final int PERIOD_MILLISECONDS = 1000 * 60;
 
     /**
-     * Legacy constant used when {@link #registerConnectionManager(HttpClientConnectionManager)} is called. New code paths should
-     * use {@link #registerConnectionManager(HttpClientConnectionManager, long)} and provide the max idle timeout for that
-     * particular connection manager.
+     * The default period between invocations of the idle connection reaper.
      */
-    @Deprecated
-    private static final int DEFAULT_MAX_IDLE_MILLIS = 1000 * 60;
+    private static final Duration DEFAULT_PERIOD = Duration.ofSeconds(60);
 
-    private static final Map<HttpClientConnectionManager, Long> connectionManagers = new ConcurrentHashMap<HttpClientConnectionManager, Long>();
+    /**
+     * The minimum duration between invocations of the idle connection reaper.
+     */
+    private static final Duration MINIMUM_PERIOD = Duration.ofSeconds(1);
+
+    /**
+     * A map from the connection managers this reaper will monitor to the duration (in milliseconds) connections are allowed to
+     * remain idle.
+     */
+    private static final Map<HttpClientConnectionManager, Long> CONNECTION_MANAGERS = new ConcurrentHashMap<>();
+
     /**
      * Singleton instance of the connection reaper.
      */
     private static volatile IdleConnectionReaper instance;
+
+    /**
+     * The amount of time in milliseconds that the connection reaper should wait between duration checks.
+     */
+    private static volatile long reaperSleepPeriodMillis = DEFAULT_PERIOD.toMillis();
+
     /**
      * Set to true when shutting down the reaper;  Once set to true, this
      * flag is never set back to false.
@@ -84,24 +95,28 @@ public final class IdleConnectionReaper extends Thread {
     }
 
     /**
-     * Registers the given connection manager with this reaper.
+     * Updates this reaper with a new wait time between checking for idle connections. This is useful when setting short maximum
+     * idle times with {@link #registerConnectionManager(HttpClientConnectionManager, Duration)}, because the idle connection
+     * reaper may not check for idle connections frequently enough.
      *
-     * @return true if the connection manager has been successfully registered; false otherwise.
-     * @deprecated By {@link #registerConnectionManager(HttpClientConnectionManager, long)}.
+     * @param reaperFrequency The frequency at which the reaper should check for idle connections.
      */
-    @Deprecated
-    public static boolean registerConnectionManager(HttpClientConnectionManager connectionManager) {
-        return registerConnectionManager(connectionManager, DEFAULT_MAX_IDLE_MILLIS);
+    public static void setPeriod(Duration reaperFrequency) {
+        ValidationUtils.assertIsPositive(reaperFrequency, "Reaper frequency");
+        Duration newReaperFrequency = reaperFrequency.compareTo(MINIMUM_PERIOD) < 0 ? MINIMUM_PERIOD
+                                                                                    : reaperFrequency;
+        reaperSleepPeriodMillis = newReaperFrequency.toMillis();
     }
 
     /**
      * Registers the given connection manager with this reaper;
      *
      * @param connectionManager Connection manager to register
-     * @param maxIdleInMs       Max idle connection timeout in milliseconds for this connection manager.
+     * @param maxIdleTime The max idle connection timeout for this connection manager.
      * @return true if the connection manager has been successfully registered; false otherwise.
      */
-    public static boolean registerConnectionManager(HttpClientConnectionManager connectionManager, long maxIdleInMs) {
+    public static boolean registerConnectionManager(HttpClientConnectionManager connectionManager, Duration maxIdleTime) {
+        ValidationUtils.assertIsPositive(maxIdleTime, "Max connection idle time");
         if (instance == null) {
             synchronized (IdleConnectionReaper.class) {
                 if (instance == null) {
@@ -110,7 +125,8 @@ public final class IdleConnectionReaper extends Thread {
                 }
             }
         }
-        return connectionManagers.put(connectionManager, maxIdleInMs) == null;
+
+        return CONNECTION_MANAGERS.put(connectionManager, maxIdleTime.toMillis()) == null;
     }
 
     /**
@@ -121,8 +137,8 @@ public final class IdleConnectionReaper extends Thread {
      *     false otherwise.
      */
     public static boolean removeConnectionManager(HttpClientConnectionManager connectionManager) {
-        boolean wasRemoved = connectionManagers.remove(connectionManager) != null;
-        if (connectionManagers.isEmpty()) {
+        boolean wasRemoved = CONNECTION_MANAGERS.remove(connectionManager) != null;
+        if (CONNECTION_MANAGERS.isEmpty()) {
             shutdown();
         }
         return wasRemoved;
@@ -130,7 +146,7 @@ public final class IdleConnectionReaper extends Thread {
 
     @SdkTestInternalApi
     public static List<HttpClientConnectionManager> getRegisteredConnectionManagers() {
-        return new ArrayList<HttpClientConnectionManager>(connectionManagers.keySet());
+        return new ArrayList<>(CONNECTION_MANAGERS.keySet());
     }
 
     /**
@@ -148,7 +164,7 @@ public final class IdleConnectionReaper extends Thread {
         if (instance != null) {
             instance.markShuttingDown();
             instance.interrupt();
-            connectionManagers.clear();
+            CONNECTION_MANAGERS.clear();
             instance = null;
             return true;
         }
@@ -161,7 +177,7 @@ public final class IdleConnectionReaper extends Thread {
      * reaper.
      */
     static int size() {
-        return connectionManagers.size();
+        return CONNECTION_MANAGERS.size();
     }
 
     private void markShuttingDown() {
@@ -177,9 +193,9 @@ public final class IdleConnectionReaper extends Thread {
                 return;
             }
             try {
-                Thread.sleep(PERIOD_MILLISECONDS);
+                Thread.sleep(reaperSleepPeriodMillis);
 
-                for (Map.Entry<HttpClientConnectionManager, Long> entry : connectionManagers.entrySet()) {
+                for (Map.Entry<HttpClientConnectionManager, Long> entry : CONNECTION_MANAGERS.entrySet()) {
                     // When we release connections, the connection manager leaves them
                     // open so they can be reused.  We want to close out any idle
                     // connections so that they don't sit around in CLOSE_WAIT.
