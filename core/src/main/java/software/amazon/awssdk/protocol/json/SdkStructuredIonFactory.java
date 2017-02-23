@@ -40,7 +40,8 @@ import software.amazon.ion.system.IonWriterBuilder;
 class SdkStructuredIonFactory extends SdkStructuredJsonFactoryImpl {
     private static final IonSystem ION_SYSTEM = IonSystemBuilder.standard().build();
     private static final JsonFactory JSON_FACTORY = new IonFactory(ION_SYSTEM);
-    private static final Map<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>> UNMARSHALLERS = new ImmutableMapParameter.Builder<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>>()
+    private static final Map<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>> UNMARSHALLERS =
+            new ImmutableMapParameter.Builder<Class<?>, Unmarshaller<?, JsonUnmarshallerContext>>()
             .put(BigDecimal.class, SimpleTypeIonUnmarshallers.BigDecimalIonUnmarshaller.getInstance())
             .put(BigInteger.class, SimpleTypeIonUnmarshallers.BigIntegerIonUnmarshaller.getInstance())
             .put(Boolean.class, SimpleTypeIonUnmarshallers.BooleanIonUnmarshaller.getInstance())

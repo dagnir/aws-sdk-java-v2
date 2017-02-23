@@ -52,9 +52,9 @@ public class SignatureChecker {
     private static final String SUBJECT = "Subject";
     private static final String TOPIC = "TopicArn";
     private static final String TOKEN = "Token";
-    private static final Set<String> INTERESTING_FIELDS = new HashSet<String>(Arrays.asList(TYPE, SUBSCRIBE_URL, MESSAGE, TIMESTAMP,
-                                                                                     SIGNATURE, SIGNATURE_VERSION, MESSAGE_ID,
-                                                                                     SUBJECT, TOPIC, TOKEN));
+    private static final Set<String> INTERESTING_FIELDS = new HashSet<>(Arrays.asList(TYPE, SUBSCRIBE_URL, MESSAGE, TIMESTAMP,
+                                                                                      SIGNATURE, SIGNATURE_VERSION, MESSAGE_ID,
+                                                                                      SUBJECT, TOPIC, TOKEN));
     private Signature sigChecker;
 
     /**

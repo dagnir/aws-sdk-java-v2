@@ -31,12 +31,8 @@ import software.amazon.awssdk.services.s3.transfer.internal.TransferManagerUtils
 @NotThreadSafe
 public final class TransferManagerBuilder {
 
-    private static final SdkFunction<TransferManagerParams, TransferManager> DEFAULT_TRANSFER_MANAGER_FACTORY = new SdkFunction<TransferManagerParams, TransferManager>() {
-        @Override
-        public TransferManager apply(TransferManagerParams params) {
-            return new TransferManager(params);
-        }
-    };
+    private static final SdkFunction<TransferManagerParams, TransferManager> DEFAULT_TRANSFER_MANAGER_FACTORY =
+            TransferManager::new;
 
     private final SdkFunction<TransferManagerParams, TransferManager> transferManagerFactory;
 

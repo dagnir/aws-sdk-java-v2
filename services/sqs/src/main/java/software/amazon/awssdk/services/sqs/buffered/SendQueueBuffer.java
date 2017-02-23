@@ -98,7 +98,8 @@ public class SendQueueBuffer {
      * Current batching task for changeMessageVisibility. Using a size 1 array to allow
      * "passing by reference". Synchronized by {@code changeMessageVisibilityLock}.
      */
-    private final ChangeMessageVisibilityBatchTask[] openChangeMessageVisibilityBatchTask = new ChangeMessageVisibilityBatchTask[1];
+    private final ChangeMessageVisibilityBatchTask[] openChangeMessageVisibilityBatchTask =
+            new ChangeMessageVisibilityBatchTask[1];
     /**
      * Permits controlling the number of in flight SendMessage batches.
      */
@@ -133,18 +134,16 @@ public class SendQueueBuffer {
     /**
      * @return never null
      */
-    public QueueBufferFuture<SendMessageRequest, SendMessageResult> sendMessage(SendMessageRequest request,
-                                                                                QueueBufferCallback<SendMessageRequest, SendMessageResult> callback) {
-        QueueBufferFuture<SendMessageRequest, SendMessageResult> result = submitOutboundRequest(sendMessageLock,
-                                                                                                openSendMessageBatchTask, request, inflightSendMessageBatches, callback);
-        return result;
+    public QueueBufferFuture<SendMessageRequest, SendMessageResult>
+            sendMessage(SendMessageRequest request, QueueBufferCallback<SendMessageRequest, SendMessageResult> callback) {
+        return submitOutboundRequest(sendMessageLock, openSendMessageBatchTask, request, inflightSendMessageBatches, callback);
     }
 
     /**
      * @return never null
      */
-    public QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult> deleteMessage(DeleteMessageRequest request,
-                                                                                      QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback) {
+    public QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult>
+            deleteMessage(DeleteMessageRequest request, QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback) {
         return submitOutboundRequest(deleteMessageLock, openDeleteMessageBatchTask, request,
                                      inflightDeleteMessageBatches, callback);
     }
@@ -588,9 +587,10 @@ public class SendQueueBuffer {
             List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                     requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
-                entries.add(new ChangeMessageVisibilityBatchRequestEntry().withId(Integer.toString(i))
-                                                                          .withReceiptHandle(requests.get(i).getReceiptHandle())
-                                                                          .withVisibilityTimeout(requests.get(i).getVisibilityTimeout()));
+                entries.add(new ChangeMessageVisibilityBatchRequestEntry()
+                                    .withId(Integer.toString(i))
+                                    .withReceiptHandle(requests.get(i).getReceiptHandle())
+                                    .withVisibilityTimeout(requests.get(i).getVisibilityTimeout()));
             }
             batchRequest.setEntries(entries);
 

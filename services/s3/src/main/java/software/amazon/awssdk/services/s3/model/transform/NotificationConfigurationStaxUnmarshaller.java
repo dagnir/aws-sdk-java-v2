@@ -33,8 +33,8 @@ import software.amazon.awssdk.services.s3.model.TopicConfiguration;
  * @param <T>
  *            Concrete type of {@link NotificationConfiguration}
  */
-abstract class NotificationConfigurationStaxUnmarshaller<T extends NotificationConfiguration> implements
-                                                                                              Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
+abstract class NotificationConfigurationStaxUnmarshaller<T extends NotificationConfiguration>
+        implements Unmarshaller<Entry<String, NotificationConfiguration>, StaxUnmarshallerContext> {
 
     /**
      * Id (aka configuration name) isn't modeled on the actual {@link NotificationConfiguration}

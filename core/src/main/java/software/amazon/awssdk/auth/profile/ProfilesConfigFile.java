@@ -88,7 +88,7 @@ public class ProfilesConfigFile {
      * difference for basic credentials but for assume role it's more efficient as each assume role
      * provider has it's own async refresh logic.
      */
-    private final ConcurrentHashMap<String, AwsCredentialsProvider> credentialProviderCache = new ConcurrentHashMap<String, AwsCredentialsProvider>();
+    private final ConcurrentHashMap<String, AwsCredentialsProvider> credentialProviderCache = new ConcurrentHashMap<>();
     private volatile AllProfiles allProfiles;
     private volatile long profileFileLastModified;
 

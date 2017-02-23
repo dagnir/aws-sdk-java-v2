@@ -103,7 +103,7 @@ public class InternalConfig {
      */
     static InternalConfig load() throws JsonParseException, JsonMappingException, IOException {
         // First try loading via the class by using a relative path
-        URL url = ClassLoaderHelper.getResource(DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH, true, InternalConfig.class); // classesFirst=true
+        URL url = ClassLoaderHelper.getResource(DEFAULT_CONFIG_RESOURCE_RELATIVE_PATH, true, InternalConfig.class);
         if (url == null) { // Then try with the absolute path
             url = ClassLoaderHelper.getResource(DEFAULT_CONFIG_RESOURCE_ABSOLUTE_PATH, InternalConfig.class);
         }
@@ -286,11 +286,11 @@ public class InternalConfig {
     }
 
     void dump() {
-        StringBuilder sb = new StringBuilder().append("defaultSignerConfig: ").append(defaultSignerConfig).append("\n")
-                                              .append("serviceRegionSigners: ").append(serviceRegionSigners).append("\n").append("regionSigners: ")
-                                              .append(regionSigners).append("\n").append("serviceSigners: ").append(serviceSigners).append("\n")
-                                              .append("userAgentTemplate: ").append(userAgentTemplate);
-        log.debug(sb.toString());
+        log.debug("defaultSignerConfig: " + defaultSignerConfig + "\n" +
+                  "serviceRegionSigners: " + serviceRegionSigners + "\n" +
+                  "regionSigners: " + regionSigners + "\n" +
+                  "serviceSigners: " + serviceSigners + "\n" +
+                  "userAgentTemplate: " + userAgentTemplate);
     }
 
     public static class Factory {

@@ -42,6 +42,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.client.builder.ExecutorFactory;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.ProgressListenerChain;
 import software.amazon.awssdk.services.s3.AmazonS3;
@@ -141,7 +142,8 @@ public class TransferManager {
 
     private static final Log log = LogFactory.getLog(TransferManager.class);
     private static final String USER_AGENT = TransferManager.class.getName() + "/" + VersionInfoUtils.getVersion();
-    private static final String USER_AGENT_MULTIPART = TransferManager.class.getName() + "_multipart/" + VersionInfoUtils.getVersion();
+    private static final String USER_AGENT_MULTIPART = TransferManager.class.getName() + "_multipart/" +
+                                                       VersionInfoUtils.getVersion();
     private static final String DEFAULT_DELIMITER = "/";
     /**
      * There is no need for threads from timedThreadPool if there is no more running threads in current process,
@@ -206,7 +208,10 @@ public class TransferManager {
      *            The AWS security credentials provider to use when making
      *            authenticated requests.
      * @deprecated use {@link TransferManagerBuilder#withS3Client(AmazonS3)} for example:
-     * {@code TransferManagerBuilder.standard().withS3Client(AmazonS3ClientBuilder.standard.withCredentials(credentialsProvider).build()).build(); }
+     *     {@code TransferManagerBuilder.standard()
+     *                                  .withS3Client(AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider)
+     *                                                                     .build())
+     *                                  .build(); }
      */
     @Deprecated
     public TransferManager(AwsCredentialsProvider credentialsProvider) {
@@ -228,7 +233,10 @@ public class TransferManager {
      *            The AWS security credentials to use when making authenticated
      *            requests.
      * @deprecated use {@link TransferManagerBuilder#withS3Client(AmazonS3)} for example:
-     * {@code TransferManagerBuilder.standard().withS3Client(AmazonS3ClientBuilder.standard.withCredentials(credentials).build()).build(); }
+     *     {@code TransferManagerBuilder.standard()
+     *                                  .withS3Client(AmazonS3ClientBuilder.standard().withCredentials(credentials)
+     *                                                                     .build())
+     *                                  .build(); }
      */
     @Deprecated
     public TransferManager(AwsCredentials credentials) {
@@ -283,7 +291,7 @@ public class TransferManager {
      * @see TransferManager#TransferManager(AmazonS3 s3, ExecutorService
      *      executorService, boolean shutDownThreadPools)
      * @deprecated use {@link TransferManagerBuilder#withS3Client(AmazonS3)} and
-     *                 {@link TransferManagerBuilder#withExecutorFactory(software.amazon.awssdk.client.builder.ExecutorFactory)}
+     *                 {@link TransferManagerBuilder#withExecutorFactory(ExecutorFactory)}
      */
     @Deprecated
     public TransferManager(AmazonS3 s3, ExecutorService executorService) {
@@ -313,7 +321,7 @@ public class TransferManager {
      *            If set to true, the thread pool will be shutdown when transfer
      *            manager instance is garbage collected.
      * @deprecated use {@link TransferManagerBuilder#withS3Client(AmazonS3)} and
-     *                 {@link TransferManagerBuilder#withExecutorFactory(software.amazon.awssdk.client.builder.ExecutorFactory)} and
+     *                 {@link TransferManagerBuilder#withExecutorFactory(ExecutorFactory)} and
      *                 {@link TransferManagerBuilder#withShutDownThreadPools(Boolean)}
      */
     @Deprecated
@@ -1076,8 +1084,10 @@ public class TransferManager {
         }
 
         final long origStartingByte = startingByte;
-        final boolean isDownloadParallel = !configuration.isDisableParallelDownloads()
-                                           && TransferManagerUtils.isDownloadParallelizable(s3, getObjectRequest, ServiceUtils.getPartCount(getObjectRequest, s3));
+        boolean isDownloadParallelizable =
+                TransferManagerUtils.isDownloadParallelizable(s3, getObjectRequest,
+                                                              ServiceUtils.getPartCount(getObjectRequest, s3));
+        final boolean isDownloadParallel = !configuration.isDisableParallelDownloads() && isDownloadParallelizable;
 
         // We still pass the unfiltered listener chain into DownloadImpl
         final DownloadImpl download = new DownloadImpl(description, transferProgress, listenerChain, null,
@@ -1105,7 +1115,8 @@ public class TransferManager {
         if (resumeExistingDownload) {
             if (isS3ObjectModifiedSincePause(lastModifiedTime, lastModifiedTimeRecordedDuringPause)) {
                 throw new AmazonClientException("The requested object in bucket " + getObjectRequest.getBucketName()
-                                                + " with key " + getObjectRequest.getKey() + " is modified on Amazon S3 since the last pause.");
+                                                + " with key " + getObjectRequest.getKey() + " is modified on Amazon S3 since " +
+                                                "the last pause.");
             }
             // There's still a chance the object is modified while the request
             // is in flight. Set this header so S3 fails the request if this happens.
@@ -1205,7 +1216,8 @@ public class TransferManager {
             do {
                 if (listObjectsResponse == null) {
                     ListObjectsRequest listObjectsRequest = new ListObjectsRequest().withBucketName(bucketName)
-                                                                                    .withDelimiter(DEFAULT_DELIMITER).withPrefix(prefix);
+                                                                                    .withDelimiter(DEFAULT_DELIMITER)
+                                                                                    .withPrefix(prefix);
                     listObjectsResponse = s3.listObjects(listObjectsRequest);
                 } else {
                     listObjectsResponse = s3.listNextBatchOfObjects(listObjectsResponse);
@@ -1246,7 +1258,8 @@ public class TransferManager {
 
         String description = "Downloading from " + bucketName + "/" + keyPrefix;
         final MultipleFileDownloadImpl multipleFileDownload = new MultipleFileDownloadImpl(description, transferProgress,
-                                                                                           additionalListeners, keyPrefix, bucketName, downloads);
+                                                                                           additionalListeners, keyPrefix,
+                                                                                           bucketName, downloads);
         multipleFileDownload.setMonitor(new MultipleFileTransferMonitor(multipleFileDownload, downloads));
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -1458,7 +1471,9 @@ public class TransferManager {
                 progress, additionalListeners);
 
         List<UploadImpl> uploads = new LinkedList<UploadImpl>();
-        MultipleFileUploadImpl multipleFileUpload = new MultipleFileUploadImpl("Uploading etc", progress, additionalListeners, virtualDirectoryKeyPrefix, bucketName, uploads);
+        MultipleFileUploadImpl multipleFileUpload = new MultipleFileUploadImpl("Uploading etc", progress,
+                                                                               additionalListeners, virtualDirectoryKeyPrefix,
+                                                                               bucketName, uploads);
         multipleFileUpload.setMonitor(new MultipleFileTransferMonitor(multipleFileUpload, uploads));
         final CountDownLatch latch = new CountDownLatch(1);
         MultipleFileTransferStateChangeListener transferListener =

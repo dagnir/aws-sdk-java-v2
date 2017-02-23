@@ -195,8 +195,8 @@ public class STSAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
      */
     private STSAssumeRoleSessionCredentialsProvider(Builder builder) {
         if (builder.sts != null) {
-            ValidationUtils.assertAllAreNull(
-                    "If a custom STS client is set you must not set any other client related fields (ClientConfiguration, AWSCredentials, Endpoint, etc",
+            ValidationUtils.assertAllAreNull("If a custom STS client is set you must not set any other client related fields " +
+                                             "(ClientConfiguration, AWSCredentials, Endpoint, etc",
                     builder.longLivedCredentials, builder.longLivedCredentialsProvider,
                     builder.clientConfiguration, builder.serviceEndpoint);
             this.securityTokenService = builder.sts;

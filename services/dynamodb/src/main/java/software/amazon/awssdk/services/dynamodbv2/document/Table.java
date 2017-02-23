@@ -477,8 +477,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         Waiter waiter = client.waiters().tableExists();
 
         try {
-            waiter.run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(tableName))
-                               .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25), new FixedDelayStrategy(5))));
+            waiter.run(new WaiterParameters<>(new DescribeTableRequest(tableName))
+                               .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25),
+                                                                        new FixedDelayStrategy(5))));
             return describe();
         } catch (Exception exception) {
             // The additional describe call is to return ResourceNotFoundException if the table doesn't exist.
@@ -497,8 +498,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     public void waitForDelete() throws InterruptedException {
         Waiter waiter = client.waiters().tableNotExists();
         try {
-            waiter.run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(tableName))
-                               .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25), new FixedDelayStrategy(5))));
+            waiter.run(new WaiterParameters<>(new DescribeTableRequest(tableName))
+                               .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25),
+                                                                        new FixedDelayStrategy(5))));
         } catch (Exception exception) {
             throw new IllegalArgumentException("Table " + tableName + " is not deleted.", exception);
         }

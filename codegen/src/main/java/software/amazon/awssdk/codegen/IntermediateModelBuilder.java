@@ -192,12 +192,14 @@ public class IntermediateModelBuilder {
 
                  ShapeModel shape = operation.getInputShape();
                  if (shape == null) {
-                     throw new RuntimeException(String.format("Operation %s has unknown input shape", operation.getOperationName()));
+                     throw new RuntimeException(String.format("Operation %s has unknown input shape",
+                                                              operation.getOperationName()));
                  }
                  if (AuthType.CUSTOM.equals(c2jOperation.getAuthType())) {
                      AuthorizerModel auth = model.getCustomAuthorizers().get(c2jOperation.getAuthorizer());
                      if (auth == null) {
-                         throw new RuntimeException(String.format("Required custom auth not defined: %s", c2jOperation.getAuthorizer()));
+                         throw new RuntimeException(String.format("Required custom auth not defined: %s",
+                                                                  c2jOperation.getAuthorizer()));
                      }
                      shape.setRequestSignerClassFqcn(model.getMetadata().getPackageName() + ".auth." + auth.getInterfaceName());
                  } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {

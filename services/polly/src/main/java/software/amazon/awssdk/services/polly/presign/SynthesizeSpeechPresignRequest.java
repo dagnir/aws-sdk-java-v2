@@ -45,24 +45,24 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
 
 
     /**
-     * @return Expiration of the presigned request. Default is {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES}
-     *     minutes if not overridden.
+     * @return Expiration of the presigned request. Default is
+     *     {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      */
     public Date getExpirationDate() {
         return expirationDate;
     }
 
     /**
-     * Sets the expiration of the presigned request. Default is {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES}
-     * minutes if not overridden.
+     * Sets the expiration of the presigned request. Default is
+     * {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      */
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
     }
 
     /**
-     * Sets the expiration of the presigned request. Default is {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES}
-     * minutes if not overridden.
+     * Sets the expiration of the presigned request. Default is
+     * {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      *
      * @return This object for method chaining.
      */
@@ -104,7 +104,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
             return;
         }
 
-        this.lexiconNames = new java.util.ArrayList<String>(lexiconNames);
+        this.lexiconNames = new java.util.ArrayList<>(lexiconNames);
     }
 
     /**
@@ -116,7 +116,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
      */
     public SynthesizeSpeechPresignRequest withLexiconNames(String... lexiconNames) {
         if (this.lexiconNames == null) {
-            setLexiconNames(new java.util.ArrayList<String>(lexiconNames.length));
+            setLexiconNames(new java.util.ArrayList<>(lexiconNames.length));
         }
         for (String ele : lexiconNames) {
             this.lexiconNames.add(ele);

@@ -54,7 +54,8 @@ public class WaiterExecution<InputT extends AmazonWebServiceRequest, OutputT> {
     public WaiterExecution(WaiterExecutionBuilder<InputT, OutputT> waiterExecutionBuilder) {
         this.sdkFunction = ValidationUtils.assertNotNull(waiterExecutionBuilder.getSdkFunction(), "sdkFunction");
         this.request = ValidationUtils.assertNotNull(waiterExecutionBuilder.getRequest(), "request");
-        this.acceptor = new CompositeAcceptor<OutputT>(ValidationUtils.assertNotNull(waiterExecutionBuilder.getAcceptorsList(), "acceptors"));
+        this.acceptor = new CompositeAcceptor<>(ValidationUtils.assertNotNull(waiterExecutionBuilder.getAcceptorsList(),
+                                                                              "acceptors"));
         this.pollingStrategy = ValidationUtils.assertNotNull(waiterExecutionBuilder.getPollingStrategy(), "pollingStrategy");
     }
 

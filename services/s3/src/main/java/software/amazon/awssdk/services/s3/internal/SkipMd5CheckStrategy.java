@@ -31,13 +31,15 @@ public class SkipMd5CheckStrategy {
      * System property to disable MD5 validation for GetObject. Any value set for this property will
      * disable validation.
      */
-    public static final String DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY = "software.amazon.awssdk.services.s3.disableGetObjectMD5Validation";
+    public static final String DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY =
+            "software.amazon.awssdk.services.s3.disableGetObjectMD5Validation";
 
     /**
      * System property to disable MD5 validation for both PutObject and UploadPart. Any value set
      * for this property will disable validation.
      */
-    public static final String DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY = "software.amazon.awssdk.services.s3.disablePutObjectMD5Validation";
+    public static final String DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY =
+            "software.amazon.awssdk.services.s3.disablePutObjectMD5Validation";
 
     public static final SkipMd5CheckStrategy INSTANCE = new SkipMd5CheckStrategy();
 

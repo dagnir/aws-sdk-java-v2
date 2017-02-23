@@ -454,7 +454,7 @@ public final class StepFunctionBuilder {
     }
 
     /**
-     * Represents the logical NOT of a single condition. May be used in a {@link software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState}.
+     * Represents the logical NOT of a single condition. May be used in a {@link ChoiceState}.
      *
      * @param conditionBuilder The condition to be negated. May be another composite condition or a simple condition.
      * @return Builder used to configure a {@link NotCondition}.
@@ -465,7 +465,7 @@ public final class StepFunctionBuilder {
     }
 
     /**
-     * Represents the logical AND of multiple conditions. May be used in a {@link software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState}.
+     * Represents the logical AND of multiple conditions. May be used in a {@link ChoiceState}.
      *
      * @param conditionBuilders The conditions to AND together. May be another composite condition or a simple condition.
      * @return Builder used to configure a {@link AndCondition}.
@@ -476,7 +476,7 @@ public final class StepFunctionBuilder {
     }
 
     /**
-     * Represents the logical OR of multiple conditions. May be used in a {@link software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState}.
+     * Represents the logical OR of multiple conditions. May be used in a {@link ChoiceState}.
      *
      * @param conditionBuilders The conditions to OR together. May be another composite condition or a simple condition.
      * @return Builder used to configure a {@link OrCondition}.

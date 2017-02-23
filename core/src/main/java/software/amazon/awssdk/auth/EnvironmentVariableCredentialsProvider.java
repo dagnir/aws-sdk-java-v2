@@ -45,10 +45,11 @@ public class EnvironmentVariableCredentialsProvider implements AwsCredentialsPro
         if (StringUtils.isNullOrEmpty(accessKey)
             || StringUtils.isNullOrEmpty(secretKey)) {
 
-            throw new SdkClientException(
-                    "Unable to load AWS credentials from environment variables " +
-                    "(" + SDKGlobalConfiguration.ACCESS_KEY_ENV_VAR + " (or " + SDKGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR + ") and " +
-                    SDKGlobalConfiguration.SECRET_KEY_ENV_VAR + " (or " + SDKGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR + "))");
+            throw new SdkClientException("Unable to load AWS credentials from environment variables (" +
+                                         SDKGlobalConfiguration.ACCESS_KEY_ENV_VAR + " (or " +
+                                         SDKGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR + ") and " +
+                                         SDKGlobalConfiguration.SECRET_KEY_ENV_VAR + " (or " +
+                                         SDKGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR + "))");
         }
 
         return sessionToken == null ?

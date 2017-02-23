@@ -182,11 +182,12 @@ final class DownloadCallable implements Callable<File> {
         }
 
         for (int i = lastFullyMergedPartNumber + 1; i <= partCount; i++) {
-            GetObjectRequest getPartRequest = new GetObjectRequest(req.getBucketName(), req.getKey(),
-                                                                   req.getVersionId()).withUnmodifiedSinceConstraint(req.getUnmodifiedSinceConstraint())
-                                                                                      .withModifiedSinceConstraint(req.getModifiedSinceConstraint())
-                                                                                      .withResponseHeaders(req.getResponseHeaders()).withSSECustomerKey(req.getSSECustomerKey())
-                                                                                      .withGeneralProgressListener(req.getGeneralProgressListener());
+            GetObjectRequest getPartRequest =
+                    new GetObjectRequest(req.getBucketName(), req.getKey(), req.getVersionId())
+                          .withUnmodifiedSinceConstraint(req.getUnmodifiedSinceConstraint())
+                          .withModifiedSinceConstraint(req.getModifiedSinceConstraint())
+                          .withResponseHeaders(req.getResponseHeaders()).withSSECustomerKey(req.getSSECustomerKey())
+                          .withGeneralProgressListener(req.getGeneralProgressListener());
 
             getPartRequest.setMatchingETagConstraints(req.getMatchingETagConstraints());
             getPartRequest.setNonmatchingETagConstraints(req.getNonmatchingETagConstraints());
@@ -197,7 +198,8 @@ final class DownloadCallable implements Callable<File> {
         }
 
         truncateDestinationFileIfNecessary();
-        Future<File> future = executor.submit(new CompleteMultipartDownload(futureFiles, dstfile, download, ++lastFullyMergedPartNumber));
+        Future<File> future =
+                executor.submit(new CompleteMultipartDownload(futureFiles, dstfile, download, ++lastFullyMergedPartNumber));
         ((DownloadMonitor) download.getMonitor()).setFuture(future);
     }
 
@@ -313,7 +315,8 @@ final class DownloadCallable implements Callable<File> {
                     if (hasRetried) {
                         throw ace;
                     } else {
-                        LOG.info("Retry the download of object " + s3Object.getKey() + " (bucket " + s3Object.getBucketName() + ")", ace);
+                        LOG.info("Retry the download of object " + s3Object.getKey() +
+                                 " (bucket " + s3Object.getBucketName() + ")", ace);
                         hasRetried = true;
                     }
                 }

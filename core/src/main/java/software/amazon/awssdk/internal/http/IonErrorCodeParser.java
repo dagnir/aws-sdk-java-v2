@@ -49,7 +49,8 @@ public class IonErrorCodeParser implements ErrorCodeParser {
         try {
             IonType type = reader.next();
             if (type != IonType.STRUCT) {
-                throw new SdkClientException(String.format("Can only get error codes from structs (saw %s), request id %s", type, getRequestId(response)));
+                throw new SdkClientException(String.format("Can only get error codes from structs (saw %s), request id %s",
+                                                           type, getRequestId(response)));
             }
 
             boolean errorCodeSeen = false;
@@ -58,7 +59,8 @@ public class IonErrorCodeParser implements ErrorCodeParser {
             for (String annotation : annotations) {
                 if (annotation.startsWith(TYPE_PREFIX)) {
                     if (errorCodeSeen) {
-                        throw new SdkClientException(String.format("Multiple error code annotations found for request id %s", getRequestId(response)));
+                        throw new SdkClientException(String.format("Multiple error code annotations found for request id %s",
+                                                                   getRequestId(response)));
                     } else {
                         errorCodeSeen = true;
                         errorCode = annotation.substring(TYPE_PREFIX.length());

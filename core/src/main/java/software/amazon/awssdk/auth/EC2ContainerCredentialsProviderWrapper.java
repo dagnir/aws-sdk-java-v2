@@ -41,8 +41,9 @@ public class EC2ContainerCredentialsProviderWrapper implements AwsCredentialsPro
             return System.getenv(ContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH) != null
                    ? new ContainerCredentialsProvider() : InstanceProfileCredentialsProvider.getInstance();
         } catch (SecurityException securityException) {
-            LOG.debug("Security manager did not allow access to the ECS credentials environment variable " + ContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH
-                      + ". Please provide access to this environment variable if you want to load credentials from ECS Container.");
+            LOG.debug("Security manager did not allow access to the ECS credentials environment variable " +
+                      ContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH + ". Please provide access to this " +
+                      "environment variable if you want to load credentials from ECS Container.");
             return InstanceProfileCredentialsProvider.getInstance();
         }
     }

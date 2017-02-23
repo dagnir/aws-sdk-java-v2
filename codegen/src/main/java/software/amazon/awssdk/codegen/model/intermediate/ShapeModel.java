@@ -139,9 +139,8 @@ public class ShapeModel extends DocumentationModel {
                     payloadMember = member;
                 } else {
                     throw new IllegalStateException(
-                            String.format(
-                                    "Only one payload member can be explicitly set on %s. This is likely an error in the C2J model",
-                                    c2jName));
+                            String.format("Only one payload member can be explicitly set on %s. This is likely an error in " +
+                                          "the C2J model", c2jName));
                 }
             }
         }

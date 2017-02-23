@@ -17,11 +17,12 @@ package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.util.List;
+import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.inventory.InventoryConfiguration;
 
 /**
  * Result object to contain the response returned from
- * {@link software.amazon.awssdk.services.s3.AmazonS3Client#listBucketInventoryConfigurations(ListBucketInventoryConfigurationsRequest)}
+ * {@link AmazonS3Client#listBucketInventoryConfigurations(ListBucketInventoryConfigurationsRequest)}
  * operation.
  */
 public class ListBucketInventoryConfigurationsResult implements Serializable {

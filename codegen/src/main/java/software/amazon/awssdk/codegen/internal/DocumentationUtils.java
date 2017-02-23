@@ -28,7 +28,8 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 
 public class DocumentationUtils {
 
-    public static final String DEFAULT_ASYNC_RETURN = "A Java Future containing the result of the %s operation returned by the service.";
+    public static final String DEFAULT_ASYNC_RETURN =
+            "A Java Future containing the result of the %s operation returned by the service.";
 
     public static final String DEFAULT_SYNC_RETURN = "Result of the %s operation returned by the service.";
 
@@ -40,11 +41,17 @@ public class DocumentationUtils {
 
     public static final String DEFAULT_GETTER_PARAM = "The value of the %s property for this object.";
 
-    public static final String DEFAULT_FLUENT_RETURN = "Returns a reference to this object so that method calls can be chained together.";
+    public static final String DEFAULT_FLUENT_RETURN =
+            "Returns a reference to this object so that method calls can be chained together.";
 
-    public static final String CONSTRUCTOR_DOC = "Constructs a new %s object. Callers should use the setter or fluent setter (with...) methods to initialize any additional object members.";
+    public static final String CONSTRUCTOR_DOC =
+            "Constructs a new %s object. Callers should use the setter or fluent setter (with...) methods to initialize any " +
+            "additional object members.";
 
-    public static final String LIST_VARARG_ADDITIONAL_DOC = "<p><b>NOTE:</b> This method appends the values to the existing list (if any). Use {@link #set%s(java.util.Collection)} or {@link #with%s(java.util.Collection)} if you want to override the existing values.</p>";
+    public static final String LIST_VARARG_ADDITIONAL_DOC =
+            "<p><b>NOTE:</b> This method appends the values to the existing list (if any). Use " +
+            "{@link #set%s(java.util.Collection)} or {@link #with%s(java.util.Collection)} if you want to override the " +
+            "existing values.</p>";
 
     //TODO kylthoms@: probably should move this to a custom config in each service
     private static final Set<String> SERVICES_EXCLUDED_FROM_CROSS_LINKING = new HashSet<>(Arrays.asList(
@@ -142,7 +149,9 @@ public class DocumentationUtils {
      * @return a '@see also' HTML link to the doc
      */
     public static String createLinkToServiceDocumentation(Metadata metadata, ShapeModel shapeModel) {
-        return isRequestResponseOrModel(shapeModel) ? createLinkToServiceDocumentation(metadata, shapeModel.getDocumentationShapeName()) : "";
+        return isRequestResponseOrModel(shapeModel) ? createLinkToServiceDocumentation(metadata,
+                                                                                       shapeModel.getDocumentationShapeName())
+                                                    : "";
     }
 
     public static String removeFromEnd(String string, String stringToRemove) {
@@ -150,10 +159,12 @@ public class DocumentationUtils {
     }
 
     private static boolean isRequestResponseOrModel(ShapeModel shapeModel) {
-        return shapeModel.getShapeType() == Model || shapeModel.getShapeType() == Request || shapeModel.getShapeType() == Response;
+        return shapeModel.getShapeType() == Model || shapeModel.getShapeType() == Request ||
+               shapeModel.getShapeType() == Response;
     }
 
     private static boolean isCrossLinkingEnabledForService(Metadata metadata) {
-        return metadata.getUid() != null && metadata.getEndpointPrefix() != null && !SERVICES_EXCLUDED_FROM_CROSS_LINKING.contains(metadata.getEndpointPrefix());
+        return metadata.getUid() != null && metadata.getEndpointPrefix() != null &&
+               !SERVICES_EXCLUDED_FROM_CROSS_LINKING.contains(metadata.getEndpointPrefix());
     }
 }

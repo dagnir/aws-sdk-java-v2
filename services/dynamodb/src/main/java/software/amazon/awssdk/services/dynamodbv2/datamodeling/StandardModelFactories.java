@@ -436,7 +436,7 @@ final class StandardModelFactories {
 
             @Override
             public DynamoDBTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
-                return joinAll(SET.join(getConverter(ByteBuffer.class, type.<T>param(0))), type.<List<ByteBuffer>>typeConverter());
+                return joinAll(SET.join(getConverter(ByteBuffer.class, type.param(0))), type.typeConverter());
             }
 
             @Override
@@ -471,7 +471,7 @@ final class StandardModelFactories {
                          + "it's probably a bug. If you DO know what you're doing feel"
                          + "free to ignore this warning, but consider using a custom "
                          + "marshaler for this instead.");
-                return joinAll(SET.join(scalars.getConverter(String.class, DEFAULT.<T>type())), type.<List<String>>typeConverter());
+                return joinAll(SET.join(scalars.getConverter(String.class, DEFAULT.type())), type.typeConverter());
             }
         }
 
@@ -490,7 +490,7 @@ final class StandardModelFactories {
 
             @Override
             public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
-                return joinAll(getConverter(Boolean.class, type), type.<Boolean>typeConverter());
+                return joinAll(getConverter(Boolean.class, type), type.typeConverter());
             }
 
             @Override

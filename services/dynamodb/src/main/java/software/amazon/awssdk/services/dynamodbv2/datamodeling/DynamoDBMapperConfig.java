@@ -276,7 +276,8 @@ public class DynamoDBMapperConfig {
      */
     @Deprecated
     public DynamoDBMapperConfig(ConversionSchema conversionSchema) {
-        this(null, null, null, null, null, null, null, conversionSchema, DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+        this(null, null, null, null, null, null, null,
+             conversionSchema, DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
     }
 
     /**
@@ -613,7 +614,8 @@ public class DynamoDBMapperConfig {
     /**
      * {@link DynamoDbMapper#batchLoad(List)} breaks the requested items in batches of maximum size 100.
      * When calling the Dyanmo Db client, there is a chance that due to throttling, some unprocessed keys will be returned.
-     * This interfaces controls whether we need to retry these unprocessed keys and it also controls the strategy as to how retries should be handled
+     * This interfaces controls whether we need to retry these unprocessed keys and it also controls the strategy as to how
+     * retries should be handled.
      */
     public interface BatchLoadRetryStrategy {
         /**
@@ -1129,7 +1131,7 @@ public class DynamoDBMapperConfig {
         private final DynamoDBMapperConfig config = builder().withBatchLoadRetryStrategy(this).build();
 
         /* (non-Javadoc)
-         * @see software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.BatchLoadRetryStrategy#getMaxRetryOnUnprocessedKeys(java.util.Map, java.util.Map)
+         * @see BatchLoadRetryStrategy#getMaxRetryOnUnprocessedKeys(java.util.Map, java.util.Map)
          */
         @Override
         public boolean shouldRetry(final BatchLoadContext batchLoadContext) {
@@ -1137,7 +1139,7 @@ public class DynamoDBMapperConfig {
         }
 
         /* (non-Javadoc)
-         * @see software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.BatchLoadRetryStrategy#getDelayBeforeNextRetry(java.util.Map, int)
+         * @see BatchLoadRetryStrategy#getDelayBeforeNextRetry(java.util.Map, int)
          */
         @Override
         public long getDelayBeforeNextRetry(final BatchLoadContext batchLoadContext) {
@@ -1186,7 +1188,7 @@ public class DynamoDBMapperConfig {
         @Override
         public boolean shouldRetry(BatchLoadContext batchLoadContext) {
             Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.getBatchGetItemResult().getUnprocessedKeys();
-            return (unprocessedKeys != null && unprocessedKeys.size() > 0 && batchLoadContext.getRetriesAttempted() < MAX_RETRIES);
+            return unprocessedKeys != null && unprocessedKeys.size() > 0 && batchLoadContext.getRetriesAttempted() < MAX_RETRIES;
         }
 
         public final DynamoDBMapperConfig config() {

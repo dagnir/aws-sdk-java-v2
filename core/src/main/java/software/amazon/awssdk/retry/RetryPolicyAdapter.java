@@ -24,8 +24,8 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.retry.v2.RetryPolicyContext;
 
 /**
- * Adapts a legacy {@link RetryPolicy} to the new {@link software.amazon.awssdk.retry.v2.RetryPolicy}. This class is intended for internal
- * use by the SDK.
+ * Adapts a legacy {@link RetryPolicy} to the new {@link software.amazon.awssdk.retry.v2.RetryPolicy}. This class is
+ * intended for internal use by the SDK.
  */
 @SdkInternalApi
 public class RetryPolicyAdapter implements software.amazon.awssdk.retry.v2.RetryPolicy {

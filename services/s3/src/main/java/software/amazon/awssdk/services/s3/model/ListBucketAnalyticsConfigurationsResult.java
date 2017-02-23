@@ -17,11 +17,12 @@ package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.util.List;
+import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.analytics.AnalyticsConfiguration;
 
 /**
  * Result object to contain the response returned from
- * {@link software.amazon.awssdk.services.s3.AmazonS3Client#listBucketAnalyticsConfigurations(ListBucketAnalyticsConfigurationsRequest)}
+ * {@link AmazonS3Client#listBucketAnalyticsConfigurations(ListBucketAnalyticsConfigurationsRequest)}
  * operation.
  */
 public class ListBucketAnalyticsConfigurationsResult implements Serializable {

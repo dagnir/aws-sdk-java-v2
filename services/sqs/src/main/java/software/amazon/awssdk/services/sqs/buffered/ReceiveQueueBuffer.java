@@ -104,8 +104,9 @@ public class ReceiveQueueBuffer {
      *
      * @return never null
      */
-    public QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult> receiveMessageAsync(ReceiveMessageRequest rq,
-                                                                                              QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult> callback) {
+    public QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult>
+            receiveMessageAsync(ReceiveMessageRequest rq,
+                                QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult> callback) {
         if (shutDown) {
             throw new AmazonClientException("The client has been shut down.");
         }
@@ -463,7 +464,8 @@ public class ReceiveQueueBuffer {
                 for (Message m : messages) {
 
                     entries.add(new ChangeMessageVisibilityBatchRequestEntry().withId(Integer.toString(i))
-                                                                              .withReceiptHandle(m.getReceiptHandle()).withVisibilityTimeout(0));
+                                                                              .withReceiptHandle(m.getReceiptHandle())
+                                                                              .withVisibilityTimeout(0));
                     ++i;
                 }
 
@@ -486,14 +488,13 @@ public class ReceiveQueueBuffer {
 
             try {
                 visibilityDeadlineNano = System.nanoTime() + visibilityTimeoutNanos;
-                ReceiveMessageRequest request = new ReceiveMessageRequest(qUrl).withMaxNumberOfMessages(config
-                                                                                                                .getMaxBatchSize());
+                ReceiveMessageRequest request = new ReceiveMessageRequest(qUrl).withMaxNumberOfMessages(config.getMaxBatchSize());
                 ResultConverter.appendUserAgent(request, AmazonSqsBufferedAsyncClient.USER_AGENT);
 
                 if (config.getVisibilityTimeoutSeconds() > 0) {
                     request.setVisibilityTimeout(config.getVisibilityTimeoutSeconds());
-                    visibilityDeadlineNano = System.nanoTime()
-                                             + TimeUnit.NANOSECONDS.convert(config.getVisibilityTimeoutSeconds(), TimeUnit.SECONDS);
+                    visibilityDeadlineNano = System.nanoTime() +
+                                             TimeUnit.NANOSECONDS.convert(config.getVisibilityTimeoutSeconds(), TimeUnit.SECONDS);
                 }
 
                 if (config.isLongPoll()) {

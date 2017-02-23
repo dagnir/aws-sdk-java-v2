@@ -148,7 +148,8 @@ public class InstanceProfileCredentialsProvider implements AwsCredentialsProvide
         public URI getCredentialsEndpoint() throws URISyntaxException, IOException {
             String host = EC2MetadataUtils.getHostAddressForEC2MetadataService();
 
-            String securityCredentialsList = EC2CredentialsUtils.getInstance().readResource(new URI(host + EC2MetadataUtils.SECURITY_CREDENTIALS_RESOURCE));
+            String securityCredentialsList = EC2CredentialsUtils.getInstance().readResource(
+                    new URI(host + EC2MetadataUtils.SECURITY_CREDENTIALS_RESOURCE));
             String[] securityCredentials = securityCredentialsList.trim().split("\n");
             if (securityCredentials.length == 0) {
                 throw new SdkClientException("Unable to load credentials path");

@@ -187,8 +187,7 @@ public final class ParallelState extends TransitionState {
         /**
          * REQUIRED. Adds a new branch of execution to this states branches. A parallel state must have at least one branch.
          *
-         * @param branchBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Branch.Builder}. Note that
-         *                      the {@link
+         * @param branchBuilder Instance of {@link Branch.Builder}. Note that the {@link
          *                      Branch} object is not built until the {@link ParallelState} is built so any modifications on the
          *                      state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -201,8 +200,7 @@ public final class ParallelState extends TransitionState {
         /**
          * REQUIRED. Adds the branches of execution to this states branches. A parallel state must have at least one branch.
          *
-         * @param branchBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Branch.Builder}. Note
-         *                       that the {@link
+         * @param branchBuilders Instances of {@link Branch.Builder}. Note that the {@link
          *                       Branch} object is not built until the {@link ParallelState} is built so any modifications on the
          *                       state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -270,8 +268,7 @@ public final class ParallelState extends TransitionState {
          * OPTIONAL. Adds the {@link Retrier}s to this states retries. If a single branch fails then the entire parallel state is
          * considered failed and eligible for retry.
          *
-         * @param retrierBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Retrier.Builder}. Note
-         *                        that the {@link
+         * @param retrierBuilders Instances of {@link Retrier.Builder}. Note that the {@link
          *                        Retrier} object is not built until the {@link ParallelState} is built so any modifications on
          *                        the state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -287,8 +284,7 @@ public final class ParallelState extends TransitionState {
          * OPTIONAL. Adds the {@link Retrier} to this states retries. If a single branch fails then the entire parallel state is
          * considered failed and eligible for retry.
          *
-         * @param retrierBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Retrier.Builder}. Note
-         *                       that the {@link
+         * @param retrierBuilder Instance of {@link Retrier.Builder}. Note that the {@link
          *                       Retrier} object is not built until the {@link ParallelState} is built so any modifications on
          *                       the
          *                       state builder will be reflected in this object.
@@ -303,8 +299,7 @@ public final class ParallelState extends TransitionState {
          * OPTIONAL. Adds the {@link Catcher}s to this states catchers.  If a single branch fails then the entire parallel state
          * is considered failed and eligible to be caught.
          *
-         * @param catcherBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Catcher.Builder}. Note
-         *                        that the {@link
+         * @param catcherBuilders Instances of {@link Catcher.Builder}. Note that the {@link
          *                        Catcher} object is not built until the {@link ParallelState} is built so any modifications on
          *                        the state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -321,8 +316,7 @@ public final class ParallelState extends TransitionState {
          * is
          * considered failed and eligible to be caught.
          *
-         * @param catcherBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Catcher.Builder}. Note
-         *                       that the {@link
+         * @param catcherBuilder Instance of {@link Catcher.Builder}. Note that the {@link
          *                       Catcher} object is not built until the {@link ParallelState} is built so any modifications on
          *                       the
          *                       state builder will be reflected in this object.

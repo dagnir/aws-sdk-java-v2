@@ -24,8 +24,8 @@ public class IsSigV4RetryablePredicate extends SdkPredicate<AmazonServiceExcepti
 
     private static final List<String> AUTH_ERROR_CODES = Arrays.asList("InvalidRequest", "InvalidArgument");
 
-    private static final List<String> AUTH_ERROR_MESSAGES = Arrays.asList("Please use AWS4-HMAC-SHA256.",
-                                                                          "AWS KMS managed keys require AWS Signature Version 4.");
+    private static final List<String> AUTH_ERROR_MESSAGES =
+            Arrays.asList("Please use AWS4-HMAC-SHA256.", "AWS KMS managed keys require AWS Signature Version 4.");
 
     /**
      * @return True to retry with SigV4, false to not retry

@@ -297,8 +297,7 @@ public final class TaskState extends TransitionState {
          * out,
          * etc) it will be considered failed and eligible to be retried.
          *
-         * @param retrierBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Retrier.Builder}. Note
-         *                        that the {@link
+         * @param retrierBuilders Instances of {@link Retrier.Builder}. Note that the {@link
          *                        Retrier} object is not built until the {@link ParallelState} is built so any modifications on
          *                        the state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -314,8 +313,7 @@ public final class TaskState extends TransitionState {
          * OPTIONAL. Adds the {@link Retrier} to this states retriers. If the task exits abnormally (throws exception, times out,
          * etc) it will be considered failed and eligible to be retried.
          *
-         * @param retrierBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Retrier.Builder}. Note
-         *                       that the {@link
+         * @param retrierBuilder Instance of {@link Retrier.Builder}. Note that the {@link
          *                       Retrier} object is not built until the {@link ParallelState} is built so any modifications on
          *                       the
          *                       state builder will be reflected in this object.
@@ -331,8 +329,7 @@ public final class TaskState extends TransitionState {
          * out,
          * etc) it will be considered failed and eligible to be caught.
          *
-         * @param catcherBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Catcher.Builder}. Note
-         *                        that the {@link
+         * @param catcherBuilders Instances of {@link Catcher.Builder}. Note that the {@link
          *                        Catcher} object is not built until the {@link TaskState} is built so any modifications on the
          *                        state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -348,8 +345,7 @@ public final class TaskState extends TransitionState {
          * OPTIONAL. Adds the {@link Catcher} to this states catchers. If the task exits abnormally (throws exception, times out,
          * etc) it will be considered failed and eligible to be caught.
          *
-         * @param catcherBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.Catcher.Builder}. Note
-         *                       that the {@link
+         * @param catcherBuilder Instance of {@link Catcher.Builder}. Note that the {@link
          *                       Catcher} object is not built until the {@link TaskState} is built so any modifications on the
          *                       state builder will be reflected in this object.
          * @return This object for method chaining.

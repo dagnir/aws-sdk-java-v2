@@ -17,8 +17,8 @@ package software.amazon.awssdk.services.stepfunctions.builder;
 
 /**
  * Predefined error codes thrown by a StateMachine. See <a href="https://states-language.net/spec.html#appendix-a">Predefined
- * Error Codes</a>. Useful for constructing {@link software.amazon.awssdk.services.stepfunctions.builder.states.Retrier}s or {@link
- * software.amazon.awssdk.services.stepfunctions.builder.states.Catcher}s.
+ * Error Codes</a>. Useful for constructing {@link software.amazon.awssdk.services.stepfunctions.builder.states.Retrier}s or
+ * {@link software.amazon.awssdk.services.stepfunctions.builder.states.Catcher}s.
  *
  * @see <a href="https://states-language.net/spec.html#appendix-a">https://states-language.net/spec.html#appendix-a</a>
  */

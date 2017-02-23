@@ -20,6 +20,13 @@ import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.auth.policy.resources.S3BucketResource;
 import software.amazon.awssdk.auth.policy.resources.S3ObjectResource;
 import software.amazon.awssdk.services.s3.AmazonS3;
+import software.amazon.awssdk.services.s3.model.DeleteBucketWebsiteConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.GetBucketWebsiteConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.SetBucketCrossOriginConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.SetBucketLifecycleConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.SetBucketTaggingConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.SetBucketVersioningConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.SetBucketWebsiteConfigurationRequest;
 
 /**
  * The available AWS access control policy actions for Amazon S3.
@@ -235,7 +242,7 @@ public enum S3Actions implements Action {
      * <p>
      * Valid for use with {@link S3BucketResource} resources.
      *
-     * @see AmazonS3#setBucketCrossOriginConfiguration(software.amazon.awssdk.services.s3.model.SetBucketCrossOriginConfigurationRequest)
+     * @see AmazonS3#setBucketCrossOriginConfiguration(SetBucketCrossOriginConfigurationRequest)
      */
     SetBucketCrossOriginConfiguration("s3:PutBucketCORS"),
 
@@ -254,7 +261,7 @@ public enum S3Actions implements Action {
      * <p>
      * Valid for use with {@link S3BucketResource} resources.
      *
-     * @see AmazonS3#setBucketVersioningConfiguration(software.amazon.awssdk.services.s3.model.SetBucketVersioningConfigurationRequest)
+     * @see AmazonS3#setBucketVersioningConfiguration(SetBucketVersioningConfigurationRequest)
      */
     SetBucketVersioningConfiguration("s3:PutBucketVersioning"),
 
@@ -365,7 +372,7 @@ public enum S3Actions implements Action {
      * <p>
      * Valid for use with {@link S3BucketResource} resources.
      *
-     * @see AmazonS3#setBucketTaggingConfiguration(software.amazon.awssdk.services.s3.model.SetBucketTaggingConfigurationRequest)
+     * @see AmazonS3#setBucketTaggingConfiguration(SetBucketTaggingConfigurationRequest)
      */
     SetBucketTagging("s3:PutBucketTagging"),
 
@@ -375,7 +382,7 @@ public enum S3Actions implements Action {
      * <p>
      * Valid for use with {@link S3BucketResource} resources.
      *
-     * @see AmazonS3#getBucketWebsiteConfiguration(software.amazon.awssdk.services.s3.model.GetBucketWebsiteConfigurationRequest)
+     * @see AmazonS3#getBucketWebsiteConfiguration(GetBucketWebsiteConfigurationRequest)
      */
     GetBucketWebsiteConfiguration("s3:GetBucketWebsite"),
 
@@ -385,7 +392,7 @@ public enum S3Actions implements Action {
      * <p>
      * Valid for use with {@link S3BucketResource} resources.
      *
-     * @see AmazonS3#setBucketWebsiteConfiguration(software.amazon.awssdk.services.s3.model.SetBucketWebsiteConfigurationRequest)
+     * @see AmazonS3#setBucketWebsiteConfiguration(SetBucketWebsiteConfigurationRequest)
      */
     SetBucketWebsiteConfiguration("s3:PutBucketWebsite"),
 
@@ -395,7 +402,7 @@ public enum S3Actions implements Action {
      * <p>
      * Valid for use with {@link S3BucketResource} resources.
      *
-     * @see AmazonS3#deleteBucketWebsiteConfiguration(software.amazon.awssdk.services.s3.model.DeleteBucketWebsiteConfigurationRequest)
+     * @see AmazonS3#deleteBucketWebsiteConfiguration(DeleteBucketWebsiteConfigurationRequest)
      */
     DeleteBucketWebsiteConfiguration("s3:DeleteBucketWebsite"),
 
@@ -415,7 +422,7 @@ public enum S3Actions implements Action {
      * <p>
      * Valid for use with {@link S3BucketResource} resources.
      *
-     * @see AmazonS3#setBucketLifecycleConfiguration(software.amazon.awssdk.services.s3.model.SetBucketLifecycleConfigurationRequest)
+     * @see AmazonS3#setBucketLifecycleConfiguration(SetBucketLifecycleConfigurationRequest)
      */
     SetBucketLifecycleConfiguration("s3:PutLifecycleConfiguration");
 

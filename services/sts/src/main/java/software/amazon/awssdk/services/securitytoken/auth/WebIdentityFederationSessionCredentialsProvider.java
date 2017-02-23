@@ -83,12 +83,13 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
      *            The name of the Identity Provider (null for OpenID providers)
      * @param roleArn
      *            The ARN of the IAM Role that will be assumed
-     * @param clientConfiguation
+     * @param clientConfiguration
      *            Configuration to apply to STS client created
      */
     public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn,
                                                            ClientConfiguration clientConfiguration) {
-        this(wifToken, wifProvider, roleArn, new AWSSecurityTokenServiceClient(new AnonymousAwsCredentials(), clientConfiguration));
+        this(wifToken, wifProvider, roleArn, new AWSSecurityTokenServiceClient(new AnonymousAwsCredentials(),
+                                                                               clientConfiguration));
     }
 
     /**

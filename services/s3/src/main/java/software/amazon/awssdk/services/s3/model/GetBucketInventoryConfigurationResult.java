@@ -15,12 +15,12 @@
 
 package software.amazon.awssdk.services.s3.model;
 
+import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.inventory.InventoryConfiguration;
 
 /**
  * Result object to contain the response returned from
- * {@link software.amazon.awssdk.services.s3.AmazonS3Client#getBucketInventoryConfiguration(GetBucketInventoryConfigurationRequest)}
- * operation.
+ * {@link AmazonS3Client#getBucketInventoryConfiguration(GetBucketInventoryConfigurationRequest)} operation.
  */
 public class GetBucketInventoryConfigurationResult {
 

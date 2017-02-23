@@ -66,7 +66,8 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * </p>
  *
  * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration)
- * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration, MultiFactorAuthentication)
+ * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration,
+ *                                                                                      MultiFactorAuthentication)
  */
 public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceRequest implements Serializable {
 
@@ -99,7 +100,8 @@ public class SetBucketVersioningConfigurationRequest extends AmazonWebServiceReq
      * @param configuration
      *            The new versioning configuration for the specified bucket.
      *
-     * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration, MultiFactorAuthentication)
+     * @see SetBucketVersioningConfigurationRequest#SetBucketVersioningConfigurationRequest(String, BucketVersioningConfiguration,
+     *                                                                                      MultiFactorAuthentication)
      */
     public SetBucketVersioningConfigurationRequest(
             String bucketName, BucketVersioningConfiguration configuration) {

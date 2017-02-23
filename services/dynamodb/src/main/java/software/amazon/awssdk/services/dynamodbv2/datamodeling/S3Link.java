@@ -139,7 +139,8 @@ public class S3Link {
             if (BucketNameUtils.isDnsBucketName(bucketName)) {
                 regionAsString = Region.US_Standard.getFirstRegionId();
             } else {
-                throw new IllegalArgumentException("Region must be specified for bucket that cannot be addressed using virtual host style");
+                throw new IllegalArgumentException("Region must be specified for bucket that cannot be addressed using " +
+                                                   "virtual host style");
             }
         } else {
             regionAsString = region.getFirstRegionId();

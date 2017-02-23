@@ -501,8 +501,8 @@ public class Item {
             for (Object element : col) {
                 String s = element == null ? null : valToString(element);
                 if (!stringSet.add(s)) {
-                    throw new IncompatibleTypeException(val.getClass()
-                                                        + " cannot be converted into a set of strings because of duplicate elements");
+                    throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of strings because " +
+                                                        "of duplicate elements");
                 }
             }
             return stringSet;
@@ -567,8 +567,8 @@ public class Item {
             for (Object element : col) {
                 BigDecimal bd = toBigDecimal(element);
                 if (!numSet.add(bd)) {
-                    throw new IncompatibleTypeException(val.getClass()
-                                                        + " cannot be converted into a set of BigDecimal's because of duplicate elements");
+                    throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of BigDecimal's " +
+                                                        "because of duplicate elements");
                 }
             }
             return numSet;
@@ -659,8 +659,8 @@ public class Item {
             for (Object element : col) {
                 byte[] ba = toByteArray(element);
                 if (!binarySet.add(ba)) {
-                    throw new IncompatibleTypeException(val.getClass()
-                                                        + " cannot be converted into a set of byte arrays because of duplicate elements");
+                    throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of byte arrays " +
+                                                        "because of duplicate elements");
                 }
             }
             return binarySet;
@@ -708,8 +708,8 @@ public class Item {
             for (Object element : col) {
                 ByteBuffer ba = toByteBuffer(element);
                 if (!binarySet.add(ba)) {
-                    throw new IncompatibleTypeException(val.getClass()
-                                                        + " cannot be converted into a set of ByteBuffer because of duplicate elements");
+                    throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of ByteBuffer " +
+                                                        "because of duplicate elements");
                 }
             }
             return binarySet;

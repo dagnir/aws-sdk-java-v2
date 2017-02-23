@@ -27,7 +27,8 @@ import software.amazon.awssdk.services.securitytoken.auth.STSAssumeRoleSessionCr
 public class STSProfileCredentialsService implements ProfileCredentialsService {
     @Override
     public AwsCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
-        return new STSAssumeRoleSessionCredentialsProvider.Builder(targetRoleInfo.getRoleArn(), targetRoleInfo.getRoleSessionName())
+        return new STSAssumeRoleSessionCredentialsProvider.Builder(targetRoleInfo.getRoleArn(),
+                                                                   targetRoleInfo.getRoleSessionName())
                 .withLongLivedCredentialsProvider(targetRoleInfo.getLongLivedCredentialsProvider())
                 .withExternalId(targetRoleInfo.getExternalId())
                 .build();

@@ -169,7 +169,8 @@ public class JobStatusMonitor {
 
         queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).getQueueUrl();
         topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
-        String queueARN = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl).withAttributeNames("QueueArn")).getAttributes().get("QueueArn");
+        String queueARN = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl).withAttributeNames("QueueArn"))
+                             .getAttributes().get("QueueArn");
 
         Policy sqsPolicy =
                 new Policy().withStatements(
@@ -185,7 +186,8 @@ public class JobStatusMonitor {
 
     private Map<String, String> newAttributes(String... keyValuePairs) {
         if (keyValuePairs.length % 2 != 0) {
-            throw new IllegalArgumentException("Incorrect number of arguments passed.  Input must be specified as: key, value, key, value, ...");
+            throw new IllegalArgumentException(
+                    "Incorrect number of arguments passed.  Input must be specified as: key, value, key, value, ...");
         }
 
         Map<String, String> map = new HashMap<String, String>();

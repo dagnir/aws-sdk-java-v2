@@ -3149,7 +3149,7 @@ public class XmlResponsesSaxParser {
 
             } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "Filter")) {
                 if (name.equals("And")) {
-                    andOperandsList = new ArrayList<AnalyticsFilterPredicate>();
+                    andOperandsList = new ArrayList<>();
                 }
 
             } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis")) {
@@ -3157,12 +3157,14 @@ public class XmlResponsesSaxParser {
                     dataExport = new StorageClassAnalysisDataExport();
                 }
 
-            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis", "DataExport")) {
+            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration",
+                          "StorageClassAnalysis", "DataExport")) {
                 if (name.equals("Destination")) {
                     destination = new AnalyticsExportDestination();
                 }
 
-            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis", "DataExport", "Destination")) {
+            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis",
+                          "DataExport", "Destination")) {
                 if (name.equals("S3BucketDestination")) {
                     s3BucketDestination = new AnalyticsS3BucketDestination();
                 }
@@ -3229,17 +3231,20 @@ public class XmlResponsesSaxParser {
                 if (name.equals("DataExport")) {
                     storageClassAnalysis.setDataExport(dataExport);
                 }
-            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis", "DataExport")) {
+            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis",
+                          "DataExport")) {
                 if (name.equals("OutputSchemaVersion")) {
                     dataExport.setOutputSchemaVersion(getText());
                 } else if (name.equals("Destination")) {
                     dataExport.setDestination(destination);
                 }
-            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis", "DataExport", "Destination")) {
+            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis",
+                          "DataExport", "Destination")) {
                 if (name.equals("S3BucketDestination")) {
                     destination.setS3BucketDestination(s3BucketDestination);
                 }
-            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis", "DataExport", "Destination", "S3BucketDestination")) {
+            } else if (in("ListBucketAnalyticsConfigurationsResult", "AnalyticsConfiguration", "StorageClassAnalysis",
+                          "DataExport", "Destination", "S3BucketDestination")) {
                 if (name.equals("Format")) {
                     s3BucketDestination.setFormat(getText());
                 } else if (name.equals("BucketAccountId")) {

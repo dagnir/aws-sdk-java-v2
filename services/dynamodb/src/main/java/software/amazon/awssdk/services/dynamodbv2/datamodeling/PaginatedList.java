@@ -41,7 +41,8 @@ public abstract class PaginatedList<T> implements List<T> {
 
     private static final String UNMODIFIABLE_MESSAGE = "This is an unmodifiable list";
 
-    private static final String ITERATION_ONLY_UNSUPPORTED_OPERATION_MESSAGE = " is not supported when using ITERATION_ONLY configuration.";
+    private static final String ITERATION_ONLY_UNSUPPORTED_OPERATION_MESSAGE =
+            " is not supported when using ITERATION_ONLY configuration.";
 
     /**
      * Reference to the DynamoDB mapper for marshalling DynamoDB attributes back

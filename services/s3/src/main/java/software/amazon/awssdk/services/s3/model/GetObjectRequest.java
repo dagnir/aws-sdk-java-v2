@@ -948,7 +948,8 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      * The valid range for part number is 1 - 10000 inclusive.
      * Part numbers are 1 based. If an object has 1 part, partNumber=1 would be the correct not 0.
      * For partNumber < 1, an AmazonS3Exception is thrown with response code 400 bad request.
-     * For partNumber larger than actual part count,  an AmazonS3Exception is thrown with response code 416 Request Range Not Satisfiable.
+     * For partNumber larger than actual part count,  an AmazonS3Exception is thrown with response code
+     * 416 Request Range Not Satisfiable.
      * </p>
      *
      * @param partNumber
@@ -969,7 +970,8 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      * The valid range for part number is 1 - 10000 inclusive.
      * Part numbers are 1 based. If an object has 1 part, partNumber=1 would be the correct not 0.
      * For partNumber < 1, an AmazonS3Exception is thrown with response code 400 bad request.
-     * For partNumber larger than actual part count,  an AmazonS3Exception is thrown with response code 416 Request Range Not Satisfiable.
+     * For partNumber larger than actual part count,  an AmazonS3Exception is thrown with response code
+     * 416 Request Range Not Satisfiable.
      * </p>
      *
      * @param partNumber

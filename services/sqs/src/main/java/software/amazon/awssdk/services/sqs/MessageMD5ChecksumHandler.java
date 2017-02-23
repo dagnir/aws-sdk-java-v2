@@ -60,10 +60,12 @@ public class MessageMD5ChecksumHandler extends AbstractRequestHandler {
     /*
      * Constant strings for composing error message.
      */
-    private static final String MD5_MISMATCH_ERROR_MESSAGE = "MD5 returned by SQS does not match the calculation on the original request. "
-                                                             + "(MD5 calculated by the %s: \"%s\", MD5 checksum returned: \"%s\")";
-    private static final String MD5_MISMATCH_ERROR_MESSAGE_WITH_ID = "MD5 returned by SQS does not match the calculation on the original request. "
-                                                                     + "(Message ID: %s, MD5 calculated by the %s: \"%s\", MD5 checksum returned: \"%s\")";
+    private static final String MD5_MISMATCH_ERROR_MESSAGE =
+            "MD5 returned by SQS does not match the calculation on the original request. " +
+            "(MD5 calculated by the %s: \"%s\", MD5 checksum returned: \"%s\")";
+    private static final String MD5_MISMATCH_ERROR_MESSAGE_WITH_ID =
+            "MD5 returned by SQS does not match the calculation on the original request. " +
+            "(Message ID: %s, MD5 calculated by the %s: \"%s\", MD5 checksum returned: \"%s\")";
     private static final String MESSAGE_BODY = "message body";
     private static final String MESSAGE_ATTRIBUTES = "message attributes";
 
@@ -152,7 +154,8 @@ public class MessageMD5ChecksumHandler extends AbstractRequestHandler {
                     String clientSideAttrMd5 = calculateMessageAttributesMd5(messageAttr);
                     if (!clientSideAttrMd5.equals(attrMd5Returned)) {
                         throw new AmazonClientException(String.format(MD5_MISMATCH_ERROR_MESSAGE_WITH_ID,
-                                                                      MESSAGE_ATTRIBUTES, entry.getId(), clientSideAttrMd5, attrMd5Returned));
+                                                                      MESSAGE_ATTRIBUTES, entry.getId(), clientSideAttrMd5,
+                                                                      attrMd5Returned));
                     }
                 }
             }

@@ -114,16 +114,20 @@ public final class EC2CredentialsUtils {
                     // This is to preserve existing behavior of EC2 Instance metadata service.
                     throw new SdkClientException("The requested metadata is not found at " + connection.getURL());
                 } else {
-                    if (!retryPolicy.shouldRetry(retriesAttempted++, CredentialsEndpointRetryParameters.builder().withStatusCode(statusCode).build())) {
+                    if (!retryPolicy.shouldRetry(retriesAttempted++,
+                                                 CredentialsEndpointRetryParameters.builder()
+                                                                                   .withStatusCode(statusCode).build())) {
                         inputStream = connection.getErrorStream();
                         handleErrorResponse(inputStream, statusCode, connection.getResponseMessage());
                     }
                 }
             } catch (IOException ioException) {
-                if (!retryPolicy.shouldRetry(retriesAttempted++, CredentialsEndpointRetryParameters.builder().withException(ioException).build())) {
+                if (!retryPolicy.shouldRetry(retriesAttempted++,
+                                             CredentialsEndpointRetryParameters.builder().withException(ioException).build())) {
                     throw ioException;
                 }
-                LOG.debug("An IOException occured when connecting to service endpoint: " + endpoint + "\n Retrying to connect again.");
+                LOG.debug("An IOException occured when connecting to service endpoint: " + endpoint +
+                          "\n Retrying to connect again.");
             } finally {
                 IOUtils.closeQuietly(inputStream, LOG);
             }

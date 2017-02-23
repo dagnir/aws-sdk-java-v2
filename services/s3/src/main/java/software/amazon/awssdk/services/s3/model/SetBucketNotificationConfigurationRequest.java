@@ -21,7 +21,8 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 /**
  * Contains options for setting the notification configuration for a bucket.
  *
- * @see SetBucketNotificationConfigurationRequest#SetBucketNotificationConfigurationRequest(String, BucketNotificationConfiguration)
+ * @see SetBucketNotificationConfigurationRequest#SetBucketNotificationConfigurationRequest(String,
+ *                                                                                          BucketNotificationConfiguration)
  */
 public class SetBucketNotificationConfigurationRequest extends AmazonWebServiceRequest implements Serializable {
 

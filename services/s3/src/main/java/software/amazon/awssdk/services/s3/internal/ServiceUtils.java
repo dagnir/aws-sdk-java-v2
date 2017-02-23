@@ -394,7 +394,8 @@ public class ServiceUtils {
                         s3Object.getObjectContent().abort();
                         throw ace;
                     } else {
-                        LOG.info("Retry the download of object " + s3Object.getKey() + " (bucket " + s3Object.getBucketName() + ")", ace);
+                        LOG.info("Retry the download of object " + s3Object.getKey() +
+                                 " (bucket " + s3Object.getBucketName() + ")", ace);
                         hasRetried = true;
                     }
                 }
@@ -487,9 +488,13 @@ public class ServiceUtils {
         ValidationUtils.assertNotNull(s3, "S3 client");
         ValidationUtils.assertNotNull(getObjectRequest, "GetObjectRequest");
 
-        ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(), getObjectRequest.getKey(), getObjectRequest.getVersionId())
-                                                               .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
-                                                               .withPartNumber(1));
+        ObjectMetadata metadata = s3.getObjectMetadata(
+                new GetObjectMetadataRequest(getObjectRequest.getBucketName(),
+                                             getObjectRequest.getKey(),
+                                             getObjectRequest.getVersionId())
+                        .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
+                        .withPartNumber(1));
+
         return metadata.getPartCount();
     }
 
@@ -510,7 +515,9 @@ public class ServiceUtils {
         ValidationUtils.assertNotNull(getObjectRequest, "GetObjectRequest");
         ValidationUtils.assertNotNull(partNumber, "partNumber");
 
-        ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(), getObjectRequest.getKey(), getObjectRequest.getVersionId())
+        ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(),
+                                                                                    getObjectRequest.getKey(),
+                                                                                    getObjectRequest.getVersionId())
                                                                .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
                                                                .withPartNumber(partNumber));
         return metadata.getContentRange()[1];

@@ -43,7 +43,7 @@ import software.amazon.awssdk.auth.AwsCredentials;
  */
 public class HandlerContextKey<T> {
     /** The key under which the request credentials are set. */
-    public static final HandlerContextKey<AwsCredentials> AWS_CREDENTIALS = new HandlerContextKey<AwsCredentials>("AWSCredentials");
+    public static final HandlerContextKey<AwsCredentials> AWS_CREDENTIALS = new HandlerContextKey<>("AWSCredentials");
 
     private final String name;
 

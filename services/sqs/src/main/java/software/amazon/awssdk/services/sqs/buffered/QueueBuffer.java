@@ -131,11 +131,12 @@ class QueueBuffer {
      * @return a Future object that will be notified when the operation is completed; never null
      */
 
-    public Future<ChangeMessageVisibilityResult> changeMessageVisibility(ChangeMessageVisibilityRequest request,
-                                                                         AsyncHandler<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> handler) {
+    public Future<ChangeMessageVisibilityResult>
+            changeMessageVisibility(ChangeMessageVisibilityRequest request,
+                                    AsyncHandler<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> handler) {
         QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> callback = null;
         if (handler != null) {
-            callback = new QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult>(handler, request);
+            callback = new QueueBufferCallback<>(handler, request);
         }
 
         QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> future =

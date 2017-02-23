@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.Buildable;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
+import software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState;
 
 /**
- * Represents the logical OR of multiple conditions. May be used in a {@link software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState}.
+ * Represents the logical OR of multiple conditions. May be used in a {@link ChoiceState}.
  *
  * @see <a href="https://states-language.net/spec.html#choice-state">https://states-language.net/spec.html#choice-state</a>
  * @see software.amazon.awssdk.services.stepfunctions.builder.states.Choice
@@ -64,8 +65,7 @@ public final class OrCondition implements NAryCondition {
         /**
          * Adds a condition to the OR expression. May be another composite condition or a simple condition.
          *
-         * @param conditionBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition.Builder}.
-         *                         Note that the
+         * @param conditionBuilder Instance of {@link Condition.Builder}. Note that the
          *                         {@link Condition} object is not built until the {@link OrCondition} is built so any
          *                         modifications on the state builder will be reflected in this object.
          * @return This object for method chaining.
@@ -78,8 +78,7 @@ public final class OrCondition implements NAryCondition {
         /**
          * Adds the conditions to the OR expression. May be other composite conditions or simple conditions.
          *
-         * @param conditionBuilders Instances of {@link software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition.Builder}.
-         *                          Note that the
+         * @param conditionBuilders Instances of {@link Condition.Builder}. Note that the
          *                          {@link Condition} object is not built until the {@link OrCondition} is built so any
          *                          modifications on the state builder will be reflected in this object.
          * @return This object for method chaining.

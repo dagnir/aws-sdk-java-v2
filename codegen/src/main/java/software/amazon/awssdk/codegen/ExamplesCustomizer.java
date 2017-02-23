@@ -235,7 +235,8 @@ public class ExamplesCustomizer {
             }
         });
         // Apply property renames
-        final List<Map<String, ModifyModelShapeModifier>> modify = modifier.getModify() != null ? modifier.getModify() : Collections.emptyList();
+        final List<Map<String, ModifyModelShapeModifier>> modify = modifier.getModify() != null ? modifier.getModify()
+                                                                                                : Collections.emptyList();
         modify.forEach(memberMods ->
                                memberMods.entrySet().forEach(memberMod -> {
                                    String memberName = memberMod.getKey();

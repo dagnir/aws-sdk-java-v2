@@ -51,7 +51,8 @@ public class XpathUtils {
     private static final String DOCUMENT_BUILDER_FACTORY_PROP_NAME = "javax.xml.parsers.DocumentBuilderFactory";
 
     /** The FQCN of the desired DocumentBuilderFactory implementation. */
-    private static final String DOCUMENT_BUILDER_FACTORY_IMPL_CLASS_NAME = "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl";
+    private static final String DOCUMENT_BUILDER_FACTORY_IMPL_CLASS_NAME =
+            "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl";
 
     /** The FQCN of the internal XPathContext class. */
     private static final String XPATH_CONTEXT_CLASS_NAME = "com.sun.org.apache.xpath.internal.XPathContext";

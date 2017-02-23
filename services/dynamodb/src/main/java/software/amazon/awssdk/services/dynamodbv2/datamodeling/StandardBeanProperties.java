@@ -151,7 +151,8 @@ final class StandardBeanProperties {
                 setter.invoke(object, value);
             } catch (final Exception e) {
                 throw new DynamoDBMappingException("could not invoke " + setter + " on " + object.getClass() +
-                                                   " with value " + value + " of type " + (value == null ? null : value.getClass()), e);
+                                                   " with value " + value + " of type " +
+                                                   (value == null ? null : value.getClass()), e);
             }
         }
     }

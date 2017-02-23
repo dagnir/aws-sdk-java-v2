@@ -75,7 +75,8 @@ public class PartitionsLoader {
                 .getResourceAsStream(PARTITIONS_OVERRIDE_RESOURCE_PATH);
 
         if (stream != null) {
-            return new PartitionMetadataProvider(loadPartitionFromStream(stream, PARTITIONS_OVERRIDE_RESOURCE_PATH).getPartitions());
+            return new PartitionMetadataProvider(
+                    loadPartitionFromStream(stream, PARTITIONS_OVERRIDE_RESOURCE_PATH).getPartitions());
         } else {
             stream = classLoader.getResourceAsStream(PARTITIONS_RESOURCE_PATH);
             if (stream == null) {

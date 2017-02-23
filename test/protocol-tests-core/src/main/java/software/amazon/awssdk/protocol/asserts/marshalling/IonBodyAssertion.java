@@ -148,7 +148,8 @@ public class IonBodyAssertion extends MarshallingAssertion {
                     break;
 
                 case NULL:
-                    throw new IllegalStateException("We should never fall through to the IonType.NULL block due to previous assertions for equal types and nullness");
+                    throw new IllegalStateException("We should never fall through to the IonType.NULL block due to previous " +
+                                                    "assertions for equal types and nullness");
 
                 case STRING:
                 case SYMBOL:

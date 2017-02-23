@@ -208,8 +208,8 @@ public class SimpleDBUtils {
 
         if (offsetNumber < 0) {
             throw new IllegalArgumentException("OffsetNumber[" + offsetNumber + "] is negative - Number[" + number
-                                               + "], maxDigitsLeft[" + maxDigitsLeft + "], maxDigitsRight[" + maxDigitsRight + "], offsetValue["
-                                               + offsetValue + "]");
+                                               + "], maxDigitsLeft[" + maxDigitsLeft + "], maxDigitsRight[" + maxDigitsRight +
+                                               "], offsetValue[" + offsetValue + "]");
         }
 
         String longString = Long.toString(offsetNumber);
@@ -218,15 +218,16 @@ public class SimpleDBUtils {
 
         if (numZeroes < 0) {
             throw new IllegalArgumentException("Number[" + number + "] has too many digits - maxDigitsLeft["
-                                               + maxDigitsLeft + "], maxDigitsRight[" + maxDigitsRight + "], offsetValue[" + offsetValue + "]");
+                                               + maxDigitsLeft + "], maxDigitsRight[" + maxDigitsRight + "], offsetValue[" +
+                                               offsetValue + "]");
         }
 
-        StringBuffer strBuffer = new StringBuffer(numZeroes + longString.length());
+        StringBuilder stringBuilder = new StringBuilder(numZeroes + longString.length());
         for (int i = 0; i < numZeroes; i++) {
-            strBuffer.insert(i, '0');
+            stringBuilder.insert(i, '0');
         }
-        strBuffer.append(longString);
-        return strBuffer.toString();
+        stringBuilder.append(longString);
+        return stringBuilder.toString();
     }
 
     /**

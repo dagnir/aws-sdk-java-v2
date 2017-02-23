@@ -54,7 +54,8 @@ public class WaiterImpl<InputT extends AmazonWebServiceRequest, OutputT> impleme
     public WaiterImpl(WaiterBuilder<InputT, OutputT> waiterBuilder) {
         this.sdkFunction = ValidationUtils.assertNotNull(waiterBuilder.getSdkFunction(), "sdkFunction");
         this.acceptors = ValidationUtils.assertNotNull(waiterBuilder.getAcceptor(), "acceptors");
-        this.defaultPollingStrategy = ValidationUtils.assertNotNull(waiterBuilder.getDefaultPollingStrategy(), "defaultPollingStrategy");
+        this.defaultPollingStrategy = ValidationUtils.assertNotNull(waiterBuilder.getDefaultPollingStrategy(),
+                                                                    "defaultPollingStrategy");
         this.executorService = ValidationUtils.assertNotNull(waiterBuilder.getExecutorService(), "executorService");
     }
 
@@ -79,7 +80,8 @@ public class WaiterImpl<InputT extends AmazonWebServiceRequest, OutputT> impleme
         request.getRequestClientOptions().appendUserAgent("waiter-request");
         WaiterExecution<InputT, OutputT> waiterExecution = new WaiterExecutionBuilder<InputT, OutputT>()
                 .withRequest(request)
-                .withPollingStrategy(waiterParameters.getPollingStrategy() != null ? waiterParameters.getPollingStrategy() : defaultPollingStrategy)
+                .withPollingStrategy(waiterParameters.getPollingStrategy() != null ? waiterParameters.getPollingStrategy()
+                                                                                   : defaultPollingStrategy)
                 .withAcceptors(acceptors)
                 .withSdkFunction(sdkFunction)
                 .build();
@@ -102,19 +104,16 @@ public class WaiterImpl<InputT extends AmazonWebServiceRequest, OutputT> impleme
     public Future<Void> runAsync(final WaiterParameters<InputT> waiterParameters, final WaiterHandler callback)
             throws AmazonServiceException, WaiterTimedOutException, WaiterUnrecoverableException {
 
-        return executorService.submit(new java.util.concurrent.Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                try {
-                    run(waiterParameters);
-                    callback.onWaitSuccess(waiterParameters.getRequest());
-                } catch (Exception ex) {
-                    callback.onWaitFailure(ex);
+        return executorService.submit(() -> {
+            try {
+                run(waiterParameters);
+                callback.onWaitSuccess(waiterParameters.getRequest());
+            } catch (Exception ex) {
+                callback.onWaitFailure(ex);
 
-                    throw ex;
-                }
-                return null;
+                throw ex;
             }
+            return null;
         });
 
     }

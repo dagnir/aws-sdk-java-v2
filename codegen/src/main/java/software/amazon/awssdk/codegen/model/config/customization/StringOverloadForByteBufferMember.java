@@ -32,8 +32,10 @@ public class StringOverloadForByteBufferMember {
     @JsonCreator
     public StringOverloadForByteBufferMember(@JsonProperty("shapeName") String shapeName,
                                              @JsonProperty("memberName") String memberName) {
-        convenienceTypeOverload = new ConvenienceTypeOverload().withShapeName(shapeName).withMemberName(memberName)
-                                                               .withConvenienceType("String").withTypeAdapterFqcn(STRING_TO_BYTE_BUFFER_ADAPTER);
+        convenienceTypeOverload = new ConvenienceTypeOverload().withShapeName(shapeName)
+                                                               .withMemberName(memberName)
+                                                               .withConvenienceType("String")
+                                                               .withTypeAdapterFqcn(STRING_TO_BYTE_BUFFER_ADAPTER);
     }
 
     public ConvenienceTypeOverload getConvenienceTypeOverload() {

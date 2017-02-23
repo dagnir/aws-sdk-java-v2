@@ -361,8 +361,8 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
                 }
                 if (uploadContext.hasFinalPartBeenSeen()) {
                     throw new SdkClientException(
-                            "This part was specified as the last part in a multipart upload, but a previous part was already marked as the last part.  "
-                            + "Only the last part of the upload should be marked as the last part.");
+                            "This part was specified as the last part in a multipart upload, but a previous part was already " +
+                            "marked as the last part. Only the last part of the upload should be marked as the last part.");
                 }
             }
 

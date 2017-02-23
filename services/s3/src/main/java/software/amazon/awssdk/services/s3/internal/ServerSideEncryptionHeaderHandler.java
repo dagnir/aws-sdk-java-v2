@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.s3.Headers;
 public class ServerSideEncryptionHeaderHandler<T extends ServerSideEncryptionResult> implements HeaderHandler<T> {
 
     /* (non-Javadoc)
-     * @see software.amazon.awssdk.services.s3.internal.HeaderHandler#handle(java.lang.Object, software.amazon.awssdk.http.HttpResponse)
+     * @see HeaderHandler#handle(java.lang.Object, software.amazon.awssdk.http.HttpResponse)
      */
     @Override
     public void handle(T result, HttpResponse response) {

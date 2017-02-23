@@ -1020,25 +1020,25 @@ public final class ExpressionSpecBuilder implements Cloneable {
      * <pre class="brush: java">
      * import static software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder.*;
      * ...
-     *      // A complex condition expression:
-     *      //
-     *      // (attribute_not_exists(item_version) AND attribute_not_exists(config_id) AND attribute_not_exists(config_version)) OR
-     *      // (item_version < 123) OR
-     *      // (item_version = 123 AND config_id < 456) OR
-     *      // (item_version = 123 AND config_id = 456 AND config_version < 999)
-     *      //
-     *      builder.withCondition(
-     *          // add explicit parenthesis
-     *          parenthesize( attribute_not_exists("item_version")
-     *              .and( attribute_not_exists("config_id") )
-     *              .and( attribute_not_exists("config_version") )
-     *          ).or( N("item_version").lt(123) )
-     *           .or( N("item_version").eq(123)
-     *              .and( N("config_id").lt(456) ) )
-     *           .or( N("item_version").eq(123)
-     *              .and( N("config_id").eq(456) )
-     *              .and( N("config_version").lt(999) ))
-     *      )
+     *    // A complex condition expression:
+     *    //
+     *    // (attribute_not_exists(item_version) AND attribute_not_exists(config_id) AND attribute_not_exists(config_version)) OR
+     *    // (item_version < 123) OR
+     *    // (item_version = 123 AND config_id < 456) OR
+     *    // (item_version = 123 AND config_id = 456 AND config_version < 999)
+     *    //
+     *    builder.withCondition(
+     *        // add explicit parenthesis
+     *        parenthesize( attribute_not_exists("item_version")
+     *            .and( attribute_not_exists("config_id") )
+     *            .and( attribute_not_exists("config_version") )
+     *        ).or( N("item_version").lt(123) )
+     *         .or( N("item_version").eq(123)
+     *            .and( N("config_id").lt(456) ) )
+     *         .or( N("item_version").eq(123)
+     *            .and( N("config_id").eq(456) )
+     *            .and( N("config_version").lt(999) ))
+     *    )
      * ...
      * </pre>
      */

@@ -394,7 +394,8 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
      * <p>
      * The valid range for part number is 1 - 10000 inclusive.
      * For partNumber < 1, an AmazonS3Exception is thrown with response code 400 bad request
-     * For partNumber larger than actual part count,  an AmazonS3Exception is thrown with response code 416 Request Range Not Satisfiable
+     * For partNumber larger than actual part count, an AmazonS3Exception is thrown with response code
+     * 416 Request Range Not Satisfiable
      * </p>
      *
      * @param partNumber
@@ -419,7 +420,8 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
      * <p>
      * The valid range for part number is 1 - 10000 inclusive.
      * For partNumber < 1, an AmazonS3Exception is thrown with response code 400 bad request
-     * For partNumber larger than actual part count,  an AmazonS3Exception is thrown with response code 416 Request Range Not Satisfiable
+     * For partNumber larger than actual part count,  an AmazonS3Exception is thrown with response code
+     * 416 Request Range Not Satisfiable
      * </p>
      *
      * @param partNumber

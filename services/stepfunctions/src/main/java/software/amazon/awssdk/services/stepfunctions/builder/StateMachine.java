@@ -191,8 +191,7 @@ public final class StateMachine {
          * REQUIRED. Adds a new state to the state machine. A state machine MUST have at least one state.
          *
          * @param stateName    Name of the state
-         * @param stateBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.states.State.Builder}. Note that
-         *                     the {@link State}
+         * @param stateBuilder Instance of {@link State.Builder}. Note that the {@link State}
          *                     object is not built until the {@link StateMachine} is built so any modifications on the state
          *                     builder will be reflected in this object.
          * @return This object for method chaining.

@@ -101,7 +101,8 @@ public class SimpleTypeCborUnmarshallers {
 
         public BigDecimal unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
             JsonParser parser = unmarshallerContext.getJsonParser();
-            Unmarshaller<BigInteger, JsonUnmarshallerContext> bigIntegerUnmarshaller = unmarshallerContext.getUnmarshaller(BigInteger.class);
+            Unmarshaller<BigInteger, JsonUnmarshallerContext> bigIntegerUnmarshaller =
+                    unmarshallerContext.getUnmarshaller(BigInteger.class);
 
             JsonToken current = parser.getCurrentToken();
             if (current != JsonToken.START_ARRAY) {

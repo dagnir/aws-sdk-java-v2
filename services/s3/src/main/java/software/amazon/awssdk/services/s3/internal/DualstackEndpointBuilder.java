@@ -46,7 +46,8 @@ public class DualstackEndpointBuilder extends ServiceEndpointBuilder {
 
     @Override
     public URI getServiceEndpoint() {
-        String serviceEndpoint = String.format("%s.%s.%s.%s", serviceName, Constants.S3_DUALSTACK_QUALIFIER, region.getName(), region.getDomain());
+        String serviceEndpoint =
+                String.format("%s.%s.%s.%s", serviceName, Constants.S3_DUALSTACK_QUALIFIER, region.getName(), region.getDomain());
         return toURI(stripProtocol(serviceEndpoint));
     }
 

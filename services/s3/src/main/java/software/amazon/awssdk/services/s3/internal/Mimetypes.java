@@ -122,7 +122,8 @@ public class Mimetypes {
                         String extension = st.nextToken();
                         extensionToMimetypeMap.put(StringUtils.lowerCase(extension), mimetype);
                         if (log.isDebugEnabled()) {
-                            log.debug("Setting mime type for extension '" + StringUtils.lowerCase(extension) + "' to '" + mimetype + "'");
+                            log.debug("Setting mime type for extension '" + StringUtils.lowerCase(extension) + "' to '" +
+                                      mimetype + "'");
                         }
                     }
                 } else {

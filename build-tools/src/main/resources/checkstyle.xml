@@ -69,7 +69,6 @@
         <module name="LineLength">
             <property name="max" value="130"/>
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
-            <property name="severity" value="warning"/> <!-- TODO: Make error. -->
         </module>
 
         <!-- Stars must not be used in import statements. -->
@@ -277,8 +276,9 @@
         <module name="DeclarationOrder"/>
 
         <!-- Overloaded methods and constructors must be defined together. -->
-        <!-- TODO: Enable. -->
-        <!--<module name="OverloadMethodsDeclarationOrder"/>-->
+        <module name="OverloadMethodsDeclarationOrder">
+            <property name="severity" value="warning"/> <!-- TODO: Make error. -->
+        </module>
 
         <!-- Variables must be declared near where they are used. -->
         <module name="VariableDeclarationUsageDistance">

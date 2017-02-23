@@ -17,9 +17,10 @@ package software.amazon.awssdk.services.stepfunctions.builder.conditions;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import software.amazon.awssdk.services.stepfunctions.builder.internal.PropertyNames;
+import software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState;
 
 /**
- * Represents the logical NOT of a single condition. May be used in a {@link software.amazon.awssdk.services.stepfunctions.builder.states.ChoiceState}.
+ * Represents the logical NOT of a single condition. May be used in a {@link ChoiceState}.
  *
  * @see <a href="https://states-language.net/spec.html#choice-state">https://states-language.net/spec.html#choice-state</a>
  * @see software.amazon.awssdk.services.stepfunctions.builder.states.Choice
@@ -60,10 +61,8 @@ public final class NotCondition implements Condition {
         /**
          * Sets the condition to be negated. May be another composite condition or a simple condition.
          *
-         * @param conditionBuilder Instance of {@link software.amazon.awssdk.services.stepfunctions.builder.conditions.Condition.Builder}.
-         *                         Note that the
-         *                         {@link Condition} object is not built until the {@link NotCondition} is built so any
-         *                         modifications on the state builder will be reflected in this object.
+         * @param conditionBuilder Instance of {@link Condition.Builder}. Note that the {@link Condition} object is not built
+         *     until the {@link NotCondition} is built so any modifications on the state builder will be reflected in this object.
          * @return This object for method chaining.
          */
         public Builder condition(Condition.Builder conditionBuilder) {

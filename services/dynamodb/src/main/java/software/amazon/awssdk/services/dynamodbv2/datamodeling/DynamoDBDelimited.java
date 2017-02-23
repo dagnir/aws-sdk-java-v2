@@ -123,7 +123,8 @@ public @interface DynamoDBDelimited {
             final String[] names = annotation.attributeNames();
             if (names.length <= 1) {
                 throw new DynamoDBMappingException(targetType +
-                                                   " missing attributeNames in @DynamoDBDelimited; must specify two or more attribute names");
+                                                   " missing attributeNames in @DynamoDBDelimited; must specify two or " +
+                                                   "more attribute names");
             }
 
             this.delimiter = String.valueOf(annotation.delimiter());

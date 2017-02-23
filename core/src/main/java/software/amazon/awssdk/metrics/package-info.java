@@ -22,11 +22,15 @@
  * categories:  AWS Request Metrics, AWS Service Metrics, and Machine Metrics.
  * <h3>Nomenclature</h3>
  * <ul>
- * <li>Physical Http Request - an http request initiated by the http client library used by AWS Java SDK . No retry is involved, or at least not initiated from the JVM.</li>
- * <li>Logical Http Request - an http request initiated from the AWS Java SDK by executing the underlying http client library. A logical request may involve multiple physical requests due to retries.</li>
- * <li>Service Client type - the specific subtype of AmazonWebServiceClient, such as AmazonS3Client, AmazonDynamoDBClient, etc.</li>
+ * <li>Physical Http Request - an http request initiated by the http client library used by AWS Java SDK. No retry is involved,
+ * or at least not initiated from the JVM.</li>
+ * <li>Logical Http Request - an http request initiated from the AWS Java SDK by executing the underlying http client library.
+ * A logical request may involve multiple physical requests due to retries.</li>
+ * <li>Service Client type - the specific subtype of AmazonWebServiceClient, such as AmazonS3Client, AmazonDynamoDBClient,
+ * etc.</li>
  * <li>Request type - the specific subtype of AmazonWebServiceRequest, such as PutItemRequest, PutObjectRequest, etc.</li>
- * <li>Http Client Library - the <a href="http://hc.apache.org/httpcomponents-client-4.2.x/index.html">Apache HttpComponents client</a> library</li>
+ * <li>Http Client Library - the <a href="http://hc.apache.org/httpcomponents-client-4.2.x/index.html">Apache HttpComponents
+ * client</a> library</li>
  * </ul>
  *
  * <h3>AWS Request Metrics</h3>

@@ -32,8 +32,10 @@ public class StringOverloadForInputStreamMember {
     @JsonCreator
     public StringOverloadForInputStreamMember(@JsonProperty("shapeName") String shapeName,
                                               @JsonProperty("memberName") String memberName) {
-        this.convenienceTypeOverload = new ConvenienceTypeOverload().withShapeName(shapeName).withMemberName(memberName)
-                                                                    .withConvenienceType("String").withTypeAdapterFqcn(STRING_TO_INPUT_STREAM_ADAPTER);
+        this.convenienceTypeOverload = new ConvenienceTypeOverload().withShapeName(shapeName)
+                                                                    .withMemberName(memberName)
+                                                                    .withConvenienceType("String")
+                                                                    .withTypeAdapterFqcn(STRING_TO_INPUT_STREAM_ADAPTER);
     }
 
     public ConvenienceTypeOverload getConvenienceTypeOverload() {

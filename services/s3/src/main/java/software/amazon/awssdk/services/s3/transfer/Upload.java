@@ -61,7 +61,8 @@ public interface Upload extends Transfer {
      *     <li>The data source is an input stream.</li>
      *  <li>Client side encryption is used.</li>
      *  <li>Server Side Encryption with customer provided key is used.</li>
-     *  <li>Size of the file being uploaded is less than the {@link TransferManagerConfiguration#getMultipartUploadThreshold()}.</li>
+     *  <li>Size of the file being uploaded is less than the
+     *      {@link TransferManagerConfiguration#getMultipartUploadThreshold()}.</li>
      * </ul>
      * In such cases, aborts the uploads and a <code>PauseFailure</code> exception
      * is thrown
@@ -83,7 +84,8 @@ public interface Upload extends Transfer {
      *     <li>The data source is an input stream.</li>
      *  <li>Client side encryption is used.</li>
      *  <li>Server Side Encryption with customer provided key is used.</li>
-     *  <li>Size of the file being uploaded is less than the {@link TransferManagerConfiguration#getMultipartUploadThreshold()}.</li>
+     *  <li>Size of the file being uploaded is less than the
+     *      {@link TransferManagerConfiguration#getMultipartUploadThreshold()}.</li>
      * </ul>
      *
      * In such cases, aborts the uploads if forceCancelTransfers is set else No

@@ -468,17 +468,16 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         final String keyCondExpression = queryRequest.getKeyConditionExpression();
         if (keyCondExpression == null) {
             if (isNullOrEmpty(hashKeyConditions)) {
-                throw new IllegalArgumentException(
-                        "Illegal query expression: No hash key condition is found in the query");
+                throw new IllegalArgumentException("Illegal query expression: No hash key condition is found in the query");
             }
         } else {
             if (!isNullOrEmpty(hashKeyConditions)) {
-                throw new IllegalArgumentException(
-                        "Illegal query expression: Either the hash key conditions or the key condition expression must be specified but not both.");
+                throw new IllegalArgumentException("Illegal query expression: Either the hash key conditions or the key " +
+                                                   "condition expression must be specified but not both.");
             }
             if (!isNullOrEmpty(rangeKeyConditions)) {
-                throw new IllegalArgumentException(
-                        "Illegal query expression: The range key conditions can only be specified when the key condition expression is not specified.");
+                throw new IllegalArgumentException("Illegal query expression: The range key conditions can only be specified " +
+                                                   "when the key condition expression is not specified.");
             }
             // key condition expression is in use
             return;
@@ -564,7 +563,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
             Collection<String> annotatedGSINames = hk.globalSecondaryIndexNames(HASH);
             annotatedGSIsOnHashKeys.put(hashKeyName,
-                                        annotatedGSINames == null ? new HashSet<String>() : new HashSet<String>(annotatedGSINames));
+                                        annotatedGSINames == null ? new HashSet<>() : new HashSet<>(annotatedGSINames));
 
             // Additional validation if the user provided an index name.
             if (userProvidedIndexName != null) {
@@ -656,8 +655,10 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                             if (hashKeyNameForThisQuery != null) {
                                 throw new IllegalArgumentException(
                                         "Ambiguous query expression: Found multiple valid queries: " +
-                                        "(Hash: \"" + hashKeyNameForThisQuery + "\", Range: \"" + rangeKeyNameForThisQuery + "\", Index: \"" + inferredIndexName + "\") and " +
-                                        "(Hash: \"" + hashKeyName + "\", Range: \"" + rangeKeyNameForThisQuery + "\", Index: \"" + indexNameInferredByThisHashKey + "\").");
+                                        "(Hash: \"" + hashKeyNameForThisQuery + "\", Range: \"" + rangeKeyNameForThisQuery +
+                                        "\", Index: \"" + inferredIndexName + "\") and " +
+                                        "(Hash: \"" + hashKeyName + "\", Range: \"" + rangeKeyNameForThisQuery +
+                                        "\", Index: \"" + indexNameInferredByThisHashKey + "\").");
                             } else {
                                 hashKeyNameForThisQuery = hashKeyName;
                                 inferredIndexName = indexNameInferredByThisHashKey;
@@ -683,9 +684,8 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                     } else {
                         throw new IllegalArgumentException(
                                 "Ambiguous query expression: More than one index hash key EQ conditions (" +
-                                hashKeyConditions.keySet() +
-                                ") are applicable to the query. " +
-                                "Please provide only one of them in the query expression, or specify the appropriate index name.");
+                                hashKeyConditions.keySet() + ") are applicable to the query. Please provide only one of them " +
+                                "in the query expression, or specify the appropriate index name.");
                     }
 
                 } else {
@@ -703,8 +703,8 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                                     "Please specify one of them in your query expression.");
                         } else {
                             throw new IllegalArgumentException(
-                                    "Illegal query expression: No GSI is found in the @DynamoDBIndexHashKey annotation for attribute " +
-                                    "\"" + hashKeyName + "\".");
+                                    "Illegal query expression: No GSI is found in the @DynamoDBIndexHashKey annotation for " +
+                                    "attribute \"" + hashKeyName + "\".");
                         }
                     }
                     keyConditions.putAll(hashKeyConditions);
@@ -734,9 +734,9 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
             && (userProvidedConditions == null || userProvidedConditions.isEmpty())) {
             return null;
         } else if (internalAssertions == null) {
-            return new HashMap<String, ExpectedAttributeValue>(userProvidedConditions);
+            return new HashMap<>(userProvidedConditions);
         } else if (userProvidedConditions == null) {
-            return new HashMap<String, ExpectedAttributeValue>(internalAssertions);
+            return new HashMap<>(internalAssertions);
         }
 
         // Start from a copy of the internal conditions
@@ -754,10 +754,10 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         // ones.
         if (ConditionalOperator.OR.toString().equals(userProvidedConditionOperator)
             && !mergedExpectedValues.isEmpty()) {
-            throw new IllegalArgumentException("Unable to assert the value of the fields "
-                                               + mergedExpectedValues.keySet() + ", since the expected value conditions cannot be combined "
-                                               + "with user-specified conditions joined by \"OR\". You can use SaveBehavior.CLOBBER to "
-                                               + "skip the assertion on these fields.");
+            throw new IllegalArgumentException("Unable to assert the value of the fields " + mergedExpectedValues.keySet() +
+                                               ", since the expected value conditions cannot be combined with user-specified " +
+                                               "conditions joined by \"OR\". You can use SaveBehavior.CLOBBER to " +
+                                               "skip the assertion on these fields.");
         }
 
         mergedExpectedValues.putAll(userProvidedConditions);
@@ -1008,10 +1008,10 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                         // UpdateItemRequest) into the AttributeValueUpdates
                         // collection.
                         for (String keyAttributeName : getPrimaryKeyAttributeValues().keySet()) {
-                            getAttributeValueUpdates().put(keyAttributeName,
-                                                           new AttributeValueUpdate()
-                                                                   .withValue(getPrimaryKeyAttributeValues().get(keyAttributeName))
-                                                                   .withAction("PUT"));
+                            AttributeValueUpdate value = new AttributeValueUpdate()
+                                    .withValue(getPrimaryKeyAttributeValues().get(keyAttributeName))
+                                    .withAction("PUT");
+                            getAttributeValueUpdates().put(keyAttributeName, value);
                         }
 
                         doPutItem();
@@ -1379,9 +1379,9 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         } while (batchLoadStrategy.shouldRetry(batchLoadContext));
 
         if (!isNullOrEmpty(batchGetItemResult.getUnprocessedKeys())) {
-            throw new BatchGetItemException(
-                    "The BatchGetItemResult has unprocessed keys after max retry attempts. Catch the BatchGetItemException to get the list of unprocessed keys.",
-                    batchGetItemResult.getUnprocessedKeys(), resultSet);
+            throw new BatchGetItemException("The BatchGetItemResult has unprocessed keys after max retry attempts. Catch the " +
+                                            "BatchGetItemException to get the list of unprocessed keys.",
+                                            batchGetItemResult.getUnprocessedKeys(), resultSet);
         }
     }
 
@@ -1394,7 +1394,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         ScanRequest scanRequest = createScanRequestFromExpression(clazz, scanExpression, config);
 
         ScanResult scanResult = db.scan(applyUserAgent(scanRequest));
-        return new PaginatedScanList<T>(this, clazz, db, scanRequest, scanResult, config.getPaginationLoadingStrategy(), config);
+        return new PaginatedScanList<>(this, clazz, db, scanRequest, scanResult, config.getPaginationLoadingStrategy(), config);
     }
 
     @Override
@@ -1405,7 +1405,8 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         config = mergeConfig(config);
 
         // Create hard copies of the original scan request with difference segment number.
-        List<ScanRequest> parallelScanRequests = createParallelScanRequestsFromExpression(clazz, scanExpression, totalSegments, config);
+        List<ScanRequest> parallelScanRequests = createParallelScanRequestsFromExpression(clazz, scanExpression,
+                                                                                          totalSegments, config);
         ParallelScanTask parallelScanTask = new ParallelScanTask(db, parallelScanRequests);
 
         return new PaginatedParallelScanList<T>(this, clazz, db, parallelScanTask, config.getPaginationLoadingStrategy(), config);
@@ -1442,7 +1443,8 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         QueryRequest queryRequest = createQueryRequestFromExpression(clazz, queryExpression, config);
 
         QueryResult queryResult = db.query(applyUserAgent(queryRequest));
-        return new PaginatedQueryList<T>(this, clazz, db, queryRequest, queryResult, config.getPaginationLoadingStrategy(), config);
+        return new PaginatedQueryList<T>(this, clazz, db, queryRequest, queryResult,
+                                         config.getPaginationLoadingStrategy(), config);
     }
 
     @Override
@@ -1678,9 +1680,11 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         request.setLocalSecondaryIndexes(model.localSecondaryIndexes());
         for (final DynamoDBMapperFieldModel<T, Object> field : model.fields()) {
             if (field.keyType() != null || field.indexed()) {
-                request.withAttributeDefinitions(new AttributeDefinition()
-                                                         .withAttributeType(ScalarAttributeType.valueOf(field.attributeType().name()))
-                                                         .withAttributeName(field.name()));
+                AttributeDefinition attributeDefinition = new AttributeDefinition()
+                        .withAttributeType(ScalarAttributeType.valueOf(field.attributeType().name()))
+                        .withAttributeName(field.name());
+
+                request.withAttributeDefinitions(attributeDefinition);
             }
         }
         return request;
@@ -1943,10 +1947,10 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                 userProvidedConditionOperator = null;
             }
 
-            updateValues = new HashMap<String, AttributeValueUpdate>();
-            internalExpectedValueAssertions = new HashMap<String, ExpectedAttributeValue>();
-            inMemoryUpdates = new LinkedList<ValueUpdate>();
-            primaryKeys = new HashMap<String, AttributeValue>();
+            updateValues = new HashMap<>();
+            internalExpectedValueAssertions = new HashMap<>();
+            inMemoryUpdates = new LinkedList<>();
+            primaryKeys = new HashMap<>();
         }
 
         /**
@@ -2181,7 +2185,8 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                                                         new ExpectedAttributeValue().withExists(false));
                 } else {
                     internalExpectedValueAssertions.put(field.name(),
-                                                        new ExpectedAttributeValue().withExists(true).withValue(field.convert(current)));
+                                                        new ExpectedAttributeValue().withExists(true)
+                                                                                    .withValue(field.convert(current)));
                 }
             }
 

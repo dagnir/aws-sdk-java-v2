@@ -18,6 +18,8 @@ package software.amazon.awssdk.services.securitytoken.auth.policy;
 import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
+import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
+import software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest;
 
 /**
  * The available AWS access control policy actions for Amazon Security Token Service.
@@ -31,7 +33,7 @@ public enum STSActions implements Action {
     /**
      * Action for assuming role to do cross-account access or federation.
      *
-     * @see AWSSecurityTokenService#assumeRole(software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest)
+     * @see AWSSecurityTokenService#assumeRole(AssumeRoleRequest)
      */
     AssumeRole("sts:AssumeRole"),
 
@@ -41,7 +43,7 @@ public enum STSActions implements Action {
      * security credentials for users who have been authenticated in a mobile or
      * web application with a web identity provider.
      *
-     * @see AWSSecurityTokenService#assumeRoleWithWebIdentity(software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest)
+     * @see AWSSecurityTokenService#assumeRoleWithWebIdentity(AssumeRoleWithWebIdentityRequest)
      */
     AssumeRoleWithWebIdentity("sts:AssumeRoleWithWebIdentity");
 

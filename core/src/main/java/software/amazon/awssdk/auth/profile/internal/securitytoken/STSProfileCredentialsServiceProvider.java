@@ -22,7 +22,8 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 
 @ThreadSafe
 public class STSProfileCredentialsServiceProvider implements AwsCredentialsProvider {
-    private static final String CLASS_NAME = "software.amazon.awssdk.services.securitytoken.internal.STSProfileCredentialsService";
+    private static final String CLASS_NAME =
+            "software.amazon.awssdk.services.securitytoken.internal.STSProfileCredentialsService";
     private static volatile ProfileCredentialsService STS_CREDENTIALS_SERVICE;
 
     private final RoleInfo roleInfo;

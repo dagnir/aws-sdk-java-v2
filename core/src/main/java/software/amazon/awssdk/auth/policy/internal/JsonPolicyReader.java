@@ -102,11 +102,15 @@ public class JsonPolicyReader {
      * <p>
      * principal is the AWS account that is making a request to access or modify one of your AWS resources.
      * <p>
-     * action is the way in which your AWS resource is being accessed or modified, such as sending a message to an Amazon SQS queue, or storing an object in an Amazon S3 bucket.
+     * action is the way in which your AWS resource is being accessed or modified, such as sending a message to an Amazon
+     * SQS queue, or storing an object in an Amazon S3 bucket.
      * <p>
-     * resource is the AWS entity that the principal wants to access, such as an Amazon SQS queue, or an object stored in Amazon S3.
+     * resource is the AWS entity that the principal wants to access, such as an Amazon SQS queue, or an object stored in
+     * Amazon S3.
      * <p>
-     * conditions are the optional constraints that specify when to allow or deny access for the principal to access your resource. Many expressive conditions are available, some specific to each service. For example, you can use date conditions to allow access to your resources only after or before a specific time.
+     * conditions are the optional constraints that specify when to allow or deny access for the principal to access your
+     * resource. Many expressive conditions are available, some specific to each service. For example, you can use date
+     * conditions to allow access to your resources only after or before a specific time.
      *
      * @param jStatement
      *            JsonNode representing the statement.

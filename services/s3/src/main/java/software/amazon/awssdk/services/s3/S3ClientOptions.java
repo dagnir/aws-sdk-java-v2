@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.services.s3;
 
+import software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest;
+
 /**
  * S3 client configuration options such as the request access style.
  */
@@ -155,7 +157,7 @@ public class S3ClientOptions {
      * </p>
      * <p>
      * The default behavior is to disable accelerate mode for any operations (GET, PUT, DELETE). You need to call
-     * {@link software.amazon.awssdk.services.s3.AmazonS3Client#setBucketAccelerateConfiguration(software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest)}
+     * {@link AmazonS3Client#setBucketAccelerateConfiguration(SetBucketAccelerateConfigurationRequest)}
      * first to use this feature.
      * </p>
      *
@@ -292,7 +294,7 @@ public class S3ClientOptions {
          * the bucket in advance.
          * </p>
          *
-         * @see AmazonS3#setBucketAccelerateConfiguration(software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest)
+         * @see AmazonS3#setBucketAccelerateConfiguration(SetBucketAccelerateConfigurationRequest)
          */
         public Builder setAccelerateModeEnabled(boolean accelerateModeEnabled) {
             this.accelerateModeEnabled = accelerateModeEnabled;

@@ -20,6 +20,7 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.retry.PredefinedBackoffStrategies.SDKDefaultBackoffStrategy;
 
 /**
  * This class includes a set of pre-defined retry policies, including default
@@ -73,14 +74,14 @@ public class PredefinedRetryPolicies {
      * scale factor upon service throttling exception.
      */
     public static final RetryPolicy.BackoffStrategy DEFAULT_BACKOFF_STRATEGY =
-            new PredefinedBackoffStrategies.SDKDefaultBackoffStrategy();
+            new SDKDefaultBackoffStrategy();
 
     /**
      * The SDK default back-off strategy, which increases exponentially up to a max amount of delay. It also applies a larger
      * scale factor upon service throttling exception.
      */
     public static final V2CompatibleBackoffStrategy DEFAULT_BACKOFF_STRATEGY_V2 =
-            new PredefinedBackoffStrategies.SDKDefaultBackoffStrategy();
+            new SDKDefaultBackoffStrategy();
 
     /**
      * The default back-off strategy for DynamoDB client, which increases
@@ -88,9 +89,9 @@ public class PredefinedRetryPolicies {
      * back-off strategy, it applies a smaller scale factor.
      */
     public static final RetryPolicy.BackoffStrategy DYNAMODB_DEFAULT_BACKOFF_STRATEGY =
-            new PredefinedBackoffStrategies.SDKDefaultBackoffStrategy(PredefinedBackoffStrategies.DYNAMODB_DEFAULT_BASE_DELAY,
-                                                                      PredefinedBackoffStrategies.SDK_DEFAULT_THROTTLED_BASE_DELAY,
-                                                                      PredefinedBackoffStrategies.SDK_DEFAULT_MAX_BACKOFF_IN_MILLISECONDS);
+            new SDKDefaultBackoffStrategy(PredefinedBackoffStrategies.DYNAMODB_DEFAULT_BASE_DELAY,
+                                          PredefinedBackoffStrategies.SDK_DEFAULT_THROTTLED_BASE_DELAY,
+                                          PredefinedBackoffStrategies.SDK_DEFAULT_MAX_BACKOFF_IN_MILLISECONDS);
 
     static {
         DEFAULT = getDefaultRetryPolicy();

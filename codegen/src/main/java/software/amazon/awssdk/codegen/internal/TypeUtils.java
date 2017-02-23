@@ -121,12 +121,14 @@ public class TypeUtils {
         if (ShapeTypes.Structure.getName().equals(shapeType)) {
             return namingStrategy.getJavaClassName(shapeName);
         } else if (ShapeTypes.List.getName().equals(shapeType)) {
-            String listType = customConfig != null && customConfig.isUseAutoConstructList() ? LIST_AUTO_CONSTRUCT_IMPL : LIST_INTERFACE;
+            String listType = customConfig != null && customConfig.isUseAutoConstructList() ? LIST_AUTO_CONSTRUCT_IMPL
+                                                                                            : LIST_INTERFACE;
             final String listContainerType = dataTypeMappings.get(listType);
             return listContainerType + "<" +
                    getJavaDataType(shapes, shape.getListMember().getShape()) + ">";
         } else if (ShapeTypes.Map.getName().equals(shapeType)) {
-            String mapType = customConfig != null && customConfig.isUseAutoConstructMap() ? MAP_AUTO_CONSTRUCT_IMPL : MAP_INTERFACE;
+            String mapType = customConfig != null && customConfig.isUseAutoConstructMap() ? MAP_AUTO_CONSTRUCT_IMPL
+                                                                                          : MAP_INTERFACE;
             final String mapContainerType = dataTypeMappings.get(mapType);
             return mapContainerType + "<" +
                    getJavaDataType(shapes, shape.getMapKeyType().getShape()) + "," +

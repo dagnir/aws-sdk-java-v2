@@ -74,7 +74,8 @@ public class JsonErrorCodeParser implements ErrorCodeParser {
     /**
      * Attempt to parse the error code from the response content. Returns null if information is not
      * present in the content. Codes are expected to be in the form <b>"typeName"</b> or
-     * <b>"prefix#typeName"</b> Examples : "AccessDeniedException", "software.amazon.awssdk.dynamodb.v20111205#ProvisionedThroughputExceededException"
+     * <b>"prefix#typeName"</b> Examples : "AccessDeniedException",
+     * "software.amazon.awssdk.dynamodb.v20111205#ProvisionedThroughputExceededException"
      */
     private String parseErrorCodeFromContents(JsonNode jsonContents) {
         if (jsonContents == null || !jsonContents.has(errorCodeFieldName)) {

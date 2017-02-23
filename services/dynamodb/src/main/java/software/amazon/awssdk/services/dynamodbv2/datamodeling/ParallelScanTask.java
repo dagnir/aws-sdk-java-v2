@@ -209,7 +209,8 @@ public class ParallelScanTask {
                 scanResults.add(scanResult);
             } else if (currentSegmentState == SegmentScanState.Waiting
                        || currentSegmentState == SegmentScanState.Scanning) {
-                throw new SdkClientException("Should never see a 'Scanning' or 'Waiting' state when marshalling parallel scan results.");
+                throw new SdkClientException("Should never see a 'Scanning' or 'Waiting' state when marshalling parallel " +
+                                             "scan results.");
             }
         }
         return scanResults;
