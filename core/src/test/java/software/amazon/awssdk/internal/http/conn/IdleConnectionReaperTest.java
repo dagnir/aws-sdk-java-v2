@@ -31,12 +31,19 @@ import org.apache.http.conn.ConnectionRequest;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.protocol.HttpContext;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
 public class IdleConnectionReaperTest {
     @Before
     public void init() {
+        IdleConnectionReaper.shutdown();
+    }
+
+    @AfterClass
+    public static void shutdown() {
         IdleConnectionReaper.shutdown();
     }
 
