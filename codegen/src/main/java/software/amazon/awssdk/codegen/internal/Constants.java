@@ -61,7 +61,7 @@ public class Constants {
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public static final Log LOGGER = LogFactory.getLog("software.amazon.awssdk.codegen");
+    public static final Log LOGGER = LogFactory.getLog("software.amazon.awssdk.javasdk.codegen");
 
     public static final String SMOKE_TESTS_DIR_NAME = "smoketests";
 

@@ -15,13 +15,6 @@
 
 package software.amazon.awssdk.codegen;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcessor;
 import software.amazon.awssdk.codegen.customization.processors.DefaultCustomizationProcessor;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
@@ -43,6 +36,17 @@ import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.codegen.naming.DefaultNamingStrategy;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
 import software.amazon.awssdk.util.StringUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static software.amazon.awssdk.codegen.AddMetadata.constructMetadata;
+import static software.amazon.awssdk.codegen.RemoveUnusedShapes.removeUnusedShapes;
 
 /**
  * Builds an intermediate model to be used by the templates from the service model and
@@ -115,7 +119,7 @@ public class IntermediateModelBuilder {
         System.out.println(shapes.size() + " shapes found in total.");
 
         IntermediateModel fullModel = new IntermediateModel(
-                AddMetadata.constructMetadata(service, codeGenConfig, customConfig), operations, shapes,
+                constructMetadata(service, codeGenConfig, customConfig), operations, shapes,
                 customConfig, examples, waiters, authorizers);
 
         customization.postprocess(fullModel);
@@ -123,7 +127,7 @@ public class IntermediateModelBuilder {
         System.out.println(fullModel.getShapes().size() + " shapes remained after " +
                            "applying customizations.");
 
-        Map<String, ShapeModel> trimmedShapes = RemoveUnusedShapes.removeUnusedShapes(fullModel);
+        Map<String, ShapeModel> trimmedShapes = removeUnusedShapes(fullModel);
 
         System.out.println(trimmedShapes.size() + " shapes remained after removing unused shapes.");
 
@@ -186,27 +190,25 @@ public class IntermediateModelBuilder {
         }
 
         model.getOperations().values().stream()
-             .filter(OperationModel::isAuthenticated)
-             .forEach(operation -> {
-                 Operation c2jOperation = service.getOperation(operation.getOperationName());
+                .filter(OperationModel::isAuthenticated)
+                .forEach(operation -> {
+                    Operation c2jOperation = service.getOperation(operation.getOperationName());
 
-                 ShapeModel shape = operation.getInputShape();
-                 if (shape == null) {
-                     throw new RuntimeException(String.format("Operation %s has unknown input shape",
-                                                              operation.getOperationName()));
-                 }
-                 if (AuthType.CUSTOM.equals(c2jOperation.getAuthType())) {
-                     AuthorizerModel auth = model.getCustomAuthorizers().get(c2jOperation.getAuthorizer());
-                     if (auth == null) {
-                         throw new RuntimeException(String.format("Required custom auth not defined: %s",
-                                                                  c2jOperation.getAuthorizer()));
-                     }
-                     shape.setRequestSignerClassFqcn(model.getMetadata().getPackageName() + ".auth." + auth.getInterfaceName());
-                 } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
-                     model.getMetadata().setRequiresIamSigners(true);
-                     shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");
-                 }
-             });
+                    ShapeModel shape = operation.getInputShape();
+                    if (shape == null) {
+                        throw new RuntimeException(String.format("Operation %s has unknown input shape", operation.getOperationName()));
+                    }
+                    if(AuthType.CUSTOM.equals(c2jOperation.getAuthType())) {
+                        AuthorizerModel auth = model.getCustomAuthorizers().get(c2jOperation.getAuthorizer());
+                        if (auth == null) {
+                            throw new RuntimeException(String.format("Required custom auth not defined: %s", c2jOperation.getAuthorizer()));
+                        }
+                        shape.setRequestSignerClassFqcn(model.getMetadata().getPackageName() + ".auth." + auth.getInterfaceName());
+                    } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
+                        model.getMetadata().setRequiresIamSigners(true);
+                        shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");
+                    }
+                });
     }
 
     public CustomizationConfig getCustomConfig() {

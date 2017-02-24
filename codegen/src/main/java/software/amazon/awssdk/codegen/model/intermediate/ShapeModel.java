@@ -15,18 +15,19 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import static software.amazon.awssdk.codegen.internal.Constants.REQUEST_CLASS_SUFFIX;
-import static software.amazon.awssdk.codegen.internal.Constants.RESPONSE_CLASS_SUFFIX;
-
+import software.amazon.awssdk.codegen.model.intermediate.customization.ShapeCustomizationInfo;
+import software.amazon.awssdk.util.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
-import software.amazon.awssdk.codegen.model.intermediate.customization.ShapeCustomizationInfo;
-import software.amazon.awssdk.util.StringUtils;
+
+import static software.amazon.awssdk.codegen.internal.Constants.REQUEST_CLASS_SUFFIX;
+import static software.amazon.awssdk.codegen.internal.Constants.RESPONSE_CLASS_SUFFIX;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.removeFromEnd;
 
 public class ShapeModel extends DocumentationModel {
 
@@ -167,6 +168,13 @@ public class ShapeModel extends DocumentationModel {
             }
         }
         return unboundMembers;
+    }
+
+    /**
+     * @return True if the shape has an explicit payload member or implicit payload member(s).
+     */
+    public boolean hasPayloadMembers() {
+        return hasPayloadMember || getUnboundMembers().size() > 0;
     }
 
     public boolean isHasStreamingMember() {
@@ -403,9 +411,9 @@ public class ShapeModel extends DocumentationModel {
     public String getDocumentationShapeName() {
         switch (getShapeType()) {
             case Request:
-                return DocumentationUtils.removeFromEnd(shapeName, REQUEST_CLASS_SUFFIX);
+                return removeFromEnd(shapeName, REQUEST_CLASS_SUFFIX);
             case Response:
-                return DocumentationUtils.removeFromEnd(shapeName, RESPONSE_CLASS_SUFFIX);
+                return removeFromEnd(shapeName, RESPONSE_CLASS_SUFFIX);
             default:
                 return c2jName;
         }

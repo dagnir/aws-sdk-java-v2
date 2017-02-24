@@ -12,21 +12,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.codegen.emitters.tasks;
 
-import freemarker.template.Template;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
-import software.amazon.awssdk.codegen.utils.FunctionalUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;
+
+import freemarker.template.Template;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
 
 public class UnmarshallerGeneratorTasks extends BaseGeneratorTasks {
 
@@ -43,9 +45,9 @@ public class UnmarshallerGeneratorTasks extends BaseGeneratorTasks {
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting unmarshaller classes");
         return model.getShapes().entrySet().stream()
-                    .filter(e -> shouldGenerate(e.getValue()))
-                    .map(FunctionalUtils.safeFunction(e -> createTask(e.getKey(), e.getValue())))
-                    .collect(Collectors.toList());
+                .filter(e -> shouldGenerate(e.getValue()))
+                .map(safeFunction(e -> createTask(e.getKey(), e.getValue())))
+                .collect(Collectors.toList());
     }
 
     private GeneratorTask createTask(String javaShapeName, ShapeModel shapeModel) throws Exception {
@@ -64,13 +66,13 @@ public class UnmarshallerGeneratorTasks extends BaseGeneratorTasks {
             case Model: {
                 String unmarshallerNameSuffix = metadata.isJsonProtocol() ? "JsonUnmarshaller" : "StaxUnmarshaller";
                 return new FreemarkerGeneratorTask(transformClassDir,
-                                                   javaShapeName + unmarshallerNameSuffix,
+                                         javaShapeName + unmarshallerNameSuffix,
                                                    template,
                                                    dataModel);
             }
             case Exception: {
                 return new FreemarkerGeneratorTask(transformClassDir,
-                                                   javaShapeName + "Unmarshaller",
+                                         javaShapeName + "Unmarshaller",
                                                    freemarker.getExceptionUnmarshallerTemplate(),
                                                    dataModel);
             }

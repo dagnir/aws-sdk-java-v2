@@ -76,8 +76,9 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     @Override
     public String visit(final JmesPathProjection jmesPathProjection,
                         final Void aVoid) throws InvalidTypeException {
-        return "new JmesPathProjection( " + jmesPathProjection.getLhsExpr().accept(this, aVoid) + ", " +
-               jmesPathProjection.getProjectionExpr().accept(this, aVoid) + ")";
+        return "new JmesPathProjection( " + jmesPathProjection.getLhsExpr()
+                                                              .accept(this, aVoid) + ", " + jmesPathProjection.getProjectionExpr()
+                                                                                                              .accept(this, aVoid) + ")";
     }
 
     /**
@@ -120,8 +121,9 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     @Override
     public String visit(final JmesPathValueProjection valueProjection,
                         final Void aVoid) throws InvalidTypeException {
-        return "new JmesPathValueProjection( " + valueProjection.getLhsExpr().accept(this, aVoid) + ", " +
-               valueProjection.getRhsExpr().accept(this, aVoid) + ")";
+        return "new JmesPathValueProjection( " + valueProjection.getLhsExpr()
+                                                                .accept(this, aVoid) + ", " + valueProjection.getRhsExpr()
+                                                                                                             .accept(this, aVoid) + ")";
     }
 
     /**
@@ -217,8 +219,9 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     @Override
     public String visit(final JmesPathAndExpression andExpression,
                         final Void aVoid) throws InvalidTypeException {
-        return "new JmesPathAndExpression( " + andExpression.getLhsExpr().accept(this, aVoid) + ", " +
-               andExpression.getRhsExpr().accept(this, aVoid) + " )";
+        return "new JmesPathAndExpression( " + andExpression.getLhsExpr()
+                                                            .accept(this, aVoid) + ", " + andExpression.getRhsExpr()
+                                                                                                       .accept(this, aVoid) + " )";
     }
 
     /**

@@ -22,6 +22,7 @@ import static software.amazon.awssdk.codegen.internal.Utils.unCapitialize;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
+import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;

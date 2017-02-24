@@ -383,6 +383,20 @@ public class Metadata {
         return protocolMetadataProvider.isXmlProtocol();
     }
 
+    /**
+     * @return True for RESTful protocols. False for all other protocols (RPC, Query, etc).
+     */
+    public static boolean isNotRestProtocol(String protocol) {
+        switch (Protocol.fromValue(protocol)) {
+            case API_GATEWAY:
+            case REST_JSON:
+            case REST_XML:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     public String getEndpointPrefix() {
         return endpointPrefix;
     }
@@ -409,15 +423,15 @@ public class Metadata {
         return this;
     }
 
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
     public String getContentType() {
         if (contentType != null) {
             return contentType;
         }
         return protocolMetadataProvider.getContentType();
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
     }
 
     public String getUnmarshallerContextClassName() {

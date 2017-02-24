@@ -1,3 +1,66 @@
+# __@AWS_JAVA_SDK_VERSION@__ __2017-02-17__
+## __AWS Direct Connect__
+  - <h3>Features</h3>
+    - This update will introduce the ability for Direct Connect customers to take advantage of Link Aggregation (LAG). This allows you to bundle many individual physical interfaces into a single logical interface, referred to as a LAG. This makes administration much simpler as the majority of configuration is done on the LAG while you are free to add or remove physical interfaces from the bundle as bandwidth demand increases or decreases. A concrete example of the simplification added by LAG is that customers need only a single BGP session as opposed to one session per physical connection.
+
+# __1.11.92__ __2017-02-16__
+## __AWS Config__
+  - <h3>Features</h3>
+    - AWS Config now supports a new test mode for the PutEvaluations API. Set the TestMode parameter to true in your custom rule to verify whether your AWS Lambda function will deliver evaluation results to AWS Config. No updates occur to your existing evaluations, and evaluation results are not sent to AWS Config.
+
+## __Amazon Cognito Identity__
+  - <h3>Features</h3>
+    - Allow createIdentityPool and updateIdentityPool API to set server side token check value on identity pool.
+
+# __1.11.91__ __2017-02-15__
+## __AWS Key Management Service__
+  - <h3>Features</h3>
+    - This release of AWS Key Management Service introduces the ability to tag keys. Tagging keys can help you organize your keys and track your KMS costs in the cost allocation report. This release also increases the maximum length of a key ID to accommodate ARNs that include a long key alias.
+
+## __AWS SDK for Java for OSGi__
+  - <h3>Bugfixes</h3>
+    - Fixing [Issue #979](https://github.com/aws/aws-sdk-java/issues/979) by including the jmespath-java module in the OSGi bundle.
+
+## __Amazon Glacier__
+  - <h3>Features</h3>
+    - Introduce `ArchiveTransferManaggerBuilder`. This builder allows using references to `AmazonGlacier`, `AmazonSNS` and AmazonSQS` rather than the concrete implementations.
+
+  - <h3>Deprecations</h3>
+    - Deprecate all constructors for `ArchiveTransferManager`.
+
+# __1.11.90__ __2017-02-14__
+## __Amazon EC2__
+  - <h3>Features</h3>
+    - Adds support for the new Modify Volumes apis.
+
+# __1.11.89__ __2017-02-10__
+## __AWS Storage Gateway__
+  - <h3>Features</h3>
+    - File gateway mode in AWS Storage gateway provides access to objects in S3 as files on a Network File System (NFS) mount point. This is done by creating Nfs file shares using existing APIs CreateNfsFileShare. Using the feature in this update, the customer can restrict the clients that have read/write access to the gateway by specifying the list of clients as a list of IP addresses or CIDR blocks. This list can be specified using the API CreateNfsFileShare while creating new file shares, or UpdateNfsFileShare while update existing file shares. To find out the list of clients that have access, the existing API DescribeNfsFileShare will now output the list of clients that have access.
+
+# __1.11.88__ __2017-02-09__
+## __Amazon EC2__
+  - <h3>Features</h3>
+    - This feature allows customers to associate an IAM profile to running instances that do not have any.
+
+## __Amazon Rekognition__
+  - <h3>Features</h3>
+    - DetectFaces and IndexFaces operations now return an estimate of the age of the face as an age range.
+
+# __1.11.87__ __2017-02-08__
+## __Amazon Lex__
+  - <h3>Features</h3>
+    - **(NewService)** Amazon Lex is a service for building conversational interactions into any application using voice or text.
+
+## __Amazon S3__
+  - <h3>Bugfixes</h3>
+    - Fix a bug in `TransferManager` where the [`TransferManager#copy`](http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/transfer/TransferManager.html#copy-com.amazonaws.services.s3.model.CopyObjectRequest-) method was retrieving the metadata for the latest version of the source object even when supplying a specific version via `CopyObjectRequest#withSourceVersionId`.
+
+      This fixes Issue [#1009](https://github.com/aws/aws-sdk-java/issues/1009).
+    - Fix an integer overflow bug in [`LegacyS3ProgressListener`](http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/model/LegacyS3ProgressListener.html). Note that this class is deprecated and users are discouraged from using it.
+
+      This fixes Issue [#1008](https://github.com/aws/aws-sdk-java/issues/1008).
+
 # __1.11.86__ __2017-01-26__
 ## __AWS CodeDeploy__
   - <h3>Features</h3>

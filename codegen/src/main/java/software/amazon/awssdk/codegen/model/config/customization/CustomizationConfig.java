@@ -15,13 +15,14 @@
 
 package software.amazon.awssdk.codegen.model.config.customization;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.codegen.internal.Constants;
 import software.amazon.awssdk.codegen.model.config.ConstructorFormsWrapper;
 import software.amazon.awssdk.codegen.model.config.templates.CodeGenTemplatesConfig;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CustomizationConfig {
 
@@ -86,7 +87,7 @@ public class CustomizationConfig {
      *
      * Example: for backwards compatibility, this is set to "AmazonDynamoDBv2" for DynamoDB client.
      *
-     * @see {@link Request#getServiceName()}
+     * @see {@link software.amazon.awssdk.Request#getServiceName()}
      */
     private String customServiceNameForRequest;
     /**
@@ -180,6 +181,11 @@ public class CustomizationConfig {
      * Fully qualified class name of presigner extension class if it exists.
      */
     private String presignersFqcn;
+
+    /**
+     * A set of deprecated code that generation can be suppressed for
+     */
+    private Set<DeprecatedSuppression> deprecatedSuppressions;
 
     /**
      * Relative path to customize transform directory. Will be generated relative
@@ -469,5 +475,25 @@ public class CustomizationConfig {
     public CustomizationConfig setTransformDirectory(String transformDirectory) {
         this.transformDirectory = transformDirectory;
         return this;
+    }
+
+    public Set<DeprecatedSuppression> getDeprecatedSuppressions() {
+        return deprecatedSuppressions;
+    }
+
+    public void setDeprecatedSuppressions(Set<DeprecatedSuppression> deprecatedSuppressions) {
+        this.deprecatedSuppressions = deprecatedSuppressions;
+    }
+
+    public boolean emitClientMutationMethods() {
+        return !shouldSuppress(DeprecatedSuppression.ClientMutationMethods);
+    }
+
+    public boolean emitClientConstructors() {
+        return !shouldSuppress(DeprecatedSuppression.ClientConstructors);
+    }
+
+    private boolean shouldSuppress(DeprecatedSuppression suppression) {
+        return deprecatedSuppressions != null && deprecatedSuppressions.contains(suppression);
     }
 }
