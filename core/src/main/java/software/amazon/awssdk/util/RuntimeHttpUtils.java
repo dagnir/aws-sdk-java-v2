@@ -12,17 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.Protocol;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -34,11 +31,15 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.Protocol;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.SdkProtectedApi;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class RuntimeHttpUtils {
     private static final String COMMA = ", ";

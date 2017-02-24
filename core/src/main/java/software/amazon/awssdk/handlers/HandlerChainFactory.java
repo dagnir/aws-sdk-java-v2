@@ -12,8 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.handlers;
+
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.util.ClassLoaderHelper;
+import software.amazon.awssdk.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,9 +26,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.util.ClassLoaderHelper;
-import software.amazon.awssdk.util.StringUtils;
 
 /**
  * Factory for creating request/response handler chains.

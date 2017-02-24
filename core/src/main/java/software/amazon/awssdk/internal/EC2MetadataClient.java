@@ -12,16 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.internal;
+
+import static software.amazon.awssdk.SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.util.EC2MetadataUtils;
 
@@ -146,8 +148,8 @@ public class EC2MetadataClient {
      */
     private URL getEc2MetadataServiceUrlForResource(String resourcePath) throws IOException {
         String endpoint = EC2_METADATA_SERVICE_URL;
-        if (System.getProperty(SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY) != null) {
-            endpoint = System.getProperty(SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
+        if (System.getProperty(EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY) != null) {
+            endpoint = System.getProperty(EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
         }
 
         return new URL(endpoint + resourcePath);

@@ -23,7 +23,7 @@ import java.util.Map;
  * can be used in the event a service call isn't working as expected and you
  * need to work with AWS support to debug an issue.
  * <p>
- * Access to AWS request IDs is also available through the software.amazon.awssdk.request
+ * Access to AWS request IDs is also available through the com.amazonaws.request
  * logger in the AWS SDK for Java.
  */
 public class ResponseMetadata {

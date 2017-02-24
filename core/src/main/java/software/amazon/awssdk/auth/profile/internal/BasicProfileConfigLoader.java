@@ -12,8 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.auth.profile.internal;
+
+import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.util.StringUtils;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,11 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.util.StringUtils;
 
 /**
  * Class to load a CLI style config or credentials file. Performs only basic validation on
