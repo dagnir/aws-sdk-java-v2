@@ -238,8 +238,8 @@ public class Unmarshallers {
     /**
      * Unmarshaller for the a direct InputStream response.
      */
-    public static final class InputStreamUnmarshaller
-            implements Unmarshaller<InputStream, InputStream> {
+    public static final class InputStreamUnmarshaller implements
+                                                      Unmarshaller<InputStream, InputStream> {
         public InputStream unmarshall(InputStream in) throws Exception {
             return in;
         }
@@ -248,39 +248,39 @@ public class Unmarshallers {
     /**
      * Unmarshaller for the CopyObject XML response.
      */
-    public static final class CopyObjectUnmarshaller
-            implements Unmarshaller<CopyObjectResultHandler, InputStream> {
+    public static final class CopyObjectUnmarshaller implements
+                                                     Unmarshaller<CopyObjectResultHandler, InputStream> {
         public CopyObjectResultHandler unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser()
                     .parseCopyObjectResponse(in);
         }
     }
 
-    public static final class CompleteMultipartUploadResultUnmarshaller
-            implements Unmarshaller<CompleteMultipartUploadHandler, InputStream> {
+    public static final class CompleteMultipartUploadResultUnmarshaller implements
+                                                                        Unmarshaller<CompleteMultipartUploadHandler, InputStream> {
         public CompleteMultipartUploadHandler unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser().parseCompleteMultipartUploadResponse(in);
         }
     }
 
-    public static final class InitiateMultipartUploadResultUnmarshaller
-            implements Unmarshaller<InitiateMultipartUploadResult, InputStream> {
+    public static final class InitiateMultipartUploadResultUnmarshaller implements
+                                                                        Unmarshaller<InitiateMultipartUploadResult, InputStream> {
         public InitiateMultipartUploadResult unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser().parseInitiateMultipartUploadResponse(in)
                                               .getInitiateMultipartUploadResult();
         }
     }
 
-    public static final class ListMultipartUploadsResultUnmarshaller
-            implements Unmarshaller<MultipartUploadListing, InputStream> {
+    public static final class ListMultipartUploadsResultUnmarshaller implements
+                                                                     Unmarshaller<MultipartUploadListing, InputStream> {
         public MultipartUploadListing unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser().parseListMultipartUploadsResponse(in)
                                               .getListMultipartUploadsResult();
         }
     }
 
-    public static final class ListPartsResultUnmarshaller
-            implements Unmarshaller<PartListing, InputStream> {
+    public static final class ListPartsResultUnmarshaller implements
+                                                          Unmarshaller<PartListing, InputStream> {
         public PartListing unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser().parseListPartsResponse(in)
                                               .getListPartsResult();

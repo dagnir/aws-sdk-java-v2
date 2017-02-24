@@ -100,6 +100,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- demo files excluded to fix compliation. They depend on test classes.. -->
+                    <excludes>
+                        <exclude>demo/**/*.java</exclude>
+                        <exclude>*.java</exclude>
+                        <exclude>s3tests/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

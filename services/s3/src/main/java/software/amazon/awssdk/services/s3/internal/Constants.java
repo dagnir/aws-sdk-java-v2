@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.s3.internal;
 
+import software.amazon.awssdk.services.s3.AmazonS3ClientBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.RequestClientOptions;

@@ -42,7 +42,6 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
-import software.amazon.awssdk.client.builder.ExecutorFactory;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.ProgressListenerChain;
 import software.amazon.awssdk.services.s3.AmazonS3;

@@ -488,13 +488,9 @@ public class ServiceUtils {
         ValidationUtils.assertNotNull(s3, "S3 client");
         ValidationUtils.assertNotNull(getObjectRequest, "GetObjectRequest");
 
-        ObjectMetadata metadata = s3.getObjectMetadata(
-                new GetObjectMetadataRequest(getObjectRequest.getBucketName(),
-                                             getObjectRequest.getKey(),
-                                             getObjectRequest.getVersionId())
-                        .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
-                        .withPartNumber(1));
-
+        ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(), getObjectRequest.getKey(), getObjectRequest.getVersionId())
+                                                               .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
+                                                               .withPartNumber(1));
         return metadata.getPartCount();
     }
 
@@ -515,9 +511,7 @@ public class ServiceUtils {
         ValidationUtils.assertNotNull(getObjectRequest, "GetObjectRequest");
         ValidationUtils.assertNotNull(partNumber, "partNumber");
 
-        ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(),
-                                                                                    getObjectRequest.getKey(),
-                                                                                    getObjectRequest.getVersionId())
+        ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(), getObjectRequest.getKey(), getObjectRequest.getVersionId())
                                                                .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
                                                                .withPartNumber(partNumber));
         return metadata.getContentRange()[1];

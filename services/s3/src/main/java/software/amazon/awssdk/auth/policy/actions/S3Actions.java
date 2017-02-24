@@ -20,13 +20,6 @@ import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.auth.policy.resources.S3BucketResource;
 import software.amazon.awssdk.auth.policy.resources.S3ObjectResource;
 import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.model.DeleteBucketWebsiteConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.GetBucketWebsiteConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.SetBucketCrossOriginConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.SetBucketLifecycleConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.SetBucketTaggingConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.SetBucketVersioningConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.SetBucketWebsiteConfigurationRequest;
 
 /**
  * The available AWS access control policy actions for Amazon S3.
