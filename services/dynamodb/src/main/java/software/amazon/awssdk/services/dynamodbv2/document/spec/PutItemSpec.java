@@ -22,12 +22,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.services.dynamodbv2.document.Expected;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.PutItemExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
@@ -183,17 +181,5 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
             RequestMetricCollector requestMetricCollector) {
         setRequestMetricCollector(requestMetricCollector);
         return this;
-    }
-
-    /**
-     * Convenient method to specify expressions (and the associated name map and
-     * value map) via {@link PutItemExpressionSpec}.
-     */
-    @Beta
-    public PutItemSpec withExpressionSpec(PutItemExpressionSpec xspec) {
-        return withConditionExpression(xspec.getConditionExpression())
-                .withNameMap(xspec.getNameMap())
-                .withValueMap(xspec.getValueMap())
-                ;
     }
 }

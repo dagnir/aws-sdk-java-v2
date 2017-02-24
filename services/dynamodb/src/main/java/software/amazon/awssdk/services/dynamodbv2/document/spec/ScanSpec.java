@@ -23,13 +23,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;
 import software.amazon.awssdk.services.dynamodbv2.document.PrimaryKey;
 import software.amazon.awssdk.services.dynamodbv2.document.ScanFilter;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.ScanExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalOperator;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodbv2.model.ScanRequest;
@@ -360,18 +358,5 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
             RequestMetricCollector requestMetricCollector) {
         setRequestMetricCollector(requestMetricCollector);
         return this;
-    }
-
-    /**
-     * Convenient method to specify expressions (and the associated name map and
-     * value map) via {@link ScanExpressionSpec}.
-     */
-    @Beta
-    public ScanSpec withExpressionSpec(ScanExpressionSpec xspec) {
-        return withFilterExpression(xspec.getFilterExpression())
-                .withProjectionExpression(xspec.getProjectionExpression())
-                .withNameMap(xspec.getNameMap())
-                .withValueMap(xspec.getValueMap())
-                ;
     }
 }

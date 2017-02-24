@@ -24,14 +24,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.services.dynamodbv2.document.AttributeUpdate;
 import software.amazon.awssdk.services.dynamodbv2.document.Expected;
 import software.amazon.awssdk.services.dynamodbv2.document.KeyAttribute;
 import software.amazon.awssdk.services.dynamodbv2.document.PrimaryKey;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.UpdateItemExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnItemCollectionMetrics;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnValue;
@@ -251,18 +249,5 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
             RequestMetricCollector requestMetricCollector) {
         setRequestMetricCollector(requestMetricCollector);
         return this;
-    }
-
-    /**
-     * Convenient method to specify expressions (and the associated name map and
-     * value map) via {@link UpdateItemExpressionSpec}.
-     */
-    @Beta
-    public UpdateItemSpec withExpressionSpec(UpdateItemExpressionSpec xspec) {
-        return withUpdateExpression(xspec.getUpdateExpression())
-                .withConditionExpression(xspec.getConditionExpression())
-                .withNameMap(xspec.getNameMap())
-                .withValueMap(xspec.getValueMap())
-                ;
     }
 }

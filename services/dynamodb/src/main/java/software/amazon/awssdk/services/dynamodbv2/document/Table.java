@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.dynamodbv2.document;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import software.amazon.awssdk.annotation.Beta;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.document.api.DeleteItemApi;
@@ -41,11 +40,6 @@ import software.amazon.awssdk.services.dynamodbv2.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.ScanSpec;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.UpdateItemSpec;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.UpdateTableSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.DeleteItemExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.GetItemExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.QueryExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.ScanExpressionSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.xspec.UpdateItemExpressionSpec;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateGlobalSecondaryIndexAction;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
@@ -291,15 +285,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         return scanDelegate.scan(params);
     }
 
-    @Beta
-    public ItemCollection<ScanOutcome> scan(ScanExpressionSpec scanExpressions) {
-        return scanDelegate.scan(new ScanSpec()
-                                         .withProjectionExpression(scanExpressions.getProjectionExpression())
-                                         .withFilterExpression(scanExpressions.getFilterExpression())
-                                         .withNameMap(scanExpressions.getNameMap())
-                                         .withValueMap(scanExpressions.getValueMap()));
-    }
-
     @Override
     public DeleteItemOutcome deleteItem(KeyAttribute... primaryKeyComponents) {
         return deleteItemDelegate.deleteItem(primaryKeyComponents);
@@ -322,15 +307,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                                         Map<String, Object> valueMap) {
         return deleteItemDelegate.deleteItem(primaryKey,
                                              conditionExpression, nameMap, valueMap);
-    }
-
-    @Beta
-    public DeleteItemOutcome deleteItem(PrimaryKey primaryKey,
-                                        DeleteItemExpressionSpec conditionExpressions) {
-        return deleteItemDelegate.deleteItem(primaryKey,
-                                             conditionExpressions.getConditionExpression(),
-                                             conditionExpressions.getNameMap(),
-                                             conditionExpressions.getValueMap());
     }
 
     @Override
@@ -667,16 +643,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                                    nameMap, valueMap);
     }
 
-    @Beta
-    public ItemCollection<QueryOutcome> query(String hashKeyName,
-                                              Object hashKeyValue, RangeKeyCondition rangeKeyCondition,
-                                              QueryExpressionSpec queryExpressions) {
-        return queryDelegate.query(hashKeyName, hashKeyValue, rangeKeyCondition,
-                                   queryExpressions.getFilterExpression(),
-                                   queryExpressions.getProjectionExpression(),
-                                   queryExpressions.getNameMap(), queryExpressions.getValueMap());
-    }
-
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName,
                                         Object hashKeyValue, AttributeUpdate... attributeUpdates) {
@@ -737,16 +703,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                                              nameMap, valueMap);
     }
 
-    @Beta
-    public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-                                        UpdateItemExpressionSpec updateExpressions) {
-        return updateItemDelegate.updateItem(hashKeyName, hashKeyValue,
-                                             updateExpressions.getUpdateExpression(),
-                                             updateExpressions.getConditionExpression(),
-                                             updateExpressions.getNameMap(),
-                                             updateExpressions.getValueMap());
-    }
-
     @Override
     public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
                                         String rangeKeyName, Object rangeKeyValue,
@@ -756,18 +712,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                                              rangeKeyName, rangeKeyValue,
                                              updateExpression, conditionExpression,
                                              nameMap, valueMap);
-    }
-
-    @Beta
-    public UpdateItemOutcome updateItem(String hashKeyName, Object hashKeyValue,
-                                        String rangeKeyName, Object rangeKeyValue,
-                                        UpdateItemExpressionSpec updateExpressions) {
-        return updateItemDelegate.updateItem(
-                hashKeyName, hashKeyValue, rangeKeyName, rangeKeyValue,
-                updateExpressions.getUpdateExpression(),
-                updateExpressions.getConditionExpression(),
-                updateExpressions.getNameMap(),
-                updateExpressions.getValueMap());
     }
 
     @Override
@@ -786,16 +730,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                                               rangeKeyName, rangeKeyValue, projectionExpression, nameMap);
     }
 
-    @Beta
-    public GetItemOutcome getItemOutcome(String hashKeyName,
-                                         Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-                                         GetItemExpressionSpec projectionExpressions) {
-        return getItemDelegate.getItemOutcome(hashKeyName, hashKeyValue,
-                                              rangeKeyName, rangeKeyValue,
-                                              projectionExpressions.getProjectionExpression(),
-                                              projectionExpressions.getNameMap());
-    }
-
     @Override
     public Item getItem(String hashKeyName, Object hashKeyValue,
                         String projectionExpression, Map<String, String> nameMap) {
@@ -809,16 +743,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
                         String projectionExpression, Map<String, String> nameMap) {
         return getItemDelegate.getItem(hashKeyName, hashKeyValue,
                                        rangeKeyName, rangeKeyValue, projectionExpression, nameMap);
-    }
-
-    @Beta
-    public Item getItem(String hashKeyName, Object hashKeyValue,
-                        String rangeKeyName, Object rangeKeyValue,
-                        GetItemExpressionSpec projectionExpressions) {
-        return getItemDelegate.getItem(hashKeyName, hashKeyValue, rangeKeyName,
-                                       rangeKeyValue, projectionExpressions.getProjectionExpression(),
-                                       projectionExpressions.getNameMap());
-
     }
 
     @Override
@@ -864,17 +788,6 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
                                              rangeKeyName, rangeKeyValue,
                                              conditionExpression, nameMap, valueMap);
-    }
-
-    @Beta
-    public DeleteItemOutcome deleteItem(String hashKeyName,
-                                        Object hashKeyValue, String rangeKeyName, Object rangeKeyValue,
-                                        DeleteItemExpressionSpec conditionExpressions) {
-        return deleteItemDelegate.deleteItem(hashKeyName, hashKeyValue,
-                                             rangeKeyName, rangeKeyValue,
-                                             conditionExpressions.getConditionExpression(),
-                                             conditionExpressions.getNameMap(),
-                                             conditionExpressions.getValueMap());
     }
 
     @Override
