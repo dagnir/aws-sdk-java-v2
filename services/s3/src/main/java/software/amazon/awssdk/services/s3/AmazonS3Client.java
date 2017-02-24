@@ -795,8 +795,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         // header, if the user didn't specify it in the metadata
         if (sseKey.getKey() != null
             && sseKey.getMd5() == null) {
-            String encryptionKey_b64 = sseKey.getKey();
-            byte[] encryptionKey = Base64.decode(encryptionKey_b64);
+            String encryptionKeyb64 = sseKey.getKey();
+            byte[] encryptionKey = Base64.decode(encryptionKeyb64);
             request.addHeader(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5,
                               Md5Utils.md5AsBase64(encryptionKey));
         }
@@ -818,8 +818,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         // header, if the user didn't specify it in the metadata
         if (sseKey.getKey() != null
             && sseKey.getMd5() == null) {
-            String encryptionKey_b64 = sseKey.getKey();
-            byte[] encryptionKey = Base64.decode(encryptionKey_b64);
+            String encryptionKeyBase64 = sseKey.getKey();
+            byte[] encryptionKey = Base64.decode(encryptionKeyBase64);
             request.addHeader(Headers.COPY_SOURCE_SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5,
                               Md5Utils.md5AsBase64(encryptionKey));
         }
@@ -1928,8 +1928,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
             if (calculateMD5 && !skipMd5CheckStrategy.skipServerSideValidation(putObjectRequest)) {
                 try {
-                    String contentMd5_b64 = Md5Utils.md5AsBase64(file);
-                    metadata.setContentMD5(contentMd5_b64);
+                    String contentMd5Base64 = Md5Utils.md5AsBase64(file);
+                    metadata.setContentMD5(contentMd5Base64);
                 } catch (Exception e) {
                     throw new SdkClientException(
                             "Unable to calculate MD5 hash: " + e.getMessage(), e);

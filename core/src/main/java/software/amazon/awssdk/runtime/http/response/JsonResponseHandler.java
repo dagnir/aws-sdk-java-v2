@@ -93,7 +93,7 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
     public AmazonWebServiceResponse<T> handle(HttpResponse response) throws Exception {
         log.trace("Parsing service response JSON");
 
-        String CRC32Checksum = response.getHeaders().get("x-amz-crc32");
+        String crc32Checksum = response.getHeaders().get("x-amz-crc32");
 
         JsonParser jsonParser = null;
 
@@ -109,8 +109,8 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
 
             T result = responseUnmarshaller.unmarshall(unmarshallerContext);
 
-            if (CRC32Checksum != null) {
-                long serverSideCRC = Long.parseLong(CRC32Checksum);
+            if (crc32Checksum != null) {
+                long serverSideCRC = Long.parseLong(crc32Checksum);
                 long clientSideCRC = response.getCRC32Checksum();
                 if (clientSideCRC != serverSideCRC) {
                     throw new Crc32MismatchException(

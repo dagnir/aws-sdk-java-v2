@@ -108,10 +108,10 @@ public class XpathUtils {
         // https://github.com/aws/aws-sdk-java/issues/238
         // http://stackoverflow.com/questions/6340802/java-xpath-apache-jaxp-implementation-performance
         if (System.getProperty(DTM_MANAGER_DEFAULT_PROP_NAME) == null) {
-            Class<?> XPathContextClass = Class.forName(XPATH_CONTEXT_CLASS_NAME);
-            Method getDTMManager = XPathContextClass.getMethod("getDTMManager");
-            Object XPathContext = XPathContextClass.newInstance();
-            Object dtmManager = getDTMManager.invoke(XPathContext);
+            Class<?> xPathContextClass = Class.forName(XPATH_CONTEXT_CLASS_NAME);
+            Method getDTMManager = xPathContextClass.getMethod("getDTMManager");
+            Object xPathContext = xPathContextClass.newInstance();
+            Object dtmManager = getDTMManager.invoke(xPathContext);
 
             if (DTM_MANAGER_IMPL_CLASS_NAME.equals(dtmManager.getClass().getName())) {
                 // This would avoid the file system to be accessed every time

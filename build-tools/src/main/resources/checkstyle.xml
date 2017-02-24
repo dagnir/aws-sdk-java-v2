@@ -217,7 +217,6 @@
             <property name="allowOneCharVarInForLoop" value="true"/>
             <message key="name.invalidPattern"
                      value="Local variable name ''{0}'' must match pattern ''{1}''."/>
-            <property name="severity" value="warning"/> <!-- TODO: Make error. -->
         </module>
 
         <!-- Type parameters must follow a defined format. -->

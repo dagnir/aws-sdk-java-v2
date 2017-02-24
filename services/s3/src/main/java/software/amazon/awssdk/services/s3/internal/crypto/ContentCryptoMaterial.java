@@ -632,10 +632,10 @@ final class ContentCryptoMaterial {
         Map<String, String> matdesc = materials.getMaterialsDescription();
         if (req instanceof MaterialsDescriptionProvider) {
             MaterialsDescriptionProvider mdp = (MaterialsDescriptionProvider) req;
-            Map<String, String> matdesc_req = mdp.getMaterialsDescription();
-            if (matdesc_req != null) {
+            Map<String, String> materialsDescription = mdp.getMaterialsDescription();
+            if (materialsDescription != null) {
                 matdesc = new TreeMap<String, String>(matdesc);
-                matdesc.putAll(matdesc_req);    // request takes precedence
+                matdesc.putAll(materialsDescription);    // request takes precedence
             }
         }
         return matdesc;

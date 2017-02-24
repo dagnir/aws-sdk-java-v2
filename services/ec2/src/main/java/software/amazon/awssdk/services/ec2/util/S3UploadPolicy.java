@@ -62,12 +62,12 @@ public class S3UploadPolicy {
                           int expireInMinutes) {
         Calendar expirationDate = Calendar.getInstance();
         expirationDate.add(Calendar.MINUTE, expireInMinutes);
-        SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        ISO8601.setTimeZone(new SimpleTimeZone(0, "GMT"));
+        SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        iso8601.setTimeZone(new SimpleTimeZone(0, "GMT"));
         StringBuilder builder = new StringBuilder();
         builder.append("{")
                .append("\"expiration\": \"")
-               .append(ISO8601.format(expirationDate.getTime()))
+               .append(iso8601.format(expirationDate.getTime()))
                .append("\",")
                .append("\"conditions\": [")
                .append("{\"bucket\": \"")

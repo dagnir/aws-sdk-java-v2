@@ -469,15 +469,15 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
         if (req instanceof MaterialsDescriptionProvider) {
             // per request level material description
             MaterialsDescriptionProvider mdp = (MaterialsDescriptionProvider) req;
-            Map<String, String> matdesc_req = mdp.getMaterialsDescription();
+            Map<String, String> materialsDescription = mdp.getMaterialsDescription();
             ContentCryptoMaterial ccm = newContentCryptoMaterial(
                     kekMaterialsProvider,
-                    matdesc_req,
+                    materialsDescription,
                     cryptoConfig.getCryptoProvider(), req);
             if (ccm != null) {
                 return ccm;
             }
-            if (matdesc_req != null) {
+            if (materialsDescription != null) {
                 // check to see if KMS is in use and if so we should fall thru
                 // to the s3 client level encryption material
                 EncryptionMaterials material =
@@ -485,7 +485,7 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
                 if (!material.isKMSEnabled()) {
                     throw new SdkClientException(
                             "No material available from the encryption material provider for description "
-                            + matdesc_req);
+                            + materialsDescription);
                 }
             }
             // if there is no material description, fall thru to use
@@ -905,17 +905,17 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
                                         kms
                                        );
         }
-        S3ObjectWrapper orig_ifile =
+        S3ObjectWrapper originalInstructionFile =
                 fetchInstructionFile(s3w.getS3ObjectId(), null);
-        if (orig_ifile == null) {
+        if (originalInstructionFile == null) {
             throw new IllegalArgumentException(
                     "S3 object is not encrypted: " + s3w);
         }
-        if (!orig_ifile.isInstructionFile()) {
+        if (!originalInstructionFile.isInstructionFile()) {
             throw new SdkClientException(
                     "Invalid instruction file for S3 object: " + s3w);
         }
-        String json = orig_ifile.toJsonString();
+        String json = originalInstructionFile.toJsonString();
         return ccmFromJson(json);
     }
 

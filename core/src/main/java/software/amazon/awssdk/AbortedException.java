@@ -21,12 +21,12 @@ package software.amazon.awssdk;
 public class AbortedException extends SdkClientException {
     private static final long serialVersionUID = 1L;
 
-    public AbortedException(String message, Throwable t) {
-        super(message, t);
+    public AbortedException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public AbortedException(Throwable t) {
-        super("", t);
+    public AbortedException(Throwable cause) {
+        super("", cause);
     }
 
     public AbortedException(String message) {
