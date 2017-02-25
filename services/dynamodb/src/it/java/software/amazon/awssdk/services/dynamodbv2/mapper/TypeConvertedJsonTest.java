@@ -24,9 +24,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedJson;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTypeConvertedJson;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemRequest;
@@ -55,13 +55,13 @@ public class TypeConvertedJsonTest {
         assertEquals("knownValue", pojo.getJsonMappedPojo().getKnownField());
     }
 
-    @DynamoDBTable(tableName = "TestTable")
+    @DynamoDbTable(tableName = "TestTable")
     public static class TopLevelPojo {
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKey;
 
-        @DynamoDBTypeConvertedJson
+        @DynamoDbTypeConvertedJson
         private JsonMappedPojo jsonMappedPojo;
 
         public String getHashKey() {

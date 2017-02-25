@@ -22,4 +22,8 @@
     <!-- TODO: Disable these suppressions. -->
     <suppress checks=".*"
               files=".*[\\/](test|it)[\\/]java[\\/].+\.java$"/>
+
+    <!-- Assumes getter/setter match JSON property -->
+    <suppress checks="AbbreviationAsWordInName"
+              files=".*[\\/]software/amazon/awssdk/services/s3/event/S3EventNotification.java$"/>
 </suppressions>

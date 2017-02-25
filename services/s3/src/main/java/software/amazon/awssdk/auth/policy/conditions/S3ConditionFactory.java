@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
  * This class provides access to the AWS access control policy condition keys
  * specific to Amazon S3, as well as methods for quickly creating common S3
  * specific policy conditions such as
- * {@link #newCannedACLCondition(CannedAccessControlList)}.
+ * {@link #newCannedAclCondition(CannedAccessControlList)}.
  */
 public class S3ConditionFactory {
 
@@ -104,7 +104,7 @@ public class S3ConditionFactory {
      *         canned ACL specified in incoming requests against the value
      *         specified.
      */
-    public static Condition newCannedACLCondition(CannedAccessControlList cannedAcl) {
+    public static Condition newCannedAclCondition(CannedAccessControlList cannedAcl) {
         return new StringCondition(StringComparisonType.StringEquals,
                                    CANNED_ACL_CONDITION_KEY, cannedAcl.toString());
     }

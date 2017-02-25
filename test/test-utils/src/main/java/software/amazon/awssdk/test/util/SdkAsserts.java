@@ -30,7 +30,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class SdkAsserts {
 
@@ -196,8 +196,8 @@ public class SdkAsserts {
         } catch (NoSuchAlgorithmException nse) {
             throw new AmazonClientException(nse.getMessage(), nse);
         } finally {
-            IOUtils.closeQuietly(expected, null);
-            IOUtils.closeQuietly(actual, null);
+            IoUtils.closeQuietly(expected, null);
+            IoUtils.closeQuietly(actual, null);
         }
     }
 

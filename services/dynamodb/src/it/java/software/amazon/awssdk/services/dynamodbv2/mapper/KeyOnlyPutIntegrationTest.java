@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbSaveExpression;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ConditionalCheckFailedException;
@@ -63,7 +63,7 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
         DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (HashAndAttribute obj : objs) {
             try {
-                DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
+                DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression();
                 Map<String, ExpectedAttributeValue> expected = new HashMap<String, ExpectedAttributeValue>();
                 ExpectedAttributeValue expectedVersion = new ExpectedAttributeValue()
                         .withValue(new AttributeValue()
@@ -94,13 +94,13 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
         return obj;
     }
 
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class HashAndAttribute {
 
         protected String key;
         protected String normalStringAttribute;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getKey() {
             return key;
         }
@@ -109,7 +109,7 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
             this.key = key;
         }
 
-        @DynamoDBAttribute
+        @DynamoDbAttribute
         public String getNormalStringAttribute() {
             return normalStringAttribute;
         }

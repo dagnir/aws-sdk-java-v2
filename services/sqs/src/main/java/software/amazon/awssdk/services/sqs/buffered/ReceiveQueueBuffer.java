@@ -74,10 +74,10 @@ public class ReceiveQueueBuffer {
     /** finished batches are stored in this list. */
     private LinkedList<ReceiveMessageBatchTask> finishedTasks = new LinkedList<ReceiveMessageBatchTask>();
 
-    ReceiveQueueBuffer(AmazonSQS paramSQS, Executor paramExecutor, QueueBufferConfig paramConfig, String url) {
+    ReceiveQueueBuffer(AmazonSQS paramSqs, Executor paramExecutor, QueueBufferConfig paramConfig, String url) {
         config = paramConfig;
         executor = paramExecutor;
-        sqsClient = paramSQS;
+        sqsClient = paramSqs;
         qUrl = url;
 
     }

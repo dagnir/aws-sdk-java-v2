@@ -119,7 +119,7 @@ public class S3LinkTest {
     public void testGetRegion_ReturnsUsEast1_WhenS3LinkCreated_WithNullRegion() {
         S3Link s3Link = mapper.createS3Link("bucket", "key");
 
-        assertEquals("us-east-1", s3Link.getS3Region().toAWSRegion().getName());
+        assertEquals("us-east-1", s3Link.getS3Region().toAwsRegion().getName());
         assertEquals("us-east-1", s3Link.getRegion());
     }
 
@@ -127,7 +127,7 @@ public class S3LinkTest {
     public void testGetRegion_ReturnsUsEast1_WhenS3LinkCreated_WithUsStandardRegion() {
         S3Link s3Link = mapper.createS3Link(Region.US_Standard, "bucket", "key");
 
-        assertEquals("us-east-1", s3Link.getS3Region().toAWSRegion().getName());
+        assertEquals("us-east-1", s3Link.getS3Region().toAwsRegion().getName());
         assertEquals("us-east-1", s3Link.getRegion());
     }
 
@@ -135,7 +135,7 @@ public class S3LinkTest {
     public void testGetRegion_ReturnsUsEast1_WhenS3LinkCreated_WithUsEast1Region() {
         S3Link s3Link = mapper.createS3Link("us-east-1", "bucket", "key");
 
-        assertEquals("us-east-1", s3Link.getS3Region().toAWSRegion().getName());
+        assertEquals("us-east-1", s3Link.getS3Region().toAwsRegion().getName());
         assertEquals("us-east-1", s3Link.getRegion());
     }
 
@@ -144,6 +144,6 @@ public class S3LinkTest {
         S3Link s3Link = mapper.createS3Link(Region.EU_Frankfurt, "bucket", "key");
 
         assertEquals(Region.EU_Frankfurt, s3Link.getS3Region());
-        assertEquals(Region.EU_Frankfurt.toAWSRegion().getName(), s3Link.getRegion());
+        assertEquals(Region.EU_Frankfurt.toAwsRegion().getName(), s3Link.getRegion());
     }
 }

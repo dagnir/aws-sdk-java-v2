@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * A simple JSON marshaller that uses the Jackson JSON processor. It shares all limitations of that
  * library. For more information about Jackson, see: http://wiki.fasterxml.com/JacksonHome
  *
- * @deprecated Replaced by {@link DynamoDBTypeConvertedJson}
+ * @deprecated Replaced by {@link DynamoDbTypeConvertedJson}
  */
 @Deprecated
 public class JsonMarshaller<T extends Object> implements DynamoDbMarshaller<T> {

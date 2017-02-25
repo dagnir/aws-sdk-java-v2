@@ -34,20 +34,20 @@ public class HttpClientSettings {
 
     private final boolean useBrowserCompatibleHostNameVerifier;
 
-    private final boolean calculateCRC32FromCompressedData;
+    private final boolean calculateCrc32FromCompressedData;
 
     HttpClientSettings(final ClientConfiguration config,
                        final boolean useBrowserCompatibleHostNameVerifier,
-                       final boolean calculateCRC32FromCompressedData) {
+                       final boolean calculateCrc32FromCompressedData) {
         this.config = ValidationUtils.assertNotNull(config, "client configuration");
         this.useBrowserCompatibleHostNameVerifier = useBrowserCompatibleHostNameVerifier;
-        this.calculateCRC32FromCompressedData = calculateCRC32FromCompressedData;
+        this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
     }
 
     public static HttpClientSettings adapt(final ClientConfiguration config,
                                            final boolean useBrowserCompatibleHostNameVerifier,
-                                           final boolean calculateCRC32FromCompressedData) {
-        return new HttpClientSettings(config, useBrowserCompatibleHostNameVerifier, calculateCRC32FromCompressedData);
+                                           final boolean calculateCrc32FromCompressedData) {
+        return new HttpClientSettings(config, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData);
     }
 
     public static HttpClientSettings adapt(final ClientConfiguration config,
@@ -63,8 +63,8 @@ public class HttpClientSettings {
         return useBrowserCompatibleHostNameVerifier;
     }
 
-    public boolean calculateCRC32FromCompressedData() {
-        return calculateCRC32FromCompressedData;
+    public boolean calculateCrc32FromCompressedData() {
+        return calculateCrc32FromCompressedData;
     }
 
     public int getMaxConnections() {
@@ -135,7 +135,7 @@ public class HttpClientSettings {
         return config.getConnectionTimeout();
     }
 
-    public long getConnectionPoolTTL() {
+    public long getConnectionPoolTtl() {
         return config.getConnectionTtl();
     }
 

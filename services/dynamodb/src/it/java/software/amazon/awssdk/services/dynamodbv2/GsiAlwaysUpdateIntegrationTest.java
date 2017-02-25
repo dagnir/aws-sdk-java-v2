@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTableMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTableMapper;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
@@ -37,7 +37,7 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
             GsiAlwaysUpdateIntegrationTest.class.getSimpleName() + "-" + System.currentTimeMillis();
 
     private AmazonDynamoDB ddb;
-    private DynamoDBTableMapper<GsiWithAlwaysUpdateTimestamp, String, String> mapper;
+    private DynamoDbTableMapper<GsiWithAlwaysUpdateTimestamp, String, String> mapper;
 
     @Before
     public void setup() {
@@ -45,8 +45,8 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
                                          .withCredentials(new AwsStaticCredentialsProvider(credentials))
                                          .withRegion(Regions.US_WEST_2)
                                          .build();
-        mapper = new DynamoDbMapper(ddb, DynamoDBMapperConfig.builder()
-                                                             .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(TABLE_NAME))
+        mapper = new DynamoDbMapper(ddb, DynamoDbMapperConfig.builder()
+                                                             .withTableNameOverride(new DynamoDbMapperConfig.TableNameOverride(TABLE_NAME))
                                                              .build()).newTableMapper(GsiWithAlwaysUpdateTimestamp.class);
         mapper.createTable(new ProvisionedThroughput(5L, 5L));
         ddb.waiters().tableExists()

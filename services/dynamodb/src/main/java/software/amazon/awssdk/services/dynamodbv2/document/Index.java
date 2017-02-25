@@ -181,7 +181,7 @@ public class Index implements QueryApi, ScanApi {
      *
      * @return the updated table description returned from DynamoDB.
      */
-    public TableDescription updateGSI(
+    public TableDescription updateGsi(
             ProvisionedThroughput provisionedThroughput) {
         return table.updateTable(new UpdateTableSpec()
                                          .withGlobalSecondaryIndexUpdates(
@@ -202,7 +202,7 @@ public class Index implements QueryApi, ScanApi {
      *
      * @return the updated table description returned from DynamoDB.
      */
-    public TableDescription deleteGSI() {
+    public TableDescription deleteGsi() {
         return table.updateTable(new UpdateTableSpec()
                                          .withGlobalSecondaryIndexUpdates(
                                                  new GlobalSecondaryIndexUpdate().withDelete(

@@ -56,9 +56,9 @@ public class ${shape.shapeName}JsonUnmarshaller implements Unmarshaller<${shape.
         java.io.InputStream is = context.getHttpResponse().getContent();
         if(is != null) {
             try {
-                ${shape.variable.variableName}.${explicitPayloadMember.setterMethodName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.util.IOUtils.toByteArray(is)));
+                ${shape.variable.variableName}.${explicitPayloadMember.setterMethodName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.util.IoUtils.toByteArray(is)));
             } finally {
-                software.amazon.awssdk.util.IOUtils.closeQuietly(is, null);
+                software.amazon.awssdk.util.IoUtils.closeQuietly(is, null);
             }
         }
     <#else>

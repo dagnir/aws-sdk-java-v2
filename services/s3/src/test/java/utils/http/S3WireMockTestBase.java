@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.S3ClientOptions;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * Base class for tests that use a WireMock server
@@ -38,11 +38,11 @@ public abstract class S3WireMockTestBase {
     public static String getExpectedMarshalledXml(String resourceName) {
         final InputStream stream = S3WireMockTestBase.class.getResourceAsStream("/resources/marshalling/" + resourceName);
         try {
-            return IOUtils.toString(stream);
+            return IoUtils.toString(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            IOUtils.closeQuietly(stream, null);
+            IoUtils.closeQuietly(stream, null);
         }
     }
 

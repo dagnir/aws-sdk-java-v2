@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  * An unmarshaller that unmarshals DynamoDB NumberSets into sets of Java
  * {@code BigDecimal}s.
  */
-public class BigDecimalSetUnmarshaller extends NSUnmarshaller {
+public class BigDecimalSetUnmarshaller extends NsUnmarshaller {
 
     private static final BigDecimalSetUnmarshaller INSTANCE =
             new BigDecimalSetUnmarshaller();

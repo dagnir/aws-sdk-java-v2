@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,11 +30,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.internal.EC2CredentialsUtils;
 import software.amazon.awssdk.util.json.Jackson;
 
@@ -203,7 +205,7 @@ public class EC2MetadataUtils {
      * including the instance's LastUpdated date, InstanceProfileArn, and
      * InstanceProfileId.
      */
-    public static IAMInfo getIAMInstanceProfileInfo() {
+    public static IamInfo getIamInstanceProfileInfo() {
         String json = getData(EC2_METADATA_ROOT + "/iam/info");
         if (null == json) {
             return null;
@@ -211,7 +213,7 @@ public class EC2MetadataUtils {
 
         try {
 
-            return mapper.readValue(json, IAMInfo.class);
+            return mapper.readValue(json, IamInfo.class);
 
         } catch (Exception e) {
             log.warn("Unable to parse IAM Instance profile info (" + json
@@ -282,8 +284,8 @@ public class EC2MetadataUtils {
      * SessionToken, and Expiration) associated with the IAM roles on the
      * instance.
      */
-    public static Map<String, IAMSecurityCredential> getIAMSecurityCredentials() {
-        Map<String, IAMSecurityCredential> credentialsInfoMap = new HashMap<String, IAMSecurityCredential>();
+    public static Map<String, IamSecurityCredential> getIamSecurityCredentials() {
+        Map<String, IamSecurityCredential> credentialsInfoMap = new HashMap<String, IamSecurityCredential>();
 
         List<String> credentials = getItems(EC2_METADATA_ROOT
                                             + "/iam/security-credentials");
@@ -293,8 +295,8 @@ public class EC2MetadataUtils {
                 String json = getData(EC2_METADATA_ROOT
                                       + "/iam/security-credentials/" + credential);
                 try {
-                    IAMSecurityCredential credentialInfo = mapper
-                            .readValue(json, IAMSecurityCredential.class);
+                    IamSecurityCredential credentialInfo = mapper
+                            .readValue(json, IamSecurityCredential.class);
                     credentialsInfoMap.put(credential, credentialInfo);
                 } catch (Exception e) {
                     log.warn("Unable to process the credential (" + credential
@@ -416,7 +418,7 @@ public class EC2MetadataUtils {
      * Returns the host address of the Amazon EC2 Instance Metadata Service.
      */
     public static String getHostAddressForEC2MetadataService() {
-        String host = System.getProperty(SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
+        String host = System.getProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
         return host != null ? host : EC2_METADATA_SERVICE_URL;
     }
 
@@ -425,7 +427,7 @@ public class EC2MetadataUtils {
      * including the instance's LastUpdated date, InstanceProfileArn, and
      * InstanceProfileId.
      */
-    public static class IAMInfo {
+    public static class IamInfo {
         public String code;
         public String message;
         public String lastUpdated;
@@ -437,7 +439,7 @@ public class EC2MetadataUtils {
      * The temporary security credentials (AccessKeyId, SecretAccessKey,
      * SessionToken, and Expiration) associated with the IAM role.
      */
-    public static class IAMSecurityCredential {
+    public static class IamSecurityCredential {
         public String code;
         public String message;
         public String lastUpdated;

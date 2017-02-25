@@ -17,10 +17,11 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.List;
 import java.util.Map;
+
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper.FailedBatch;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchWriteItemRequest;
@@ -44,34 +45,34 @@ public interface IDynamoDbMapper {
     /**
      * Get the table model for the class, using the default configuration.
      *
-     * @see DynamoDbMapper#getTableModel(Class, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#getTableModel(Class, DynamoDbMapperConfig)
      */
-    <T extends Object> DynamoDBMapperTableModel<T> getTableModel(Class<T> clazz);
+    <T extends Object> DynamoDbMapperTableModel<T> getTableModel(Class<T> clazz);
 
     /**
      * Get the table model for the class using the provided configuration override.
      */
-    <T extends Object> DynamoDBMapperTableModel<T> getTableModel(Class<T> clazz, DynamoDBMapperConfig config);
+    <T extends Object> DynamoDbMapperTableModel<T> getTableModel(Class<T> clazz, DynamoDbMapperConfig config);
 
     /**
      * Loads an object with the hash key given and a configuration override. This configuration
      * overrides the default provided at object construction.
      *
-     * @see DynamoDbMapper#load(Class, Object, Object, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#load(Class, Object, Object, DynamoDbMapperConfig)
      */
-    <T extends Object> T load(Class<T> clazz, Object hashKey, DynamoDBMapperConfig config);
+    <T extends Object> T load(Class<T> clazz, Object hashKey, DynamoDbMapperConfig config);
 
     /**
      * Loads an object with the hash key given, using the default configuration.
      *
-     * @see DynamoDbMapper#load(Class, Object, Object, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#load(Class, Object, Object, DynamoDbMapperConfig)
      */
     <T extends Object> T load(Class<T> clazz, Object hashKey);
 
     /**
      * Loads an object with a hash and range key, using the default configuration.
      *
-     * @see DynamoDbMapper#load(Class, Object, Object, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#load(Class, Object, Object, DynamoDbMapperConfig)
      */
     <T extends Object> T load(Class<T> clazz, Object hashKey, Object rangeKey);
 
@@ -81,7 +82,7 @@ public interface IDynamoDbMapper {
      *
      * @param keyObject
      *            An object of the class to load with the keys values to match.
-     * @see DynamoDbMapper#load(Object, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#load(Object, DynamoDbMapperConfig)
      */
     <T extends Object> T load(T keyObject);
 
@@ -95,7 +96,7 @@ public interface IDynamoDbMapper {
      *            Configuration for the service call to retrieve the object from DynamoDB. This
      *            configuration overrides the default given at construction.
      */
-    <T extends Object> T load(T keyObject, DynamoDBMapperConfig config);
+    <T extends Object> T load(T keyObject, DynamoDbMapperConfig config);
 
     /**
      * Returns an object with the given hash key, or null if no such object exists.
@@ -110,7 +111,7 @@ public interface IDynamoDbMapper {
      *            Configuration for the service call to retrieve the object from DynamoDB. This
      *            configuration overrides the default given at construction.
      */
-    <T extends Object> T load(Class<T> clazz, Object hashKey, Object rangeKey, DynamoDBMapperConfig config);
+    <T extends Object> T load(Class<T> clazz, Object hashKey, Object rangeKey, DynamoDbMapperConfig config);
 
     /**
      * Creates and fills in the attributes on an instance of the class given with the attributes
@@ -142,7 +143,7 @@ public interface IDynamoDbMapper {
     /**
      * Saves the object given into DynamoDB, using the default configuration.
      *
-     * @see DynamoDbMapper#save(Object, DynamoDBSaveExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#save(Object, DynamoDbSaveExpression, DynamoDbMapperConfig)
      */
     <T extends Object> void save(T object);
 
@@ -150,20 +151,20 @@ public interface IDynamoDbMapper {
      * Saves the object given into DynamoDB, using the default configuration and the specified
      * saveExpression.
      *
-     * @see DynamoDbMapper#save(Object, DynamoDBSaveExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#save(Object, DynamoDbSaveExpression, DynamoDbMapperConfig)
      */
-    <T extends Object> void save(T object, DynamoDBSaveExpression saveExpression);
+    <T extends Object> void save(T object, DynamoDbSaveExpression saveExpression);
 
     /**
      * Saves the object given into DynamoDB, using the specified configuration.
      *
-     * @see DynamoDbMapper#save(Object, DynamoDBSaveExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#save(Object, DynamoDbSaveExpression, DynamoDbMapperConfig)
      */
-    <T extends Object> void save(T object, DynamoDBMapperConfig config);
+    <T extends Object> void save(T object, DynamoDbMapperConfig config);
 
     /**
      * Saves an item in DynamoDB. The service method used is determined by the
-     * {@link DynamoDBMapperConfig#getSaveBehavior()} value, to use either
+     * {@link DynamoDbMapperConfig#getSaveBehavior()} value, to use either
      * {@link AmazonDynamoDB#putItem(PutItemRequest)} or
      * {@link AmazonDynamoDB#updateItem(UpdateItemRequest)}:
      * <ul>
@@ -188,9 +189,9 @@ public interface IDynamoDbMapper {
      * @param config
      *            The configuration to use, which overrides the default provided at object
      *            construction.
-     * @see DynamoDBMapperConfig.SaveBehavior
+     * @see DynamoDbMapperConfig.SaveBehavior
      */
-    <T extends Object> void save(T object, DynamoDBSaveExpression saveExpression, DynamoDBMapperConfig config);
+    <T extends Object> void save(T object, DynamoDbSaveExpression saveExpression, DynamoDbMapperConfig config);
 
     /**
      * Deletes the given object from its DynamoDB table using the default configuration.
@@ -201,12 +202,12 @@ public interface IDynamoDbMapper {
      * Deletes the given object from its DynamoDB table using the specified deleteExpression and
      * default configuration.
      */
-    void delete(Object object, DynamoDBDeleteExpression deleteExpression);
+    void delete(Object object, DynamoDbDeleteExpression deleteExpression);
 
     /**
      * Deletes the given object from its DynamoDB table using the specified configuration.
      */
-    void delete(Object object, DynamoDBMapperConfig config);
+    void delete(Object object, DynamoDbMapperConfig config);
 
     /**
      * Deletes the given object from its DynamoDB table using the provided deleteExpression and
@@ -219,7 +220,7 @@ public interface IDynamoDbMapper {
      *            Config override object. If {@link SaveBehavior#CLOBBER} is supplied, version
      *            fields will not be considered when deleting the object.
      */
-    <T> void delete(T object, DynamoDBDeleteExpression deleteExpression, DynamoDBMapperConfig config);
+    <T> void delete(T object, DynamoDbDeleteExpression deleteExpression, DynamoDbMapperConfig config);
 
     /**
      * Deletes the objects given using one or more calls to the
@@ -321,25 +322,25 @@ public interface IDynamoDbMapper {
      *            as required by the {@link AmazonDynamoDB#batchWriteItem(BatchWriteItemRequest)}
      *            API.
      * @param config
-     *            Only {@link DynamoDBMapperConfig#getTableNameOverride()} and
-     *            {@link DynamoDBMapperConfig#getBatchWriteRetryStrategy()} are considered. If
+     *            Only {@link DynamoDbMapperConfig#getTableNameOverride()} and
+     *            {@link DynamoDbMapperConfig#getBatchWriteRetryStrategy()} are considered. If
      *            TableNameOverride is specified, all objects in the two parameter lists will be
      *            considered to belong to the given table override. In particular, this method
      *            <b>always acts as if SaveBehavior.CLOBBER was specified</b> regardless of the
      *            value of the config parameter.
      * @return A list of failed batches which includes the unprocessed items and the exceptions
      *         causing the failure.
-     * @see DynamoDBMapperConfig#getTableNameOverride()
-     * @see DynamoDBMapperConfig#getBatchWriteRetryStrategy()
+     * @see DynamoDbMapperConfig#getTableNameOverride()
+     * @see DynamoDbMapperConfig#getBatchWriteRetryStrategy()
      */
     List<FailedBatch> batchWrite(Iterable<? extends Object> objectsToWrite,
                                  Iterable<? extends Object> objectsToDelete,
-                                 DynamoDBMapperConfig config);
+                                 DynamoDbMapperConfig config);
 
     /**
      * Retrieves multiple items from multiple tables using their primary keys.
      *
-     * @see DynamoDbMapper#batchLoad(List, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#batchLoad(List, DynamoDbMapperConfig)
      * @return A map of the loaded objects. Each key in the map is the name of a DynamoDB table.
      *         Each value in the map is a list of objects that have been loaded from that table. All
      *         objects for each table can be cast to the associated user defined type that is
@@ -356,8 +357,8 @@ public interface IDynamoDbMapper {
      *            Key objects, corresponding to the class to fetch, with their primary key values
      *            set.
      * @param config
-     *            Only {@link DynamoDBMapperConfig#getTableNameOverride()} and
-     *            {@link DynamoDBMapperConfig#getConsistentReads()} are considered.
+     *            Only {@link DynamoDbMapperConfig#getTableNameOverride()} and
+     *            {@link DynamoDbMapperConfig#getConsistentReads()} are considered.
      * @return A map of the loaded objects. Each key in the map is the name of a DynamoDB table.
      *         Each value in the map is a list of objects that have been loaded from that table. All
      *         objects for each table can be cast to the associated user defined type that is
@@ -365,7 +366,7 @@ public interface IDynamoDbMapper {
      * @throws DynamoDbMapper.BatchGetItemException if all the requested items are not processed
      *         within the maximum number of retries.
      */
-    Map<String, List<Object>> batchLoad(Iterable<? extends Object> itemsToGet, DynamoDBMapperConfig config);
+    Map<String, List<Object>> batchLoad(Iterable<? extends Object> itemsToGet, DynamoDbMapperConfig config);
 
     /**
      * Retrieves the attributes for multiple items from multiple tables using their primary keys.
@@ -377,21 +378,21 @@ public interface IDynamoDbMapper {
      *         annotated as mapping that table.
      * @throws DynamoDbMapper.BatchGetItemException if all the requested items are not processed
      *         within the maximum number of retries.
-     * @see #batchLoad(List, DynamoDBMapperConfig)
-     * @see #batchLoad(Map, DynamoDBMapperConfig)
+     * @see #batchLoad(List, DynamoDbMapperConfig)
+     * @see #batchLoad(Map, DynamoDbMapperConfig)
      */
     Map<String, List<Object>> batchLoad(Map<Class<?>, List<KeyPair>> itemsToGet);
 
     /**
      * Retrieves multiple items from multiple tables using their primary keys. Valid only for tables
      * with a single hash key, or a single hash and range key. For other schemas, use
-     * {@link DynamoDbMapper#batchLoad(List, DynamoDBMapperConfig)}
+     * {@link DynamoDbMapper#batchLoad(List, DynamoDbMapperConfig)}
      *
      * @param itemsToGet
      *            Map from class to load to list of primary key attributes.
      * @param config
-     *            Only {@link DynamoDBMapperConfig#getTableNameOverride()} and
-     *            {@link DynamoDBMapperConfig#getConsistentReads()} are considered.
+     *            Only {@link DynamoDbMapperConfig#getTableNameOverride()} and
+     *            {@link DynamoDbMapperConfig#getConsistentReads()} are considered.
      * @return A map of the loaded objects. Each key in the map is the name of a DynamoDB table.
      *         Each value in the map is a list of objects that have been loaded from that table. All
      *         objects for each table can be cast to the associated user defined type that is
@@ -399,15 +400,15 @@ public interface IDynamoDbMapper {
      * @throws DynamoDbMapper.BatchGetItemException if all the requested items are not processed
      *         within the maximum number of retries.
      */
-    Map<String, List<Object>> batchLoad(Map<Class<?>, List<KeyPair>> itemsToGet, DynamoDBMapperConfig config);
+    Map<String, List<Object>> batchLoad(Map<Class<?>, List<KeyPair>> itemsToGet, DynamoDbMapperConfig config);
 
     /**
      * Scans through an Amazon DynamoDB table and returns the matching results as an unmodifiable
      * list of instantiated objects, using the default configuration.
      *
-     * @see DynamoDbMapper#scan(Class, DynamoDBScanExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#scan(Class, DynamoDbScanExpression, DynamoDbMapperConfig)
      */
-    <T> PaginatedScanList<T> scan(Class<T> clazz, DynamoDBScanExpression scanExpression);
+    <T> PaginatedScanList<T> scan(Class<T> clazz, DynamoDbScanExpression scanExpression);
 
     /**
      * Scans through an Amazon DynamoDB table and returns the matching results as an unmodifiable
@@ -437,17 +438,17 @@ public interface IDynamoDbMapper {
      * @see PaginatedScanList
      * @see PaginationLoadingStrategy
      */
-    <T> PaginatedScanList<T> scan(Class<T> clazz, DynamoDBScanExpression scanExpression, DynamoDBMapperConfig config);
+    <T> PaginatedScanList<T> scan(Class<T> clazz, DynamoDbScanExpression scanExpression, DynamoDbMapperConfig config);
 
     /**
      * Scans through an Amazon DynamoDB table on logically partitioned segments in parallel and
      * returns the matching results in one unmodifiable list of instantiated objects, using the
      * default configuration.
      *
-     * @see DynamoDbMapper#parallelScan(Class, DynamoDBScanExpression, int, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#parallelScan(Class, DynamoDbScanExpression, int, DynamoDbMapperConfig)
      */
     <T> PaginatedParallelScanList<T> parallelScan(Class<T> clazz,
-                                                  DynamoDBScanExpression scanExpression,
+                                                  DynamoDbScanExpression scanExpression,
                                                   int totalSegments);
 
     /**
@@ -485,9 +486,9 @@ public interface IDynamoDbMapper {
      * @see PaginationLoadingStrategy
      */
     <T> PaginatedParallelScanList<T> parallelScan(Class<T> clazz,
-                                                  DynamoDBScanExpression scanExpression,
+                                                  DynamoDbScanExpression scanExpression,
                                                   int totalSegments,
-                                                  DynamoDBMapperConfig config);
+                                                  DynamoDbMapperConfig config);
 
     /**
      * Scans through an Amazon DynamoDB table and returns a single page of matching results. The
@@ -506,22 +507,22 @@ public interface IDynamoDbMapper {
      *            The configuration to use for this scan, which overrides the default provided at
      *            object construction.
      */
-    <T> ScanResultPage<T> scanPage(Class<T> clazz, DynamoDBScanExpression scanExpression, DynamoDBMapperConfig config);
+    <T> ScanResultPage<T> scanPage(Class<T> clazz, DynamoDbScanExpression scanExpression, DynamoDbMapperConfig config);
 
     /**
      * Scans through an Amazon DynamoDB table and returns a single page of matching results.
      *
-     * @see DynamoDbMapper#scanPage(Class, DynamoDBScanExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#scanPage(Class, DynamoDbScanExpression, DynamoDbMapperConfig)
      */
-    <T> ScanResultPage<T> scanPage(Class<T> clazz, DynamoDBScanExpression scanExpression);
+    <T> ScanResultPage<T> scanPage(Class<T> clazz, DynamoDbScanExpression scanExpression);
 
     /**
      * Queries an Amazon DynamoDB table and returns the matching results as an unmodifiable list of
      * instantiated objects, using the default configuration.
      *
-     * @see DynamoDbMapper#query(Class, DynamoDBQueryExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#query(Class, DynamoDbQueryExpression, DynamoDbMapperConfig)
      */
-    <T> PaginatedQueryList<T> query(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression);
+    <T> PaginatedQueryList<T> query(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression);
 
     /**
      * Queries an Amazon DynamoDB table and returns the matching results as an unmodifiable list of
@@ -556,8 +557,8 @@ public interface IDynamoDbMapper {
      * @see PaginationLoadingStrategy
      */
     <T> PaginatedQueryList<T> query(Class<T> clazz,
-                                    DynamoDBQueryExpression<T> queryExpression,
-                                    DynamoDBMapperConfig config);
+                                    DynamoDbQueryExpression<T> queryExpression,
+                                    DynamoDbMapperConfig config);
 
     /**
      * Queries an Amazon DynamoDB table and returns a single page of matching results. The table to
@@ -565,9 +566,9 @@ public interface IDynamoDbMapper {
      * where to store the object data in Amazon DynamoDB, and the query expression parameter allows
      * the caller to filter results and control how the query is executed.
      *
-     * @see DynamoDbMapper#queryPage(Class, DynamoDBQueryExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#queryPage(Class, DynamoDbQueryExpression, DynamoDbMapperConfig)
      */
-    <T> QueryResultPage<T> queryPage(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression);
+    <T> QueryResultPage<T> queryPage(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression);
 
     /**
      * Queries an Amazon DynamoDB table and returns a single page of matching results. The table to
@@ -587,16 +588,16 @@ public interface IDynamoDbMapper {
      *            object construction.
      */
     <T> QueryResultPage<T> queryPage(Class<T> clazz,
-                                     DynamoDBQueryExpression<T> queryExpression,
-                                     DynamoDBMapperConfig config);
+                                     DynamoDbQueryExpression<T> queryExpression,
+                                     DynamoDbMapperConfig config);
 
     /**
      * Evaluates the specified scan expression and returns the count of matching items, without
      * returning any of the actual item data, using the default configuration.
      *
-     * @see DynamoDbMapper#count(Class, DynamoDBScanExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#count(Class, DynamoDbScanExpression, DynamoDbMapperConfig)
      */
-    int count(Class<?> clazz, DynamoDBScanExpression scanExpression);
+    int count(Class<?> clazz, DynamoDbScanExpression scanExpression);
 
     /**
      * Evaluates the specified scan expression and returns the count of matching items, without
@@ -614,15 +615,15 @@ public interface IDynamoDbMapper {
      *            object construction.
      * @return The count of matching items, without returning any of the actual item data.
      */
-    int count(Class<?> clazz, DynamoDBScanExpression scanExpression, DynamoDBMapperConfig config);
+    int count(Class<?> clazz, DynamoDbScanExpression scanExpression, DynamoDbMapperConfig config);
 
     /**
      * Evaluates the specified query expression and returns the count of matching items, without
      * returning any of the actual item data, using the default configuration.
      *
-     * @see DynamoDbMapper#count(Class, DynamoDBQueryExpression, DynamoDBMapperConfig)
+     * @see DynamoDbMapper#count(Class, DynamoDbQueryExpression, DynamoDbMapperConfig)
      */
-    <T> int count(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression);
+    <T> int count(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression);
 
     /**
      * Evaluates the specified query expression and returns the count of matching items, without
@@ -637,7 +638,7 @@ public interface IDynamoDbMapper {
      *            provided at object construction.
      * @return The count of matching items, without returning any of the actual item data.
      */
-    <T> int count(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression, DynamoDBMapperConfig config);
+    <T> int count(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression, DynamoDbMapperConfig config);
 
     /**
      * Returns the underlying {@link S3ClientCache} for accessing S3.

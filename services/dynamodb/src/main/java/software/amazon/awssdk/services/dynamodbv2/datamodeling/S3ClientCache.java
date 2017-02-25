@@ -106,7 +106,7 @@ public class S3ClientCache {
         if (region == null) {
             throw new IllegalArgumentException("S3 region must be specified");
         }
-        return getClient(region.toAWSRegion().getName());
+        return getClient(region.toAwsRegion().getName());
     }
 
     /**
@@ -173,7 +173,7 @@ public class S3ClientCache {
      *         {@link AmazonS3},
      */
     public TransferManager getTransferManager(Region region) {
-        return getTransferManager(region.toAWSRegion().getName());
+        return getTransferManager(region.toAwsRegion().getName());
     }
 
     /**

@@ -60,15 +60,15 @@ public class IntegrationTestBase {
     protected static final String LSI_RANGE_KEY_NAME = "lsiRangekeyAttr";
     private static final ProvisionedThroughput THRUPUT = new ProvisionedThroughput(1L, 2L);
     private static final Projection PROJECTION = new Projection().withProjectionType(ProjectionType.ALL);
-    protected static DynamoDB dynamo;
-    protected static DynamoDB dynamoOld;
+    protected static DynamoDb dynamo;
+    protected static DynamoDb dynamoOld;
 
     //    private static final boolean IS_SERVICE_BUILDER_USED = false;
     @BeforeClass
     public static void setup() throws InterruptedException {
-        dynamoOld = new DynamoDB(new AmazonDynamoDBClient(awsTestCredentials()));
+        dynamoOld = new DynamoDb(new AmazonDynamoDBClient(awsTestCredentials()));
         AmazonDynamoDBClient client = new AmazonDynamoDBClient(awsTestCredentials());
-        dynamo = new DynamoDB(client);
+        dynamo = new DynamoDb(client);
         createTable_hashKeyOnly();
         createTable_rangeKey();
     }
@@ -82,8 +82,8 @@ public class IntegrationTestBase {
     // Creates a hashkey only table with 2 GSI,
     // one hashkey only, the other hashkey and rangekey
     private static void createTable_hashKeyOnly() throws InterruptedException {
-        DynamoDB[] ddbs = {dynamo, dynamoOld};
-        for (DynamoDB ddb : ddbs) {
+        DynamoDb[] ddbs = {dynamo, dynamoOld};
+        for (DynamoDb ddb : ddbs) {
             Table table = ddb.getTable(HASH_ONLY_TABLE_NAME);
             TableDescription desc = table.waitForActiveOrDelete();
             if (desc == null) {
@@ -118,8 +118,8 @@ public class IntegrationTestBase {
     // (one hashkey only, the other hashkey and rangekey)
     // and an LSI (which must have a rangekey and share the hashkey with the table)
     private static void createTable_rangeKey() throws InterruptedException {
-        DynamoDB[] ddbs = {dynamo, dynamoOld};
-        for (DynamoDB ddb : ddbs) {
+        DynamoDb[] ddbs = {dynamo, dynamoOld};
+        for (DynamoDb ddb : ddbs) {
             Table table = ddb.getTable(RANGE_TABLE_NAME);
             TableDescription desc = table.waitForActiveOrDelete();
             if (desc == null) {
@@ -184,7 +184,7 @@ public class IntegrationTestBase {
         Assert.assertTrue("Expect " + greater + " > " + less, greater > less);
     }
 
-    protected void putDataToRangeTable(DynamoDB dynamo, String hashKeyValue,
+    protected void putDataToRangeTable(DynamoDb dynamo, String hashKeyValue,
                                        int rangeKeyValueFrom, int rangeKeyValueTo) {
         Table table = dynamo.getTable(RANGE_TABLE_NAME);
         Item item = new Item()

@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.auth;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.ACCESS_KEY_SYSTEM_PROPERTY;
-import static software.amazon.awssdk.SDKGlobalConfiguration.SECRET_KEY_SYSTEM_PROPERTY;
+import static software.amazon.awssdk.SdkGlobalConfiguration.ACCESS_KEY_SYSTEM_PROPERTY;
+import static software.amazon.awssdk.SdkGlobalConfiguration.SECRET_KEY_SYSTEM_PROPERTY;
 
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.util.StringUtils;

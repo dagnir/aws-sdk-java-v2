@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.metrics;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.DEFAULT_METRICS_SYSTEM_PROPERTY;
+import static software.amazon.awssdk.SdkGlobalConfiguration.DEFAULT_METRICS_SYSTEM_PROPERTY;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
@@ -409,7 +409,7 @@ public enum AwsSdkMetrics {
      * Returns a non-null request metric collector for the SDK. If no custom
      * request metric collector has previously been specified via
      * {@link #setMetricCollector(MetricCollector)} and the
-     * {@link SDKGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY} has been set, then this method
+     * {@link SdkGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY} has been set, then this method
      * will initialize and return the default metric collector provided by the
      * AWS SDK on a best-attempt basis.
      */
@@ -509,7 +509,7 @@ public enum AwsSdkMetrics {
 
     /**
      * Returns true if the system property
-     * {@link SDKGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY} has been
+     * {@link SdkGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY} has been
      * set; false otherwise.
      */
     public static boolean isDefaultMetricsEnabled() {

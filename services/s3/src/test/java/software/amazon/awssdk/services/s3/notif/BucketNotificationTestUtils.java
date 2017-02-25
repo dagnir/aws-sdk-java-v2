@@ -23,7 +23,7 @@ import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
-import software.amazon.awssdk.auth.policy.actions.SNSActions;
+import software.amazon.awssdk.auth.policy.actions.SnsActions;
 import software.amazon.awssdk.services.sns.AmazonSNS;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesResult;
@@ -70,7 +70,7 @@ public class BucketNotificationTestUtils {
     public static void authorizeS3ToSendToSns(AmazonSNS sns, String topicArn, String bucketName) {
         Policy policy = getSnsPolicy(sns, topicArn);
         Statement s3AccessStatement = createAllowS3AccessToResourcePolicyStatement(bucketName, topicArn,
-                                                                                   SNSActions.Publish);
+                                                                                   SnsActions.Publish);
         policy.getStatements().add(s3AccessStatement);
         sns.setTopicAttributes(new SetTopicAttributesRequest(topicArn, "Policy", policy.toJson()));
     }

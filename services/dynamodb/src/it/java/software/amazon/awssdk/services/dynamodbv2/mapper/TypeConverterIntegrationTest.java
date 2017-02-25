@@ -25,10 +25,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMappingException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTypeConverted;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTypeConverter;
 import software.amazon.awssdk.services.dynamodbv2.pojos.AutoKeyAndVal;
 import software.amazon.awssdk.services.dynamodbv2.pojos.Currency;
 
@@ -59,7 +59,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
     /**
      * Test using {@code Currency}.
      */
-    @Test(expected = DynamoDBMappingException.class) //<- does not yet support lists/maps
+    @Test(expected = DynamoDbMappingException.class) //<- does not yet support lists/maps
     public void testCurrency() {
         final KeyAndCurrency object = new KeyAndCurrency();
         object.setVal(new Currency(69.99D, "CAD"));
@@ -129,7 +129,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
     /**
      * An object with {@code Currency}.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndStringCurrency extends AutoKeyAndVal<Currency> {
         @CurrencyFormat(separator = "-")
         public Currency getVal() {
@@ -141,14 +141,14 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
             super.setVal(val);
         }
 
-        @DynamoDBTypeConverted(converter = StringCurrencyConverter.class)
+        @DynamoDbTypeConverted(converter = StringCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
         @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
         }
 
-        public static final class StringCurrencyConverter implements DynamoDBTypeConverter<String, Currency> {
+        public static final class StringCurrencyConverter implements DynamoDbTypeConverter<String, Currency> {
             private final CurrencyFormat f;
 
             public StringCurrencyConverter(final Class<Currency> targetType, final CurrencyFormat f) {
@@ -171,9 +171,9 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
     /**
      * An object with {@code Currency}.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndCurrency extends AutoKeyAndVal<Currency> {
-        @DynamoDBTypeConverted(converter = NoConvertCurrencyConverter.class)
+        @DynamoDbTypeConverted(converter = NoConvertCurrencyConverter.class)
         public Currency getVal() {
             return super.getVal();
         }
@@ -183,7 +183,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
             super.setVal(val);
         }
 
-        public static final class NoConvertCurrencyConverter implements DynamoDBTypeConverter<Currency, Currency> {
+        public static final class NoConvertCurrencyConverter implements DynamoDbTypeConverter<Currency, Currency> {
             @Override
             public Currency convert(final Currency object) {
                 return object;
@@ -199,7 +199,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
     /**
      * An object with {@code Currency}.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndStringSetCurrency extends AutoKeyAndVal<Set<Currency>> {
         @CurrencyFormat(separator = "-")
         public Set<Currency> getVal() {
@@ -211,14 +211,14 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
             super.setVal(val);
         }
 
-        @DynamoDBTypeConverted(converter = StringSetCurrencyConverter.class)
+        @DynamoDbTypeConverted(converter = StringSetCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
         @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
             String separator() default " ";
         }
 
-        public static final class StringSetCurrencyConverter implements DynamoDBTypeConverter<Set<String>, Set<Currency>> {
+        public static final class StringSetCurrencyConverter implements DynamoDbTypeConverter<Set<String>, Set<Currency>> {
             private final CurrencyFormat f;
 
             public StringSetCurrencyConverter(final Class<Currency> targetType, final CurrencyFormat f) {
@@ -249,7 +249,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
     /**
      * An object with {@code Currency}.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndDoubleCurrency extends AutoKeyAndVal<Currency> {
         @CurrencyFormat
         public Currency getVal() {
@@ -261,7 +261,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
             super.setVal(val);
         }
 
-        @DynamoDBTypeConverted(converter = DoubleCurrencyConverter.class)
+        @DynamoDbTypeConverted(converter = DoubleCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
         @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
@@ -270,7 +270,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
             String unit() default "USD";
         }
 
-        public static final class DoubleCurrencyConverter implements DynamoDBTypeConverter<Double, Currency> {
+        public static final class DoubleCurrencyConverter implements DynamoDbTypeConverter<Double, Currency> {
             private final CurrencyFormat f;
 
             public DoubleCurrencyConverter(final Class<Currency> targetType, final CurrencyFormat f) {
@@ -292,7 +292,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
     /**
      * An object with {@code Currency}.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndDoubleSetCurrency extends AutoKeyAndVal<Set<Currency>> {
         @CurrencyFormat
         public Set<Currency> getVal() {
@@ -304,7 +304,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
             super.setVal(val);
         }
 
-        @DynamoDBTypeConverted(converter = DoubleSetCurrencyConverter.class)
+        @DynamoDbTypeConverted(converter = DoubleSetCurrencyConverter.class)
         @Retention(RetentionPolicy.RUNTIME)
         @Target({ElementType.METHOD, ElementType.TYPE})
         public static @interface CurrencyFormat {
@@ -313,7 +313,7 @@ public class TypeConverterIntegrationTest extends AbstractKeyAndValIntegrationTe
             String unit() default "USD";
         }
 
-        public static final class DoubleSetCurrencyConverter implements DynamoDBTypeConverter<Set<Double>, Set<Currency>> {
+        public static final class DoubleSetCurrencyConverter implements DynamoDbTypeConverter<Set<Double>, Set<Currency>> {
             private final CurrencyFormat f;
 
             public DoubleSetCurrencyConverter(final Class<Currency> targetType, final CurrencyFormat f) {

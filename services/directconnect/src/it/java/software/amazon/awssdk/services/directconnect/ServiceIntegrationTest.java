@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionRequest;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionResult;
 import software.amazon.awssdk.services.directconnect.model.DeleteConnectionRequest;
@@ -90,10 +90,10 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkew() {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         AmazonDirectConnectClient clockSkewClient = new AmazonDirectConnectClient(credentials);
         clockSkewClient.describeConnections();
-        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 
 }

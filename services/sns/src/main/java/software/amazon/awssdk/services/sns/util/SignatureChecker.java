@@ -74,7 +74,7 @@ public class SignatureChecker {
     public boolean verifyMessageSignature(String message, PublicKey publicKey) {
 
         // extract the type and signature parameters
-        Map<String, String> parsed = parseJSON(message);
+        Map<String, String> parsed = parseJson(message);
 
         return verifySignature(parsed, publicKey);
     }
@@ -156,7 +156,7 @@ public class SignatureChecker {
         return result;
     }
 
-    private Map<String, String> parseJSON(String jsonmessage) {
+    private Map<String, String> parseJson(String jsonmessage) {
         Map<String, String> parsed = new HashMap<String, String>();
         JsonFactory jf = new JsonFactory();
         try {

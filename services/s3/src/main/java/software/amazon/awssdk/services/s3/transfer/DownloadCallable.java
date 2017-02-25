@@ -46,7 +46,7 @@ import software.amazon.awssdk.services.s3.transfer.internal.CompleteMultipartDow
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadImpl;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadMonitor;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadPartCallable;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 @SdkInternalApi
 final class DownloadCallable implements Callable<File> {
@@ -186,7 +186,7 @@ final class DownloadCallable implements Callable<File> {
                     new GetObjectRequest(req.getBucketName(), req.getKey(), req.getVersionId())
                           .withUnmodifiedSinceConstraint(req.getUnmodifiedSinceConstraint())
                           .withModifiedSinceConstraint(req.getModifiedSinceConstraint())
-                          .withResponseHeaders(req.getResponseHeaders()).withSSECustomerKey(req.getSSECustomerKey())
+                          .withResponseHeaders(req.getResponseHeaders()).withSseCustomerKey(req.getSseCustomerKey())
                           .withGeneralProgressListener(req.getGeneralProgressListener());
 
             getPartRequest.setMatchingETagConstraints(req.getMatchingETagConstraints());
@@ -230,7 +230,7 @@ final class DownloadCallable implements Callable<File> {
         } catch (Exception e) {
             throw new SdkClientException("Unable to append part file to dstfile " + e.getMessage(), e);
         } finally {
-            IOUtils.closeQuietly(raf, LOG);
+            IoUtils.closeQuietly(raf, LOG);
             FileLocks.unlock(dstfile);
         }
     }

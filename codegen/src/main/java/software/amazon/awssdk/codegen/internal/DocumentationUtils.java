@@ -82,7 +82,7 @@ public class DocumentationUtils {
      * @return HTML tag stripped documentation or empty string if input was
      *         null.
      */
-    public static String stripHTMLTags(String documentation) {
+    public static String stripHtmlTags(String documentation) {
         if (documentation == null) {
             return "";
         }
@@ -91,9 +91,9 @@ public class DocumentationUtils {
             int startTagIndex = documentation.indexOf(">");
             final int closingTagIndex = documentation.lastIndexOf("<");
             if (closingTagIndex > startTagIndex) {
-                documentation = stripHTMLTags(documentation.substring(startTagIndex + 1, closingTagIndex));
+                documentation = stripHtmlTags(documentation.substring(startTagIndex + 1, closingTagIndex));
             } else {
-                documentation = stripHTMLTags(documentation.substring(startTagIndex + 1));
+                documentation = stripHtmlTags(documentation.substring(startTagIndex + 1));
             }
         }
 

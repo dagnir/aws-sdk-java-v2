@@ -25,7 +25,7 @@ import software.amazon.awssdk.metrics.MetricFilterInputStream;
 import software.amazon.awssdk.runtime.MetricAware;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.s3.metrics.S3ServiceMetric;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * Input stream representing the content of an {@link S3Object}. In addition to
@@ -101,7 +101,7 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
         if (httpRequest != null) {
             httpRequest.abort();
         }
-        IOUtils.closeQuietly(in, null);
+        IoUtils.closeQuietly(in, null);
     }
 
     /**

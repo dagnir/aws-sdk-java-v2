@@ -70,7 +70,7 @@ public class ApacheHttpClientFactory implements HttpClientFactory<ConnectionMana
         }
 
         HttpResponseInterceptor itcp = new Crc32ChecksumResponseInterceptor();
-        if (settings.calculateCRC32FromCompressedData()) {
+        if (settings.calculateCrc32FromCompressedData()) {
             builder.addInterceptorFirst(itcp);
         } else {
             builder.addInterceptorLast(itcp);

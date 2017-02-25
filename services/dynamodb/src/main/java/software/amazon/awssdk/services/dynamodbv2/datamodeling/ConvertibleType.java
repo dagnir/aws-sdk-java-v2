@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperFieldModel.DynamoDbAttributeType;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.TypedMap;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Scalar;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardTypeConverters.Vector;
@@ -31,8 +31,8 @@ import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 @SdkInternalApi
 final class ConvertibleType<T> {
 
-    private final DynamoDBTypeConverter<?, T> typeConverter;
-    private final DynamoDBAttributeType attributeType;
+    private final DynamoDbTypeConverter<?, T> typeConverter;
+    private final DynamoDbAttributeType attributeType;
     private final ConvertibleType<T>[] params;
     private final Class<T> targetType;
 
@@ -80,13 +80,13 @@ final class ConvertibleType<T> {
     /**
      * Returns the conversion type for the converter.
      */
-    private static <T> ConvertibleType<T> of(final DynamoDBTypeConverter<?, T> converter) {
+    private static <T> ConvertibleType<T> of(final DynamoDbTypeConverter<?, T> converter) {
         final Class<?> clazz = converter.getClass();
         if (!clazz.isInterface()) {
             for (Class<?> c = clazz; Object.class != c; c = c.getSuperclass()) {
                 for (final Type genericType : c.getGenericInterfaces()) {
                     final ConvertibleType<T> type = ConvertibleType.<T>of(genericType);
-                    if (type.is(DynamoDBTypeConverter.class)) {
+                    if (type.is(DynamoDbTypeConverter.class)) {
                         if (type.params.length == 2 && type.param(0).targetType() != Object.class) {
                             return type.param(0);
                         }
@@ -94,13 +94,13 @@ final class ConvertibleType<T> {
                 }
             }
             final ConvertibleType<T> type = ConvertibleType.<T>of(clazz.getGenericSuperclass());
-            if (type.is(DynamoDBTypeConverter.class)) {
+            if (type.is(DynamoDbTypeConverter.class)) {
                 if (type.params.length > 0 && type.param(0).targetType() != Object.class) {
                     return type.param(0);
                 }
             }
         }
-        throw new DynamoDBMappingException("could not resolve type of " + clazz);
+        throw new DynamoDbMappingException("could not resolve type of " + clazz);
     }
 
     /**
@@ -124,14 +124,14 @@ final class ConvertibleType<T> {
     /**
      * Gets the target custom type-converter.
      */
-    final <S> DynamoDBTypeConverter<S, T> typeConverter() {
-        return (DynamoDBTypeConverter<S, T>) this.typeConverter;
+    final <S> DynamoDbTypeConverter<S, T> typeConverter() {
+        return (DynamoDbTypeConverter<S, T>) this.typeConverter;
     }
 
     /**
      * Gets the overriding attribute type.
      */
-    final DynamoDBAttributeType attributeType() {
+    final DynamoDbAttributeType attributeType() {
         return this.attributeType;
     }
 

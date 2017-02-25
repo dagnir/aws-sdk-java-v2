@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
@@ -140,7 +140,7 @@ public class SdkJsonProtocolFactory {
     }
 
     private boolean isCborEnabled() {
-        return metadata.isSupportsCbor() && !SDKGlobalConfiguration.isCborDisabled();
+        return metadata.isSupportsCbor() && !SdkGlobalConfiguration.isCborDisabled();
     }
 
     private boolean isIonEnabled() {
@@ -148,6 +148,6 @@ public class SdkJsonProtocolFactory {
     }
 
     boolean isIonBinaryEnabled() {
-        return !SDKGlobalConfiguration.isIonBinaryDisabled();
+        return !SdkGlobalConfiguration.isIonBinaryDisabled();
     }
 }

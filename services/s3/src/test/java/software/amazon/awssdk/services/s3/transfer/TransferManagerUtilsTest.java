@@ -95,7 +95,7 @@ public class TransferManagerUtilsTest {
     @Test
     public void isDownloadParallelizableGivenSSECustomerkeyInRequestReturnsFalse() {
         GetObjectRequest getObjectRequest = new GetObjectRequest(BUCKET_NAME, KEY)
-                .withSSECustomerKey(new SseCustomerKey(" "));
+                .withSseCustomerKey(new SseCustomerKey(" "));
         assertTrue(TransferManagerUtils.isDownloadParallelizable(s3, getObjectRequest, 1));
     }
 

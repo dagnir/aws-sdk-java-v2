@@ -34,7 +34,7 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
     /** The number of bytes read that the listener hasn't been notified about yet. */
     private int unnotifiedByteCount;
     private boolean hasBeenRead;
-    private boolean doneEOF;
+    private boolean doneEof;
     private long notifiedByteCount;
 
     public ProgressInputStream(InputStream is, ProgressListener listener) {
@@ -117,11 +117,11 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
      * An end-of-file event is to be notified.
      * Defaults to do nothing.
      */
-    protected void onEOF() {
+    protected void onEof() {
     }
 
     /**
-     * Defaults to behave the same as {@link #onEOF()}.
+     * Defaults to behave the same as {@link #onEof()}.
      */
     protected void onClose() {
         eof();
@@ -194,12 +194,12 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
     }
 
     private void eof() {
-        if (doneEOF) {
+        if (doneEof) {
             return;
         }
-        onEOF();
+        onEof();
         unnotifiedByteCount = 0;
-        doneEOF = true;
+        doneEof = true;
     }
 
     public final InputStream getWrappedInputStream() {

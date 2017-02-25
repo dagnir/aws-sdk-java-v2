@@ -126,7 +126,7 @@ public class PredefinedMetricTransformer {
      */
     protected List<MetricDatum> metricOfRequestOrRetryCount(
             Field metricType, Request<?> req, Object resp) {
-        AwsRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         // Always retrieve the request count even for retry which is equivalent
         // to the number of requests minus one.
@@ -162,7 +162,7 @@ public class PredefinedMetricTransformer {
 
     protected List<MetricDatum> metricOfCount(
             Field metricType, Request<?> req, Object resp) {
-        AwsRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         Number counter = ti.getCounter(metricType.name());
         if (counter == null) {
@@ -195,7 +195,7 @@ public class PredefinedMetricTransformer {
      */
     protected List<MetricDatum> latencyMetricOf(MetricType metricType,
                                                 Request<?> req, Object response, boolean includesRequestType) {
-        AwsRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo root = m.getTimingInfo();
         final String metricName = metricType.name();
         List<TimingInfo> subMeasures =
@@ -237,7 +237,7 @@ public class PredefinedMetricTransformer {
      * root into account.
      */
     protected List<MetricDatum> latencyOfClientExecuteTime(Request<?> req, Object response) {
-        AwsRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo root = m.getTimingInfo();
         final String metricName = Field.ClientExecuteTime.name();
         if (root.isEndTimeKnown()) { // being defensive
@@ -276,7 +276,7 @@ public class PredefinedMetricTransformer {
      */
     protected List<MetricDatum> counterMetricOf(MetricType type,
                                                 Request<?> req, Object resp, boolean includesRequestType) {
-        AwsRequestMetrics m = req.getAWSRequestMetrics();
+        AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         final String metricName = type.name();
         Number counter = ti.getCounter(metricName);

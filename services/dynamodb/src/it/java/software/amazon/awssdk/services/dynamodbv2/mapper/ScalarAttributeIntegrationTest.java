@@ -17,8 +17,8 @@ package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 import java.util.UUID;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBScalarAttribute;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbScalarAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
 import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodbv2.pojos.AutoKeyAndVal;
 
@@ -40,9 +40,9 @@ public class ScalarAttributeIntegrationTest extends AbstractKeyAndValIntegration
     /**
      * An object with an enumeration.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndBinaryUuid extends AutoKeyAndVal<UUID> {
-        @DynamoDBScalarAttribute(type = ScalarAttributeType.B)
+        @DynamoDbScalarAttribute(type = ScalarAttributeType.B)
         public UUID getVal() {
             return super.getVal();
         }

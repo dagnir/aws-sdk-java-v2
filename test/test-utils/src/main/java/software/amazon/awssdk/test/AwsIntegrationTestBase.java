@@ -23,7 +23,7 @@ import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.PropertiesFileCredentialsProvider;
 import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public abstract class AwsIntegrationTestBase {
 
@@ -74,7 +74,7 @@ public abstract class AwsIntegrationTestBase {
     protected String getResourceAsString(String location) {
         try {
             InputStream resourceStream = getClass().getResourceAsStream(location);
-            String resourceAsString = IOUtils.toString(resourceStream);
+            String resourceAsString = IoUtils.toString(resourceStream);
             resourceStream.close();
             return resourceAsString;
         } catch (Exception e) {

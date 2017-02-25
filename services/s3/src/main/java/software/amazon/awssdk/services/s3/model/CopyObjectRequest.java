@@ -89,7 +89,7 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
     private ObjectMetadata newObjectMetadata;
 
     /** Optional field specifying the ACL for the new object. */
-    private CannedAccessControlList cannedACL;
+    private CannedAccessControlList cannedAcl;
 
     /**
      * An optional access control list to apply to the new object. If specified,
@@ -578,7 +578,7 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      *         canned ACL has been specified.
      */
     public CannedAccessControlList getCannedAccessControlList() {
-        return cannedACL;
+        return cannedAcl;
     }
 
     /**
@@ -587,11 +587,11 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * {@link CannedAccessControlList#Private} canned ACL for all copied
      * objects.
      *
-     * @param cannedACL
+     * @param cannedAcl
      *            The canned ACL to set for the newly copied object.
      */
-    public void setCannedAccessControlList(CannedAccessControlList cannedACL) {
-        this.cannedACL = cannedACL;
+    public void setCannedAccessControlList(CannedAccessControlList cannedAcl) {
+        this.cannedAcl = cannedAcl;
     }
 
     /**
@@ -599,14 +599,14 @@ public class CopyObjectRequest extends AmazonWebServiceRequest implements
      * <code>CopyObjectRequest</code>, enabling additional method calls to be chained
      * together.
      *
-     * @param cannedACL
+     * @param cannedAcl
      *            The canned ACL to set for the newly copied object.
      *
      * @return This <code>CopyObjectRequest</code>, enabling additional method calls to be
      *         chained together.
      */
-    public CopyObjectRequest withCannedAccessControlList(CannedAccessControlList cannedACL) {
-        setCannedAccessControlList(cannedACL);
+    public CopyObjectRequest withCannedAccessControlList(CannedAccessControlList cannedAcl) {
+        setCannedAccessControlList(cannedAcl);
         return this;
     }
 

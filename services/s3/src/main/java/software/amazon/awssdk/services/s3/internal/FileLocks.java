@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * An internal utility used to provide both inter and intra JVM file locking.
@@ -73,7 +73,7 @@ public enum FileLocks {
                 lock = channel.lock();
             }
         } catch (Exception e) {
-            IOUtils.closeQuietly(raf, log);
+            IoUtils.closeQuietly(raf, log);
             throw new FileLockException(e);
         }
         final boolean locked;
@@ -92,7 +92,7 @@ public enum FileLocks {
                 log.debug("Locked file " + file + " with " + lock);
             }
         } else {
-            IOUtils.closeQuietly(raf, log);
+            IoUtils.closeQuietly(raf, log);
         }
         return locked;
     }
@@ -123,7 +123,7 @@ public enum FileLocks {
                 // Must close out the channel before removing it from the map;
                 // or else risk giving a false negative (of no lock but in fact
                 // the file is still locked by the file system.)
-                IOUtils.closeQuietly(raf, log);
+                IoUtils.closeQuietly(raf, log);
                 lockedFiles.remove(file);
             }
         }

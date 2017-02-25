@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3.util;
 import java.io.File;
 import java.io.IOException;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
-import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.FakeIoException;
 
 /**
  * Subclass of RepeatableFileInputStream that throws an error during the first
@@ -77,7 +77,7 @@ public class UnreliableRepeatableFileInputStream extends ResettableInputStream {
         if (position >= 100) {
             currNumberOfErrors++;
             if (isFakeIOException) {
-                throw new FakeIOException("Faked IO error " + currNumberOfErrors
+                throw new FakeIoException("Faked IO error " + currNumberOfErrors
                                           + " on UnreliableFileInputStream");
             } else {
                 throw new IOException("Injected IO error " + currNumberOfErrors

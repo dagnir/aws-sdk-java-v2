@@ -19,13 +19,13 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.event.DeliveryMode;
 import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.event.SDKProgressPublisher;
+import software.amazon.awssdk.event.SdkProgressPublisher;
 import software.amazon.awssdk.services.s3.transfer.PersistableTransfer;
 
 /**
  * Used to publish transfer events.
  */
-public class S3ProgressPublisher extends SDKProgressPublisher {
+public class S3ProgressPublisher extends SdkProgressPublisher {
     /**
      * Used to deliver a persistable transfer to the given s3 listener.
      *

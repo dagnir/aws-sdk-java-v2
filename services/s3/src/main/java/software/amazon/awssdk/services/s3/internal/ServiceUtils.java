@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.s3.internal;
 
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
-import static software.amazon.awssdk.util.IOUtils.closeQuietly;
+import static software.amazon.awssdk.util.IoUtils.closeQuietly;
 import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.io.BufferedOutputStream;
@@ -456,7 +456,7 @@ public class ServiceUtils {
         }
     }
 
-    public static boolean isS3USStandardEndpoint(String endpoint) {
+    public static boolean isS3UsStandardEndpoint(String endpoint) {
         return endpoint.endsWith(Constants.S3_HOSTNAME);
     }
 
@@ -464,8 +464,8 @@ public class ServiceUtils {
      * @return true if the given endpoint is known to be at the region us-east-1.
      *         (currently this includes S3 standard, S3 external-1 endpoints).
      */
-    public static boolean isS3USEastEndpiont(String endpoint) {
-        return isS3USStandardEndpoint(endpoint) ||
+    public static boolean isS3UsEastEndpiont(String endpoint) {
+        return isS3UsStandardEndpoint(endpoint) ||
                endpoint.endsWith(Constants.S3_EXTERNAL_1_HOSTNAME);
     }
 
@@ -490,7 +490,7 @@ public class ServiceUtils {
 
         ObjectMetadata metadata = s3.getObjectMetadata(new GetObjectMetadataRequest(getObjectRequest.getBucketName(),
                 getObjectRequest.getKey(), getObjectRequest.getVersionId())
-                .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
+                .withSseCustomerKey(getObjectRequest.getSseCustomerKey())
                 .withPartNumber(1));
         return metadata.getPartCount();
     }
@@ -515,7 +515,7 @@ public class ServiceUtils {
         ObjectMetadata metadata = s3.getObjectMetadata(
                 new GetObjectMetadataRequest(getObjectRequest.getBucketName(), getObjectRequest.getKey(),
                         getObjectRequest.getVersionId())
-                        .withSSECustomerKey(getObjectRequest.getSSECustomerKey())
+                        .withSseCustomerKey(getObjectRequest.getSseCustomerKey())
                         .withPartNumber(partNumber));
         return metadata.getContentRange()[1];
     }

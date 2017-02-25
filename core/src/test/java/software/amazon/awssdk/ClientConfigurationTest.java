@@ -46,7 +46,7 @@ public class ClientConfigurationTest {
     private static final ClientConfiguration DEFAULT_CLIENT_CONFIG = new ClientConfiguration();
 
     private static final RetryPolicy CUSTOM_RETRY_POLICY = new RetryPolicy(
-            PredefinedRetryPolicies.SDKDefaultRetryCondition.NO_RETRY_CONDITION,
+            PredefinedRetryPolicies.SdkDefaultRetryCondition.NO_RETRY_CONDITION,
             RetryPolicy.BackoffStrategy.NO_DELAY, 1000, false);
 
     @Test

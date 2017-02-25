@@ -32,46 +32,46 @@ import software.amazon.awssdk.services.s3.model.Region;
  */
 public class AbstractDynamoDbMapper implements IDynamoDbMapper {
 
-    private final DynamoDBMapperConfig config;
+    private final DynamoDbMapperConfig config;
 
-    protected AbstractDynamoDbMapper(final DynamoDBMapperConfig defaults) {
-        this.config = DynamoDBMapperConfig.DEFAULT.merge(defaults);
+    protected AbstractDynamoDbMapper(final DynamoDbMapperConfig defaults) {
+        this.config = DynamoDbMapperConfig.DEFAULT.merge(defaults);
     }
 
     protected AbstractDynamoDbMapper() {
-        this(DynamoDBMapperConfig.DEFAULT);
+        this(DynamoDbMapperConfig.DEFAULT);
     }
 
-    protected final String getTableName(Class<?> clazz, Object object, DynamoDBMapperConfig config) {
+    protected final String getTableName(Class<?> clazz, Object object, DynamoDbMapperConfig config) {
         if (config.getObjectTableNameResolver() != null && object != null) {
             return config.getObjectTableNameResolver().getTableName(object, config);
         }
         return getTableName(clazz, config);
     }
 
-    protected final String getTableName(Class<?> clazz, DynamoDBMapperConfig config) {
+    protected final String getTableName(Class<?> clazz, DynamoDbMapperConfig config) {
         if (config.getTableNameResolver() == null) {
-            return DynamoDBMapperConfig.DefaultTableNameResolver.INSTANCE.getTableName(clazz, config);
+            return DynamoDbMapperConfig.DefaultTableNameResolver.INSTANCE.getTableName(clazz, config);
         }
         return config.getTableNameResolver().getTableName(clazz, config);
     }
 
-    protected final DynamoDBMapperConfig mergeConfig(DynamoDBMapperConfig overrides) {
+    protected final DynamoDbMapperConfig mergeConfig(DynamoDbMapperConfig overrides) {
         return this.config.merge(overrides);
     }
 
     @Override
-    public <T extends Object> DynamoDBMapperTableModel<T> getTableModel(Class<T> clazz) {
+    public <T extends Object> DynamoDbMapperTableModel<T> getTableModel(Class<T> clazz) {
         return getTableModel(clazz, config);
     }
 
     @Override
-    public <T extends Object> DynamoDBMapperTableModel<T> getTableModel(Class<T> clazz, DynamoDBMapperConfig config) {
+    public <T extends Object> DynamoDbMapperTableModel<T> getTableModel(Class<T> clazz, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
-    public <T> T load(Class<T> clazz, Object hashKey, DynamoDBMapperConfig config) {
+    public <T> T load(Class<T> clazz, Object hashKey, DynamoDbMapperConfig config) {
         return load(clazz, hashKey, (Object) null, config);
     }
 
@@ -86,7 +86,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
     }
 
     @Override
-    public <T> T load(Class<T> clazz, Object hashKey, Object rangeKey, DynamoDBMapperConfig config) {
+    public <T> T load(Class<T> clazz, Object hashKey, Object rangeKey, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -96,7 +96,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
     }
 
     @Override
-    public <T> T load(T keyObject, DynamoDBMapperConfig config) {
+    public <T> T load(T keyObject, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -105,7 +105,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
         return marshallIntoObject(clazz, itemAttributes, config);
     }
 
-    public <T> T marshallIntoObject(Class<T> clazz, Map<String, AttributeValue> itemAttributes, DynamoDBMapperConfig config) {
+    public <T> T marshallIntoObject(Class<T> clazz, Map<String, AttributeValue> itemAttributes, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -115,47 +115,47 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
     }
 
     public <T> List<T> marshallIntoObjects(Class<T> clazz, List<Map<String, AttributeValue>> itemAttributes,
-                                           DynamoDBMapperConfig config) {
+                                           DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
     public <T> void save(T object) {
-        save(object, (DynamoDBSaveExpression) null, config);
+        save(object, (DynamoDbSaveExpression) null, config);
     }
 
     @Override
-    public <T> void save(T object, DynamoDBSaveExpression saveExpression) {
+    public <T> void save(T object, DynamoDbSaveExpression saveExpression) {
         save(object, saveExpression, config);
     }
 
     @Override
-    public <T> void save(T object, DynamoDBMapperConfig config) {
-        save(object, (DynamoDBSaveExpression) null, config);
+    public <T> void save(T object, DynamoDbMapperConfig config) {
+        save(object, (DynamoDbSaveExpression) null, config);
     }
 
     @Override
-    public <T> void save(T object, DynamoDBSaveExpression saveExpression, DynamoDBMapperConfig config) {
+    public <T> void save(T object, DynamoDbSaveExpression saveExpression, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
     public void delete(Object object) {
-        delete(object, (DynamoDBDeleteExpression) null, config);
+        delete(object, (DynamoDbDeleteExpression) null, config);
     }
 
     @Override
-    public void delete(Object object, DynamoDBDeleteExpression deleteExpression) {
+    public void delete(Object object, DynamoDbDeleteExpression deleteExpression) {
         delete(object, deleteExpression, config);
     }
 
     @Override
-    public void delete(Object object, DynamoDBMapperConfig config) {
-        delete(object, (DynamoDBDeleteExpression) null, config);
+    public void delete(Object object, DynamoDbMapperConfig config) {
+        delete(object, (DynamoDbDeleteExpression) null, config);
     }
 
     @Override
-    public <T> void delete(T object, DynamoDBDeleteExpression deleteExpression, DynamoDBMapperConfig config) {
+    public <T> void delete(T object, DynamoDbDeleteExpression deleteExpression, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -188,7 +188,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
     @Override
     public List<FailedBatch> batchWrite(Iterable<? extends Object> objectsToWrite,
                                         Iterable<? extends Object> objectsToDelete,
-                                        DynamoDBMapperConfig config) {
+                                        DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -198,7 +198,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
     }
 
     @Override
-    public Map<String, List<Object>> batchLoad(Iterable<? extends Object> itemsToGet, DynamoDBMapperConfig config) {
+    public Map<String, List<Object>> batchLoad(Iterable<? extends Object> itemsToGet, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -208,90 +208,90 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
     }
 
     @Override
-    public Map<String, List<Object>> batchLoad(Map<Class<?>, List<KeyPair>> itemsToGet, DynamoDBMapperConfig config) {
+    public Map<String, List<Object>> batchLoad(Map<Class<?>, List<KeyPair>> itemsToGet, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
-    public <T> PaginatedScanList<T> scan(Class<T> clazz, DynamoDBScanExpression scanExpression) {
+    public <T> PaginatedScanList<T> scan(Class<T> clazz, DynamoDbScanExpression scanExpression) {
         return scan(clazz, scanExpression, config);
     }
 
     @Override
     public <T> PaginatedScanList<T> scan(Class<T> clazz,
-                                         DynamoDBScanExpression scanExpression,
-                                         DynamoDBMapperConfig config) {
+                                         DynamoDbScanExpression scanExpression,
+                                         DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
     public <T> PaginatedParallelScanList<T> parallelScan(Class<T> clazz,
-                                                         DynamoDBScanExpression scanExpression,
+                                                         DynamoDbScanExpression scanExpression,
                                                          int totalSegments) {
         return parallelScan(clazz, scanExpression, totalSegments, config);
     }
 
     @Override
     public <T> PaginatedParallelScanList<T> parallelScan(Class<T> clazz,
-                                                         DynamoDBScanExpression scanExpression,
+                                                         DynamoDbScanExpression scanExpression,
                                                          int totalSegments,
-                                                         DynamoDBMapperConfig config) {
+                                                         DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
-    public <T> ScanResultPage<T> scanPage(Class<T> clazz, DynamoDBScanExpression scanExpression) {
+    public <T> ScanResultPage<T> scanPage(Class<T> clazz, DynamoDbScanExpression scanExpression) {
         return scanPage(clazz, scanExpression, config);
     }
 
     @Override
     public <T> ScanResultPage<T> scanPage(Class<T> clazz,
-                                          DynamoDBScanExpression scanExpression,
-                                          DynamoDBMapperConfig config) {
+                                          DynamoDbScanExpression scanExpression,
+                                          DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
-    public int count(Class<?> clazz, DynamoDBScanExpression scanExpression) {
+    public int count(Class<?> clazz, DynamoDbScanExpression scanExpression) {
         return count(clazz, scanExpression, config);
     }
 
     @Override
-    public int count(Class<?> clazz, DynamoDBScanExpression scanExpression, DynamoDBMapperConfig config) {
+    public int count(Class<?> clazz, DynamoDbScanExpression scanExpression, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
-    public <T> int count(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression) {
+    public <T> int count(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression) {
         return count(clazz, queryExpression, config);
     }
 
     @Override
-    public <T> int count(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression, DynamoDBMapperConfig config) {
+    public <T> int count(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
-    public <T> PaginatedQueryList<T> query(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression) {
+    public <T> PaginatedQueryList<T> query(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression) {
         return query(clazz, queryExpression, config);
     }
 
     @Override
     public <T> PaginatedQueryList<T> query(Class<T> clazz,
-                                           DynamoDBQueryExpression<T> queryExpression,
-                                           DynamoDBMapperConfig config) {
+                                           DynamoDbQueryExpression<T> queryExpression,
+                                           DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
     @Override
-    public <T> QueryResultPage<T> queryPage(Class<T> clazz, DynamoDBQueryExpression<T> queryExpression) {
+    public <T> QueryResultPage<T> queryPage(Class<T> clazz, DynamoDbQueryExpression<T> queryExpression) {
         return queryPage(clazz, queryExpression, config);
     }
 
     @Override
     public <T> QueryResultPage<T> queryPage(Class<T> clazz,
-                                            DynamoDBQueryExpression<T> queryExpression,
-                                            DynamoDBMapperConfig config) {
+                                            DynamoDbQueryExpression<T> queryExpression,
+                                            DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -320,7 +320,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
         return generateCreateTableRequest(clazz, config);
     }
 
-    public <T> CreateTableRequest generateCreateTableRequest(Class<T> clazz, DynamoDBMapperConfig config) {
+    public <T> CreateTableRequest generateCreateTableRequest(Class<T> clazz, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 
@@ -329,7 +329,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
         return generateDeleteTableRequest(clazz, config);
     }
 
-    public <T> DeleteTableRequest generateDeleteTableRequest(Class<T> clazz, DynamoDBMapperConfig config) {
+    public <T> DeleteTableRequest generateDeleteTableRequest(Class<T> clazz, DynamoDbMapperConfig config) {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 

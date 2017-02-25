@@ -45,7 +45,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      */
 
     public static final String AES_256_SERVER_SIDE_ENCRYPTION =
-            SSEAlgorithm.AES256.getAlgorithm();
+            SseAlgorithm.AES256.getAlgorithm();
     /**
      * Custom user metadata, represented in responses with the x-amz-meta-
      * header prefix
@@ -686,7 +686,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * using AWS-managed keys .
      */
     @Override
-    public String getSSEAlgorithm() {
+    public String getSseAlgorithm() {
         return (String) metadata.get(Headers.SERVER_SIDE_ENCRYPTION);
     }
 
@@ -699,12 +699,12 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      *            object using AWS-managed keys .
      */
     @Override
-    public void setSSEAlgorithm(String algorithm) {
+    public void setSseAlgorithm(String algorithm) {
         metadata.put(Headers.SERVER_SIDE_ENCRYPTION, algorithm);
     }
 
     /**
-     * @deprecated Replaced by {@link #getSSEAlgorithm()}
+     * @deprecated Replaced by {@link #getSseAlgorithm()}
      */
     @Deprecated
     public String getServerSideEncryption() {
@@ -712,7 +712,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
     }
 
     /**
-     * @deprecated Replaced by {@link #setSSEAlgorithm(String)}
+     * @deprecated Replaced by {@link #setSseAlgorithm(String)}
      */
     @Deprecated
     public void setServerSideEncryption(String algorithm) {
@@ -723,7 +723,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * {@inheritDoc}
      */
     @Override
-    public String getSSECustomerAlgorithm() {
+    public String getSseCustomerAlgorithm() {
         return (String) metadata.get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_ALGORITHM);
     }
 
@@ -733,7 +733,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * requests, use {@link SseCustomerKey} members in request objects.
      */
     @Override
-    public void setSSECustomerAlgorithm(String algorithm) {
+    public void setSseCustomerAlgorithm(String algorithm) {
         metadata.put(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_ALGORITHM, algorithm);
     }
 
@@ -741,7 +741,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * {@inheritDoc}
      */
     @Override
-    public String getSSECustomerKeyMd5() {
+    public String getSseCustomerKeyMd5() {
         return (String) metadata.get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5);
     }
 
@@ -750,7 +750,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * object after receiving the value in a response from S3. When sending
      * requests, use {@link SseCustomerKey} members in request objects.
      */
-    public void setSSECustomerKeyMd5(String md5Digest) {
+    public void setSseCustomerKeyMd5(String md5Digest) {
         metadata.put(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5, md5Digest);
     }
 
@@ -879,7 +879,7 @@ public class ObjectMetadata implements ServerSideEncryptionResult, S3RequesterCh
      * Returns the AWS Key Management System key id used for Server Side
      * Encryption of the Amazon S3 object.
      */
-    public String getSSEAwsKmsKeyId() {
+    public String getSseAwsKmsKeyId() {
         return (String) metadata
                 .get(Headers.SERVER_SIDE_ENCRYPTION_AWS_KMS_KEYID);
     }

@@ -16,17 +16,17 @@
 package software.amazon.awssdk.services.dynamodbv2.mapper;
 
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbIndexRangeKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbRangeKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbVersionAttribute;
 
 /**
  * Comprehensive domain class
  */
-@DynamoDBTable(tableName = "aws-java-sdk-index-range-test")
+@DynamoDbTable(tableName = "aws-java-sdk-index-range-test")
 public class IndexRangeKeyClass {
 
     private long key;
@@ -39,7 +39,7 @@ public class IndexRangeKeyClass {
     private String fooAttribute;
     private String barAttribute;
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public long getKey() {
         return key;
     }
@@ -48,7 +48,7 @@ public class IndexRangeKeyClass {
         this.key = key;
     }
 
-    @DynamoDBRangeKey
+    @DynamoDbRangeKey
     public double getRangeKey() {
         return rangeKey;
     }
@@ -57,7 +57,7 @@ public class IndexRangeKeyClass {
         this.rangeKey = rangeKey;
     }
 
-    @DynamoDBIndexRangeKey(
+    @DynamoDbIndexRangeKey(
             localSecondaryIndexName = "index_foo",
             attributeName = "indexFooRangeKey"
     )
@@ -69,7 +69,7 @@ public class IndexRangeKeyClass {
         this.indexFooRangeKey = indexFooRangeKey;
     }
 
-    @DynamoDBIndexRangeKey(
+    @DynamoDbIndexRangeKey(
             localSecondaryIndexName = "index_bar"
     )
     public Double getIndexBarRangeKey() {
@@ -80,7 +80,7 @@ public class IndexRangeKeyClass {
         this.indexBarRangeKey = indexBarRangeKey;
     }
 
-    @DynamoDBIndexRangeKey(
+    @DynamoDbIndexRangeKey(
             localSecondaryIndexNames = {"index_foo_copy", "index_bar_copy"}
     )
     public Double getMultipleIndexRangeKey() {
@@ -91,7 +91,7 @@ public class IndexRangeKeyClass {
         this.multipleIndexRangeKey = multipleIndexRangeKey;
     }
 
-    @DynamoDBAttribute
+    @DynamoDbAttribute
     public String getFooAttribute() {
         return fooAttribute;
     }
@@ -100,7 +100,7 @@ public class IndexRangeKeyClass {
         this.fooAttribute = fooAttribute;
     }
 
-    @DynamoDBAttribute
+    @DynamoDbAttribute
     public String getBarAttribute() {
         return barAttribute;
     }
@@ -109,7 +109,7 @@ public class IndexRangeKeyClass {
         this.barAttribute = barAttribute;
     }
 
-    @DynamoDBVersionAttribute
+    @DynamoDbVersionAttribute
     public Long getVersion() {
         return version;
     }

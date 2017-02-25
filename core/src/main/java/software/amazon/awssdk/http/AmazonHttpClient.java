@@ -15,11 +15,11 @@
 
 package software.amazon.awssdk.http;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishRequestContentLength;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseContentLength;
-import static software.amazon.awssdk.util.IOUtils.closeQuietly;
+import static software.amazon.awssdk.SdkGlobalConfiguration.PROFILING_SYSTEM_PROPERTY;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishRequestContentLength;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishResponseContentLength;
+import static software.amazon.awssdk.util.IoUtils.closeQuietly;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -61,9 +61,9 @@ import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.ResponseMetadata;
-import software.amazon.awssdk.SDKGlobalTime;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
@@ -112,7 +112,7 @@ import software.amazon.awssdk.util.CapacityManager;
 import software.amazon.awssdk.util.CollectionUtils;
 import software.amazon.awssdk.util.CountingInputStream;
 import software.amazon.awssdk.util.DateUtils;
-import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.FakeIoException;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 import software.amazon.awssdk.util.MetadataCache;
 import software.amazon.awssdk.util.NullResponseMetadataCache;
@@ -222,7 +222,7 @@ public class AmazonHttpClient {
     /**
      * The time difference in seconds between this client and AWS.
      */
-    private volatile int timeOffset = SDKGlobalTime.getGlobalTimeOffset();
+    private volatile int timeOffset = SdkGlobalTime.getGlobalTimeOffset();
 
     /**
      * Constructs a new AWS client using the specified client configuration options (ex: max retry
@@ -934,7 +934,7 @@ public class AmazonHttpClient {
          */
         private InputStream wrapWithUnreliableStream(InputStream content) {
             return new UnreliableFilterInputStream(content,
-                                                   unreliableTestConfig.isFakeIOException())
+                                                   unreliableTestConfig.isFakeIoException())
                     .withBytesReadBeforeException(
                             unreliableTestConfig.getBytesReadBeforeException())
                     .withMaxNumErrors(unreliableTestConfig.getMaxNumErrors())
@@ -1262,7 +1262,7 @@ public class AmazonHttpClient {
              */
             if (RetryUtils.isClockSkewError(exception)) {
                 int clockSkew = parseClockSkewOffset(execOneParams.apacheResponse, exception);
-                SDKGlobalTime.setGlobalTimeOffset(timeOffset = clockSkew);
+                SdkGlobalTime.setGlobalTimeOffset(timeOffset = clockSkew);
                 request.setTimeOffset(timeOffset); // adjust time offset for the retry
             }
             return null; // => retry
@@ -1774,7 +1774,7 @@ public class AmazonHttpClient {
             }
 
             /**
-             * @throws FakeIOException thrown only during test simulation.
+             * @throws FakeIoException thrown only during test simulation.
              */
             HttpRequestBase newApacheRequest(
                     final HttpRequestFactory<HttpRequestBase> httpRequestFactory,

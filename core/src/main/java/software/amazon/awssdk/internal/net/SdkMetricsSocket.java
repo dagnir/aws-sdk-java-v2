@@ -26,7 +26,7 @@ import software.amazon.awssdk.util.AwsRequestMetrics;
  */
 public class SdkMetricsSocket extends DelegateSocket {
 
-    private MetricsInputStream metricsIS;
+    private MetricsInputStream metricsIs;
 
     public SdkMetricsSocket(Socket sock) {
         super(sock);
@@ -36,17 +36,17 @@ public class SdkMetricsSocket extends DelegateSocket {
      * {@link AwsRequestMetrics} is set per request.
      */
     public void setMetrics(AwsRequestMetrics metrics) {
-        if (metricsIS == null) {
+        if (metricsIs == null) {
             throw new IllegalStateException(
                     "The underlying input stream must be initialized!");
         }
-        metricsIS.setMetrics(metrics);
+        metricsIs.setMetrics(metrics);
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        metricsIS = new MetricsInputStream(sock.getInputStream());
-        return metricsIS;
+        metricsIs = new MetricsInputStream(sock.getInputStream());
+        return metricsIs;
     }
 
 }

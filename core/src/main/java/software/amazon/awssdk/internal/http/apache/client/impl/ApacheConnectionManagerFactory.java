@@ -42,14 +42,14 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.internal.http.DelegatingDnsResolver;
-import software.amazon.awssdk.internal.http.apache.conn.SdkTLSSocketFactory;
+import software.amazon.awssdk.internal.http.apache.conn.SdkTlsSocketFactory;
 import software.amazon.awssdk.internal.http.client.ConnectionManagerFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-import software.amazon.awssdk.internal.net.SdkSSLContext;
+import software.amazon.awssdk.internal.net.SdkSslContext;
 
 /**
  * Factory class to create connection manager used by the apache client.
@@ -70,7 +70,7 @@ public class ApacheConnectionManagerFactory implements
                 null,
                 DefaultSchemePortResolver.INSTANCE,
                 new DelegatingDnsResolver(settings.getDnsResolver()),
-                settings.getConnectionPoolTTL(),
+                settings.getConnectionPoolTtl(),
                 TimeUnit.MILLISECONDS);
 
         cm.setValidateAfterInactivity(settings.getValidateAfterInactivityMillis());
@@ -87,8 +87,8 @@ public class ApacheConnectionManagerFactory implements
 
         return sslsf != null
                ? sslsf
-               : new SdkTLSSocketFactory(
-                       SdkSSLContext.getPreferredSSLContext(settings.getSecureRandom()),
+               : new SdkTlsSocketFactory(
+                       SdkSslContext.getPreferredSslContext(settings.getSecureRandom()),
                        getHostNameVerifier(settings));
     }
 
@@ -127,7 +127,7 @@ public class ApacheConnectionManagerFactory implements
          * register a new scheme for HTTPS that won't cause self-signed certs to
          * error out.
          */
-        if (SDKGlobalConfiguration.isCertCheckingDisabled()) {
+        if (SdkGlobalConfiguration.isCertCheckingDisabled()) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("SSL Certificate checking for endpoints has been " +
                          "explicitly disabled.");

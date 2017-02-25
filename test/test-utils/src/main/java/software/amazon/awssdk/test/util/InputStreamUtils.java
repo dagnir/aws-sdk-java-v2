@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class InputStreamUtils {
 
@@ -58,7 +58,7 @@ public class InputStreamUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            IOUtils.closeQuietly(byteArrayOutputStream, null);
+            IoUtils.closeQuietly(byteArrayOutputStream, null);
         }
     }
 }

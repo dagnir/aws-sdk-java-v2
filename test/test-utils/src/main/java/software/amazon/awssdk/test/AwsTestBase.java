@@ -27,7 +27,7 @@ import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
 import software.amazon.awssdk.test.util.InputStreamUtils;
 import software.amazon.awssdk.test.util.SdkAsserts;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public abstract class AwsTestBase {
     /**
@@ -75,7 +75,7 @@ public abstract class AwsTestBase {
     protected String getResourceAsString(String location) {
         try {
             InputStream resourceStream = getClass().getResourceAsStream(location);
-            String resourceAsString = IOUtils.toString(resourceStream);
+            String resourceAsString = IoUtils.toString(resourceStream);
             resourceStream.close();
             return resourceAsString;
         } catch (Exception e) {

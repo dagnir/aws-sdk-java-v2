@@ -64,7 +64,7 @@ import software.amazon.awssdk.waiters.WaiterParameters;
 
 /**
  * A DynamoDB table. Instance of this class is typically obtained via
- * {@link DynamoDB#getTable(String)}.
+ * {@link DynamoDb#getTable(String)}.
  */
 @ThreadSafe
 public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
@@ -363,10 +363,10 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      *
      * @return the index being created
      */
-    public Index createGSI(
+    public Index createGsi(
             CreateGlobalSecondaryIndexAction create,
             AttributeDefinition hashKeyDefinition) {
-        return doCreateGSI(create, hashKeyDefinition);
+        return doCreateGsi(create, hashKeyDefinition);
     }
 
     /**
@@ -388,14 +388,14 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      *
      * @return the index being created
      */
-    public Index createGSI(
+    public Index createGsi(
             CreateGlobalSecondaryIndexAction create,
             AttributeDefinition hashKeyDefinition,
             AttributeDefinition rangeKeyDefinition) {
-        return doCreateGSI(create, hashKeyDefinition, rangeKeyDefinition);
+        return doCreateGsi(create, hashKeyDefinition, rangeKeyDefinition);
     }
 
-    private Index doCreateGSI(
+    private Index doCreateGsi(
             CreateGlobalSecondaryIndexAction create,
             AttributeDefinition... keyDefinitions) {
         UpdateTableSpec spec = new UpdateTableSpec()

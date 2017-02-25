@@ -15,21 +15,21 @@
 
 package software.amazon.awssdk.services.dynamodbv2.pojos;
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.S3Link;
 
 /**
  * Test domain class with a single string key, and two S3Links
  */
-@DynamoDBTable(tableName = "aws-java-sdk-util")
+@DynamoDbTable(tableName = "aws-java-sdk-util")
 public class S3LinksTestClass {
 
     private String key;
     private S3Link s3LinkWest;
     private S3Link s3LinkEast;
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public String getKey() {
         return key;
     }

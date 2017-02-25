@@ -18,7 +18,7 @@ package software.amazon.awssdk.internal.io;
 import java.io.FilterOutputStream;
 import java.io.OutputStream;
 import software.amazon.awssdk.runtime.MetricAware;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * Base class for AWS Java SDK specific {@link FilterOutputStream}.
@@ -41,7 +41,7 @@ public class SdkFilterOutputStream extends FilterOutputStream implements
     @Override
     public final void release() {
         // Don't call IOUtils.release(in, null) or else could lead to infinite loop
-        IOUtils.closeQuietly(this, null);
+        IoUtils.closeQuietly(this, null);
         if (out instanceof Releasable) {
             // This allows any underlying stream that has the close operation
             // disabled to be truly released

@@ -32,7 +32,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.junit.After;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
-import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.autoscaling.model.AlreadyExistsException;
 import software.amazon.awssdk.services.autoscaling.model.AutoScalingGroup;
 import software.amazon.awssdk.services.autoscaling.model.BlockDeviceMapping;
@@ -602,10 +602,10 @@ public class AutoscalingIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testClockSkewAs() {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         AmazonAutoScalingClient clockSkewClient = new AmazonAutoScalingClient(credentials);
         clockSkewClient.describePolicies();
-        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }
 

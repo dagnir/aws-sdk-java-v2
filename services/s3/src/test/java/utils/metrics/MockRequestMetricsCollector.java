@@ -34,7 +34,7 @@ public class MockRequestMetricsCollector extends RequestMetricCollector {
 
     @Override
     public void collectMetrics(Request<?> request, Response<?> response) {
-        metrics.add(request.getAWSRequestMetrics());
+        metrics.add(request.getAwsRequestMetrics());
     }
 
     /**

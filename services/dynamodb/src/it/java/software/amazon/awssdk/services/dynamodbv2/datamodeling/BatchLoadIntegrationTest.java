@@ -38,8 +38,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.ConsistentReads;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.ConsistentReads;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodbv2.mapper.NumberSetAttributeClass;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchGetItemRequest;
@@ -54,7 +54,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     private static int start = 1;
     private static int byteStart = 1;
     private static int startKeyDebug = 1;
-    DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new DynamoDBMapperConfig(SaveBehavior.UPDATE,
+    DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new DynamoDbMapperConfig(SaveBehavior.UPDATE,
                                                                                 ConsistentReads.CONSISTENT, null));
 
     @BeforeClass

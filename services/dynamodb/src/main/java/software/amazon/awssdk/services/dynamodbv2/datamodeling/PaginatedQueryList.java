@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
 import java.util.List;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
 import software.amazon.awssdk.services.dynamodbv2.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.QueryResult;
 
@@ -41,7 +41,7 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
     /** The current query request. */
     private final QueryRequest queryRequest;
 
-    private final DynamoDBMapperConfig config;
+    private final DynamoDbMapperConfig config;
 
     /** The current results for the last executed query operation. */
     private QueryResult queryResult;
@@ -53,7 +53,7 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
             QueryRequest queryRequest,
             QueryResult queryResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDBMapperConfig config) {
+            DynamoDbMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.queryRequest = queryRequest;

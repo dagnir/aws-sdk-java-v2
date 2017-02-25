@@ -28,7 +28,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.net.ConnectionUtils;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryParameters;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.json.Jackson;
 
 @SdkInternalApi
@@ -109,7 +109,7 @@ public final class EC2CredentialsUtils {
 
                 if (statusCode == HttpURLConnection.HTTP_OK) {
                     inputStream = connection.getInputStream();
-                    return IOUtils.toString(inputStream);
+                    return IoUtils.toString(inputStream);
                 } else if (statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
                     // This is to preserve existing behavior of EC2 Instance metadata service.
                     throw new SdkClientException("The requested metadata is not found at " + connection.getURL());
@@ -129,7 +129,7 @@ public final class EC2CredentialsUtils {
                 LOG.debug("An IOException occured when connecting to service endpoint: " + endpoint +
                           "\n Retrying to connect again.");
             } finally {
-                IOUtils.closeQuietly(inputStream, LOG);
+                IoUtils.closeQuietly(inputStream, LOG);
             }
         }
 
@@ -140,7 +140,7 @@ public final class EC2CredentialsUtils {
 
         // Parse the error stream returned from the service.
         if (errorStream != null) {
-            String errorResponse = IOUtils.toString(errorStream);
+            String errorResponse = IoUtils.toString(errorStream);
 
             try {
                 JsonNode node = Jackson.jsonNodeOf(errorResponse);

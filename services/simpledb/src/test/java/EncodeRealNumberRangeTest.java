@@ -15,7 +15,7 @@
 
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.services.simpledb.util.SimpleDBUtils;
+import software.amazon.awssdk.services.simpledb.util.SimpleDbUtils;
 
 public class EncodeRealNumberRangeTest {
 
@@ -49,7 +49,7 @@ public class EncodeRealNumberRangeTest {
         int numDigitsRight = 2;
         int offset = 0;
 
-        String mungedValue = SimpleDBUtils.encodeRealNumberRange(value, numDigitsLeft, numDigitsRight, offset);
+        String mungedValue = SimpleDbUtils.encodeRealNumberRange(value, numDigitsLeft, numDigitsRight, offset);
 
         Assert.assertEquals(expectedValue, mungedValue);
     }
@@ -59,7 +59,7 @@ public class EncodeRealNumberRangeTest {
         int numDigitsRight = 0;
         int offset = 0;
 
-        String mungedValue = SimpleDBUtils.encodeRealNumberRange(value, numDigitsLeft, numDigitsRight, offset);
+        String mungedValue = SimpleDbUtils.encodeRealNumberRange(value, numDigitsLeft, numDigitsRight, offset);
 
         Assert.assertEquals(expectedValue, mungedValue);
     }

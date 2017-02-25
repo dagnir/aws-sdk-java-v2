@@ -132,7 +132,7 @@ public class TreeHashGenerator {
                 System.arraycopy(firstPart, 0, concatenation, 0, firstPart.length);
                 System.arraycopy(secondPart, 0, concatenation, firstPart.length, secondPart.length);
                 try {
-                    treeHashes.add(computeSHA256Hash(concatenation));
+                    treeHashes.add(computeSha256Hash(concatenation));
                 } catch (Exception e) {
                     throw new AmazonClientException("Unable to compute hash", e);
                 }
@@ -147,7 +147,7 @@ public class TreeHashGenerator {
     }
 
 
-    private static byte[] computeSHA256Hash(byte[] data) throws NoSuchAlgorithmException, IOException {
+    private static byte[] computeSha256Hash(byte[] data) throws NoSuchAlgorithmException, IOException {
         BufferedInputStream bis = new BufferedInputStream(new ByteArrayInputStream(data));
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");

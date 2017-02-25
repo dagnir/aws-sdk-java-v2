@@ -46,7 +46,7 @@ public class BucketNotificationConfigurationStaxUnmarshallerTest {
         BucketNotificationConfiguration config = unmarshaller.unmarshall(getResource(TOPIC_INPUT));
 
         TopicConfiguration topicConfig = (TopicConfiguration) config.getConfigurationByName("TopicConfigId");
-        assertEquals("some-topic-arn", topicConfig.getTopicARN());
+        assertEquals("some-topic-arn", topicConfig.getTopicArn());
         assertEventsUnmarshalledCorrectly(topicConfig.getEvents());
         assertFilterRulesUnmarshalledCorrectly(topicConfig.getFilter().getS3KeyFilter().getFilterRules());
     }
@@ -56,7 +56,7 @@ public class BucketNotificationConfigurationStaxUnmarshallerTest {
         BucketNotificationConfiguration config = unmarshaller.unmarshall(getResource(QUEUE_INPUT));
 
         QueueConfiguration queueConfig = (QueueConfiguration) config.getConfigurationByName("QueueConfigId");
-        assertEquals("some-queue-arn", queueConfig.getQueueARN());
+        assertEquals("some-queue-arn", queueConfig.getQueueArn());
         assertEventsUnmarshalledCorrectly(queueConfig.getEvents());
         assertFilterRulesUnmarshalledCorrectly(queueConfig.getFilter().getS3KeyFilter().getFilterRules());
     }
@@ -66,7 +66,7 @@ public class BucketNotificationConfigurationStaxUnmarshallerTest {
         BucketNotificationConfiguration config = unmarshaller.unmarshall(getResource(LAMBDA_INPUT));
 
         LambdaConfiguration lambdaConfig = (LambdaConfiguration) config.getConfigurationByName("LambdaConfigId");
-        assertEquals("some-lambda-function-arn", lambdaConfig.getFunctionARN());
+        assertEquals("some-lambda-function-arn", lambdaConfig.getFunctionArn());
         assertEventsUnmarshalledCorrectly(lambdaConfig.getEvents());
         assertFilterRulesUnmarshalledCorrectly(lambdaConfig.getFilter().getS3KeyFilter().getFilterRules());
     }

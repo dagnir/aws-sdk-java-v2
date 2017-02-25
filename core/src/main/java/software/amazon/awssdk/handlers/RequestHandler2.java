@@ -28,7 +28,7 @@ import software.amazon.awssdk.util.TimingInfo;
  * This interface deprecates {@link RequestHandler} by providing access to not only the AWS
  * response, but also the associated http response via {@link Response}.
  * <p>
- * Note {@link TimingInfo} is accessible via {@link Request#getAWSRequestMetrics()} and hence is
+ * Note {@link TimingInfo} is accessible via {@link Request#getAwsRequestMetrics()} and hence is
  * omitted from the interface to reduce duplication by design.
  */
 public abstract class RequestHandler2 implements IRequestHandler2 {

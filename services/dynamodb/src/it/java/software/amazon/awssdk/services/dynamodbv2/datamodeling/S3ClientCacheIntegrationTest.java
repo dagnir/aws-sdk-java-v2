@@ -60,11 +60,11 @@ public class S3ClientCacheIntegrationTest {
     public void testUserProvidedClients() {
         S3ClientCache s3cc = new S3ClientCache(credentials);
         AmazonS3Client s3East1 = new AmazonS3Client(credentials);
-        s3East1.setRegion(Region.US_Standard.toAWSRegion());
+        s3East1.setRegion(Region.US_Standard.toAwsRegion());
         AmazonS3Client s3West1 = new AmazonS3Client(credentials);
-        s3West1.setRegion(Region.US_West.toAWSRegion());
+        s3West1.setRegion(Region.US_West.toAwsRegion());
         AmazonS3Client s3West2 = new AmazonS3Client(credentials);
-        s3West2.setRegion(Region.US_West_2.toAWSRegion());
+        s3West2.setRegion(Region.US_West_2.toAwsRegion());
 
         s3cc.useClient(s3East1);
         s3cc.useClient(s3West1);
@@ -104,7 +104,7 @@ public class S3ClientCacheIntegrationTest {
         assertNotNull(tmEast1);
 
         AmazonS3Client newS3East = new AmazonS3Client(credentials);
-        newS3East.setRegion(Region.US_Standard.toAWSRegion());
+        newS3East.setRegion(Region.US_Standard.toAwsRegion());
         s3cc.useClient(newS3East); // should remove old TM
 
         TransferManager tmEast2 = s3cc.getTransferManager(Region.US_Standard);

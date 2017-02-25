@@ -36,7 +36,7 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.util.DateUtils;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class EC2CredentialsFetcherTest {
 
@@ -52,8 +52,8 @@ public class EC2CredentialsFetcherTest {
 
     @BeforeClass
     public static void setup() throws IOException {
-        successResponse = IOUtils.toString(EC2CredentialsFetcherTest.class.getResourceAsStream("/resources/wiremock/successResponse.json"));
-        successResponseWithInvalidBody = IOUtils.toString(EC2CredentialsFetcherTest.class.getResourceAsStream("/resources/wiremock/successResponseWithInvalidBody.json"));
+        successResponse = IoUtils.toString(EC2CredentialsFetcherTest.class.getResourceAsStream("/resources/wiremock/successResponse.json"));
+        successResponseWithInvalidBody = IoUtils.toString(EC2CredentialsFetcherTest.class.getResourceAsStream("/resources/wiremock/successResponseWithInvalidBody.json"));
     }
 
 

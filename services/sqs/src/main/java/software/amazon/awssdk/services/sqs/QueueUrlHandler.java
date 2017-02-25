@@ -36,10 +36,10 @@ public class QueueUrlHandler extends AbstractRequestHandler {
     public void beforeRequest(Request<?> request) {
 
         final Map<String, List<String>> requestParams = request.getParameters();
-        final List<String> queueURLParam = requestParams.get(QUEUE_URL_PARAMETER);
-        if (queueURLParam != null && !queueURLParam.isEmpty()) {
-            List<String> queueURLParameter = requestParams.remove(QUEUE_URL_PARAMETER);
-            String queueUrl = queueURLParameter.iterator().next();
+        final List<String> queueUrlParam = requestParams.get(QUEUE_URL_PARAMETER);
+        if (queueUrlParam != null && !queueUrlParam.isEmpty()) {
+            List<String> queueUrlParameter = requestParams.remove(QUEUE_URL_PARAMETER);
+            String queueUrl = queueUrlParameter.iterator().next();
 
             try {
                 URI uri = new URI(queueUrl);

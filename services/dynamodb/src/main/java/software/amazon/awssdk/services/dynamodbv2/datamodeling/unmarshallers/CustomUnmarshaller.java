@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers;
 
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMappingException;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
@@ -43,12 +43,12 @@ public class CustomUnmarshaller extends SUnmarshaller {
             return (DynamoDbMarshaller) clazz.newInstance();
 
         } catch (InstantiationException e) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
 
         } catch (IllegalAccessException e) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
         }

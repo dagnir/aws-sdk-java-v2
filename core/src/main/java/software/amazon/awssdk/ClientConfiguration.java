@@ -1266,7 +1266,7 @@ public class ClientConfiguration {
      */
     public boolean useThrottledRetries() {
         return throttleRetries || getSystemProperty(
-                SDKGlobalConfiguration.RETRY_THROTTLING_SYSTEM_PROPERTY) != null;
+                SdkGlobalConfiguration.RETRY_THROTTLING_SYSTEM_PROPERTY) != null;
     }
 
     /**

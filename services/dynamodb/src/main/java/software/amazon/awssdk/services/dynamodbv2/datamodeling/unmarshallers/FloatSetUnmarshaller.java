@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  * An unmarshaller that unmarshals DynamoDB NumberSets into sets of Java
  * {@code Float}s.
  */
-public class FloatSetUnmarshaller extends NSUnmarshaller {
+public class FloatSetUnmarshaller extends NsUnmarshaller {
 
     private static final FloatSetUnmarshaller INSTANCE =
             new FloatSetUnmarshaller();

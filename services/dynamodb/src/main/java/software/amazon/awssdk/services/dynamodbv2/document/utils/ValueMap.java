@@ -200,7 +200,7 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key to an object represented by the JSON
      * structure passed.
      */
-    public ValueMap withJSON(String key, String jsonValue) {
+    public ValueMap withJson(String key, String jsonValue) {
         super.put(key, valueConformer.transform(Jackson.fromJsonString(jsonValue, Object.class)));
         return this;
     }

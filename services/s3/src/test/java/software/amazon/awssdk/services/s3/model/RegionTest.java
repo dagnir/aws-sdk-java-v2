@@ -37,7 +37,7 @@ public class RegionTest {
 
     @Test
     public void toAWSRegion_UsStandard_ReturnsUsEast1Region() {
-        assertEquals("us-east-1", Region.US_Standard.toAWSRegion().getName());
+        assertEquals("us-east-1", Region.US_Standard.toAwsRegion().getName());
     }
 
 }

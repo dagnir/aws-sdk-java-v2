@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.simpledb;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.SdkGlobalTime;
 
 public class ClockSkewIntegrationTest extends IntegrationTestBase {
 
@@ -29,10 +29,10 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkewSdb() {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         AmazonSimpleDBClient clockSkewClient = new AmazonSimpleDBClient(credentials);
         clockSkewClient.listDomains();
-        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 
     /**
@@ -42,9 +42,9 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkewAsync() {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         AmazonSimpleDBAsyncClient clockSkewClient = new AmazonSimpleDBAsyncClient(credentials);
         clockSkewClient.listDomains();
-        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

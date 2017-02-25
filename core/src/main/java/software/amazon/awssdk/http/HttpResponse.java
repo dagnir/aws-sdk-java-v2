@@ -177,7 +177,7 @@ public class HttpResponse {
      *
      * @return The CRC32 checksum.
      */
-    public long getCRC32Checksum() {
+    public long getCrc32Checksum() {
         if (context == null) {
             return 0L;
         }

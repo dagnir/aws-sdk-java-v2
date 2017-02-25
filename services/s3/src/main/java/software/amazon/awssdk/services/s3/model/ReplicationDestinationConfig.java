@@ -27,7 +27,7 @@ public class ReplicationDestinationConfig implements Serializable {
     /**
      * The ARN of the Amazon S3 bucket where the replicas are sent.
      */
-    private String bucketARN;
+    private String bucketArn;
 
     /**
      * Storage class for the replica. If not specified, Amazon S3
@@ -38,8 +38,8 @@ public class ReplicationDestinationConfig implements Serializable {
     /**
      * Returns the Amazon S3 bucket ARN where the replicas are present.
      */
-    public String getBucketARN() {
-        return bucketARN;
+    public String getBucketArn() {
+        return bucketArn;
     }
 
     /**
@@ -48,11 +48,11 @@ public class ReplicationDestinationConfig implements Serializable {
      * @throws IllegalArgumentException
      *             if the bucket arn is null.
      */
-    public void setBucketARN(String bucketARN) {
-        if (bucketARN == null) {
+    public void setBucketArn(String bucketArn) {
+        if (bucketArn == null) {
             throw new IllegalArgumentException("Bucket name cannot be null");
         }
-        this.bucketARN = bucketARN;
+        this.bucketArn = bucketArn;
     }
 
     /**
@@ -63,8 +63,8 @@ public class ReplicationDestinationConfig implements Serializable {
      * @throws IllegalArgumentException
      *             if the bucket arn is null.
      */
-    public ReplicationDestinationConfig withBucketARN(String bucketARN) {
-        setBucketARN(bucketARN);
+    public ReplicationDestinationConfig withBucketArn(String bucketArn) {
+        setBucketArn(bucketArn);
         return this;
     }
 

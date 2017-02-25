@@ -178,13 +178,13 @@ public class BucketConfigurationXmlFactory {
             if (config instanceof TopicConfiguration) {
                 xml.start("TopicConfiguration");
                 xml.start("Id").value(configName).end();
-                xml.start("Topic").value(((TopicConfiguration) config).getTopicARN()).end();
+                xml.start("Topic").value(((TopicConfiguration) config).getTopicArn()).end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof QueueConfiguration) {
                 xml.start("QueueConfiguration");
                 xml.start("Id").value(configName).end();
-                xml.start("Queue").value(((QueueConfiguration) config).getQueueARN()).end();
+                xml.start("Queue").value(((QueueConfiguration) config).getQueueArn()).end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             } else if (config instanceof CloudFunctionConfiguration) {
@@ -197,7 +197,7 @@ public class BucketConfigurationXmlFactory {
             } else if (config instanceof LambdaConfiguration) {
                 xml.start("CloudFunctionConfiguration");
                 xml.start("Id").value(configName).end();
-                xml.start("CloudFunction").value(((LambdaConfiguration) config).getFunctionARN()).end();
+                xml.start("CloudFunction").value(((LambdaConfiguration) config).getFunctionArn()).end();
                 addEventsAndFilterCriteria(xml, config);
                 xml.end();
             }
@@ -263,7 +263,7 @@ public class BucketConfigurationXmlFactory {
 
             final ReplicationDestinationConfig config = rule.getDestinationConfig();
             xml.start("Destination");
-            xml.start("Bucket").value(config.getBucketARN()).end();
+            xml.start("Bucket").value(config.getBucketArn()).end();
             if (config.getStorageClass() != null) {
                 xml.start("StorageClass").value(config.getStorageClass()).end();
             }

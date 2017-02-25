@@ -25,9 +25,9 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.internal.http.apache.conn.SdkTLSSocketFactory;
+import software.amazon.awssdk.internal.http.apache.conn.SdkTlsSocketFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-import software.amazon.awssdk.internal.net.SdkSSLContext;
+import software.amazon.awssdk.internal.net.SdkSslContext;
 
 public class RecordingSocketFactory implements ConnectionSocketFactory {
 
@@ -38,8 +38,8 @@ public class RecordingSocketFactory implements ConnectionSocketFactory {
 
     public RecordingSocketFactory() {
         HttpClientSettings settings = HttpClientSettings.adapt(new ClientConfiguration(), false);
-        this.delegate = new SdkTLSSocketFactory(
-                SdkSSLContext.getPreferredSSLContext(settings.getSecureRandom()),
+        this.delegate = new SdkTlsSocketFactory(
+                SdkSslContext.getPreferredSslContext(settings.getSecureRandom()),
                 settings.useBrowserCompatibleHostNameVerifier()
                 ? SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER
                 : SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER);

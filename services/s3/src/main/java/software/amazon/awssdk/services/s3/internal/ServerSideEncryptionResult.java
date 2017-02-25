@@ -31,7 +31,7 @@ public interface ServerSideEncryptionResult {
      * Returns the server-side encryption algorithm if the object is encrypted
      * using AWS-managed keys. Otherwise returns null.
      */
-    public String getSSEAlgorithm();
+    public String getSseAlgorithm();
 
     /**
      * Sets the server-side encryption algorithm for the response.
@@ -39,13 +39,13 @@ public interface ServerSideEncryptionResult {
      * @param algorithm
      *            The server-side encryption algorithm for the response.
      */
-    public void setSSEAlgorithm(String algorithm);
+    public void setSseAlgorithm(String algorithm);
 
     /**
      * Returns the server-side encryption algorithm if the object is encrypted
      * using customer-provided keys. Otherwise returns null.
      */
-    public String getSSECustomerAlgorithm();
+    public String getSseCustomerAlgorithm();
 
     /**
      * Sets the server-side encryption algorithm used when encrypting the object
@@ -55,14 +55,14 @@ public interface ServerSideEncryptionResult {
      *            The server-side encryption algorithm used when encrypting the
      *            object with customer-provided keys.
      */
-    public void setSSECustomerAlgorithm(String algorithm);
+    public void setSseCustomerAlgorithm(String algorithm);
 
     /**
      * Returns the base64-encoded MD5 digest of the encryption key for
      * server-side encryption, if the object is encrypted using
      * customer-provided keys. Otherwise returns null.
      */
-    public String getSSECustomerKeyMd5();
+    public String getSseCustomerKeyMd5();
 
     /**
      * Sets the base64-encoded MD5 digest of the encryption key for server-side
@@ -72,5 +72,5 @@ public interface ServerSideEncryptionResult {
      *            The base64-encoded MD5 digest of the encryption key for
      *            server-side encryption.
      */
-    public void setSSECustomerKeyMd5(String md5Digest);
+    public void setSseCustomerKeyMd5(String md5Digest);
 }

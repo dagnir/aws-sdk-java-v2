@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3.util;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.FakeIoException;
 
 public class UnreliableBufferedInputStream extends BufferedInputStream {
     // True to throw a FakeIOException; false to throw a RuntimeException
@@ -70,7 +70,7 @@ public class UnreliableBufferedInputStream extends BufferedInputStream {
         if (position >= 100) {
             currNumberOfErrors++;
             if (isFakeIOException) {
-                throw new FakeIOException("Fake IO error " + currNumberOfErrors
+                throw new FakeIoException("Fake IO error " + currNumberOfErrors
                                           + " on UnreliableFileInputStream");
             } else {
                 throw new IOException("Injected IO error " + currNumberOfErrors

@@ -90,7 +90,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      * which means the users who provided the KMS client would be responsible
      * to shut down the KMS client. 
      */
-    private final boolean isKMSClientInternal;
+    private final boolean isKmsClientInternal;
 
     // ///////////////////// Constructors ////////////////
 
@@ -505,8 +505,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
                                "EncryptionMaterialsProvider parameter must not be null.");
         assertParameterNotNull(cryptoConfig,
                                "CryptoConfiguration parameter must not be null.");
-        this.isKMSClientInternal = kms == null;
-        this.kms = isKMSClientInternal
+        this.isKmsClientInternal = kms == null;
+        this.kms = isKmsClientInternal
                    ? newAwsKmsClient(credentialsProvider, clientConfig, cryptoConfig,
                                      requestMetricCollector)
                    : kms;
@@ -519,8 +519,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
         super(params);
         assertParameterNotNull(params.getEncryptionMaterials(), "EncryptionMaterialsProvider parameter must not be null.");
         assertParameterNotNull(params.getCryptoConfiguration(), "CryptoConfiguration parameter must not be null.");
-        this.isKMSClientInternal = params.getKmsClient() == null;
-        this.kms = isKMSClientInternal ?
+        this.isKmsClientInternal = params.getKmsClient() == null;
+        this.kms = isKmsClientInternal ?
                    newAwsKmsClient(params.getClientParams().getCredentialsProvider(),
                                    params.getClientParams().getClientConfiguration(),
                                    params.getCryptoConfiguration(),
@@ -675,7 +675,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     @Override
     public void shutdown() {
         super.shutdown();
-        if (isKMSClientInternal) {
+        if (isKmsClientInternal) {
             kms.shutdown();
         }
     }

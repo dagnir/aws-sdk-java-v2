@@ -26,7 +26,7 @@ public class QueueConfiguration extends NotificationConfiguration implements Ser
     /**
      * The Amazon SQS queue ARN for this configuration.
      */
-    private String queueARN;
+    private String queueArn;
 
     public QueueConfiguration() {
         super();
@@ -35,44 +35,44 @@ public class QueueConfiguration extends NotificationConfiguration implements Ser
     /**
      * Creates a new queue configuration with the given queue arn and set of events.
      *
-     * @param queueARN
+     * @param queueArn
      *            the Amazon SQS queue arn to which the notifications are to be sent.
      * @param events
      *            the events for which the notifications are to be sent
      */
-    public QueueConfiguration(String queueARN, EnumSet<S3Event> events) {
+    public QueueConfiguration(String queueArn, EnumSet<S3Event> events) {
         super(events);
-        this.queueARN = queueARN;
+        this.queueArn = queueArn;
     }
 
     /**
      * Creates a new queue configuration with the given queue arn and set of events.
      *
-     * @param queueARN
+     * @param queueArn
      *            the Amazon SQS queue arn to which the notifications are to be sent.
      * @param events
      *            the events for which the notifications are to be sent
      */
-    public QueueConfiguration(String queueARN, String... events) {
+    public QueueConfiguration(String queueArn, String... events) {
         super(events);
-        this.queueARN = queueARN;
+        this.queueArn = queueArn;
     }
 
     /**
      * Returns the queue arn for this notification configuration.
      */
-    public String getQueueARN() {
-        return queueARN;
+    public String getQueueArn() {
+        return queueArn;
     }
 
     /**
      * Sets the queue ARN for this configuration
      *
-     * @param queueARN
+     * @param queueArn
      *            ARN for the SQS queue
      */
-    public void setQueueARN(String queueARN) {
-        this.queueARN = queueARN;
+    public void setQueueArn(String queueArn) {
+        this.queueArn = queueArn;
     }
 
     /**
@@ -82,8 +82,8 @@ public class QueueConfiguration extends NotificationConfiguration implements Ser
      *            ARN for the SQS queue
      * @return This object for method chaining
      */
-    public QueueConfiguration withQueueARN(String queueARN) {
-        setQueueARN(queueARN);
+    public QueueConfiguration withQueueArn(String queueArn) {
+        setQueueArn(queueArn);
         return this;
     }
 }

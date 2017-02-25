@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  * An unmarshaller that unmarshals DynamoDB NumberSets into sets of Java
  * {@code BigInteger}s.
  */
-public class BigIntegerSetUnmarshaller extends NSUnmarshaller {
+public class BigIntegerSetUnmarshaller extends NsUnmarshaller {
 
     private static final BigIntegerSetUnmarshaller INSTANCE =
             new BigIntegerSetUnmarshaller();

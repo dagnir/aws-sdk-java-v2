@@ -15,7 +15,7 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
-import software.amazon.awssdk.services.securitytoken.auth.STSAssumeRoleSessionCredentialsProvider;
+import software.amazon.awssdk.services.securitytoken.auth.StsAssumeRoleSessionCredentialsProvider;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleResult;
 import software.amazon.awssdk.services.securitytoken.model.Credentials;
@@ -48,7 +48,7 @@ public class ScopeDownPolicyCredentialsProviderTest {
         ArgumentCaptor<AssumeRoleRequest> argumentCaptor = ArgumentCaptor
                 .forClass(AssumeRoleRequest.class);
 
-        new STSAssumeRoleSessionCredentialsProvider.Builder(
+        new StsAssumeRoleSessionCredentialsProvider.Builder(
                 "some-role-arn", "role-session-name")
                 .withScopeDownPolicy("{...}")
                 .withStsClient(this.sts)

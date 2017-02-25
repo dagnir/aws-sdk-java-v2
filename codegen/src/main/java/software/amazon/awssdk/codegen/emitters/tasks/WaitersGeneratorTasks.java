@@ -80,7 +80,7 @@ public class WaitersGeneratorTasks extends BaseGeneratorTasks {
 
                 generatorTasks.add(new FreemarkerGeneratorTask(waiterClassDir,
                                                                className,
-                                                               freemarker.getWaiterSDKFunctionTemplate(),
+                                                               freemarker.getWaiterSdkFunctionTemplate(),
                                                                dataModel));
             }
         }

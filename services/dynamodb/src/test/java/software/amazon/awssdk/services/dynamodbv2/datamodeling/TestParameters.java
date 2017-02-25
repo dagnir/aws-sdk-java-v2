@@ -43,7 +43,7 @@ public class TestParameters<T>
         return null;
     }
 
-    public DynamoDBMapperConfig getMapperConfig() {
+    public DynamoDbMapperConfig getMapperConfig() {
         return null;
     }
 

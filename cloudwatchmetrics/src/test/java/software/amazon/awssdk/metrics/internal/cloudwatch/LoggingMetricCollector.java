@@ -28,7 +28,7 @@ public class LoggingMetricCollector extends MetricCollector {
         return new RequestMetricCollector() {
             @Override
             public void collectMetrics(Request<?> request, Response<?> response) {
-              AwsRequestMetrics metrics = request.getAWSRequestMetrics();
+              AwsRequestMetrics metrics = request.getAwsRequestMetrics();
               metrics.log();
             }
         };

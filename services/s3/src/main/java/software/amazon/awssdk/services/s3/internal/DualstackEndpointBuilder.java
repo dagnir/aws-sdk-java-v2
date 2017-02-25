@@ -48,7 +48,7 @@ public class DualstackEndpointBuilder extends ServiceEndpointBuilder {
     public URI getServiceEndpoint() {
         String serviceEndpoint =
                 String.format("%s.%s.%s.%s", serviceName, Constants.S3_DUALSTACK_QUALIFIER, region.getName(), region.getDomain());
-        return toURI(stripProtocol(serviceEndpoint));
+        return toUri(stripProtocol(serviceEndpoint));
     }
 
     private String stripProtocol(final String endpoint) {
@@ -56,7 +56,7 @@ public class DualstackEndpointBuilder extends ServiceEndpointBuilder {
         return protocolIndex >= 0 ? endpoint.substring(protocolIndex + "://".length()) : endpoint;
     }
 
-    private URI toURI(String endpoint) throws IllegalArgumentException {
+    private URI toUri(String endpoint) throws IllegalArgumentException {
         try {
             return new URI(String.format("%s://%s", protocol, endpoint));
         } catch (URISyntaxException e) {

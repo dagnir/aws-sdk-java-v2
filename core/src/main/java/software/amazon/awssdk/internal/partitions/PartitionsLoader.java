@@ -25,7 +25,7 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.partitions.model.Partitions;
 import software.amazon.awssdk.regions.RegionMetadata;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * Loads all the partition files into memory.
@@ -96,7 +96,7 @@ public class PartitionsLoader {
             throw new SdkClientException("Error while loading partitions " +
                                          "file from " + location, e);
         } finally {
-            IOUtils.closeQuietly(stream, null);
+            IoUtils.closeQuietly(stream, null);
         }
     }
 }

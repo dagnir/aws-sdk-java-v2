@@ -33,7 +33,7 @@ class QueueConfigurationStaxUnmarshaller extends NotificationConfigurationStaxUn
     protected boolean handleXmlEvent(QueueConfiguration queueConfig, StaxUnmarshallerContext context, int targetDepth)
             throws Exception {
         if (context.testExpression("Queue", targetDepth)) {
-            queueConfig.setQueueARN(StringStaxUnmarshaller.getInstance().unmarshall(context));
+            queueConfig.setQueueArn(StringStaxUnmarshaller.getInstance().unmarshall(context));
             return true;
         }
         return false;

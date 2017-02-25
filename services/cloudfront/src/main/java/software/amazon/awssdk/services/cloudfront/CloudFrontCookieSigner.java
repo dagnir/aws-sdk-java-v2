@@ -22,7 +22,7 @@ import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.genera
 import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.loadPrivateKey;
 import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.makeBytesUrlSafe;
 import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.makeStringUrlSafe;
-import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.signWithSha1RSA;
+import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.signWithSha1Rsa;
 import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.io.File;
@@ -183,7 +183,7 @@ public enum CloudFrontCookieSigner {
                                                                    Date expiresOn) {
         try {
             final String cannedPolicy = buildCannedPolicy(resourceUrlOrPath, expiresOn);
-            byte[] signatureBytes = signWithSha1RSA(cannedPolicy.getBytes(UTF8), privateKey);
+            byte[] signatureBytes = signWithSha1Rsa(cannedPolicy.getBytes(UTF8), privateKey);
             String urlSafeSignature = makeBytesUrlSafe(signatureBytes);
             // Create the cookies
             final CookiesForCannedPolicy cookies = new CookiesForCannedPolicy();
@@ -270,7 +270,7 @@ public enum CloudFrontCookieSigner {
                                                                    String ipRange) {
         try {
             final String policy = buildCustomPolicy(resourceUrlOrPath, expiresOn, activeFrom, ipRange);
-            byte[] signatureBytes = signWithSha1RSA(policy.getBytes(UTF8), privateKey);
+            byte[] signatureBytes = signWithSha1Rsa(policy.getBytes(UTF8), privateKey);
             String urlSafePolicy = makeStringUrlSafe(policy);
             String urlSafeSignature = makeBytesUrlSafe(signatureBytes);
             // Create the cookies

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.util;
 
-import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.FakeIoException;
 
 public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
     // True to throw a FakeIOException; false to throw a RuntimeException
@@ -41,7 +41,7 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
     }
 
     @Override
-    public int read() throws FakeIOException {
+    public int read() throws FakeIoException {
         int read = super.read();
         if (read != -1) {
             position++;
@@ -51,7 +51,7 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws FakeIOException {
+    public int read(byte[] b, int off, int len) throws FakeIoException {
         triggerError();
         int read = super.read(b, off, len);
         position += read;
@@ -59,7 +59,7 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
         return read;
     }
 
-    private void triggerError() throws FakeIOException {
+    private void triggerError() throws FakeIoException {
         if (currNumberOfErrors >= maxNumberOfErrors) {
             return;
         }
@@ -67,7 +67,7 @@ public class UnreliableByteArrayInputStream extends TestByteArrayInputStream {
         if (position >= 100) {
             currNumberOfErrors++;
             if (isFakeIOException) {
-                throw new FakeIOException("Fake IO error " + currNumberOfErrors
+                throw new FakeIoException("Fake IO error " + currNumberOfErrors
                                           + " on UnreliableFileInputStream");
             } else {
                 throw new RuntimeException("Injected runtime error " + currNumberOfErrors

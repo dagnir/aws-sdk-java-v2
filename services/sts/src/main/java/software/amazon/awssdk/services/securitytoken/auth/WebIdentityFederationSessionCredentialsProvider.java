@@ -50,7 +50,7 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
     private Date sessionCredentialsExpiration;
     private int sessionDuration;
     private int refreshThreshold;
-    private String subjectFromWIF;
+    private String subjectFromWif;
 
     /**
      * Constructs a new WebIdentityFederationSessionCredentialsProvider, which will use the
@@ -236,8 +236,8 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
      *
      * @return The identifier returned from Identity Provider
      */
-    public String getSubjectFromWIF() {
-        return this.subjectFromWIF;
+    public String getSubjectFromWif() {
+        return this.subjectFromWif;
     }
 
     /**
@@ -254,7 +254,7 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
                                                                                  .withDurationSeconds(this.sessionDuration));
         Credentials stsCredentials = sessionTokenResult.getCredentials();
 
-        subjectFromWIF = sessionTokenResult.getSubjectFromWebIdentityToken();
+        subjectFromWif = sessionTokenResult.getSubjectFromWebIdentityToken();
 
         sessionCredentials = new BasicSessionCredentials(
                 stsCredentials.getAccessKeyId(),

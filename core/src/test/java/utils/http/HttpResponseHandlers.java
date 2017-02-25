@@ -18,7 +18,7 @@ package utils.http;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class HttpResponseHandlers {
 
@@ -26,7 +26,7 @@ public class HttpResponseHandlers {
         return responseHandler(new FunctionWithException<HttpResponse, String>() {
             @Override
             public String apply(HttpResponse in) throws Exception {
-                return IOUtils.toString(in.getContent());
+                return IoUtils.toString(in.getContent());
             }
         });
     }

@@ -39,8 +39,8 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     public void responseMetadataInBaseResultIsSameAsCache() {
         ListDomainsRequest request = new ListDomainsRequest().withMaxNumberOfDomains(1);
         final ListDomainsResult result = simpleDB.listDomains(request);
-        SimpleDBResponseMetadata cachedMetadata = simpleDB.getCachedResponseMetadata(request);
-        SimpleDBResponseMetadata resultMetadata = result.getSdkResponseMetadata();
+        SimpleDbResponseMetadata cachedMetadata = simpleDB.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata resultMetadata = result.getSdkResponseMetadata();
         assertNotNull(result.getSdkResponseMetadata());
         assertEquals(cachedMetadata.getRequestId(), resultMetadata.getRequestId());
         assertEquals(cachedMetadata.getBoxUsage(), resultMetadata.getBoxUsage(), 0.0001f);

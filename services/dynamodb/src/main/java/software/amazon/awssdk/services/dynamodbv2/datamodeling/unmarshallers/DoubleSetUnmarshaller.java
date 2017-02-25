@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  * An unmarshaller that unmarshals DynamoDB NumberSets into sets of Java
  * {@code Double}s.
  */
-public class DoubleSetUnmarshaller extends NSUnmarshaller {
+public class DoubleSetUnmarshaller extends NsUnmarshaller {
 
     private static final DoubleSetUnmarshaller INSTANCE =
             new DoubleSetUnmarshaller();

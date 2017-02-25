@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.internal.ObjectExpirationResult;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
 import software.amazon.awssdk.services.s3.internal.S3VersionResult;
-import software.amazon.awssdk.services.s3.internal.SSEResultBase;
+import software.amazon.awssdk.services.s3.internal.SseResultBase;
 
 /**
  * <p>
@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.s3.internal.SSEResultBase;
  * @see AmazonS3Client#copyObject(String, String, String, String)
  * @see AmazonS3Client#copyObject(software.amazon.awssdk.services.s3.model.CopyObjectRequest)
  */
-public class CopyObjectResult extends SSEResultBase
+public class CopyObjectResult extends SseResultBase
         implements ObjectExpirationResult, S3RequesterChargedResult, S3VersionResult, Serializable {
 
     /** The ETag value of the new object. */

@@ -606,9 +606,9 @@ public enum InternalUtils {
      * Append the custom user-agent string.
      */
     public static <X extends AmazonWebServiceRequest> X applyUserAgent(X request) {
-        final String USER_AGENT = "dynamodb-table-api/" + VersionInfoUtils.getVersion();
+        final String userAgent = "dynamodb-table-api/" + VersionInfoUtils.getVersion();
 
-        request.getRequestClientOptions().appendUserAgent(USER_AGENT);
+        request.getRequestClientOptions().appendUserAgent(userAgent);
         return request;
     }
 

@@ -17,13 +17,13 @@ package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
-import software.amazon.awssdk.services.s3.internal.SSEResultBase;
+import software.amazon.awssdk.services.s3.internal.SseResultBase;
 
 /**
  * Contains the details returned from Amazon S3 after calling the UploadPart
  * operation.
  */
-public class UploadPartResult extends SSEResultBase
+public class UploadPartResult extends SseResultBase
         implements Serializable, S3RequesterChargedResult {
 
     /** The part number of the newly uploaded part. */

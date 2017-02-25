@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.s3.AmazonS3Client;
  * @see GetObjectRequest
  */
 public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
-                                                                      SSECustomerKeyProvider, Serializable {
+        SseCustomerKeyProvider, Serializable {
     /**
      * The name of the bucket containing the object's whose metadata is being
      * retrieved.
@@ -332,7 +332,7 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
     }
 
     @Override
-    public SseCustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSseCustomerKey() {
         return sseCustomerKey;
     }
 
@@ -345,7 +345,7 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
      *            use when retrieving the metadata of a server-side encrypted
      *            object.
      */
-    public void setSSECustomerKey(SseCustomerKey sseKey) {
+    public void setSseCustomerKey(SseCustomerKey sseKey) {
         this.sseCustomerKey = sseKey;
     }
 
@@ -363,8 +363,8 @@ public class GetObjectMetadataRequest extends AmazonWebServiceRequest implements
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public GetObjectMetadataRequest withSSECustomerKey(SseCustomerKey sseKey) {
-        setSSECustomerKey(sseKey);
+    public GetObjectMetadataRequest withSseCustomerKey(SseCustomerKey sseKey) {
+        setSseCustomerKey(sseKey);
         return this;
     }
 

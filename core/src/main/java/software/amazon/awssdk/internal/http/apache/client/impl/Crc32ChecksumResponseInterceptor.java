@@ -27,7 +27,7 @@ import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.Crc32ChecksumCalculatingInputStream;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 @SdkInternalApi
 public class Crc32ChecksumResponseInterceptor implements HttpResponseInterceptor {
@@ -67,7 +67,7 @@ public class Crc32ChecksumResponseInterceptor implements HttpResponseInterceptor
             @Override
             public void writeTo(OutputStream outstream) throws IOException {
                 try {
-                    IOUtils.copy(this.getContent(), outstream);
+                    IoUtils.copy(this.getContent(), outstream);
                 } finally {
                     this.getContent().close();
                 }

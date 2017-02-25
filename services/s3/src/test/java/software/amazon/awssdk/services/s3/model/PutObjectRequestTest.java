@@ -205,7 +205,7 @@ public class PutObjectRequestTest {
         assertEquals("um_v1", toOMD.getUserMetaDataOf("um_k1"));
         assertEquals("um_v2", toOMD.getUserMetaDataOf("um_k2"));
 
-        assertSame(sseKey, to.getSSECustomerKey());
+        assertSame(sseKey, to.getSseCustomerKey());
         assertEquals("redirectLocation", to.getRedirectLocation());
         assertEquals(StorageClass.Standard.toString(), to.getStorageClass());
 
