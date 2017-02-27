@@ -23,11 +23,11 @@ import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.protocol.OperationInfo;
 import software.amazon.awssdk.protocol.ProtocolRequestMarshaller;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
-import software.amazon.awssdk.protocol.OperationInfo;
 
 /**
  * Factory to generate the various JSON protocol handlers and generators depending on the wire protocol to be used for

@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.event;
 
-import software.amazon.awssdk.annotation.Immutable;
+package software.amazon.awssdk.event;
 
 import java.util.EnumMap;
 import java.util.Map;
+
+import software.amazon.awssdk.annotation.Immutable;
 
 /**
  * A progress event. Typically this is used to notify a chunk of bytes has been

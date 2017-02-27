@@ -1,0 +1,119 @@
+{ // AWS Java SDK internal configuration overrides.
+  // Configuration in this file will override those specified
+  // at awssdk_config.json
+
+  // "regionSigners" configuration takes precedence over
+  // the "serviceSigners" configuration,
+  // but not the "serviceRegionSigners" configuration
+  "regionSigners" : [ {
+    "key" : "us-iso-east-1",
+    "config" : {
+      "signerType" : "AWS4SignerType",
+      "doubleUrlEncode" : true
+    }
+  }, {
+    "key" : "cn-north-1",
+    "config" : {
+      "signerType" : "AWS4SignerType",
+      "doubleUrlEncode" : true
+    }
+  }, {
+    "key" : "eu-central-1",
+    "config" : {
+      "signerType" : "AWS4SignerType"
+    }
+  } ],
+  // "serviceRegionSigners" has the highest precedence
+  "serviceRegionSigners" : [ {
+    "key" : "s3/us-iso-east-1",
+    "config" : {
+      "signerType" : "AWSS3V4SignerType"
+    }
+  }, {
+    // https://tt.amazon.com/0043987527
+    "key" : "s3/aws-master",
+    "config" : {
+      "signerType" : "S3SignerType"
+    }
+  }, {
+    "key" : "s3/cn-north-1",
+    "config" : {
+      "signerType" : "AWSS3V4SignerType"
+    }
+  }, {
+    "key" : "s3/eu-central-1",
+    "config" : {
+      "signerType" : "AWSS3V4SignerType"
+    }
+  }, {
+    // This is being added to support internal customer who still use s3-external-2.amazonaws.com
+    // endpoint as we have defaulted the to AWS3V4SignerType for S3.
+    "key" : "s3/external-2",
+    "config" : {
+      "signerType" : "S3SignerType"
+    }
+  },{
+    // This is being added to support internal customer who still use s3-internal-iad.amazonaws.com
+    // endpoint as we have defaulted the to AWS3V4SignerType for S3.
+    "key" : "s3/internal-iad",
+    "config" : {
+      "signerType" : "S3SignerType"
+    }
+  },{
+    // This is being added to support internal customer who still use s3-internal-sea.amazonaws.com
+    // endpoint as we have defaulted the to AWS3V4SignerType for S3.
+    "key" : "s3/internal-sea",
+    "config" : {
+      "signerType" : "S3SignerType"
+    }
+  },{
+    // This is being added to support internal customer who still use s3-internal-dub.amazonaws.com
+    // endpoint as we have defaulted the to AWS3V4SignerType for S3.
+    "key" : "s3/internal-dub",
+    "config" : {
+      "signerType" : "S3SignerType"
+    }
+  }, {
+    // SDB rolled their own SigV2 implementation in "SigV4-only" BJS
+    "key" : "sdb/cn-north-1",
+    "config" : {
+      "signerType" : "QueryStringSignerType"
+    }
+  } ],
+  "httpClients" : [ {
+    "key": "AmazonAccountsServiceClient",
+    "config": {
+      "serviceName": "AWSAccountsService"
+    }
+  }, {
+    "key": "AWSSecurityTokenV20111201Client",
+    "config": {
+      "serviceName": "sts"
+    }
+  }, {
+    "key": "AmazonDynamoDBStreamsClient",
+    "config": {
+      "serviceName": "dynamodb", // for v4 signing
+      "regionMetadataServiceName": "streams.dynamodb" // for region metadata
+    }
+  }, {
+    "key": "AWSKanapkaClient",
+    "config": {
+      "serviceName": "KanapkaService"
+    }
+  } ],
+  "hostRegexToRegionMappings" : [ {
+    "hostNameRegex" : "(.+\\.)?s3-external-2\\.amazon\\.com",
+    "regionName"    : "us-east-1"
+  }, {
+    "hostNameRegex" : "(.+\\.)?s3-internal-iad\\.amazon\\.com",
+    "regionName"    : "us-east-1"
+  }, {
+    "hostNameRegex" : "(.+\\.)?s3-internal-sea\\.amazon\\.com",
+    "regionName"    : "us-east-1"
+  }, {
+    "hostNameRegex" : "(.+\\.)?s3-internal-dub\\.amazon\\.com",
+    "regionName"    : "eu-west-1"
+  } ],
+  "userAgentTemplate": "aws-internal/3"
+}

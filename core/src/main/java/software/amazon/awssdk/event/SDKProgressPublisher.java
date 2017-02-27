@@ -22,8 +22,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import org.apache.commons.logging.LogFactory;
 
-import static software.amazon.awssdk.event.ProgressEventType.*;
-
 /**
  * This class is responsible for executing the callback method of
  * ProgressListener; listener callbacks are executed sequentially in a separate

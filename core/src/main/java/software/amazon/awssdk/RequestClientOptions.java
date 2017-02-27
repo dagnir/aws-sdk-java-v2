@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
+package software.amazon.awssdk;
 
 import java.io.InputStream;
 import java.util.EnumMap;
+
+import software.amazon.awssdk.annotation.NotThreadSafe;
 
 /**
  * Client request options such as client markers for individual

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol;
 
 import software.amazon.awssdk.annotation.SdkProtectedApi;
@@ -49,9 +50,9 @@ public class MarshallingInfo<T> {
 
     /**
      * @return Marshall location name. This may represent different things depending on where the data is meant to be marshalled
-     * to. For data bound to the payload, this may be the JSON field name, for data bound to the query params this will be the
-     * parameter name, for data bound to the path this will be the value of the path placeholder to replace in the request URI.
-     * Note that it may be null for explicit payload members.
+     *     to. For data bound to the payload, this may be the JSON field name, for data bound to the query params this will be
+     *     the parameter name, for data bound to the path this will be the value of the path placeholder to replace in the
+     *     request URI. Note that it may be null for explicit payload members.
      */
     public String marshallLocationName() {
         return marshallLocationName;
@@ -73,8 +74,8 @@ public class MarshallingInfo<T> {
 
     /**
      * @return True if the payload member is binary data (i.e. a {@link java.nio.ByteBuffer} or {@link java.io.InputStream} and
-     * should be sent as the request content. This is not true when binary data is bound to a member of the JSON payload since it
-     * will be base64 encoded as a string.
+     *     should be sent as the request content. This is not true when binary data is bound to a member of the JSON payload
+     *     since it will be base64 encoded as a string.
      */
     public boolean isBinary() {
         return isBinary;

@@ -38,10 +38,10 @@ public class InternalConfigLoaderInternalTest {
 
         assertThat(
                 loaded.getDefaultConfigFileLocation().getPath(),
-                endsWith("/com/amazonaws/internal/config/awssdk_config_default.json"));
+                endsWith("/software/amazon/awssdk/internal/config/awssdk_config_default.json"));
         assertThat(
                 loaded.getDefaultConfigFileLocation().getPath(),
-                not(endsWith("/jarjar/com/amazonaws/internal/config/awssdk_config_default.json")));
+                not(endsWith("/jarjar/software/amazon/awssdk/internal/config/awssdk_config_default.json")));
     }
 
     // FIXME(dongie): commented this out for now. Should we just delete?

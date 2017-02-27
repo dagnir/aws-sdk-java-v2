@@ -12,7 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.presign;
+
+import java.net.URL;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
@@ -24,11 +30,6 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.util.CredentialUtils;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
-
-import java.net.URL;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Really thin facade over {@link Presigner} to deal with some common concerns like credential resolution, adding custom headers

@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.internal.http.timers.request;
 
 import java.util.concurrent.ScheduledFuture;
@@ -23,8 +24,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.internal.http.timers.TimeoutThreadPoolBuilder;
 import software.amazon.awssdk.http.AmazonHttpClient;
+import software.amazon.awssdk.internal.http.timers.TimeoutThreadPoolBuilder;
 
 /**
  * Represents a timer class to enforce HTTP request timeouts.

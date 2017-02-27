@@ -1337,6 +1337,7 @@ public class ClientConfiguration {
         this.maxConsecutiveRetriesBeforeThrottling = ValidationUtils.assertIsPositive(maxConsecutiveRetriesBeforeThrottling,
                 "maxConsecutiveRetriesBeforeThrottling");
     }
+
     /**
      * Set the maximum number of consecutive failed retries that the client will permit before
      * throttling all subsequent retries of failed requests.
@@ -1358,7 +1359,7 @@ public class ClientConfiguration {
 
     /**
      * @return Set the maximum number of consecutive failed retries that the client will permit
-     * before throttling all subsequent retries of failed requests.
+     *     before throttling all subsequent retries of failed requests.
      */
     public int getMaxConsecutiveRetriesBeforeThrottling() {
         return maxConsecutiveRetriesBeforeThrottling;

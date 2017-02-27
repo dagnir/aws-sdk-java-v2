@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol;
 
 import software.amazon.awssdk.Request;
@@ -57,8 +58,8 @@ public class OperationInfo {
 
     /**
      * @return Identifer for the operation/API being invoked. This is used for RPC based protocols that
-     * need to identify which action is being taken. For Query/EC2 protocol this is sent as the 'Action' query
-     * parameter, for JSON RPC this is sent as the 'X-Amz-Target' header.
+     *     need to identify which action is being taken. For Query/EC2 protocol this is sent as the 'Action' query
+     *     parameter, for JSON RPC this is sent as the 'X-Amz-Target' header.
      */
     public String operationIdentifier() {
         return operationIdentifier;
@@ -66,8 +67,8 @@ public class OperationInfo {
 
     /**
      * @return Display name for the service. Mainly used for the metrics system but is also available on the {@link Request}
-     * object (to do something in a {@link com.amazonaws.handlers.RequestHandler2} for example). This is usually the service
-     * interface name but may be customized at generation time ('AmazonDynamoDBv2' for example).
+     *     object (to do something in a {@link software.amazon.awssdk.handlers.RequestHandler2} for example). This is usually the
+     *     service interface name but may be customized at generation time ('AmazonDynamoDBv2' for example).
      */
     public String serviceName() {
         return serviceName;
@@ -75,7 +76,7 @@ public class OperationInfo {
 
     /**
      * @return True if the operation has a member that's explicitly marked as the payload. False otherwise. (Applicable only to
-     * RESTUL protocols).
+     *     RESTUL protocols).
      */
     public boolean hasExplicitPayloadMember() {
         return hasExplicitPayloadMember;
@@ -83,7 +84,7 @@ public class OperationInfo {
 
     /**
      * @return True if the operation has members bound to the payload. Some requests (especially GET and DELETE) may not
-     * have any members bound to the payload. (Applicable only to RESTFUL protocols).
+     *     have any members bound to the payload. (Applicable only to RESTFUL protocols).
      */
     public boolean hasPayloadMembers() {
         return hasPayloadMembers;
@@ -107,6 +108,9 @@ public class OperationInfo {
         private String serviceName;
         private boolean hasExplicitPayloadMember;
         private boolean hasPayloadMembers;
+
+        private Builder() {
+        }
 
         public Builder requestUri(String requestUri) {
             this.requestUri = requestUri;
@@ -136,9 +140,6 @@ public class OperationInfo {
         public Builder hasPayloadMembers(boolean hasPayloadMembers) {
             this.hasPayloadMembers = hasPayloadMembers;
             return this;
-        }
-
-        private Builder() {
         }
 
         /**

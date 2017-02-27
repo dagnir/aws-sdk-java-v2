@@ -12,7 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.client.builder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.ClientConfiguration;
@@ -34,12 +41,6 @@ import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Base class for all service specific client builders.

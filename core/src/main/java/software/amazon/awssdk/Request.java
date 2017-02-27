@@ -12,15 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk;
 
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+package software.amazon.awssdk;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+
+import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * Represents a request being sent to an Amazon Web Service, including the
@@ -151,7 +152,7 @@ public interface Request<T> extends SignableRequest<T> {
 
     /**
      * Adds a context to the request object that is visible
-     * to all {@link com.amazonaws.handlers.RequestHandler2} .
+     * to all {@link software.amazon.awssdk.handlers.RequestHandler2} .
      *
      * Note that, context added here will available only for the scope of
      * the request execution and will not be marshalled over the wire.

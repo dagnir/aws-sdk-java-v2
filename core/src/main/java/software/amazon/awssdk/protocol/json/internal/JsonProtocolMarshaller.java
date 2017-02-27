@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -7,12 +7,17 @@
  *
  *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is divalibuted
+ * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json.internal;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.DefaultRequest;
@@ -27,22 +32,18 @@ import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.UriResourcePathUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-
 /**
  * Implementation of {@link ProtocolMarshaller} for JSON based services. This includes JSON-RPC and REST-JSON.
  *
- * @param <OrigRequest> Type of the original request object.
+ * @param <OrigRequestT> Type of the original request object.
  */
 @SdkInternalApi
-public class JsonProtocolMarshaller<OrigRequest> implements ProtocolRequestMarshaller<OrigRequest> {
+public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMarshaller<OrigRequestT> {
 
     private static final MarshallerRegistry marshallerRegistry = createMarshallerRegistry();
 
     private final StructuredJsonGenerator jsonGenerator;
-    private final Request<OrigRequest> request;
+    private final Request<OrigRequestT> request;
     private final String contentType;
     private final boolean hasExplicitPayloadMember;
 
@@ -51,7 +52,7 @@ public class JsonProtocolMarshaller<OrigRequest> implements ProtocolRequestMarsh
     public JsonProtocolMarshaller(StructuredJsonGenerator jsonGenerator,
                                   String contentType,
                                   OperationInfo operationInfo,
-                                  OrigRequest originalRequest) {
+                                  OrigRequestT originalRequest) {
         this.jsonGenerator = jsonGenerator;
         this.contentType = contentType;
         this.hasExplicitPayloadMember = operationInfo.hasExplicitPayloadMember();
@@ -64,8 +65,8 @@ public class JsonProtocolMarshaller<OrigRequest> implements ProtocolRequestMarsh
                 .build();
     }
 
-    private Request<OrigRequest> fillBasicRequestParams(OperationInfo operationInfo, OrigRequest originalRequest) {
-        Request<OrigRequest> request = createRequest(operationInfo, originalRequest);
+    private Request<OrigRequestT> fillBasicRequestParams(OperationInfo operationInfo, OrigRequestT originalRequest) {
+        Request<OrigRequestT> request = createRequest(operationInfo, originalRequest);
         request.setHttpMethod(operationInfo.httpMethodName());
         request.setResourcePath(UriResourcePathUtils.addStaticQueryParamtersToRequest(request, operationInfo.requestUri()));
         if (operationInfo.operationIdentifier() != null) {
@@ -74,11 +75,11 @@ public class JsonProtocolMarshaller<OrigRequest> implements ProtocolRequestMarsh
         return request;
     }
 
-    private DefaultRequest<OrigRequest> createRequest(OperationInfo operationInfo, OrigRequest originalRequest) {
+    private DefaultRequest<OrigRequestT> createRequest(OperationInfo operationInfo, OrigRequestT originalRequest) {
         if (originalRequest instanceof AmazonWebServiceRequest) {
-            return new DefaultRequest<OrigRequest>((AmazonWebServiceRequest) originalRequest, operationInfo.serviceName());
+            return new DefaultRequest<OrigRequestT>((AmazonWebServiceRequest) originalRequest, operationInfo.serviceName());
         } else {
-            return new DefaultRequest<OrigRequest>(operationInfo.serviceName());
+            return new DefaultRequest<OrigRequestT>(operationInfo.serviceName());
         }
     }
 
@@ -145,8 +146,8 @@ public class JsonProtocolMarshaller<OrigRequest> implements ProtocolRequestMarsh
     }
 
     /**
-     * @return The original value if non-null, or if value is null and a {@link com.amazonaws.protocol.DefaultValueSupplier} is
-     * present return the default value. Otherwise return null.
+     * @return The original value if non-null, or if value is null and a
+     * {@link software.amazon.awssdk.protocol.DefaultValueSupplier} is present return the default value. Otherwise return null.
      */
     private <V> V resolveValue(V val, MarshallingInfo<V> marshallingInfo) {
         return val == null && marshallingInfo.defaultValueSupplier() != null ? marshallingInfo.defaultValueSupplier().get() : val;
@@ -173,7 +174,7 @@ public class JsonProtocolMarshaller<OrigRequest> implements ProtocolRequestMarsh
     }
 
     @Override
-    public Request<OrigRequest> finishMarshalling() {
+    public Request<OrigRequestT> finishMarshalling() {
         // Content may already be set if the payload is binary data.
         if (request.getContent() == null) {
             // End the implicit request object if needed.

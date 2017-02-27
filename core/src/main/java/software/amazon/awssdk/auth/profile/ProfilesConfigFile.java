@@ -12,7 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.auth.profile;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentials;
@@ -29,11 +35,6 @@ import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredent
 import software.amazon.awssdk.auth.profile.internal.securitytoken.STSProfileCredentialsServiceLoader;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 import software.amazon.awssdk.util.ValidationUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Loads the local AWS credential profiles from the standard location (~/.aws/credentials), which

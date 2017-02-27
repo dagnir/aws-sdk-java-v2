@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,13 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json.internal;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
 import software.amazon.awssdk.protocol.MarshallLocation;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
+import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
 
 /**
  * Dependencies needed by implemenatations of {@link JsonMarshaller}.
@@ -47,7 +48,7 @@ public class JsonMarshallerContext {
 
     /**
      * @return Implementation of {@link ProtocolMarshaller} that can be used to call back out to marshall structured data (i.e.
-     * lists of objects).
+     *      dlists of objects).
      */
     public ProtocolMarshaller protocolHandler() {
         return protocolHandler;
@@ -55,7 +56,7 @@ public class JsonMarshallerContext {
 
     /**
      * @return Marshaller registry to obtain marshaller implementations for nested types (i.e. lists of objects or maps of string
-     * to string).
+     *     to string).
      */
     public MarshallerRegistry marshallerRegistry() {
         return marshallerRegistry;

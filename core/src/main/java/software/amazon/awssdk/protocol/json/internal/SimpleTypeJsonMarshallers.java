@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,7 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json.internal;
+
+import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.protocol.MarshallLocation;
@@ -20,12 +27,6 @@ import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
 import software.amazon.awssdk.runtime.SdkInternalList;
 import software.amazon.awssdk.runtime.SdkInternalMap;
-
-import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @SdkInternalApi
 public class SimpleTypeJsonMarshallers {

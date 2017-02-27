@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol;
 
 import software.amazon.awssdk.Request;
@@ -30,10 +31,10 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
  * }
  * </pre>
  *
- * @param <OrigRequest> Type of the original request object.
+ * @param <OrigRequestT> Type of the original request object.
  */
 @SdkProtectedApi
-public interface ProtocolRequestMarshaller<OrigRequest> extends ProtocolMarshaller {
+public interface ProtocolRequestMarshaller<OrigRequestT> extends ProtocolMarshaller {
 
     /**
      * Hook to perform an initialization that needs to happen at the start of marshalling. Must be called before
@@ -47,6 +48,6 @@ public interface ProtocolRequestMarshaller<OrigRequest> extends ProtocolMarshall
      *
      * @return Marshalled {@link Request} object.
      */
-    Request<OrigRequest> finishMarshalling();
+    Request<OrigRequestT> finishMarshalling();
 
 }

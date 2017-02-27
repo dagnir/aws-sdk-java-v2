@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.protocol.json.internal;
 
 import software.amazon.awssdk.Request;
@@ -23,14 +24,14 @@ import software.amazon.awssdk.protocol.ProtocolRequestMarshaller;
  * AWS services expect an empty body when the payload member is null instead of an explicit JSON null.
  * This implementation can be removed once CR-6541513 has been deployed to all services that use the payload trait.
  *
- * @param <OrigRequest> Type of the original request object.
+ * @param <OrigRequestT> Type of the original request object.
  */
 @SdkInternalApi
-public class NullAsEmptyBodyProtocolRequestMarshaller<OrigRequest> implements ProtocolRequestMarshaller<OrigRequest> {
+public class NullAsEmptyBodyProtocolRequestMarshaller<OrigRequestT> implements ProtocolRequestMarshaller<OrigRequestT> {
 
-    private final ProtocolRequestMarshaller<OrigRequest> delegate;
+    private final ProtocolRequestMarshaller<OrigRequestT> delegate;
 
-    public NullAsEmptyBodyProtocolRequestMarshaller(ProtocolRequestMarshaller<OrigRequest> delegate) {
+    public NullAsEmptyBodyProtocolRequestMarshaller(ProtocolRequestMarshaller<OrigRequestT> delegate) {
         this.delegate = delegate;
     }
 
@@ -49,7 +50,7 @@ public class NullAsEmptyBodyProtocolRequestMarshaller<OrigRequest> implements Pr
     }
 
     @Override
-    public Request<OrigRequest> finishMarshalling() {
+    public Request<OrigRequestT> finishMarshalling() {
         return delegate.finishMarshalling();
     }
 }

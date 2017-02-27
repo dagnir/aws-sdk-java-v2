@@ -12,7 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.client.builder;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import software.amazon.awssdk.ClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
@@ -20,9 +24,6 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.regions.AwsRegionProvider;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Base class for all service specific async client builders.
