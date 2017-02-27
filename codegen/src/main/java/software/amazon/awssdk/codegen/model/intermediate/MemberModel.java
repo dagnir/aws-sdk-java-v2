@@ -16,10 +16,15 @@
 package software.amazon.awssdk.codegen.model.intermediate;
 
 import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.*;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_FLUENT_RETURN;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_GETTER;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_GETTER_PARAM;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_SETTER;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_SETTER_PARAM;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.LIST_VARARG_ADDITIONAL_DOC;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.protocol.MarshallingInfo;
 import software.amazon.awssdk.runtime.transform.PathMarshallers;
@@ -409,9 +414,9 @@ public class MemberModel extends DocumentationModel {
 
     /**
      * @return Implementation of {@link software.amazon.awssdk.transform.PathMarshallers.PathMarshaller} to use if this
-     * member is bound the the URI.
-     * @throws IllegalStateException If this member is not bound to the URI. Templates should first check {@link
-     *                               ParameterHttpMapping#isUri()} first.
+     *     member is bound the the URI.
+     * @throws IllegalStateException If this member is not bound to the URI. Templates should first check
+     *     {@link ParameterHttpMapping#isUri()} first.
      */
     @JsonIgnore
     public String getPathMarshaller() {

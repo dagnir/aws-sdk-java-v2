@@ -167,10 +167,12 @@ public class ParameterHttpMapping {
     }
 
     public MarshallLocation getMarshallLocation() {
-        if(location == null) {
+        if (location == null) {
             return MarshallLocation.PAYLOAD;
         }
         switch (location) {
+            default:
+                return MarshallLocation.PAYLOAD;
             case HEADER:
             case HEADERS:
                 return MarshallLocation.HEADER;
@@ -179,7 +181,6 @@ public class ParameterHttpMapping {
             case URI:
                 return isGreedy ? MarshallLocation.GREEDY_PATH : MarshallLocation.PATH;
         }
-        return MarshallLocation.PAYLOAD;
     }
 
 }

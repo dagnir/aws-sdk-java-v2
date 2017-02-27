@@ -15,6 +15,24 @@
 
 package software.amazon.awssdk.codegen;
 
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.generateGetterDocumentation;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.generateSetterDocumentation;
+import static software.amazon.awssdk.codegen.internal.TypeUtils.LIST_AUTO_CONSTRUCT_IMPL;
+import static software.amazon.awssdk.codegen.internal.TypeUtils.LIST_DEFAULT_IMPL;
+import static software.amazon.awssdk.codegen.internal.TypeUtils.LIST_INTERFACE;
+import static software.amazon.awssdk.codegen.internal.TypeUtils.MAP_AUTO_CONSTRUCT_IMPL;
+import static software.amazon.awssdk.codegen.internal.TypeUtils.MAP_DEFAULT_IMPL;
+import static software.amazon.awssdk.codegen.internal.TypeUtils.MAP_INTERFACE;
+import static software.amazon.awssdk.codegen.internal.TypeUtils.getDataTypeMapping;
+import static software.amazon.awssdk.codegen.internal.Utils.capitialize;
+import static software.amazon.awssdk.codegen.internal.Utils.isEnumShape;
+import static software.amazon.awssdk.codegen.internal.Utils.isListShape;
+import static software.amazon.awssdk.codegen.internal.Utils.isMapShape;
+import static software.amazon.awssdk.codegen.internal.Utils.isScalar;
+
+import java.util.List;
+import java.util.Map;
+
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.EnumModel;
@@ -32,24 +50,6 @@ import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
 import software.amazon.awssdk.util.StringUtils;
-
-import java.util.List;
-import java.util.Map;
-
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.generateGetterDocumentation;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.generateSetterDocumentation;
-import static software.amazon.awssdk.codegen.internal.TypeUtils.LIST_AUTO_CONSTRUCT_IMPL;
-import static software.amazon.awssdk.codegen.internal.TypeUtils.LIST_DEFAULT_IMPL;
-import static software.amazon.awssdk.codegen.internal.TypeUtils.LIST_INTERFACE;
-import static software.amazon.awssdk.codegen.internal.TypeUtils.MAP_AUTO_CONSTRUCT_IMPL;
-import static software.amazon.awssdk.codegen.internal.TypeUtils.MAP_DEFAULT_IMPL;
-import static software.amazon.awssdk.codegen.internal.TypeUtils.MAP_INTERFACE;
-import static software.amazon.awssdk.codegen.internal.TypeUtils.getDataTypeMapping;
-import static software.amazon.awssdk.codegen.internal.Utils.capitialize;
-import static software.amazon.awssdk.codegen.internal.Utils.isEnumShape;
-import static software.amazon.awssdk.codegen.internal.Utils.isListShape;
-import static software.amazon.awssdk.codegen.internal.Utils.isMapShape;
-import static software.amazon.awssdk.codegen.internal.Utils.isScalar;
 
 abstract class AddShapes {
 

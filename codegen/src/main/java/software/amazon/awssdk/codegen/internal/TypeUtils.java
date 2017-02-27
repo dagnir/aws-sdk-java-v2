@@ -15,6 +15,10 @@
 
 package software.amazon.awssdk.codegen.internal;
 
+import static software.amazon.awssdk.codegen.model.service.ShapeTypes.List;
+import static software.amazon.awssdk.codegen.model.service.ShapeTypes.Map;
+import static software.amazon.awssdk.codegen.model.service.ShapeTypes.Structure;
+
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -29,10 +33,6 @@ import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
 import software.amazon.awssdk.runtime.SdkInternalList;
 import software.amazon.awssdk.runtime.SdkInternalMap;
-
-import static software.amazon.awssdk.codegen.model.service.ShapeTypes.List;
-import static software.amazon.awssdk.codegen.model.service.ShapeTypes.Map;
-import static software.amazon.awssdk.codegen.model.service.ShapeTypes.Structure;
 
 /**
  * Used to determine the Java types for the service model.
@@ -54,9 +54,9 @@ public class TypeUtils {
 
     public static final String MAP_AUTO_CONSTRUCT_IMPL = "mapAutoConstructImpl";
 
-    private final static Map<String, String> dataTypeMappings = new HashMap<>();
+    private static final Map<String, String> dataTypeMappings = new HashMap<>();
 
-    private final static Map<String, String> marshallingTypeMappings = new HashMap<>();
+    private static final Map<String, String> marshallingTypeMappings = new HashMap<>();
 
     static {
         dataTypeMappings.put("string", String.class.getSimpleName());

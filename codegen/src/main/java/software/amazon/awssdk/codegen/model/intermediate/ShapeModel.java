@@ -15,8 +15,10 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.model.intermediate.customization.ShapeCustomizationInfo;
-import software.amazon.awssdk.util.StringUtils;
+import static software.amazon.awssdk.codegen.internal.Constants.REQUEST_CLASS_SUFFIX;
+import static software.amazon.awssdk.codegen.internal.Constants.RESPONSE_CLASS_SUFFIX;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.removeFromEnd;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,9 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static software.amazon.awssdk.codegen.internal.Constants.REQUEST_CLASS_SUFFIX;
-import static software.amazon.awssdk.codegen.internal.Constants.RESPONSE_CLASS_SUFFIX;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.removeFromEnd;
+import software.amazon.awssdk.codegen.model.intermediate.customization.ShapeCustomizationInfo;
+import software.amazon.awssdk.util.StringUtils;
 
 public class ShapeModel extends DocumentationModel {
 

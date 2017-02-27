@@ -12,15 +12,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.codegen.emitters.tasks;
 
-import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTask;
-import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
-import software.amazon.awssdk.codegen.model.intermediate.Metadata;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
-import software.amazon.awssdk.util.ImmutableMapParameter;
+import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
 
 import freemarker.template.Template;
 
@@ -30,7 +25,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
+import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTask;
+import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.model.intermediate.Metadata;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
+import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class MarshallerGeneratorTasks extends BaseGeneratorTasks {
 

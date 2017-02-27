@@ -15,16 +15,17 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
-import software.amazon.awssdk.codegen.internal.Utils;
+import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
+import software.amazon.awssdk.codegen.internal.DocumentationUtils;
+import software.amazon.awssdk.codegen.internal.Utils;
 
 public class OperationModel extends DocumentationModel {
 

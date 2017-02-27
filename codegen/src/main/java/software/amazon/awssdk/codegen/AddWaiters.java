@@ -87,7 +87,7 @@ class AddWaiters {
 
             final Process p = executeToAstProcess(argument);
 
-            if(p.exitValue() != 0) {
+            if (p.exitValue() != 0) {
                 throw new RuntimeException(IOUtils.toString(p.getErrorStream()));
             }
 

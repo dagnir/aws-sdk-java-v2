@@ -76,9 +76,9 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     @Override
     public String visit(final JmesPathProjection jmesPathProjection,
                         final Void aVoid) throws InvalidTypeException {
-        return "new JmesPathProjection( " + jmesPathProjection.getLhsExpr()
-                                                              .accept(this, aVoid) + ", " + jmesPathProjection.getProjectionExpr()
-                                                                                                              .accept(this, aVoid) + ")";
+        final String param1 = jmesPathProjection.getLhsExpr().accept(this, aVoid);
+        final String param2 = jmesPathProjection.getProjectionExpr().accept(this, aVoid);
+        return "new JmesPathProjection( " + param1 + ", " + param2 + ")";
     }
 
     /**
@@ -121,9 +121,9 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     @Override
     public String visit(final JmesPathValueProjection valueProjection,
                         final Void aVoid) throws InvalidTypeException {
-        return "new JmesPathValueProjection( " + valueProjection.getLhsExpr()
-                                                                .accept(this, aVoid) + ", " + valueProjection.getRhsExpr()
-                                                                                                             .accept(this, aVoid) + ")";
+        final String param1 = valueProjection.getLhsExpr().accept(this, aVoid);
+        final String param2 = valueProjection.getRhsExpr().accept(this, aVoid);
+        return "new JmesPathValueProjection( " + param1 + ", " + param2 + ")";
     }
 
     /**
@@ -219,9 +219,9 @@ public class JmesPathCodeGenVisitor implements JmesPathVisitor<Void, String> {
     @Override
     public String visit(final JmesPathAndExpression andExpression,
                         final Void aVoid) throws InvalidTypeException {
-        return "new JmesPathAndExpression( " + andExpression.getLhsExpr()
-                                                            .accept(this, aVoid) + ", " + andExpression.getRhsExpr()
-                                                                                                       .accept(this, aVoid) + " )";
+        final String param1 = andExpression.getLhsExpr().accept(this, aVoid);
+        final String param2 = andExpression.getRhsExpr().accept(this, aVoid);
+        return "new JmesPathAndExpression( " + param1 + ", " + param2 + " )";
     }
 
     /**
