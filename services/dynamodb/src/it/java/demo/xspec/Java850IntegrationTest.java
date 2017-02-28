@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.dynamodbv2.document.Table;
 import software.amazon.awssdk.services.dynamodbv2.xspec.ExpressionSpecBuilder;
 import software.amazon.awssdk.services.dynamodbv2.xspec.UpdateItemExpressionSpec;
 
-// https://issues.amazon.com/JAVA-850
+// JAVA-850
 public class Java850IntegrationTest extends DemoIntegrationTestBase {
     /**
      * <pre>
