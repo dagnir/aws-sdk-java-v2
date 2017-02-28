@@ -256,8 +256,8 @@ public class Unmarshallers {
         }
     }
 
-    public static final class CompleteMultipartUploadResultUnmarshaller implements
-                                                                        Unmarshaller<CompleteMultipartUploadHandler, InputStream> {
+    public static final class CompleteMultipartUploadResultUnmarshaller
+            implements Unmarshaller<CompleteMultipartUploadHandler, InputStream> {
         public CompleteMultipartUploadHandler unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser().parseCompleteMultipartUploadResponse(in);
         }

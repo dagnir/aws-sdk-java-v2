@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package demo;
 
 import java.io.ByteArrayInputStream;
@@ -44,24 +59,24 @@ public class S3KMSClientSideEncryptionDemo {
         System.out.println(putResult);
         S3Object s3object = s3.getObject(bucket, "hello_s3_kms.txt");
         System.out.println(IOUtils.toString(s3object.getObjectContent()));
-//        deleteBucketAndAllContents(s3, bucket);
+        // deleteBucketAndAllContents(s3, bucket);
         s3.shutdown();
     }
 
     public static void tryCreateBucket(AmazonS3 s3, String bucketName) {
         try {
             s3.createBucket(bucketName);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             LogFactory.getLog(CryptoTestUtils.class).debug("", ex);
         }
         return;
     }
 
     static String tempBucketName(String prefix) {
-        return StringUtils.lowerCase(prefix) + "-" + yyMMdd_hhmmss();
+        return StringUtils.lowerCase(prefix) + "-" + yyMMddhhmmss();
     }
 
-    static String yyMMdd_hhmmss() {
+    static String yyMMddhhmmss() {
         return DateTimeFormat.forPattern("yyMMdd-hhmmss").print(new DateTime());
     }
 
@@ -70,7 +85,7 @@ public class S3KMSClientSideEncryptionDemo {
         ObjectListing objectListing = client.listObjects(bucketName);
 
         while (true) {
-            for ( Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
+            for (Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext();) {
                 S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
                 client.deleteObject(bucketName, objectSummary.getKey());
             }
@@ -80,10 +95,10 @@ public class S3KMSClientSideEncryptionDemo {
             } else {
                 break;
             }
-        };
+        }
         VersionListing list = client.listVersions(new ListVersionsRequest().withBucketName(bucketName));
-        for ( Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
-            S3VersionSummary s = (S3VersionSummary)iterator.next();
+        for (Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
+            S3VersionSummary s = (S3VersionSummary) iterator.next();
             client.deleteVersion(bucketName, s.getKey(), s.getVersionId());
         }
         client.deleteBucket(bucketName);

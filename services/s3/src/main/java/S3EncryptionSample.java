@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,9 +63,9 @@ public class S3EncryptionSample {
          *            before you try to run this sample.
          *            http://aws.amazon.com/security-credentials
          */
-    	AWSCredentials credentials = new BasicAWSCredentials("", "");
-    	EncryptionMaterials encryptionMaterials = new EncryptionMaterials(generateAsymmetricKeyPair());
-		AmazonS3 s3 = new AmazonS3EncryptionClient(credentials, encryptionMaterials);
+        AWSCredentials credentials = new BasicAWSCredentials("", "");
+        EncryptionMaterials encryptionMaterials = new EncryptionMaterials(generateAsymmetricKeyPair());
+        AmazonS3 s3 = new AmazonS3EncryptionClient(credentials, encryptionMaterials);
 
         String bucketName = "my-encrypted-s3-bucket-" + UUID.randomUUID();
         String key = "MyObjectKey";
@@ -83,8 +84,8 @@ public class S3EncryptionSample {
              * or decryption being performed.
              */
             if (s3.doesBucketExist(bucketName) == false) {
-            	System.out.println("Creating bucket " + bucketName + "\n");
-            	s3.createBucket(bucketName);
+                System.out.println("Creating bucket " + bucketName + "\n");
+                s3.createBucket(bucketName);
             }
 
             /*
@@ -95,18 +96,18 @@ public class S3EncryptionSample {
              * (https://console.aws.amazon.com/s3) and verifying that the content
              * of the file has been encrypted.
              */
-        	System.out.println("Uploading and encrypting data to Amazon S3\n");
-			s3.putObject(bucketName, key, createSampleFile());
+            System.out.println("Uploading and encrypting data to Amazon S3\n");
+            s3.putObject(bucketName, key, createSampleFile());
 
-			/*
-			 * When you use the getObject method, the data retrieved from Amazon S3
-			 * is automatically decrypted on the fly.
-			 */
-        	System.out.println("Downloading and decrypting data from Amazon S3\n");
-			S3Object downloadedObject = s3.getObject(bucketName, key);
+            /*
+             * When you use the getObject method, the data retrieved from Amazon S3
+             * is automatically decrypted on the fly.
+             */
+            System.out.println("Downloading and decrypting data from Amazon S3\n");
+            S3Object downloadedObject = s3.getObject(bucketName, key);
 
-        	System.out.println("Decrypted data:");
-			displayTextInputStream(downloadedObject.getObjectContent());
+            System.out.println("Decrypted data:");
+            displayTextInputStream(downloadedObject.getObjectContent());
 
         } catch (AmazonServiceException ase) {
             System.out.println("Caught an AmazonServiceException, which means your request made it "
@@ -169,7 +170,9 @@ public class S3EncryptionSample {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         while (true) {
             String line = reader.readLine();
-            if (line == null) break;
+            if (line == null) {
+                break;
+            }
             System.out.println("    " + line);
         }
         System.out.println();

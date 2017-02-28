@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package s3tests;
 
 import static software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils.getTestKeyPair;
@@ -16,7 +31,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.junit.Test;
 
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
@@ -69,14 +84,14 @@ public class TestS3EncryptionClientMultithreaded {
         TransferManagerConfiguration tmgrConfig = new TransferManagerConfiguration();
         tmgrConfig.setMultipartUploadThreshold(1024);
         mgr.setConfiguration(tmgrConfig);
-        Upload upload = mgr.upload(TestS3BucketName, inputFile.getName(),
+        Upload upload = mgr.upload(testS3BucketName, inputFile.getName(),
                 inputFile);
         upload.waitForCompletion();
 
         File outputFile = new File(inputFile.getParent(), inputFile.getName()
                 + ".out");
 
-        Download download = mgr.download(TestS3BucketName, inputFile.getName(),
+        Download download = mgr.download(testS3BucketName, inputFile.getName(),
                 outputFile);
         download.waitForCompletion();
 
@@ -87,34 +102,41 @@ public class TestS3EncryptionClientMultithreaded {
         BufferedInputStream is1 = null;
         BufferedInputStream is2 = null;
         try {
-            if (f1.length() != f2.length())
+            if (f1.length() != f2.length()) {
                 throw new RuntimeException("Files differ in length");
+            }
             is1 = new BufferedInputStream(new FileInputStream(f1), 2048);
             is2 = new BufferedInputStream(new FileInputStream(f2), 2048);
-            int c1, c2;
+            int c1;
+            int c2;
             long pos = 0;
             do {
                 c1 = is1.read();
                 c2 = is2.read();
-                if (c1 != c2)
+                if (c1 != c2) {
                     throw new RuntimeException(
                             "The two files differ at byte offset: " + pos);
+                }
                 pos++;
             } while ((c1 != -1) && (c2 != -1));
             // at the end of the loop both file should reach end of file
             // together
-            if (c1 != -1)
+            if (c1 != -1) {
                 throw new IllegalStateException("Unexpected end of file: " + f1);
-            if (c1 != -1)
+            }
+            if (c1 != -1) {
                 throw new IllegalStateException("Unexpected end of file: " + f2);
+            }
 
             System.out.println("Successfully verified " + (pos / 1024 / 1024)
                     + "mb");
         } finally {
-            if (is1 != null)
+            if (is1 != null) {
                 is1.close();
-            if (is2 != null)
+            }
+            if (is2 != null) {
                 is2.close();
+            }
         }
     }
 
@@ -130,7 +152,13 @@ public class TestS3EncryptionClientMultithreaded {
         return result;
     }
 
-    public static AWSCredentials awsTestCredentials() throws IOException {
+    /**
+     * Return the test credentials.
+     * @return The test credentials.
+     *
+     * @throws IOException
+     */
+    public static AwsCredentials awsTestCredentials() throws IOException {
         return new PropertiesCredentials(new File(
                 System.getProperty("user.home")
                         + "/.aws/awsTestAccount.properties"));
@@ -166,8 +194,8 @@ public class TestS3EncryptionClientMultithreaded {
     // "com.amazon.aws.billing.awsb3.detailed_line_items.s3encryption.prod";
     // private static final String TestS3EndPoint =
     // "https://s3-external-1.amazonaws.com";
-    // private static final String TestS3BucketName =
+    // private static final String testS3BucketName =
     // "amazon.aws.billpresentation.tests_useast";
-    private static final String TestS3BucketName = CryptoTestUtils
+    private static final String testS3BucketName = CryptoTestUtils
             .tempBucketName(TestS3EncryptionClientMultithreaded.class);
 }

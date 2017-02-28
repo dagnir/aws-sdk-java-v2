@@ -12,11 +12,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.transfer;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
-
 import java.io.File;
+
+import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
  * Context object provided to {@link ObjectTaggingProvider} to provide extra information about the

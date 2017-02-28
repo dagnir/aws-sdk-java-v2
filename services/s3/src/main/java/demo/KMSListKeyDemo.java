@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package demo;
 
 import java.io.IOException;
@@ -20,7 +35,7 @@ public class KMSListKeyDemo {
     public static void main(String[] args) throws IOException {
         if (false) {
             AWSKMSClient kms = new AWSKMSClient();
-                // .withRegion(Region.getRegion(Regions.US_WEST_2));
+            // .withRegion(Region.getRegion(Regions.US_WEST_2));
             ListKeysResult result = kms.listKeys();
             System.err.println(result);
             kms.shutdown();
@@ -31,7 +46,7 @@ public class KMSListKeyDemo {
 
     private static void testDataKey(String keyId) {
         AWSKMSClient kms = new AWSKMSClient();
-        Map<String,String> ctx = new HashMap<String,String>();
+        Map<String, String> ctx = new HashMap<>();
         ctx.put("foo", "bar");
         GenerateDataKeyResult result = kms.generateDataKey(new GenerateDataKeyRequest()
             .withKeyId(keyId)

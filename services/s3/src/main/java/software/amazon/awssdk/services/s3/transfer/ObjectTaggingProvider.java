@@ -12,12 +12,13 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.s3.transfer;
 
-import software.amazon.awssdk.services.s3.model.ObjectTagging;
+package software.amazon.awssdk.services.s3.transfer;
 
 import java.io.File;
 import java.util.List;
+
+import software.amazon.awssdk.services.s3.model.ObjectTagging;
 
 /**
  * This is the callback interface which is used by {@link TransferManager#uploadDirectory(String,
