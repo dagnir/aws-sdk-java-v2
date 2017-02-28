@@ -73,7 +73,6 @@ public class S3IntegrationTestBase extends AwsTestBase {
     protected static AmazonS3Client s3;
     protected static AmazonS3Client euS3;
     protected static AmazonS3Client cnS3;
-    protected static AmazonS3Client s3gamma;
 
     /**
      * Loads the AWS account info for the integration tests and creates an S3
@@ -92,12 +91,6 @@ public class S3IntegrationTestBase extends AwsTestBase {
         euS3.configureRegion(Regions.EU_WEST_1);
         cnS3 = new AmazonS3TestClient(cnCredentials);
         cnS3.setEndpoint("s3.cn-north-1.amazonaws.com.cn");
-        AwsCredentials s3GammaCredentials = new PropertiesCredentials(
-                new File(new File(System.getProperty("user.home")),
-                         ".aws/awsTestAccount.properties_s3gamma"));
-        s3gamma = new AmazonS3Client(s3GammaCredentials);
-        s3gamma.setEndpoint("http://s3.aws-master.amazon.com");
-        s3gamma.setSignerRegionOverride("us-east-1");
     }
 
     /*

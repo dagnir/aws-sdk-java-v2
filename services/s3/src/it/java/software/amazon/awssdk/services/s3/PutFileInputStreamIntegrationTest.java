@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.s3.transfer.TransferManager;
 import software.amazon.awssdk.services.s3.transfer.Upload;
 import software.amazon.awssdk.util.Md5Utils;
 
-// https://issues.amazon.com/JAVA-1035
+// JAVA-1035
 public class PutFileInputStreamIntegrationTest extends S3IntegrationTestBase {
 
     private static String bucketName = CryptoTestUtils.tempBucketName(PutFileInputStreamIntegrationTest.class);
