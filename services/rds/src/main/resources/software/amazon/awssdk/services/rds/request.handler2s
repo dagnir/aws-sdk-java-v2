@@ -1,0 +1,2 @@
+com.amazonaws.services.rds.CopyDBSnapshotPresignHandler
+com.amazonaws.services.rds.CreateDBInstanceReadReplicaPresignHandler

@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
@@ -62,7 +63,9 @@ import software.amazon.awssdk.services.glacier.model.UploadArchiveRequest;
 import software.amazon.awssdk.services.glacier.model.UploadArchiveResult;
 import software.amazon.awssdk.services.glacier.model.UploadMultipartPartRequest;
 import software.amazon.awssdk.services.s3.internal.InputSubstream;
+import software.amazon.awssdk.services.sns.AmazonSNS;
 import software.amazon.awssdk.services.sns.AmazonSNSClient;
+import software.amazon.awssdk.services.sqs.AmazonSQS;
 import software.amazon.awssdk.services.sqs.AmazonSQSClient;
 import software.amazon.awssdk.util.BinaryUtils;
 
@@ -80,18 +83,25 @@ public class ArchiveTransferManager {
     /** The minimum part size, in bytes, for a Glacier multipart upload. */
     private static final long MINIMUM_PART_SIZE = 1024L * 1024;
 
-    /** Threshold, in bytes, for when to use the multipart upload operations. */
+    /** Threshold, in bytes, for when to use the multipart upload operations */
     private static final long MULTIPART_UPLOAD_SIZE_THRESHOLD = 1024L * 1024L * 100;
 
-    /** Default retry time when downloading in multiple chunks using range retrieval. */
+    /** Default retry time when downloading in multiple chunks using range retrieval */
     private static final int DEFAULT_MAX_RETRIES = 3;
-    private static final Log LOG = LogFactory.getLog(ArchiveTransferManager.class);
+
+    private static final Log log = LogFactory.getLog(ArchiveTransferManager.class);
+
     /** Glacier client used for making all requests. */
     private final AmazonGlacier glacier;
+
     private final AwsCredentialsProvider credentialsProvider;
+
     private final ClientConfiguration clientConfiguration;
-    private final AmazonSQSClient sqs;
-    private final AmazonSNSClient sns;
+
+    private final AmazonSQS sqs;
+
+    private final AmazonSNS sns;
+
 
     /**
      * Constructs a new ArchiveTransferManager, using the specified AWS
@@ -99,6 +109,7 @@ public class ArchiveTransferManager {
      *
      * @param credentials
      *            The AWS credentials used to authenticate requests.
+     * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AwsCredentials credentials) {
         this(new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
@@ -112,6 +123,7 @@ public class ArchiveTransferManager {
      *            The AWS credentials provider used to authenticate requests.
      * @param clientConfiguration
      *            Client specific options, such as proxy settings, retries, and timeouts.
+     * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AwsCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
         this(new AmazonGlacierClient(credentialsProvider, clientConfiguration), credentialsProvider, clientConfiguration);
@@ -125,6 +137,7 @@ public class ArchiveTransferManager {
      *            The client for working with Amazon Glacier.
      * @param credentialsProvider
      *            The AWS credentials provider used to authenticate requests.
+     * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider) {
         this(glacier, credentialsProvider, new ClientConfiguration());
@@ -138,6 +151,7 @@ public class ArchiveTransferManager {
      *            The client for working with Amazon Glacier.
      * @param credentials
      *            The AWS credentials used to authenticate requests.
+     * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentials credentials) {
         this(glacier, new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
@@ -154,6 +168,7 @@ public class ArchiveTransferManager {
      * @param clientConfiguration
      *            Client specific options, such as proxy settings, retries, and
      *            timeouts.
+     * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider,
                                   ClientConfiguration clientConfiguration) {
@@ -182,6 +197,7 @@ public class ArchiveTransferManager {
      * @param sns
      *            The client for working with Amazon SNS when polling archive
      *            retrieval job status.
+     * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AmazonSQSClient sqs, AmazonSNSClient sns) {
         this.credentialsProvider = null;
@@ -189,6 +205,15 @@ public class ArchiveTransferManager {
         this.glacier = glacier;
         this.sqs = sqs;
         this.sns = sns;
+    }
+
+    @SdkInternalApi
+    ArchiveTransferManager(ArchiveTransferManagerParams params) {
+        this.credentialsProvider = null;
+        this.clientConfiguration = null;
+        this.glacier = params.getAmazonGlacier();
+        this.sqs = params.getAmazonSQS();
+        this.sns = params.getAmazonSNS();
     }
 
     /**
@@ -546,7 +571,7 @@ public class ArchiveTransferManager {
             }
             publishProgress(progressListener, ProgressEventType.TRANSFER_COMPLETED_EVENT);
         } finally {
-            closeQuietly(output, LOG);
+            closeQuietly(output, log);
         }
     }
 
@@ -586,7 +611,7 @@ public class ArchiveTransferManager {
                 } catch (NoSuchAlgorithmException e) {
                     throw failure(e, "Unable to compute hash for data integrity");
                 } finally {
-                    closeQuietly(input, LOG);
+                    closeQuietly(input, log);
                 }
 
                 // Only do tree-hash check when the output checksum is returned from Glacier
@@ -595,14 +620,14 @@ public class ArchiveTransferManager {
                     if (!input.getTreeHash().equalsIgnoreCase(jobOutputResult.getChecksum())) {
                         // Discard the chunk of bytes received 
                         publishResponseBytesDiscarded(progressListener, chunkSize);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("reverting " + chunkSize);
+                        if (log.isDebugEnabled()) {
+                            log.debug("reverting " + chunkSize);
                         }
                         throw new IOException("Client side computed hash doesn't match server side hash; " +
                                               "possible data corruption");
                     }
                 } else {
-                    LOG.warn("Cannot validate the downloaded output since no tree-hash checksum is returned from Glacier. "
+                    log.warn("Cannot validate the downloaded output since no tree-hash checksum is returned from Glacier. "
                              + "Make sure the InitiateJob and GetJobOutput requests use tree-hash-aligned ranges.");
                 }
                 // Successfully download
@@ -611,8 +636,8 @@ public class ArchiveTransferManager {
             } catch (IOException ioe) {
                 if (retries < DEFAULT_MAX_RETRIES) {
                     retries++;
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(retries
+                    if (log.isDebugEnabled()) {
+                        log.debug(retries
                                   + " retry downloadOneChunk accountId="
                                   + accountId + ", vaultName=" + vaultName
                                   + ", jobId=" + jobId + ", currentPosition="
@@ -733,7 +758,7 @@ public class ArchiveTransferManager {
                         failedException = e;
                     } finally {
                         // We opened the file underneath; so need to release it
-                        release(inputSubStream, LOG);
+                        release(inputSubStream, log);
                     }
                 } // end inner while
                 if (!completed && failedException != null) {

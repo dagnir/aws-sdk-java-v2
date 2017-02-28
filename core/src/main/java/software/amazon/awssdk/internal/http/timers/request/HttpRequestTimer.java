@@ -18,7 +18,9 @@ package software.amazon.awssdk.internal.http.timers.request;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.http.client.methods.HttpRequestBase;
+
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
@@ -28,6 +30,9 @@ import software.amazon.awssdk.internal.http.timers.TimeoutThreadPoolBuilder;
 /**
  * Represents a timer class to enforce HTTP request timeouts.
  */
+// DO NOT override finalize(). The shutdown() method is called from AmazonHttpClient#shutdown()
+// which is called from it's finalize() method. Since finalize methods can be be called in any order
+// and even concurrently, we need to rely on AmazonHttpClient to call our shutdown() method.
 @ThreadSafe
 @SdkInternalApi
 public class HttpRequestTimer {

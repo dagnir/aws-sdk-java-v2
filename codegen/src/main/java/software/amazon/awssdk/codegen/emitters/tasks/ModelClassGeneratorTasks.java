@@ -15,19 +15,21 @@
 
 package software.amazon.awssdk.codegen.emitters.tasks;
 
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
+import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
-import software.amazon.awssdk.codegen.utils.FunctionalUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
@@ -43,9 +45,9 @@ public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting model classes");
         return model.getShapes().entrySet().stream()
-                    .filter(e -> shouldGenerateShape(e.getValue()))
-                    .map(FunctionalUtils.safeFunction(e -> createTask(e.getKey(), e.getValue())))
-                    .collect(Collectors.toList());
+                .filter(e -> shouldGenerateShape(e.getValue()))
+                .map(safeFunction(e -> createTask(e.getKey(), e.getValue())))
+                .collect(Collectors.toList());
     }
 
     private boolean shouldGenerateShape(ShapeModel shapeModel) {
@@ -66,7 +68,10 @@ public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
                 .put("baseClassFqcn", getModelBaseClassFqcn(shapeModel.getShapeType()))
                 .put("customConfig", model.getCustomizationConfig())
                 .put("shouldGenerateSdkRequestConfigSetter", shouldGenerateSdkRequestConfigSetter(shapeModel))
-                .put("awsDocsUrl", DocumentationUtils.createLinkToServiceDocumentation(metadata, shapeModel))
+                .put("awsDocsUrl", createLinkToServiceDocumentation(metadata, shapeModel))
+                .put("shouldEmitStructuredPojoInterface", model.getMetadata().isJsonProtocol()
+                                                          && shapeModel.getShapeType() == ShapeType.Model)
+                .put("transformPackage", model.getTransformPackage())
                 .build();
 
         // Submit task for generating the

@@ -17,11 +17,14 @@ package software.amazon.awssdk.auth;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;

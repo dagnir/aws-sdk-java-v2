@@ -83,6 +83,7 @@
         <commons.io.version>2.4</commons.io.version>
         <mockito.version>1.10.19</mockito.version>
         <equalsverifier.version>1.7.5</equalsverifier.version>
+        <guava.version>19.0</guava.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- These properties are used by SWF for its dependencies -->
@@ -242,6 +243,11 @@
                 <artifactId>equalsverifier</artifactId>
                 <version>${equalsverifier.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

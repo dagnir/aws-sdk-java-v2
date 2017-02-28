@@ -17,10 +17,13 @@ package software.amazon.awssdk.codegen.model.intermediate;
 
 import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import software.amazon.awssdk.codegen.internal.DocumentationUtils;
 import software.amazon.awssdk.codegen.internal.Utils;
 
@@ -106,6 +109,23 @@ public class OperationModel extends DocumentationModel {
         this.outputShape = outputShape;
     }
 
+    private static enum MethodType {
+
+        SYNC(false),
+        ASYNC(true),
+        ASYNC_WITH_HANDLER(true);
+
+        private final boolean async;
+
+        private MethodType(boolean async) {
+            this.async = async;
+        }
+
+        public boolean isAsync() {
+            return async;
+        }
+    }
+
     private String getDocumentation(final MethodType methodType, final Metadata md) {
         StringBuilder docBuilder = new StringBuilder("/**");
 
@@ -123,17 +143,17 @@ public class OperationModel extends DocumentationModel {
 
         if (input != null) {
             docBuilder.append(LINE_SEPARATOR).append("@param ").append(input.getVariableName())
-                      .append(" ").append(DocumentationUtils.stripHTMLTags(input.getDocumentation()));
+                    .append(" ").append(stripHTMLTags(input.getDocumentation()));
         }
 
         if (methodType == MethodType.ASYNC_WITH_HANDLER) {
             docBuilder.append(LINE_SEPARATOR)
-                      .append("@param asyncHandler Asynchronous callback handler " +
-                              "for events in the lifecycle of the request. " +
-                              "Users can provide an implementation of the " +
-                              "callback methods in this interface to receive " +
-                              "notification of successful or unsuccessful " +
-                              "completion of the operation.");
+                    .append("@param asyncHandler Asynchronous callback handler " +
+                            "for events in the lifecycle of the request. " +
+                            "Users can provide an implementation of the " +
+                            "callback methods in this interface to receive " +
+                            "notification of successful or unsuccessful " +
+                            "completion of the operation.");
         }
 
         if (returnType != null) {
@@ -151,8 +171,8 @@ public class OperationModel extends DocumentationModel {
 
             for (ExceptionModel exception : exceptions) {
                 docBuilder.append(LINE_SEPARATOR).append("@throws ")
-                          .append(exception.getExceptionName()).append(" ")
-                          .append(DocumentationUtils.stripHTMLTags(exception.getDocumentation()));
+                        .append(exception.getExceptionName()).append(" ")
+                        .append(stripHTMLTags(exception.getDocumentation()));
             }
         }
 
@@ -275,22 +295,5 @@ public class OperationModel extends DocumentationModel {
 
     public void setHasBlobMemberAsPayload(boolean hasBlobMemberAsPayload) {
         this.hasBlobMemberAsPayload = hasBlobMemberAsPayload;
-    }
-
-    private static enum MethodType {
-
-        SYNC(false),
-        ASYNC(true),
-        ASYNC_WITH_HANDLER(true);
-
-        private final boolean async;
-
-        private MethodType(boolean async) {
-            this.async = async;
-        }
-
-        public boolean isAsync() {
-            return async;
-        }
     }
 }

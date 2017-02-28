@@ -63,12 +63,57 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>codegen-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>add-integ-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/it/java/software/**</source>
+                                <!-- FIXME: enable these? -->
+                                <excludes>${basedir}/src/it/java/demo/**</excludes>
+                                <excludes>${basedir}/src/it/java/hacking/**</excludes>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-integ-resources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/it/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>demo/xspec/**</exclude>
+                        <exclude>software/amazon/awssdk/services/dynamodbv2/document/quickstart/*</exclude>
+                        <exclude>software/amazon/awssdk/services/dynamodbv2/document/utils/AbstractQuickStart.java</exclude>
+                        <!-- depends on nonexistent class? -->
+                        <exclude>software/amazon/awssdk/services/dynamodbv2/datamodeling/DynamoDBReflectorTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>codegen-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

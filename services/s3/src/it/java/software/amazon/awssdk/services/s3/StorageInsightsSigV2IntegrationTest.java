@@ -12,18 +12,8 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package software.amazon.awssdk.services.s3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
-import java.util.List;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.DeleteBucketInventoryConfigurationRequest;
@@ -53,9 +43,21 @@ import software.amazon.awssdk.services.s3.model.inventory.InventoryIncludedObjec
 import software.amazon.awssdk.services.s3.model.inventory.InventoryS3BucketDestination;
 import software.amazon.awssdk.services.s3.model.inventory.InventorySchedule;
 import software.amazon.awssdk.services.s3.model.metrics.MetricsConfiguration;
+import software.amazon.awssdk.test.AWSIntegrationTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
-public class StorageInsightsSigV2IntegrationTest {
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+public class StorageInsightsSigV2IntegrationTest extends AWSIntegrationTestBase {
 
     /** The bucket created and used by these tests. */
     private static final String BUCKET_NAME = "java-bucket-inventory-integ-test-" + new Date().getTime();
@@ -70,7 +72,7 @@ public class StorageInsightsSigV2IntegrationTest {
     @BeforeClass
     public static void setUpFixture() throws Exception {
         ClientConfiguration clientConfiguration = new ClientConfiguration().withSignerOverride("S3SignerType");
-        s3SigV2 = new AmazonS3Client(clientConfiguration);
+        s3SigV2 = new AmazonS3Client(getCredentials(), clientConfiguration);
         s3SigV2.createBucket(BUCKET_NAME);
         s3SigV2.putObject(new PutObjectRequest(BUCKET_NAME, KEY, new RandomTempFile("foo", 1024)));
     }

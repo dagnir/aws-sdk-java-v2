@@ -49,6 +49,16 @@ public abstract class InternalLogFactory {
     }
 
     /**
+     * SPI to return a logger given a class.
+     */
+    protected abstract InternalLogApi doGetLog(Class<?> clazz);
+
+    /**
+     * SPI to return a logger given a name.
+     */
+    protected abstract InternalLogApi doGetLog(String name);
+
+    /**
      * Returns the current default log factory.
      */
     public static InternalLogFactory getFactory() {
@@ -83,14 +93,4 @@ public abstract class InternalLogFactory {
         factoryConfigured = true;
         return true;
     }
-
-    /**
-     * SPI to return a logger given a class.
-     */
-    protected abstract InternalLogApi doGetLog(Class<?> clazz);
-
-    /**
-     * SPI to return a logger given a name.
-     */
-    protected abstract InternalLogApi doGetLog(String name);
 }

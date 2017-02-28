@@ -60,10 +60,12 @@ public class AwsJavaMailTransport extends Transport {
     public static final String AWS_SECRET_KEY_PROPERTY = "mail.aws.password";
     public static final String AWS_ACCESS_KEY_PROPERTY = "mail.aws.user";
     private static final String USER_AGENT = AwsJavaMailTransport.class.getName() + "/" + VersionInfoUtils.getVersion();
+
+    private AmazonSimpleEmailServiceClient emailService;
     private final String accessKey;
     private final String secretKey;
     private final String httpsEndpoint;
-    private AmazonSimpleEmailServiceClient emailService;
+
     private String lastMessageId;
 
     public AwsJavaMailTransport(Session session, URLName urlname) {
@@ -71,14 +73,6 @@ public class AwsJavaMailTransport extends Transport {
         this.accessKey = session.getProperty(AWS_ACCESS_KEY_PROPERTY);
         this.secretKey = session.getProperty(AWS_SECRET_KEY_PROPERTY);
         this.httpsEndpoint = session.getProperty(AWS_EMAIL_SERVICE_ENDPOINT_PROPERTY);
-    }
-
-    private static boolean isNullOrEmpty(String s) {
-        return (s == null || s.length() == 0);
-    }
-
-    private static boolean isNullOrEmpty(Object[] o) {
-        return (o == null || o.length == 0);
     }
 
     /**
@@ -136,27 +130,24 @@ public class AwsJavaMailTransport extends Transport {
     private void checkAddresses(Message m, Address[] addresses)
             throws MessagingException, SendFailedException {
 
-        if (isNullOrEmpty(addresses)
-            && isNullOrEmpty(m.getRecipients(Message.RecipientType.TO))
-            && isNullOrEmpty(m.getRecipients(Message.RecipientType.CC))
-            && isNullOrEmpty(m.getRecipients(Message.RecipientType.BCC))) {
+        if (isNullOrEmpty((Object[]) addresses)
+                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.TO))
+                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.CC))
+                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.BCC))) {
             throw new SendFailedException("No recipient addresses");
         }
 
         // Make sure all addresses are internet addresses
         Set<Address> invalid = new HashSet<Address>();
-        Address[][] recipients = {
+        for (Address[] recipients : new Address[][] {
             m.getRecipients(Message.RecipientType.TO),
             m.getRecipients(Message.RecipientType.CC),
             m.getRecipients(Message.RecipientType.BCC),
-            addresses
-        };
-
-        for (Address[] recipient : recipients) {
-            if (!isNullOrEmpty(recipient)) {
-                for (Address address : recipient) {
-                    if (!(address instanceof InternetAddress)) {
-                        invalid.add(address);
+            addresses }) {
+            if (!isNullOrEmpty(recipients)) {
+                for (Address a : recipients) {
+                    if (!(a instanceof InternetAddress)) {
+                        invalid.add(a);
                     }
                 }
             }
@@ -166,7 +157,7 @@ public class AwsJavaMailTransport extends Transport {
             Address[] sent = new Address[0];
             Address[] unsent = new Address[0];
             super.notifyTransportListeners(TransportEvent.MESSAGE_NOT_DELIVERED, sent, unsent,
-                                           invalid.toArray(new Address[invalid.size()]), m);
+                    invalid.toArray(new Address[invalid.size()]), m);
             throw new SendFailedException("AWS Mail Service can only send to InternetAddresses");
         }
     }
@@ -218,7 +209,7 @@ public class AwsJavaMailTransport extends Transport {
 
             // Simple E-mail needs at least one TO address, so add one if there isn't one
             if (m.getRecipients(Message.RecipientType.TO) == null ||
-                m.getRecipients(Message.RecipientType.TO).length == 0) {
+                    m.getRecipients(Message.RecipientType.TO).length == 0) {
                 m.setRecipient(Message.RecipientType.TO, addressTable.keySet().iterator().next());
             }
         }
@@ -254,12 +245,12 @@ public class AwsJavaMailTransport extends Transport {
                     TransportEvent.MESSAGE_NOT_DELIVERED, sent, unsent,
                     invalid, m);
             throw new MessagingException("Unable to write message: "
-                                         + m.toString(), e);
+                    + m.toString(), e);
         }
     }
 
     /**
-     * Sends an email using AWS E-mail Service and notifies listeners.
+     * Sends an email using AWS E-mail Service and notifies listeners
      *
      * @param m
      *            Message used to notify users
@@ -281,7 +272,7 @@ public class AwsJavaMailTransport extends Transport {
             unsent = new Address[0];
             invalid = new Address[0];
             super.notifyTransportListeners(TransportEvent.MESSAGE_DELIVERED,
-                                           sent, unsent, invalid, m);
+                    sent, unsent, invalid, m);
         } catch (Exception e) {
             sent = new Address[0];
             unsent = m.getAllRecipients();
@@ -290,7 +281,7 @@ public class AwsJavaMailTransport extends Transport {
                     TransportEvent.MESSAGE_NOT_DELIVERED, sent, unsent,
                     invalid, m);
             throw new SendFailedException("Unable to send email", e, sent,
-                                          unsent, invalid);
+                    unsent, invalid);
         }
     }
 
@@ -317,7 +308,7 @@ public class AwsJavaMailTransport extends Transport {
      */
     @Override
     protected boolean protocolConnect(String host, int port, String awsAccessKey,
-                                      String awsSecretKey) {
+            String awsSecretKey) {
         if (isConnected()) {
             throw new IllegalStateException("Already connected");
         }
@@ -355,20 +346,27 @@ public class AwsJavaMailTransport extends Transport {
     }
 
     /**
-     * <p>
-     * The unique message identifier ot the last message sent by <code>sendMessage</code>
-     * </p>
-     *
-     * @return The unique message identifier sent by the last
-     *         <code>sendMessage</code> action.
-     */
+    * <p>
+    * The unique message identifier ot the last message sent by <code>sendMessage</code>
+            * </p>
+            *
+            * @return The unique message identifier sent by the last
+    *         <code>sendMessage</code> action.
+    */
     public String getLastMessageId() {
         return lastMessageId;
+    }
+
+    private static boolean isNullOrEmpty(String s) {
+        return (s == null || s.length() == 0);
+    }
+
+    private static boolean isNullOrEmpty(Object[] o) {
+        return (o == null || o.length == 0);
     }
 
     public <X extends AmazonWebServiceRequest> X appendUserAgent(X request, String userAgent) {
         request.getRequestClientOptions().appendUserAgent(USER_AGENT);
         return request;
     }
-
 }

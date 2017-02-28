@@ -17,6 +17,7 @@ package software.amazon.awssdk;
 
 import java.io.InputStream;
 import java.util.EnumMap;
+
 import software.amazon.awssdk.annotation.NotThreadSafe;
 
 /**

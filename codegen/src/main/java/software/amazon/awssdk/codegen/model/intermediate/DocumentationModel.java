@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import software.amazon.awssdk.codegen.internal.DocumentationUtils;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.escapeIllegalCharacters;
 
 public class DocumentationModel {
 
@@ -26,6 +26,6 @@ public class DocumentationModel {
     }
 
     public void setDocumentation(String documentation) {
-        this.documentation = DocumentationUtils.escapeIllegalCharacters(documentation);
+        this.documentation = escapeIllegalCharacters(documentation);
     }
 }

@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.model.intermediate;
 
 import software.amazon.awssdk.codegen.model.service.Location;
+import software.amazon.awssdk.protocol.MarshallLocation;
 
 public class ParameterHttpMapping {
 
@@ -164,4 +165,22 @@ public class ParameterHttpMapping {
         setIsGreedy(greedy);
         return this;
     }
+
+    public MarshallLocation getMarshallLocation() {
+        if (location == null) {
+            return MarshallLocation.PAYLOAD;
+        }
+        switch (location) {
+            default:
+                return MarshallLocation.PAYLOAD;
+            case HEADER:
+            case HEADERS:
+                return MarshallLocation.HEADER;
+            case QUERY_STRING:
+                return MarshallLocation.QUERY_PARAM;
+            case URI:
+                return isGreedy ? MarshallLocation.GREEDY_PATH : MarshallLocation.PATH;
+        }
+    }
+
 }

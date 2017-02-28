@@ -152,6 +152,10 @@ public class Freemarker {
         return getTemplate(templateConfig.getModelMarshaller());
     }
 
+    public Template getRequestMarshallerTemplate() throws IOException {
+        return getTemplate(templateConfig.getRequestMarshaller());
+    }
+
     public Template getModelUnmarshallerTemplate() throws IOException {
         return getTemplate(templateConfig.getModelUnmarshaller());
     }

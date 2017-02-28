@@ -30,8 +30,8 @@ public class UnusedImportRemover implements ContentProcessor {
 
     @Override
     public String apply(String content) {
-        return findUnusedImports(content).stream().map(this::removeImportFunction)
-                                         .reduce(Function.identity(), Function::andThen).apply(content);
+        return findUnusedImports(content).stream().map(this::removeImportFunction).reduce(Function.identity(),
+                Function::andThen).apply(content);
     }
 
     private Function<String, String> removeImportFunction(String importToRemove) {
@@ -57,8 +57,8 @@ public class UnusedImportRemover implements ContentProcessor {
 
     private Predicate<String> isUnused(String content) {
         String contentWithoutImports = removeAllImports(content);
-        return importToCheck -> !importToCheck.contains("*") && (isNotReferenced(contentWithoutImports, importToCheck) ||
-                                                                 isDuplicate(content, importToCheck));
+        return importToCheck -> !importToCheck.contains("*")
+                && (isNotReferenced(contentWithoutImports, importToCheck) || isDuplicate(content, importToCheck));
     }
 
     private boolean isNotReferenced(String contentWithoutImports, String importToCheck) {

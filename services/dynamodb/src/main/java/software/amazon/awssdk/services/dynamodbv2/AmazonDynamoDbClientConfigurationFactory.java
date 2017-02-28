@@ -25,7 +25,7 @@ import software.amazon.awssdk.retry.PredefinedRetryPolicies;
  * the AmazonDynamoDB client.
  */
 @SdkInternalApi
-class AmazonDynamoDBClientConfigurationFactory extends ClientConfigurationFactory {
+class AmazonDynamoDbClientConfigurationFactory extends ClientConfigurationFactory {
 
     @Override
     protected ClientConfiguration getDefaultConfig() {

@@ -17,6 +17,7 @@ package software.amazon.awssdk.auth.profile.internal;
 
 import java.util.Collections;
 import java.util.Map;
+
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 

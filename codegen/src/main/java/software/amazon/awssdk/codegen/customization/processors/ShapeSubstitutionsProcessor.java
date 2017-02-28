@@ -282,7 +282,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                 MemberModel listTypeMember = parentShape.findMemberModelByC2jName(listTypeMemberC2jName);
 
                 ShapeModel nestedListMemberOriginalShape = Utils.findShapeModelByC2jName(intermediateModel,
-                                                                                         nestedListMemberOriginalShapeC2jName);
+                        nestedListMemberOriginalShapeC2jName);
 
                 MemberModel emitFromMember =
                         nestedListMemberOriginalShape.findMemberModelByC2jName(
@@ -301,7 +301,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
                  * version bump.
                  */
                 if (!shouldSkipAddingMarshallingPath(shapeSubstitutions.get(nestedListMemberOriginalShapeC2jName),
-                                                     parentShapeC2jName)) {
+                        parentShapeC2jName)) {
                     listTypeMember.getListModel().setMemberAdditionalMarshallingPath(
                             emitFromMember.getHttp().getMarshallLocationName());
                 }

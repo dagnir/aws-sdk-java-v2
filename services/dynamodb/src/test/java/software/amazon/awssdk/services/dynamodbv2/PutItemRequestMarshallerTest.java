@@ -28,13 +28,14 @@ import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.transform.PutItemRequestMarshaller;
+import software.amazon.awssdk.services.dynamodbv2.model.transform.PutItemRequestProtocolMarshaller;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 public class PutItemRequestMarshallerTest {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private final PutItemRequestMarshaller marshaller = new PutItemRequestMarshaller(
+    private final PutItemRequestProtocolMarshaller marshaller = new PutItemRequestProtocolMarshaller(
             new SdkJsonProtocolFactory(new JsonClientMetadata().withProtocolVersion("1.0")));
 
     /**

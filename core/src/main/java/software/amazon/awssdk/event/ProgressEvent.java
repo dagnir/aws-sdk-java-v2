@@ -17,6 +17,7 @@ package software.amazon.awssdk.event;
 
 import java.util.EnumMap;
 import java.util.Map;
+
 import software.amazon.awssdk.annotation.Immutable;
 
 /**
