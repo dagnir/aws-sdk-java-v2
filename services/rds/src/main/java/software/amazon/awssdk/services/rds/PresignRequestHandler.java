@@ -1,16 +1,24 @@
 /*
- * Copyright 2011-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with
- * the License. A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
- * and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.rds;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Date;
 
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
@@ -25,11 +33,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Abstract pre-sign handler that follows the pre-signing scheme outlined in the 'RDS Presigned URL for Cross-Region Copying' SEP.
@@ -71,15 +74,21 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
 
     @Override
     public void beforeRequest(Request<?> request) {
-        if (!requestClassToPreSign.isInstance(request.getOriginalRequest())) return;
+        if (!requestClassToPreSign.isInstance(request.getOriginalRequest())) {
+            return;
+        }
 
-        if (request.getParameters().containsKey(PARAM_PRESIGNED_URL)) return;
+        if (request.getParameters().containsKey(PARAM_PRESIGNED_URL)) {
+            return;
+        }
 
         PresignableRequest presignableRequest = adaptRequest(requestClassToPreSign.cast(
                 request.getOriginalRequest()));
 
         String sourceRegion = presignableRequest.getSourceRegion();
-        if (sourceRegion == null) return;
+        if (sourceRegion == null) {
+            return;
+        }
 
         String destinationRegion = AwsHostNameUtils.parseRegion(request.getEndpoint().getHost(),
                 SERVICE_NAME);
