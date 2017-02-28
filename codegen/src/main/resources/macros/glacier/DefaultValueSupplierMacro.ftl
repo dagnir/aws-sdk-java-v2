@@ -3,6 +3,6 @@
     <#if (member.http.uri && member.name == "AccountId")>
     .defaultValueSupplier(DefaultAccountIdSupplier.getInstance())
     <#elseif member.isIdempotencyToken()>
-    .defaultValueSupplier(com.amazonaws.util.IdempotentUtils.getGenerator())
+    .defaultValueSupplier(software.amazon.awssdk.util.IdempotentUtils.getGenerator())
     </#if>
 </#macro>

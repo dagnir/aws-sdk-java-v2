@@ -59,12 +59,13 @@ public class JobStatusMonitor {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private static final Log log = LogFactory.getLog(JobStatusMonitor.class);
+
     private AmazonSQS sqs;
     private AmazonSNS sns;
     private String queueUrl;
     private String topicArn;
 
-    private static final Log log = LogFactory.getLog(JobStatusMonitor.class);
 
     public JobStatusMonitor(AwsCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
         sqs = new AmazonSQSClient(credentialsProvider, clientConfiguration);

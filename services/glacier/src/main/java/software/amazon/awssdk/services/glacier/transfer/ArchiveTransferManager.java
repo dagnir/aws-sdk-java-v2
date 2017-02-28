@@ -63,10 +63,10 @@ import software.amazon.awssdk.services.glacier.model.UploadArchiveRequest;
 import software.amazon.awssdk.services.glacier.model.UploadArchiveResult;
 import software.amazon.awssdk.services.glacier.model.UploadMultipartPartRequest;
 import software.amazon.awssdk.services.s3.internal.InputSubstream;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
 import software.amazon.awssdk.services.sns.AmazonSNS;
-import software.amazon.awssdk.services.sqs.AmazonSQSClient;
 import software.amazon.awssdk.services.sns.AmazonSNSClient;
+import software.amazon.awssdk.services.sqs.AmazonSQS;
+import software.amazon.awssdk.services.sqs.AmazonSQSClient;
 import software.amazon.awssdk.util.BinaryUtils;
 
 /**
@@ -89,6 +89,8 @@ public class ArchiveTransferManager {
     /** Default retry time when downloading in multiple chunks using range retrieval */
     private static final int DEFAULT_MAX_RETRIES = 3;
 
+    private static final Log log = LogFactory.getLog(ArchiveTransferManager.class);
+
     /** Glacier client used for making all requests. */
     private final AmazonGlacier glacier;
 
@@ -100,7 +102,6 @@ public class ArchiveTransferManager {
 
     private final AmazonSNS sns;
 
-    private static final Log log = LogFactory.getLog(ArchiveTransferManager.class);
 
     /**
      * Constructs a new ArchiveTransferManager, using the specified AWS
@@ -169,7 +170,8 @@ public class ArchiveTransferManager {
      *            timeouts.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
+    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider,
+                                  ClientConfiguration clientConfiguration) {
         this.credentialsProvider = credentialsProvider;
         this.clientConfiguration = clientConfiguration;
         this.glacier = glacier;
