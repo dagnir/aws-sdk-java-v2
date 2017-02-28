@@ -1,4 +1,4 @@
-package software.amazon.awssdk.auth;
+package software.amazon.awssdk.services.cloudfront.auth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
