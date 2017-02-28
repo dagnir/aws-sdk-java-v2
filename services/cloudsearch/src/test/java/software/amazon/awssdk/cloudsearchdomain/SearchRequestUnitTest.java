@@ -14,16 +14,18 @@
  */
 package software.amazon.awssdk.cloudsearchdomain;
 
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.cloudsearchdomain.AmazonCloudSearchDomainClient;
-import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.IOException;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.services.cloudsearchdomain.AmazonCloudSearchDomainClient;
+import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
