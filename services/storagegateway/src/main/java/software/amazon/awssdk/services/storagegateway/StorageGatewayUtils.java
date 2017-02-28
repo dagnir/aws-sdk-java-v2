@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.storagegateway;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class StorageGatewayUtils {
      *             remote AWS Storage Gateway server.
      */
     public static String getActivationKey(String gatewayAddress) throws AmazonClientException {
-        return getActivationKey(gatewayAddress, (String)null);
+        return getActivationKey(gatewayAddress, (String) null);
     }
 
     /**
@@ -107,18 +108,21 @@ public class StorageGatewayUtils {
             HttpResponse response = client.execute(method);
             int statusCode = response.getStatusLine().getStatusCode();
 
-            if (statusCode != 302)
+            if (statusCode != 302) {
                 throw new AmazonClientException("Could not fetch activation key.  HTTP status code: " + statusCode);
+            }
 
             Header[] headers = response.getHeaders("Location");
-            if (headers.length < 1)
+            if (headers.length < 1) {
                 throw new AmazonClientException("Could not fetch activation key, no location header found");
+            }
 
             String activationUrl = headers[0].getValue();
             String[] parts = activationUrl.split("activationKey=");
 
-            if (parts.length < 2 || null == parts[1])
+            if (parts.length < 2 || null == parts[1]) {
                 throw new AmazonClientException("Unable to get activation key from : " + activationUrl);
+            }
 
             return parts[1];
         } catch (IOException ioe) {
