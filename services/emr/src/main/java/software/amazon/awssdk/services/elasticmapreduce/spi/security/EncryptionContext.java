@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016. Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -24,43 +24,43 @@ import java.util.Map;
  *
  */
 public class EncryptionContext {
-  private final String type;
-  private final Map<String, String> context = new HashMap<String, String>();
+    private final String type;
+    private final Map<String, String> context = new HashMap<String, String>();
 
-  public EncryptionContext(String type) {
-    this.type = type;
-  }
+    public EncryptionContext(String type) {
+        this.type = type;
+    }
 
-  /**
-   * Gets the type of the encryption context.
-   * Supported value is LOCAL_DISK.
-   * @return the type of encryption context.
-   */
-  public String getType() {
-    return type;
-  }
+    /**
+     * Gets the type of the encryption context.
+     * Supported value is LOCAL_DISK.
+     * @return the type of encryption context.
+     */
+    public String getType() {
+        return type;
+    }
 
-  /**
-   * Gets the encryption context key value pairs.
-   * @return the key value pairs in the encryption context.
-   */
-  public Map<String, String> getContext() {
-    return new HashMap<String, String>(context);
-  }
+    /**
+     * Gets the encryption context key value pairs.
+     * @return the key value pairs in the encryption context.
+     */
+    public Map<String, String> getContext() {
+        return new HashMap<String, String>(context);
+    }
 
-  /**
-   * Fluent API to add encryption context.
-   */
-  public EncryptionContext withContext(String key, String value) {
-    this.context.put(key, value);
-    return this;
-  }
+    /**
+     * Fluent API to add encryption context.
+     */
+    public EncryptionContext withContext(String key, String value) {
+        this.context.put(key, value);
+        return this;
+    }
 
-  /**
-   * Fluent API to add all the given encryption context.
-   */
-  public EncryptionContext withContext(Map<String, String> context) {
-    this.context.putAll(context);
-    return this;
-  }
+    /**
+     * Fluent API to add all the given encryption context.
+     */
+    public EncryptionContext withContext(Map<String, String> context) {
+        this.context.putAll(context);
+        return this;
+    }
 }
