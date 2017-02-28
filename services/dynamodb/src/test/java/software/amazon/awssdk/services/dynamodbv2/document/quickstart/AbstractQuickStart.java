@@ -12,14 +12,14 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.utils;
+package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import java.io.File;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.dynamodbv2.document.DynamoDB;
@@ -57,7 +57,7 @@ public class AbstractQuickStart {
         dynamo.shutdown();
     }
     
-    protected static AWSCredentials awsTestCredentials() {
+    protected static AwsCredentials awsTestCredentials() {
         try {
             return new PropertiesCredentials(new File(
                     System.getProperty("user.home")

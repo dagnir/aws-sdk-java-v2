@@ -24,7 +24,6 @@ import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.document.BatchGetItemOutcome;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.TableKeysAndAttributes;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
 import software.amazon.awssdk.services.dynamodbv2.document.utils.NameMap;
 import software.amazon.awssdk.services.dynamodbv2.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;

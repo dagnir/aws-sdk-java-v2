@@ -19,7 +19,6 @@ import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.Table;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.GetItemSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
 
 public class B_PutItemJsonBooleanTest extends AbstractQuickStart {
     @Test

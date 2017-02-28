@@ -23,7 +23,6 @@ import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.Table;
 import software.amazon.awssdk.services.dynamodbv2.document.UpdateItemOutcome;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.UpdateItemSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
 import software.amazon.awssdk.services.dynamodbv2.document.utils.NameMap;
 import software.amazon.awssdk.services.dynamodbv2.document.utils.ValueMap;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeAction;

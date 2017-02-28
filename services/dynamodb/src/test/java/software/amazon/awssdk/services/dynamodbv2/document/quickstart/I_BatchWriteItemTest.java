@@ -26,7 +26,6 @@ import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.ItemCollection;
 import software.amazon.awssdk.services.dynamodbv2.document.RangeKeyCondition;
 import software.amazon.awssdk.services.dynamodbv2.document.TableWriteItems;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
 import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
 
 /**

@@ -28,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.dynamodbv2.document.AttributeUpdate;
@@ -269,7 +269,7 @@ public class F_UpdateItemTest {
         dynamo.shutdown();
     }
 
-    protected static AWSCredentials awsTestCredentials() {
+    protected static AwsCredentials awsTestCredentials() {
         try {
             return new PropertiesCredentials(new File(
                     System.getProperty("user.home")
