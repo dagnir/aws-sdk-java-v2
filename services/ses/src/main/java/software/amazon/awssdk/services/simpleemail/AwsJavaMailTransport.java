@@ -59,6 +59,7 @@ public class AwsJavaMailTransport extends Transport {
     public static final String AWS_EMAIL_SERVICE_ENDPOINT_PROPERTY = "mail.aws.host";
     public static final String AWS_SECRET_KEY_PROPERTY = "mail.aws.password";
     public static final String AWS_ACCESS_KEY_PROPERTY = "mail.aws.user";
+    private static final String USER_AGENT = AwsJavaMailTransport.class.getName() + "/" + VersionInfoUtils.getVersion();
 
     private AmazonSimpleEmailServiceClient emailService;
     private final String accessKey;
@@ -129,30 +130,30 @@ public class AwsJavaMailTransport extends Transport {
     private void checkAddresses(Message m, Address[] addresses)
             throws MessagingException, SendFailedException {
 
-        if ( isNullOrEmpty((Object[]) addresses)
+        if (isNullOrEmpty((Object[]) addresses)
                 && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.TO))
                 && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.CC))
-                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.BCC)) ) {
+                && isNullOrEmpty((Object[]) m.getRecipients(Message.RecipientType.BCC))) {
             throw new SendFailedException("No recipient addresses");
         }
 
         // Make sure all addresses are internet addresses
         Set<Address> invalid = new HashSet<Address>();
-        for ( Address[] recipients : new Address[][] {
-                m.getRecipients(Message.RecipientType.TO),
-                m.getRecipients(Message.RecipientType.CC),
-                m.getRecipients(Message.RecipientType.BCC),
-                addresses } ) {
-            if ( !isNullOrEmpty(recipients) ) {
-                for ( Address a : recipients ) {
-                    if ( !(a instanceof InternetAddress) ) {
+        for (Address[] recipients : new Address[][] {
+            m.getRecipients(Message.RecipientType.TO),
+            m.getRecipients(Message.RecipientType.CC),
+            m.getRecipients(Message.RecipientType.BCC),
+            addresses }) {
+            if (!isNullOrEmpty(recipients)) {
+                for (Address a : recipients) {
+                    if (!(a instanceof InternetAddress)) {
                         invalid.add(a);
                     }
                 }
             }
         }
 
-        if ( !invalid.isEmpty() ) {
+        if (!invalid.isEmpty()) {
             Address[] sent = new Address[0];
             Address[] unsent = new Address[0];
             super.notifyTransportListeners(TransportEvent.MESSAGE_NOT_DELIVERED, sent, unsent,
@@ -171,25 +172,25 @@ public class AwsJavaMailTransport extends Transport {
      */
     private void collateRecipients(Message m, Address[] addresses) throws MessagingException {
 
-        if ( !isNullOrEmpty(addresses) ) {
+        if (!isNullOrEmpty(addresses)) {
             Hashtable<Address, Message.RecipientType> addressTable = new Hashtable<Address, Message.RecipientType>();
 
-            for ( Address a : addresses ) {
+            for (Address a : addresses) {
                 addressTable.put(a, Message.RecipientType.TO);
             }
 
-            if ( !isNullOrEmpty(m.getRecipients(Message.RecipientType.TO)) ) {
-                for ( Address a : m.getRecipients(Message.RecipientType.TO) ) {
+            if (!isNullOrEmpty(m.getRecipients(Message.RecipientType.TO))) {
+                for (Address a : m.getRecipients(Message.RecipientType.TO)) {
                     addressTable.put(a, Message.RecipientType.TO);
                 }
             }
-            if ( !isNullOrEmpty(m.getRecipients(Message.RecipientType.CC)) ) {
-                for ( Address a : m.getRecipients(Message.RecipientType.CC) ) {
+            if (!isNullOrEmpty(m.getRecipients(Message.RecipientType.CC))) {
+                for (Address a : m.getRecipients(Message.RecipientType.CC)) {
                     addressTable.put(a, Message.RecipientType.CC);
                 }
             }
-            if ( !isNullOrEmpty(m.getRecipients(Message.RecipientType.BCC)) ) {
-                for ( Address a : m.getRecipients(Message.RecipientType.BCC) ) {
+            if (!isNullOrEmpty(m.getRecipients(Message.RecipientType.BCC))) {
+                for (Address a : m.getRecipients(Message.RecipientType.BCC)) {
                     addressTable.put(a, Message.RecipientType.BCC);
                 }
             }
@@ -201,14 +202,14 @@ public class AwsJavaMailTransport extends Transport {
 
             Iterator<Address> aIter = addressTable.keySet().iterator();
 
-            while ( aIter.hasNext() ) {
+            while (aIter.hasNext()) {
                 Address a = aIter.next();
                 m.addRecipient(addressTable.get(a), a);
             }
 
             // Simple E-mail needs at least one TO address, so add one if there isn't one
-            if ( m.getRecipients(Message.RecipientType.TO) == null ||
-                    m.getRecipients(Message.RecipientType.TO).length == 0 ) {
+            if (m.getRecipients(Message.RecipientType.TO) == null ||
+                    m.getRecipients(Message.RecipientType.TO).length == 0) {
                 m.setRecipient(Message.RecipientType.TO, addressTable.keySet().iterator().next());
             }
         }
@@ -308,8 +309,9 @@ public class AwsJavaMailTransport extends Transport {
     @Override
     protected boolean protocolConnect(String host, int port, String awsAccessKey,
             String awsSecretKey) {
-        if (isConnected())
+        if (isConnected()) {
             throw new IllegalStateException("Already connected");
+        }
 
         if (isNullOrEmpty(awsAccessKey) || isNullOrEmpty(awsSecretKey)) {
             if (isNullOrEmpty(accessKey) || isNullOrEmpty(secretKey)) {
@@ -367,7 +369,4 @@ public class AwsJavaMailTransport extends Transport {
         request.getRequestClientOptions().appendUserAgent(USER_AGENT);
         return request;
     }
-
-    private static final String USER_AGENT = AwsJavaMailTransport.class.getName() + "/" + VersionInfoUtils.getVersion();
-
 }
