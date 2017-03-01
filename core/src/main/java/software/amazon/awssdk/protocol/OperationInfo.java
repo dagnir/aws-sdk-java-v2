@@ -26,6 +26,7 @@ import software.amazon.awssdk.http.HttpMethodName;
 @SdkProtectedApi
 public class OperationInfo {
 
+    private final Protocol protocol;
     private final String requestUri;
     private final HttpMethodName httpMethodName;
     private final String operationIdentifier;
@@ -34,12 +35,20 @@ public class OperationInfo {
     private final boolean hasPayloadMembers;
 
     private OperationInfo(Builder builder) {
+        this.protocol = builder.protocol;
         this.requestUri = builder.requestUri;
         this.httpMethodName = builder.httpMethodName;
         this.operationIdentifier = builder.operationIdentifier;
         this.serviceName = builder.serviceName;
         this.hasExplicitPayloadMember = builder.hasExplicitPayloadMember;
         this.hasPayloadMembers = builder.hasPayloadMembers;
+    }
+
+    /**
+     * @return The protocol of the client. Gives hints to the marshaller on how things should be transformed.
+     */
+    public Protocol protocol() {
+        return protocol;
     }
 
     /**
@@ -102,6 +111,7 @@ public class OperationInfo {
      */
     public static final class Builder {
 
+        private Protocol protocol;
         private String requestUri;
         private HttpMethodName httpMethodName;
         private String operationIdentifier;
@@ -110,6 +120,11 @@ public class OperationInfo {
         private boolean hasPayloadMembers;
 
         private Builder() {
+        }
+
+        public Builder protocol(Protocol protocol) {
+            this.protocol = protocol;
+            return this;
         }
 
         public Builder requestUri(String requestUri) {

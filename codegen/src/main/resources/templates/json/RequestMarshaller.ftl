@@ -37,6 +37,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 public class ${className} implements Marshaller<Request<${shapeName}>, ${shapeName}> {
 
     private static final OperationInfo SDK_OPERATION_BINDING = OperationInfo.builder()
+        .protocol(Protocol.${protocolEnum})
         .requestUri("${shape.marshaller.requestUri}")
         .httpMethodName(HttpMethodName.${httpVerb})
         .hasExplicitPayloadMember(${shape.hasPayloadMember?c})

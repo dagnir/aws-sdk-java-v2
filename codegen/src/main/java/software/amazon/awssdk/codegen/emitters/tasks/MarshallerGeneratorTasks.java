@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.codegen.emitters.tasks;
 
+import static software.amazon.awssdk.codegen.model.intermediate.Protocol.AWS_JSON;
 import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
 
 import freemarker.template.Template;
@@ -94,6 +95,7 @@ public class MarshallerGeneratorTasks extends BaseGeneratorTasks {
                 .put("transformPackage", model.getTransformPackage())
                 .put("customConfig", model.getCustomizationConfig())
                 .put("className", marshallerClassName)
+                .put("protocolEnum", getProtocolEnumName())
                 .build();
 
         return new FreemarkerGeneratorTask(transformClassDir,
@@ -102,4 +104,14 @@ public class MarshallerGeneratorTasks extends BaseGeneratorTasks {
                                            marshallerDataModel);
     }
 
+    private String getProtocolEnumName() {
+        switch (metadata.getProtocol()) {
+            case CBOR:
+            case ION:
+            case AWS_JSON:
+                return AWS_JSON.name();
+            default:
+                return metadata.getProtocol().name();
+        }
+    }
 }

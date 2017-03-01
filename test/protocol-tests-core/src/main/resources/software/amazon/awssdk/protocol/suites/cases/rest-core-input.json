@@ -18,6 +18,20 @@
     }
   },
   {
+    "description": "X-Amz-Target header is not set for REST services.",
+    "when": {
+      "action": "marshall",
+      "operation": "AllTypes"
+    },
+    "then": {
+      "serializedAs": {
+        "headers": {
+          "doesNotContain": [ "X-Amz-Target" ]
+        }
+      }
+    }
+  },
+  {
     "description": "Scalars in headers are marshalled correctly",
     "given": {
       "input": {
@@ -44,6 +58,41 @@
             "x-amz-double": "5.678",
             "x-amz-timestamp": "2015-01-25T08:00:00.123Z"
           }
+        }
+      }
+    }
+  },
+  {
+    "description": "Null value bound to header, does not add header to request",
+    "given": {
+      "input": {
+        "StringMember": ""
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "MembersInHeaders"
+    },
+    "then": {
+      "serializedAs": {
+        "headers": {
+          "contains": {
+            "x-amz-string": ""
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Empty value bound to header, adds header with empty value",
+    "when": {
+      "action": "marshall",
+      "operation": "MembersInHeaders"
+    },
+    "then": {
+      "serializedAs": {
+        "headers": {
+          "doesNotContain": ["StringMember"]
         }
       }
     }
@@ -188,6 +237,62 @@
               "bar",
               "baz"
             ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Empty list of strings in query params, does not add param",
+    "given": {
+      "input": {
+        "ListOfStrings": []
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "MembersInQueryParams"
+    },
+    "then": {
+      "serializedAs": {
+        "params": {
+          "doesNotContain": ["item"]
+        }
+      }
+    }
+  },
+  {
+    "description": "Singleton list with empty string in query params, adds param with empty value",
+    "given": {
+      "input": {
+        "ListOfStrings": [""]
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "MembersInQueryParams"
+    },
+    "then": {
+      "serializedAs": {
+        "params": {
+          "contains": {
+            "item": ""
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Static query params in the requestURI are present.",
+    "when": {
+      "action": "marshall",
+      "operation": "MembersInQueryParams"
+    },
+    "then": {
+      "serializedAs": {
+        "params": {
+          "contains": {
+            "StaticQueryParam": "foo"
           }
         }
       }
@@ -358,47 +463,117 @@
         "uri": "/2016-03-11/queryParamWithoutValue",
         "params": {
           "contains": {
-            "param": [
-              null
-            ]
+            "param": [null]
           }
         }
       }
     }
   },
   {
-    "description": "Input with greedy label in path",
-    "given": {
-      "input": {
-        "NonGreedyPathParam": "pathParamValue",
-        "GreedyPathParam": "foo/bar/baz"
+      "description": "Input with greedy label in path",
+      "given": {
+	  "input": {
+	      "NonGreedyPathParam": "pathParamValue",
+	      "GreedyPathParam": "foo/bar/baz"
+	  }
+      },
+      "when": {
+	  "action": "marshall",
+	  "operation": "OperationWithGreedyLabel"
+      },
+      "then": {
+	  "serializedAs": {
+	      "uri": "/2016-03-11/operationWithGreedyLabel/pathParamValue/foo/bar/baz"
+	  }
       }
-    },
+  },
+  {
+      "description": "Input with greedy label in path, leading slash removed",
+      "given": {
+	  "input": {
+	      "NonGreedyPathParam": "pathParamValue",
+	      "GreedyPathParam": "/foo/bar/baz"
+	  }
+      },
+      "when": {
+	  "action": "marshall",
+	  "operation": "OperationWithGreedyLabel"
+      },
+      "then": {
+	  "serializedAs": {
+	      "uri": "/2016-03-11/operationWithGreedyLabel/pathParamValue/foo/bar/baz"
+	  }
+      }
+  },
+  {
+    "description": "Operation with null members that have the idempotent trait are autofilled.",
     "when": {
       "action": "marshall",
-      "operation": "OperationWithGreedyLabel"
+      "operation": "IdempotentOperation"
     },
     "then": {
       "serializedAs": {
-        "uri": "/2016-03-11/operationWithGreedyLabel/pathParamValue/foo/bar/baz"
+        "uri": "/2016-03-11/idempotentOperation/00000000-0000-4000-8000-000000000000",
+        "params": {
+          "contains": {
+            "QueryParam": "00000000-0000-4000-8000-000000000000"
+          }
+        },
+        "headers": {
+          "contains": {
+            "x-amz-idempotent-header": "00000000-0000-4000-8000-000000000000"
+          }
+        }
       }
     }
   },
   {
-    "description": "Input with greedy label in path, leading slash removed",
+    "description": "Operation with non-null members that have the idempotent trait are not autofilled.",
     "given": {
       "input": {
-        "NonGreedyPathParam": "pathParamValue",
-        "GreedyPathParam": "/foo/bar/baz"
+          "PathIdempotentToken": "foo",
+          "QueryIdempotentToken": "bar",
+          "HeaderIdempotentToken": "baz"
       }
     },
     "when": {
       "action": "marshall",
-      "operation": "OperationWithGreedyLabel"
+      "operation": "IdempotentOperation"
     },
     "then": {
       "serializedAs": {
-        "uri": "/2016-03-11/operationWithGreedyLabel/pathParamValue/foo/bar/baz"
+        "uri": "/2016-03-11/idempotentOperation/foo",
+        "params": {
+          "contains": {
+            "QueryParam": "bar"
+          }
+        },
+        "headers": {
+          "contains": {
+            "x-amz-idempotent-header": "baz"
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Operation with modeled content-type, respects modeled content-type over protocol default.",
+    "given": {
+      "input": {
+          "ContentType": "application/foo"
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "OperationWithModeledContentType"
+    },
+    "then": {
+      "serializedAs": {
+        "headers": {
+          "contains": {
+            "Content-Type": "application/foo"
+          }
+        }
       }
     }
   }

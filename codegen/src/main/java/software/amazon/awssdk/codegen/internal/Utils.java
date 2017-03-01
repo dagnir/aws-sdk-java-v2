@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
-import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeMarshaller;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.service.Input;
@@ -288,9 +287,8 @@ public class Utils {
                 marshaller.setXmlNameSpaceUri(xmlNamespace.getUri());
             }
         }
-        if (!StringUtils.isNullOrEmpty(service.getTargetPrefix())) {
-            marshaller.setTarget(service.getTargetPrefix() + "."
-                                 + operation.getName());
+        if (!StringUtils.isNullOrEmpty(service.getTargetPrefix()) && Metadata.isNotRestProtocol(service.getProtocol())) {
+            marshaller.setTarget(service.getTargetPrefix() + "." + operation.getName());
         }
         return marshaller;
 

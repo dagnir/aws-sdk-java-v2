@@ -48,7 +48,7 @@ public class Freemarker {
         Protocol templateProtocol = model.getMetadata().getProtocol();
         if (Protocol.CBOR.equals(model.getMetadata().getProtocol()) ||
             Protocol.ION.equals(model.getMetadata().getProtocol())) {
-            templateProtocol = Protocol.JSON;
+            templateProtocol = Protocol.AWS_JSON;
         }
         CodeGenTemplatesConfig protocolDefaultConfig = CodeGenTemplatesConfig.load(templateProtocol);
 

@@ -88,6 +88,7 @@ public class MetricUnitTestBase extends AwsTestBase {
      */
     @BeforeClass
     public static void setUp() throws Exception {
+        setUpCredentials();
         cloudWatchClient = new AmazonCloudWatchTestClient();
         queue = new LinkedBlockingQueue<MetricDatum>(CloudWatchMetricConfig.DEFAULT_METRICS_QSIZE);
         config = new CloudWatchMetricConfig().withQueuePollTimeoutMilli(QUEUE_TIMEOUT_MILLI);

@@ -342,5 +342,98 @@
         }
       }
     }
+  },
+  {
+    "description": "List of list of strings is marshalled correctly",
+    "given": {
+      "input": {
+        "ListOfListsOfStrings": [
+          [ "foo", "bar" ],
+          [ "baz" ]
+        ]
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "NestedContainers"
+    },
+    "then": {
+      "serializedAs": {
+        "body": {
+          "jsonEquals": "{\"ListOfListsOfStrings\": [[\"foo\", \"bar\"], [\"baz\"]]}"
+        }
+      }
+    }
+  },
+  {
+    "description": "Deeply nested list is marshalled correctly.",
+    "given": {
+      "input": {
+        "ListOfListOfListsOfStrings": [
+          [
+            [ "foo", "bar" ], [ "baz" ]
+          ],
+          [
+            [ "abcd" ]
+          ]
+        ]
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "NestedContainers"
+    },
+    "then": {
+      "serializedAs": {
+        "body": {
+          "jsonEquals": "{\"ListOfListOfListsOfStrings\": [ [ [\"foo\", \"bar\"], [\"baz\"] ], [ [\"abcd\"] ] ]}"
+        }
+      }
+    }
+  },
+  {
+    "description": "Map of String to List of List of strings is marshalled correctly",
+    "given": {
+      "input": {
+        "MapOfStringToListOfListsOfStrings": {
+          "keyOne": [
+            [ "foo", "bar" ], [ "baz" ]
+          ],
+          "keyTwo": [
+            [ "abcd" ]
+          ]
+        }
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "NestedContainers"
+    },
+    "then": {
+      "serializedAs": {
+        "body": {
+          "jsonEquals": "{\"MapOfStringToListOfListsOfStrings\": {\"keyOne\": [ [\"foo\", \"bar\"], [\"baz\"] ], \"keyTwo\": [ [\"abcd\"] ]}}"
+        }
+      }
+    }
+  },
+  {
+    "description": "Explicit nulls in list are preserved.",
+    "given": {
+      "input": {
+        "SimpleList": [ null, "foo", null, "bar", null ]
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "AllTypes"
+    },
+    "then": {
+      "serializedAs": {
+        "body": {
+          "jsonEquals": "{\"SimpleList\": [null, \"foo\", null, \"bar\", null ] }"
+        }
+      }
+    }
   }
 ]

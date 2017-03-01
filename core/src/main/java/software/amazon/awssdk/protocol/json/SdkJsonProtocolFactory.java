@@ -24,6 +24,7 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.protocol.OperationInfo;
+import software.amazon.awssdk.protocol.Protocol;
 import software.amazon.awssdk.protocol.ProtocolRequestMarshaller;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
@@ -58,12 +59,20 @@ public class SdkJsonProtocolFactory implements SdkJsonMarshallerFactory {
 
     public <T> ProtocolRequestMarshaller<T> createProtocolMarshaller(OperationInfo operationInfo, T origRequest) {
         return JsonProtocolMarshallerBuilder.<T>standard()
-                .jsonGenerator(operationInfo.hasPayloadMembers() ? createGenerator() : StructuredJsonGenerator.NO_OP)
+                .jsonGenerator(createGenerator(operationInfo))
                 .contentType(getContentType())
                 .operationInfo(operationInfo)
                 .originalRequest(origRequest)
                 .sendExplicitNullForPayload(false)
                 .build();
+    }
+
+    private StructuredJsonGenerator createGenerator(OperationInfo operationInfo) {
+        if (operationInfo.hasPayloadMembers() || operationInfo.protocol() == Protocol.AWS_JSON) {
+            return createGenerator();
+        } else {
+            return StructuredJsonGenerator.NO_OP;
+        }
     }
 
     /**

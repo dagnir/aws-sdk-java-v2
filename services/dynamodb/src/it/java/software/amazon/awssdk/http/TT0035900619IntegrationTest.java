@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.AWSCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
@@ -128,7 +128,7 @@ public class TT0035900619IntegrationTest {
         }
     }
 
-    protected static AWSCredentials awsTestCredentials() {
+    protected static AwsCredentials awsTestCredentials() {
         try {
             return new PropertiesCredentials(new File(
                     System.getProperty("user.home")
