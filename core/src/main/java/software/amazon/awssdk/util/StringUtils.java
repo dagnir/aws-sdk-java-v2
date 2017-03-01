@@ -200,6 +200,13 @@ public class StringUtils {
     }
 
     /**
+     * @return true if the given value is non-null and non-empty
+     */
+    public static boolean hasNonWhitespaceCharacter(String str) {
+        return !isNullOrEmpty(str) && str.trim().length() > 0;
+    }
+
+    /**
      * Converts a given String to lower case with Locale.ENGLISH
      *
      * @param str the string to be converted to lower case

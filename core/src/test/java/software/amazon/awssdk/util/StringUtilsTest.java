@@ -172,4 +172,12 @@ public class StringUtilsTest {
         Assert.assertFalse(StringUtils.hasValue(null));
         Assert.assertFalse(StringUtils.hasValue(""));
     }
+
+    @Test
+    public void hasNonWhitespaceCharacter() {
+        Assert.assertTrue(StringUtils.hasNonWhitespaceCharacter("hello"));
+        Assert.assertFalse(StringUtils.hasNonWhitespaceCharacter(null));
+        Assert.assertFalse(StringUtils.hasNonWhitespaceCharacter(""));
+        Assert.assertFalse(StringUtils.hasNonWhitespaceCharacter("\n\t"));
+    }
 }

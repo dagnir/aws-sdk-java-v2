@@ -56,6 +56,11 @@
             <version>2.3.24-incubating</version>
         </dependency>
         <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+        <dependency>
             <artifactId>jmespath-java</artifactId>
             <groupId>software.amazon.awssdk</groupId>
         </dependency>
@@ -67,14 +72,17 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

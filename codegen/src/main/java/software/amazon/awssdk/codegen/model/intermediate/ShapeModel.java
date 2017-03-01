@@ -30,7 +30,7 @@ import java.util.Map;
 import software.amazon.awssdk.codegen.model.intermediate.customization.ShapeCustomizationInfo;
 import software.amazon.awssdk.util.StringUtils;
 
-public class ShapeModel extends DocumentationModel {
+public class ShapeModel extends DocumentationModel implements HasDeprecation {
 
     private final String c2jName;
     // shapeName might be later modified by the customization.
@@ -72,6 +72,7 @@ public class ShapeModel extends DocumentationModel {
         this.shapeName = shapeName;
     }
 
+    @Override
     public boolean isDeprecated() {
         return deprecated;
     }

@@ -22,32 +22,36 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.emitters.PoetGeneratorTask;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
+import software.amazon.awssdk.codegen.poet.ClassSpec;
+import software.amazon.awssdk.codegen.poet.common.EnumClass;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
-public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
+class ModelClassGeneratorTasks extends BaseGeneratorTasks {
 
     private final String modelClassDir;
+    private final String basePackageDir;
 
-    public ModelClassGeneratorTasks(GeneratorTaskParams dependencies) {
+    ModelClassGeneratorTasks(GeneratorTaskParams dependencies) {
         super(dependencies);
         this.modelClassDir = dependencies.getPathProvider().getModelDirectory();
+        this.basePackageDir = dependencies.getPathProvider().getBasePackageDirectory();
     }
 
     @Override
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting model classes");
         return model.getShapes().entrySet().stream()
-                .filter(e -> shouldGenerateShape(e.getValue()))
-                .map(safeFunction(e -> createTask(e.getKey(), e.getValue())))
-                .collect(Collectors.toList());
+                    .filter(e -> shouldGenerateShape(e.getValue()))
+                    .map(safeFunction(e -> createTask(e.getKey(), e.getValue())))
+                    .collect(Collectors.toList());
     }
 
     private boolean shouldGenerateShape(ShapeModel shapeModel) {
@@ -61,7 +65,8 @@ public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
     private GeneratorTask createTask(String javaShapeName, ShapeModel shapeModel) throws IOException {
         Metadata metadata = model.getMetadata();
 
-        Map<String, Object> dataModel = ImmutableMapParameter.<String, Object>builder()
+        if (shapeModel.getShapeType() != ShapeType.Enum) {
+            Map<String, Object> dataModel = ImmutableMapParameter.<String, Object>builder()
                 .put("fileHeader", model.getFileHeader())
                 .put("shape", shapeModel)
                 .put("metadata", metadata)
@@ -74,12 +79,16 @@ public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
                 .put("transformPackage", model.getTransformPackage())
                 .build();
 
-        // Submit task for generating the
-        // model/request/response/enum/exception class.
-        return new FreemarkerGeneratorTask(modelClassDir,
-                                           javaShapeName,
-                                           freemarker.getShapeTemplate(shapeModel),
-                                           dataModel);
+            // Submit task for generating the
+            // model/request/response/enum/exception class.
+            return new FreemarkerGeneratorTask(modelClassDir,
+                                               javaShapeName,
+                                               freemarker.getShapeTemplate(shapeModel),
+                                               dataModel);
+        } else {
+            ClassSpec enumClass = new EnumClass(metadata.getPackageName(), shapeModel);
+            return new PoetGeneratorTask(basePackageDir, model.getFileHeader(), enumClass);
+        }
     }
 
     /**
@@ -94,6 +103,7 @@ public class ModelClassGeneratorTasks extends BaseGeneratorTasks {
 
     /**
      * @param shapeType Shape type to get base class for.
+     *
      * @return Correct base type for the type of model. May depend on protocol and customizations. Null if model has no base type.
      */
     private String getModelBaseClassFqcn(ShapeType shapeType) {

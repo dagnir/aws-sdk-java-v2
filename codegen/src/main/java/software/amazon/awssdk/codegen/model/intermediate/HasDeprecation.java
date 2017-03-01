@@ -13,11 +13,8 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.codegen.emitters;
+package software.amazon.awssdk.codegen.model.intermediate;
 
-/**
- * Interface for tasks that are submitted to {@link GeneratorTaskExecutor}.
- */
-public interface GeneratorTask {
-    void execute();
+public interface HasDeprecation {
+    boolean isDeprecated();
 }
