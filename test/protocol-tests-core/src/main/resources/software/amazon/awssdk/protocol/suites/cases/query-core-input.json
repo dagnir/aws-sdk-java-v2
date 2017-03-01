@@ -156,5 +156,42 @@
         }
       }
     }
+  },
+  {
+    "description": "Operation with null members that have the idempotent trait are autofilled.",
+    "when": {
+      "action": "marshall",
+      "operation": "IdempotentOperation"
+    },
+    "then": {
+      "serializedAs": {
+        "params": {
+          "contains": {
+            "IdempotencyToken": "00000000-0000-4000-8000-000000000000"
+          }
+        }
+      }
+    }
+  },
+  {
+    "description": "Operation with non-null members that have the idempotent trait are not autofilled.",
+    "given": {
+      "input": {
+        "IdempotencyToken": "foo"
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "IdempotentOperation"
+    },
+    "then": {
+      "serializedAs": {
+        "params": {
+          "contains": {
+            "IdempotencyToken": "foo"
+          }
+        }
+      }
+    }
   }
 ]

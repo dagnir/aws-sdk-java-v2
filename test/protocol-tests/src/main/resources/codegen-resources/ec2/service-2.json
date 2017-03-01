@@ -1,193 +1,147 @@
 {
-  "version": "2.0",
-  "metadata": {
-    "apiVersion": "2016-03-11",
-    "endpointPrefix": "ec2",
-    "protocol": "ec2",
-    "serviceAbbreviation": "EC2ProtocolTests",
-    "serviceFullName": "AWS DR Tools EC2 Protocol Tests",
-    "signatureVersion": "v4",
-    "timestampFormat": "unixTimestamp"
+  "version":"2.0",
+  "metadata":{
+    "apiVersion":"2016-03-11",
+    "endpointPrefix":"ec2",
+    "protocol":"ec2",
+    "serviceAbbreviation":"EC2ProtocolTests",
+    "serviceFullName":"AWS DR Tools EC2 Protocol Tests",
+    "signatureVersion":"v4",
+    "timestampFormat":"unixTimestamp"
   },
-  "operations": {
-    "AllTypes": {
-      "name": "AllTypes",
-      "http": {
-        "method": "POST",
-        "requestUri": "/"
+  "operations":{
+    "AllTypes":{
+      "name":"AllTypes",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
       },
-      "input": {
-        "shape": "AllTypesStructure"
-      },
-      "output": {
-        "shape": "AllTypesStructure"
-      }
+      "input":{"shape":"AllTypesStructure"},
+      "output":{"shape":"AllTypesStructure"}
     },
-    "Ec2Types": {
-      "name": "Ec2Types",
-      "http": {
-        "method": "POST",
-        "requestUri": "/"
+    "Ec2Types":{
+      "name":"Ec2Types",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
       },
-      "input": {
-        "shape": "Ec2TypesInput"
+      "input":{"shape":"Ec2TypesInput"},
+      "output":{"shape":"Ec2TypesInput"}
+    },
+    "IdempotentOperation":{
+      "name":"IdempotentOperation",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
       },
-      "output": {
-        "shape": "Ec2TypesInput"
-      }
+      "input":{"shape":"IdempotentOperationStructure"},
+      "output":{"shape":"IdempotentOperationStructure"}
     }
   },
-  "shapes": {
-    "AllTypesStructure": {
-      "type": "structure",
-      "members": {
-        "stringMember": {
-          "shape": "String"
+  "shapes":{
+    "AllTypesStructure":{
+      "type":"structure",
+      "members":{
+        "stringMember":{"shape":"String"},
+        "integerMember":{"shape":"Integer"},
+        "booleanMember":{"shape":"Boolean"},
+        "floatMember":{"shape":"Float"},
+        "doubleMember":{"shape":"Double"},
+        "longMember":{"shape":"Long"},
+        "simpleStructMember":{"shape":"SimpleStruct"},
+        "simpleList":{"shape":"ListOfStrings"},
+        "listOfStructs":{"shape":"ListOfSimpleStructs"},
+        "timestampMember":{"shape":"Timestamp"},
+        "structWithNestedTimestampMember":{"shape":"StructWithTimestamp"},
+        "blobArg":{"shape":"BlobType"}
+      }
+    },
+    "BlobType":{"type":"blob"},
+    "Boolean":{"type":"boolean"},
+    "Double":{"type":"double"},
+    "Ec2TypesInput":{
+      "type":"structure",
+      "members":{
+        "FlattenedListOfStrings":{"shape":"FlattenedListOfStrings"},
+        "FlattenedListOfStructs":{"shape":"FlattenedListOfStructs"},
+        "FlattenedListWithLocation":{
+          "shape":"FlattenedListWithLocation",
+          "locationName":"ListMemberName"
         },
-        "integerMember": {
-          "shape": "Integer"
+        "StringMemberWithLocation":{
+          "shape":"String",
+          "locationName":"someLocation"
         },
-        "booleanMember": {
-          "shape": "Boolean"
+        "StringMemberWithQueryName":{
+          "shape":"String",
+          "queryName":"someQueryName"
         },
-        "floatMember": {
-          "shape": "Float"
+        "StringMemberWithLocationAndQueryName":{
+          "shape":"String",
+          "queryName":"someQueryName"
         },
-        "doubleMember": {
-          "shape": "Double"
+        "ListMemberWithLocationAndQueryName":{
+          "shape":"ListOfStrings",
+          "locationName":"someLocation",
+          "queryName":"listQueryName"
         },
-        "longMember": {
-          "shape": "Long"
-        },
-        "simpleStructMember": {
-          "shape": "SimpleStruct"
-        },
-        "simpleList": {
-          "shape": "ListOfStrings"
-        },
-        "listOfStructs": {
-          "shape": "ListOfSimpleStructs"
-        },
-        "timestampMember": {
-          "shape": "Timestamp"
-        },
-        "structWithNestedTimestampMember": {
-          "shape": "StructWithTimestamp"
-        },
-        "blobArg": {
-          "shape": "BlobType"
+        "ListMemberWithOnlyMemberLocation":{
+          "shape":"ListOfStrings",
+          "locationName":"item"
         }
       }
     },
-    "BlobType": {
-      "type": "blob"
+    "FlattenedListOfStrings":{
+      "type":"list",
+      "member":{"shape":"String"},
+      "flattened":true
     },
-    "Boolean": {
-      "type": "boolean"
+    "FlattenedListOfStructs":{
+      "type":"list",
+      "member":{"shape":"SimpleStruct"},
+      "flattened":true
     },
-    "Double": {
-      "type": "double"
-    },
-    "Ec2TypesInput": {
-      "type": "structure",
-      "members": {
-        "FlattenedListOfStrings": {
-          "shape": "FlattenedListOfStrings"
-        },
-        "FlattenedListOfStructs": {
-          "shape": "FlattenedListOfStructs"
-        },
-        "FlattenedListWithLocation": {
-          "shape": "FlattenedListWithLocation",
-          "locationName": "ListMemberName"
-        },
-        "StringMemberWithLocation": {
-          "shape": "String",
-          "locationName": "someLocation"
-        },
-        "StringMemberWithQueryName": {
-          "shape": "String",
-          "queryName": "someQueryName"
-        },
-        "StringMemberWithLocationAndQueryName": {
-          "shape": "String",
-          "queryName": "someQueryName"
-        },
-        "ListMemberWithLocationAndQueryName": {
-          "shape": "ListOfStrings",
-          "locationName": "someLocation",
-          "queryName": "listQueryName"
-        },
-        "ListMemberWithOnlyMemberLocation": {
-          "shape": "ListOfStrings",
-          "locationName": "item"
-        }
-      }
-    },
-    "FlattenedListOfStrings": {
-      "type": "list",
-      "member": {
-        "shape": "String"
+    "FlattenedListWithLocation":{
+      "type":"list",
+      "member":{
+        "shape":"String",
+        "locationName":"item"
       },
-      "flattened": true
+      "flattened":true
     },
-    "FlattenedListOfStructs": {
-      "type": "list",
-      "member": {
-        "shape": "SimpleStruct"
-      },
-      "flattened": true
-    },
-    "FlattenedListWithLocation": {
-      "type": "list",
-      "member": {
-        "shape": "String",
-        "locationName": "item"
-      },
-      "flattened": true
-    },
-    "Float": {
-      "type": "float"
-    },
-    "Integer": {
-      "type": "integer"
-    },
-    "ListOfSimpleStructs": {
-      "type": "list",
-      "member": {
-        "shape": "SimpleStruct"
-      }
-    },
-    "ListOfStrings": {
-      "type": "list",
-      "member": {
-        "shape": "String"
-      }
-    },
-    "Long": {
-      "type": "long"
-    },
-    "SimpleStruct": {
-      "type": "structure",
-      "members": {
-        "StringMember": {
-          "shape": "String"
+    "Float":{"type":"float"},
+    "IdempotentOperationStructure":{
+      "type":"structure",
+      "members":{
+        "IdempotencyToken":{
+          "shape":"String",
+          "idempotencyToken":true
         }
       }
     },
-    "String": {
-      "type": "string"
+    "Integer":{"type":"integer"},
+    "ListOfSimpleStructs":{
+      "type":"list",
+      "member":{"shape":"SimpleStruct"}
     },
-    "StructWithTimestamp": {
-      "type": "structure",
-      "members": {
-        "NestedTimestamp": {
-          "shape": "Timestamp"
-        }
+    "ListOfStrings":{
+      "type":"list",
+      "member":{"shape":"String"}
+    },
+    "Long":{"type":"long"},
+    "SimpleStruct":{
+      "type":"structure",
+      "members":{
+        "StringMember":{"shape":"String"}
       }
     },
-    "Timestamp": {
-      "type": "timestamp"
-    }
+    "String":{"type":"string"},
+    "StructWithTimestamp":{
+      "type":"structure",
+      "members":{
+        "NestedTimestamp":{"shape":"Timestamp"}
+      }
+    },
+    "Timestamp":{"type":"timestamp"}
   }
 }

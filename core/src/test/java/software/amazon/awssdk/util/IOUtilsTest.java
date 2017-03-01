@@ -20,9 +20,12 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 import org.junit.Test;
 
 public class IOUtilsTest {
+
+    private final Random random = new Random();
 
     @Test
     public void testEmptyByteArray() throws Exception {
@@ -45,5 +48,26 @@ public class IOUtilsTest {
     public void test() throws Exception {
         String s = IOUtils.toString(new ByteArrayInputStream("Testing".getBytes(StringUtils.UTF8)));
         assertEquals("Testing", s);
+    }
+
+    @Test
+    public void drainInputStream_AlreadyEos_DoesNotThrowException() throws IOException {
+        final InputStream inputStream = randomInputStream();
+        while (inputStream.read() != -1) {
+        }
+        IOUtils.drainInputStream(inputStream);
+    }
+
+    @Test
+    public void drainInputStream_RemainingBytesInStream_ReadsAllRemainingData() throws IOException {
+        final InputStream inputStream = randomInputStream();
+        IOUtils.drainInputStream(inputStream);
+        assertEquals(-1, inputStream.read());
+    }
+
+    private InputStream randomInputStream() {
+        byte[] data = new byte[100];
+        random.nextBytes(data);
+        return new ByteArrayInputStream(data);
     }
 }

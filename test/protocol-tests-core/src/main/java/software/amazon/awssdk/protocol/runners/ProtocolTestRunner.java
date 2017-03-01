@@ -24,6 +24,7 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.protocol.model.TestCase;
 import software.amazon.awssdk.protocol.reflect.ClientReflector;
 import software.amazon.awssdk.protocol.wiremock.WireMockUtils;
+import software.amazon.awssdk.util.IdempotentUtils;
 
 /**
  * Runs a list of test cases (either marshalling or unmarshalling).
@@ -44,6 +45,7 @@ public class ProtocolTestRunner {
         this.clientReflector = new ClientReflector(model);
         this.marshallingTestRunner = new MarshallingTestRunner(model, clientReflector);
         this.unmarshallingTestRunner = new UnmarshallingTestRunner(model, clientReflector);
+        IdempotentUtils.setGenerator(() -> "00000000-0000-4000-8000-000000000000");
     }
 
     private IntermediateModel loadModel(String intermedidateModelLocation) {

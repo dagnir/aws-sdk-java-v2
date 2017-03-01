@@ -27,6 +27,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
@@ -41,10 +42,12 @@ import software.amazon.awssdk.services.protocol.restjson.model.MultiLocationOper
 public class RestJsonExceptionTests {
 
     private static final String ALL_TYPES_PATH = "/2016-03-11/allTypes";
-    private final AmazonProtocolRestJsonClient client = new AmazonProtocolRestJsonClient(
-            new BasicAwsCredentials("akid", "skid"));
+
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
+
+    private final AmazonProtocolRestJsonClient client = new AmazonProtocolRestJsonClient(
+            new BasicAwsCredentials("akid", "skid"));
 
     @Before
     public void setup() {
@@ -95,13 +98,13 @@ public class RestJsonExceptionTests {
     }
 
     @Test
-    public void nullPathParam_ThrowsIllegalArgumentException() {
-        assertThrowsIllegalArgumentException(() -> client.multiLocationOperation(new MultiLocationOperationRequest()));
+    public void nullPathParam_ThrowsSdkClientException() {
+        assertThrowsSdkClientException(() -> client.multiLocationOperation(new MultiLocationOperationRequest()));
     }
 
     @Test
-    public void emptyPathParam_ThrowsIllegalArgumentException() {
-        assertThrowsIllegalArgumentException(() -> client.multiLocationOperation(
+    public void emptyPathParam_ThrowsSdkClientException() {
+        assertThrowsSdkClientException(() -> client.multiLocationOperation(
                 new MultiLocationOperationRequest().withPathParam("")));
     }
 
@@ -114,8 +117,8 @@ public class RestJsonExceptionTests {
         assertThrowsException(runnable, AmazonProtocolRestJsonException.class);
     }
 
-    private void assertThrowsIllegalArgumentException(Runnable runnable) {
-        assertThrowsException(runnable, IllegalArgumentException.class);
+    private void assertThrowsSdkClientException(Runnable runnable) {
+        assertThrowsException(runnable, SdkClientException.class);
     }
 
     private void assertThrowsException(Runnable runnable, Class<? extends Exception> expectedException) {

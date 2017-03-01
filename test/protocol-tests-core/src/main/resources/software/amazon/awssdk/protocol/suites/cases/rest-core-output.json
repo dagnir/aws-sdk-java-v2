@@ -69,6 +69,23 @@
         "BooleanMember": false
       }
     }
+  },
+  {
+    "description": "Delete operation with no output, returns 204 No Content. Unmarshalls as empty object.",
+    "given": {
+      "response": {
+        "status_code": 204
+      }
+    },
+    "when": {
+      "action": "unmarshall",
+      "operation": "DeleteOperation"
+    },
+    "then": {
+      "deserializedAs": {
+          // Empty object
+      }
+    }
   }
   // TODO header maps, Coral supports this but Java SDK does not (not currently exercised)
   // TODO header maps with prefix, Coral does not support this, only used by S3

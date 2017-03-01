@@ -17,5 +17,52 @@
         "method": "POST"
       }
     }
+  },
+  {
+    "description": "Operation with no input members, serializes as empty JSON object.",
+    "when": {
+      "action": "marshall",
+      "operation": "OperationWithNoInputOrOutput"
+    },
+    "then": {
+      "serializedAs": {
+        "body": {
+          "jsonEquals": "{}"
+        }
+      }
+    }
+  },
+  {
+    "description": "Operation with null member that has idempotent trait is autofilled.",
+    "when": {
+      "action": "marshall",
+      "operation": "IdempotentOperation"
+    },
+    "then": {
+      "serializedAs": {
+        "body": {
+          "jsonEquals": "{\"IdempotencyToken\":\"00000000-0000-4000-8000-000000000000\"}"
+        }
+      }
+    }
+  },
+  {
+    "description": "Operation with non-null member that has idempotent trait is not changed.",
+    "given": {
+      "input": {
+          "IdempotencyToken": "abcd"
+      }
+    },
+    "when": {
+      "action": "marshall",
+      "operation": "IdempotentOperation"
+    },
+    "then": {
+      "serializedAs": {
+        "body": {
+          "jsonEquals": "{\"IdempotencyToken\":\"abcd\"}"
+        }
+      }
+    }
   }
 ]

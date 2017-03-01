@@ -18,7 +18,6 @@ package software.amazon.awssdk.protocol.json.internal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
@@ -188,7 +187,9 @@ public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMars
                 request.addHeader("Content-Length", Integer.toString(content.length));
             }
         }
-        request.addHeader("Content-Type", contentType);
+        if (!request.getHeaders().containsKey("Content-Type")) {
+            request.addHeader("Content-Type", contentType);
+        }
         return request;
     }
 
