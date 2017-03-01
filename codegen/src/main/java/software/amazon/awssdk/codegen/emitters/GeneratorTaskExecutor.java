@@ -31,13 +31,9 @@ public class GeneratorTaskExecutor {
 
     public void submit(GeneratorTask task) {
         if (DEBUG) {
-            try {
-                task.call();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            task.execute();
         } else {
-            futures.add(executor.submit(task));
+            futures.add(executor.submit(task::execute));
         }
     }
 
