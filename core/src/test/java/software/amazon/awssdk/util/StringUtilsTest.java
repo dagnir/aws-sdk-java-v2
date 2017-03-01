@@ -15,15 +15,17 @@
 
 package software.amazon.awssdk.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.nullValue;
 import static software.amazon.awssdk.util.StringUtils.UTF8;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -44,7 +46,7 @@ public class StringUtilsTest {
         ByteBuffer byteBuffer = ByteBuffer.wrap(expectedData.getBytes());
         String encodedData = StringUtils.fromByteBuffer(byteBuffer);
 
-        assertEquals(expectedEncodedData, encodedData);
+        assertThat(encodedData, equalTo(expectedEncodedData));
     }
 
     /**
@@ -52,13 +54,13 @@ public class StringUtilsTest {
      */
     @Test
     public void testFromByte() {
-        assertEquals("123", StringUtils.fromByte(new Byte("123")));
-        assertEquals("-99", StringUtils.fromByte(new Byte("-99")));
+        assertThat(StringUtils.fromByte(new Byte("123")), equalTo("123"));
+        assertThat(StringUtils.fromByte(new Byte("-99")), equalTo("-99"));
     }
 
     @Test
     public void testUTF8Charset() {
-        assertEquals(UTF8.displayName(), "UTF-8");
+        assertThat(UTF8.displayName(), equalTo("UTF-8"));
     }
 
     /**
@@ -66,74 +68,70 @@ public class StringUtilsTest {
      */
     @Test(timeout = 10 * 1000)
     public void replace_ReplacementStringContainsMatchString_DoesNotCauseInfiniteLoop() {
-        assertEquals("aabc", StringUtils.replace("abc", "a", "aa"));
+        assertThat(StringUtils.replace("abc", "a", "aa"), equalTo("aabc"));
     }
 
     @Test
     public void replace_EmptyReplacementString_RemovesAllOccurencesOfMatchString() {
-        assertEquals("bbb", StringUtils.replace("ababab", "a", ""));
+        assertThat(StringUtils.replace("ababab", "a", ""), equalTo("bbb"));
     }
 
     @Test
     public void replace_MatchNotFound_ReturnsOriginalString() {
-        assertEquals("abc", StringUtils.replace("abc", "d", "e"));
+        assertThat(StringUtils.replace("abc", "d", "e"), equalTo("abc"));
     }
 
     @Test
     public void lowerCase_NonEmptyString() {
         String input = "x-amz-InvocAtion-typE";
         String expected = "x-amz-invocation-type";
-        assertEquals(expected, StringUtils.lowerCase(input));
+        assertThat(StringUtils.lowerCase(input), equalTo(expected));
     }
 
     @Test
     public void lowerCase_NullString() {
-        assertNull(StringUtils.lowerCase(null));
+        assertThat(StringUtils.lowerCase(null), is(nullValue()));
     }
 
     @Test
     public void lowerCase_EmptyString() {
-        Assert.assertThat(StringUtils.lowerCase(""), Matchers.isEmptyString());
+        assertThat(StringUtils.lowerCase(""), isEmptyString());
     }
 
     @Test
     public void upperCase_NonEmptyString() {
         String input = "dHkdjj139_)(e";
         String expected = "DHKDJJ139_)(E";
-        assertEquals(expected, StringUtils.upperCase(input));
+        assertThat(StringUtils.upperCase(input), equalTo(expected));
     }
 
     @Test
     public void upperCase_NullString() {
-        assertNull(StringUtils.upperCase((null)));
+        assertThat(StringUtils.upperCase(null), is(nullValue()));
     }
 
     @Test
     public void upperCase_EmptyString() {
-        Assert.assertThat(StringUtils.upperCase(""), Matchers.isEmptyString());
+        assertThat(StringUtils.upperCase(""), isEmptyString());
     }
 
     @Test
     public void testCompare() {
-        assertTrue(StringUtils.compare("truck", "Car") > 0);
-        assertTrue(StringUtils.compare("", "dd") < 0);
-        assertTrue(StringUtils.compare("dd", "") > 0);
-        assertEquals(0, StringUtils.compare("", ""));
-        assertTrue(StringUtils.compare(" ", "") > 0);
+        assertThat(StringUtils.compare("truck", "Car"), is(greaterThan(0)));
+        assertThat(StringUtils.compare("", "dd"), is(lessThan(0)));
+        assertThat(StringUtils.compare("dd", ""), is(greaterThan(0)));
+        assertThat(StringUtils.compare("", ""), equalTo(0));
+        assertThat(StringUtils.compare(" ", ""), is(greaterThan(0)));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCompare_String1Null() {
-        String str1 = null;
-        String str2 = "test";
-        int result = StringUtils.compare(str1, str2);
+        StringUtils.compare(null, "test");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCompare_String2Null() {
-        String str1 = "test";
-        String str2 = null;
-        int result = StringUtils.compare(str1, str2);
+        StringUtils.compare("test", null);
     }
 
     @Test
@@ -152,32 +150,33 @@ public class StringUtilsTest {
             StringBuilder sb = new StringBuilder();
             StringUtils.appendCompactedString(sb, s);
             String compacted = s.replaceAll("\\s+", " ");
-            assertEquals('[' + compacted + ']', sb.toString(), compacted);
+            assertThat('[' + compacted + ']', sb.toString(), equalTo(compacted));
         }
     }
 
     @Test
     public void begins_with_ignore_case() {
-        Assert.assertTrue(StringUtils.beginsWithIgnoreCase("foobar", "FoO"));
+        assertThat(StringUtils.beginsWithIgnoreCase("foobar", "FoO"), is(true));
     }
 
     @Test
     public void begins_with_ignore_case_returns_false_when_seq_doesnot_match() {
-        Assert.assertFalse(StringUtils.beginsWithIgnoreCase("foobar", "baz"));
+        assertThat(StringUtils.beginsWithIgnoreCase("foobar", "baz"), is(false));
     }
 
     @Test
     public void hasValue() {
-        Assert.assertTrue(StringUtils.hasValue("something"));
-        Assert.assertFalse(StringUtils.hasValue(null));
-        Assert.assertFalse(StringUtils.hasValue(""));
+        assertThat(StringUtils.hasValue("something"), is(true));
+        assertThat(StringUtils.hasValue(null), is(false));
+        assertThat(StringUtils.hasValue(""), is(false));
     }
 
     @Test
-    public void hasNonWhitespaceCharacter() {
-        Assert.assertTrue(StringUtils.hasNonWhitespaceCharacter("hello"));
-        Assert.assertFalse(StringUtils.hasNonWhitespaceCharacter(null));
-        Assert.assertFalse(StringUtils.hasNonWhitespaceCharacter(""));
-        Assert.assertFalse(StringUtils.hasNonWhitespaceCharacter("\n\t"));
+    public void isNotBlank() {
+        assertThat(StringUtils.isNotBlank("hello"), is(true));
+        assertThat(StringUtils.isNotBlank(null), is(false));
+        assertThat(StringUtils.isNotBlank(""), is(false));
+        assertThat(StringUtils.isNotBlank("\n\t"), is(false));
+        assertThat(StringUtils.isNotBlank(" "), is(false));
     }
 }

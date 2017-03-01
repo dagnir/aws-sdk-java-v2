@@ -202,7 +202,7 @@ public class StringUtils {
     /**
      * @return true if the given value is non-null and non-empty
      */
-    public static boolean hasNonWhitespaceCharacter(String str) {
+    public static boolean isNotBlank(String str) {
         return !isNullOrEmpty(str) && str.trim().length() > 0;
     }
 

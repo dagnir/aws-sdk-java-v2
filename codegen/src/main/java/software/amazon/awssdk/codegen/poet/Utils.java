@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.codegen.poet;
 
-import static software.amazon.awssdk.util.StringUtils.hasNonWhitespaceCharacter;
+import static software.amazon.awssdk.util.StringUtils.isNotBlank;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
@@ -57,7 +57,7 @@ public final class Utils {
     }
 
     public static void addJavadoc(Consumer<String> builder, String javadoc) {
-        if (hasNonWhitespaceCharacter(javadoc)) {
+        if (isNotBlank(javadoc)) {
             builder.accept(javadoc + (javadoc.endsWith("\n") ? "" : "\n"));
         }
     }
