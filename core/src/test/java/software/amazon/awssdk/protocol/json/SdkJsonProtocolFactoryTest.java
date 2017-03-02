@@ -63,13 +63,12 @@ public class SdkJsonProtocolFactoryTest {
         JsonClientMetadata metadata = new JsonClientMetadata()
                 .withSupportsIon(ionEnabled == IonEnabled.YES)
                 .withProtocolVersion("1.0");
-        SdkJsonProtocolFactory protocolFactory = new SdkJsonProtocolFactory(metadata) {
+        return new SdkJsonProtocolFactory(metadata) {
             @Override
             boolean isIonBinaryEnabled() {
                 return ionBinaryEnabled == IonBinaryEnabled.YES;
             }
         };
-        return protocolFactory;
     }
 
     private enum IonEnabled {

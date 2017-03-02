@@ -33,7 +33,6 @@ import software.amazon.awssdk.protocol.json.JsonErrorResponseMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorShapeMetadata;
 import software.amazon.awssdk.protocol.json.JsonOperationMetadata;
 import software.amazon.awssdk.protocol.json.JsonProtocolMarshallerBuilder;
-import software.amazon.awssdk.protocol.json.SdkJsonMarshallerFactory;
 import software.amazon.awssdk.protocol.json.SdkStructuredJsonFactory;
 import software.amazon.awssdk.protocol.json.SdkStructuredPlainJsonFactory;
 import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
@@ -44,7 +43,7 @@ import software.amazon.awssdk.runtime.transform.Unmarshaller;
 /**
  * Protocol factory implementation for API Gateway clients.
  */
-public final class ApiGatewayProtocolFactoryImpl implements SdkJsonMarshallerFactory {
+public final class ApiGatewayProtocolFactoryImpl {
 
     private static final SdkStructuredJsonFactory JSON_FACTORY = SdkStructuredPlainJsonFactory.SDK_JSON_FACTORY;
     private static final String CONTENT_TYPE = "application/json";
@@ -55,16 +54,6 @@ public final class ApiGatewayProtocolFactoryImpl implements SdkJsonMarshallerFac
         this.metadata = metadata;
     }
 
-    @Override
-    public StructuredJsonGenerator createGenerator() {
-        return JSON_FACTORY.createWriter(CONTENT_TYPE);
-    }
-
-    @Override
-    public String getContentType() {
-        return CONTENT_TYPE;
-    }
-
     public <T> ProtocolRequestMarshaller<T> createProtocolMarshaller(OperationInfo operationInfo, T origRequest) {
         return JsonProtocolMarshallerBuilder.<T>standard()
                 .jsonGenerator(operationInfo.hasPayloadMembers() ? createGenerator() : StructuredJsonGenerator.NO_OP)
@@ -73,6 +62,14 @@ public final class ApiGatewayProtocolFactoryImpl implements SdkJsonMarshallerFac
                 .originalRequest(origRequest)
                 .sendExplicitNullForPayload(true)
                 .build();
+    }
+
+    private StructuredJsonGenerator createGenerator() {
+        return JSON_FACTORY.createWriter(CONTENT_TYPE);
+    }
+
+    public String getContentType() {
+        return CONTENT_TYPE;
     }
 
     /**

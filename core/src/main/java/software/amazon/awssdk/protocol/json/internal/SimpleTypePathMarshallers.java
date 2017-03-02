@@ -22,26 +22,23 @@ import software.amazon.awssdk.runtime.transform.PathMarshallers;
 public class SimpleTypePathMarshallers {
 
     public static final JsonMarshaller<String> STRING =
-            new SimplePathMarshaller<String>(ValueToStringConverters.FROM_STRING, PathMarshallers.NON_GREEDY);
+            new SimplePathMarshaller<>(ValueToStringConverters.FROM_STRING, PathMarshallers.NON_GREEDY);
 
     public static final JsonMarshaller<Integer> INTEGER =
-            new SimplePathMarshaller<Integer>(ValueToStringConverters.FROM_INTEGER, PathMarshallers.NON_GREEDY);
+            new SimplePathMarshaller<>(ValueToStringConverters.FROM_INTEGER, PathMarshallers.NON_GREEDY);
 
     public static final JsonMarshaller<Long> LONG =
-            new SimplePathMarshaller<Long>(ValueToStringConverters.FROM_LONG, PathMarshallers.NON_GREEDY);
+            new SimplePathMarshaller<>(ValueToStringConverters.FROM_LONG, PathMarshallers.NON_GREEDY);
 
     /**
      * Marshallers for Strings bound to a greedy path param. No URL encoding is done on the string
      * so that it preserves the path structure.
      */
     public static final JsonMarshaller<String> GREEDY_STRING =
-            new SimplePathMarshaller<String>(ValueToStringConverters.FROM_STRING, PathMarshallers.GREEDY);
+            new SimplePathMarshaller<>(ValueToStringConverters.FROM_STRING, PathMarshallers.GREEDY);
 
-    public static final JsonMarshaller<Void> NULL = new JsonMarshaller<Void>() {
-        @Override
-        public void marshall(Void val, JsonMarshallerContext context, String paramName) {
-            throw new IllegalArgumentException(String.format("Parameter '%s' must not be null", paramName));
-        }
+    public static final JsonMarshaller<Void> NULL = (val, context, paramName) -> {
+        throw new IllegalArgumentException(String.format("Parameter '%s' must not be null", paramName));
     };
 
     private static class SimplePathMarshaller<T> implements JsonMarshaller<T> {
@@ -58,7 +55,7 @@ public class SimpleTypePathMarshallers {
         @Override
         public void marshall(T val, JsonMarshallerContext context, String paramName) {
             context.request().setResourcePath(
-                    pathMarshaller.marshall(context.request().getResourcePath(), paramName, converter.convert(val)));
+                    pathMarshaller.marshall(context.request().getResourcePath(), paramName, converter.apply(val)));
         }
 
     }
