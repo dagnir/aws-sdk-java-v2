@@ -19,7 +19,9 @@ package software.amazon.awssdk.util;
  * Common base class for Base 32 like codec implementation.
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 abstract class AbstractBase32Codec implements Codec {
     private static final int MASK_2BITS = (1 << 2) - 1;
     private static final int MASK_3BITS = (1 << 3) - 1;

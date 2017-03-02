@@ -16,7 +16,6 @@
 package software.amazon.awssdk.internal.http.request;
 
 import java.io.IOException;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;

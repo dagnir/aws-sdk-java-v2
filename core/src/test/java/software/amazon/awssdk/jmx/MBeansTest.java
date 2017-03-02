@@ -3,7 +3,6 @@ package software.amazon.awssdk.jmx;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 
 public class MBeansTest {

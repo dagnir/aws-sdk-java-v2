@@ -21,7 +21,9 @@ package software.amazon.awssdk.util;
  * See http://www.ietf.org/rfc/rfc4648.txt
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 public enum Base16 {
     ;
     private static final Base16Codec CODEC = new Base16Codec();

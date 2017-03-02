@@ -57,6 +57,9 @@
         <module>cloudwatchmetrics</module>
         <module>bom</module>
         <module>codegen</module>
+        <module>metrics-spi</module>
+        <module>http-client-spi</module>
+        <module>aws-http-client-apache</module>
         <module>codegen-maven-plugin</module>
         <module>jmespath-java</module>
         <module>bundle</module>
@@ -65,6 +68,8 @@
         <module>test/protocol-tests</module>
         <module>test/protocol-tests-core</module>
         <module>test/test-utils</module>
+        <module>sdk-annotations</module>
+        <module>utils</module>
     </modules>
     <scm>
         <url>https://github.com/aws/aws-sdk-java.git</url>

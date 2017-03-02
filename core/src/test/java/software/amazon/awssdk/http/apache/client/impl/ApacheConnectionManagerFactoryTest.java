@@ -15,14 +15,13 @@
 package software.amazon.awssdk.http.apache.client.impl;
 
 
-import software.amazon.awssdk.ClientConfiguration;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Test;
+import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheConnectionManagerFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-
-import static org.junit.Assert.assertEquals;
 
 public class ApacheConnectionManagerFactoryTest {
 

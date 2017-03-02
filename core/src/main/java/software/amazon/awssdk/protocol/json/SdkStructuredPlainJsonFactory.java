@@ -16,13 +16,11 @@
 package software.amazon.awssdk.protocol.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Map;
-
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;

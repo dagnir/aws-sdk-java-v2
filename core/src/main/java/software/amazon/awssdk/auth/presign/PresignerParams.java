@@ -16,7 +16,6 @@
 package software.amazon.awssdk.auth.presign;
 
 import java.net.URI;
-
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;

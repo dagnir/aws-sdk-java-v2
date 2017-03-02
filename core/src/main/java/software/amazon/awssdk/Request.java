@@ -18,7 +18,6 @@ package software.amazon.awssdk;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.util.AwsRequestMetrics;

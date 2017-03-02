@@ -17,7 +17,6 @@ package software.amazon.awssdk.client.builder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import software.amazon.awssdk.ClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
