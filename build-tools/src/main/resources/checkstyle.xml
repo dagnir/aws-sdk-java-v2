@@ -261,6 +261,7 @@
         <!-- File indentation must follow a convention of 4 spaces (8 for throws statements). -->
         <module name="Indentation">
             <property name="throwsIndent" value="8"/>
+            <property name="arrayInitIndent" value="8"/>
         </module>
 
         <!-- Abbreviations must follow the same conventions as any other word (eg. use Aws, not AWS). -->

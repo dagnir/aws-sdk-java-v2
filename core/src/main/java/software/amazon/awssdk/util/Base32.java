@@ -21,7 +21,9 @@ package software.amazon.awssdk.util;
  * See http://www.ietf.org/rfc/rfc4648.txt
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 public enum Base32 {
     ;
     private static final Base32Codec CODEC = new Base32Codec();

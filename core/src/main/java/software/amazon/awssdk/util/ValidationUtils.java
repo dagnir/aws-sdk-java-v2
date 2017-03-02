@@ -20,7 +20,9 @@ import java.util.Collection;
 
 /**
  * Useful utilities to validate dependencies
+ * @deprecated By utils module.
  */
+@Deprecated
 public class ValidationUtils {
 
     /**

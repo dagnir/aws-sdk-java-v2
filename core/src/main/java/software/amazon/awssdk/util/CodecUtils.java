@@ -19,7 +19,9 @@ package software.amazon.awssdk.util;
  * Codec internal utilities
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 public enum CodecUtils {
     ;
 

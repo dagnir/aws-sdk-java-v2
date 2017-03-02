@@ -17,7 +17,6 @@ package software.amazon.awssdk.client;
 
 import java.net.URI;
 import java.util.List;
-
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;

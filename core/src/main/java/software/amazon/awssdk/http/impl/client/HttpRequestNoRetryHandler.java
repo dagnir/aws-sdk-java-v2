@@ -16,10 +16,8 @@
 package software.amazon.awssdk.http.impl.client;
 
 import java.io.IOException;
-
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
-
 import software.amazon.awssdk.annotation.ThreadSafe;
 
 @ThreadSafe

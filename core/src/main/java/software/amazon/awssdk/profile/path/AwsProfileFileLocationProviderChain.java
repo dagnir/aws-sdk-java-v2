@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**

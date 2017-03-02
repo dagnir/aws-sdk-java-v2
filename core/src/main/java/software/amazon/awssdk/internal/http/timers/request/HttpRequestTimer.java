@@ -18,9 +18,7 @@ package software.amazon.awssdk.internal.http.timers.request;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.http.client.methods.HttpRequestBase;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;

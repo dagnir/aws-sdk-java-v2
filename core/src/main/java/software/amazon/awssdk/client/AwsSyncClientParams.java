@@ -17,7 +17,6 @@ package software.amazon.awssdk.client;
 
 import java.net.URI;
 import java.util.List;
-
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;

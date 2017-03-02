@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.ClientConfigurationFactory;

@@ -24,7 +24,9 @@ import software.amazon.awssdk.log.InternalLogFactory;
  * See http://www.ietf.org/rfc/rfc4648.txt
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 public enum Base64 {
     ;
     private static final Base64Codec CODEC = new Base64Codec();

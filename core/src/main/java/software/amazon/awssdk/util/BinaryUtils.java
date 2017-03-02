@@ -21,7 +21,9 @@ import java.util.Arrays;
 
 /**
  * Utilities for encoding and decoding binary data to and from different forms.
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 public class BinaryUtils {
     /**
      * Converts byte data to a Hex-encoded string in lower case.

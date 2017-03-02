@@ -17,7 +17,6 @@ package software.amazon.awssdk.http;
 
 import java.util.Collections;
 import java.util.Map;
-
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkPublicApi;
 

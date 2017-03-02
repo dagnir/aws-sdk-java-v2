@@ -19,7 +19,9 @@ package software.amazon.awssdk.util;
  * A Base 32 codec implementation.
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 class Base32Codec extends AbstractBase32Codec {
     private static final int OFFSET_OF_2 = '2' - 26;
 

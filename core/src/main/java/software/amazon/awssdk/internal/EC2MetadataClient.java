@@ -21,10 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.util.EC2MetadataUtils;
 

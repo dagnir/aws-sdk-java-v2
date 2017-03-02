@@ -19,7 +19,9 @@ package software.amazon.awssdk.util;
  * A Base 64 codec implementation.
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 class Base64Codec implements Codec {
     private static final int OFFSET_OF_LITTLE_A = 'a' - 26;
     private static final int OFFSET_OF_0 = '0' - 52;

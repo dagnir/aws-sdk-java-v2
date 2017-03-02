@@ -27,7 +27,9 @@ import java.util.Locale;
 
 /**
  * Utilities for converting objects to strings.
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 public class StringUtils {
 
     public static final String COMMA_SEPARATOR = ",";

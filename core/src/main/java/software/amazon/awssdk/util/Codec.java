@@ -19,7 +19,9 @@ package software.amazon.awssdk.util;
  * Codec SPI
  *
  * @author Hanson Char
+ * @deprecated Use utils module instead.
  */
+@Deprecated
 interface Codec {
     public byte[] encode(byte[] src);
 
