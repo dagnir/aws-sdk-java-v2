@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.protocol.MarshallLocation;
@@ -36,7 +35,7 @@ public class MarshallerRegistry {
     private MarshallerRegistry(Builder builder) {
         this.marshallers = builder.marshallers;
         this.marshallingTypes = builder.marshallingTypes;
-        this.marshallingTypeCache = new HashMap<Class<?>, MarshallingType<?>>(marshallingTypes.size());
+        this.marshallingTypeCache = new HashMap<>(marshallingTypes.size());
 
     }
 
@@ -95,10 +94,8 @@ public class MarshallerRegistry {
      */
     public static final class Builder {
 
-        private final Map<MarshallLocation, Map<MarshallingType, JsonMarshaller<?>>> marshallers
-                = new HashMap<MarshallLocation, Map<MarshallingType, JsonMarshaller<?>>>();
-        private final Set<MarshallingType<?>> marshallingTypes
-                = new HashSet<MarshallingType<?>>();
+        private final Map<MarshallLocation, Map<MarshallingType, JsonMarshaller<?>>> marshallers = new HashMap<>();
+        private final Set<MarshallingType<?>> marshallingTypes = new HashSet<>();
 
         private Builder() {
         }
@@ -133,7 +130,7 @@ public class MarshallerRegistry {
                                           JsonMarshaller<T> marshaller) {
             marshallingTypes.add(marshallingType);
             if (!marshallers.containsKey(marshallLocation)) {
-                marshallers.put(marshallLocation, new HashMap<MarshallingType, JsonMarshaller<?>>());
+                marshallers.put(marshallLocation, new HashMap<>());
             }
             marshallers.get(marshallLocation).put(marshallingType, marshaller);
             return this;

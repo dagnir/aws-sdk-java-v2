@@ -15,26 +15,19 @@
 
 package software.amazon.awssdk.services.glacier.model.transform;
 
-import software.amazon.awssdk.protocol.DefaultValueSupplier;
+import java.util.function.Supplier;
 
-public class DefaultAccountIdSupplier implements DefaultValueSupplier<String> {
-
-    private static final DefaultAccountIdSupplier INSTANCE = new DefaultAccountIdSupplier();
+public class DefaultAccountIdSupplier {
 
     /**
      * Value that indicates the current account.
      */
     private static final String CURRENT_ACCOUNT_ID = "-";
 
-    private DefaultAccountIdSupplier() {
-    }
+    private static final Supplier<String> INSTANCE = () -> CURRENT_ACCOUNT_ID;
 
-    public static DefaultAccountIdSupplier getInstance() {
+    public static Supplier<String> getInstance() {
         return INSTANCE;
     }
 
-    @Override
-    public String get() {
-        return CURRENT_ACCOUNT_ID;
-    }
 }

@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.protocol.MarshallLocation;
 import software.amazon.awssdk.protocol.StructuredPojo;
@@ -31,16 +30,13 @@ import software.amazon.awssdk.runtime.SdkInternalMap;
 @SdkInternalApi
 public class SimpleTypeJsonMarshallers {
 
-    public static final JsonMarshaller<Void> NULL = new JsonMarshaller<Void>() {
-        @Override
-        public void marshall(Void val, JsonMarshallerContext context, String paramName) {
-            // If paramName is non null then we are emitting a field of an object, in that
-            // we just don't write the field. If param name is null then we are either in a container
-            // or the thing being marshalled is the payload itself in which case we want to preserve
-            // the JSON null.
-            if (paramName == null) {
-                context.jsonGenerator().writeNull();
-            }
+    public static final JsonMarshaller<Void> NULL = (val, context, paramName) -> {
+        // If paramName is non null then we are emitting a field of an object, in that
+        // we just don't write the field. If param name is null then we are either in a container
+        // or the thing being marshalled is the payload itself in which case we want to preserve
+        // the JSON null.
+        if (paramName == null) {
+            context.jsonGenerator().writeNull();
         }
     };
 

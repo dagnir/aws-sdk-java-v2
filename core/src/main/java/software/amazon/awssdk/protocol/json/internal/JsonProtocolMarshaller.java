@@ -76,9 +76,9 @@ public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMars
 
     private DefaultRequest<OrigRequestT> createRequest(OperationInfo operationInfo, OrigRequestT originalRequest) {
         if (originalRequest instanceof AmazonWebServiceRequest) {
-            return new DefaultRequest<OrigRequestT>((AmazonWebServiceRequest) originalRequest, operationInfo.serviceName());
+            return new DefaultRequest<>((AmazonWebServiceRequest) originalRequest, operationInfo.serviceName());
         } else {
-            return new DefaultRequest<OrigRequestT>(operationInfo.serviceName());
+            return new DefaultRequest<>(operationInfo.serviceName());
         }
     }
 
@@ -145,8 +145,8 @@ public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMars
     }
 
     /**
-     * @return The original value if non-null, or if value is null and a
-     * {@link software.amazon.awssdk.protocol.DefaultValueSupplier} is present return the default value. Otherwise return null.
+     * @return The original value if non-null, or if value is null and a default value {@link java.util.function.Supplier}
+     *     is present return the default value. Otherwise return null.
      */
     private <V> V resolveValue(V val, MarshallingInfo<V> marshallingInfo) {
         return val == null && marshallingInfo.defaultValueSupplier() != null ? marshallingInfo.defaultValueSupplier().get() : val;

@@ -16,7 +16,7 @@
 package software.amazon.awssdk.protocol.json.internal;
 
 import java.util.Date;
-
+import java.util.function.Function;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.StringUtils;
 
@@ -31,65 +31,30 @@ public class ValueToStringConverters {
      *
      * @param <T> Type to convert.
      */
-    public interface ValueToString<T> {
-        String convert(T val);
+    @FunctionalInterface
+    public interface ValueToString<T> extends Function<T, String> {
     }
 
     /**
      * Identity converter.
      */
-    public static final ValueToString<String> FROM_STRING = new ValueToString<String>() {
-        @Override
-        public String convert(String val) {
-            return val;
-        }
-    };
+    public static final ValueToString<String> FROM_STRING = val -> val;
 
-    public static final ValueToString<Integer> FROM_INTEGER = new ValueToString<Integer>() {
-        @Override
-        public String convert(Integer val) {
-            return StringUtils.fromInteger(val);
-        }
-    };
+    public static final ValueToString<Integer> FROM_INTEGER = StringUtils::fromInteger;
 
-    public static final ValueToString<Long> FROM_LONG = new ValueToString<Long>() {
-        @Override
-        public String convert(Long val) {
-            return StringUtils.fromLong(val);
-        }
-    };
+    public static final ValueToString<Long> FROM_LONG = StringUtils::fromLong;
 
-    public static final ValueToString<Float> FROM_FLOAT = new ValueToString<Float>() {
-        @Override
-        public String convert(Float val) {
-            return StringUtils.fromFloat(val);
-        }
-    };
+    public static final ValueToString<Float> FROM_FLOAT = StringUtils::fromFloat;
 
-    public static final ValueToString<Double> FROM_DOUBLE = new ValueToString<Double>() {
-        @Override
-        public String convert(Double val) {
-            return StringUtils.fromDouble(val);
-        }
-    };
+    public static final ValueToString<Double> FROM_DOUBLE = StringUtils::fromDouble;
 
     /**
      * Marshalls boolean as a literal 'true' or 'false' string.
      */
-    public static final ValueToString<Boolean> FROM_BOOLEAN = new ValueToString<Boolean>() {
-        @Override
-        public String convert(Boolean val) {
-            return StringUtils.fromBoolean(val);
-        }
-    };
+    public static final ValueToString<Boolean> FROM_BOOLEAN = StringUtils::fromBoolean;
 
     /**
      * Marshalls date to an ISO8601 date string.
      */
-    public static final ValueToString<Date> FROM_DATE = new ValueToString<Date>() {
-        @Override
-        public String convert(Date val) {
-            return StringUtils.fromDate(val);
-        }
-    };
+    public static final ValueToString<Date> FROM_DATE = StringUtils::fromDate;
 }

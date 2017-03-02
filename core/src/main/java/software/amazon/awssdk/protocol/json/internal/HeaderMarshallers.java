@@ -16,29 +16,24 @@
 package software.amazon.awssdk.protocol.json.internal;
 
 import java.util.Date;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 @SdkInternalApi
 public class HeaderMarshallers {
 
-    public static final JsonMarshaller<String> STRING = new SimpleHeaderMarshaller<String>(
-            ValueToStringConverters.FROM_STRING);
+    public static final JsonMarshaller<String> STRING = new SimpleHeaderMarshaller<>(ValueToStringConverters.FROM_STRING);
 
-    public static final JsonMarshaller<Integer> INTEGER = new SimpleHeaderMarshaller<Integer>(
-            ValueToStringConverters.FROM_INTEGER);
+    public static final JsonMarshaller<Integer> INTEGER = new SimpleHeaderMarshaller<>(ValueToStringConverters.FROM_INTEGER);
 
-    public static final JsonMarshaller<Long> LONG = new SimpleHeaderMarshaller<Long>(ValueToStringConverters.FROM_LONG);
+    public static final JsonMarshaller<Long> LONG = new SimpleHeaderMarshaller<>(ValueToStringConverters.FROM_LONG);
 
-    public static final JsonMarshaller<Double> DOUBLE = new SimpleHeaderMarshaller<Double>(
-            ValueToStringConverters.FROM_DOUBLE);
+    public static final JsonMarshaller<Double> DOUBLE = new SimpleHeaderMarshaller<>(ValueToStringConverters.FROM_DOUBLE);
 
-    public static final JsonMarshaller<Float> FLOAT = new SimpleHeaderMarshaller<Float>(ValueToStringConverters.FROM_FLOAT);
+    public static final JsonMarshaller<Float> FLOAT = new SimpleHeaderMarshaller<>(ValueToStringConverters.FROM_FLOAT);
 
-    public static final JsonMarshaller<Boolean> BOOLEAN = new SimpleHeaderMarshaller<Boolean>(
-            ValueToStringConverters.FROM_BOOLEAN);
+    public static final JsonMarshaller<Boolean> BOOLEAN = new SimpleHeaderMarshaller<>(ValueToStringConverters.FROM_BOOLEAN);
 
-    public static final JsonMarshaller<Date> DATE = new SimpleHeaderMarshaller<Date>(ValueToStringConverters.FROM_DATE);
+    public static final JsonMarshaller<Date> DATE = new SimpleHeaderMarshaller<>(ValueToStringConverters.FROM_DATE);
 
     private static class SimpleHeaderMarshaller<T> implements JsonMarshaller<T> {
 
@@ -50,7 +45,7 @@ public class HeaderMarshallers {
 
         @Override
         public void marshall(T val, JsonMarshallerContext context, String paramName) {
-            context.request().addHeader(paramName, converter.convert(val));
+            context.request().addHeader(paramName, converter.apply(val));
         }
     }
 

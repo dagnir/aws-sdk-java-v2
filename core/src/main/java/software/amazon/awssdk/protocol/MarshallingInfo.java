@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.protocol;
 
+import java.util.function.Supplier;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
@@ -30,7 +31,7 @@ public class MarshallingInfo<T> {
     private final MarshallLocation marshallLocation;
     private final boolean isExplicitPayloadMember;
     private final boolean isBinary;
-    private final DefaultValueSupplier<T> defaultValueSupplier;
+    private final Supplier<T> defaultValueSupplier;
 
     private MarshallingInfo(Builder<T> builder) {
         this.marshallingType = builder.marshallingType;
@@ -84,7 +85,7 @@ public class MarshallingInfo<T> {
     /**
      * @return Optional supplier of default value if the value to marshall is null.
      */
-    public DefaultValueSupplier<T> defaultValueSupplier() {
+    public Supplier<T> defaultValueSupplier() {
         return defaultValueSupplier;
     }
 
@@ -105,7 +106,7 @@ public class MarshallingInfo<T> {
         private MarshallLocation marshallLocation;
         private boolean isExplicitPayloadMember;
         private boolean isBinary;
-        private DefaultValueSupplier<T> defaultValueSupplier;
+        private Supplier<T> defaultValueSupplier;
 
         private Builder(MarshallingType<T> marshallingType) {
             this.marshallingType = marshallingType;
@@ -131,7 +132,7 @@ public class MarshallingInfo<T> {
             return this;
         }
 
-        public Builder<T> defaultValueSupplier(DefaultValueSupplier<T> defaultValueSupplier) {
+        public Builder<T> defaultValueSupplier(Supplier<T> defaultValueSupplier) {
             this.defaultValueSupplier = defaultValueSupplier;
             return this;
         }

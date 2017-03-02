@@ -16,9 +16,9 @@
 package software.amazon.awssdk.util;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
-import software.amazon.awssdk.protocol.DefaultValueSupplier;
 
 /**
  * Utility class to manage idempotency token
@@ -26,12 +26,7 @@ import software.amazon.awssdk.protocol.DefaultValueSupplier;
 @SdkProtectedApi
 public final class IdempotentUtils {
 
-    private static DefaultValueSupplier<String> generator = new DefaultValueSupplier<String>() {
-        @Override
-        public String get() {
-            return UUID.randomUUID().toString();
-        }
-    };
+    private static Supplier<String> generator = () -> UUID.randomUUID().toString();
 
     /**
      * @deprecated By {@link #getGenerator()}
@@ -43,13 +38,13 @@ public final class IdempotentUtils {
     }
 
     @SdkProtectedApi
-    public static DefaultValueSupplier<String> getGenerator() {
+    public static Supplier<String> getGenerator() {
         return generator;
     }
 
 
     @SdkTestInternalApi
-    public static void setGenerator(DefaultValueSupplier<String> newGenerator) {
+    public static void setGenerator(Supplier<String> newGenerator) {
         generator = newGenerator;
     }
 }

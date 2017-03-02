@@ -21,6 +21,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.protocol.OperationInfo;
@@ -36,25 +37,15 @@ import software.amazon.awssdk.runtime.transform.Unmarshaller;
  */
 @ThreadSafe
 @SdkProtectedApi
-public class SdkJsonProtocolFactory implements SdkJsonMarshallerFactory {
+public class SdkJsonProtocolFactory {
 
     private final JsonClientMetadata metadata;
 
-    private final List<JsonErrorUnmarshaller> errorUnmarshallers = new ArrayList<JsonErrorUnmarshaller>();
+    private final List<JsonErrorUnmarshaller> errorUnmarshallers = new ArrayList<>();
 
     public SdkJsonProtocolFactory(JsonClientMetadata metadata) {
         this.metadata = metadata;
         createErrorUnmarshallers();
-    }
-
-    @Override
-    public StructuredJsonGenerator createGenerator() {
-        return getSdkFactory().createWriter(getContentType());
-    }
-
-    @Override
-    public String getContentType() {
-        return getContentTypeResolver().resolveContentType(metadata);
     }
 
     public <T> ProtocolRequestMarshaller<T> createProtocolMarshaller(OperationInfo operationInfo, T origRequest) {
@@ -73,6 +64,16 @@ public class SdkJsonProtocolFactory implements SdkJsonMarshallerFactory {
         } else {
             return StructuredJsonGenerator.NO_OP;
         }
+    }
+
+    @SdkTestInternalApi
+    StructuredJsonGenerator createGenerator() {
+        return getSdkFactory().createWriter(getContentType());
+    }
+
+    @SdkTestInternalApi
+    String getContentType() {
+        return getContentTypeResolver().resolveContentType(metadata);
     }
 
     /**
