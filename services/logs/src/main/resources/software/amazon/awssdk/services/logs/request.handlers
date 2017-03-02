@@ -1,1 +1,1 @@
-com.amazonaws.services.logs.internal.AcceptJsonRequestHandler
+software.amazon.awssdk.services.logs.internal.AcceptJsonRequestHandler
