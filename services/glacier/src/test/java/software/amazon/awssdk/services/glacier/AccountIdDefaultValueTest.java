@@ -15,16 +15,6 @@
 
 package software.amazon.awssdk.services.glacier;
 
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
-import software.amazon.awssdk.services.glacier.model.ListVaultsRequest;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -32,6 +22,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.services.glacier.model.ListVaultsRequest;
 
 /**
  * Glacier has a customization to default accountId to '-' (which indicates the current account) if not provided.

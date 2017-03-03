@@ -18,11 +18,9 @@ package software.amazon.awssdk.codegen.emitters.tasks;
 import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
 
 import freemarker.template.Template;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;

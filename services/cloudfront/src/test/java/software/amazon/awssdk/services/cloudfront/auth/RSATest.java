@@ -10,9 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.util.IOUtils;
 
 public class RSATest {

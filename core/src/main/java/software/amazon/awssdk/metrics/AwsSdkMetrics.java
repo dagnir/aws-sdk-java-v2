@@ -33,10 +33,11 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.AwsServiceMetrics;
 
 /**

@@ -1,10 +1,8 @@
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 
 public class MachineMetricFactoryTest {

@@ -19,13 +19,11 @@ import static software.amazon.awssdk.codegen.model.intermediate.Protocol.AWS_JSO
 import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
 
 import freemarker.template.Template;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;

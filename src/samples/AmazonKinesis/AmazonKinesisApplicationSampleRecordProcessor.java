@@ -17,10 +17,8 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.services.kinesis.clientlibrary.exceptions.InvalidStateException;
 import software.amazon.awssdk.services.kinesis.clientlibrary.exceptions.ShutdownException;
 import software.amazon.awssdk.services.kinesis.clientlibrary.exceptions.ThrottlingException;

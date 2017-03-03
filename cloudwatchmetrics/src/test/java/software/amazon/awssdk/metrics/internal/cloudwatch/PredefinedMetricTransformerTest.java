@@ -1,25 +1,24 @@
 package software.amazon.awssdk.metrics.internal.cloudwatch;
-import static software.amazon.awssdk.metrics.internal.cloudwatch.PredefinedMetricTransformer.EXCLUDE_REQUEST_TYPE;
-import static software.amazon.awssdk.metrics.internal.cloudwatch.PredefinedMetricTransformer.INCLUDE_REQUEST_TYPE;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.metrics.internal.cloudwatch.PredefinedMetricTransformer.EXCLUDE_REQUEST_TYPE;
+import static software.amazon.awssdk.metrics.internal.cloudwatch.PredefinedMetricTransformer.INCLUDE_REQUEST_TYPE;
 
 import java.util.List;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AwsMetricTransformerFactory;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.RequestMetricTransformer;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
-import software.amazon.awssdk.util.AwsRequestMetrics;
-import software.amazon.awssdk.util.AwsRequestMetrics.Field;
 import software.amazon.awssdk.util.AwsRequestMetricsFullSupport;
-import software.amazon.awssdk.util.TimingInfo;
 
 /**
  * This is an important unit test used to safe-guard against accidental

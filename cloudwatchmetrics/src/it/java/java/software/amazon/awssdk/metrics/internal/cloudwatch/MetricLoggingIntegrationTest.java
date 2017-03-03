@@ -16,9 +16,7 @@ package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;

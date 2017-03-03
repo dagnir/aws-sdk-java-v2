@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.util.TimingInfo;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 
 public class RequestHandler2AdaptorTest {
     final boolean[] bs = new boolean[3];

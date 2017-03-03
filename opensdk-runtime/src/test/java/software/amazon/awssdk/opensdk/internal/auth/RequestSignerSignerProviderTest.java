@@ -14,27 +14,6 @@
  */
 package software.amazon.awssdk.opensdk.internal.auth;
 
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.RequestConfig;
-import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.opensdk.BaseRequest;
-import software.amazon.awssdk.opensdk.protect.auth.RequestSignerAware;
-import software.amazon.awssdk.opensdk.protect.auth.RequestSignerNotFoundException;
-import software.amazon.awssdk.opensdk.protect.auth.RequestSignerProvider;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.RequestSigner;
-import software.amazon.awssdk.auth.Signer;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import software.amazon.awssdk.runtime.auth.SignerProviderContext;
-
-import java.util.Optional;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,6 +21,25 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import software.amazon.awssdk.DefaultRequest;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.RequestConfig;
+import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.RequestSigner;
+import software.amazon.awssdk.auth.Signer;
+import software.amazon.awssdk.opensdk.BaseRequest;
+import software.amazon.awssdk.opensdk.protect.auth.RequestSignerAware;
+import software.amazon.awssdk.opensdk.protect.auth.RequestSignerNotFoundException;
+import software.amazon.awssdk.opensdk.protect.auth.RequestSignerProvider;
+import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequestSignerSignerProviderTest {

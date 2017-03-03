@@ -12,23 +12,6 @@
  */
 package software.amazon.awssdk.services.rds;
 
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.runtime.SdkInternalList;
-import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
-import software.amazon.awssdk.services.rds.model.Tag;
-import software.amazon.awssdk.services.rds.model.transform.CopyDBSnapshotRequestMarshaller;
-import org.junit.Test;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
@@ -38,6 +21,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+import org.junit.Test;
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.runtime.SdkInternalList;
+import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
+import software.amazon.awssdk.services.rds.model.Tag;
+import software.amazon.awssdk.services.rds.model.transform.CopyDBSnapshotRequestMarshaller;
 
 /**
  * Unit Tests for {@link PresignRequestHandler}

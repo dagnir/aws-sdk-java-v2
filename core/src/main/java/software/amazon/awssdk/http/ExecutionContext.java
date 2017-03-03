@@ -26,10 +26,10 @@ import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
-import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.AwsRequestMetricsFullSupport;
 
 /**

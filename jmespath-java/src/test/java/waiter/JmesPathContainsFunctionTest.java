@@ -1,16 +1,15 @@
 package waiter;
 
-import software.amazon.awssdk.jmespath.InvalidTypeException;
-import software.amazon.awssdk.jmespath.JmesPathContainsFunction;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BooleanNode;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import software.amazon.awssdk.jmespath.InvalidTypeException;
+import software.amazon.awssdk.jmespath.JmesPathContainsFunction;
 
 /**
  * Created by meghbyar on 8/3/16.

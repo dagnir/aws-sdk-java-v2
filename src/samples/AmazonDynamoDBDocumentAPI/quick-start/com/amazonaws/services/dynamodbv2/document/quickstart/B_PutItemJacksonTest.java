@@ -15,7 +15,6 @@
 package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.Table;
 import software.amazon.awssdk.services.dynamodbv2.document.spec.GetItemSpec;

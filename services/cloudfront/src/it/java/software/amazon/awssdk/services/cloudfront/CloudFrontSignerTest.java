@@ -1,5 +1,14 @@
 package software.amazon.awssdk.services.cloudfront;
 
+import static org.junit.Assert.assertEquals;
+import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.loadPrivateKey;
+import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
 import org.junit.Test;
 import software.amazon.awssdk.services.cloudfront.CloudFrontCookieSigner;
 import software.amazon.awssdk.services.cloudfront.CloudFrontCookieSigner.CookiesForCannedPolicy;
@@ -9,16 +18,6 @@ import software.amazon.awssdk.services.cloudfront.util.SignerUtils;
 import software.amazon.awssdk.services.cloudfront.util.SignerUtils.Protocol;
 import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.StringUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
-
-import static org.junit.Assert.assertEquals;
-import static software.amazon.awssdk.services.cloudfront.util.SignerUtils.loadPrivateKey;
-import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
 
 public class CloudFrontSignerTest {
 

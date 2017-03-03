@@ -17,6 +17,7 @@ package software.amazon.awssdk.services.route53.internal;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.route53.model.AliasTarget;
 import software.amazon.awssdk.services.route53.model.ChangeInfo;
 import software.amazon.awssdk.services.route53.model.ChangeResourceRecordSetsResult;
@@ -36,7 +37,6 @@ import software.amazon.awssdk.services.route53.model.ListHostedZonesResult;
 import software.amazon.awssdk.services.route53.model.ListResourceRecordSetsResult;
 import software.amazon.awssdk.services.route53.model.ListReusableDelegationSetsResult;
 import software.amazon.awssdk.services.route53.model.ResourceRecordSet;
-import software.amazon.awssdk.util.TimingInfo;
 
 /**
  * Route 53 returns a portion of the URL resource path as the ID for a few

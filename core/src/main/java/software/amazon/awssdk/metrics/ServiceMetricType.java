@@ -15,16 +15,18 @@
 
 package software.amazon.awssdk.metrics;
 
+import software.amazon.awssdk.metrics.spi.MetricType;
+
 /**
  * <a href=
  * "http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/software/amazon/awssdk/metrics/package-summary.html"
  * >Service specific Metric type</a> (eg S3, DynamoDB, etc.)
  */
 public interface ServiceMetricType extends MetricType {
-    public static final String UPLOAD_THROUGHPUT_NAME_SUFFIX = "UploadThroughput";
-    public static final String UPLOAD_BYTE_COUNT_NAME_SUFFIX = "UploadByteCount";
-    public static final String DOWNLOAD_THROUGHPUT_NAME_SUFFIX = "DownloadThroughput";
-    public static final String DOWNLOAD_BYTE_COUNT_NAME_SUFFIX = "DownloadByteCount";
+    String UPLOAD_THROUGHPUT_NAME_SUFFIX = "UploadThroughput";
+    String UPLOAD_BYTE_COUNT_NAME_SUFFIX = "UploadByteCount";
+    String DOWNLOAD_THROUGHPUT_NAME_SUFFIX = "DownloadThroughput";
+    String DOWNLOAD_BYTE_COUNT_NAME_SUFFIX = "DownloadByteCount";
 
-    public String getServiceName();
+    String getServiceName();
 }

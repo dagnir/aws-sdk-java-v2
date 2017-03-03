@@ -14,24 +14,21 @@
  */
 package software.amazon.awssdk.services.securitytoken.auth;
 
-import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
-import software.amazon.awssdk.services.securitytoken.auth.STSAssumeRoleSessionCredentialsProvider;
-import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.securitytoken.model.AssumeRoleResult;
-import software.amazon.awssdk.services.securitytoken.model.Credentials;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.Date;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Date;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
+import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
+import software.amazon.awssdk.services.securitytoken.model.AssumeRoleResult;
+import software.amazon.awssdk.services.securitytoken.model.Credentials;
 
 
 @RunWith(MockitoJUnitRunner.class)

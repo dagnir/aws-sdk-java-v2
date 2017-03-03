@@ -89,6 +89,8 @@ import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
@@ -293,8 +295,6 @@ import software.amazon.awssdk.services.s3.model.transform.XmlResponsesSaxParser.
 import software.amazon.awssdk.services.s3.request.S3HandlerContextKeys;
 import software.amazon.awssdk.services.s3.waiters.AmazonS3Waiters;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.util.AwsRequestMetrics;
-import software.amazon.awssdk.util.AwsRequestMetrics.Field;
 import software.amazon.awssdk.util.Base16;
 import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.BinaryUtils;

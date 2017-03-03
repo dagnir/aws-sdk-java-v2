@@ -19,7 +19,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.util.TimingInfo;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 
 /**
  * Interface for addition request handling in clients. A request handler is executed on a request

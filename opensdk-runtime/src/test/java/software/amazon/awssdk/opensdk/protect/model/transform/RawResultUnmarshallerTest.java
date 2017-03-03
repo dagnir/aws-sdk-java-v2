@@ -14,17 +14,16 @@
  */
 package software.amazon.awssdk.opensdk.protect.model.transform;
 
-import software.amazon.awssdk.opensdk.model.ResultContentConsumer;
-import software.amazon.awssdk.http.HttpResponse;
-import org.junit.Test;
-import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
-
-import java.io.IOException;
-import java.io.InputStream;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.io.InputStream;
+import org.junit.Test;
+import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.opensdk.model.ResultContentConsumer;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 
 /**
  * @Tests for {@link RawResultUnmarshaller}

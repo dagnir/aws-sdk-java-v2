@@ -1,7 +1,6 @@
 package software.amazon.awssdk.opensdk.model;
 
-import software.amazon.awssdk.opensdk.SdkRequestConfig;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import software.amazon.awssdk.opensdk.SdkRequestConfig;
 
 /**
  * Unit tests for {@link RawRequest}.

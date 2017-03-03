@@ -30,7 +30,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import utils.http.S3WireMockTestBase;
 import utils.metrics.MockRequestMetricsCollector;
 

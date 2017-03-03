@@ -15,14 +15,13 @@
 
 package software.amazon.awssdk.test.util.hamcrest;
 
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
+import static software.amazon.awssdk.test.util.hamcrest.Matchers.containsOnlyInOrder;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static software.amazon.awssdk.test.util.hamcrest.Matchers.containsOnlyInOrder;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
+import org.junit.Test;
 
 public class CollectionContainsOnlyInOrderTest {
 

@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import software.amazon.awssdk.internal.io.MetricsInputStream;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * A wrapper to Socket with metrics feature to record socket read time.

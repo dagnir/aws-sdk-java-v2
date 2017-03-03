@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * Represents a request being sent to an Amazon Web Service, including the

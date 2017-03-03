@@ -14,10 +14,9 @@
  */
 package utils.http;
 
-import software.amazon.awssdk.http.HttpResponse;
-
 import java.util.HashMap;
 import java.util.Map;
+import software.amazon.awssdk.http.HttpResponse;
 
 public class HttpResponseBuilder {
 

@@ -26,7 +26,7 @@ import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.SdkHttpMetadata;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.util.MetadataCache;
 
 /**

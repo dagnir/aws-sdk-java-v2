@@ -20,10 +20,8 @@ import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createL
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import software.amazon.awssdk.codegen.internal.DocumentationUtils;
 import software.amazon.awssdk.codegen.internal.Utils;
 

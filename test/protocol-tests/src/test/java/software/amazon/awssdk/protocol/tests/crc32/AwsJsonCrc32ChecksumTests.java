@@ -31,7 +31,6 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.protocol.jsonrpc.AmazonProtocolJsonRpc;

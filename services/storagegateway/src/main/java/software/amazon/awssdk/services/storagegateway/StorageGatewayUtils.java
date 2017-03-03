@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.storagegateway;
 
 import java.io.IOException;
-
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -24,7 +23,6 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.regions.Region;
 

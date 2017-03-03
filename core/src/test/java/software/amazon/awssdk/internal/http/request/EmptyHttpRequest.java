@@ -25,7 +25,7 @@ import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 public class EmptyHttpRequest implements Request<Object> {
 

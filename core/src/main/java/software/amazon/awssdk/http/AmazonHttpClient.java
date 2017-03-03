@@ -97,6 +97,7 @@ import software.amazon.awssdk.internal.http.timers.request.HttpRequestAbortTaskT
 import software.amazon.awssdk.internal.http.timers.request.HttpRequestTimer;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.retry.RetryPolicyAdapter;
 import software.amazon.awssdk.retry.RetryUtils;
 import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
@@ -107,7 +108,6 @@ import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.runtime.io.ReleasableInputStream;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
-import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.CapacityManager;
 import software.amazon.awssdk.util.CollectionUtils;
 import software.amazon.awssdk.util.CountingInputStream;

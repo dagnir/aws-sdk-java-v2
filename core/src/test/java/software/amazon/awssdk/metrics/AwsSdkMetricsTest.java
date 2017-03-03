@@ -27,7 +27,8 @@ import java.util.Collections;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.util.AwsRequestMetrics.Field;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field;
+import software.amazon.awssdk.metrics.spi.MetricType;
 
 public class AwsSdkMetricsTest {
     /**

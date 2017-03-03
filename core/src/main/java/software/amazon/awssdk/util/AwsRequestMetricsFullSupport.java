@@ -24,8 +24,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
-import software.amazon.awssdk.metrics.MetricType;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.MetricType;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 
 /**
  * In contrast to {@link AwsRequestMetrics}, which is intended to be a minimal

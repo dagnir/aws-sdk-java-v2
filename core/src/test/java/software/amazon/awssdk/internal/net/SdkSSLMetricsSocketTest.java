@@ -25,7 +25,7 @@ import java.io.InputStream;
 import javax.net.ssl.SSLSocket;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 public class SdkSSLMetricsSocketTest {
 

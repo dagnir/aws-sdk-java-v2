@@ -27,12 +27,12 @@ import org.junit.Test;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParams;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import software.amazon.awssdk.util.AwsRequestMetrics;
 
 public class SSEAWSKMSSigV4IntegrationTest extends S3IntegrationTestBase {
 

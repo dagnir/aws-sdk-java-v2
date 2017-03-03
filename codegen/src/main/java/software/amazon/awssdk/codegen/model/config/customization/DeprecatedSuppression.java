@@ -16,7 +16,6 @@
 package software.amazon.awssdk.codegen.model.config.customization;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Arrays;
 
 /**
