@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.codegen.emitters.tasks;
 
-import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
+import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
 
 import freemarker.template.Template;
 
