@@ -28,7 +28,7 @@ import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_SDK_RETRY_INFO
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.retry.RetryPolicy;
 import utils.http.WireMockTestBase;
 import utils.retry.AlwaysRetryCondition;
@@ -68,8 +68,8 @@ public class RetryCountInUserAgentTest extends WireMockTestBase {
 
     private void executeRequest() throws Exception {
         AmazonHttpClient httpClient = new AmazonHttpClient(
-                new ClientConfiguration().withRetryPolicy(buildRetryPolicy())
-                                         .withThrottledRetries(true));
+                new LegacyClientConfiguration().withRetryPolicy(buildRetryPolicy())
+                                               .withThrottledRetries(true));
         try {
             httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler())
                       .execute();

@@ -16,6 +16,7 @@
 package software.amazon.awssdk.opensdk.config;
 
 import java.util.Optional;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 
 /**
@@ -32,7 +33,7 @@ public class ConnectionConfiguration {
     /**
      * Returns an {@link Optional} that contains the maximum number of allowed open HTTP connections.
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_MAX_CONNECTIONS}.
+     * Default value is {@value LegacyClientConfiguration#DEFAULT_MAX_CONNECTIONS}.
      * </p>
      *
      * @return The maximum number of allowed open HTTP connections.
@@ -44,7 +45,7 @@ public class ConnectionConfiguration {
     /**
      * Sets the maximum number of allowed open HTTP connections.
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_MAX_CONNECTIONS}.
+     * Default value is {@value LegacyClientConfiguration#DEFAULT_MAX_CONNECTIONS}.
      * </p>
      *
      * @param maxConnections The maximum number of allowed open HTTP connections.
@@ -56,7 +57,7 @@ public class ConnectionConfiguration {
     /**
      * Sets the maximum number of allowed open HTTP connections.
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_MAX_CONNECTIONS}.
+     * Default value is {@value LegacyClientConfiguration#DEFAULT_MAX_CONNECTIONS}.
      * </p>
      *
      * @param maxConnections The maximum number of allowed open HTTP connections.
@@ -79,7 +80,7 @@ public class ConnectionConfiguration {
      * connections more frequently.
      * </p>
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
+     * Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
      * not expire.
      * </p>
      *
@@ -101,7 +102,7 @@ public class ConnectionConfiguration {
      * connections more frequently.
      * </p>
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
+     * Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
      * not expire.
      * </p>
      *
@@ -123,7 +124,7 @@ public class ConnectionConfiguration {
      * connections more frequently.
      * </p>
      * <p>
-     * Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
+     * Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_TTL}, which means connections do
      * not expire.
      * </p>
      *
@@ -146,7 +147,7 @@ public class ConnectionConfiguration {
      * service decides the connection has been idle for too long and closes it) at the cost of
      * having to re-establish new connections more frequently.
      * </p>
-     * <p>Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_MAX_IDLE_MILLIS}.</p>
+     * <p>Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_MAX_IDLE_MILLIS}.</p>
      *
      * @return The connection maximum idle time, in milliseconds.
      */
@@ -165,7 +166,7 @@ public class ConnectionConfiguration {
      * service decides the connection has been idle for too long and closes it) at the cost of
      * having to re-establish new connections more frequently.
      * </p>
-     * <p>Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_MAX_IDLE_MILLIS}.</p>
+     * <p>Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_MAX_IDLE_MILLIS}.</p>
      *
      * @param connectionMaxIdleMillis The connection maximum idle time, in milliseconds
      */
@@ -184,7 +185,7 @@ public class ConnectionConfiguration {
      * service decides the connection has been idle for too long and closes it) at the cost of
      * having to re-establish new connections more frequently.
      * </p>
-     * <p>Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_CONNECTION_MAX_IDLE_MILLIS}.</p>
+     * <p>Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_MAX_IDLE_MILLIS}.</p>
      *
      * @param connectionMaxIdleMillis The connection maximum idle time, in milliseconds
      * @return This object for method chaining.
@@ -196,7 +197,7 @@ public class ConnectionConfiguration {
 
     /**
      * Checks if the {@link IdleConnectionReaper} is to be started.
-     * <p>Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_USE_REAPER}.</p>
+     * <p>Default value is {@value LegacyClientConfiguration#DEFAULT_USE_REAPER}.</p>
      *
      * @return If the {@link IdleConnectionReaper} is to be started.
      */
@@ -206,7 +207,7 @@ public class ConnectionConfiguration {
 
     /**
      * Sets whether the {@link IdleConnectionReaper} is to be started as a daemon thread.
-     * <p>Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_USE_REAPER}.</p>
+     * <p>Default value is {@value LegacyClientConfiguration#DEFAULT_USE_REAPER}.</p>
      *
      * @param useReaper The {@link IdleConnectionReaper} is to be started as a daemon thread
      */
@@ -216,7 +217,7 @@ public class ConnectionConfiguration {
 
     /**
      * Sets whether the {@link IdleConnectionReaper} is to be started as a daemon thread.
-     * <p>Default value is {@value software.amazon.awssdk.ClientConfiguration#DEFAULT_USE_REAPER}.</p>
+     * <p>Default value is {@value LegacyClientConfiguration#DEFAULT_USE_REAPER}.</p>
      *
      * @param useReaper The {@link IdleConnectionReaper} is to be started as a daemon thread
      * @return This object for method chaining.

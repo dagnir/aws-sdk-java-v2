@@ -47,7 +47,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SDKGlobalConfiguration;
@@ -640,7 +640,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AwsTestBase {
     public void testGetObjectWithHttpsNotSet() {
 
         AmazonS3Client s3Client = new AmazonS3Client(credentials,
-                                                     new ClientConfiguration().withProtocol(Protocol.HTTP));
+                                                     new LegacyClientConfiguration().withProtocol(Protocol.HTTP));
         s3Client.setEndpoint("https://s3-us-west-2.amazonaws.com");
         try {
             s3Client.getObject(new GetObjectRequest(BUCKET_NAME,
@@ -658,7 +658,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AwsTestBase {
     public void testMultipartObjectWithHttpsNotSet() {
 
         AmazonS3Client s3Client = new AmazonS3Client(credentials,
-                                                     new ClientConfiguration().withProtocol(Protocol.HTTP));
+                                                     new LegacyClientConfiguration().withProtocol(Protocol.HTTP));
         try {
             s3Client.initiateMultipartUpload(new InitiateMultipartUploadRequest(
                     BUCKET_NAME, ENCRYPTED_OBJECT)
@@ -691,7 +691,7 @@ public class SSEAwsKeyManagementIntegrationTest extends AwsTestBase {
     public void testCopyObjectWithHttpsNotSet() {
 
         AmazonS3Client s3Client = new AmazonS3Client(credentials,
-                                                     new ClientConfiguration().withProtocol(Protocol.HTTP));
+                                                     new LegacyClientConfiguration().withProtocol(Protocol.HTTP));
         try {
             s3Client.copyObject(new CopyObjectRequest(BUCKET_NAME,
                                                       UNENCRYPTED_OBJECT, COPY_DEST_BUCKET_NAME, ENCRYPTED_OBJECT)

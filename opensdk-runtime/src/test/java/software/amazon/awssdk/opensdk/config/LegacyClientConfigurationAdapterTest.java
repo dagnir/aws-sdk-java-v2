@@ -23,14 +23,14 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfiguration;
-import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfigurationFactory;
+import software.amazon.awssdk.opensdk.internal.config.ApiGatewayLegacyClientConfigurationFactory;
 import software.amazon.awssdk.opensdk.internal.config.ClientConfigurationAdapter;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 
-public class ClientConfigurationAdapterTest {
+public class LegacyClientConfigurationAdapterTest {
 
     private static final int DEFAULT_MAX_ERROR_RETRY = -1;
     private static final int DEFAULT_PROXY_PORT = -1;
@@ -47,24 +47,25 @@ public class ClientConfigurationAdapterTest {
      */
     @Test
     public void testDefaultApiGatewayClientConfiguration() {
-        ClientConfiguration config = ClientConfigurationAdapter.adapt(new ApiGatewayClientConfiguration(), new ClientConfiguration());
+        LegacyClientConfiguration
+                config = ClientConfigurationAdapter.adapt(new ApiGatewayClientConfiguration(), new LegacyClientConfiguration());
 
-        assertEquals(ClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
         assertEquals(Protocol.HTTPS, config.getProtocol());
-        assertEquals(ClientConfiguration.DEFAULT_MAX_CONNECTIONS, config.getMaxConnections());
-        assertEquals(ClientConfiguration.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_REQUEST_TIMEOUT, config.getRequestTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
-        assertEquals(ClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
-        assertEquals(ClientConfiguration.DEFAULT_USE_GZIP, config.useGzip());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_TTL, config.getConnectionTtl());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_MAX_IDLE_MILLIS, config.getConnectionMaxIdleMillis());
-        assertEquals(ClientConfiguration.DEFAULT_TCP_KEEP_ALIVE, config.useTcpKeepAlive());
-        assertEquals(ClientConfiguration.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
-        assertEquals(ClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
-        assertEquals(ClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
+        assertEquals(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS, config.getMaxConnections());
+        assertEquals(LegacyClientConfiguration.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_REQUEST_TIMEOUT, config.getRequestTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_GZIP, config.useGzip());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TTL, config.getConnectionTtl());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_MAX_IDLE_MILLIS, config.getConnectionMaxIdleMillis());
+        assertEquals(LegacyClientConfiguration.DEFAULT_TCP_KEEP_ALIVE, config.useTcpKeepAlive());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
+        assertEquals(LegacyClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
         assertEquals(DEFAULT_MAX_ERROR_RETRY, config.getMaxErrorRetry());
         assertEquals(DEFAULT_PROXY_PORT, config.getProxyPort());
         assertArrayEquals(SOCKET_BUFFER_HINTS, config.getSocketBufferSizeHints());
@@ -131,7 +132,7 @@ public class ClientConfigurationAdapterTest {
                 );
 
 
-        ClientConfiguration config = ClientConfigurationAdapter.adapt(apigConfig, new ClientConfiguration());
+        LegacyClientConfiguration config = ClientConfigurationAdapter.adapt(apigConfig, new LegacyClientConfiguration());
         
         assertEquals(protocol, config.getProtocol());
         assertEquals(proxyHost, config.getProxyHost());
@@ -153,13 +154,13 @@ public class ClientConfigurationAdapterTest {
         assertEquals(requestTimeout, config.getRequestTimeout());
         assertEquals(clientExecutionTimeout, config.getClientExecutionTimeout());
 
-        assertEquals(ClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
-        assertEquals(ClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
-        assertEquals(ClientConfiguration.DEFAULT_USE_GZIP, config.useGzip());
-        assertEquals(ClientConfiguration.DEFAULT_TCP_KEEP_ALIVE, config.useTcpKeepAlive());
-        assertEquals(ClientConfiguration.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
-        assertEquals(ClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
-        assertEquals(ClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
+        assertEquals(LegacyClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_GZIP, config.useGzip());
+        assertEquals(LegacyClientConfiguration.DEFAULT_TCP_KEEP_ALIVE, config.useTcpKeepAlive());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
+        assertEquals(LegacyClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
         assertEquals(DEFAULT_MAX_ERROR_RETRY, config.getMaxErrorRetry());
         assertArrayEquals(SOCKET_BUFFER_HINTS, config.getSocketBufferSizeHints());
 
@@ -188,13 +189,13 @@ public class ClientConfigurationAdapterTest {
                                                                            .proxyConfiguration(new ProxyConfiguration().proxyHost(proxyHost).proxyPort(proxyPort))
                                                                            .timeoutConfiguration(new TimeoutConfiguration().httpRequestTimeout(requestTimeout));
 
-        ClientConfiguration serviceDefaultConfig = new ClientConfiguration()
+        LegacyClientConfiguration serviceDefaultConfig = new LegacyClientConfiguration()
                 .withRetryPolicy(PredefinedRetryPolicies.NO_RETRY_POLICY)
                 .withMaxConnections(serviceDefaultMaxConnections)
                 .withRequestTimeout(3000)
                 .withTcpKeepAlive(true);
 
-        ClientConfiguration config = ClientConfigurationAdapter.adapt(apigConfig, serviceDefaultConfig);
+        LegacyClientConfiguration config = ClientConfigurationAdapter.adapt(apigConfig, serviceDefaultConfig);
 
         assertTrue(config.useTcpKeepAlive());
         assertEquals(proxyHost, config.getProxyHost());
@@ -203,18 +204,18 @@ public class ClientConfigurationAdapterTest {
         assertEquals(requestTimeout, config.getRequestTimeout());
 
         assertEquals(PredefinedRetryPolicies.NO_RETRY_POLICY, config.getRetryPolicy());
-        assertEquals(ClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
         assertEquals(Protocol.HTTPS, config.getProtocol());
-        assertEquals(ClientConfiguration.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
-        assertEquals(ClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_TTL, config.getConnectionTtl());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_MAX_IDLE_MILLIS, config.getConnectionMaxIdleMillis());
-        assertEquals(ClientConfiguration.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
-        assertEquals(ClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
-        assertEquals(ClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
+        assertEquals(LegacyClientConfiguration.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TTL, config.getConnectionTtl());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_MAX_IDLE_MILLIS, config.getConnectionMaxIdleMillis());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
+        assertEquals(LegacyClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
         assertEquals(DEFAULT_MAX_ERROR_RETRY, config.getMaxErrorRetry());
         assertArrayEquals(SOCKET_BUFFER_HINTS, config.getSocketBufferSizeHints());
 
@@ -242,25 +243,25 @@ public class ClientConfigurationAdapterTest {
      */
     @Test
     public void testConfigFromApiGatewayClientConfigurationFactory() {
-        ClientConfiguration config = ClientConfigurationAdapter.adapt(new ApiGatewayClientConfiguration(), new ApiGatewayClientConfigurationFactory().getConfig());
+        LegacyClientConfiguration config = ClientConfigurationAdapter.adapt(new ApiGatewayClientConfiguration(), new ApiGatewayLegacyClientConfigurationFactory().getConfig());
 
         assertEquals(PredefinedRetryPolicies.NO_RETRY_POLICY, config.getRetryPolicy());
-        assertEquals(ClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
         assertEquals(Protocol.HTTPS, config.getProtocol());
-        assertEquals(ClientConfiguration.DEFAULT_MAX_CONNECTIONS, config.getMaxConnections());
-        assertEquals(ApiGatewayClientConfigurationFactory.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_REQUEST_TIMEOUT, config.getRequestTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
-        assertEquals(ClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
-        assertEquals(ClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
-        assertEquals(ClientConfiguration.DEFAULT_USE_GZIP, config.useGzip());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_TTL, config.getConnectionTtl());
-        assertEquals(ClientConfiguration.DEFAULT_CONNECTION_MAX_IDLE_MILLIS, config.getConnectionMaxIdleMillis());
-        assertEquals(ClientConfiguration.DEFAULT_TCP_KEEP_ALIVE, config.useTcpKeepAlive());
-        assertEquals(ApiGatewayClientConfigurationFactory.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
-        assertEquals(ClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
-        assertEquals(ClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
+        assertEquals(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS, config.getMaxConnections());
+        assertEquals(ApiGatewayLegacyClientConfigurationFactory.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_REQUEST_TIMEOUT, config.getRequestTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
+        assertEquals(LegacyClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_GZIP, config.useGzip());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TTL, config.getConnectionTtl());
+        assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_MAX_IDLE_MILLIS, config.getConnectionMaxIdleMillis());
+        assertEquals(LegacyClientConfiguration.DEFAULT_TCP_KEEP_ALIVE, config.useTcpKeepAlive());
+        assertEquals(ApiGatewayLegacyClientConfigurationFactory.DEFAULT_CACHE_RESPONSE_METADATA, config.getCacheResponseMetadata());
+        assertEquals(LegacyClientConfiguration.DEFAULT_RESPONSE_METADATA_CACHE_SIZE, config.getResponseMetadataCacheSize());
+        assertEquals(LegacyClientConfiguration.DEFAULT_USE_EXPECT_CONTINUE, config.isUseExpectContinue());
         assertEquals(DEFAULT_MAX_ERROR_RETRY, config.getMaxErrorRetry());
         assertEquals(DEFAULT_PROXY_PORT, config.getProxyPort());
         assertArrayEquals(SOCKET_BUFFER_HINTS, config.getSocketBufferSizeHints());

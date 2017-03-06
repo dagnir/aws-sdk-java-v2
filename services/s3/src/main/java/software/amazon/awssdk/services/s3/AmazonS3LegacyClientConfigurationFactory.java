@@ -13,22 +13,22 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.sqs;
+package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /*
  * Factory producing predefined {@link ClientConfiguration} instances for
- * the AmazonSQS client.
+ * the AmazonS3 client.
  */
 @SdkInternalApi
-class AmazonSQSClientConfigurationFactory extends ClientConfigurationFactory {
+class AmazonS3LegacyClientConfigurationFactory extends LegacyClientConfigurationFactory {
 
     @Override
-    protected ClientConfiguration getInRegionOptimizedConfig() {
-        return super.getInRegionOptimizedConfig().withSocketTimeout(25000);
+    protected LegacyClientConfiguration getInRegionOptimizedConfig() {
+        return super.getInRegionOptimizedConfig().withSocketTimeout(21000);
     }
 
 }

@@ -53,7 +53,7 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestClientOptions.Marker;
@@ -178,7 +178,7 @@ public class AmazonHttpClient {
     /**
      * Client configuration options, such as proxy httpClientSettings, max retries, etc.
      */
-    private final ClientConfiguration config;
+    private final LegacyClientConfiguration config;
     private final RetryPolicy retryPolicy;
     /**
      * Client configuration options, such as proxy httpClientSettings, max retries, etc.
@@ -231,7 +231,7 @@ public class AmazonHttpClient {
      * @param config Configuration options specifying how this client will communicate with AWS (ex:
      *               proxy httpClientSettings, retry count, etc.).
      */
-    public AmazonHttpClient(ClientConfiguration config) {
+    public AmazonHttpClient(LegacyClientConfiguration config) {
         this(config, null);
     }
 
@@ -246,7 +246,7 @@ public class AmazonHttpClient {
      *                               precedence over the one at the AWS SDK level; or null if there
      *                               is none.
      */
-    public AmazonHttpClient(ClientConfiguration config,
+    public AmazonHttpClient(LegacyClientConfiguration config,
                             RequestMetricCollector requestMetricCollector) {
         this(config, requestMetricCollector, false);
     }
@@ -262,7 +262,7 @@ public class AmazonHttpClient {
      *                               precedence over the one at the AWS SDK level; or null if there
      *                               is none.
      */
-    public AmazonHttpClient(ClientConfiguration config,
+    public AmazonHttpClient(LegacyClientConfiguration config,
                             RequestMetricCollector requestMetricCollector,
                             boolean useBrowserCompatibleHostNameVerifier) {
         this(config, requestMetricCollector, useBrowserCompatibleHostNameVerifier, false);
@@ -283,7 +283,7 @@ public class AmazonHttpClient {
      *                                         applicable when the header "x-amz-crc32" is set in
      *                                         the response.
      */
-    public AmazonHttpClient(ClientConfiguration config,
+    public AmazonHttpClient(LegacyClientConfiguration config,
                             RequestMetricCollector requestMetricCollector,
                             boolean useBrowserCompatibleHostNameVerifier,
                             boolean calculateCrc32FromCompressedData) {
@@ -294,7 +294,7 @@ public class AmazonHttpClient {
              calculateCrc32FromCompressedData);
     }
 
-    private AmazonHttpClient(ClientConfiguration config,
+    private AmazonHttpClient(LegacyClientConfiguration config,
                              RetryPolicy retryPolicy,
                              RequestMetricCollector requestMetricCollector,
                              boolean useBrowserCompatibleHostNameVerifier,
@@ -310,7 +310,7 @@ public class AmazonHttpClient {
      * Package-protected constructor for unit test purposes.
      */
     @SdkTestInternalApi
-    public AmazonHttpClient(ClientConfiguration clientConfig,
+    public AmazonHttpClient(LegacyClientConfiguration clientConfig,
                             ConnectionManagerAwareHttpClient httpClient,
                             RequestMetricCollector requestMetricCollector) {
         this(clientConfig,
@@ -320,7 +320,7 @@ public class AmazonHttpClient {
         this.httpClient = httpClient;
     }
 
-    private AmazonHttpClient(ClientConfiguration clientConfig,
+    private AmazonHttpClient(LegacyClientConfiguration clientConfig,
                              RetryPolicy retryPolicy,
                              RequestMetricCollector requestMetricCollector,
                              HttpClientSettings httpClientSettings) {
@@ -546,7 +546,7 @@ public class AmazonHttpClient {
 
     public static class Builder {
 
-        private ClientConfiguration clientConfig;
+        private LegacyClientConfiguration clientConfig;
         private RetryPolicy retryPolicy;
         private RequestMetricCollector requestMetricCollector;
         private boolean useBrowserCompatibleHostNameVerifier;
@@ -555,7 +555,7 @@ public class AmazonHttpClient {
         private Builder() {
         }
 
-        public Builder clientConfiguration(ClientConfiguration clientConfig) {
+        public Builder clientConfiguration(LegacyClientConfiguration clientConfig) {
             this.clientConfig = clientConfig;
             return this;
         }
@@ -1687,7 +1687,7 @@ public class AmazonHttpClient {
 
         /**
          * Gets the correct request timeout taking into account precedence of the configuration in
-         * {@link AmazonWebServiceRequest} versus {@link ClientConfiguration}.
+         * {@link AmazonWebServiceRequest} versus {@link LegacyClientConfiguration}.
          *
          * @param requestConfig Current request configuration
          * @return Request timeout value or 0 if none is set
@@ -1702,7 +1702,7 @@ public class AmazonHttpClient {
 
         /**
          * Gets the correct client execution timeout taking into account precedence of the
-         * configuration in {@link AmazonWebServiceRequest} versus {@link ClientConfiguration}.
+         * configuration in {@link AmazonWebServiceRequest} versus {@link LegacyClientConfiguration}.
          *
          * @param requestConfig Current request configuration
          * @return Client Execution timeout value or 0 if none is set

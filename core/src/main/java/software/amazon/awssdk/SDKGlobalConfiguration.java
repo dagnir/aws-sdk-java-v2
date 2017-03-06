@@ -161,7 +161,7 @@ public class SDKGlobalConfiguration {
             "software.amazon.awssdk.services.s3.disableImplicitGlobalClients";
 
     /**
-     * Overrides the client default {@link ClientConfiguration} to use
+     * Overrides the client default {@link LegacyClientConfiguration} to use
      * configuration with values tailored towards clients operating in the
      * same AWS region as the service endpoint they call.  Timeouts in
      * in-region optimized configurations are generally set much lower than

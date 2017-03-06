@@ -23,7 +23,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.DeleteBucketInventoryConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketMetricsConfigurationRequest;
@@ -69,7 +69,7 @@ public class StorageInsightsSigV2IntegrationTest extends AWSIntegrationTestBase 
 
     @BeforeClass
     public static void setUpFixture() throws Exception {
-        ClientConfiguration clientConfiguration = new ClientConfiguration().withSignerOverride("S3SignerType");
+        LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration().withSignerOverride("S3SignerType");
         s3SigV2 = new AmazonS3Client(getCredentials(), clientConfiguration);
         s3SigV2.createBucket(BUCKET_NAME);
         s3SigV2.putObject(new PutObjectRequest(BUCKET_NAME, KEY, new RandomTempFile("foo", 1024)));

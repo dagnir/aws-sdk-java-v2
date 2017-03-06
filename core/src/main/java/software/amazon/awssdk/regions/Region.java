@@ -18,7 +18,7 @@ package software.amazon.awssdk.regions;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.util.ValidationUtils;
@@ -143,7 +143,7 @@ public class Region {
     @Deprecated
     public <T extends AmazonWebServiceClient> T createClient(Class<T> serviceClass,
                                                              AwsCredentialsProvider credentials,
-                                                             ClientConfiguration config) {
+                                                             LegacyClientConfiguration config) {
         Constructor<T> constructor;
         T client;
         try {
@@ -151,13 +151,13 @@ public class Region {
                 constructor = serviceClass.getConstructor();
                 client = constructor.newInstance();
             } else if (credentials == null) {
-                constructor = serviceClass.getConstructor(ClientConfiguration.class);
+                constructor = serviceClass.getConstructor(LegacyClientConfiguration.class);
                 client = constructor.newInstance(config);
             } else if (config == null) {
                 constructor = serviceClass.getConstructor(AwsCredentialsProvider.class);
                 client = constructor.newInstance(credentials);
             } else {
-                constructor = serviceClass.getConstructor(AwsCredentialsProvider.class, ClientConfiguration.class);
+                constructor = serviceClass.getConstructor(AwsCredentialsProvider.class, LegacyClientConfiguration.class);
                 client = constructor.newInstance(credentials, config);
             }
 

@@ -17,7 +17,7 @@ package software.amazon.awssdk.client.builder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
@@ -35,12 +35,12 @@ public abstract class AwsAsyncClientBuilder<SubclassT extends AwsAsyncClientBuil
         extends AwsClientBuilder<SubclassT, TypeToBuildT> {
     private ExecutorFactory executorFactory;
 
-    protected AwsAsyncClientBuilder(ClientConfigurationFactory clientConfigFactory) {
+    protected AwsAsyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
         super(clientConfigFactory);
     }
 
     @SdkTestInternalApi
-    protected AwsAsyncClientBuilder(ClientConfigurationFactory clientConfigFactory,
+    protected AwsAsyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory,
                                     AwsRegionProvider regionProvider) {
         super(clientConfigFactory, regionProvider);
     }

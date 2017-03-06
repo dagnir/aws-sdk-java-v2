@@ -33,7 +33,7 @@ public class IntermediateModel {
     /**
      * This is used for all service clients unless overridden in the Customizations file.
      */
-    private static final String DEFAULT_CLIENT_CONFIG_FACTORY = "ClientConfigurationFactory";
+    private static final String DEFAULT_CLIENT_CONFIG_FACTORY = "LegacyClientConfigurationFactory";
 
     private final Metadata metadata;
 
@@ -111,7 +111,7 @@ public class IntermediateModel {
     }
 
     /**
-     * ClientConfigurationFactory to use when producing default client configuration for the
+     * LegacyClientConfigurationFactory to use when producing default client configuration for the
      * client.
      */
     public String getClientConfigFactory() {

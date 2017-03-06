@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.services.s3.internal.AwsS3V4Signer;
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
@@ -61,9 +61,9 @@ public class SigV4RegionAutoResolveIntegrationTest extends AwsIntegrationTestBas
     @BeforeClass
     public static void setup() throws IOException {
         s3_classic = new AmazonS3Client(getCredentials(),
-                                        new ClientConfiguration().withMaxErrorRetry(0));
+                                        new LegacyClientConfiguration().withMaxErrorRetry(0));
 
-        s3_classicWithSigV2 = new AmazonS3Client(getCredentials(), new ClientConfiguration()
+        s3_classicWithSigV2 = new AmazonS3Client(getCredentials(), new LegacyClientConfiguration()
                 .withMaxErrorRetry(0)
                 .withSignerOverride("S3SignerType"));
 
@@ -74,7 +74,7 @@ public class SigV4RegionAutoResolveIntegrationTest extends AwsIntegrationTestBas
         // in time to cause the full 3-request worst-case.
         s3_external_1 = new AmazonS3Client(
                 getCredentials(),
-                new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
+                new LegacyClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
 
         s3_external_1.setEndpoint("s3-external-1.amazonaws.com");
 
@@ -215,7 +215,7 @@ public class SigV4RegionAutoResolveIntegrationTest extends AwsIntegrationTestBas
     @Test
     public void testNonRetryableAuthError() throws IOException {
         AmazonS3Client fra = new AmazonS3Client(getCredentials(),
-                                                new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
+                                                new LegacyClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
         fra.setEndpoint("s3.eu-central-1.amazonaws.com");
         fra.setSignerRegionOverride("us-east-1");
         try {

@@ -30,7 +30,7 @@
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import java.util.concurrent.TimeUnit;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
@@ -94,7 +94,7 @@ public class CloudWatchMetricConfig {
     private AwsCredentialsProvider credentialsProvider;
 
     /** ClientConfiguration for connecting to Amazon CloudWatch. */
-    private ClientConfiguration clientConfiguration;
+    private LegacyClientConfiguration clientConfiguration;
 
     /**
      * Number of milliseconds to wait before the polling of the metrics queue
@@ -135,7 +135,7 @@ public class CloudWatchMetricConfig {
      * Returns the Client Configuration used to connect to
      * Amazon CloudWatch.
      */
-    public ClientConfiguration getClientConfiguration() {
+    public LegacyClientConfiguration getClientConfiguration() {
         return clientConfiguration;
     }
 
@@ -143,11 +143,11 @@ public class CloudWatchMetricConfig {
      * Sets the Client Configuration. This client
      * configuration is used by the uploader thread to connect to Amazon CloudWatch.
      */
-    public void setClientConfiguration(ClientConfiguration clientConfiguration) {
+    public void setClientConfiguration(LegacyClientConfiguration clientConfiguration) {
         this.clientConfiguration = clientConfiguration;
     }
 
-    public CloudWatchMetricConfig withClientConfiguration(ClientConfiguration clientConfiguration) {
+    public CloudWatchMetricConfig withClientConfiguration(LegacyClientConfiguration clientConfiguration) {
         setClientConfiguration(clientConfiguration);
         return this;
     }

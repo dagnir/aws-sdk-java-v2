@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
@@ -43,7 +43,7 @@ public class DefaultMetricCollectorFactory
         Integer qSize = AwsSdkMetrics.getMetricQueueSize();
         Long timeoutMilli = AwsSdkMetrics.getQueuePollTimeoutMilli();
         CloudWatchMetricConfig config = new CloudWatchMetricConfig();
-        ClientConfiguration clientConfig = new ClientConfiguration();
+        LegacyClientConfiguration clientConfig = new LegacyClientConfiguration();
         if (provider != null) {
             config.setCredentialsProvider(provider);
         }

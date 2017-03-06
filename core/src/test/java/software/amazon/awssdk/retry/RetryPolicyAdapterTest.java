@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.retry.v2.RetryPolicyContext;
 import software.amazon.awssdk.retry.v2.RetryPolicyContexts;
 
@@ -46,7 +46,7 @@ public class RetryPolicyAdapterTest {
 
     private RetryPolicy legacyPolicy;
 
-    private ClientConfiguration clientConfiguration = new ClientConfiguration().withMaxErrorRetry(10);
+    private LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration().withMaxErrorRetry(10);
 
     private RetryPolicyAdapter adapter;
 

@@ -15,29 +15,29 @@
 
 package software.amazon.awssdk.opensdk.internal.config;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 
 /**
- * Factory producing predefined {@link ClientConfiguration} instances.
+ * Factory producing predefined {@link LegacyClientConfiguration} instances.
  */
 @SdkInternalApi
-public class ApiGatewayClientConfigurationFactory extends ClientConfigurationFactory {
+public class ApiGatewayLegacyClientConfigurationFactory extends LegacyClientConfigurationFactory {
 
     public static final int DEFAULT_SOCKET_TIMEOUT = 35 * 1000;
     public static final boolean DEFAULT_CACHE_RESPONSE_METADATA = false;
 
     @Override
-    protected ClientConfiguration getDefaultConfig() {
+    protected LegacyClientConfiguration getDefaultConfig() {
         return super.getDefaultConfig().withRetryPolicy(PredefinedRetryPolicies.NO_RETRY_POLICY)
                     .withCacheResponseMetadata(DEFAULT_CACHE_RESPONSE_METADATA)
                     .withSocketTimeout(DEFAULT_SOCKET_TIMEOUT);
     }
 
     @Override
-    protected ClientConfiguration getInRegionOptimizedConfig() {
+    protected LegacyClientConfiguration getInRegionOptimizedConfig() {
         return getDefaultConfig();
     }
 

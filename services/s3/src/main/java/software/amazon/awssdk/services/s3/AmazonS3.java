@@ -22,8 +22,8 @@ import java.util.Date;
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.HttpMethod;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.RegionUtils;
@@ -204,7 +204,7 @@ public interface AmazonS3 extends S3DirectSpi {
      * Pass the endpoint (e.g. "s3.amazonaws.com") or a full
      * URL, including the protocol (e.g. "https://s3.amazonaws.com"). If the
      * protocol is not specified, the protocol  from this client's
-     * {@link software.amazon.awssdk.ClientConfiguration} is used.
+     * {@link LegacyClientConfiguration} is used.
      * </p>
      * @param endpoint
      *            The endpoint (e.g. "s3.amazonaws.com") or the full URL,
@@ -5090,7 +5090,7 @@ public interface AmazonS3 extends S3DirectSpi {
      * transit or retrying.</b>
      * <p>
      * By default, all service endpoints in all regions use the https protocol.
-     * To use http instead, specify it in the {@link ClientConfiguration}
+     * To use http instead, specify it in the {@link LegacyClientConfiguration}
      * supplied at construction.
      *
      * @param region
@@ -5102,7 +5102,7 @@ public interface AmazonS3 extends S3DirectSpi {
      *             available in the given region. See
      *             {@link software.amazon.awssdk.regions.Region#isServiceSupported(String)}
      * @see software.amazon.awssdk.regions.Region#getRegion(software.amazon.awssdk.regions.Regions)
-     * @see software.amazon.awssdk.regions.Region#createClient(Class, AwsCredentialsProvider, ClientConfiguration)
+     * @see software.amazon.awssdk.regions.Region#createClient(Class, AwsCredentialsProvider, LegacyClientConfiguration)
      */
     public void setRegion(software.amazon.awssdk.regions.Region region) throws IllegalArgumentException;
 

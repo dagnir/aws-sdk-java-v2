@@ -13,30 +13,22 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.dynamodbv2;
+package software.amazon.awssdk.services.sqs;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 
 /*
  * Factory producing predefined {@link ClientConfiguration} instances for
- * the AmazonDynamoDB client.
+ * the AmazonSQS client.
  */
 @SdkInternalApi
-class AmazonDynamoDbClientConfigurationFactory extends ClientConfigurationFactory {
+class AmazonSQSLegacyClientConfigurationFactory extends LegacyClientConfigurationFactory {
 
     @Override
-    protected ClientConfiguration getDefaultConfig() {
-        return super.getDefaultConfig().withRetryPolicy(PredefinedRetryPolicies.DYNAMODB_DEFAULT);
+    protected LegacyClientConfiguration getInRegionOptimizedConfig() {
+        return super.getInRegionOptimizedConfig().withSocketTimeout(25000);
     }
-
-    @Override
-    protected ClientConfiguration getInRegionOptimizedConfig() {
-        return super.getInRegionOptimizedConfig().withSocketTimeout(6000)
-                    .withRetryPolicy(PredefinedRetryPolicies.DYNAMODB_DEFAULT);
-    }
-
 
 }

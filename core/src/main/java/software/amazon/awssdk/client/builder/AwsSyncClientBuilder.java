@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.client.builder;
 
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
@@ -32,12 +32,12 @@ import software.amazon.awssdk.regions.AwsRegionProvider;
 @SdkProtectedApi
 public abstract class AwsSyncClientBuilder<SubclassT extends AwsSyncClientBuilder, TypeToBuildT>
         extends AwsClientBuilder<SubclassT, TypeToBuildT> {
-    protected AwsSyncClientBuilder(ClientConfigurationFactory clientConfigFactory) {
+    protected AwsSyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
         super(clientConfigFactory);
     }
 
     @SdkInternalApi
-    protected AwsSyncClientBuilder(ClientConfigurationFactory clientConfigFactory, AwsRegionProvider regionProvider) {
+    protected AwsSyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory, AwsRegionProvider regionProvider) {
         super(clientConfigFactory, regionProvider);
     }
 

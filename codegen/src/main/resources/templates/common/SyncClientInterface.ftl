@@ -41,7 +41,7 @@ public interface ${metadata.syncInterface} {
      * Callers can pass in just the endpoint <#if metadata.defaultEndpointWithoutHttpProtocol?has_content>(ex: "${metadata.defaultEndpointWithoutHttpProtocol}")</#if> or a full
      * URL, including the protocol<#if metadata.defaultEndpoint?has_content> (ex: "${metadata.defaultEndpoint}")</#if>. If the
      * protocol is not specified here, the default protocol from this client's
-     * {@link ClientConfiguration} will be used, which by default is HTTPS.
+     * {@link LegacyClientConfiguration} will be used, which by default is HTTPS.
      * <p>
      * For more information on using AWS regions with the AWS SDK for Java, and
      * a complete list of all available endpoints for all AWS services, see:
@@ -75,7 +75,7 @@ public interface ${metadata.syncInterface} {
      * method to control which AWS region they want to work with.
      * <p>
      * By default, all service endpoints in all regions use the https protocol.
-     * To use http instead, specify it in the {@link ClientConfiguration}
+     * To use http instead, specify it in the {@link LegacyClientConfiguration}
      * supplied at construction.
      * <p>
      * <b>This method is not threadsafe. A region should be configured when the
@@ -90,7 +90,7 @@ public interface ${metadata.syncInterface} {
      *            region where the service is available.
      *
      * @see Region#getRegion(software.amazon.awssdk.regions.Regions)
-     * @see Region#createClient(Class, software.amazon.awssdk.auth.AwsCredentialsProvider, ClientConfiguration)
+     * @see Region#createClient(Class, software.amazon.awssdk.auth.AwsCredentialsProvider, LegacyClientConfiguration)
      * @see ${regionClassType}#isServiceSupported(String)
      * @deprecated use {@link AwsClientBuilder#setRegion(String)}
      */

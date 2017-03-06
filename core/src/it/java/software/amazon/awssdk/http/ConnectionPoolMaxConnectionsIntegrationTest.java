@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
@@ -51,7 +51,7 @@ public class ConnectionPoolMaxConnectionsIntegrationTest {
         String localhostEndpoint = "http://localhost:" + server.getPort();
 
         AmazonHttpClient httpClient = new AmazonHttpClient(
-                new ClientConfiguration()
+                new LegacyClientConfiguration()
                         .withMaxConnections(1)
                         .withConnectionTimeout(100)
                         .withMaxErrorRetry(0));

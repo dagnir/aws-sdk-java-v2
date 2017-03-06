@@ -21,8 +21,8 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import org.apache.http.conn.ConnectTimeoutException;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.NoOpSigner;
@@ -63,7 +63,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
      * Different services may have custom client configuration factories to vend defaults
      * tailored for that service.
      */
-    private final ClientConfigurationFactory clientConfigFactory;
+    private final LegacyClientConfigurationFactory clientConfigFactory;
     private AwsCredentialsProvider iamCredentials;
     private String endpoint;
     private String apiKey;
@@ -71,7 +71,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
     private RetryPolicy retryPolicy;
     private RequestSignerRegistry signerRegistry = new RequestSignerRegistry();
 
-    protected SdkSyncClientBuilder(ClientConfigurationFactory clientConfigFactory) {
+    protected SdkSyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
         this.clientConfigFactory = clientConfigFactory;
     }
 
@@ -241,12 +241,12 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
         }
 
         @Override
-        public ClientConfiguration getClientConfiguration() {
+        public LegacyClientConfiguration getClientConfiguration() {
             return resolveClientConfiguration();
         }
 
-        private ClientConfiguration resolveClientConfiguration() {
-            ClientConfiguration config = ClientConfigurationAdapter
+        private LegacyClientConfiguration resolveClientConfiguration() {
+            LegacyClientConfiguration config = ClientConfigurationAdapter
                     .adapt(apiGatewayClientConfiguration, clientConfigFactory.getConfig());
 
             if (apiKey != null) {

@@ -32,14 +32,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.util.LogCaptor;
 import utils.http.WireMockTestBase;
 
 public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase {
 
     private static final String RESOURCE = "/some-path";
-    private final AmazonHttpClient client = new AmazonHttpClient(new ClientConfiguration());
+    private final AmazonHttpClient client = new AmazonHttpClient(new LegacyClientConfiguration());
     private final DefaultErrorResponseHandler sut = new DefaultErrorResponseHandler(new ArrayList<>());
     private LogCaptor logCaptor = new LogCaptor.DefaultLogCaptor(Level.INFO);
 

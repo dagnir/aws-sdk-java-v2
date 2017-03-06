@@ -72,7 +72,7 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
     private volatile ${metadata.syncInterface}Waiters waiters;
 </#if>
 
-    /** Client configuration factory providing ClientConfigurations tailored to this client */
+    /** Client configuration factory providing LegacyClientConfigurations tailored to this client */
     protected static final ${clientConfigFactory} CONFIG_FACTORY = new ${clientConfigFactory}();
 
     <@AdditionalSyncClientFieldsMacro.content .data_model />
@@ -118,10 +118,10 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
      *                       (ex: proxy settings, retry counts, etc.).
      *
      * @see DefaultAwsCredentialsProviderChain
-     * @deprecated use {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)}
+     * @deprecated use {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
-    public ${metadata.syncClient}(ClientConfiguration clientConfiguration) {
+    public ${metadata.syncClient}(LegacyClientConfiguration clientConfiguration) {
         this(DefaultAwsCredentialsProviderChain.getInstance(), clientConfiguration);
     }
 
@@ -158,10 +158,10 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
      *                       client connects to ${serviceAbbreviation}
      *                       (ex: proxy settings, retry counts, etc.).
      * @deprecated use {@link ${metadata.syncClientBuilderClassName}#withCredentials(AwsCredentialsProvider)} and
-     *             {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)}
+     *             {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
-    public ${metadata.syncClient}(AwsCredentials awsCredentials, ClientConfiguration clientConfiguration) {
+    public ${metadata.syncClient}(AwsCredentials awsCredentials, LegacyClientConfiguration clientConfiguration) {
         super(clientConfiguration);
         this.awsCredentialsProvider = new AwsStaticCredentialsProvider(awsCredentials);
         init();
@@ -201,10 +201,10 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
      *                       client connects to ${serviceAbbreviation}
      *                       (ex: proxy settings, retry counts, etc.).
      * @deprecated use {@link ${metadata.syncClientBuilderClassName}#withCredentials(AwsCredentialsProvider)} and
-     *             {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)}
+     *             {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
-    public ${metadata.syncClient}(AwsCredentialsProvider awsCredentialsProvider, ClientConfiguration clientConfiguration) {
+    public ${metadata.syncClient}(AwsCredentialsProvider awsCredentialsProvider, LegacyClientConfiguration clientConfiguration) {
         this(awsCredentialsProvider, clientConfiguration, null);
     }
 
@@ -225,12 +225,12 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
      *                       (ex: proxy settings, retry counts, etc.).
      * @param requestMetricCollector optional request metric collector
      * @deprecated use {@link ${metadata.syncClientBuilderClassName}#withCredentials(AwsCredentialsProvider)} and
-     *             {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)} and
+     *             {@link ${metadata.syncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)} and
      *             {@link ${metadata.syncClientBuilderClassName}#withMetricsCollector(RequestMetricCollector)}
      */
     @Deprecated
     public ${metadata.syncClient}(AwsCredentialsProvider awsCredentialsProvider,
-            ClientConfiguration clientConfiguration,
+            LegacyClientConfiguration clientConfiguration,
             RequestMetricCollector requestMetricCollector) {
         super(clientConfiguration, requestMetricCollector);
         this.awsCredentialsProvider = awsCredentialsProvider;

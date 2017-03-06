@@ -34,7 +34,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
@@ -98,7 +98,7 @@ public class SseCustomerKeyHttpIntegrationTest extends AwsTestBase {
         s3 = new AmazonS3Client(credentials,
                                 // Deliberately set to http so the requests with customer keys would
                                 // fail
-                                new ClientConfiguration().withProtocol(Protocol.HTTP));
+                                new LegacyClientConfiguration().withProtocol(Protocol.HTTP));
         s3Https = new AmazonS3Client(credentials);
         secretKey = generateSecretKey();
         secretKey_b64 = Base64.encodeAsString(secretKey.getEncoded());

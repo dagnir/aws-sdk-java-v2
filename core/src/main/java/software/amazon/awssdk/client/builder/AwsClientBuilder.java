@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
-import software.amazon.awssdk.PredefinedClientConfigurations;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
+import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -62,7 +62,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * for that service. If no explicit client configuration is provided to the builder the default
      * factory for the service is used.
      */
-    private final ClientConfigurationFactory clientConfigFactory;
+    private final LegacyClientConfigurationFactory clientConfigFactory;
 
     /**
      * {@link AwsRegionProvider} to use when no explicit region or endpointConfiguration is configured.
@@ -71,18 +71,18 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     private final AwsRegionProvider regionProvider;
 
     private AwsCredentialsProvider credentials;
-    private ClientConfiguration clientConfig;
+    private LegacyClientConfiguration clientConfig;
     private RequestMetricCollector metricsCollector;
     private Region region;
     private List<RequestHandler2> requestHandlers;
     private EndpointConfiguration endpointConfiguration;
 
-    protected AwsClientBuilder(ClientConfigurationFactory clientConfigFactory) {
+    protected AwsClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
         this(clientConfigFactory, DEFAULT_REGION_PROVIDER);
     }
 
     @SdkTestInternalApi
-    protected AwsClientBuilder(ClientConfigurationFactory clientConfigFactory,
+    protected AwsClientBuilder(LegacyClientConfigurationFactory clientConfigFactory,
                                AwsRegionProvider regionProvider) {
         this.clientConfigFactory = clientConfigFactory;
         this.regionProvider = regionProvider;
@@ -128,40 +128,40 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     /**
      * Gets the ClientConfiguration currently configured in the builder
      */
-    public final ClientConfiguration getClientConfiguration() {
+    public final LegacyClientConfiguration getClientConfiguration() {
         return this.clientConfig;
     }
 
     /**
      * Sets the ClientConfiguration to be used by the client. If not specified the default is
-     * typically {@link PredefinedClientConfigurations#defaultConfig} but may differ per service.
+     * typically {@link PredefinedLegacyClientConfigurations#defaultConfig} but may differ per service.
      *
      * @param config Custom configuration to use
      */
-    public final void setClientConfiguration(ClientConfiguration config) {
+    public final void setClientConfiguration(LegacyClientConfiguration config) {
         this.clientConfig = config;
     }
 
     /**
      * Sets the ClientConfiguration to be used by the client. If not specified the default is
-     * typically {@link PredefinedClientConfigurations#defaultConfig} but may differ per service.
+     * typically {@link PredefinedLegacyClientConfigurations#defaultConfig} but may differ per service.
      *
      * @param config Custom configuration to use
      * @return This object for method chaining.
      */
-    public final SubclassT withClientConfiguration(ClientConfiguration config) {
+    public final SubclassT withClientConfiguration(LegacyClientConfiguration config) {
         setClientConfiguration(config);
         return getSubclass();
     }
 
     /**
      * If not explicit client configuration is provided we consult the {@link
-     * ClientConfigurationFactory} of the service. If an explicit configuration is provided we use
+     * LegacyClientConfigurationFactory} of the service. If an explicit configuration is provided we use
      * ClientConfiguration's copy constructor to avoid mutation.
      */
-    private ClientConfiguration resolveClientConfiguration() {
+    private LegacyClientConfiguration resolveClientConfiguration() {
         return (clientConfig == null) ? clientConfigFactory.getConfig() :
-               new ClientConfiguration(clientConfig);
+               new LegacyClientConfiguration(clientConfig);
     }
 
     /**
@@ -430,7 +430,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     protected class SyncBuilderParams extends AwsAsyncClientParams {
 
 
-        private final ClientConfiguration clientConfig;
+        private final LegacyClientConfiguration clientConfig;
         private final AwsCredentialsProvider credentials;
         private final RequestMetricCollector metricsCollector;
         private final List<RequestHandler2> requestHandlers;
@@ -448,7 +448,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         }
 
         @Override
-        public ClientConfiguration getClientConfiguration() {
+        public LegacyClientConfiguration getClientConfiguration() {
             return this.clientConfig;
         }
 

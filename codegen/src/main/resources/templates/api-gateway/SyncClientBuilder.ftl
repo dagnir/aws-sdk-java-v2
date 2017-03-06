@@ -4,7 +4,7 @@ package ${metadata.packageName};
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.opensdk.protect.client.SdkSyncClientBuilder;
-import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfigurationFactory;
+import software.amazon.awssdk.opensdk.internal.config.ApiGatewayLegacyClientConfigurationFactory;
 <#if metadata.requiresIamSigners>
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
@@ -34,7 +34,7 @@ public final class ${metadata.syncClientBuilderClassName}
      * Package private constructor - builder should be created via {@link ${metadata.syncInterface}#builder()}
      */
     ${metadata.syncClientBuilderClassName}() {
-        super(new ApiGatewayClientConfigurationFactory());
+        super(new ApiGatewayLegacyClientConfigurationFactory());
     }
 
     <#if metadata.requiresApiKey>

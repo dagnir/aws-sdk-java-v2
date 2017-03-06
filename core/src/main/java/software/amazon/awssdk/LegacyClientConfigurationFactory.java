@@ -18,45 +18,45 @@ package software.amazon.awssdk;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
- * Factory producing predefined {@link ClientConfiguration} instances.
+ * Factory producing predefined {@link LegacyClientConfiguration} instances.
  * Individual service clients may extend this factory to override
  * these with service specific configuration values.
  */
 @SdkProtectedApi
-public class ClientConfigurationFactory {
+public class LegacyClientConfigurationFactory {
 
     /**
-     * Builds a {@link ClientConfiguration} instance with the default configuration
+     * Builds a {@link LegacyClientConfiguration} instance with the default configuration
      * for the current client.  If the {@link SDKGlobalConfiguration#ENABLE_IN_REGION_OPTIMIZED_MODE}
      * system property has been set, in-region optimized configuration will be used.
      *
-     * @return constructed {@link ClientConfiguration} instance
+     * @return constructed {@link LegacyClientConfiguration} instance
      */
-    public final ClientConfiguration getConfig() {
+    public final LegacyClientConfiguration getConfig() {
         return SDKGlobalConfiguration.isInRegionOptimizedModeEnabled()
                ? getInRegionOptimizedConfig() : getDefaultConfig();
     }
 
     /**
-     * Builds a {@link ClientConfiguration} instance with default configuration
+     * Builds a {@link LegacyClientConfiguration} instance with default configuration
      * values suitable for most use cases.
      *
-     * @return constructed {@link ClientConfiguration} with standard configuration.
+     * @return constructed {@link LegacyClientConfiguration} with standard configuration.
      */
-    protected ClientConfiguration getDefaultConfig() {
-        return new ClientConfiguration();
+    protected LegacyClientConfiguration getDefaultConfig() {
+        return new LegacyClientConfiguration();
     }
 
     /**
-     * Builds a {@link ClientConfiguration} instance with configuration values
+     * Builds a {@link LegacyClientConfiguration} instance with configuration values
      * tailored towards clients operating in the same AWS region as the service
      * endpoint they call.  Timeouts in in-region optimized configurations are
      * generally set much lower than the client standard configuration.
      *
-     * @return constructed {@link ClientConfiguration} with in-region optimized configuration
+     * @return constructed {@link LegacyClientConfiguration} with in-region optimized configuration
      */
-    protected ClientConfiguration getInRegionOptimizedConfig() {
-        return new ClientConfiguration().withConnectionTimeout(1000);
+    protected LegacyClientConfiguration getInRegionOptimizedConfig() {
+        return new LegacyClientConfiguration().withConnectionTimeout(1000);
     }
 
 }

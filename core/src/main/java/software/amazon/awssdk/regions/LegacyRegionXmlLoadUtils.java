@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 
@@ -38,7 +38,7 @@ public class LegacyRegionXmlLoadUtils {
      * @param config configuration for the HTTP client to use to fetch the file
      * @throws IOException any error while reading data.
      */
-    public static RegionMetadata load(final URI uri, final ClientConfiguration config) throws
+    public static RegionMetadata load(final URI uri, final LegacyClientConfiguration config) throws
                                                       IOException {
 
         return RegionMetadataParser.parse(

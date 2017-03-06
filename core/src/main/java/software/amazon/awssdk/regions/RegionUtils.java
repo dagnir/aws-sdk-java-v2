@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.SdkClientException;
 
 /**
@@ -135,7 +135,7 @@ public class RegionUtils {
     @Deprecated
     public static RegionMetadata loadMetadataFromURI(
             final URI uri,
-            final ClientConfiguration config) throws IOException {
+            final LegacyClientConfiguration config) throws IOException {
         return LegacyRegionXmlLoadUtils.load(uri, config);
     }
 
@@ -265,7 +265,7 @@ public class RegionUtils {
     @Deprecated
     public static synchronized void initializeFromURI(
             final URI uri,
-            final ClientConfiguration config) {
+            final LegacyClientConfiguration config) {
         try {
 
             regionMetadata = loadMetadataFromURI(uri, config);

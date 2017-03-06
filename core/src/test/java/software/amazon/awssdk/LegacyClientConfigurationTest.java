@@ -39,11 +39,11 @@ import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
-public class ClientConfigurationTest {
+public class LegacyClientConfigurationTest {
 
     private static final Random RANDOM = new Random();
 
-    private static final ClientConfiguration DEFAULT_CLIENT_CONFIG = new ClientConfiguration();
+    private static final LegacyClientConfiguration DEFAULT_CLIENT_CONFIG = new LegacyClientConfiguration();
 
     private static final RetryPolicy CUSTOM_RETRY_POLICY = new RetryPolicy(
             PredefinedRetryPolicies.SDKDefaultRetryCondition.NO_RETRY_CONDITION,
@@ -51,7 +51,7 @@ public class ClientConfigurationTest {
 
     @Test
     public void httpClientConfiguration() throws Exception {
-        ClientConfiguration config = new ClientConfiguration();
+        LegacyClientConfiguration config = new LegacyClientConfiguration();
         ApacheHttpClientConfig httpclientConfig = config.getApacheHttpClientConfig();
         assertNotNull("httpclient config must never be null", httpclientConfig);
 
@@ -72,7 +72,7 @@ public class ClientConfigurationTest {
                    customFactory,
                    config.getApacheHttpClientConfig().getSslSocketFactory());
 
-        ClientConfiguration config2 = new ClientConfiguration(config);
+        LegacyClientConfiguration config2 = new LegacyClientConfiguration(config);
         assertSame("custom ssl socket factory copied via ctor",
                    customFactory,
                    config2.getApacheHttpClientConfig().getSslSocketFactory());
@@ -121,8 +121,8 @@ public class ClientConfigurationTest {
         clearProxyProperties();
 
         // test ClientConfiguration setting
-        ClientConfiguration config;
-        config = new ClientConfiguration().withNonProxyHosts("foo.com");
+        LegacyClientConfiguration config;
+        config = new LegacyClientConfiguration().withNonProxyHosts("foo.com");
         assertEquals("foo.com", config.getNonProxyHosts());
 
         config.setProtocol(Protocol.HTTP);
@@ -130,7 +130,7 @@ public class ClientConfigurationTest {
 
         // test system property
         System.setProperty("http.nonProxyHosts", "foo.com");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertEquals("foo.com", config.getNonProxyHosts());
 
         config.setProtocol(Protocol.HTTP);
@@ -139,7 +139,7 @@ public class ClientConfigurationTest {
 
         // ClientConfiguration setting has a precedence over system property
         System.setProperty("http.nonProxyHosts", "bar.com");
-        config = new ClientConfiguration().withNonProxyHosts("foo.com");
+        config = new LegacyClientConfiguration().withNonProxyHosts("foo.com");
         assertEquals("foo.com", config.getNonProxyHosts());
 
         config.setProtocol(Protocol.HTTP);
@@ -147,7 +147,7 @@ public class ClientConfigurationTest {
         System.clearProperty("http.nonProxyHosts");
 
         // ClientConfiguration setting has a precedence over system property
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertNull(config.getNonProxyHosts());
 
         config.setProtocol(Protocol.HTTP);
@@ -157,8 +157,8 @@ public class ClientConfigurationTest {
     @Test
     public void testProxySystemProperties() throws Exception {
         clearProxyProperties();
-        ClientConfiguration config;
-        config = new ClientConfiguration();
+        LegacyClientConfiguration config;
+        config = new LegacyClientConfiguration();
         assertNull(config.getProxyHost());
         assertEquals(config.getProxyPort(), -1);
         assertNull(config.getProxyUsername());
@@ -170,56 +170,56 @@ public class ClientConfigurationTest {
         assertNull(config.getProxyPassword());
 
         System.setProperty("https.proxyHost", "foo");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertEquals(config.getProxyHost(), "foo");
         config.setProtocol(Protocol.HTTP);
         assertNull(config.getProxyHost());
         System.clearProperty("https.proxyHost");
 
         System.setProperty("http.proxyHost", "foo");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertNull(config.getProxyHost());
         config.setProtocol(Protocol.HTTP);
         assertEquals(config.getProxyHost(), "foo");
         System.clearProperty("http.proxyHost");
 
         System.setProperty("https.proxyPort", "8443");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertEquals(config.getProxyPort(), 8443);
         config.setProtocol(Protocol.HTTP);
         assertEquals(config.getProxyPort(), -1);
         System.clearProperty("https.proxyPort");
 
         System.setProperty("http.proxyPort", "8080");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertEquals(config.getProxyPort(), -1);
         config.setProtocol(Protocol.HTTP);
         assertEquals(config.getProxyPort(), 8080);
         System.clearProperty("http.proxyPort");
 
         System.setProperty("https.proxyUser", "foo");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertEquals(config.getProxyUsername(), "foo");
         config.setProtocol(Protocol.HTTP);
         assertNull(config.getProxyUsername());
         System.clearProperty("https.proxyUser");
 
         System.setProperty("http.proxyUser", "foo");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertNull(config.getProxyUsername());
         config.setProtocol(Protocol.HTTP);
         assertEquals(config.getProxyUsername(), "foo");
         System.clearProperty("http.proxyUser");
 
         System.setProperty("https.proxyPassword", "foo");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertEquals(config.getProxyPassword(), "foo");
         config.setProtocol(Protocol.HTTP);
         assertNull(config.getProxyPassword());
         System.clearProperty("https.proxyPassword");
 
         System.setProperty("http.proxyPassword", "foo");
-        config = new ClientConfiguration();
+        config = new LegacyClientConfiguration();
         assertNull(config.getProxyPassword());
         config.setProtocol(Protocol.HTTP);
         assertEquals(config.getProxyPassword(), "foo");
@@ -233,8 +233,8 @@ public class ClientConfigurationTest {
         String key2 = "key2";
         String value2 = "value2";
 
-        ClientConfiguration source = new ClientConfiguration().withHeader(key1, value1).withHeader(key2, value2);
-        ClientConfiguration target = new ClientConfiguration(source);
+        LegacyClientConfiguration source = new LegacyClientConfiguration().withHeader(key1, value1).withHeader(key2, value2);
+        LegacyClientConfiguration target = new LegacyClientConfiguration(source);
 
         assertEquals(2, target.getHeaders().size());
         assertEquals(value1, target.getHeaders().get(key1));
@@ -250,9 +250,9 @@ public class ClientConfigurationTest {
 
     @Test
     public void clientConfigurationCopyConstructor_CopiesAllValues() throws Exception {
-        ClientConfiguration customConfig = new ClientConfiguration();
+        LegacyClientConfiguration customConfig = new LegacyClientConfiguration();
 
-        for (Field field : ClientConfiguration.class.getDeclaredFields()) {
+        for (Field field : LegacyClientConfiguration.class.getDeclaredFields()) {
             if (isStaticField(field)) {
                 continue;
             }
@@ -295,7 +295,7 @@ public class ClientConfigurationTest {
         }
 
         // Do a deep comparison of the config after sending it through the copy constructor
-        assertReflectionEquals(customConfig, new ClientConfiguration(customConfig));
+        assertReflectionEquals(customConfig, new LegacyClientConfiguration(customConfig));
     }
 
     private boolean isStaticField(Field field) {

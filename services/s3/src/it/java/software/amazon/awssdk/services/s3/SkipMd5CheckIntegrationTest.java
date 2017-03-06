@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
@@ -69,7 +69,7 @@ public class SkipMd5CheckIntegrationTest extends AwsIntegrationTestBase {
         normalS3.createBucket(BUCKET);
         normalS3.putObject(new PutObjectRequest(BUCKET, GET_KEY, getContent(), null));
 
-        md5TamperingS3 = new AmazonS3Client(new AwsStaticCredentialsProvider(getCredentials()), new ClientConfiguration(),
+        md5TamperingS3 = new AmazonS3Client(new AwsStaticCredentialsProvider(getCredentials()), new LegacyClientConfiguration(),
                                             null, mockStrategy);
         md5TamperingS3.addRequestHandler(new RequestHandler2() {
             @Override

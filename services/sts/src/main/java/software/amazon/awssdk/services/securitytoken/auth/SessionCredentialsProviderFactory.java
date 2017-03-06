@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.HashMap;
 import java.util.Map;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 
 /**
@@ -46,7 +46,7 @@ public class SessionCredentialsProviderFactory {
     public static synchronized
             STSSessionCredentialsProvider getSessionCredentialsProvider(AwsCredentials longTermCredentials,
                                                                         String serviceEndpoint,
-                                                                        ClientConfiguration stsClientConfiguration) {
+                                                                        LegacyClientConfiguration stsClientConfiguration) {
         Key key = new Key(longTermCredentials.getAwsAccessKeyId(), serviceEndpoint);
         if (!CACHE.containsKey(key)) {
             CACHE.put(key, new STSSessionCredentialsProvider(longTermCredentials, stsClientConfiguration));

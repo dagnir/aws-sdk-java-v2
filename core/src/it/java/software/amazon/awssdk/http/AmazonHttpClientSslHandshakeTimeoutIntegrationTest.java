@@ -26,7 +26,7 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 
 /**
@@ -42,7 +42,7 @@ public class AmazonHttpClientSslHandshakeTimeoutIntegrationTest extends Unrespon
 
     @Test(timeout = 60 * 1000)
     public void testSslHandshakeTimeout() {
-        AmazonHttpClient httpClient = new AmazonHttpClient(new ClientConfiguration()
+        AmazonHttpClient httpClient = new AmazonHttpClient(new LegacyClientConfiguration()
                                                                    .withSocketTimeout(CLIENT_SOCKET_TO).withMaxErrorRetry(0));
 
         System.out.println("Sending request to localhost...");

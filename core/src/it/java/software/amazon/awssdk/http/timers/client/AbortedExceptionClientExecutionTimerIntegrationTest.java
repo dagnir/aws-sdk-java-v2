@@ -29,7 +29,7 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AbortedException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpMethodName;
@@ -58,7 +58,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockSer
 
     @Test(expected = AbortedException.class)
     public void clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_not_expired() throws Exception {
-        ClientConfiguration config = new ClientConfiguration()
+        LegacyClientConfiguration config = new LegacyClientConfiguration()
                 .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
                 .withMaxErrorRetry(0);
         ConnectionManagerAwareHttpClient rawHttpClient = createRawHttpClientSpy(config);
@@ -72,7 +72,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockSer
 
     @Test(expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_expired() throws Exception {
-        ClientConfiguration config = new ClientConfiguration()
+        LegacyClientConfiguration config = new LegacyClientConfiguration()
                 .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
                 .withMaxErrorRetry(0);
         ConnectionManagerAwareHttpClient rawHttpClient =

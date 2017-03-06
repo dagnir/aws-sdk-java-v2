@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.concurrent.Callable;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -67,7 +67,7 @@ public class STSSessionCredentialsProvider implements AwsSessionCredentialsProvi
      * @param longLivedCredentials The main AWS credentials for a user's account.
      */
     public STSSessionCredentialsProvider(AwsCredentials longLivedCredentials) {
-        this(longLivedCredentials, new ClientConfiguration());
+        this(longLivedCredentials, new LegacyClientConfiguration());
     }
 
     /**
@@ -80,7 +80,7 @@ public class STSSessionCredentialsProvider implements AwsSessionCredentialsProvi
      * @param clientConfiguration  Client configuration connection parameters.
      */
     public STSSessionCredentialsProvider(AwsCredentials longLivedCredentials,
-                                         ClientConfiguration clientConfiguration) {
+                                         LegacyClientConfiguration clientConfiguration) {
         this(new AWSSecurityTokenServiceClient(longLivedCredentials, clientConfiguration));
     }
 
@@ -108,7 +108,7 @@ public class STSSessionCredentialsProvider implements AwsSessionCredentialsProvi
      * @param clientConfiguration          Client configuration connection parameters.
      */
     public STSSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider,
-                                         ClientConfiguration clientConfiguration) {
+                                         LegacyClientConfiguration clientConfiguration) {
 
         this(new AWSSecurityTokenServiceClient(longLivedCredentialsProvider, clientConfiguration));
     }

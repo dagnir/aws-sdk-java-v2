@@ -18,7 +18,7 @@ package software.amazon.awssdk.regions;
 import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 
 public class RegionsTest {
 
@@ -52,7 +52,7 @@ public class RegionsTest {
     private static class AmazonServiceClient extends AmazonWebServiceClient {
 
         public AmazonServiceClient() {
-            super(new ClientConfiguration());
+            super(new LegacyClientConfiguration());
         }
 
         public String getEndpoint() {
@@ -64,7 +64,7 @@ public class RegionsTest {
             extends AmazonWebServiceClient {
 
         public AmazonUnknownServiceClient() {
-            super(new ClientConfiguration());
+            super(new LegacyClientConfiguration());
         }
 
         public String getEndpoint() {

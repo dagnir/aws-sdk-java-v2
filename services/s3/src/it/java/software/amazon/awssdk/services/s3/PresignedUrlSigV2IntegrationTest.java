@@ -37,7 +37,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.kms.utils.KmsTestKeyCache;
 import software.amazon.awssdk.regions.Regions;
@@ -76,7 +76,7 @@ public class PresignedUrlSigV2IntegrationTest extends S3IntegrationTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         s3SigV2 = new AmazonS3TestClient(credentials,
-                                         new ClientConfiguration().withSignerOverride("S3SignerType"));
+                                         new LegacyClientConfiguration().withSignerOverride("S3SignerType"));
         s3SigV2.createBucket(BUCKET);
         file = CryptoTestUtils.generateRandomAsciiFile(100);
         nonDefaultKmsKeyId = KmsTestKeyCache.getInstance(Regions.US_EAST_1, credentials).getNonDefaultKeyId();

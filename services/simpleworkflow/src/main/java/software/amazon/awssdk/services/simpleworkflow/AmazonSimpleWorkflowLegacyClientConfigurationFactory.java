@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.services.simpleworkflow;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /*
@@ -24,10 +24,10 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  * the AmazonSimpleWorkflow client.
  */
 @SdkInternalApi
-public class AmazonSimpleWorkflowClientConfigurationFactory extends ClientConfigurationFactory {
+public class AmazonSimpleWorkflowLegacyClientConfigurationFactory extends LegacyClientConfigurationFactory {
 
     @Override
-    protected ClientConfiguration getDefaultConfig() {
+    protected LegacyClientConfiguration getDefaultConfig() {
         return super.getDefaultConfig().withMaxConnections(1000).withSocketTimeout(90000);
     }
 }

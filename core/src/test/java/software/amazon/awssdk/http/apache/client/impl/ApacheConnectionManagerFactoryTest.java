@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheConnectionManagerFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
@@ -32,7 +32,7 @@ public class ApacheConnectionManagerFactoryTest {
     public void validateAfterInactivityMillis_RespectedInConnectionManager() {
         final int validateAfterInactivity = 1234;
         final HttpClientSettings httpClientSettings =
-                HttpClientSettings.adapt(new ClientConfiguration()
+                HttpClientSettings.adapt(new LegacyClientConfiguration()
                                                  .withValidateAfterInactivityMillis(validateAfterInactivity));
 
         final PoolingHttpClientConnectionManager connectionManager =

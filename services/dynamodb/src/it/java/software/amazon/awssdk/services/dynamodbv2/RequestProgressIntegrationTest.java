@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener.ExceptionReporter;
 import software.amazon.awssdk.event.ProgressTracker;
@@ -119,7 +119,7 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
                 ProgressEventType.CLIENT_REQUEST_FAILED_EVENT));
         request.setGeneralProgressListener(listener);
 
-        ClientConfiguration config = new ClientConfiguration().withRetryPolicy(new RetryPolicy(new RetryCondition() {
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withRetryPolicy(new RetryPolicy(new RetryCondition() {
 
             @Override
             public boolean shouldRetry(AmazonWebServiceRequest originalRequest,
@@ -149,7 +149,7 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
                 ImmutableMapParameter.of("foo", new AttributeValue("bar")));
 
         // ClientConfiguration that specifies a maximum of two retries
-        ClientConfiguration config = new ClientConfiguration().withRetryPolicy(new RetryPolicy(new RetryCondition() {
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withRetryPolicy(new RetryPolicy(new RetryCondition() {
 
             @Override
             public boolean shouldRetry(AmazonWebServiceRequest originalRequest,

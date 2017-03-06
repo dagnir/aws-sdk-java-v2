@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.builder.AwsSyncClientBuilder;
@@ -29,7 +29,8 @@ import software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfiguration
 public abstract class AmazonS3Builder<SubclassT extends AmazonS3Builder, TypeToBuildT extends AmazonS3>
         extends AwsSyncClientBuilder<SubclassT, TypeToBuildT> {
 
-    private static final AmazonS3ClientConfigurationFactory CLIENT_CONFIG_FACTORY = new AmazonS3ClientConfigurationFactory();
+    private static final AmazonS3LegacyClientConfigurationFactory
+            CLIENT_CONFIG_FACTORY = new AmazonS3LegacyClientConfigurationFactory();
 
     private static final SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> DEFAULT_CLIENT_FACTORY =
             new SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3>() {
@@ -55,7 +56,7 @@ public abstract class AmazonS3Builder<SubclassT extends AmazonS3Builder, TypeToB
 
     @SdkTestInternalApi
     AmazonS3Builder(SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> clientFactory,
-                    ClientConfigurationFactory clientConfigFactory,
+                    LegacyClientConfigurationFactory clientConfigFactory,
                     AwsRegionProvider regionProvider) {
         super(clientConfigFactory, regionProvider);
         this.clientFactory = clientFactory;

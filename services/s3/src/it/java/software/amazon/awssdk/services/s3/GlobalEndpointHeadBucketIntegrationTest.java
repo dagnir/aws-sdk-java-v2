@@ -26,7 +26,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.Region;
 import utils.http.RecordingSocketFactory;
@@ -106,8 +106,8 @@ public class GlobalEndpointHeadBucketIntegrationTest extends S3IntegrationTestBa
         return hosts;
     }
 
-    private ClientConfiguration createConfig() {
-        ClientConfiguration c = new ClientConfiguration();
+    private LegacyClientConfiguration createConfig() {
+        LegacyClientConfiguration c = new LegacyClientConfiguration();
         c.getApacheHttpClientConfig().setSslSocketFactory(socketRecorder);
         return c;
     }

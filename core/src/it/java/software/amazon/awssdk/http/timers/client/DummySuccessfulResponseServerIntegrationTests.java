@@ -30,7 +30,7 @@ import org.apache.http.pool.ConnPoolControl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
@@ -67,7 +67,7 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     public void clientExecutionTimeoutEnabled_SlowResponseHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
         httpClient = new AmazonHttpClient(
-                new ClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
+                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
 
         requestBuilder().execute(new UnresponsiveResponseHandler());
     }
@@ -76,7 +76,7 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     public void clientExecutionTimeoutEnabled_SlowAfterResponseRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
         httpClient = new AmazonHttpClient(
-                new ClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
+                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
 
         List<RequestHandler2> requestHandlers = RequestHandlerTestUtils.buildRequestHandlerList(
                 new SlowRequestHandler().withAfterResponseWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
@@ -88,7 +88,7 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     public void clientExecutionTimeoutEnabled_SlowBeforeRequestRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
         httpClient = new AmazonHttpClient(
-                new ClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
+                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
 
         List<RequestHandler2> requestHandlers = RequestHandlerTestUtils.buildRequestHandlerList(
                 new SlowRequestHandler().withBeforeRequestWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
@@ -104,7 +104,7 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
      */
     @Test
     public void clientInterruptedDuringResponseHandlers_DoesNotLeakConnection() throws IOException {
-        ClientConfiguration config = new ClientConfiguration();
+        LegacyClientConfiguration config = new LegacyClientConfiguration();
         ConnectionManagerAwareHttpClient rawHttpClient = new ApacheHttpClientFactory().create(HttpClientSettings.adapt(config));
 
         httpClient = new AmazonHttpClient(config, rawHttpClient, null);

@@ -60,9 +60,9 @@ import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.HttpMethod;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
@@ -334,7 +334,8 @@ import software.amazon.awssdk.util.StringUtils;
 public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
     public static final String S3_SERVICE_NAME = "s3";
-    protected static final AmazonS3ClientConfigurationFactory CONFIG_FACTORY = new AmazonS3ClientConfigurationFactory();
+    protected static final AmazonS3LegacyClientConfigurationFactory CONFIG_FACTORY =
+            new AmazonS3LegacyClientConfigurationFactory();
     private static final String S3_SIGNER = "S3SignerType";
     private static final String S3_V4_SIGNER = "AWSS3V4SignerType";
     /** Shared factory for converting configuration objects to XML. */
@@ -421,7 +422,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      * </p>
      *
      * @see AmazonS3Client#AmazonS3Client(AwsCredentials)
-     * @see AmazonS3Client#AmazonS3Client(AwsCredentials, ClientConfiguration)
+     * @see AmazonS3Client#AmazonS3Client(AwsCredentials, LegacyClientConfiguration)
      * @sample AmazonS3.CreateClient
      * @deprecated use {@link AmazonS3ClientBuilder#defaultClient()}
      */
@@ -439,7 +440,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      *            with this client.
      *
      * @see AmazonS3Client#AmazonS3Client()
-     * @see AmazonS3Client#AmazonS3Client(AwsCredentials, ClientConfiguration)
+     * @see AmazonS3Client#AmazonS3Client(AwsCredentials, LegacyClientConfiguration)
      * @deprecated use {@link AmazonS3ClientBuilder#withCredentials(AwsCredentialsProvider)}
      */
     @Deprecated
@@ -461,10 +462,10 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      * @see AmazonS3Client#AmazonS3Client()
      * @see AmazonS3Client#AmazonS3Client(AwsCredentials)
      * @deprecated use {@link AmazonS3ClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *             {@link AmazonS3ClientBuilder#withClientConfiguration(ClientConfiguration)}
+     *             {@link AmazonS3ClientBuilder#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
-    public AmazonS3Client(AwsCredentials awsCredentials, ClientConfiguration clientConfiguration) {
+    public AmazonS3Client(AwsCredentials awsCredentials, LegacyClientConfiguration clientConfiguration) {
         this(new AwsStaticCredentialsProvider(awsCredentials), clientConfiguration);
     }
 
@@ -493,11 +494,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      *            The client configuration options controlling how this client
      *            connects to Amazon S3 (e.g. proxy settings, retry counts, etc).
      * @deprecated use {@link AmazonS3ClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *             {@link AmazonS3ClientBuilder#withClientConfiguration(ClientConfiguration)}
+     *             {@link AmazonS3ClientBuilder#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
     public AmazonS3Client(AwsCredentialsProvider credentialsProvider,
-                          ClientConfiguration clientConfiguration) {
+                          LegacyClientConfiguration clientConfiguration) {
         this(credentialsProvider, clientConfiguration, null);
     }
 
@@ -513,12 +514,12 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      *            connects to Amazon S3 (e.g. proxy settings, retry counts, etc).
      * @param requestMetricCollector request metric collector
      * @deprecated use {@link AmazonS3ClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *             {@link AmazonS3ClientBuilder#withClientConfiguration(ClientConfiguration)} and
+     *             {@link AmazonS3ClientBuilder#withClientConfiguration(LegacyClientConfiguration)} and
      *             {@link AmazonS3ClientBuilder#withMetricsCollector(RequestMetricCollector)}
      */
     @Deprecated
     public AmazonS3Client(AwsCredentialsProvider credentialsProvider,
-                          ClientConfiguration clientConfiguration,
+                          LegacyClientConfiguration clientConfiguration,
                           RequestMetricCollector requestMetricCollector) {
         this(credentialsProvider, clientConfiguration, requestMetricCollector, SkipMd5CheckStrategy.INSTANCE);
     }
@@ -537,7 +538,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @SdkTestInternalApi
     AmazonS3Client(AwsCredentialsProvider credentialsProvider,
-                   ClientConfiguration clientConfiguration,
+                   LegacyClientConfiguration clientConfiguration,
                    RequestMetricCollector requestMetricCollector,
                    SkipMd5CheckStrategy skipMd5CheckStrategy) {
         super(clientConfiguration, requestMetricCollector, true);
@@ -587,11 +588,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      *            connects to Amazon S3 (e.g. proxy settings, retry counts, etc).
      *
      * @see AmazonS3Client#AmazonS3Client(AwsCredentials)
-     * @see AmazonS3Client#AmazonS3Client(AwsCredentials, ClientConfiguration)
-     * @deprecated use {@link AmazonS3ClientBuilder#withClientConfiguration(ClientConfiguration)}
+     * @see AmazonS3Client#AmazonS3Client(AwsCredentials, LegacyClientConfiguration)
+     * @deprecated use {@link AmazonS3ClientBuilder#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
-    public AmazonS3Client(ClientConfiguration clientConfiguration) {
+    public AmazonS3Client(LegacyClientConfiguration clientConfiguration) {
         this(new S3CredentialsProviderChain(), clientConfiguration);
     }
 

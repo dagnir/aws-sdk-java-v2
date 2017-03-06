@@ -67,7 +67,7 @@ public class CustomizationConfig {
      * Fully qualified class name of the client configuration factory to use when producing client
      * configurations for this client.  This factory is called when an explicit ClientConfiguration
      * is not provided in the service client's constructor. <p> Example:
-     * "software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClientConfigurationFactory" </p>
+     * "software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBLegacyClientConfigurationFactory" </p>
      */
     private String customClientConfigFactory;
     /**

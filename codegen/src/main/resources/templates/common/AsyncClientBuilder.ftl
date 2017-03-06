@@ -3,7 +3,7 @@ package ${metadata.packageName};
 
 import javax.annotation.Generated;
 
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.client.builder.AwsAsyncClientBuilder;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
@@ -17,7 +17,7 @@ import software.amazon.awssdk.client.AwsAsyncClientParams;
 public final class ${metadata.asyncClientBuilderClassName}
     extends AwsAsyncClientBuilder<${metadata.asyncClientBuilderClassName}, ${metadata.asyncInterface}> {
 
-    private static final ClientConfigurationFactory CLIENT_CONFIG_FACTORY = new ${clientConfigFactory}();;
+    private static final LegacyClientConfigurationFactory CLIENT_CONFIG_FACTORY = new ${clientConfigFactory}();;
 
     /**
     * @return Create new instance of builder with all defaults set.
