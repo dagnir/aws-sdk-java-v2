@@ -48,7 +48,7 @@ public class PartitionsLoader {
     /**
      * Jackson object mapper that is used for parsing the partition files.
      */
-    private static final ObjectMapper mapper = new ObjectMapper()
+    private static final ObjectMapper MAPPER = new ObjectMapper()
             .disable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
             .disable(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS)
             .enable(JsonParser.Feature.ALLOW_COMMENTS)
@@ -90,7 +90,7 @@ public class PartitionsLoader {
 
         try {
 
-            return mapper.readValue(stream, Partitions.class);
+            return MAPPER.readValue(stream, Partitions.class);
 
         } catch (IOException e) {
             throw new SdkClientException("Error while loading partitions " +

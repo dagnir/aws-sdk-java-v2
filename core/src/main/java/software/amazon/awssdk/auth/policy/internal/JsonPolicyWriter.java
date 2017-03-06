@@ -225,8 +225,8 @@ public class JsonPolicyWriter {
      */
     private void writePrincipals(List<Principal> principals)
             throws JsonGenerationException, IOException {
-        if (principals.size() == 1 && principals.get(0).equals(Principal.All)) {
-            writeJsonKeyValue(JsonDocumentFields.PRINCIPAL, Principal.All.getId());
+        if (principals.size() == 1 && principals.get(0).equals(Principal.ALL)) {
+            writeJsonKeyValue(JsonDocumentFields.PRINCIPAL, Principal.ALL.getId());
         } else {
             writeJsonObjectStart(JsonDocumentFields.PRINCIPAL);
 

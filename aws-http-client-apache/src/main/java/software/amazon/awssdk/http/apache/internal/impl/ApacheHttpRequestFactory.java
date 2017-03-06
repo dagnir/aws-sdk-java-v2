@@ -43,7 +43,7 @@ public class ApacheHttpRequestFactory {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
-    private static final List<String> ignoreHeaders = Arrays.asList(HttpHeaders.CONTENT_LENGTH, HttpHeaders.HOST);
+    private static final List<String> IGNORE_HEADERS = Arrays.asList(HttpHeaders.CONTENT_LENGTH, HttpHeaders.HOST);
 
     public HttpRequestBase create(final SdkHttpRequest request, final SdkHttpClientSettings settings) {
         URI endpoint = request.getEndpoint();
@@ -179,7 +179,7 @@ public class ApacheHttpRequestFactory {
                  * header to avoid sending it twice, which will interfere with some
                  * signing schemes.
                  */
-                .filter(e -> !ignoreHeaders.contains(e.getKey()))
+                .filter(e -> !IGNORE_HEADERS.contains(e.getKey()))
                 .forEach(e -> e.getValue().stream()
                         .forEach(h -> httpRequest.addHeader(e.getKey(), h)));
 

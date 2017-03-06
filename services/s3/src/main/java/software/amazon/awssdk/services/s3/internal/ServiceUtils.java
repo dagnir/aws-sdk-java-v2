@@ -59,9 +59,9 @@ public class ServiceUtils {
     public static final boolean APPEND_MODE = true;
     public static final boolean OVERWRITE_MODE = false;
     @Deprecated
-    protected static final DateUtils dateUtils = new DateUtils();
+    protected static final DateUtils DATE_UTILS = new DateUtils();
     private static final Log LOG = LogFactory.getLog(ServiceUtils.class);
-    private static final SkipMd5CheckStrategy skipMd5CheckStrategy = SkipMd5CheckStrategy.INSTANCE;
+    private static final SkipMd5CheckStrategy SKIP_MD5_CHECK_STRATEGY = SkipMd5CheckStrategy.INSTANCE;
 
     public static Date parseIso8601Date(String dateString) {
         return DateUtils.parseIso8601Date(dateString);
@@ -319,7 +319,7 @@ public class ServiceUtils {
             byte[] serverSideHash = null;
             try {
                 final ObjectMetadata metadata = s3Object.getObjectMetadata();
-                if (!skipMd5CheckStrategy.skipClientSideValidationPerGetResponse(metadata)) {
+                if (!SKIP_MD5_CHECK_STRATEGY.skipClientSideValidationPerGetResponse(metadata)) {
                     clientSideHash = Md5Utils.computeMD5Hash(new FileInputStream(dstfile));
                     serverSideHash = BinaryUtils.fromHex(metadata.getETag());
                 }

@@ -73,7 +73,7 @@ public interface JmxInfoProvider {
     public boolean isEnabled();
 
     public static class Factory {
-        private static final JmxInfoProvider provider;
+        private static final JmxInfoProvider PROVIDER;
 
         static {
             JmxInfoProvider p;
@@ -86,11 +86,11 @@ public interface JmxInfoProvider {
                         .debug("Failed to load the JMX implementation module - JMX is disabled", e);
                 p = NONE;
             }
-            provider = p;
+            PROVIDER = p;
         }
 
         public static JmxInfoProvider getJmxInfoProvider() {
-            return provider;
+            return PROVIDER;
         }
     }
 }

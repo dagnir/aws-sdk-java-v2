@@ -197,7 +197,7 @@ public class JobStatusMonitor {
         Policy sqsPolicy =
                 new Policy().withStatements(
                         new Statement(Effect.Allow)
-                                .withPrincipals(Principal.AllUsers)
+                                .withPrincipals(Principal.ALL_USERS)
                                 .withActions(SQSActions.SendMessage)
                                 .withResources(new Resource(queueARN))
                                 .withConditions(ConditionFactory.newSourceArnCondition(topicArn)));

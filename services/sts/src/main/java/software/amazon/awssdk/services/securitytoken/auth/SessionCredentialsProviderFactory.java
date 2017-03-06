@@ -26,7 +26,7 @@ import software.amazon.awssdk.auth.AwsCredentials;
  */
 public class SessionCredentialsProviderFactory {
 
-    private static final Map<Key, STSSessionCredentialsProvider> cache = new HashMap<>();
+    private static final Map<Key, STSSessionCredentialsProvider> CACHE = new HashMap<>();
 
     /**
      * Gets a session credentials provider for the long-term credentials and
@@ -48,10 +48,10 @@ public class SessionCredentialsProviderFactory {
                                                                         String serviceEndpoint,
                                                                         ClientConfiguration stsClientConfiguration) {
         Key key = new Key(longTermCredentials.getAwsAccessKeyId(), serviceEndpoint);
-        if (!cache.containsKey(key)) {
-            cache.put(key, new STSSessionCredentialsProvider(longTermCredentials, stsClientConfiguration));
+        if (!CACHE.containsKey(key)) {
+            CACHE.put(key, new STSSessionCredentialsProvider(longTermCredentials, stsClientConfiguration));
         }
-        return cache.get(key);
+        return CACHE.get(key);
     }
 
     /**

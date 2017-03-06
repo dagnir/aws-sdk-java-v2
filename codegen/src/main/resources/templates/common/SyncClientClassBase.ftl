@@ -73,7 +73,7 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
 </#if>
 
     /** Client configuration factory providing ClientConfigurations tailored to this client */
-    protected static final ${clientConfigFactory} configFactory = new ${clientConfigFactory}();
+    protected static final ${clientConfigFactory} CONFIG_FACTORY = new ${clientConfigFactory}();
 
     <@AdditionalSyncClientFieldsMacro.content .data_model />
 
@@ -96,7 +96,7 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
      */
     @Deprecated
     public ${metadata.syncClient}() {
-        this(DefaultAwsCredentialsProviderChain.getInstance(), configFactory.getConfig());
+        this(DefaultAwsCredentialsProviderChain.getInstance(), CONFIG_FACTORY.getConfig());
     }
 
     /**
@@ -140,7 +140,7 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
      */
     @Deprecated
     public ${metadata.syncClient}(AwsCredentials awsCredentials) {
-        this(awsCredentials, configFactory.getConfig());
+        this(awsCredentials, CONFIG_FACTORY.getConfig());
     }
 
     /**
@@ -182,7 +182,7 @@ public class ${metadata.syncClient} extends AmazonWebServiceClient implements ${
      */
     @Deprecated
     public ${metadata.syncClient}(AwsCredentialsProvider awsCredentialsProvider) {
-        this(awsCredentialsProvider, configFactory.getConfig());
+        this(awsCredentialsProvider, CONFIG_FACTORY.getConfig());
     }
 
     /**

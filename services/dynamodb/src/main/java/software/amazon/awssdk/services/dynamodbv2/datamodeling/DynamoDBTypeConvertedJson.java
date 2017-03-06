@@ -70,7 +70,7 @@ public @interface DynamoDBTypeConvertedJson {
      * JSON type converter.
      */
     final class Converter<T> implements DynamoDBTypeConverter<String, T> {
-        private static final ObjectMapper mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        private static final ObjectMapper MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         private final Class<T> targetType;
 
         public Converter(Class<T> targetType, DynamoDBTypeConvertedJson annotation) {
@@ -80,7 +80,7 @@ public @interface DynamoDBTypeConvertedJson {
         @Override
         public final String convert(final T object) {
             try {
-                return mapper.writeValueAsString(object);
+                return MAPPER.writeValueAsString(object);
             } catch (final Exception e) {
                 throw new DynamoDBMappingException("Unable to write object to JSON", e);
             }
@@ -89,7 +89,7 @@ public @interface DynamoDBTypeConvertedJson {
         @Override
         public final T unconvert(final String object) {
             try {
-                return mapper.readValue(object, targetType);
+                return MAPPER.readValue(object, targetType);
             } catch (final Exception e) {
                 throw new DynamoDBMappingException("Unable to read JSON string", e);
             }

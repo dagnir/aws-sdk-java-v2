@@ -35,7 +35,7 @@ import software.amazon.awssdk.internal.http.timers.TimeoutThreadPoolBuilder;
 @SdkInternalApi
 public class HttpRequestTimer {
 
-    private static final String threadNamePrefix = "AwsSdkRequestTimerThread";
+    private static final String THREAD_NAME_PREFIX = "AwsSdkRequestTimerThread";
 
     private volatile ScheduledThreadPoolExecutor executor;
 
@@ -71,7 +71,7 @@ public class HttpRequestTimer {
      */
     private synchronized void initializeExecutor() {
         if (executor == null) {
-            executor = TimeoutThreadPoolBuilder.buildDefaultTimeoutThreadPool(threadNamePrefix);
+            executor = TimeoutThreadPoolBuilder.buildDefaultTimeoutThreadPool(THREAD_NAME_PREFIX);
         }
     }
 

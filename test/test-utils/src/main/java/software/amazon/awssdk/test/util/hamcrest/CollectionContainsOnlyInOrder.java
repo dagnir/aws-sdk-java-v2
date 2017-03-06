@@ -37,7 +37,7 @@ public class CollectionContainsOnlyInOrder<T> extends TypeSafeMatcher<Collection
 
     @Override
     protected boolean matchesSafely(Collection<T> actualItems) {
-        final Queue<Matcher<? super T>> copyOfMatchers = new LinkedList<Matcher<? super T>>(matchers);
+        final Queue<Matcher<? super T>> copyOfMatchers = new LinkedList<>(matchers);
         for (T item : actualItems) {
             if (copyOfMatchers.isEmpty() || !copyOfMatchers.remove().matches(item)) {
                 return false;

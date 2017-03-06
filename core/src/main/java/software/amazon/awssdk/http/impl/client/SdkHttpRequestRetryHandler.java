@@ -24,7 +24,7 @@ import software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field;
 
 @ThreadSafe
 public class SdkHttpRequestRetryHandler extends DefaultHttpRequestRetryHandler {
-    public static final SdkHttpRequestRetryHandler Singleton = new SdkHttpRequestRetryHandler();
+    public static final SdkHttpRequestRetryHandler SINGLETON = new SdkHttpRequestRetryHandler();
 
     private SdkHttpRequestRetryHandler() {}
 

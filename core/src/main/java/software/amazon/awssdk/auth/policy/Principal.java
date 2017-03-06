@@ -24,7 +24,7 @@ package software.amazon.awssdk.auth.policy;
  * "A has permission to do B to C where D applies."
  * <p>
  * In an access control policy statement, you can set the principal to all
- * authenticated AWS users through the {@link Principal#AllUsers} member. This
+ * authenticated AWS users through the {@link Principal#ALL_USERS} member. This
  * is useful when you don't want to restrict access based on the identity of the
  * requester, but instead on other identifying characteristics such as the
  * requester's IP address.
@@ -38,22 +38,22 @@ public class Principal {
      * identity of the requester, but instead on other identifying
      * characteristics such as the requester's IP address.
      */
-    public static final Principal AllUsers = new Principal("AWS", "*");
+    public static final Principal ALL_USERS = new Principal("AWS", "*");
 
     /**
      * Principal instance that includes all AWS web services.
      */
-    public static final Principal AllServices = new Principal("Service", "*");
+    public static final Principal ALL_SERVICES = new Principal("Service", "*");
 
     /**
      * Principal instance that includes all the web identity providers.
      */
-    public static final Principal AllWebProviders = new Principal("Federated", "*");
+    public static final Principal ALL_WEB_PROVIDERS = new Principal("Federated", "*");
 
     /**
      * Principal instance that includes all the AWS accounts, AWS web services and web identity providers.
      */
-    public static final Principal All = new Principal("*", "*");
+    public static final Principal ALL = new Principal("*", "*");
 
     private final String id;
     private final String provider;

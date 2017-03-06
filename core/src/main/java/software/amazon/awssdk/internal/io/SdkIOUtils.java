@@ -25,7 +25,7 @@ import software.amazon.awssdk.log.InternalLogFactory;
  */
 public enum SdkIOUtils {
     ;
-    private static final InternalLogApi defaultLog = InternalLogFactory.getLog(SdkIOUtils.class);
+    private static final InternalLogApi DEFAULT_LOG = InternalLogFactory.getLog(SdkIOUtils.class);
 
     public static void closeQuietly(Closeable is) {
         closeQuietly(is, null);
@@ -41,7 +41,7 @@ public enum SdkIOUtils {
             try {
                 is.close();
             } catch (IOException ex) {
-                InternalLogApi logger = log == null ? defaultLog : log;
+                InternalLogApi logger = log == null ? DEFAULT_LOG : log;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Ignore failure in closing the Closeable", ex);
                 }

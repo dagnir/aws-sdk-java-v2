@@ -23,6 +23,7 @@ import java.util.SimpleTimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import software.amazon.awssdk.log.InternalLogFactory;
@@ -32,14 +33,14 @@ import software.amazon.awssdk.log.InternalLogFactory;
  */
 public enum JodaTime {
     ;
-    private static final boolean expectedBehavior = checkExpectedBehavior();
+    private static final boolean EXPECTED_BEHAVIOR = checkExpectedBehavior();
 
     /**
      * Returns the current version of joda-time used during runtime; or null
      * if it cannot be determined.
      */
     public static String getVersion() {
-        return LazyHolder.version;
+        return LazyHolder.VERSION;
     }
 
     /**
@@ -47,7 +48,7 @@ public enum JodaTime {
      * behaves as expected by the Java SDK; false otherwise.
      */
     public static boolean hasExpectedBehavior() {
-        return expectedBehavior;
+        return EXPECTED_BEHAVIOR;
     }
 
     private static boolean checkExpectedBehavior() {
@@ -147,7 +148,7 @@ public enum JodaTime {
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String formatted = sdf.format(date);
         String alternative = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.print(date
-                                                                                .getTime());
+                .getTime());
         if (formatted.equals(alternative)) {
             Date expectedDate = sdf.parse(formatted);
             Date actualDate = DateUtils.parseIso8601Date(formatted);
@@ -162,7 +163,7 @@ public enum JodaTime {
         sdf.setTimeZone(new SimpleTimeZone(0, "GMT"));
         String expected = sdf.format(date);
         String actual = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT.print(date
-                                                                           .getTime());
+                .getTime());
         if (expected.equals(actual)) {
             Date expectedDate = sdf.parse(expected);
             DateTime actualDateTime = DateUtils.ALTERNATE_ISO_8601_DATE_FORMAT
@@ -188,7 +189,7 @@ public enum JodaTime {
      * runtime from the jar file discovered on the classpath.
      */
     private static class LazyHolder {
-        static final String version = getVersion();
+        static final String VERSION = getVersion();
 
         private static String getVersion() {
             try {

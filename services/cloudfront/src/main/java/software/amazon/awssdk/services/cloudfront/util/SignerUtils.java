@@ -39,7 +39,7 @@ import software.amazon.awssdk.util.StringUtils;
 
 public class SignerUtils {
 
-    private static final SecureRandom srand = new SecureRandom();
+    private static final SecureRandom SRAND = new SecureRandom();
 
     /**
      * Returns a "canned" policy for the given parameters.
@@ -136,7 +136,7 @@ public class SignerUtils {
         Signature signature;
         try {
             signature = Signature.getInstance("SHA1withRSA");
-            signature.initSign(privateKey, srand);
+            signature.initSign(privateKey, SRAND);
             signature.update(dataToSign);
             return signature.sign();
         } catch (NoSuchAlgorithmException e) {

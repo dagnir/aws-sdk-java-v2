@@ -30,10 +30,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for String values.
      */
     public static class StringCborUnmarshaller implements Unmarshaller<String, JsonUnmarshallerContext> {
-        private static final StringCborUnmarshaller instance = new StringCborUnmarshaller();
+        private static final StringCborUnmarshaller INSTANCE = new StringCborUnmarshaller();
 
         public static StringCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public String unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -45,10 +45,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Double values.
      */
     public static class DoubleCborUnmarshaller implements Unmarshaller<Double, JsonUnmarshallerContext> {
-        private static final DoubleCborUnmarshaller instance = new DoubleCborUnmarshaller();
+        private static final DoubleCborUnmarshaller INSTANCE = new DoubleCborUnmarshaller();
 
         public static DoubleCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Double unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -60,10 +60,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Integer values.
      */
     public static class IntegerCborUnmarshaller implements Unmarshaller<Integer, JsonUnmarshallerContext> {
-        private static final IntegerCborUnmarshaller instance = new IntegerCborUnmarshaller();
+        private static final IntegerCborUnmarshaller INSTANCE = new IntegerCborUnmarshaller();
 
         public static IntegerCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Integer unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -72,10 +72,10 @@ public class SimpleTypeCborUnmarshallers {
     }
 
     public static class BigIntegerCborUnmarshaller implements Unmarshaller<BigInteger, JsonUnmarshallerContext> {
-        private static final BigIntegerCborUnmarshaller instance = new BigIntegerCborUnmarshaller();
+        private static final BigIntegerCborUnmarshaller INSTANCE = new BigIntegerCborUnmarshaller();
 
         public static BigIntegerCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public BigInteger unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -93,10 +93,10 @@ public class SimpleTypeCborUnmarshallers {
     }
 
     public static class BigDecimalCborUnmarshaller implements Unmarshaller<BigDecimal, JsonUnmarshallerContext> {
-        private static final BigDecimalCborUnmarshaller instance = new BigDecimalCborUnmarshaller();
+        private static final BigDecimalCborUnmarshaller INSTANCE = new BigDecimalCborUnmarshaller();
 
         public static BigDecimalCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public BigDecimal unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -120,10 +120,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Boolean values.
      */
     public static class BooleanCborUnmarshaller implements Unmarshaller<Boolean, JsonUnmarshallerContext> {
-        private static final BooleanCborUnmarshaller instance = new BooleanCborUnmarshaller();
+        private static final BooleanCborUnmarshaller INSTANCE = new BooleanCborUnmarshaller();
 
         public static BooleanCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Boolean unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -135,10 +135,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Float values.
      */
     public static class FloatCborUnmarshaller implements Unmarshaller<Float, JsonUnmarshallerContext> {
-        private static final FloatCborUnmarshaller instance = new FloatCborUnmarshaller();
+        private static final FloatCborUnmarshaller INSTANCE = new FloatCborUnmarshaller();
 
         public static FloatCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Float unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -150,10 +150,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Long values.
      */
     public static class LongCborUnmarshaller implements Unmarshaller<Long, JsonUnmarshallerContext> {
-        private static final LongCborUnmarshaller instance = new LongCborUnmarshaller();
+        private static final LongCborUnmarshaller INSTANCE = new LongCborUnmarshaller();
 
         public static LongCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Long unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -165,10 +165,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Byte values.
      */
     public static class ByteCborUnmarshaller implements Unmarshaller<Byte, JsonUnmarshallerContext> {
-        private static final ByteCborUnmarshaller instance = new ByteCborUnmarshaller();
+        private static final ByteCborUnmarshaller INSTANCE = new ByteCborUnmarshaller();
 
         public static ByteCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Byte unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -180,10 +180,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Date values - JSON dates come in as epoch seconds.
      */
     public static class DateCborUnmarshaller implements Unmarshaller<Date, JsonUnmarshallerContext> {
-        private static final DateCborUnmarshaller instance = new DateCborUnmarshaller();
+        private static final DateCborUnmarshaller INSTANCE = new DateCborUnmarshaller();
 
         public static DateCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Date unmarshall(JsonUnmarshallerContext unmarshallerContext)
@@ -196,10 +196,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for ByteBuffer values.
      */
     public static class ByteBufferCborUnmarshaller implements Unmarshaller<ByteBuffer, JsonUnmarshallerContext> {
-        private static final ByteBufferCborUnmarshaller instance = new ByteBufferCborUnmarshaller();
+        private static final ByteBufferCborUnmarshaller INSTANCE = new ByteBufferCborUnmarshaller();
 
         public static ByteBufferCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public ByteBuffer unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {
@@ -212,10 +212,10 @@ public class SimpleTypeCborUnmarshallers {
      * Unmarshaller for Short values.
      */
     public static class ShortCborUnmarshaller implements Unmarshaller<Short, JsonUnmarshallerContext> {
-        private static final ShortCborUnmarshaller instance = new ShortCborUnmarshaller();
+        private static final ShortCborUnmarshaller INSTANCE = new ShortCborUnmarshaller();
 
         public static ShortCborUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Short unmarshall(JsonUnmarshallerContext unmarshallerContext) throws Exception {

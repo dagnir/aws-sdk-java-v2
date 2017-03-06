@@ -54,52 +54,52 @@ public class TypeUtils {
 
     public static final String MAP_AUTO_CONSTRUCT_IMPL = "mapAutoConstructImpl";
 
-    private static final Map<String, String> dataTypeMappings = new HashMap<>();
+    private static final Map<String, String> DATA_TYPE_MAPPINGS = new HashMap<>();
 
-    private static final Map<String, String> marshallingTypeMappings = new HashMap<>();
+    private static final Map<String, String> MARSHALLING_TYPE_MAPPINGS = new HashMap<>();
 
     static {
-        dataTypeMappings.put("string", String.class.getSimpleName());
-        dataTypeMappings.put("boolean", Boolean.class.getSimpleName());
-        dataTypeMappings.put("int", Integer.class.getSimpleName());
-        dataTypeMappings.put("any", Object.class.getSimpleName());
-        dataTypeMappings.put("integer", Integer.class.getSimpleName());
-        dataTypeMappings.put("double", Double.class.getSimpleName());
-        dataTypeMappings.put("short", Short.class.getSimpleName());
-        dataTypeMappings.put("long", Long.class.getSimpleName());
-        dataTypeMappings.put("float", Float.class.getSimpleName());
-        dataTypeMappings.put("byte", Byte.class.getSimpleName());
-        dataTypeMappings.put("timestamp", Date.class.getName());
-        dataTypeMappings.put("blob", ByteBuffer.class.getName());
-        dataTypeMappings.put("stream", InputStream.class.getName());
-        dataTypeMappings.put("bigdecimal", BigDecimal.class.getName());
-        dataTypeMappings.put("biginteger", BigInteger.class.getName());
-        dataTypeMappings.put("list", List.class.getSimpleName());
-        dataTypeMappings.put("map", Map.class.getSimpleName());
-        dataTypeMappings.put(LIST_INTERFACE, List.class.getName());
-        dataTypeMappings.put(LIST_DEFAULT_IMPL, ArrayList.class.getName());
-        dataTypeMappings.put(LIST_AUTO_CONSTRUCT_IMPL, SdkInternalList.class.getName());
-        dataTypeMappings.put(MAP_INTERFACE, Map.class.getName());
-        dataTypeMappings.put(MAP_DEFAULT_IMPL, HashMap.class.getName());
-        dataTypeMappings.put(MAP_AUTO_CONSTRUCT_IMPL, SdkInternalMap.class.getName());
-        dataTypeMappings.put(LIST_INTERFACE, List.class.getName());
-        dataTypeMappings.put(LIST_DEFAULT_IMPL, ArrayList.class.getName());
-        dataTypeMappings.put(LIST_AUTO_CONSTRUCT_IMPL, SdkInternalList.class.getName());
-        dataTypeMappings.put(MAP_INTERFACE, Map.class.getName());
-        dataTypeMappings.put(MAP_DEFAULT_IMPL, HashMap.class.getName());
-        dataTypeMappings.put(MAP_AUTO_CONSTRUCT_IMPL, SdkInternalMap.class.getName());
+        DATA_TYPE_MAPPINGS.put("string", String.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("boolean", Boolean.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("int", Integer.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("any", Object.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("integer", Integer.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("double", Double.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("short", Short.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("long", Long.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("float", Float.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("byte", Byte.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("timestamp", Date.class.getName());
+        DATA_TYPE_MAPPINGS.put("blob", ByteBuffer.class.getName());
+        DATA_TYPE_MAPPINGS.put("stream", InputStream.class.getName());
+        DATA_TYPE_MAPPINGS.put("bigdecimal", BigDecimal.class.getName());
+        DATA_TYPE_MAPPINGS.put("biginteger", BigInteger.class.getName());
+        DATA_TYPE_MAPPINGS.put("list", List.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put("map", Map.class.getSimpleName());
+        DATA_TYPE_MAPPINGS.put(LIST_INTERFACE, List.class.getName());
+        DATA_TYPE_MAPPINGS.put(LIST_DEFAULT_IMPL, ArrayList.class.getName());
+        DATA_TYPE_MAPPINGS.put(LIST_AUTO_CONSTRUCT_IMPL, SdkInternalList.class.getName());
+        DATA_TYPE_MAPPINGS.put(MAP_INTERFACE, Map.class.getName());
+        DATA_TYPE_MAPPINGS.put(MAP_DEFAULT_IMPL, HashMap.class.getName());
+        DATA_TYPE_MAPPINGS.put(MAP_AUTO_CONSTRUCT_IMPL, SdkInternalMap.class.getName());
+        DATA_TYPE_MAPPINGS.put(LIST_INTERFACE, List.class.getName());
+        DATA_TYPE_MAPPINGS.put(LIST_DEFAULT_IMPL, ArrayList.class.getName());
+        DATA_TYPE_MAPPINGS.put(LIST_AUTO_CONSTRUCT_IMPL, SdkInternalList.class.getName());
+        DATA_TYPE_MAPPINGS.put(MAP_INTERFACE, Map.class.getName());
+        DATA_TYPE_MAPPINGS.put(MAP_DEFAULT_IMPL, HashMap.class.getName());
+        DATA_TYPE_MAPPINGS.put(MAP_AUTO_CONSTRUCT_IMPL, SdkInternalMap.class.getName());
 
-        marshallingTypeMappings.put("String", "STRING");
-        marshallingTypeMappings.put("Integer", "INTEGER");
-        marshallingTypeMappings.put("Long", "LONG");
-        marshallingTypeMappings.put("Float", "FLOAT");
-        marshallingTypeMappings.put("Double", "DOUBLE");
-        marshallingTypeMappings.put("Date", "DATE");
-        marshallingTypeMappings.put("ByteBuffer", "BYTE_BUFFER");
-        marshallingTypeMappings.put("Boolean", "BOOLEAN");
-        marshallingTypeMappings.put("BigDecimal", "BIG_DECIMAL");
-        marshallingTypeMappings.put("InputStream", "STREAM");
-        marshallingTypeMappings.put(null, "NULL");
+        MARSHALLING_TYPE_MAPPINGS.put("String", "STRING");
+        MARSHALLING_TYPE_MAPPINGS.put("Integer", "INTEGER");
+        MARSHALLING_TYPE_MAPPINGS.put("Long", "LONG");
+        MARSHALLING_TYPE_MAPPINGS.put("Float", "FLOAT");
+        MARSHALLING_TYPE_MAPPINGS.put("Double", "DOUBLE");
+        MARSHALLING_TYPE_MAPPINGS.put("Date", "DATE");
+        MARSHALLING_TYPE_MAPPINGS.put("ByteBuffer", "BYTE_BUFFER");
+        MARSHALLING_TYPE_MAPPINGS.put("Boolean", "BOOLEAN");
+        MARSHALLING_TYPE_MAPPINGS.put("BigDecimal", "BIG_DECIMAL");
+        MARSHALLING_TYPE_MAPPINGS.put("InputStream", "STREAM");
+        MARSHALLING_TYPE_MAPPINGS.put(null, "NULL");
     }
 
     private final NamingStrategy namingStrategy;
@@ -109,15 +109,15 @@ public class TypeUtils {
     }
 
     public static String getMarshallingType(String simpleType) {
-        return marshallingTypeMappings.get(simpleType);
+        return MARSHALLING_TYPE_MAPPINGS.get(simpleType);
     }
 
     public static boolean isSimple(String type) {
-        return dataTypeMappings.containsKey(type) || dataTypeMappings.containsValue(type);
+        return DATA_TYPE_MAPPINGS.containsKey(type) || DATA_TYPE_MAPPINGS.containsValue(type);
     }
 
     public static String getDataTypeMapping(String type) {
-        return dataTypeMappings.get(type);
+        return DATA_TYPE_MAPPINGS.get(type);
     }
 
     /**
@@ -153,24 +153,24 @@ public class TypeUtils {
         } else if (List.getName().equals(shapeType)) {
             String listType =
                     customConfig != null && customConfig.isUseAutoConstructList() ? LIST_AUTO_CONSTRUCT_IMPL : LIST_INTERFACE;
-            final String listContainerType = dataTypeMappings.get(listType);
+            final String listContainerType = DATA_TYPE_MAPPINGS.get(listType);
             return listContainerType + "<" +
                     getJavaDataType(shapes, shape.getListMember().getShape()) + ">";
         } else if (Map.getName().equals(shapeType)) {
             String mapType =
                     customConfig != null && customConfig.isUseAutoConstructMap() ? MAP_AUTO_CONSTRUCT_IMPL : MAP_INTERFACE;
-            final String mapContainerType = dataTypeMappings.get(mapType);
+            final String mapContainerType = DATA_TYPE_MAPPINGS.get(mapType);
             return mapContainerType + "<" +
                     getJavaDataType(shapes, shape.getMapKeyType().getShape()) + "," +
                     getJavaDataType(shapes, shape.getMapValueType().getShape()) + ">";
         } else {
 
             if (shape.isStreaming()) {
-                return dataTypeMappings.get("stream");
+                return DATA_TYPE_MAPPINGS.get("stream");
             }
 
             // scalar type.
-            final String dataType = dataTypeMappings.get(shapeType);
+            final String dataType = DATA_TYPE_MAPPINGS.get(shapeType);
             if (dataType == null) {
                 throw new RuntimeException(
                         "Equivalent Java data type cannot be found for data type : " + shapeType);

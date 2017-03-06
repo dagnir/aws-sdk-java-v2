@@ -65,15 +65,15 @@ public class EC2MetadataUtils {
     private static final String EC2_METADATA_SERVICE_URL = "http://169.254.169.254";
     private static final int DEFAULT_QUERY_RETRIES = 3;
     private static final int MINIMUM_RETRY_WAIT_TIME_MILLISECONDS = 250;
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final Log log = LogFactory.getLog(EC2MetadataUtils.class);
     private static Map<String, String> cache = new ConcurrentHashMap<String, String>();
 
     static {
-        mapper.configure(
+        MAPPER.configure(
                 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        mapper
+        MAPPER
                 .setPropertyNamingStrategy(PropertyNamingStrategy.PASCAL_CASE_TO_CAMEL_CASE);
     }
 
@@ -211,7 +211,7 @@ public class EC2MetadataUtils {
 
         try {
 
-            return mapper.readValue(json, IAMInfo.class);
+            return MAPPER.readValue(json, IAMInfo.class);
 
         } catch (Exception e) {
             log.warn("Unable to parse IAM Instance profile info (" + json
@@ -266,7 +266,7 @@ public class EC2MetadataUtils {
     static String doGetEC2InstanceRegion(final String json) {
         if (null != json) {
             try {
-                JsonNode node = mapper.readTree(json.getBytes(StringUtils.UTF8));
+                JsonNode node = MAPPER.readTree(json.getBytes(StringUtils.UTF8));
                 JsonNode region = node.findValue(REGION);
                 return region.asText();
             } catch (Exception e) {
@@ -293,7 +293,7 @@ public class EC2MetadataUtils {
                 String json = getData(EC2_METADATA_ROOT
                                       + "/iam/security-credentials/" + credential);
                 try {
-                    IAMSecurityCredential credentialInfo = mapper
+                    IAMSecurityCredential credentialInfo = MAPPER
                             .readValue(json, IAMSecurityCredential.class);
                     credentialsInfoMap.put(credential, credentialInfo);
                 } catch (Exception e) {

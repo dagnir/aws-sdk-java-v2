@@ -120,7 +120,7 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
     @Deprecated
     public ${metadata.asyncClient}(AwsCredentials awsCredentials, ExecutorService executorService) {
 
-        this(awsCredentials, configFactory.getConfig(), executorService);
+        this(awsCredentials, CONFIG_FACTORY.getConfig(), executorService);
     }
 
     /**
@@ -204,7 +204,7 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      */
     @Deprecated
     public ${metadata.asyncClient}(AwsCredentialsProvider awsCredentialsProvider, ExecutorService executorService) {
-        this(awsCredentialsProvider, configFactory.getConfig(), executorService);
+        this(awsCredentialsProvider, CONFIG_FACTORY.getConfig(), executorService);
     }
 
     /**

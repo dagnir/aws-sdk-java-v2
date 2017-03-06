@@ -84,134 +84,134 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
          * {@link BigDecimal}
          */
         BIG_DECIMAL(ScalarAttributeType.N, new ConverterMap(BigDecimal.class, null)
-                .with(Number.class, ToBigDecimal.FromString.join(ToString.FromNumber))
-                .with(String.class, ToBigDecimal.FromString)
+                .with(Number.class, ToBigDecimal.FROM_STRING.join(ToString.FROM_NUMBER))
+                .with(String.class, ToBigDecimal.FROM_STRING)
         ),
 
         /**
          * {@link BigInteger}
          */
         BIG_INTEGER(ScalarAttributeType.N, new ConverterMap(BigInteger.class, null)
-                .with(Number.class, ToBigInteger.FromString.join(ToString.FromNumber))
-                .with(String.class, ToBigInteger.FromString)
+                .with(Number.class, ToBigInteger.FROM_STRING.join(ToString.FROM_NUMBER))
+                .with(String.class, ToBigInteger.FROM_STRING)
         ),
 
         /**
          * {@link Boolean}
          */
         BOOLEAN(ScalarAttributeType.N, new ConverterMap(Boolean.class, Boolean.TYPE)
-                .with(Number.class, ToBoolean.FromString.join(ToString.FromNumber))
-                .with(String.class, ToBoolean.FromString)
+                .with(Number.class, ToBoolean.FROM_STRING.join(ToString.FROM_NUMBER))
+                .with(String.class, ToBoolean.FROM_STRING)
         ),
 
         /**
          * {@link Byte}
          */
         BYTE(ScalarAttributeType.N, new ConverterMap(Byte.class, Byte.TYPE)
-                .with(Number.class, ToByte.FromNumber)
-                .with(String.class, ToByte.FromString)
+                .with(Number.class, ToByte.FROM_NUMBER)
+                .with(String.class, ToByte.FROM_STRING)
         ),
 
         /**
          * {@link Byte} array
          */
         BYTE_ARRAY(ScalarAttributeType.B, new ConverterMap(byte[].class, null)
-                .with(ByteBuffer.class, ToByteArray.FromByteBuffer)
-                .with(String.class, ToByteArray.FromString)
+                .with(ByteBuffer.class, ToByteArray.FROM_BYTE_BUFFER)
+                .with(String.class, ToByteArray.FROM_STRING)
         ),
 
         /**
          * {@link ByteBuffer}
          */
         BYTE_BUFFER(ScalarAttributeType.B, new ConverterMap(ByteBuffer.class, null)
-                .with(byte[].class, ToByteBuffer.FromByteArray)
-                .with(String.class, ToByteBuffer.FromByteArray.join(ToByteArray.FromString))
-                .with(java.util.UUID.class, ToByteBuffer.FromUuid)
+                .with(byte[].class, ToByteBuffer.FROM_BYTE_ARRAY)
+                .with(String.class, ToByteBuffer.FROM_BYTE_ARRAY.join(ToByteArray.FROM_STRING))
+                .with(java.util.UUID.class, ToByteBuffer.FROM_UUID)
         ),
 
         /**
          * {@link Calendar}
          */
         CALENDAR(ScalarAttributeType.S, new ConverterMap(Calendar.class, null)
-                .with(Date.class, ToCalendar.FromDate)
-                .with(DateTime.class, ToCalendar.FromDate.join(ToDate.FromDateTime))
-                .with(Long.class, ToCalendar.FromDate.join(ToDate.FromLong))
-                .with(String.class, ToCalendar.FromDate.join(ToDate.FromString))
+                .with(Date.class, ToCalendar.FROM_DATE)
+                .with(DateTime.class, ToCalendar.FROM_DATE.join(ToDate.FROM_DATETIME))
+                .with(Long.class, ToCalendar.FROM_DATE.join(ToDate.FROM_LONG))
+                .with(String.class, ToCalendar.FROM_DATE.join(ToDate.FROM_STRING))
         ),
 
         /**
          * {@link Character}
          */
         CHARACTER(ScalarAttributeType.S, new ConverterMap(Character.class, Character.TYPE)
-                .with(String.class, ToCharacter.FromString)
+                .with(String.class, ToCharacter.FROM_STRING)
         ),
 
         /**
          * {@link Currency}
          */
         CURRENCY(ScalarAttributeType.S, new ConverterMap(Currency.class, null)
-                .with(String.class, ToCurrency.FromString)
+                .with(String.class, ToCurrency.FROM_STRING)
         ),
 
         /**
          * {@link Date}
          */
         DATE(ScalarAttributeType.S, new ConverterMap(Date.class, null)
-                .with(Calendar.class, ToDate.FromCalendar)
-                .with(DateTime.class, ToDate.FromDateTime)
-                .with(Long.class, ToDate.FromLong)
-                .with(String.class, ToDate.FromString)
+                .with(Calendar.class, ToDate.FROM_CALENDAR)
+                .with(DateTime.class, ToDate.FROM_DATETIME)
+                .with(Long.class, ToDate.FROM_LONG)
+                .with(String.class, ToDate.FROM_STRING)
         ),
 
         /**
          * {@link DateTime}
          */
         DATE_TIME(/*ScalarAttributeType.S*/null, new ConverterMap(DateTime.class, null)
-                .with(Calendar.class, ToDateTime.FromDate.join(ToDate.FromCalendar))
-                .with(Date.class, ToDateTime.FromDate)
-                .with(Long.class, ToDateTime.FromDate.join(ToDate.FromLong))
-                .with(String.class, ToDateTime.FromDate.join(ToDate.FromString))
+                .with(Calendar.class, ToDateTime.FROM_DATE.join(ToDate.FROM_CALENDAR))
+                .with(Date.class, ToDateTime.FROM_DATE)
+                .with(Long.class, ToDateTime.FROM_DATE.join(ToDate.FROM_LONG))
+                .with(String.class, ToDateTime.FROM_DATE.join(ToDate.FROM_STRING))
         ),
 
         /**
          * {@link Double}
          */
         DOUBLE(ScalarAttributeType.N, new ConverterMap(Double.class, Double.TYPE)
-                .with(Number.class, ToDouble.FromNumber)
-                .with(String.class, ToDouble.FromString)
+                .with(Number.class, ToDouble.FROM_NUMBER)
+                .with(String.class, ToDouble.FROM_STRING)
         ),
 
         /**
          * {@link Float}
          */
         FLOAT(ScalarAttributeType.N, new ConverterMap(Float.class, Float.TYPE)
-                .with(Number.class, ToFloat.FromNumber)
-                .with(String.class, ToFloat.FromString)
+                .with(Number.class, ToFloat.FROM_NUMBER)
+                .with(String.class, ToFloat.FROM_STRING)
         ),
 
         /**
          * {@link Integer}
          */
         INTEGER(ScalarAttributeType.N, new ConverterMap(Integer.class, Integer.TYPE)
-                .with(Number.class, ToInteger.FromNumber)
-                .with(String.class, ToInteger.FromString)
+                .with(Number.class, ToInteger.FROM_NUMBER)
+                .with(String.class, ToInteger.FROM_STRING)
         ),
 
         /**
          * {@link Locale}
          */
         LOCALE(ScalarAttributeType.S, new ConverterMap(Locale.class, null)
-                .with(String.class, ToLocale.FromString)
+                .with(String.class, ToLocale.FROM_STRING)
         ),
 
         /**
          * {@link Long}
          */
         LONG(ScalarAttributeType.N, new ConverterMap(Long.class, Long.TYPE)
-                .with(Date.class, ToLong.FromDate)
-                .with(DateTime.class, ToLong.FromDate.join(ToDate.FromDateTime))
-                .with(Number.class, ToLong.FromNumber)
-                .with(String.class, ToLong.FromString)
+                .with(Date.class, ToLong.FROM_DATE)
+                .with(DateTime.class, ToLong.FROM_DATE.join(ToDate.FROM_DATETIME))
+                .with(Number.class, ToLong.FROM_NUMBER)
+                .with(String.class, ToLong.FROM_STRING)
         ),
 
         /**
@@ -223,52 +223,52 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
          * {@link Short}
          */
         SHORT(ScalarAttributeType.N, new ConverterMap(Short.class, Short.TYPE)
-                .with(Number.class, ToShort.FromNumber)
-                .with(String.class, ToShort.FromString)
+                .with(Number.class, ToShort.FROM_NUMBER)
+                .with(String.class, ToShort.FROM_STRING)
         ),
 
         /**
          * {@link String}
          */
         STRING(ScalarAttributeType.S, new ConverterMap(String.class, null)
-                .with(Boolean.class, ToString.FromBoolean)
-                .with(byte[].class, ToString.FromByteArray)
-                .with(ByteBuffer.class, ToString.FromByteArray.join(ToByteArray.FromByteBuffer))
-                .with(Calendar.class, ToString.FromDate.join(ToDate.FromCalendar))
-                .with(Date.class, ToString.FromDate)
-                .with(Enum.class, ToString.FromEnum)
-                .with(Locale.class, ToString.FromLocale)
-                .with(TimeZone.class, ToString.FromTimeZone)
-                .with(Object.class, ToString.FromObject)
+                .with(Boolean.class, ToString.FROM_BOOLEAN)
+                .with(byte[].class, ToString.FROM_BYTE_ARRAY)
+                .with(ByteBuffer.class, ToString.FROM_BYTE_ARRAY.join(ToByteArray.FROM_BYTE_BUFFER))
+                .with(Calendar.class, ToString.FROM_DATE.join(ToDate.FROM_CALENDAR))
+                .with(Date.class, ToString.FROM_DATE)
+                .with(Enum.class, ToString.FROM_ENUM)
+                .with(Locale.class, ToString.FROM_LOCALE)
+                .with(TimeZone.class, ToString.FROM_TIME_ZONE)
+                .with(Object.class, ToString.FROM_OBJECT)
         ),
 
         /**
          * {@link TimeZone}
          */
         TIME_ZONE(ScalarAttributeType.S, new ConverterMap(TimeZone.class, null)
-                .with(String.class, ToTimeZone.FromString)
+                .with(String.class, ToTimeZone.FROM_STRING)
         ),
 
         /**
          * {@link java.net.URL}
          */
         URL(ScalarAttributeType.S, new ConverterMap(java.net.URL.class, null)
-                .with(String.class, ToUrl.FromString)
+                .with(String.class, ToUrl.FROM_STRING)
         ),
 
         /**
          * {@link java.net.URI}
          */
         URI(ScalarAttributeType.S, new ConverterMap(java.net.URI.class, null)
-                .with(String.class, ToUri.FromString)
+                .with(String.class, ToUri.FROM_STRING)
         ),
 
         /**
          * {@link java.util.UUID}
          */
         UUID(ScalarAttributeType.S, new ConverterMap(java.util.UUID.class, null)
-                .with(ByteBuffer.class, ToUuid.FromByteBuffer)
-                .with(String.class, ToUuid.FromString)
+                .with(ByteBuffer.class, ToUuid.FROM_BYTE_BUFFER)
+                .with(String.class, ToUuid.FROM_STRING)
         ),
 
         /**
@@ -278,7 +278,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
             @Override
             <S, T> Converter<S, T> getConverter(Class<S> sourceType, Class<T> targetType) {
                 if (sourceType.isEnum() && STRING.map.isAssignableFrom(targetType)) {
-                    return (Converter<S, T>) new ToEnum.FromString(sourceType);
+                    return (Converter<S, T>) new ToEnum.FROM_STRING(sourceType);
                 }
                 return super.<S, T>getConverter(sourceType, targetType);
             }
@@ -512,7 +512,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
                 }
             }
             if (isAssignableFrom(targetType)) {
-                return (Converter<S, T>) ToObject.FromObject;
+                return (Converter<S, T>) ToObject.FROM_OBJECT;
             }
             throw new DynamoDBMappingException(
                     "type [" + targetType + "] is not supported; no conversion from " + referenceType
@@ -524,7 +524,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link BigDecimal} conversion functions.
      */
     private abstract static class ToBigDecimal<T> extends Converter<BigDecimal, T> {
-        private static final ToBigDecimal<String> FromString = new ToBigDecimal<String>() {
+        private static final ToBigDecimal<String> FROM_STRING = new ToBigDecimal<String>() {
             @Override
             public final BigDecimal convert(final String o) {
                 return new BigDecimal(o);
@@ -536,7 +536,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link BigInteger} conversion functions.
      */
     private abstract static class ToBigInteger<T> extends Converter<BigInteger, T> {
-        private static final ToBigInteger<String> FromString = new ToBigInteger<String>() {
+        private static final ToBigInteger<String> FROM_STRING = new ToBigInteger<String>() {
             @Override
             public final BigInteger convert(final String o) {
                 return new BigInteger(o);
@@ -548,7 +548,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Boolean} conversion functions.
      */
     private abstract static class ToBoolean<T> extends Converter<Boolean, T> {
-        private static final ToBoolean<String> FromString = new ToBoolean<String>() {
+        private static final ToBoolean<String> FROM_STRING = new ToBoolean<String>() {
             private final Pattern n0 = Pattern.compile("(?i)[N0]");
             private final Pattern y1 = Pattern.compile("(?i)[Y1]");
 
@@ -563,14 +563,14 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Byte} conversion functions.
      */
     private abstract static class ToByte<T> extends Converter<Byte, T> {
-        private static final ToByte<Number> FromNumber = new ToByte<Number>() {
+        private static final ToByte<Number> FROM_NUMBER = new ToByte<Number>() {
             @Override
             public final Byte convert(final Number o) {
                 return o.byteValue();
             }
         };
 
-        private static final ToByte<String> FromString = new ToByte<String>() {
+        private static final ToByte<String> FROM_STRING = new ToByte<String>() {
             @Override
             public final Byte convert(final String o) {
                 return Byte.valueOf(o);
@@ -582,7 +582,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link byte} array conversion functions.
      */
     private abstract static class ToByteArray<T> extends Converter<byte[], T> {
-        private static final ToByteArray<ByteBuffer> FromByteBuffer = new ToByteArray<ByteBuffer>() {
+        private static final ToByteArray<ByteBuffer> FROM_BYTE_BUFFER = new ToByteArray<ByteBuffer>() {
             @Override
             public final byte[] convert(final ByteBuffer o) {
                 if (o.hasArray()) {
@@ -594,7 +594,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
             }
         };
 
-        private static final ToByteArray<String> FromString = new ToByteArray<String>() {
+        private static final ToByteArray<String> FROM_STRING = new ToByteArray<String>() {
             @Override
             public final byte[] convert(final String o) {
                 return o.getBytes(Charset.forName("UTF-8"));
@@ -606,14 +606,14 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link ByteBuffer} conversion functions.
      */
     private abstract static class ToByteBuffer<T> extends Converter<ByteBuffer, T> {
-        private static final ToByteBuffer<byte[]> FromByteArray = new ToByteBuffer<byte[]>() {
+        private static final ToByteBuffer<byte[]> FROM_BYTE_ARRAY = new ToByteBuffer<byte[]>() {
             @Override
             public final ByteBuffer convert(final byte[] o) {
                 return ByteBuffer.wrap(o);
             }
         };
 
-        private static final ToByteBuffer<java.util.UUID> FromUuid = new ToByteBuffer<java.util.UUID>() {
+        private static final ToByteBuffer<java.util.UUID> FROM_UUID = new ToByteBuffer<java.util.UUID>() {
             @Override
             public final ByteBuffer convert(final java.util.UUID o) {
                 final ByteBuffer value = ByteBuffer.allocate(16);
@@ -628,7 +628,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Calendar} conversion functions.
      */
     private abstract static class ToCalendar<T> extends Converter<Calendar, T> {
-        private static final ToCalendar<Date> FromDate = new ToCalendar<Date>() {
+        private static final ToCalendar<Date> FROM_DATE = new ToCalendar<Date>() {
             @Override
             public final Calendar convert(final Date o) {
                 final Calendar value = Calendar.getInstance();
@@ -642,7 +642,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Character} conversion functions.
      */
     private abstract static class ToCharacter<T> extends Converter<Character, T> {
-        private static final ToCharacter<String> FromString = new ToCharacter<String>() {
+        private static final ToCharacter<String> FROM_STRING = new ToCharacter<String>() {
             @Override
             public final Character convert(final String o) {
                 return Character.valueOf(o.charAt(0));
@@ -654,7 +654,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Currency} conversion functions.
      */
     private abstract static class ToCurrency<T> extends Converter<Currency, T> {
-        private static final ToCurrency<String> FromString = new ToCurrency<String>() {
+        private static final ToCurrency<String> FROM_STRING = new ToCurrency<String>() {
             @Override
             public final Currency convert(final String o) {
                 return Currency.getInstance(o);
@@ -666,28 +666,28 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Date} conversion functions.
      */
     private abstract static class ToDate<T> extends Converter<Date, T> {
-        private static final ToDate<Calendar> FromCalendar = new ToDate<Calendar>() {
+        private static final ToDate<Calendar> FROM_CALENDAR = new ToDate<Calendar>() {
             @Override
             public final Date convert(final Calendar o) {
                 return o.getTime();
             }
         };
 
-        private static final ToDate<DateTime> FromDateTime = new ToDate<DateTime>() {
+        private static final ToDate<DateTime> FROM_DATETIME = new ToDate<DateTime>() {
             @Override
             public final Date convert(final DateTime o) {
                 return o.toDate();
             }
         };
 
-        private static final ToDate<Long> FromLong = new ToDate<Long>() {
+        private static final ToDate<Long> FROM_LONG = new ToDate<Long>() {
             @Override
             public final Date convert(final Long o) {
                 return new Date(o);
             }
         };
 
-        private static final ToDate<String> FromString = new ToDate<String>() {
+        private static final ToDate<String> FROM_STRING = new ToDate<String>() {
             @Override
             public final Date convert(final String o) {
                 return DateUtils.parseIso8601Date(o);
@@ -699,7 +699,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link DateTime} conversion functions.
      */
     private abstract static class ToDateTime<T> extends Converter<DateTime, T> {
-        private static final ToDateTime<Date> FromDate = new ToDateTime<Date>() {
+        private static final ToDateTime<Date> FROM_DATE = new ToDateTime<Date>() {
             public final DateTime convert(final Date o) {
                 return new DateTime(o);
             }
@@ -710,14 +710,14 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Double} conversion functions.
      */
     private abstract static class ToDouble<T> extends Converter<Double, T> {
-        private static final ToDouble<Number> FromNumber = new ToDouble<Number>() {
+        private static final ToDouble<Number> FROM_NUMBER = new ToDouble<Number>() {
             @Override
             public final Double convert(final Number o) {
                 return o.doubleValue();
             }
         };
 
-        private static final ToDouble<String> FromString = new ToDouble<String>() {
+        private static final ToDouble<String> FROM_STRING = new ToDouble<String>() {
             @Override
             public final Double convert(final String o) {
                 return Double.valueOf(o);
@@ -729,10 +729,10 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Enum} from {@link String}
      */
     private abstract static class ToEnum<S extends Enum<S>, T> extends Converter<S, T> {
-        private static final class FromString<S extends Enum<S>> extends ToEnum<S, String> {
+        private static final class FROM_STRING<S extends Enum<S>> extends ToEnum<S, String> {
             private final Class<S> sourceType;
 
-            private FromString(final Class<S> sourceType) {
+            private FROM_STRING(final Class<S> sourceType) {
                 this.sourceType = sourceType;
             }
 
@@ -747,14 +747,14 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Float} conversion functions.
      */
     private abstract static class ToFloat<T> extends Converter<Float, T> {
-        private static final ToFloat<Number> FromNumber = new ToFloat<Number>() {
+        private static final ToFloat<Number> FROM_NUMBER = new ToFloat<Number>() {
             @Override
             public final Float convert(final Number o) {
                 return o.floatValue();
             }
         };
 
-        private static final ToFloat<String> FromString = new ToFloat<String>() {
+        private static final ToFloat<String> FROM_STRING = new ToFloat<String>() {
             @Override
             public final Float convert(final String o) {
                 return Float.valueOf(o);
@@ -766,14 +766,14 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Integer} conversion functions.
      */
     private abstract static class ToInteger<T> extends Converter<Integer, T> {
-        private static final ToInteger<Number> FromNumber = new ToInteger<Number>() {
+        private static final ToInteger<Number> FROM_NUMBER = new ToInteger<Number>() {
             @Override
             public final Integer convert(final Number o) {
                 return o.intValue();
             }
         };
 
-        private static final ToInteger<String> FromString = new ToInteger<String>() {
+        private static final ToInteger<String> FROM_STRING = new ToInteger<String>() {
             @Override
             public final Integer convert(final String o) {
                 return Integer.valueOf(o);
@@ -785,7 +785,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Locale} conversion functions.
      */
     private abstract static class ToLocale<T> extends Converter<Locale, T> {
-        private static final ToLocale<String> FromString = new ToLocale<String>() {
+        private static final ToLocale<String> FROM_STRING = new ToLocale<String>() {
             @Override
             public final Locale convert(final String o) {
                 final String[] value = o.split("-", 3);
@@ -804,21 +804,21 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Long} conversion functions.
      */
     private abstract static class ToLong<T> extends Converter<Long, T> {
-        private static final ToLong<Date> FromDate = new ToLong<Date>() {
+        private static final ToLong<Date> FROM_DATE = new ToLong<Date>() {
             @Override
             public final Long convert(final Date o) {
                 return o.getTime();
             }
         };
 
-        private static final ToLong<Number> FromNumber = new ToLong<Number>() {
+        private static final ToLong<Number> FROM_NUMBER = new ToLong<Number>() {
             @Override
             public final Long convert(final Number o) {
                 return o.longValue();
             }
         };
 
-        private static final ToLong<String> FromString = new ToLong<String>() {
+        private static final ToLong<String> FROM_STRING = new ToLong<String>() {
             @Override
             public final Long convert(final String o) {
                 return Long.valueOf(o);
@@ -830,14 +830,14 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Short} conversion functions.
      */
     private abstract static class ToShort<T> extends Converter<Short, T> {
-        private static final ToShort<Number> FromNumber = new ToShort<Number>() {
+        private static final ToShort<Number> FROM_NUMBER = new ToShort<Number>() {
             @Override
             public final Short convert(final Number o) {
                 return o.shortValue();
             }
         };
 
-        private static final ToShort<String> FromString = new ToShort<String>() {
+        private static final ToShort<String> FROM_STRING = new ToShort<String>() {
             @Override
             public final Short convert(final String o) {
                 return Short.valueOf(o);
@@ -849,35 +849,35 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link String} conversion functions.
      */
     private abstract static class ToString<T> extends Converter<String, T> {
-        private static final ToString<Boolean> FromBoolean = new ToString<Boolean>() {
+        private static final ToString<Boolean> FROM_BOOLEAN = new ToString<Boolean>() {
             @Override
             public final String convert(final Boolean o) {
                 return Boolean.TRUE.equals(o) ? "1" : "0";
             }
         };
 
-        private static final ToString<byte[]> FromByteArray = new ToString<byte[]>() {
+        private static final ToString<byte[]> FROM_BYTE_ARRAY = new ToString<byte[]>() {
             @Override
             public final String convert(final byte[] o) {
                 return new String(o, Charset.forName("UTF-8"));
             }
         };
 
-        private static final ToString<Date> FromDate = new ToString<Date>() {
+        private static final ToString<Date> FROM_DATE = new ToString<Date>() {
             @Override
             public final String convert(final Date o) {
                 return DateUtils.formatIso8601Date(o);
             }
         };
 
-        private static final ToString<Enum> FromEnum = new ToString<Enum>() {
+        private static final ToString<Enum> FROM_ENUM = new ToString<Enum>() {
             @Override
             public final String convert(final Enum o) {
                 return o.name();
             }
         };
 
-        private static final ToString<Locale> FromLocale = new ToString<Locale>() {
+        private static final ToString<Locale> FROM_LOCALE = new ToString<Locale>() {
             @Override
             public final String convert(final Locale o) {
                 final StringBuilder value = new StringBuilder(o.getLanguage());
@@ -891,21 +891,21 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
             }
         };
 
-        private static final ToString<Number> FromNumber = new ToString<Number>() {
+        private static final ToString<Number> FROM_NUMBER = new ToString<Number>() {
             @Override
             public final String convert(final Number o) {
                 return o.toString();
             }
         };
 
-        private static final ToString<TimeZone> FromTimeZone = new ToString<TimeZone>() {
+        private static final ToString<TimeZone> FROM_TIME_ZONE = new ToString<TimeZone>() {
             @Override
             public final String convert(final TimeZone o) {
                 return o.getID();
             }
         };
 
-        private static final ToString<Object> FromObject = new ToString<Object>() {
+        private static final ToString<Object> FROM_OBJECT = new ToString<Object>() {
             @Override
             public final String convert(final Object o) {
                 return o.toString();
@@ -917,7 +917,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link TimeZone} conversion functions.
      */
     private abstract static class ToTimeZone<T> extends Converter<TimeZone, T> {
-        private static final ToTimeZone<String> FromString = new ToTimeZone<String>() {
+        private static final ToTimeZone<String> FROM_STRING = new ToTimeZone<String>() {
             @Override
             public final TimeZone convert(final String o) {
                 return TimeZone.getTimeZone(o);
@@ -929,7 +929,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link java.net.URL} conversion functions.
      */
     private abstract static class ToUrl<T> extends Converter<java.net.URL, String> {
-        private static final ToUrl<String> FromString = new ToUrl<String>() {
+        private static final ToUrl<String> FROM_STRING = new ToUrl<String>() {
             @Override
             public final java.net.URL convert(final String o) {
                 try {
@@ -945,7 +945,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link java.net.URI} conversion functions.
      */
     private abstract static class ToUri<T> extends Converter<java.net.URI, T> {
-        private static final ToUri<String> FromString = new ToUri<String>() {
+        private static final ToUri<String> FROM_STRING = new ToUri<String>() {
             @Override
             public final java.net.URI convert(final String o) {
                 try {
@@ -961,14 +961,14 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link java.util.UUID} conversion functions.
      */
     private abstract static class ToUuid<T> extends Converter<java.util.UUID, T> {
-        private static final ToUuid<ByteBuffer> FromByteBuffer = new ToUuid<ByteBuffer>() {
+        private static final ToUuid<ByteBuffer> FROM_BYTE_BUFFER = new ToUuid<ByteBuffer>() {
             @Override
             public final java.util.UUID convert(final ByteBuffer o) {
                 return new java.util.UUID(o.getLong(), o.getLong());
             }
         };
 
-        private static final ToUuid<String> FromString = new ToUuid<String>() {
+        private static final ToUuid<String> FROM_STRING = new ToUuid<String>() {
             @Override
             public final java.util.UUID convert(final String o) {
                 return java.util.UUID.fromString(o);
@@ -980,7 +980,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@link Object} conversion functions.
      */
     private abstract static class ToObject<T> extends Converter<Object, T> {
-        private static final ToObject<Object> FromObject = new ToObject<Object>() {
+        private static final ToObject<Object> FROM_OBJECT = new ToObject<Object>() {
             @Override
             public final Object convert(final Object o) {
                 return o;

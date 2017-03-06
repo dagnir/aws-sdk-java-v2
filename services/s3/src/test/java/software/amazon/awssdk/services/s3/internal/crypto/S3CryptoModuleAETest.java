@@ -75,7 +75,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
                 byte[] iv = decodeBase64(b64iv);
                 assertTrue(AES_GCM.getIvLengthInBytes() == iv.length);
                 assertEquals(AES_GCM.getCipherAlgorithm(), userMD.get(Headers.CRYPTO_CEK_ALGORITHM));
-                assertEquals(S3KeyWrapScheme.AESWrap, userMD.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
+                assertEquals(S3KeyWrapScheme.AES_WRAP, userMD.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
                 assertEquals(String.valueOf(AES_GCM.getTagLengthInBits()), userMD.get(Headers.CRYPTO_TAG_LENGTH));
                 return;
             }
@@ -134,7 +134,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
                     assertEquals("{}", map.get(Headers.MATERIALS_DESCRIPTION));
                     assertEquals(AES_GCM.getCipherAlgorithm(),
                                  map.get(Headers.CRYPTO_CEK_ALGORITHM));
-                    assertEquals(S3KeyWrapScheme.AESWrap,
+                    assertEquals(S3KeyWrapScheme.AES_WRAP,
                                  map.get(Headers.CRYPTO_KEYWRAP_ALGORITHM));
                     assertEquals(String.valueOf(AES_GCM.getTagLengthInBits()),
                                  map.get(Headers.CRYPTO_TAG_LENGTH));
@@ -159,7 +159,7 @@ public class S3CryptoModuleAETest extends S3CryptoModuleTestBase {
         assertEquals(AES_GCM.getSpecificCipherProvider(), scheme.getSpecificCipherProvider());
 
         String kwa = inst.getKeyWrappingAlgorithm();
-        assertEquals(S3KeyWrapScheme.AESWrap, kwa);
+        assertEquals(S3KeyWrapScheme.AES_WRAP, kwa);
         byte[] encryptedCEK = inst.getEncryptedCek();
         assertTrue(encryptedCEK.length == 40);
 

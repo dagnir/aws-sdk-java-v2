@@ -71,21 +71,21 @@ public class ProgressEvent {
 
     // Deprecated integer event codes
     // Mapping from event types to the legacy event codes
-    private static final Map<ProgressEventType, Integer> legacyEventCodes =
+    private static final Map<ProgressEventType, Integer> LEGACY_EVENT_CODES =
             new EnumMap<ProgressEventType, Integer>(ProgressEventType.class);
 
     static {
-        legacyEventCodes.put(ProgressEventType.BYTE_TRANSFER_EVENT, 0);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PREPARING_EVENT, PREPARING_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_STARTED_EVENT, STARTED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_COMPLETED_EVENT, COMPLETED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_FAILED_EVENT, FAILED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_CANCELED_EVENT, CANCELED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.HTTP_REQUEST_CONTENT_RESET_EVENT, RESET_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.HTTP_RESPONSE_CONTENT_RESET_EVENT, RESET_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_STARTED_EVENT, PART_STARTED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_COMPLETED_EVENT, PART_COMPLETED_EVENT_CODE);
-        legacyEventCodes.put(ProgressEventType.TRANSFER_PART_FAILED_EVENT, PART_FAILED_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.BYTE_TRANSFER_EVENT, 0);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_PREPARING_EVENT, PREPARING_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_STARTED_EVENT, STARTED_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_COMPLETED_EVENT, COMPLETED_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_FAILED_EVENT, FAILED_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_CANCELED_EVENT, CANCELED_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.HTTP_REQUEST_CONTENT_RESET_EVENT, RESET_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.HTTP_RESPONSE_CONTENT_RESET_EVENT, RESET_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_PART_STARTED_EVENT, PART_STARTED_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_PART_COMPLETED_EVENT, PART_COMPLETED_EVENT_CODE);
+        LEGACY_EVENT_CODES.put(ProgressEventType.TRANSFER_PART_FAILED_EVENT, PART_FAILED_EVENT_CODE);
     }
 
     /** The number of bytes associated with the progress event. */
@@ -171,7 +171,7 @@ public class ProgressEvent {
      */
     @Deprecated
     public int getEventCode() {
-        Integer legacyCode = legacyEventCodes.get(eventType);
+        Integer legacyCode = LEGACY_EVENT_CODES.get(eventType);
         // Returns -1 if the event type does not have a legacy event code
         return legacyCode == null ? -1 : legacyCode;
     }

@@ -36,10 +36,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for String values.
      */
     public static class StringStaxUnmarshaller implements Unmarshaller<String, StaxUnmarshallerContext> {
-        private static final StringStaxUnmarshaller instance = new StringStaxUnmarshaller();
+        private static final StringStaxUnmarshaller INSTANCE = new StringStaxUnmarshaller();
 
         public static StringStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public String unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -48,10 +48,10 @@ public class SimpleTypeStaxUnmarshallers {
     }
 
     public static class BigDecimalStaxUnmarshaller implements Unmarshaller<BigDecimal, StaxUnmarshallerContext> {
-        private static final BigDecimalStaxUnmarshaller instance = new BigDecimalStaxUnmarshaller();
+        private static final BigDecimalStaxUnmarshaller INSTANCE = new BigDecimalStaxUnmarshaller();
 
         public static BigDecimalStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public BigDecimal unmarshall(StaxUnmarshallerContext unmarshallerContext)
@@ -62,10 +62,10 @@ public class SimpleTypeStaxUnmarshallers {
     }
 
     public static class BigIntegerStaxUnmarshaller implements Unmarshaller<BigInteger, StaxUnmarshallerContext> {
-        private static final BigIntegerStaxUnmarshaller instance = new BigIntegerStaxUnmarshaller();
+        private static final BigIntegerStaxUnmarshaller INSTANCE = new BigIntegerStaxUnmarshaller();
 
         public static BigIntegerStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public BigInteger unmarshall(StaxUnmarshallerContext unmarshallerContext)
@@ -79,10 +79,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Double values.
      */
     public static class DoubleStaxUnmarshaller implements Unmarshaller<Double, StaxUnmarshallerContext> {
-        private static final DoubleStaxUnmarshaller instance = new DoubleStaxUnmarshaller();
+        private static final DoubleStaxUnmarshaller INSTANCE = new DoubleStaxUnmarshaller();
 
         public static DoubleStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Double unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -95,10 +95,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Integer values.
      */
     public static class IntegerStaxUnmarshaller implements Unmarshaller<Integer, StaxUnmarshallerContext> {
-        private static final IntegerStaxUnmarshaller instance = new IntegerStaxUnmarshaller();
+        private static final IntegerStaxUnmarshaller INSTANCE = new IntegerStaxUnmarshaller();
 
         public static IntegerStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Integer unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -111,10 +111,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Boolean values.
      */
     public static class BooleanStaxUnmarshaller implements Unmarshaller<Boolean, StaxUnmarshallerContext> {
-        private static final BooleanStaxUnmarshaller instance = new BooleanStaxUnmarshaller();
+        private static final BooleanStaxUnmarshaller INSTANCE = new BooleanStaxUnmarshaller();
 
         public static BooleanStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Boolean unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -127,10 +127,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Float values.
      */
     public static class FloatStaxUnmarshaller implements Unmarshaller<Float, StaxUnmarshallerContext> {
-        private static final FloatStaxUnmarshaller instance = new FloatStaxUnmarshaller();
+        private static final FloatStaxUnmarshaller INSTANCE = new FloatStaxUnmarshaller();
 
         public static FloatStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Float unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -143,10 +143,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Long values.
      */
     public static class LongStaxUnmarshaller implements Unmarshaller<Long, StaxUnmarshallerContext> {
-        private static final LongStaxUnmarshaller instance = new LongStaxUnmarshaller();
+        private static final LongStaxUnmarshaller INSTANCE = new LongStaxUnmarshaller();
 
         public static LongStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Long unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -159,10 +159,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Byte values.
      */
     public static class ByteStaxUnmarshaller implements Unmarshaller<Byte, StaxUnmarshallerContext> {
-        private static final ByteStaxUnmarshaller instance = new ByteStaxUnmarshaller();
+        private static final ByteStaxUnmarshaller INSTANCE = new ByteStaxUnmarshaller();
 
         public static ByteStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Byte unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -175,10 +175,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Date values.
      */
     public static class DateStaxUnmarshaller implements Unmarshaller<Date, StaxUnmarshallerContext> {
-        private static final DateStaxUnmarshaller instance = new DateStaxUnmarshaller();
+        private static final DateStaxUnmarshaller INSTANCE = new DateStaxUnmarshaller();
 
         public static DateStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Date unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -200,10 +200,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for ByteBuffer values.
      */
     public static class ByteBufferStaxUnmarshaller implements Unmarshaller<ByteBuffer, StaxUnmarshallerContext> {
-        private static final ByteBufferStaxUnmarshaller instance = new ByteBufferStaxUnmarshaller();
+        private static final ByteBufferStaxUnmarshaller INSTANCE = new ByteBufferStaxUnmarshaller();
 
         public static ByteBufferStaxUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public ByteBuffer unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -218,10 +218,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Character values.
      */
     public static class CharacterJsonUnmarshaller implements Unmarshaller<Character, StaxUnmarshallerContext> {
-        private static final CharacterJsonUnmarshaller instance = new CharacterJsonUnmarshaller();
+        private static final CharacterJsonUnmarshaller INSTANCE = new CharacterJsonUnmarshaller();
 
         public static CharacterJsonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Character unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
@@ -244,10 +244,10 @@ public class SimpleTypeStaxUnmarshallers {
      * Unmarshaller for Short values.
      */
     public static class ShortJsonUnmarshaller implements Unmarshaller<Short, StaxUnmarshallerContext> {
-        private static final ShortJsonUnmarshaller instance = new ShortJsonUnmarshaller();
+        private static final ShortJsonUnmarshaller INSTANCE = new ShortJsonUnmarshaller();
 
         public static ShortJsonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         public Short unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {

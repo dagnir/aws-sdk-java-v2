@@ -65,7 +65,7 @@ public class SDKProgressPublisher {
         // This is unfortunate as the listener should never block in the first
         // place, but such task submission is necessary to remain backward
         // compatible.
-        return latestFutureTask = LazyHolder.executor.submit(new Runnable() {
+        return latestFutureTask = LazyHolder.EXECUTOR.submit(new Runnable() {
             @Override
             public void run() {
                 listener.progressChanged(event);
@@ -213,7 +213,7 @@ public class SDKProgressPublisher {
      * Returns the executor service used for performing the callbacks.
      */
     protected static ExecutorService getExecutorService() {
-        return LazyHolder.executor;
+        return LazyHolder.EXECUTOR;
     }
 
     protected static Future<?> setLatestFutureTask(Future<?> f) {
@@ -246,9 +246,9 @@ public class SDKProgressPublisher {
      */
     public static void shutdown(boolean now) {
         if (now) {
-            LazyHolder.executor.shutdownNow();
+            LazyHolder.EXECUTOR.shutdownNow();
         } else {
-            LazyHolder.executor.shutdown();
+            LazyHolder.EXECUTOR.shutdown();
         }
     }
 
@@ -257,7 +257,7 @@ public class SDKProgressPublisher {
      */
     private static final class LazyHolder {
         /** A single thread pool for executing all ProgressListener callbacks. **/
-        private static final ExecutorService executor = createNewExecutorService();
+        private static final ExecutorService EXECUTOR = createNewExecutorService();
 
         /**
          * Creates a new single threaded executor service for performing the

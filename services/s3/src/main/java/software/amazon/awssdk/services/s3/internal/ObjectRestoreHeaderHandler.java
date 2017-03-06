@@ -33,9 +33,9 @@ public class ObjectRestoreHeaderHandler<T extends ObjectRestoreResult>
      *  ongoing-request="false", expiry-date="Fri, 23 Dec 2012 00:00:00 GMT"
      */
 
-    private static final Pattern datePattern =
+    private static final Pattern DATE_PATTERN =
             Pattern.compile("expiry-date=\"(.*?)\"");
-    private static final Pattern ongoingPattern =
+    private static final Pattern ONGOING_PATTERN =
             Pattern.compile("ongoing-request=\"(.*?)\"");
 
     private static final Log log =
@@ -61,7 +61,7 @@ public class ObjectRestoreHeaderHandler<T extends ObjectRestoreResult>
     }
 
     private Date parseDate(String restoreHeader) {
-        Matcher matcher = datePattern.matcher(restoreHeader);
+        Matcher matcher = DATE_PATTERN.matcher(restoreHeader);
         if (matcher.find()) {
             String date = matcher.group(1);
             try {
@@ -77,7 +77,7 @@ public class ObjectRestoreHeaderHandler<T extends ObjectRestoreResult>
     }
 
     private Boolean parseBoolean(String restoreHeader) {
-        Matcher matcher = ongoingPattern.matcher(restoreHeader);
+        Matcher matcher = ONGOING_PATTERN.matcher(restoreHeader);
         if (matcher.find()) {
             String ongoingRestore = matcher.group(1);
             return Boolean.parseBoolean(ongoingRestore);

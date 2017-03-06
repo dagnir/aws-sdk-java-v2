@@ -52,7 +52,7 @@ public class S3ErrorResponseHandler implements
             .getLog(S3ErrorResponseHandler.class);
 
     /** Shared factory for creating XML event readers. */
-    private static final XMLInputFactory xmlInputFactory = XMLInputFactory
+    private static final XMLInputFactory XML_INPUT_FACTORY = XMLInputFactory
             .newInstance();
 
     @Override
@@ -95,8 +95,8 @@ public class S3ErrorResponseHandler implements
          * http://itdoc.hitachi.co.jp/manuals/3020/30203Y2210e/EY220140.HTM
          */
         XMLStreamReader reader;
-        synchronized (xmlInputFactory) {
-            reader = xmlInputFactory
+        synchronized (XML_INPUT_FACTORY) {
+            reader = XML_INPUT_FACTORY
                     .createXMLStreamReader(new ByteArrayInputStream(content
                                                                             .getBytes(UTF8)));
         }

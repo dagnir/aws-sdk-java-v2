@@ -32,18 +32,18 @@ import java.util.List;
 public class WireMockUtils {
 
     // Use 0 to dynamically assign an available port.
-    private static final WireMockServer wireMock = new WireMockServer(wireMockConfig().port(0));
+    private static final WireMockServer WIRE_MOCK = new WireMockServer(wireMockConfig().port(0));
 
     public static void startWireMockServer() {
-        wireMock.start();
-        WireMock.configureFor(wireMock.port());
+        WIRE_MOCK.start();
+        WireMock.configureFor(WIRE_MOCK.port());
     }
 
     /**
      * @return The port that was chosen by the WireMock server.
      */
     public static int port() {
-        return wireMock.port();
+        return WIRE_MOCK.port();
     }
 
     /**

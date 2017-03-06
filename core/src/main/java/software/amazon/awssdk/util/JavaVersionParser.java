@@ -35,7 +35,7 @@ public class JavaVersionParser {
                                                                          MAJOR_VERSION_FAMILY_PATTERN, MAJOR_VERSION_PATTERN,
                                                                          MAINTENANCE_NUMBER_PATTERN, UPDATE_NUMBER_PATTERN));
 
-    private static final JavaVersion currentJavaVersion = parseJavaVersion(System.getProperty(JAVA_VERSION_PROPERTY));
+    private static final JavaVersion CURRENT_JAVA_VERSION = parseJavaVersion(System.getProperty(JAVA_VERSION_PROPERTY));
 
     private JavaVersionParser() {
     }
@@ -44,7 +44,7 @@ public class JavaVersionParser {
      * @return The {@link JavaVersion} of this JVM.
      */
     public static JavaVersion getCurrentJavaVersion() {
-        return currentJavaVersion;
+        return CURRENT_JAVA_VERSION;
     }
 
     public static JavaVersion parseJavaVersion(final String fullVersionString) {

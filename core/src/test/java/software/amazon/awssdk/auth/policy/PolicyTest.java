@@ -93,7 +93,7 @@ public class PolicyTest {
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("resource"))
-                                      .withPrincipals(Principal.AllUsers)
+                                      .withPrincipals(Principal.ALL_USERS)
                                       .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
@@ -112,7 +112,7 @@ public class PolicyTest {
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("resource"))
-                                      .withPrincipals(Principal.AllServices, Principal.AllUsers)
+                                      .withPrincipals(Principal.ALL_SERVICES, Principal.ALL_USERS)
                                       .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
@@ -133,8 +133,8 @@ public class PolicyTest {
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("resource"))
-                                      .withPrincipals(Principal.AllServices, Principal.AllUsers,
-                                                      Principal.AllWebProviders)
+                                      .withPrincipals(Principal.ALL_SERVICES, Principal.ALL_USERS,
+                                                      Principal.ALL_WEB_PROVIDERS)
                                       .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
@@ -158,8 +158,8 @@ public class PolicyTest {
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("resource"))
-                                      .withPrincipals(Principal.AllServices, Principal.AllUsers,
-                                                      Principal.AllWebProviders, Principal.All)
+                                      .withPrincipals(Principal.ALL_SERVICES, Principal.ALL_USERS,
+                                                      Principal.ALL_WEB_PROVIDERS, Principal.ALL)
                                       .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
@@ -185,7 +185,7 @@ public class PolicyTest {
         policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("resource"))
-                                      .withPrincipals(new Principal("accountId1"), Principal.AllUsers)
+                                      .withPrincipals(new Principal("accountId1"), Principal.ALL_USERS)
                                       .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
@@ -207,7 +207,7 @@ public class PolicyTest {
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("resource"))
                                       .withPrincipals(new Principal(Services.AmazonEC2),
-                                                      Principal.AllServices, new Principal("accountId1"))
+                                                      Principal.ALL_SERVICES, new Principal("accountId1"))
                                       .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
@@ -232,9 +232,9 @@ public class PolicyTest {
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("resource"))
                                       .withPrincipals(new Principal(Services.AmazonEC2),
-                                                      Principal.AllServices, new Principal("accountId1"),
+                                                      Principal.ALL_SERVICES, new Principal("accountId1"),
                                                       new Principal(WebIdentityProviders.Amazon),
-                                                      Principal.AllWebProviders)
+                                                      Principal.ALL_WEB_PROVIDERS)
                                       .withActions(new TestAction("action")));
 
         jsonPolicyNode = Jackson.jsonNodeOf(policy.toJson());
@@ -272,7 +272,7 @@ public class PolicyTest {
                                       .withResources(
                                               new Resource(
                                                       "arn:aws:sqs:us-east-1:987654321000:MyQueue"))
-                                      .withPrincipals(Principal.AllUsers)
+                                      .withPrincipals(Principal.ALL_USERS)
                                       .withActions(new TestAction("foo"))
                                       .withConditions(
                                               new StringCondition(StringComparisonType.StringNotLike,
@@ -301,7 +301,7 @@ public class PolicyTest {
         Policy policy = new Policy("S3PolicyId1");
         policy.withStatements(
                 new Statement(Effect.Allow)
-                        .withPrincipals(Principal.AllUsers)
+                        .withPrincipals(Principal.ALL_USERS)
                         .withActions(new TestAction("action1"))
                         .withResources(new Resource("resource"))
                         .withConditions(
@@ -309,7 +309,7 @@ public class PolicyTest {
                                 new IpAddressCondition(
                                         IpAddressComparisonType.NotIpAddress,
                                         "192.168.143.188/32")),
-                new Statement(Effect.Deny).withPrincipals(Principal.AllUsers)
+                new Statement(Effect.Deny).withPrincipals(Principal.ALL_USERS)
                                           .withActions(new TestAction("action2"))
                                           .withResources(new Resource("resource"))
                                           .withConditions(new IpAddressCondition("10.1.2.0/24")));
@@ -342,12 +342,12 @@ public class PolicyTest {
         Policy policy = new Policy("S3PolicyId1");
         policy.withStatements(
                 new Statement(Effect.Allow).withId("0")
-                                           .withPrincipals(Principal.AllUsers)
+                                           .withPrincipals(Principal.ALL_USERS)
                                            .withActions(new TestAction("action1")),
                 new Statement(Effect.Allow).withId("1")
-                                           .withPrincipals(Principal.AllUsers)
+                                           .withPrincipals(Principal.ALL_USERS)
                                            .withActions(new TestAction("action1")), new Statement(
-                        Effect.Deny).withPrincipals(Principal.AllUsers)
+                        Effect.Deny).withPrincipals(Principal.ALL_USERS)
                                     .withActions(new TestAction("action2")));
 
         assertValidStatementIds(policy);

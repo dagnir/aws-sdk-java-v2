@@ -39,18 +39,18 @@ class ${waiter.waiterName} {
                 return ${acceptor.expectedAsString}.equals(e.getErrorCode());
             }
         <#else>
-            private static final JsonNode expectedResult;
+            private static final JsonNode EXPECTED_RESULT;
 
             static{
                  try{
-                      expectedResult = ObjectMapperSingleton.getObjectMapper().readTree("${acceptor.expectedAsEscapedJson}");
+                      EXPECTED_RESULT = ObjectMapperSingleton.getObjectMapper().readTree("${acceptor.expectedAsEscapedJson}");
                  }
                  catch(IOException ioe){
                       throw new RuntimeException(ioe);
                  }
             }
 
-            private static final JmesPathExpression ast = ${acceptor.ast};
+            private static final JmesPathExpression AST = ${acceptor.ast};
 
             /**
               * Takes the result and determines whether the state of the
@@ -65,8 +65,8 @@ class ${waiter.waiterName} {
             @Override
             public boolean matches(${outputType} result) {
                 JsonNode queryNode = ObjectMapperSingleton.getObjectMapper().valueToTree(result);
-                JsonNode finalResult = ast.accept(new JmesPathEvaluationVisitor(), queryNode);
-                return AcceptorPathMatcher.${acceptor.matcher}(expectedResult, finalResult);
+                JsonNode finalResult = AST.accept(new JmesPathEvaluationVisitor(), queryNode);
+                return AcceptorPathMatcher.${acceptor.matcher}(EXPECTED_RESULT, finalResult);
             }
         </#if>
 
