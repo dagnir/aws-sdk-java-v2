@@ -27,7 +27,6 @@ import software.amazon.awssdk.protocol.json.JsonClientMetadata;
 import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.transform.PutItemRequestMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.transform.PutItemRequestProtocolMarshaller;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;

@@ -1,17 +1,7 @@
 package software.amazon.awssdk.services.s3.transfer;
 
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.ObjectTaggingTestUtil;
-import software.amazon.awssdk.services.s3.model.ObjectTagging;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResult;
-import software.amazon.awssdk.services.s3.model.Tag;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
+import static org.mockito.Mockito.*;
+import static software.amazon.awssdk.services.s3.internal.Constants.KB;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,9 +10,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static software.amazon.awssdk.services.s3.internal.Constants.KB;
-import static org.mockito.Mockito.*;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import software.amazon.awssdk.services.s3.AmazonS3;
+import software.amazon.awssdk.services.s3.ObjectTaggingTestUtil;
+import software.amazon.awssdk.services.s3.model.ObjectTagging;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResult;
+import software.amazon.awssdk.services.s3.model.Tag;
 
 /**
  * Tests for upload directory functionality.

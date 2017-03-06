@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.s3.transfer;
 
 import java.io.File;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**

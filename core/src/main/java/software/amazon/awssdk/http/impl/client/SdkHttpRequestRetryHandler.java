@@ -19,8 +19,8 @@ import java.io.IOException;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.util.AwsRequestMetrics;
-import software.amazon.awssdk.util.AwsRequestMetrics.Field;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field;
 
 @ThreadSafe
 public class SdkHttpRequestRetryHandler extends DefaultHttpRequestRetryHandler {

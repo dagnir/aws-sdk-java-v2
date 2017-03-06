@@ -14,25 +14,23 @@
  */
 package software.amazon.awssdk.opensdk.internal.protocol;
 
-import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.opensdk.BaseResult;
-import software.amazon.awssdk.opensdk.SdkResponseMetadata;
-import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.http.HttpResponseHandler;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
+import software.amazon.awssdk.AmazonWebServiceResponse;
+import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.opensdk.BaseResult;
+import software.amazon.awssdk.opensdk.SdkResponseMetadata;
 import utils.http.HttpResponseBuilder;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApiGatewayResponseHandlerTest {

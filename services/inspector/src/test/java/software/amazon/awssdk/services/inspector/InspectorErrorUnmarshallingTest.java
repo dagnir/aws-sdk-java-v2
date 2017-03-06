@@ -13,20 +13,19 @@ package software.amazon.awssdk.services.inspector;/*
  * permissions and limitations under the License.
  */
 
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.inspector.model.AccessDeniedException;
-import software.amazon.awssdk.services.inspector.model.ListRulesPackagesRequest;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.services.inspector.model.AccessDeniedException;
+import software.amazon.awssdk.services.inspector.model.ListRulesPackagesRequest;
 
 public class InspectorErrorUnmarshallingTest {
 

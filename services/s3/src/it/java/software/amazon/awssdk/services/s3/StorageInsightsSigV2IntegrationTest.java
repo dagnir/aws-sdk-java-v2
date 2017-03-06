@@ -14,6 +14,15 @@
  */
 package software.amazon.awssdk.services.s3;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
+import java.util.List;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.DeleteBucketInventoryConfigurationRequest;
@@ -45,17 +54,6 @@ import software.amazon.awssdk.services.s3.model.inventory.InventorySchedule;
 import software.amazon.awssdk.services.s3.model.metrics.MetricsConfiguration;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class StorageInsightsSigV2IntegrationTest extends AWSIntegrationTestBase {
 

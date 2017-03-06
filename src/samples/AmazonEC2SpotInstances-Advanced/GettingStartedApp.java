@@ -15,7 +15,6 @@
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.ec2.model.Tag;
 

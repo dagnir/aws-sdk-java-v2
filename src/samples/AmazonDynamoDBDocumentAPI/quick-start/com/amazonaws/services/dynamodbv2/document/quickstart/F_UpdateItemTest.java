@@ -22,11 +22,9 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;

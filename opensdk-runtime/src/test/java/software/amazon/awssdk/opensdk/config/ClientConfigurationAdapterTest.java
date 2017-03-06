@@ -14,22 +14,21 @@
  */
 package software.amazon.awssdk.opensdk.config;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfiguration;
 import software.amazon.awssdk.opensdk.internal.config.ApiGatewayClientConfigurationFactory;
 import software.amazon.awssdk.opensdk.internal.config.ClientConfigurationAdapter;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class ClientConfigurationAdapterTest {
 

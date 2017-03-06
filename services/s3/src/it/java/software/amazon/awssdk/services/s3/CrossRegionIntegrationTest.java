@@ -1,5 +1,13 @@
 package software.amazon.awssdk.services.s3;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.UUID;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AWSStaticCredentialsProvider;
@@ -9,15 +17,6 @@ import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.test.AWSIntegrationTestBase;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.UUID;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Validate the cross-region bucket discovery functionality of the S3 client.

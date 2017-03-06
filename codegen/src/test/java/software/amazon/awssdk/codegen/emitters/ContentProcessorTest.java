@@ -15,12 +15,12 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
-import org.junit.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.Test;
 
 public class ContentProcessorTest {
 

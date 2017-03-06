@@ -7,15 +7,14 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.sqs.AmazonSQS;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResult;
@@ -23,7 +22,6 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
-import com.google.common.util.concurrent.MoreExecutors;
 
 public class ReceiveQueueBufferTest {
 

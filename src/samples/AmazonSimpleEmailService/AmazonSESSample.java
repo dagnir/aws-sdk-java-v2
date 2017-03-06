@@ -14,7 +14,6 @@
  */
 
 import java.io.IOException;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;

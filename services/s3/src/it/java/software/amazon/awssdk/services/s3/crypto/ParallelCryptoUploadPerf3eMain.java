@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;

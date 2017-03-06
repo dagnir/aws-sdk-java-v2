@@ -21,7 +21,7 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * Mock metrics collector that just holds a reference to all metrics recorded. Get captured metrics

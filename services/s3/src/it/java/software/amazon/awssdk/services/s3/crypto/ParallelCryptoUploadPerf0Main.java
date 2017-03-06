@@ -5,7 +5,6 @@ import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;

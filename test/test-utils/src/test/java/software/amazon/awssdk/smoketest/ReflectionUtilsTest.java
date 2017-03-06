@@ -15,16 +15,13 @@
 
 package software.amazon.awssdk.smoketest;
 
-import org.junit.Test;
-import org.mockito.cglib.core.Local;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+
+import org.junit.Test;
 
 @SuppressWarnings("unused")
 public class ReflectionUtilsTest {

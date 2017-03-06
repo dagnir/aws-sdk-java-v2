@@ -1,13 +1,10 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import junit.framework.Assert;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;

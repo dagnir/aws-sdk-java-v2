@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
@@ -42,7 +43,6 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResult;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.Md5Utils;
-import software.amazon.awssdk.util.TimingInfo;
 
 /**
  * SQS operations on sending and receiving messages will return the MD5 digest of the message body.

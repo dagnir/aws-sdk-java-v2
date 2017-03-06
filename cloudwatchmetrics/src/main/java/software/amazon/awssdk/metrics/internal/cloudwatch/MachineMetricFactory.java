@@ -36,7 +36,7 @@ import java.util.Set;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.jmx.spi.JmxInfoProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
-import software.amazon.awssdk.metrics.MetricType;
+import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;

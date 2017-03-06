@@ -13,16 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.metrics;
+package software.amazon.awssdk.runtime.io;
+
+import java.io.InputStream;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 
 /**
- * Metric type.
+ * Provides access to delegate stream for verification in unit tests. Should
+ * not be used outside of the SDK.
  */
-public interface MetricType {
-    /**
-     * Non-null name of the metric type. Used to uniquely identify the metric
-     * type. Therefore, the name returned must be globally unique across all
-     * metric types that implement this interface.
-     */
-    public String name();
+@SdkTestInternalApi
+public interface WrappedInputStream {
+
+    InputStream getWrappedStream();
 }

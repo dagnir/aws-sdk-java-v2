@@ -12,13 +12,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
-
 import org.easymock.Capture;
 import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.sqs.buffered.AmazonSqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;

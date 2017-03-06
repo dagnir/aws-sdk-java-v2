@@ -17,7 +17,7 @@ package software.amazon.awssdk.metrics;
 
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.util.TimingInfo;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 
 /**
  * Latency metric information provider.

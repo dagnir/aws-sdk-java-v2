@@ -3,7 +3,6 @@ package software.amazon.awssdk.metrics.internal.cloudwatch;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.test.util.IndexValues;
 

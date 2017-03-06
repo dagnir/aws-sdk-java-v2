@@ -19,11 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.GetItemOutcome;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.Table;

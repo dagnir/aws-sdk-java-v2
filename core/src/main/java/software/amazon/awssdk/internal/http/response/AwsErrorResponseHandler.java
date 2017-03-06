@@ -19,7 +19,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * Wrapper around protocol specific error handler to deal with some default scenarios and fill in common information.

@@ -16,11 +16,9 @@ package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.BatchWriteItemOutcome;
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.ItemCollection;

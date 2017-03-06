@@ -14,23 +14,21 @@
  */
 package software.amazon.awssdk.opensdk.protect.client;
 
-import software.amazon.awssdk.opensdk.BaseRequest;
-import software.amazon.awssdk.opensdk.SdkRequestConfig;
-import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.metrics.RequestMetricCollector;
-
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import org.junit.Test;
+import software.amazon.awssdk.event.ProgressListener;
+import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.opensdk.BaseRequest;
+import software.amazon.awssdk.opensdk.SdkRequestConfig;
 
 public class RequestConfigAdapterTest {
 

@@ -24,8 +24,8 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
-import software.amazon.awssdk.util.TimingInfo;
 
 /**
  * Tests that new request handlers can be registered for a client, and that they're correctly run

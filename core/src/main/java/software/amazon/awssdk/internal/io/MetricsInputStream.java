@@ -17,7 +17,7 @@ package software.amazon.awssdk.internal.io;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * Record input stream read time into {@link AwsRequestMetrics} under metric type

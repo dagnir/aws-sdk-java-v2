@@ -14,14 +14,13 @@
  */
 package software.amazon.awssdk.opensdk.protect.auth;
 
-import software.amazon.awssdk.auth.RequestSigner;
-import org.junit.Test;
-
-import java.util.Optional;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+
+import java.util.Optional;
+import org.junit.Test;
+import software.amazon.awssdk.auth.RequestSigner;
 
 public class RequestSignerRegistryTest {
 

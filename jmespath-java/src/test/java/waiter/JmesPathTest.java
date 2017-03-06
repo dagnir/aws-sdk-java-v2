@@ -1,17 +1,30 @@
 package waiter;
 
-import software.amazon.awssdk.jmespath.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.*;
-import org.junit.Assert;
-
-import org.junit.Test;
-
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import software.amazon.awssdk.jmespath.JmesPathAndExpression;
+import software.amazon.awssdk.jmespath.JmesPathContainsFunction;
+import software.amazon.awssdk.jmespath.JmesPathEvaluationVisitor;
+import software.amazon.awssdk.jmespath.JmesPathExpression;
+import software.amazon.awssdk.jmespath.JmesPathField;
+import software.amazon.awssdk.jmespath.JmesPathFilter;
+import software.amazon.awssdk.jmespath.JmesPathFlatten;
+import software.amazon.awssdk.jmespath.JmesPathIdentity;
+import software.amazon.awssdk.jmespath.JmesPathLengthFunction;
+import software.amazon.awssdk.jmespath.JmesPathLiteral;
+import software.amazon.awssdk.jmespath.JmesPathMultiSelectList;
+import software.amazon.awssdk.jmespath.JmesPathNotExpression;
+import software.amazon.awssdk.jmespath.JmesPathProjection;
+import software.amazon.awssdk.jmespath.JmesPathSubExpression;
+import software.amazon.awssdk.jmespath.JmesPathValueProjection;
+import software.amazon.awssdk.jmespath.OpEquals;
+import software.amazon.awssdk.jmespath.OpGreaterThan;
+import software.amazon.awssdk.jmespath.OpGreaterThanOrEqualTo;
 
 /**
  * Created by meghbyar on 7/13/16.

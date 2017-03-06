@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.cloudsearchdomain;
 
 import java.io.ByteArrayInputStream;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpMethodName;

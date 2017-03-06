@@ -12,28 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import java.awt.BorderLayout;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-
+import javax.swing.*;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
+import software.amazon.awssdk.event.ProgressEvent;
+import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.event.ProgressEvent;
-import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.transfer.TransferManager;
 import software.amazon.awssdk.services.s3.transfer.Upload;

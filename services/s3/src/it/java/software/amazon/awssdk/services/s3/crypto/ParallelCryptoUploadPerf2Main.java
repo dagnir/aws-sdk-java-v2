@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.UploadObjectObserver;
