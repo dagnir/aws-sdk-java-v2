@@ -15,96 +15,92 @@
 
 package software.amazon.awssdk.util;
 
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static software.amazon.awssdk.util.FunctionalUtils.invokeSafely;
+import static software.amazon.awssdk.util.FunctionalUtils.safeConsumer;
+import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.function.Consumer;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.Test;
+
 
 public class FunctionalUtilsTest {
 
-    @Test
-    public void safeConsumer_ThrowsCheckedException_ConvertsToRuntimeException() {
-        final Consumer<String> safeConsumer = FunctionalUtils.safely(FunctionalUtilsTest::consumeAndThrow);
-
-        try {
-            safeConsumer.accept("foo");
-            fail("Should have thrown exception.");
-        } catch (RuntimeException expected) {
-        }
-    }
+    private static final boolean DONT_THROW_EXCEPTION = false;
+    private static final boolean THROW_EXCEPTION = true;
 
     @Test
-    public void safeConsumer_ThrowsCheckedIOException_ConvertsToUncheckedIOException() {
-        final Consumer<String> safeConsumer = FunctionalUtils.safely(FunctionalUtilsTest::consumeAndThrowIo);
-
-        try {
-            safeConsumer.accept("foo");
-            fail("Should have thrown exception.");
-        } catch (UncheckedIOException expected) {
-        }
+    public void checkedExceptionsAreConvertedToRuntimeExceptions() {
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> invokeSafely(this::methodThatThrows))
+            .withCauseInstanceOf(Exception.class);
     }
 
     @Test
-    public void safeConsumer_ThrowsRuntimeException_DoesNotWrap() {
-        final Consumer<String> safeConsumer = FunctionalUtils.safely(FunctionalUtilsTest::consumeAndThrowRuntime);
-
-        try {
-            safeConsumer.accept("foo");
-            fail("Should have thrown exception.");
-        } catch (IllegalArgumentException expected) {
-        }
+    public void ioExceptionsAreConvertedToUncheckedIoExceptions() {
+        assertThatExceptionOfType(UncheckedIOException.class)
+            .isThrownBy(() -> invokeSafely(this::methodThatThrowsIOException))
+            .withCauseInstanceOf(IOException.class);
     }
 
     @Test
-    public void invokeSafely_ThrowsCheckedException_ConvertsToRuntimeException() {
-        try {
-            FunctionalUtils.invokeSafely(FunctionalUtilsTest::supplierThatThrows);
-            fail("Should have thrown exception.");
-        } catch (RuntimeException expected) {
-        }
+    public void runtimeExceptionsAreNotWrapped() {
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> invokeSafely(this::methodWithCheckedSignatureThatThrowsRuntimeException))
+            .withNoCause();
     }
 
     @Test
-    public void invokeSafely_ThrowsCheckedIOException_ConvertsToUncheckedIOException() {
-        try {
-            FunctionalUtils.invokeSafely(FunctionalUtilsTest::supplierThatThrowsIo);
-            fail("Should have thrown exception.");
-        } catch (UncheckedIOException expected) {
-        }
+    public void canUseConsumerThatThrowsCheckedExceptionInLambda() {
+        Stream.of(DONT_THROW_EXCEPTION).forEach(safeConsumer(this::consumerMethodWithChecked));
     }
 
     @Test
-    public void invokeSafely_ThrowsRuntimeException_DoesNotWrap() {
-        try {
-            FunctionalUtils.invokeSafely(FunctionalUtilsTest::supplierThatThrowsRuntime);
-            fail("Should have thrown exception.");
-        } catch (IllegalArgumentException expected) {
+    public void exceptionsForConsumersAreConverted() {
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> Stream.of(THROW_EXCEPTION).forEach(safeConsumer(this::consumerMethodWithChecked)))
+            .withCauseExactlyInstanceOf(Exception.class);
+    }
+
+    @Test
+    public void canUseFunctionThatThrowsCheckedExceptionInLambda() {
+        Optional<String> result = Stream.of(DONT_THROW_EXCEPTION).map(safeFunction(this::functionMethodWithChecked)).findFirst();
+        assertThat(result).isPresent().contains("Hello");
+    }
+
+    @Test
+    public void exceptionsForFunctionsAreConverted() {
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> Stream.of(THROW_EXCEPTION).map(safeFunction(this::functionMethodWithChecked)).findFirst())
+            .withCauseExactlyInstanceOf(Exception.class);
+    }
+
+    private String methodThatThrows() throws Exception {
+        throw new Exception("Ouch");
+    }
+
+    private String methodThatThrowsIOException() throws IOException {
+        throw new IOException("Boom");
+    }
+
+    private String methodWithCheckedSignatureThatThrowsRuntimeException() throws Exception {
+        throw new RuntimeException("Uh oh");
+    }
+
+    private void consumerMethodWithChecked(Boolean shouldThrow) throws Exception {
+        if (shouldThrow) {
+            throw new Exception("Duh, something went wrong");
         }
     }
 
-    private static void consumeAndThrow(String value) throws Exception {
-        throw new Exception("checked");
-    }
-
-    private static void consumeAndThrowIo(String value) throws IOException {
-        throw new IOException("checked");
-    }
-
-    private static void consumeAndThrowRuntime(String value) throws IOException {
-        throw new IllegalArgumentException("runtime");
-    }
-
-    private static String supplierThatThrows() throws Exception {
-        throw new Exception("checked");
-    }
-
-    private static String supplierThatThrowsIo() throws IOException {
-        throw new IOException("checked");
-    }
-
-    private static String supplierThatThrowsRuntime() {
-        throw new IllegalArgumentException("runtime");
+    private String functionMethodWithChecked(Boolean shouldThrow) throws Exception {
+        if (shouldThrow) {
+            throw new Exception("Duh, something went wrong");
+        }
+        return "Hello";
     }
 }

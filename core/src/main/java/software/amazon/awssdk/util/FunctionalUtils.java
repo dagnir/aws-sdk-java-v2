@@ -18,42 +18,87 @@ package software.amazon.awssdk.util;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class FunctionalUtils {
 
     /**
-     * A wrapper around a Consumer that throws a checked exception
-     *
+     * A wrapper around a Consumer that throws a checked exception.
      * @param unsafeConsumer - something that acts like a consumer but throws an exception
-     * @return A consumer that is wrapped in a try-catch converting the checked exception into a runtime exception
-     * @throws RuntimeException     If any checked {@link Exception} is thrown by the supplier.
-     * @throws UncheckedIOException If any {@link IOException} is thrown by the supplier.
+     * @return a consumer that is wrapped in a try-catch converting the checked exception into a runtime exception
      */
-    public static <I> Consumer<I> safely(UnsafeConsumer<I> unsafeConsumer) {
+    public static <I> Consumer<I> safeConsumer(UnsafeConsumer<I> unsafeConsumer) {
         return (input) -> {
             try {
                 unsafeConsumer.accept(input);
-            } catch (Exception exception) {
-                throw asRuntimeException(exception);
+            } catch (Exception e) {
+                throw asRuntimeException(e);
             }
         };
     }
 
     /**
-     * Invoke the given supplier and return the value. Will convert any checked exceptions to runtime exceptions.
+     * Takes a functional interface that throws an exception and returns a {@link Function} that deals with that exception by
+     * wrapping in a runtime exception. Useful for APIs that use the standard Java functional interfaces that don't throw checked
+     * exceptions.
      *
-     * @param supplier Supplier to invoke.
-     * @param <T>      Type to return.
-     * @return Value provided by supplier function.
-     * @throws RuntimeException     If any checked {@link Exception} is thrown by the supplier.
-     * @throws UncheckedIOException If any {@link IOException} is thrown by the supplier.
+     * @param unsafeFunction Functional interface that throws checked exception.
+     * @param <T>        Input
+     * @param <R>        Output
+     * @return New {@link Function} that handles checked exception.
      */
-    public static <T> T invokeSafely(UnsafeSupplier<T> supplier) {
-        try {
-            return supplier.get();
-        } catch (Exception exception) {
-            throw asRuntimeException(exception);
-        }
+    public static <T, R> Function<T, R> safeFunction(UnsafeFunction<T, R> unsafeFunction) {
+        return t -> {
+            try {
+                return unsafeFunction.apply(t);
+            } catch (Exception e) {
+                throw asRuntimeException(e);
+            }
+        };
+    }
+
+    /**
+     * A wrapper around a BiConsumer that throws a checked exception.
+     * @param unsafeSupplier - something that acts like a BiConsumer but throws an exception
+     * @return a consumer that is wrapped in a try-catch converting the checked exception into a runtime exception
+     */
+    public static <T> Supplier<T> safeSupplier(UnsafeSupplier<T> unsafeSupplier) {
+        return () -> {
+            try {
+                return unsafeSupplier.get();
+            } catch (Exception e) {
+                throw asRuntimeException(e);
+            }
+        };
+    }
+
+    public static <T> T invokeSafely(UnsafeSupplier<T> unsafeSupplier) {
+        return safeSupplier(unsafeSupplier).get();
+    }
+
+    /**
+     * Equivalent of {@link Consumer} that throws a checked exception.
+     */
+    @FunctionalInterface
+    public interface UnsafeConsumer<I> {
+        void accept(I input) throws Exception;
+    }
+
+    /**
+     * Equivalent of {@link Function} that throws a checked exception.
+     */
+    @FunctionalInterface
+    public interface UnsafeFunction<T, R> {
+        R apply(T t) throws Exception;
+    }
+
+    /**
+     * Equivalent of {@link Supplier} that throws a checked exception.
+     */
+    @FunctionalInterface
+    public interface UnsafeSupplier<T> {
+        T get() throws Exception;
     }
 
     private static RuntimeException asRuntimeException(Exception exception) {
@@ -64,25 +109,5 @@ public final class FunctionalUtils {
             return new UncheckedIOException((IOException) exception);
         }
         return new RuntimeException(exception);
-    }
-
-    /**
-     * {@link Consumer} that can throw checked exceptions.
-     *
-     * @param <I> Type of thing being consumed.
-     */
-    @FunctionalInterface
-    public interface UnsafeConsumer<I> {
-        void accept(I input) throws Exception;
-    }
-
-    /**
-     * {@link java.util.function.Supplier} that can throw checked exceptions.
-     *
-     * @param <I> Type of thing being supplied.
-     */
-    @FunctionalInterface
-    public interface UnsafeSupplier<I> {
-        I get() throws Exception;
     }
 }

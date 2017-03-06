@@ -16,7 +16,10 @@
 package software.amazon.awssdk.auth.profile;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 
 /**
  * Loads profile related resource files and exposes static factory methods of the known resource
@@ -124,14 +127,24 @@ public class ProfileResourceLoader {
      * Load resource as a {@link File} object
      */
     public File asFile() {
-        return new File(asUrl().getFile());
+        return Paths.get(asUri()).toFile();
     }
 
     /**
      * Load resource as a {@link URL}
      */
-    public URL asUrl() {
+    private URL asUrl() {
         return getClass().getResource(PREFIX + resourceName);
     }
 
+    /**
+     * Load resource as a {@link URI}
+     */
+    private URI asUri() {
+        try {
+            return asUrl().toURI();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Unable to format resource path as URI.", e);
+        }
+    }
 }

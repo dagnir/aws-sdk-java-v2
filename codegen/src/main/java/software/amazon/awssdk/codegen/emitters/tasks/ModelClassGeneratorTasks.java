@@ -16,7 +16,7 @@
 package software.amazon.awssdk.codegen.emitters.tasks;
 
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
-import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
+import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
 
 import java.io.IOException;
 import java.util.List;

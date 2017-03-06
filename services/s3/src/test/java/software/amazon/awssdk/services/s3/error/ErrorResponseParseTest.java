@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
@@ -46,8 +48,9 @@ public class ErrorResponseParseTest {
      * stream.
      */
     private static InputStream loadFileAsStream(String fileName)
-            throws FileNotFoundException {
-        File errorResponseFile = new File(ErrorResponseParseTest.class.getResource("/resources/errorResponse/" + fileName).getFile());
+            throws Exception {
+        URI errorResponseUri = ErrorResponseParseTest.class.getResource("/resources/errorResponse/" + fileName).toURI();
+        File errorResponseFile = Paths.get(errorResponseUri).toFile();
         return new FileInputStream(errorResponseFile);
     }
 
@@ -272,8 +275,7 @@ public class ErrorResponseParseTest {
      * the exception must be formed from the headers.
      */
     @Test
-    public void testErrorResponseWithRootElementAsNotErrorTag()
-            throws FileNotFoundException, XMLStreamException {
+    public void testErrorResponseWithRootElementAsNotErrorTag() throws Exception {
         final String fileName = "ErrorResponseRootElementAsFoo.xml";
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
@@ -299,8 +301,7 @@ public class ErrorResponseParseTest {
      * the exception must be formed from the headers.
      */
     @Test
-    public void testErrorResponseWithRepeatedXmls()
-            throws FileNotFoundException, XMLStreamException {
+    public void testErrorResponseWithRepeatedXmls() throws Exception {
         final String fileName = "ErrorResponseRepeatedXml.xml";
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
@@ -326,8 +327,7 @@ public class ErrorResponseParseTest {
      * the &lt;Error&gt; tag.
      */
     @Test
-    public void testErrorResponseWithChildTagError()
-            throws FileNotFoundException, XMLStreamException {
+    public void testErrorResponseWithChildTagError() throws Exception {
         final String fileName = "ErrorResponseChildTagError.xml";
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
