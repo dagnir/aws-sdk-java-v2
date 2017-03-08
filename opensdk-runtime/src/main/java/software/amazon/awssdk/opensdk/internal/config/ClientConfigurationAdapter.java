@@ -18,19 +18,19 @@ package software.amazon.awssdk.opensdk.internal.config;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
- * Adapter that adapts {@link ApiGatewayClientConfiguration} to {@link ClientConfiguration}.
+ * Adapter that adapts {@link ApiGatewayClientConfiguration} to {@link LegacyClientConfiguration}.
  */
 @SdkInternalApi
 public class ClientConfigurationAdapter {
 
     /**
      * Helper method that takes in a custom {@link ApiGatewayClientConfiguration} object and
-     * a service default {@link ClientConfiguration} object,
-     * adapts it to a target {@link ClientConfiguration} object and returns it.
+     * a service default {@link LegacyClientConfiguration} object,
+     * adapts it to a target {@link LegacyClientConfiguration} object and returns it.
      * <p>
      * If value is not present for a property in customConfiguration object,
      * then the value from the defaultConfiguration is used.
@@ -38,11 +38,11 @@ public class ClientConfigurationAdapter {
      *
      * @param customConfiguration The adaptee which is a {@link ApiGatewayClientConfiguration} object.
      * @param defaultConfiguration The configuration to use for options that are not set in customConfiguration.
-     * @return The target {@link ClientConfiguration} object.
+     * @return The target {@link LegacyClientConfiguration} object.
      */
-    public static ClientConfiguration adapt(ApiGatewayClientConfiguration customConfiguration,
-                                            ClientConfiguration defaultConfiguration) {
-        ClientConfiguration adaptedConfiguration = new ClientConfiguration(defaultConfiguration);
+    public static LegacyClientConfiguration adapt(ApiGatewayClientConfiguration customConfiguration,
+                                                  LegacyClientConfiguration defaultConfiguration) {
+        LegacyClientConfiguration adaptedConfiguration = new LegacyClientConfiguration(defaultConfiguration);
 
         customConfiguration.getProxyConfiguration().ifPresent(
             proxyConfiguration -> {

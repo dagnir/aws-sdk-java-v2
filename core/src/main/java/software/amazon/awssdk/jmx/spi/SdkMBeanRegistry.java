@@ -57,7 +57,7 @@ public interface SdkMBeanRegistry {
     public boolean isMBeanRegistered(String objectName);
 
     public static class Factory {
-        private static final SdkMBeanRegistry registry;
+        private static final SdkMBeanRegistry REGISTRY;
 
         static {
             SdkMBeanRegistry rego;
@@ -70,11 +70,11 @@ public interface SdkMBeanRegistry {
                         .debug("Failed to load the JMX implementation module - JMX is disabled", e);
                 rego = NONE;
             }
-            registry = rego;
+            REGISTRY = rego;
         }
 
         public static SdkMBeanRegistry getMBeanRegistry() {
-            return registry;
+            return REGISTRY;
         }
     }
 }

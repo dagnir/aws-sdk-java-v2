@@ -17,7 +17,7 @@ package software.amazon.awssdk.client;
 
 import java.net.URI;
 import java.util.List;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
@@ -35,7 +35,7 @@ public abstract class AwsSyncClientParams {
 
     public abstract AwsCredentialsProvider getCredentialsProvider();
 
-    public abstract ClientConfiguration getClientConfiguration();
+    public abstract LegacyClientConfiguration getClientConfiguration();
 
     public abstract RequestMetricCollector getRequestMetricCollector();
 
@@ -54,7 +54,7 @@ public abstract class AwsSyncClientParams {
     }
 
     public RetryPolicy getRetryPolicy() {
-        final ClientConfiguration config = getClientConfiguration();
+        final LegacyClientConfiguration config = getClientConfiguration();
         return new RetryPolicyAdapter(config.getRetryPolicy(), config);
     }
 }

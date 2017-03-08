@@ -23,7 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.glacier.GlacierIntegrationTestBase;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
@@ -106,6 +106,6 @@ public class CustomizedDownloadChunkSizeIntegrationTest extends GlacierIntegrati
     }
 
     private ArchiveTransferManager newArchiveTransferManager() {
-        return new ArchiveTransferManager(glacier, new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
+        return new ArchiveTransferManager(glacier, new AwsStaticCredentialsProvider(credentials), new LegacyClientConfiguration());
     }
 }

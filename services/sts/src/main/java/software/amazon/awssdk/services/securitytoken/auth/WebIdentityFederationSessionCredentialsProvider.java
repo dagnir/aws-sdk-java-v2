@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.Date;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AnonymousAwsCredentials;
 import software.amazon.awssdk.auth.AwsSessionCredentials;
 import software.amazon.awssdk.auth.AwsSessionCredentialsProvider;
@@ -67,7 +67,7 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
      *            The ARN of the IAM Role that will be assumed 
      */
     public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn) {
-        this(wifToken, wifProvider, roleArn, new ClientConfiguration());
+        this(wifToken, wifProvider, roleArn, new LegacyClientConfiguration());
     }
 
     /**
@@ -87,7 +87,7 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
      *            Configuration to apply to STS client created
      */
     public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn,
-                                                           ClientConfiguration clientConfiguration) {
+                                                           LegacyClientConfiguration clientConfiguration) {
         this(wifToken, wifProvider, roleArn, new AWSSecurityTokenServiceClient(new AnonymousAwsCredentials(),
                                                                                clientConfiguration));
     }

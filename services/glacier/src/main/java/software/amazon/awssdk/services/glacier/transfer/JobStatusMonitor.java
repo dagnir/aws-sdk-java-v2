@@ -25,7 +25,7 @@ import java.util.UUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Principal;
@@ -67,7 +67,7 @@ public class JobStatusMonitor {
     private String topicArn;
 
 
-    public JobStatusMonitor(AwsCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
+    public JobStatusMonitor(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfiguration) {
         sqs = new AmazonSQSClient(credentialsProvider, clientConfiguration);
         sns = new AmazonSNSClient(credentialsProvider, clientConfiguration);
         setupQueueAndTopic();
@@ -197,7 +197,7 @@ public class JobStatusMonitor {
         Policy sqsPolicy =
                 new Policy().withStatements(
                         new Statement(Effect.Allow)
-                                .withPrincipals(Principal.AllUsers)
+                                .withPrincipals(Principal.ALL_USERS)
                                 .withActions(SQSActions.SendMessage)
                                 .withResources(new Resource(queueArn))
                                 .withConditions(ConditionFactory.newSourceArnCondition(topicArn)));

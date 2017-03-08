@@ -26,7 +26,7 @@ import org.apache.http.conn.ConnectionRequest;
 
 class ClientConnectionRequestFactory {
     private static final Log log = LogFactory.getLog(ClientConnectionRequestFactory.class);
-    private static final Class<?>[] interfaces = {
+    private static final Class<?>[] INTERFACES = {
             ConnectionRequest.class,
             Wrapped.class
     };
@@ -44,7 +44,7 @@ class ClientConnectionRequestFactory {
         return (ConnectionRequest) Proxy.newProxyInstance(
                 // https://github.com/aws/aws-sdk-java/pull/48#issuecomment-29454423
                 ClientConnectionRequestFactory.class.getClassLoader(),
-                interfaces,
+                INTERFACES,
                 new Handler(orig));
     }
 

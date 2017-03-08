@@ -14,8 +14,11 @@
  */
 package software.amazon.awssdk.opensdk;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.junit.Test;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -26,12 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 
 public class SdkRequestConfigTest {
     private final Random rng = new SecureRandom();

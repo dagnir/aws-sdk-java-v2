@@ -29,20 +29,20 @@ import software.amazon.awssdk.SdkClientException;
 
 public enum Jackson {
     ;
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final ObjectWriter writer = objectMapper.writer();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectWriter WRITER = OBJECT_MAPPER.writer();
 
 
-    private static final ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
+    private static final ObjectWriter PRETTY_WRITER = OBJECT_MAPPER.writerWithDefaultPrettyPrinter();
 
     static {
-        objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public static String toJsonPrettyString(Object value) {
         try {
-            return prettyWriter.writeValueAsString(value);
+            return PRETTY_WRITER.writeValueAsString(value);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -50,7 +50,7 @@ public enum Jackson {
 
     public static String toJsonString(Object value) {
         try {
-            return writer.writeValueAsString(value);
+            return WRITER.writeValueAsString(value);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -65,7 +65,7 @@ public enum Jackson {
             return null;
         }
         try {
-            return objectMapper.readValue(json, clazz);
+            return OBJECT_MAPPER.readValue(json, clazz);
         } catch (Exception e) {
             throw new SdkClientException("Unable to parse Json String.", e);
         }
@@ -81,7 +81,7 @@ public enum Jackson {
 
     public static <T> T loadFrom(File file, Class<T> clazz) throws IOException {
         try {
-            return objectMapper.readValue(file, clazz);
+            return OBJECT_MAPPER.readValue(file, clazz);
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
@@ -90,14 +90,14 @@ public enum Jackson {
     }
 
     public static ObjectMapper getObjectMapper() {
-        return objectMapper;
+        return OBJECT_MAPPER;
     }
 
     public static ObjectWriter getWriter() {
-        return writer;
+        return WRITER;
     }
 
     public static ObjectWriter getPrettywriter() {
-        return prettyWriter;
+        return PRETTY_WRITER;
     }
 }

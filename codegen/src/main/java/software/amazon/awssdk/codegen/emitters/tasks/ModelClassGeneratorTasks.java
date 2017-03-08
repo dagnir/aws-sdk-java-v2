@@ -16,7 +16,7 @@
 package software.amazon.awssdk.codegen.emitters.tasks;
 
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
-import static software.amazon.awssdk.codegen.utils.FunctionalUtils.safeFunction;
+import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,12 +37,10 @@ import software.amazon.awssdk.util.ImmutableMapParameter;
 class ModelClassGeneratorTasks extends BaseGeneratorTasks {
 
     private final String modelClassDir;
-    private final String basePackageDir;
 
     ModelClassGeneratorTasks(GeneratorTaskParams dependencies) {
         super(dependencies);
         this.modelClassDir = dependencies.getPathProvider().getModelDirectory();
-        this.basePackageDir = dependencies.getPathProvider().getBasePackageDirectory();
     }
 
     @Override
@@ -87,7 +85,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
                                                dataModel);
         } else {
             ClassSpec enumClass = new EnumClass(metadata.getPackageName(), shapeModel);
-            return new PoetGeneratorTask(basePackageDir, model.getFileHeader(), enumClass);
+            return new PoetGeneratorTask(modelClassDir, model.getFileHeader(), enumClass);
         }
     }
 

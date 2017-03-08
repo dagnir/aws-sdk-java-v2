@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.internal;
 
 import java.io.File;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -46,7 +46,7 @@ public class AmazonS3TestClient extends AmazonS3Client {
         super(awsCredentials);
     }
 
-    public AmazonS3TestClient(AwsCredentials awsCredentials, ClientConfiguration clientConfiguration) {
+    public AmazonS3TestClient(AwsCredentials awsCredentials, LegacyClientConfiguration clientConfiguration) {
         super(awsCredentials, clientConfiguration);
     }
 
@@ -55,17 +55,17 @@ public class AmazonS3TestClient extends AmazonS3Client {
     }
 
     public AmazonS3TestClient(AwsCredentialsProvider credentialsProvider,
-                              ClientConfiguration clientConfiguration) {
+                              LegacyClientConfiguration clientConfiguration) {
         super(credentialsProvider, clientConfiguration);
     }
 
     public AmazonS3TestClient(AwsCredentialsProvider credentialsProvider,
-                              ClientConfiguration clientConfiguration,
+                              LegacyClientConfiguration clientConfiguration,
                               RequestMetricCollector requestMetricCollector) {
         super(credentialsProvider, clientConfiguration, requestMetricCollector);
     }
 
-    public AmazonS3TestClient(ClientConfiguration clientConfiguration) {
+    public AmazonS3TestClient(LegacyClientConfiguration clientConfiguration) {
         super(clientConfiguration);
     }
 

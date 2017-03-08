@@ -30,8 +30,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 @Deprecated
 public class JsonMarshaller<T extends Object> implements DynamoDbMarshaller<T> {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private static final ObjectWriter writer = mapper.writer();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectWriter WRITER = MAPPER.writer();
 
     /**
      * The value type.
@@ -65,7 +65,7 @@ public class JsonMarshaller<T extends Object> implements DynamoDbMarshaller<T> {
     public String marshall(T obj) {
 
         try {
-            return writer.writeValueAsString(obj);
+            return WRITER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw failure(e,
                           "Unable to marshall the instance of " + obj.getClass()
@@ -76,7 +76,7 @@ public class JsonMarshaller<T extends Object> implements DynamoDbMarshaller<T> {
     @Override
     public T unmarshall(Class<T> clazz, String json) {
         try {
-            return mapper.readValue(json, (getValueType() == null ? clazz : getValueType()));
+            return MAPPER.readValue(json, (getValueType() == null ? clazz : getValueType()));
         } catch (Exception e) {
             throw failure(e, "Unable to unmarshall the string " + json
                              + "into " + clazz);

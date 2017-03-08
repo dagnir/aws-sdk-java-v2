@@ -29,7 +29,7 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
@@ -53,7 +53,7 @@ public class MockedClientTests {
 
     @Test
     public void requestTimeoutEnabled_RequestCompletesWithinTimeout_TaskCanceledAndEntityBuffered() throws Exception {
-        ClientConfiguration config = new ClientConfiguration().withRequestTimeout(5 * 1000).withMaxErrorRetry(0);
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withRequestTimeout(5 * 1000).withMaxErrorRetry(0);
         ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
 
         HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpResponseProxySpy();
@@ -84,7 +84,7 @@ public class MockedClientTests {
      */
     @Test
     public void requestTimeoutEnabled_HeadRequestCompletesWithinTimeout_EntityNotBuffered() throws Exception {
-        ClientConfiguration config = new ClientConfiguration().withRequestTimeout(5 * 1000).withMaxErrorRetry(0);
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withRequestTimeout(5 * 1000).withMaxErrorRetry(0);
         ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
 
         HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpHeadResponseProxy();
@@ -104,7 +104,7 @@ public class MockedClientTests {
 
     @Test
     public void requestTimeoutDisabled_RequestCompletesWithinTimeout_EntityNotBuffered() throws Exception {
-        ClientConfiguration config = new ClientConfiguration().withRequestTimeout(0);
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withRequestTimeout(0);
         ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
 
         HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpResponseProxySpy();
@@ -126,7 +126,7 @@ public class MockedClientTests {
     @Test
     public void requestTimeoutEnabled_RequestCompletesWithinTimeout_EntityNotBufferedForStreamedResponse()
             throws Exception {
-        ClientConfiguration config = new ClientConfiguration().withRequestTimeout(5 * 1000);
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withRequestTimeout(5 * 1000);
         ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
 
         HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpResponseProxySpy();

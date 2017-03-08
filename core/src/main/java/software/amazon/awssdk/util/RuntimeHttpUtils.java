@@ -34,7 +34,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkClientException;
@@ -59,7 +59,7 @@ public class RuntimeHttpUtils {
     @SuppressWarnings("deprecation")
     public static InputStream fetchFile(
             final URI uri,
-            final ClientConfiguration config) throws IOException {
+            final LegacyClientConfiguration config) throws IOException {
 
         HttpParams httpClientParams = new BasicHttpParams();
         HttpProtocolParams.setUserAgent(
@@ -107,15 +107,15 @@ public class RuntimeHttpUtils {
                 response.getEntity().getContent());
     }
 
-    public static String getUserAgent(final ClientConfiguration config, final String userAgentMarker) {
+    public static String getUserAgent(final LegacyClientConfiguration config, final String userAgentMarker) {
         String userDefinedPrefix = config != null ? config.getUserAgentPrefix() : "";
         String userDefinedSuffix = config != null ? config.getUserAgentSuffix() : "";
         String awsExecutionEnvironment = getEnvironmentVariable(AWS_EXECUTION_ENV_NAME);
 
         StringBuilder userAgent = new StringBuilder(userDefinedPrefix.trim());
 
-        if (!ClientConfiguration.DEFAULT_USER_AGENT.equals(userDefinedPrefix)) {
-            userAgent.append(COMMA).append(ClientConfiguration.DEFAULT_USER_AGENT);
+        if (!LegacyClientConfiguration.DEFAULT_USER_AGENT.equals(userDefinedPrefix)) {
+            userAgent.append(COMMA).append(LegacyClientConfiguration.DEFAULT_USER_AGENT);
         }
 
         if (StringUtils.hasValue(userDefinedSuffix)) {
@@ -142,18 +142,18 @@ public class RuntimeHttpUtils {
         }
     }
 
-    private static int getConnectionTimeout(final ClientConfiguration config) {
+    private static int getConnectionTimeout(final LegacyClientConfiguration config) {
         if (config != null) {
             return config.getConnectionTimeout();
         }
-        return ClientConfiguration.DEFAULT_CONNECTION_TIMEOUT;
+        return LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT;
     }
 
-    private static int getSocketTimeout(final ClientConfiguration config) {
+    private static int getSocketTimeout(final LegacyClientConfiguration config) {
         if (config != null) {
             return config.getSocketTimeout();
         }
-        return ClientConfiguration.DEFAULT_SOCKET_TIMEOUT;
+        return LegacyClientConfiguration.DEFAULT_SOCKET_TIMEOUT;
     }
 
     /**
@@ -162,7 +162,7 @@ public class RuntimeHttpUtils {
      *
      * @throws IllegalArgumentException if the inputs are null.
      */
-    public static URI toUri(String endpoint, ClientConfiguration config) {
+    public static URI toUri(String endpoint, LegacyClientConfiguration config) {
 
         if (config == null) {
             throw new IllegalArgumentException("ClientConfiguration cannot be null");

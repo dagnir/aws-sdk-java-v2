@@ -28,7 +28,7 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.OverloadedMockServerTestBase;
@@ -61,8 +61,8 @@ public class OverloadedServerIntegrationTests extends OverloadedMockServerTestBa
     @Test(timeout = TEST_TIMEOUT)
     public void requestTimeoutEnabled_HonorsRetryPolicy() throws IOException {
         int maxRetries = 2;
-        ClientConfiguration config = new ClientConfiguration().withRequestTimeout(1 * 1000)
-                                                              .withMaxErrorRetry(maxRetries);
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withRequestTimeout(1 * 1000)
+                                                                          .withMaxErrorRetry(maxRetries);
         HttpClientFactory<ConnectionManagerAwareHttpClient> httpClientFactory = new ApacheHttpClientFactory();
         ConnectionManagerAwareHttpClient rawHttpClient = spy(httpClientFactory.create(HttpClientSettings.adapt(config)));
 

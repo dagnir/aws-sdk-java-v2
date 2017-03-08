@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.internal;
 
 import java.io.File;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
@@ -89,7 +89,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
                               CryptoConfiguration cryptoConfig) {
         super(kms, new AwsStaticCredentialsProvider(credentials),
               new StaticEncryptionMaterialsProvider(encryptionMaterials),
-              new ClientConfiguration(),
+              new LegacyClientConfiguration(),
               cryptoConfig,
               null);
     }
@@ -109,13 +109,13 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
 
     public S3CryptoTestClient(AwsCredentials credentials,
                               EncryptionMaterials encryptionMaterials,
-                              ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+                              LegacyClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         super(credentials, encryptionMaterials, clientConfig, cryptoConfig);
     }
 
     public S3CryptoTestClient(AWSKMSClient kms, AwsCredentials credentials,
                               EncryptionMaterialsProvider encryptionMaterialsProvider,
-                              ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+                              LegacyClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         super(kms,
               new AwsStaticCredentialsProvider(credentials),
               encryptionMaterialsProvider,
@@ -125,7 +125,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
 
     public S3CryptoTestClient(AwsCredentials credentials,
                               EncryptionMaterialsProvider encryptionMaterialsProvider,
-                              ClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
+                              LegacyClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         super(credentials, encryptionMaterialsProvider, clientConfig,
               cryptoConfig);
     }
@@ -133,7 +133,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
     public S3CryptoTestClient(
             AwsCredentialsProvider credentialsProvider,
             EncryptionMaterialsProvider kekMaterialsProvider,
-            ClientConfiguration clientConfig,
+            LegacyClientConfiguration clientConfig,
             CryptoConfiguration cryptoConfig) {
         super(credentialsProvider, kekMaterialsProvider, clientConfig, cryptoConfig);
     }
@@ -141,7 +141,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
     public S3CryptoTestClient(
             AwsCredentialsProvider credentialsProvider,
             EncryptionMaterialsProvider kekMaterialsProvider,
-            ClientConfiguration clientConfig,
+            LegacyClientConfiguration clientConfig,
             CryptoConfiguration cryptoConfig,
             RequestMetricCollector requestMetricCollector) {
         super(credentialsProvider, kekMaterialsProvider, clientConfig, cryptoConfig, requestMetricCollector);
@@ -151,7 +151,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
             AWSKMSClient kms,
             AwsCredentialsProvider credentialsProvider,
             EncryptionMaterialsProvider kekMaterialsProvider,
-            ClientConfiguration clientConfig,
+            LegacyClientConfiguration clientConfig,
             CryptoConfiguration cryptoConfig,
             RequestMetricCollector requestMetricCollector) {
         super(kms, credentialsProvider, kekMaterialsProvider, clientConfig, cryptoConfig, requestMetricCollector);

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.internal.crypto;
 
-import static software.amazon.awssdk.services.s3.internal.crypto.S3KeyWrapScheme.RSA_ECB_OAEPWithSHA256AndMGF1Padding;
+import static software.amazon.awssdk.services.s3.internal.crypto.S3KeyWrapScheme.RSA_ECB_OAEP_WITH_SHA_256_AND_MGF_1_PADDING;
 
 import java.security.Provider;
 import java.security.Security;
@@ -98,7 +98,7 @@ public class CryptoRuntime {
 
         private static boolean check() {
             try {
-                Cipher.getInstance(RSA_ECB_OAEPWithSHA256AndMGF1Padding,
+                Cipher.getInstance(RSA_ECB_OAEP_WITH_SHA_256_AND_MGF_1_PADDING,
                                    BOUNCY_CASTLE_PROVIDER);
                 return true;
             } catch (Exception e) {

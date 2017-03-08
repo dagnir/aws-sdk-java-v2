@@ -27,10 +27,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import utils.http.S3WireMockTestBase;
 import utils.metrics.MockRequestMetricsCollector;
 
@@ -48,7 +48,7 @@ public class BucketThrottlingTest extends S3WireMockTestBase {
     public void setup() {
         metricsCollector = new MockRequestMetricsCollector();
         s3client = new AmazonS3Client(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")),
-                                      new ClientConfiguration().withMaxErrorRetry(MAX_RETRY),
+                                      new LegacyClientConfiguration().withMaxErrorRetry(MAX_RETRY),
                                       metricsCollector);
         s3client.setEndpoint(getEndpoint());
     }

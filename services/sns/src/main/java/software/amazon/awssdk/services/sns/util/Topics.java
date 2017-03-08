@@ -191,7 +191,7 @@ public class Topics {
                         ? Policy.fromJson(policyJson) : new Policy();
         policy.getStatements().add(new Statement(Effect.Allow)
                                            .withId("topic-subscription-" + snsTopicArn)
-                                           .withPrincipals(Principal.AllUsers)
+                                           .withPrincipals(Principal.ALL_USERS)
                                            .withActions(SQSActions.SendMessage)
                                            .withResources(new Resource(sqsQueueArn))
                                            .withConditions(ConditionFactory.newSourceArnCondition(snsTopicArn)));

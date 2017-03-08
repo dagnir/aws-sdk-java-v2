@@ -21,6 +21,7 @@ import java.util.UUID;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesResult;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotInstanceRequestsResult;
 import software.amazon.awssdk.services.ec2.model.GroupIdentifier;
@@ -34,7 +35,6 @@ import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.RunInstancesResult;
 import software.amazon.awssdk.services.ec2.model.SpotInstanceRequest;
 import software.amazon.awssdk.util.Base64;
-import software.amazon.awssdk.util.TimingInfo;
 
 public class EC2RequestHandler extends AbstractRequestHandler {
     @Override

@@ -49,7 +49,7 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
             boolean collectMetrics) {
 
         super(collectMetrics
-              ? new MetricFilterInputStream(S3ServiceMetric.S3DownloadThroughput, in)
+              ? new MetricFilterInputStream(S3ServiceMetric.S3_DOWNLOAD_THROUGHPUT, in)
               : in);
 
         this.httpRequest = httpRequest;

@@ -76,7 +76,7 @@ public class PolicyReaderTest {
         assertEquals(Services.AmazonElasticTranscoder.getServiceId(), statements.get(0).getPrincipals().get(1).getId());
 
         policy = new Policy();
-        policy.withStatements(new Statement(Effect.Allow).withResources(new Resource("resource")).withPrincipals(Principal.All)
+        policy.withStatements(new Statement(Effect.Allow).withResources(new Resource("resource")).withPrincipals(Principal.ALL)
                                                          .withActions(new TestAction("action")));
         policy = Policy.fromJson(policy.toJson());
         assertEquals(1, policy.getStatements().size());
@@ -86,11 +86,11 @@ public class PolicyReaderTest {
         assertEquals(1, statements.get(0).getActions().size());
         assertEquals("action", statements.get(0).getActions().get(0).getActionName());
         assertEquals(1, statements.get(0).getPrincipals().size());
-        assertEquals(Principal.All, statements.get(0).getPrincipals().get(0));
+        assertEquals(Principal.ALL, statements.get(0).getPrincipals().get(0));
 
 
         policy = new Policy();
-        policy.withStatements(new Statement(Effect.Allow).withResources(new Resource("resource")).withPrincipals(Principal.AllUsers, Principal.AllServices, Principal.AllWebProviders)
+        policy.withStatements(new Statement(Effect.Allow).withResources(new Resource("resource")).withPrincipals(Principal.ALL_USERS, Principal.ALL_SERVICES, Principal.ALL_WEB_PROVIDERS)
                                                          .withActions(new TestAction("action")));
         policy = Policy.fromJson(policy.toJson());
         assertEquals(1, policy.getStatements().size());
@@ -101,7 +101,7 @@ public class PolicyReaderTest {
         assertEquals("action", statements.get(0).getActions().get(0).getActionName());
         assertEquals(3, statements.get(0).getPrincipals().size());
         assertThat(statements.get(0).getPrincipals(),
-                   contains(Principal.AllUsers, Principal.AllServices, Principal.AllWebProviders));
+                   contains(Principal.ALL_USERS, Principal.ALL_SERVICES, Principal.ALL_WEB_PROVIDERS));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class PolicyReaderTest {
         Policy policy = new Policy();
         policy.withStatements(new Statement(Effect.Allow)
                                       .withResources(new Resource("arn:aws:sqs:us-east-1:987654321000:MyQueue"))
-                                      .withPrincipals(Principal.AllUsers)
+                                      .withPrincipals(Principal.ALL_USERS)
                                       .withActions(new TestAction("foo"))
                                       .withConditions(
                                               new StringCondition(StringComparisonType.StringNotLike, "key1", "foo"),
@@ -162,7 +162,7 @@ public class PolicyReaderTest {
         policy.withStatements(
                 new Statement(Effect.Allow)
                         .withId("0")
-                        .withPrincipals(Principal.AllUsers)
+                        .withPrincipals(Principal.ALL_USERS)
                         .withActions(new TestAction("action1"))
                         .withResources(new Resource("resource"))
                         .withConditions(
@@ -170,7 +170,7 @@ public class PolicyReaderTest {
                                 new IpAddressCondition(IpAddressComparisonType.NotIpAddress, "192.168.143.188/32")),
                 new Statement(Effect.Deny)
                         .withId("1")
-                        .withPrincipals(Principal.AllUsers)
+                        .withPrincipals(Principal.ALL_USERS)
                         .withActions(new TestAction("action2"))
                         .withResources(new Resource("resource"))
                         .withConditions(new IpAddressCondition("10.1.2.0/24")));

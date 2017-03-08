@@ -19,9 +19,9 @@ import java.util.Date;
 import java.util.List;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.metrics.MetricType;
+import software.amazon.awssdk.metrics.spi.MetricType;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
-import software.amazon.awssdk.util.TimingInfo;
 
 /**
  * Internal SPI used to provide custom request metric transformer that can be

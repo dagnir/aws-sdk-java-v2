@@ -28,7 +28,7 @@ public class AmazonWebServiceClientTest {
 
     @Test
     public void emptyClient() {
-        AmazonWebServiceClient client = new AmazonWebServiceClient(new ClientConfiguration()) { };
+        AmazonWebServiceClient client = new AmazonWebServiceClient(new LegacyClientConfiguration()) { };
 
         try {
             client.getServiceName();
@@ -47,7 +47,7 @@ public class AmazonWebServiceClientTest {
 
     @Test
     public void testOverrideSigner() {
-        ClientConfiguration config = new ClientConfiguration();
+        LegacyClientConfiguration config = new LegacyClientConfiguration();
         config.setSignerOverride("QueryStringSignerType");
 
         AmazonTestClient client = new AmazonTestClient(config);
@@ -88,7 +88,7 @@ public class AmazonWebServiceClientTest {
         // Clears out the IdleConnectionReaper. This is helpful when there are open registered connections from previous tests.
         IdleConnectionReaper.shutdown();
         for (int count = 0; count < 100; count++) {
-            new AmazonWebServiceClient(new ClientConfiguration()) {
+            new AmazonWebServiceClient(new LegacyClientConfiguration()) {
             }.shutdown();
         }
         assertEquals(0, IdleConnectionReaper.getRegisteredConnectionManagers().size());
@@ -96,10 +96,10 @@ public class AmazonWebServiceClientTest {
 
     private static class AmazonTestClient extends AmazonWebServiceClient {
         public AmazonTestClient() {
-            this(new ClientConfiguration());
+            this(new LegacyClientConfiguration());
         }
 
-        public AmazonTestClient(final ClientConfiguration config) {
+        public AmazonTestClient(final LegacyClientConfiguration config) {
             super(config);
             super.setEndpoint("test.us-west-2.amazonaws.com");
         }

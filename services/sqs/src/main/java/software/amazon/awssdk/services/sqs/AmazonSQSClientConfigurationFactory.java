@@ -13,16 +13,22 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.metrics;
+package software.amazon.awssdk.services.sqs;
 
-/**
- * Metric type.
+import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+
+/*
+ * Factory producing predefined {@link ClientConfiguration} instances for
+ * the AmazonSQS client.
  */
-public interface MetricType {
-    /**
-     * Non-null name of the metric type. Used to uniquely identify the metric
-     * type. Therefore, the name returned must be globally unique across all
-     * metric types that implement this interface.
-     */
-    public String name();
+@SdkInternalApi
+class AmazonSqsClientConfigurationFactory extends ClientConfigurationFactory {
+
+    @Override
+    protected ClientConfiguration getInRegionOptimizedConfig() {
+        return super.getInRegionOptimizedConfig().withSocketTimeout(25000);
+    }
+
 }

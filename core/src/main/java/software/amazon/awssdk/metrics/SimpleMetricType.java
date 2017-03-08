@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.metrics;
 
+import software.amazon.awssdk.metrics.spi.MetricType;
+
 public abstract class SimpleMetricType implements MetricType {
     @Override
     public abstract String name();

@@ -184,7 +184,7 @@
 
         <!-- Constant fields must follow a defined format. -->
         <module name="ConstantName">
-            <property name="severity" value="warning"/> <!-- TODO: Make error. -->
+            <property name="format" value="^log?|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
         </module>
 
         <!-- Method and lambda parameters must follow a defined format. -->

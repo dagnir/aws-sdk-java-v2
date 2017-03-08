@@ -15,10 +15,8 @@
 package software.amazon.awssdk.services.dynamodbv2.document.utils;
 
 import java.io.File;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;

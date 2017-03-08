@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.rds;
 
 import java.util.Date;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;

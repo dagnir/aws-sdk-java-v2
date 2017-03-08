@@ -27,7 +27,7 @@ import org.apache.http.protocol.HttpRequestExecutor;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.net.SdkMetricsSocket;
 import software.amazon.awssdk.internal.net.SdkSslMetricsSocket;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * Used to capture the http send-request and receive-response latency metrics

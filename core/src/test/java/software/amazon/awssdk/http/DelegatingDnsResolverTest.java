@@ -30,7 +30,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.DnsResolver;
 import software.amazon.awssdk.Request;
@@ -48,7 +48,7 @@ public class DelegatingDnsResolverTest {
         dnsResolutionCounter = new AtomicInteger(0);
         requestedHosts = new CopyOnWriteArraySet<String>();
 
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration();
         clientConfiguration.withMaxErrorRetry(0);
         clientConfiguration.withDnsResolver(new DnsResolver() {
             DnsResolver system = new SystemDefaultDnsResolver();

@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.glacier.GlacierIntegrationTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
@@ -57,7 +57,7 @@ public class SmallFileWithListenerIntegrationTest extends GlacierIntegrationTest
     }
 
     private ArchiveTransferManager newArchiveTransferManager() {
-        return new ArchiveTransferManager(glacier, new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
+        return new ArchiveTransferManager(glacier, new AwsStaticCredentialsProvider(credentials), new LegacyClientConfiguration());
     }
 
     // hchar: This test took about 4.2 hours to finish last time 

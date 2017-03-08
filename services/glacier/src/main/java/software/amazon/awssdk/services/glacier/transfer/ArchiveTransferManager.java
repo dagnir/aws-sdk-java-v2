@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -96,7 +96,7 @@ public class ArchiveTransferManager {
 
     private final AwsCredentialsProvider credentialsProvider;
 
-    private final ClientConfiguration clientConfiguration;
+    private final LegacyClientConfiguration clientConfiguration;
 
     private final AmazonSQS sqs;
 
@@ -112,7 +112,7 @@ public class ArchiveTransferManager {
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AwsCredentials credentials) {
-        this(new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
+        this(new AwsStaticCredentialsProvider(credentials), new LegacyClientConfiguration());
     }
 
     /**
@@ -125,7 +125,7 @@ public class ArchiveTransferManager {
      *            Client specific options, such as proxy settings, retries, and timeouts.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
-    public ArchiveTransferManager(AwsCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
+    public ArchiveTransferManager(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfiguration) {
         this(new AmazonGlacierClient(credentialsProvider, clientConfiguration), credentialsProvider, clientConfiguration);
     }
 
@@ -140,7 +140,7 @@ public class ArchiveTransferManager {
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider) {
-        this(glacier, credentialsProvider, new ClientConfiguration());
+        this(glacier, credentialsProvider, new LegacyClientConfiguration());
     }
 
     /**
@@ -154,7 +154,7 @@ public class ArchiveTransferManager {
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentials credentials) {
-        this(glacier, new AwsStaticCredentialsProvider(credentials), new ClientConfiguration());
+        this(glacier, new AwsStaticCredentialsProvider(credentials), new LegacyClientConfiguration());
     }
 
     /**
@@ -171,7 +171,7 @@ public class ArchiveTransferManager {
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider,
-                                  ClientConfiguration clientConfiguration) {
+                                  LegacyClientConfiguration clientConfiguration) {
         this.credentialsProvider = credentialsProvider;
         this.clientConfiguration = clientConfiguration;
         this.glacier = glacier;

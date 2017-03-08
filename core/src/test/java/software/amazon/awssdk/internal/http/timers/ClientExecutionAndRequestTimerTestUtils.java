@@ -36,7 +36,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.protocol.HttpContext;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpMethodName;
@@ -155,11 +155,11 @@ public class ClientExecutionAndRequestTimerTestUtils {
      * Creates Apache {@link HttpClient} spy
      *
      * @param config
-     *            {@link ClientConfiguration} for {@link HttpClientFactory}
+     *            {@link LegacyClientConfiguration} for {@link HttpClientFactory}
      * @return Real implementation of {@link HttpClient} with ability to verify method calls or
      *         partially mock
      */
-    public static ConnectionManagerAwareHttpClient createRawHttpClientSpy(ClientConfiguration config) {
+    public static ConnectionManagerAwareHttpClient createRawHttpClientSpy(LegacyClientConfiguration config) {
         HttpClientFactory<ConnectionManagerAwareHttpClient> httpClientFactory = new ApacheHttpClientFactory();
         return spy(httpClientFactory.create(HttpClientSettings.adapt(config, false)));
     }

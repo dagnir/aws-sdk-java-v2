@@ -29,10 +29,10 @@
             }
         }
 
-        private static ${memberModel.name}MapEntryUnmarshaller instance;
+        private static ${memberModel.name}MapEntryUnmarshaller INSTANCE;
         public static ${memberModel.name}MapEntryUnmarshaller getInstance() {
-            if (instance == null) instance = new ${memberModel.name}MapEntryUnmarshaller();
-            return instance;
+            if (INSTANCE == null) INSTANCE = new ${memberModel.name}MapEntryUnmarshaller();
+            return INSTANCE;
         }
 
     }

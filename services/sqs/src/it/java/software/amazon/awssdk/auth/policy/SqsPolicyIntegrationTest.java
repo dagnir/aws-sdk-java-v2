@@ -57,7 +57,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
         String queueName = getUniqueQueueName();
         queueUrl = sqsClient.createQueue(queueName).getQueueUrl();
 
-        Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withPrincipals(Principal.AllUsers)
+        Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withPrincipals(Principal.ALL_USERS)
                                                                                .withActions(SQSActions.SendMessage, SQSActions.ReceiveMessage)
                                                                                .withResources(new SqsQueueResource(ACCOUNT_ID, queueName))
                                                                                .withConditions(new DateCondition(DateComparisonType.DateLessThan,

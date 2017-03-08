@@ -20,7 +20,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.CombinableMatcher.both;
-import static software.amazon.awssdk.util.FunctionalUtils.safely;
+import static software.amazon.awssdk.util.FunctionalUtils.safeConsumer;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
@@ -55,15 +55,15 @@ public final class PoetGeneratorTaskIntegrationTest {
 
     @After
     public void cleanUp() {
-        tempDirectories.forEach(safely(tempDir -> {
+        tempDirectories.forEach(safeConsumer(tempDir -> {
             List<Path> files = Files.walk(Paths.get(tempDir)).collect(toList());
             Collections.reverse(files);
-            files.forEach(safely(Files::delete));
+            files.forEach(safeConsumer(Files::delete));
         }));
     }
 
     private Path determineOutputFile(ClassSpec classSpec, String randomBaseDirectory) {
-        return Paths.get(randomBaseDirectory, PACKAGE.split(".")).resolve(classSpec.className().simpleName() + ".java");
+        return Paths.get(randomBaseDirectory).resolve(classSpec.className().simpleName() + ".java");
     }
 
     private ClassSpec dummyClass() {

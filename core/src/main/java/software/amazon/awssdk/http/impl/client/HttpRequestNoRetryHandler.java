@@ -22,7 +22,7 @@ import software.amazon.awssdk.annotation.ThreadSafe;
 
 @ThreadSafe
 public class HttpRequestNoRetryHandler extends DefaultHttpRequestRetryHandler {
-    public static final HttpRequestNoRetryHandler Singleton = new HttpRequestNoRetryHandler();
+    public static final HttpRequestNoRetryHandler SINGLETON = new HttpRequestNoRetryHandler();
 
     private HttpRequestNoRetryHandler() {}
 

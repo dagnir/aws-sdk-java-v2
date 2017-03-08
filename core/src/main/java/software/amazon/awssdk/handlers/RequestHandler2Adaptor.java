@@ -17,8 +17,8 @@ package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.util.AwsRequestMetrics;
-import software.amazon.awssdk.util.TimingInfo;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 
 /**
  * Internal class used to adapt a request handler that implements the

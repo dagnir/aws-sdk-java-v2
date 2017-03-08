@@ -26,7 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.http.MockServerTestBase;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
@@ -104,7 +104,7 @@ public class SdkProxyRoutePlannerIntegrationTest extends MockServerTestBase {
     // Create a HttpClient with the proxy set up to the local mock server.
     private HttpClient createHttpClient(String nonProxyHosts) {
         HttpClientFactory<ConnectionManagerAwareHttpClient> httpClientFactory = new ApacheHttpClientFactory();
-        ClientConfiguration config = new ClientConfiguration()
+        LegacyClientConfiguration config = new LegacyClientConfiguration()
                 .withProxyHost("localhost").withProxyPort(server.getPort())
                 .withNonProxyHosts(nonProxyHosts);
         return httpClientFactory.create(HttpClientSettings.adapt(config));

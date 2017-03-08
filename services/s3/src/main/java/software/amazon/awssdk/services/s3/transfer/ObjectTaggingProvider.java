@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.s3.transfer;
 
 import java.io.File;
 import java.util.List;
-
 import software.amazon.awssdk.services.s3.model.ObjectTagging;
 
 /**

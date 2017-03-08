@@ -24,10 +24,10 @@ import org.apache.http.HttpHost;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.protocol.HttpContext;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.internal.http.apache.conn.SdkTlsSocketFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.internal.http.apache.conn.SdkTLSSocketFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-import software.amazon.awssdk.internal.net.SdkSslContext;
+import software.amazon.awssdk.internal.net.SdkSSLContext;
 
 public class RecordingSocketFactory implements ConnectionSocketFactory {
 
@@ -37,9 +37,9 @@ public class RecordingSocketFactory implements ConnectionSocketFactory {
     private final List<HttpContext> createSocketRequests = new ArrayList<HttpContext>();
 
     public RecordingSocketFactory() {
-        HttpClientSettings settings = HttpClientSettings.adapt(new ClientConfiguration(), false);
-        this.delegate = new SdkTlsSocketFactory(
-                SdkSslContext.getPreferredSslContext(settings.getSecureRandom()),
+        HttpClientSettings settings = HttpClientSettings.adapt(new LegacyClientConfiguration(), false);
+        this.delegate = new SdkTLSSocketFactory(
+                SdkSSLContext.getPreferredSSLContext(settings.getSecureRandom()),
                 settings.useBrowserCompatibleHostNameVerifier()
                 ? SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER
                 : SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER);

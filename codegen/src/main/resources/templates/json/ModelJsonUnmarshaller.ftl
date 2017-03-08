@@ -71,9 +71,9 @@ public class ${shape.shapeName}JsonUnmarshaller implements Unmarshaller<${shape.
         return ${shape.variable.variableName};
     }
 
-    private static ${shape.shapeName}JsonUnmarshaller instance;
+    private static ${shape.shapeName}JsonUnmarshaller INSTANCE;
     public static ${shape.shapeName}JsonUnmarshaller getInstance() {
-        if (instance == null) instance = new ${shape.shapeName}JsonUnmarshaller();
-        return instance;
+        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}JsonUnmarshaller();
+        return INSTANCE;
     }
 }

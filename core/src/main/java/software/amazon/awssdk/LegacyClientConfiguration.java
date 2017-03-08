@@ -30,10 +30,10 @@ import software.amazon.awssdk.util.VersionInfoUtils;
 /**
  * Client configuration options such as proxy settings, user agent string, max retry attempts, etc.
  *
- * @see PredefinedClientConfigurations
+ * @see PredefinedLegacyClientConfigurations
  */
 @NotThreadSafe
-public class ClientConfiguration {
+public class LegacyClientConfiguration {
 
     /** The default timeout for creating new connections. */
     public static final int DEFAULT_CONNECTION_TIMEOUT = 10 * 1000;
@@ -288,11 +288,11 @@ public class ClientConfiguration {
      */
     private final ApacheHttpClientConfig apacheHttpClientConfig;
 
-    public ClientConfiguration() {
+    public LegacyClientConfiguration() {
         apacheHttpClientConfig = new ApacheHttpClientConfig();
     }
 
-    public ClientConfiguration(ClientConfiguration other) {
+    public LegacyClientConfiguration(LegacyClientConfiguration other) {
         this.connectionTimeout = other.connectionTimeout;
         this.maxConnections = other.maxConnections;
         this.maxErrorRetry = other.maxErrorRetry;
@@ -376,7 +376,7 @@ public class ClientConfiguration {
      *            The protocol to use when connecting to Amazon Web Services.
      * @return The updated ClientConfiguration object with the new max HTTP connections setting.
      */
-    public ClientConfiguration withProtocol(Protocol protocol) {
+    public LegacyClientConfiguration withProtocol(Protocol protocol) {
         setProtocol(protocol);
         return this;
     }
@@ -408,7 +408,7 @@ public class ClientConfiguration {
      *            The maximum number of allowed open HTTP connections.
      * @return The updated ClientConfiguration object with the new max HTTP connections setting.
      */
-    public ClientConfiguration withMaxConnections(int maxConnections) {
+    public LegacyClientConfiguration withMaxConnections(int maxConnections) {
         setMaxConnections(maxConnections);
         return this;
     }
@@ -439,7 +439,7 @@ public class ClientConfiguration {
      * @return The updated ClientConfiguration object.
      */
     @Deprecated
-    public ClientConfiguration withUserAgent(String userAgent) {
+    public LegacyClientConfiguration withUserAgent(String userAgent) {
         return withUserAgentPrefix(userAgent);
     }
 
@@ -470,7 +470,7 @@ public class ClientConfiguration {
      *            The string to prefix to user agent to use when sending requests.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withUserAgentPrefix(String prefix) {
+    public LegacyClientConfiguration withUserAgentPrefix(String prefix) {
         setUserAgentPrefix(prefix);
         return this;
     }
@@ -502,7 +502,7 @@ public class ClientConfiguration {
      *            The string to suffix to user agent to use when sending requests.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withUserAgentSuffix(String suffix) {
+    public LegacyClientConfiguration withUserAgentSuffix(String suffix) {
         setUserAgentSuffix(suffix);
         return this;
     }
@@ -534,7 +534,7 @@ public class ClientConfiguration {
      *            The local address the client will bind to.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withLocalAddress(InetAddress localAddress) {
+    public LegacyClientConfiguration withLocalAddress(InetAddress localAddress) {
         setLocalAddress(localAddress);
         return this;
     }
@@ -590,7 +590,7 @@ public class ClientConfiguration {
      *            The proxy host the client will connect through.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withProxyHost(String proxyHost) {
+    public LegacyClientConfiguration withProxyHost(String proxyHost) {
         setProxyHost(proxyHost);
         return this;
     }
@@ -645,7 +645,7 @@ public class ClientConfiguration {
      *            The proxy port the client will connect through.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withProxyPort(int proxyPort) {
+    public LegacyClientConfiguration withProxyPort(int proxyPort) {
         setProxyPort(proxyPort);
         return this;
     }
@@ -695,7 +695,7 @@ public class ClientConfiguration {
      *            The proxy user name to use if connecting through a proxy.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withProxyUsername(String proxyUsername) {
+    public LegacyClientConfiguration withProxyUsername(String proxyUsername) {
         setProxyUsername(proxyUsername);
         return this;
     }
@@ -745,7 +745,7 @@ public class ClientConfiguration {
      *            The password to use when connecting through a proxy.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withProxyPassword(String proxyPassword) {
+    public LegacyClientConfiguration withProxyPassword(String proxyPassword) {
         setProxyPassword(proxyPassword);
         return this;
     }
@@ -780,7 +780,7 @@ public class ClientConfiguration {
      *            The optional Windows domain name for configuring an NTLM proxy.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withProxyDomain(String proxyDomain) {
+    public LegacyClientConfiguration withProxyDomain(String proxyDomain) {
         setProxyDomain(proxyDomain);
         return this;
     }
@@ -815,7 +815,7 @@ public class ClientConfiguration {
      *            The optional Windows workstation name for configuring NTLM proxy support.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withProxyWorkstation(String proxyWorkstation) {
+    public LegacyClientConfiguration withProxyWorkstation(String proxyWorkstation) {
         setProxyWorkstation(proxyWorkstation);
         return this;
     }
@@ -860,7 +860,7 @@ public class ClientConfiguration {
      *            The hosts the client will access without going through the proxy.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withNonProxyHosts(String nonProxyHosts) {
+    public LegacyClientConfiguration withNonProxyHosts(String nonProxyHosts) {
         setNonProxyHosts(nonProxyHosts);
         return this;
     }
@@ -893,7 +893,7 @@ public class ClientConfiguration {
      * @param retryPolicy
      *            The retry policy upon failed requests.
      */
-    public ClientConfiguration withRetryPolicy(RetryPolicy retryPolicy) {
+    public LegacyClientConfiguration withRetryPolicy(RetryPolicy retryPolicy) {
         setRetryPolicy(retryPolicy);
         return this;
     }
@@ -935,7 +935,7 @@ public class ClientConfiguration {
      *            should not be negative.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withMaxErrorRetry(int maxErrorRetry) {
+    public LegacyClientConfiguration withMaxErrorRetry(int maxErrorRetry) {
         setMaxErrorRetry(maxErrorRetry);
         return this;
     }
@@ -975,7 +975,7 @@ public class ClientConfiguration {
      *            established, open connection before the connection is times out and is closed.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withSocketTimeout(int socketTimeout) {
+    public LegacyClientConfiguration withSocketTimeout(int socketTimeout) {
         setSocketTimeout(socketTimeout);
         return this;
     }
@@ -1013,7 +1013,7 @@ public class ClientConfiguration {
      *            connection before giving up and timing out.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withConnectionTimeout(int connectionTimeout) {
+    public LegacyClientConfiguration withConnectionTimeout(int connectionTimeout) {
         setConnectionTimeout(connectionTimeout);
         return this;
     }
@@ -1038,7 +1038,7 @@ public class ClientConfiguration {
      *
      * @return The amount of time to wait (in milliseconds) for the request to complete before
      *         giving up and timing out.
-     * @see {@link ClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
+     * @see {@link LegacyClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
      *      all retries
      */
     public int getRequestTimeout() {
@@ -1067,7 +1067,7 @@ public class ClientConfiguration {
      * @param requestTimeout
      *            The amount of time to wait (in milliseconds) for the request to complete before
      *            giving up and timing out.
-     * @see {@link ClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
+     * @see {@link LegacyClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
      *      all retries
      */
     public void setRequestTimeout(int requestTimeout) {
@@ -1098,10 +1098,10 @@ public class ClientConfiguration {
      *            The amount of time to wait (in milliseconds) for the request to complete before
      *            giving up and timing out.
      * @return The updated ClientConfiguration object.
-     * @see {@link ClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
+     * @see {@link LegacyClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
      *      all retries
      */
-    public ClientConfiguration withRequestTimeout(int requestTimeout) {
+    public LegacyClientConfiguration withRequestTimeout(int requestTimeout) {
         setRequestTimeout(requestTimeout);
         return this;
     }
@@ -1123,7 +1123,7 @@ public class ClientConfiguration {
      * feature should not be used when absolute precision is needed.
      * </p>
      * <p>
-     * This may be used together with {@link ClientConfiguration#setRequestTimeout(int)} to enforce
+     * This may be used together with {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce
      * both a timeout on each individual HTTP request (i.e. each retry) and the total time spent on
      * all requests across retries (i.e. the 'client execution' time). A non-positive value disables
      * this feature.
@@ -1134,7 +1134,7 @@ public class ClientConfiguration {
      *
      * @return The amount of time (in milliseconds) to allow the client to complete the execution of
      *         an API call.
-     * @see {@link ClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
+     * @see {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
      */
     public int getClientExecutionTimeout() {
         return this.clientExecutionTimeout;
@@ -1157,7 +1157,7 @@ public class ClientConfiguration {
      * feature should not be used when absolute precision is needed.
      * </p>
      * <p>
-     * This may be used together with {@link ClientConfiguration#setRequestTimeout(int)} to enforce
+     * This may be used together with {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce
      * both a timeout on each individual HTTP request (i.e. each retry) and the total time spent on
      * all requests across retries (i.e. the 'client execution' time). A non-positive value disables
      * this feature.
@@ -1169,7 +1169,7 @@ public class ClientConfiguration {
      * @param clientExecutionTimeout
      *            The amount of time (in milliseconds) to allow the client to complete the execution
      *            of an API call. A value of '0' disables this feature.
-     * @see {@link ClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
+     * @see {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
      */
     public void setClientExecutionTimeout(int clientExecutionTimeout) {
         this.clientExecutionTimeout = clientExecutionTimeout;
@@ -1192,7 +1192,7 @@ public class ClientConfiguration {
      * feature should not be used when absolute precision is needed.
      * </p>
      * <p>
-     * This may be used together with {@link ClientConfiguration#setRequestTimeout(int)} to enforce
+     * This may be used together with {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce
      * both a timeout on each individual HTTP request (i.e. each retry) and the total time spent on
      * all requests across retries (i.e. the 'client execution' time). A non-positive value disables
      * this feature.
@@ -1205,9 +1205,9 @@ public class ClientConfiguration {
      *            The amount of time (in milliseconds) to allow the client to complete the execution
      *            of an API call. A value of '0' disables this feature.
      * @return The updated ClientConfiguration object for method chaining
-     * @see {@link ClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
+     * @see {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
      */
-    public ClientConfiguration withClientExecutionTimeout(int clientExecutionTimeout) {
+    public LegacyClientConfiguration withClientExecutionTimeout(int clientExecutionTimeout) {
         setClientExecutionTimeout(clientExecutionTimeout);
         return this;
     }
@@ -1239,7 +1239,7 @@ public class ClientConfiguration {
      *            the {@link IdleConnectionReaper} is to be started as a daemon thread
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withReaper(boolean use) {
+    public LegacyClientConfiguration withReaper(boolean use) {
         setUseReaper(use);
         return this;
     }
@@ -1316,7 +1316,7 @@ public class ClientConfiguration {
      *            true if throttled retries should be used
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withThrottledRetries(boolean use) {
+    public LegacyClientConfiguration withThrottledRetries(boolean use) {
         setUseThrottleRetries(use);
         return this;
     }
@@ -1352,7 +1352,7 @@ public class ClientConfiguration {
      *
      * @return This object for chaining.
      */
-    public ClientConfiguration withMaxConsecutiveRetriesBeforeThrottling(int maxConsecutiveRetriesBeforeThrottling) {
+    public LegacyClientConfiguration withMaxConsecutiveRetriesBeforeThrottling(int maxConsecutiveRetriesBeforeThrottling) {
         setMaxConsecutiveRetriesBeforeThrottling(maxConsecutiveRetriesBeforeThrottling);
         return this;
     }
@@ -1391,7 +1391,7 @@ public class ClientConfiguration {
      *            whether gzip compression should be used
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withGzip(boolean use) {
+    public LegacyClientConfiguration withGzip(boolean use) {
         setUseGzip(use);
         return this;
     }
@@ -1503,8 +1503,8 @@ public class ClientConfiguration {
      *            The size hint (in bytes) for the low level TCP receive buffer.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withSocketBufferSizeHints(int socketSendBufferSizeHint,
-                                                         int socketReceiveBufferSizeHint) {
+    public LegacyClientConfiguration withSocketBufferSizeHints(int socketSendBufferSizeHint,
+                                                               int socketReceiveBufferSizeHint) {
         setSocketBufferSizeHints(socketSendBufferSizeHint, socketReceiveBufferSizeHint);
         return this;
     }
@@ -1580,7 +1580,7 @@ public class ClientConfiguration {
      *            The signature algorithm to use for this client, or null to use the default.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withSignerOverride(final String value) {
+    public LegacyClientConfiguration withSignerOverride(final String value) {
         setSignerOverride(value);
         return this;
     }
@@ -1615,7 +1615,7 @@ public class ClientConfiguration {
      *            Whether to authenticate preemptively against proxy server.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withPreemptiveBasicProxyAuth(boolean preemptiveBasicProxyAuth) {
+    public LegacyClientConfiguration withPreemptiveBasicProxyAuth(boolean preemptiveBasicProxyAuth) {
         setPreemptiveBasicProxyAuth(preemptiveBasicProxyAuth);
         return this;
     }
@@ -1673,7 +1673,7 @@ public class ClientConfiguration {
      *            the connection TTL, in milliseconds
      * @return the updated ClientConfiguration object
      */
-    public ClientConfiguration withConnectionTtl(long connectionTtl) {
+    public LegacyClientConfiguration withConnectionTtl(long connectionTtl) {
         setConnectionTtl(connectionTtl);
         return this;
     }
@@ -1732,7 +1732,7 @@ public class ClientConfiguration {
      *            the connection maximum idle time, in milliseconds
      * @return the updated ClientConfiguration object
      */
-    public ClientConfiguration withConnectionMaxIdleMillis(long connectionMaxIdleMillis) {
+    public LegacyClientConfiguration withConnectionMaxIdleMillis(long connectionMaxIdleMillis) {
 
         setConnectionMaxIdleMillis(connectionMaxIdleMillis);
         return this;
@@ -1787,9 +1787,9 @@ public class ClientConfiguration {
      *
      * @param validateAfterInactivityMillis The allowed time, in milliseconds, a connection can be idle before it must be
      *                                      re-validated.
-     * @return The updated {@link ClientConfiguration} object.
+     * @return The updated {@link LegacyClientConfiguration} object.
      */
-    public ClientConfiguration withValidateAfterInactivityMillis(int validateAfterInactivityMillis) {
+    public LegacyClientConfiguration withValidateAfterInactivityMillis(int validateAfterInactivityMillis) {
         setValidateAfterInactivityMillis(validateAfterInactivityMillis);
         return this;
     }
@@ -1813,7 +1813,7 @@ public class ClientConfiguration {
      *
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withTcpKeepAlive(final boolean use) {
+    public LegacyClientConfiguration withTcpKeepAlive(final boolean use) {
         setUseTcpKeepAlive(use);
         return this;
     }
@@ -1842,7 +1842,7 @@ public class ClientConfiguration {
      *
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withDnsResolver(final DnsResolver resolver) {
+    public LegacyClientConfiguration withDnsResolver(final DnsResolver resolver) {
         setDnsResolver(resolver);
         return this;
     }
@@ -1895,7 +1895,7 @@ public class ClientConfiguration {
      * @param shouldCache true if response metadata should be cached
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withCacheResponseMetadata(final boolean shouldCache) {
+    public LegacyClientConfiguration withCacheResponseMetadata(final boolean shouldCache) {
         setCacheResponseMetadata(shouldCache);
         return this;
     }
@@ -1926,7 +1926,7 @@ public class ClientConfiguration {
      *            maximum cache size.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withResponseMetadataCacheSize(int responseMetadataCacheSize) {
+    public LegacyClientConfiguration withResponseMetadataCacheSize(int responseMetadataCacheSize) {
         setResponseMetadataCacheSize(responseMetadataCacheSize);
         return this;
     }
@@ -1962,7 +1962,7 @@ public class ClientConfiguration {
     /**
      * Fluent API for {@link #setSecureRandom(SecureRandom)}.
      */
-    public ClientConfiguration withSecureRandom(SecureRandom secureRandom) {
+    public LegacyClientConfiguration withSecureRandom(SecureRandom secureRandom) {
         setSecureRandom(secureRandom);
         return this;
     }
@@ -1993,14 +1993,14 @@ public class ClientConfiguration {
      *            use expect continue HTTP/1.1 header.
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withUseExpectContinue(boolean useExpectContinue) {
+    public LegacyClientConfiguration withUseExpectContinue(boolean useExpectContinue) {
         setUseExpectContinue(useExpectContinue);
 
         return this;
     }
 
     /**
-     * Adds a header to be added on all requests and returns the {@link ClientConfiguration} object
+     * Adds a header to be added on all requests and returns the {@link LegacyClientConfiguration} object
      *
      * @param name
      *            the name of the header
@@ -2009,7 +2009,7 @@ public class ClientConfiguration {
      *
      * @return The updated ClientConfiguration object.
      */
-    public ClientConfiguration withHeader(String name, String value) {
+    public LegacyClientConfiguration withHeader(String name, String value) {
         addHeader(name, value);
         return this;
     }

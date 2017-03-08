@@ -27,7 +27,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
@@ -194,7 +194,7 @@ public class TTE004146470IntegrationTest {
     @Test
     public void test() throws Exception {
         System.setProperty("javax.net.debug", "ssl");
-        HttpClient httpclient = new ApacheHttpClientFactory().create(HttpClientSettings.adapt(new ClientConfiguration()));
+        HttpClient httpclient = new ApacheHttpClientFactory().create(HttpClientSettings.adapt(new LegacyClientConfiguration()));
         //        HttpUriRequest request = new HttpGet("https://google.com:6443");
         HttpUriRequest request = new HttpGet("https://google.com");
         org.apache.http.HttpResponse resp = httpclient.execute(request);

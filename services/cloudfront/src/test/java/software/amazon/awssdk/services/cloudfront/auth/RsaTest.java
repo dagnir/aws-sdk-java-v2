@@ -10,22 +10,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
-
 import org.junit.Test;
+import software.amazon.awssdk.util.IOUtils;
 
-import software.amazon.awssdk.util.IoUtils;
-
-public class RsaTest {
+public class RSATest {
     @Test
     public void loadPrivateKeyFromDER() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("pk-APKAIATTOHFWCYDFKICQ.der");
-        byte[] pkcs8 = IoUtils.toByteArray(is);
+        byte[] pkcs8 = IOUtils.toByteArray(is);
         is.close();
-        PrivateKey pk = Rsa.privateKeyFromPkcs8(pkcs8);
+        PrivateKey pk = RSA.privateKeyFromPKCS8(pkcs8);
         assertEquals("PKCS#8", pk.getFormat());
         assertEquals("RSA", pk.getAlgorithm());
         try {
-            Rsa.privateKeyFromPkcs1(pkcs8);
+            RSA.privateKeyFromPKCS1(pkcs8);
             fail();
         } catch(IllegalArgumentException expected) {
         }
@@ -48,7 +46,7 @@ public class RsaTest {
     }
     
     private void doLoadPrivateKey(InputStream is) throws InvalidKeySpecException, IOException {
-        PrivateKey pk = Pem.readPrivateKey(is);
+        PrivateKey pk = PEM.readPrivateKey(is);
         // funny a private key loaded from PKCS1 encoded format would still report as PKCS#8
         assertEquals("PKCS#8", pk.getFormat());
         assertEquals("RSA", pk.getAlgorithm());
@@ -63,7 +61,7 @@ public class RsaTest {
         };
         for (String resource : resourceNames) {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-            PublicKey pk = Pem.readPublicKey(is);
+            PublicKey pk = PEM.readPublicKey(is);
             is.close();
             assertEquals("X.509", pk.getFormat());
             assertEquals("RSA", pk.getAlgorithm());

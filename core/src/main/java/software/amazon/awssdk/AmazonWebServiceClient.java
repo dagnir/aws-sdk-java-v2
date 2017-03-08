@@ -37,13 +37,13 @@ import software.amazon.awssdk.log.CommonsLogFactory;
 import software.amazon.awssdk.log.InternalLogFactory;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.util.AwsRequestMetrics;
 import software.amazon.awssdk.util.Classes;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
@@ -91,7 +91,7 @@ public abstract class AmazonWebServiceClient {
      */
     protected volatile URI endpoint;
     /** The client configuration. */
-    protected ClientConfiguration clientConfiguration;
+    protected LegacyClientConfiguration clientConfiguration;
     /** Low level client for sending requests to AWS services. */
     protected AmazonHttpClient client;
     /** Optional offset (in seconds) to use when signing requests. */
@@ -127,7 +127,7 @@ public abstract class AmazonWebServiceClient {
      * @param clientConfiguration
      *            The client configuration for this client.
      */
-    public AmazonWebServiceClient(ClientConfiguration clientConfiguration) {
+    public AmazonWebServiceClient(LegacyClientConfiguration clientConfiguration) {
         this(clientConfiguration, null);
     }
 
@@ -141,13 +141,13 @@ public abstract class AmazonWebServiceClient {
      *            optional request metric collector to be used at the http
      *            client level; can be null.
      */
-    public AmazonWebServiceClient(ClientConfiguration clientConfiguration,
+    public AmazonWebServiceClient(LegacyClientConfiguration clientConfiguration,
                                   RequestMetricCollector requestMetricCollector) {
         this(clientConfiguration, requestMetricCollector, false);
     }
 
     @SdkProtectedApi
-    protected AmazonWebServiceClient(ClientConfiguration clientConfiguration,
+    protected AmazonWebServiceClient(LegacyClientConfiguration clientConfiguration,
                                      RequestMetricCollector requestMetricCollector,
                                      boolean disableStrictHostNameVerification) {
         this.clientConfiguration = clientConfiguration;
@@ -201,7 +201,7 @@ public abstract class AmazonWebServiceClient {
      * Callers can pass in just the endpoint (ex: "ec2.amazonaws.com") or a full
      * URL, including the protocol (ex: "https://ec2.amazonaws.com"). If the
      * protocol is not specified here, the default protocol from this client's
-     * {@link ClientConfiguration} will be used, which by default is HTTPS.
+     * {@link LegacyClientConfiguration} will be used, which by default is HTTPS.
      * <p>
      * For more information on using AWS regions with the AWS SDK for Java, and
      * a complete list of all available endpoints for all AWS services, see:
@@ -327,7 +327,7 @@ public abstract class AmazonWebServiceClient {
      * conditions for any service requests in transit or retrying.</b>
      * <p>
      * By default, all service endpoints in all regions use the https protocol. To use http instead,
-     * specify it in the {@link ClientConfiguration} supplied at construction.
+     * specify it in the {@link LegacyClientConfiguration} supplied at construction.
      *
      * @param region
      *            The region this client will communicate with. See
@@ -338,7 +338,7 @@ public abstract class AmazonWebServiceClient {
      *             region. See {@link Region#isServiceSupported(String)}
      * @see Region#getRegion(Regions)
      * @see Region#createClient(Class, AwsCredentialsProvider,
-     *      ClientConfiguration)
+     *      LegacyClientConfiguration)
      * @deprecated use {@link AwsClientBuilder#setRegion(String)}
      */
     @Deprecated

@@ -18,25 +18,25 @@ package software.amazon.awssdk.internal.http.settings;
 import java.net.InetAddress;
 import java.security.SecureRandom;
 import software.amazon.awssdk.ApacheHttpClientConfig;
-import software.amazon.awssdk.ClientConfiguration;
 import software.amazon.awssdk.DnsResolver;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.ValidationUtils;
 
 /**
- * A convienient class that expose all settings in {@link ClientConfiguration} and other internal settings to the
+ * A convienient class that expose all settings in {@link LegacyClientConfiguration} and other internal settings to the
  * underlying http client.
  */
 @SdkInternalApi
 public class HttpClientSettings {
 
-    private final ClientConfiguration config;
+    private final LegacyClientConfiguration config;
 
     private final boolean useBrowserCompatibleHostNameVerifier;
 
     private final boolean calculateCrc32FromCompressedData;
 
-    HttpClientSettings(final ClientConfiguration config,
+    HttpClientSettings(final LegacyClientConfiguration config,
                        final boolean useBrowserCompatibleHostNameVerifier,
                        final boolean calculateCrc32FromCompressedData) {
         this.config = ValidationUtils.assertNotNull(config, "client configuration");
@@ -44,18 +44,18 @@ public class HttpClientSettings {
         this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
     }
 
-    public static HttpClientSettings adapt(final ClientConfiguration config,
+    public static HttpClientSettings adapt(final LegacyClientConfiguration config,
                                            final boolean useBrowserCompatibleHostNameVerifier,
                                            final boolean calculateCrc32FromCompressedData) {
         return new HttpClientSettings(config, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData);
     }
 
-    public static HttpClientSettings adapt(final ClientConfiguration config,
+    public static HttpClientSettings adapt(final LegacyClientConfiguration config,
                                            final boolean useBrowserCompatibleHostNameVerifier) {
         return adapt(config, useBrowserCompatibleHostNameVerifier, false);
     }
 
-    public static HttpClientSettings adapt(final ClientConfiguration config) {
+    public static HttpClientSettings adapt(final LegacyClientConfiguration config) {
         return adapt(config, false);
     }
 

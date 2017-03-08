@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.dynamodbv2;
 
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
@@ -37,7 +37,7 @@ public class RequestTimeoutIntegrationTest extends AwsIntegrationTestBase {
                 .standard()
                 .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                 .withRegion(Regions.US_WEST_2)
-                .withClientConfiguration(new ClientConfiguration().withRequestTimeout(5000))
+                .withClientConfiguration(new LegacyClientConfiguration().withRequestTimeout(5000))
                 .build()
                 .listTables();
     }

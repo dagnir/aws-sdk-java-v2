@@ -36,7 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -57,7 +57,7 @@ public class AmazonHttpClientTest {
 
     @Before
     public void setUp() {
-        ClientConfiguration config = new ClientConfiguration();
+        LegacyClientConfiguration config = new LegacyClientConfiguration();
 
         httpClient = EasyMock.createMock(ConnectionManagerAwareHttpClient.class);
         EasyMock.replay(httpClient);
@@ -163,7 +163,7 @@ public class AmazonHttpClientTest {
     @Test
     public void testUseExpectContinueTrue() throws IOException {
         Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, true);
-        ClientConfiguration clientConfiguration = new ClientConfiguration().withUseExpectContinue(true);
+        LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration().withUseExpectContinue(true);
 
         HttpRequestFactory<HttpRequestBase> httpRequestFactory = new ApacheHttpRequestFactory();
         HttpRequestBase httpRequest = httpRequestFactory.create(request, HttpClientSettings.adapt(clientConfiguration));
@@ -176,7 +176,7 @@ public class AmazonHttpClientTest {
     @Test
     public void testUseExpectContinueFalse() throws IOException {
         Request<?> request = mockRequest(serverName, HttpMethodName.PUT, uriName, true);
-        ClientConfiguration clientConfiguration = new ClientConfiguration().withUseExpectContinue(false);
+        LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration().withUseExpectContinue(false);
 
         HttpRequestFactory<HttpRequestBase> httpRequestFactory = new ApacheHttpRequestFactory();
         HttpRequestBase httpRequest = httpRequestFactory.create(request, HttpClientSettings.adapt(clientConfiguration));
@@ -217,8 +217,8 @@ public class AmazonHttpClientTest {
 
         HttpResponseHandler<AmazonWebServiceResponse<Object>> handler = createStubResponseHandler();
         EasyMock.replay(handler);
-        ClientConfiguration config =
-                new ClientConfiguration().withUserAgentPrefix(prefix).withUserAgentSuffix(suffix);
+        LegacyClientConfiguration config =
+                new LegacyClientConfiguration().withUserAgentPrefix(prefix).withUserAgentSuffix(suffix);
 
         Capture<HttpRequestBase> capturedRequest = new Capture<HttpRequestBase>();
 
@@ -248,7 +248,7 @@ public class AmazonHttpClientTest {
                 .once();
         EasyMock.replay(httpClient);
 
-        AmazonHttpClient client = new AmazonHttpClient(new ClientConfiguration(), httpClient, null);
+        AmazonHttpClient client = new AmazonHttpClient(new LegacyClientConfiguration(), httpClient, null);
 
         final BasicAwsCredentials credentials = new BasicAwsCredentials("foo", "bar");
 

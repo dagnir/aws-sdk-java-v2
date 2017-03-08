@@ -33,7 +33,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.HttpMethodName;
@@ -50,7 +50,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
     private static final HttpRequestFactory<HttpRequestBase> REQUEST_FACTORY = new ApacheHttpRequestFactory();
     private static final String SERVICE_NAME = "fooService";
     private static final String ENDPOINT = "https://aws.amazon.com";
-    private final HttpClientSettings settings = HttpClientSettings.adapt(new ClientConfiguration());
+    private final HttpClientSettings settings = HttpClientSettings.adapt(new LegacyClientConfiguration());
 
     public static byte[] drainInputStream(InputStream inputStream) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

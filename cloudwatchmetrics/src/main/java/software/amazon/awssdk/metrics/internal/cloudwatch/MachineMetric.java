@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
-import software.amazon.awssdk.metrics.MetricType;
+import software.amazon.awssdk.metrics.spi.MetricType;
 
 /**
  * <a href=

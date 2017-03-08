@@ -32,7 +32,7 @@ import software.amazon.awssdk.util.json.Jackson;
  */
 public class ValueMap extends FluentHashMap<String, Object> {
     private static final long serialVersionUID = 1L;
-    private static final ItemValueConformer valueConformer = new ItemValueConformer();
+    private static final ItemValueConformer VALUE_CONFORMER = new ItemValueConformer();
 
     /**
      * Sets the value of the specified key in the current ValueMap to the
@@ -200,8 +200,8 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key to an object represented by the JSON
      * structure passed.
      */
-    public ValueMap withJson(String key, String jsonValue) {
-        super.put(key, valueConformer.transform(Jackson.fromJsonString(jsonValue, Object.class)));
+    public ValueMap withJSON(String key, String jsonValue) {
+        super.put(key, VALUE_CONFORMER.transform(Jackson.fromJsonString(jsonValue, Object.class)));
         return this;
     }
 

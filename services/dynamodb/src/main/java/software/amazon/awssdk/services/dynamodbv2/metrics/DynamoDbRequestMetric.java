@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodbv2.metrics;
 
-import software.amazon.awssdk.metrics.RequestMetricType;
+import software.amazon.awssdk.metrics.spi.RequestMetricType;
 
 /**
  * DynamoDB specific request metric type.

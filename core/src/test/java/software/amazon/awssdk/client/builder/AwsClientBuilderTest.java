@@ -35,9 +35,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
-import software.amazon.awssdk.PredefinedClientConfigurations;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
+import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
@@ -54,7 +54,7 @@ import utils.builder.StaticExecutorFactory;
 public class AwsClientBuilderTest {
 
     // Note that the tests rely on the socket timeout being set to some arbitrary unique value
-    private static final ClientConfiguration DEFAULT_CLIENT_CONFIG = new ClientConfiguration()
+    private static final LegacyClientConfiguration DEFAULT_CLIENT_CONFIG = new LegacyClientConfiguration()
             .withSocketTimeout(9001);
 
     /**
@@ -74,7 +74,7 @@ public class AwsClientBuilderTest {
         //@formatter:off
         AmazonConcreteClient client = new ConcreteSyncBuilder()
                 .withRegion(Regions.EU_CENTRAL_1)
-                .withClientConfiguration(new ClientConfiguration().withSocketTimeout(1234))
+                .withClientConfiguration(new LegacyClientConfiguration().withSocketTimeout(1234))
                 .withCredentials(credentials)
                 .withMetricsCollector(metrics)
                 .withRequestHandlers(requestHandlers.toArray(new RequestHandler2[requestHandlers.size()]))
@@ -121,13 +121,13 @@ public class AwsClientBuilderTest {
     @Test
     public void clientConfigurationNotExplicitlySet_UsesServiceDefaultClientConfiguration() {
         AwsAsyncClientParams params = builderWithRegion().build().getAsyncParams();
-        ClientConfiguration actualConfig = params.getClientConfiguration();
+        LegacyClientConfiguration actualConfig = params.getClientConfiguration();
         assertEquals(DEFAULT_CLIENT_CONFIG.getSocketTimeout(), actualConfig.getSocketTimeout());
     }
 
     @Test
     public void clientConfigurationExplicitlySet_UsesExplicitConfiguration() {
-        ClientConfiguration config = new ClientConfiguration().withSocketTimeout(1000);
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withSocketTimeout(1000);
         AwsAsyncClientParams params = builderWithRegion().withClientConfiguration(config).build()
                                                          .getAsyncParams();
         assertEquals(config.getSocketTimeout(), params.getClientConfiguration().getSocketTimeout());
@@ -186,7 +186,7 @@ public class AwsClientBuilderTest {
     public void defaultClientConfigAndNoExplicitExecutor_UsesDefaultExecutorBasedOnMaxConns() {
         ExecutorService executor = builderWithRegion().build().getAsyncParams().getExecutor();
         assertThat(executor, instanceOf(ThreadPoolExecutor.class));
-        assertEquals(PredefinedClientConfigurations.defaultConfig().getMaxConnections(),
+        assertEquals(PredefinedLegacyClientConfigurations.defaultConfig().getMaxConnections(),
                      ((ThreadPoolExecutor) executor).getMaximumPoolSize());
     }
 
@@ -194,7 +194,7 @@ public class AwsClientBuilderTest {
     public void customMaxConnsAndNoExplicitExecutor_UsesDefaultExecutorBasedOnMaxConns() {
         final int maxConns = 10;
         ExecutorService executor = builderWithRegion()
-                .withClientConfiguration(new ClientConfiguration().withMaxConnections(maxConns))
+                .withClientConfiguration(new LegacyClientConfiguration().withMaxConnections(maxConns))
                 .build().getAsyncParams().getExecutor();
         assertThat(executor, instanceOf(ThreadPoolExecutor.class));
         assertEquals(maxConns, ((ThreadPoolExecutor) executor).getMaximumPoolSize());
@@ -210,7 +210,7 @@ public class AwsClientBuilderTest {
         final int customExecutorThreadCount = 15;
         final ExecutorService customExecutor = Executors
                 .newFixedThreadPool(customExecutorThreadCount);
-        ClientConfiguration config = new ClientConfiguration().withMaxConnections(clientConfigMaxConns);
+        LegacyClientConfiguration config = new LegacyClientConfiguration().withMaxConnections(clientConfigMaxConns);
         ExecutorService actualExecutor = builderWithRegion().withClientConfiguration(config)
                                                             .withExecutorFactory(new StaticExecutorFactory(customExecutor))
                                                             .build().getAsyncParams().getExecutor();
@@ -270,9 +270,9 @@ public class AwsClientBuilderTest {
     private static class ConcreteRequestHandler extends RequestHandler2 {
     }
 
-    private static class MockClientConfigurationFactory extends ClientConfigurationFactory {
+    private static class MockLegacyClientConfigurationFactory extends LegacyClientConfigurationFactory {
         @Override
-        protected ClientConfiguration getDefaultConfig() {
+        protected LegacyClientConfiguration getDefaultConfig() {
             return DEFAULT_CLIENT_CONFIG;
         }
     }
@@ -280,11 +280,11 @@ public class AwsClientBuilderTest {
     private static class ConcreteAsyncBuilder extends
                                               AwsAsyncClientBuilder<ConcreteAsyncBuilder, AmazonConcreteClient> {
         private ConcreteAsyncBuilder() {
-            super(new MockClientConfigurationFactory());
+            super(new MockLegacyClientConfigurationFactory());
         }
 
         private ConcreteAsyncBuilder(AwsRegionProvider mockRegionProvider) {
-            super(new MockClientConfigurationFactory(), mockRegionProvider);
+            super(new MockLegacyClientConfigurationFactory(), mockRegionProvider);
         }
 
         @Override
@@ -296,7 +296,7 @@ public class AwsClientBuilderTest {
     private static class ConcreteSyncBuilder extends
                                              AwsSyncClientBuilder<ConcreteSyncBuilder, AmazonConcreteClient> {
         private ConcreteSyncBuilder() {
-            super(new MockClientConfigurationFactory());
+            super(new MockLegacyClientConfigurationFactory());
         }
 
         @Override
@@ -315,12 +315,12 @@ public class AwsClientBuilderTest {
         private AwsSyncClientParams syncParams;
 
         private AmazonConcreteClient(AwsAsyncClientParams asyncParams) {
-            super(new ClientConfiguration());
+            super(new LegacyClientConfiguration());
             this.asyncParams = asyncParams;
         }
 
         private AmazonConcreteClient(AwsSyncClientParams syncParams) {
-            super(new ClientConfiguration());
+            super(new LegacyClientConfiguration());
             this.syncParams = syncParams;
         }
 

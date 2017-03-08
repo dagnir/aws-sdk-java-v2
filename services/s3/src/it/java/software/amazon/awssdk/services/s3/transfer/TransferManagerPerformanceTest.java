@@ -5,7 +5,6 @@ import static software.amazon.awssdk.services.s3.internal.Constants.MB;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.test.util.RandomTempFile;

@@ -4,12 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Date;
-
 import org.junit.After;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.services.s3.categories.S3Categories;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.test.util.RandomInputStream;
@@ -65,7 +63,7 @@ public class UploadStressIntegrationTest extends S3IntegrationTestBase {
     public void testLargeStream() throws Exception {
     
         int socketBufferSize = 5 * 1024 * 1024;
-        ClientConfiguration clientConfiguration = new ClientConfiguration()
+        LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration()
             .withSocketBufferSizeHints(socketBufferSize, socketBufferSize);
         s3 = new AmazonS3Client(super.credentials, clientConfiguration); 
       

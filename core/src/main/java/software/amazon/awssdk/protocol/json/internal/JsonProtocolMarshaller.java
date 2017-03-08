@@ -39,7 +39,7 @@ import software.amazon.awssdk.util.UriResourcePathUtils;
 @SdkInternalApi
 public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMarshaller<OrigRequestT> {
 
-    private static final MarshallerRegistry marshallerRegistry = createMarshallerRegistry();
+    private static final MarshallerRegistry MARSHALLER_REGISTRY = createMarshallerRegistry();
 
     private final StructuredJsonGenerator jsonGenerator;
     private final Request<OrigRequestT> request;
@@ -58,7 +58,7 @@ public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMars
         this.request = fillBasicRequestParams(operationInfo, originalRequest);
         this.marshallerContext = JsonMarshallerContext.builder()
                 .jsonGenerator(jsonGenerator)
-                .marshallerRegistry(marshallerRegistry)
+                .marshallerRegistry(MARSHALLER_REGISTRY)
                 .protocolHandler(this)
                 .request(request)
                 .build();
@@ -156,7 +156,7 @@ public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMars
         if (marshallingInfo.isBinary()) {
             marshallBinaryPayload(val);
         } else {
-            marshallerRegistry.getMarshaller(marshallingInfo.marshallLocation(), marshallingInfo.marshallingType(), val)
+            MARSHALLER_REGISTRY.getMarshaller(marshallingInfo.marshallLocation(), marshallingInfo.marshallingType(), val)
                     .marshall(val, marshallerContext, marshallingInfo.marshallLocationName());
         }
     }

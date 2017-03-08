@@ -22,7 +22,7 @@ import software.amazon.awssdk.annotation.ThreadSafe;
  */
 @ThreadSafe
 public class ProgressSupport extends Progress {
-    private static final Object lock = new Object();
+    private static final Object LOCK = new Object();
     /* Request transfer progress. */
     private volatile long requestContentLength = -1;
     private volatile long requestBytesTransferred;
@@ -49,7 +49,7 @@ public class ProgressSupport extends Progress {
         if (contentLength < 0) {
             throw new IllegalArgumentException();
         }
-        synchronized (lock) {
+        synchronized (LOCK) {
             if (this.requestContentLength == -1) {
                 this.requestContentLength = contentLength;
             } else {
@@ -84,7 +84,7 @@ public class ProgressSupport extends Progress {
         if (contentLength < 0) {
             throw new IllegalArgumentException();
         }
-        synchronized (lock) {
+        synchronized (LOCK) {
             if (this.responseContentLength == -1) {
                 this.responseContentLength = contentLength;
             } else {
@@ -103,14 +103,14 @@ public class ProgressSupport extends Progress {
 
     @Override
     public void addRequestBytesTransferred(long bytes) {
-        synchronized (lock) {
+        synchronized (LOCK) {
             requestBytesTransferred += bytes;
         }
     }
 
     @Override
     public void addResponseBytesTransferred(long bytes) {
-        synchronized (lock) {
+        synchronized (LOCK) {
             responseBytesTransferred += bytes;
         }
     }

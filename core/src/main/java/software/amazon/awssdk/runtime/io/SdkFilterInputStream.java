@@ -29,8 +29,9 @@ import software.amazon.awssdk.util.SdkRuntime;
  * Base class for AWS Java SDK specific {@link FilterInputStream}.
  */
 @SdkProtectedApi
-public class SdkFilterInputStream extends FilterInputStream implements
-                                                            MetricAware, Releasable {
+public class SdkFilterInputStream extends FilterInputStream
+        implements MetricAware, Releasable {
+
     protected SdkFilterInputStream(InputStream in) {
         super(in);
     }
@@ -47,6 +48,7 @@ public class SdkFilterInputStream extends FilterInputStream implements
     /**
      * Aborts with subclass specific abortion logic executed if needed.
      * Note the interrupted status of the thread is cleared by this method.
+     *
      * @throws AbortedException if found necessary.
      */
     protected final void abortIfNeeded() {

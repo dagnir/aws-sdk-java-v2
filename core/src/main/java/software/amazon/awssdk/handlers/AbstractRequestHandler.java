@@ -16,7 +16,7 @@
 package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.util.TimingInfo;
+import software.amazon.awssdk.metrics.spi.TimingInfo;
 
 /**
  * Simple implementation of RequestHandler to stub out required methods.

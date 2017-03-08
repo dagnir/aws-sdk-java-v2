@@ -13,21 +13,22 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.simpleworkflow;
+package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /*
  * Factory producing predefined {@link ClientConfiguration} instances for
- * the AmazonSimpleWorkflow client.
+ * the AmazonS3 client.
  */
 @SdkInternalApi
-public class AmazonSimpleWorkflowClientConfigurationFactory extends ClientConfigurationFactory {
+class AmazonS3LegacyClientConfigurationFactory extends LegacyClientConfigurationFactory {
 
     @Override
-    protected ClientConfiguration getDefaultConfig() {
-        return super.getDefaultConfig().withMaxConnections(1000).withSocketTimeout(90000);
+    protected LegacyClientConfiguration getInRegionOptimizedConfig() {
+        return super.getInRegionOptimizedConfig().withSocketTimeout(21000);
     }
+
 }

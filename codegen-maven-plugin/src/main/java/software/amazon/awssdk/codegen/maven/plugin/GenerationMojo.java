@@ -45,11 +45,11 @@ import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
 @Mojo(name = "generate")
 public class GenerationMojo extends AbstractMojo {
 
-    private static final String modelFile = "service-2.json";
-    private static final String codeGenConfigFile = "codegen.config";
-    private static final String customizationConfigFile = "customization.config";
-    private static final String examplesFile = "examples-1.json";
-    private static final String waitersFile = "waiters-2.json";
+    private static final String MODEL_FILE = "service-2.json";
+    private static final String CODE_GEN_CONFIG_FILE = "codegen.config";
+    private static final String CUSTOMIZATION_CONFIG_FILE = "customization.config";
+    private static final String EXAMPLES_FILE = "examples-1.json";
+    private static final String WAITERS_FILE = "waiters-2.json";
 
     @Parameter(property = "codeGenResources", defaultValue = "${basedir}/src/main/resources/codegen-resources/")
     private File codeGenResources;
@@ -88,12 +88,12 @@ public class GenerationMojo extends AbstractMojo {
         try {
             return Files.find(codeGenResources.toPath(), 10, this::isModelFile).map(Path::getParent);
         } catch (IOException e) {
-            throw new MojoExecutionException("Failed to find '" + modelFile + "' files in " + codeGenResources, e);
+            throw new MojoExecutionException("Failed to find '" + MODEL_FILE + "' files in " + codeGenResources, e);
         }
     }
 
     private boolean isModelFile(Path p, BasicFileAttributes a) {
-        return p.toString().endsWith(modelFile);
+        return p.toString().endsWith(MODEL_FILE);
     }
 
     private void generateCode(C2jModels models) {
@@ -107,24 +107,24 @@ public class GenerationMojo extends AbstractMojo {
     }
 
     private BasicCodeGenConfig loadCodeGenConfig(Path root) throws MojoExecutionException {
-        return loadRequiredModel(BasicCodeGenConfig.class, root.resolve(codeGenConfigFile));
+        return loadRequiredModel(BasicCodeGenConfig.class, root.resolve(CODE_GEN_CONFIG_FILE));
     }
 
     private CustomizationConfig loadCustomizationConfig(Path root) {
-        return loadOptionalModel(CustomizationConfig.class, root.resolve(customizationConfigFile))
+        return loadOptionalModel(CustomizationConfig.class, root.resolve(CUSTOMIZATION_CONFIG_FILE))
                 .orElse(CustomizationConfig.DEFAULT);
     }
 
     private ServiceModel loadServiceModel(Path root) throws MojoExecutionException {
-        return loadRequiredModel(ServiceModel.class, root.resolve(modelFile));
+        return loadRequiredModel(ServiceModel.class, root.resolve(MODEL_FILE));
     }
 
     private ServiceExamples loadExamplesModel(Path root) {
-        return loadOptionalModel(ServiceExamples.class, root.resolve(examplesFile)).orElse(ServiceExamples.NONE);
+        return loadOptionalModel(ServiceExamples.class, root.resolve(EXAMPLES_FILE)).orElse(ServiceExamples.NONE);
     }
 
     private Waiters loadWaiterModel(Path root) {
-        return loadOptionalModel(Waiters.class, root.resolve(waitersFile)).orElse(Waiters.NONE);
+        return loadOptionalModel(Waiters.class, root.resolve(WAITERS_FILE)).orElse(Waiters.NONE);
     }
 
     /**

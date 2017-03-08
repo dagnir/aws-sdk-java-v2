@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.concurrent.Callable;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.securitytoken.model.GetSessionTokenResult
  * temporary, short-lived sessions to use for authentication.
  */
 @ThreadSafe
-public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvider {
+public class STSSessionCredentialsProvider implements AwsSessionCredentialsProvider {
 
     /**
      * Default duration for started sessions
@@ -52,7 +52,7 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
     };
 
     /**
-     * Handles the refreshing of sessions. Ideally this should be final but #setStsClientEndpoint
+     * Handles the refreshing of sessions. Ideally this should be final but #setSTSClientEndpoint
      * forces us to create a new one.
      */
     private volatile RefreshableTask<SessionCredentialsHolder> refreshableTask;
@@ -66,8 +66,8 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
      *
      * @param longLivedCredentials The main AWS credentials for a user's account.
      */
-    public StsSessionCredentialsProvider(AwsCredentials longLivedCredentials) {
-        this(longLivedCredentials, new ClientConfiguration());
+    public STSSessionCredentialsProvider(AwsCredentials longLivedCredentials) {
+        this(longLivedCredentials, new LegacyClientConfiguration());
     }
 
     /**
@@ -79,8 +79,8 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
      * @param longLivedCredentials The main AWS credentials for a user's account.
      * @param clientConfiguration  Client configuration connection parameters.
      */
-    public StsSessionCredentialsProvider(AwsCredentials longLivedCredentials,
-                                         ClientConfiguration clientConfiguration) {
+    public STSSessionCredentialsProvider(AwsCredentials longLivedCredentials,
+                                         LegacyClientConfiguration clientConfiguration) {
         this(new AWSSecurityTokenServiceClient(longLivedCredentials, clientConfiguration));
     }
 
@@ -93,7 +93,7 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
      * @param longLivedCredentialsProvider Credentials provider for the main AWS credentials for a
      *                                     user's account.
      */
-    public StsSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider) {
+    public STSSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider) {
         this(new AWSSecurityTokenServiceClient(longLivedCredentialsProvider));
     }
 
@@ -107,8 +107,8 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
      *                                     user's account.
      * @param clientConfiguration          Client configuration connection parameters.
      */
-    public StsSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider,
-                                         ClientConfiguration clientConfiguration) {
+    public STSSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider,
+                                         LegacyClientConfiguration clientConfiguration) {
 
         this(new AWSSecurityTokenServiceClient(longLivedCredentialsProvider, clientConfiguration));
     }
@@ -118,7 +118,7 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
      *
      * @param sts Preconfigured STS client to use for this provider
      */
-    public StsSessionCredentialsProvider(AWSSecurityTokenService sts) {
+    public STSSessionCredentialsProvider(AWSSecurityTokenService sts) {
         this.securityTokenService = sts;
         this.refreshableTask = createRefreshableTask();
     }
@@ -144,7 +144,7 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
      *     if you need to work with multiple STS endpoints.
      */
     @Deprecated
-    public synchronized void setStsClientEndpoint(String endpoint) {
+    public synchronized void setSTSClientEndpoint(String endpoint) {
         securityTokenService.setEndpoint(endpoint);
         // Create a new task rather then trying to synchronize this in the refreshable task
         this.refreshableTask = createRefreshableTask();

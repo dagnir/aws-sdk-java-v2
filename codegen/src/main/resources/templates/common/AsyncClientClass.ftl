@@ -8,7 +8,7 @@ import javax.annotation.Generated;
 import ${metadata.packageName}.model.*;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import java.util.concurrent.ExecutorService;
@@ -70,7 +70,7 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      * <p>
      * Asynchronous methods are delegated to a fixed-size thread pool
      * containing a number of threads equal to the maximum number of concurrent
-     * connections configured via {@code ClientConfiguration.getMaxConnections()}.
+     * connections configured via {@code LegacyClientConfiguration.getMaxConnections()}.
      *
      * @param clientConfiguration The client configuration options controlling
      *            how this client connects to ${metadata.serviceName}
@@ -78,10 +78,10 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      *
      * @see software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain
      * @see java.util.concurrent.Executors#newFixedThreadPool(int)
-     * @deprecated use {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)}
+     * @deprecated use {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
-    public ${metadata.asyncClient}(ClientConfiguration clientConfiguration) {
+    public ${metadata.asyncClient}(LegacyClientConfiguration clientConfiguration) {
         this(DefaultAwsCredentialsProviderChain.getInstance(),
                 clientConfiguration,
                 newFixedThreadPool(clientConfiguration.getMaxConnections()));
@@ -120,7 +120,7 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
     @Deprecated
     public ${metadata.asyncClient}(AwsCredentials awsCredentials, ExecutorService executorService) {
 
-        this(awsCredentials, configFactory.getConfig(), executorService);
+        this(awsCredentials, CONFIG_FACTORY.getConfig(), executorService);
     }
 
     /**
@@ -135,11 +135,11 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      * @param executorService The executor service by which all asynchronous
      *            requests will be executed.
      * @deprecated use {@link ${metadata.asyncClientBuilderClassName}#withCredentials(AwsCredentialsProvider)}
-     *             and {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)}
+     *             and {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)}
      *             and {@link ${metadata.asyncClientBuilderClassName}#withExecutorFactory(software.amazon.awssdk.client.builder.ExecutorFactory)}
      */
     @Deprecated
-    public ${metadata.asyncClient}(AwsCredentials awsCredentials, ClientConfiguration clientConfiguration, ExecutorService executorService) {
+    public ${metadata.asyncClient}(AwsCredentials awsCredentials, LegacyClientConfiguration clientConfiguration, ExecutorService executorService) {
         super(awsCredentials, clientConfiguration);
         this.executorService = executorService;
     }
@@ -171,7 +171,7 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      * <p>
      * Asynchronous methods are delegated to a fixed-size thread pool
      * containing a number of threads equal to the maximum number of concurrent
-     * connections configured via {@code ClientConfiguration.getMaxConnections()}.
+     * connections configured via {@code LegacyClientConfiguration.getMaxConnections()}.
      *
      * @param awsCredentialsProvider The AWS credentials provider which will
      *            provide credentials to authenticate requests with AWS
@@ -182,10 +182,10 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      * @see software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain
      * @see java.util.concurrent.Executors#newFixedThreadPool(int)
      * @deprecated use {@link ${metadata.asyncClientBuilderClassName}#withCredentials(AwsCredentialsProvider)}
-     *             and {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)}
+     *             and {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)}
      */
     @Deprecated
-    public ${metadata.asyncClient}(AwsCredentialsProvider awsCredentialsProvider, ClientConfiguration clientConfiguration) {
+    public ${metadata.asyncClient}(AwsCredentialsProvider awsCredentialsProvider, LegacyClientConfiguration clientConfiguration) {
         this(awsCredentialsProvider, clientConfiguration, newFixedThreadPool(clientConfiguration.getMaxConnections()));
     }
 
@@ -204,7 +204,7 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      */
     @Deprecated
     public ${metadata.asyncClient}(AwsCredentialsProvider awsCredentialsProvider, ExecutorService executorService) {
-        this(awsCredentialsProvider, configFactory.getConfig(), executorService);
+        this(awsCredentialsProvider, CONFIG_FACTORY.getConfig(), executorService);
     }
 
     /**
@@ -220,11 +220,11 @@ public class ${metadata.asyncClient} extends ${metadata.syncClient}
      * @param executorService The executor service by which all asynchronous
      *            requests will be executed.
      * @deprecated use {@link ${metadata.asyncClientBuilderClassName}#withCredentials(AwsCredentialsProvider)}
-     *             and {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(ClientConfiguration)}
+     *             and {@link ${metadata.asyncClientBuilderClassName}#withClientConfiguration(LegacyClientConfiguration)}
      *             and {@link ${metadata.asyncClientBuilderClassName}#withExecutorFactory(software.amazon.awssdk.client.builder.ExecutorFactory)}
      */
     @Deprecated
-    public ${metadata.asyncClient}(AwsCredentialsProvider awsCredentialsProvider, ClientConfiguration clientConfiguration, ExecutorService executorService) {
+    public ${metadata.asyncClient}(AwsCredentialsProvider awsCredentialsProvider, LegacyClientConfiguration clientConfiguration, ExecutorService executorService) {
         super(awsCredentialsProvider, clientConfiguration);
         this.executorService = executorService;
     }

@@ -14,15 +14,14 @@
  */
 package software.amazon.awssdk.test.retry;
 
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.io.IOException;
-
-import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RetryableAssertionTest {

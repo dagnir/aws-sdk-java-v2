@@ -107,9 +107,9 @@ public class ${shape.shapeName}StaxUnmarshaller implements Unmarshaller<${shape.
         }
     }
 
-    private static ${shape.shapeName}StaxUnmarshaller instance;
+    private static ${shape.shapeName}StaxUnmarshaller INSTANCE;
     public static ${shape.shapeName}StaxUnmarshaller getInstance() {
-        if (instance == null) instance = new ${shape.shapeName}StaxUnmarshaller();
-        return instance;
+        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}StaxUnmarshaller();
+        return INSTANCE;
     }
 }

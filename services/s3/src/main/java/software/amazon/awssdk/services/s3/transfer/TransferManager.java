@@ -148,7 +148,7 @@ public class TransferManager {
      * There is no need for threads from timedThreadPool if there is no more running threads in current process,
      * so we need a daemon thread factory for it.
      */
-    private static final ThreadFactory daemonThreadFactory = new ThreadFactory() {
+    private static final ThreadFactory DAEMON_THREAD_FACTORY = new ThreadFactory() {
         final AtomicInteger threadCount = new AtomicInteger(0);
 
         public Thread newThread(Runnable r) {
@@ -167,7 +167,7 @@ public class TransferManager {
      * Thread used for periodically checking transfers and updating their state, as well as enforcing
      * timeouts.
      */
-    private final ScheduledExecutorService timedThreadPool = new ScheduledThreadPoolExecutor(1, daemonThreadFactory);
+    private final ScheduledExecutorService timedThreadPool = new ScheduledThreadPoolExecutor(1, DAEMON_THREAD_FACTORY);
     private final boolean shutDownThreadPools;
     /**
      * Flag indicating whether the transfer manager is mutable or not. Legacy managers built via the

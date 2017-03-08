@@ -32,7 +32,6 @@ import static software.amazon.awssdk.codegen.internal.Utils.isScalar;
 
 import java.util.List;
 import java.util.Map;
-
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.EnumModel;

@@ -22,11 +22,11 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
-import software.amazon.awssdk.metrics.MetricType;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.metrics.RequestMetricType;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.MetricType;
+import software.amazon.awssdk.metrics.spi.RequestMetricType;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
-import software.amazon.awssdk.util.AwsRequestMetrics;
 
 /**
  * This is the default implementation of an AWS SDK request metric collection

@@ -5,7 +5,7 @@ import software.amazon.awssdk.Response;
 import software.amazon.awssdk.metrics.MetricCollector;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.ServiceMetricCollector;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 public class LoggingMetricCollector extends MetricCollector {
     @Override

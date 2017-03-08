@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.concurrent.Callable;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -114,7 +114,7 @@ public class StsAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
     @Deprecated
     public StsAssumeRoleSessionCredentialsProvider(AwsCredentials longLivedCredentials,
                                                    String roleArn, String roleSessionName) {
-        this(longLivedCredentials, roleArn, roleSessionName, new ClientConfiguration());
+        this(longLivedCredentials, roleArn, roleSessionName, new LegacyClientConfiguration());
     }
 
     /**
@@ -132,7 +132,7 @@ public class StsAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
     @Deprecated
     public StsAssumeRoleSessionCredentialsProvider(AwsCredentials longLivedCredentials,
                                                    String roleArn, String roleSessionName,
-                                                   ClientConfiguration clientConfiguration) {
+                                                   LegacyClientConfiguration clientConfiguration) {
         this(new Builder(roleArn, roleSessionName).withLongLivedCredentials(longLivedCredentials)
                                                   .withClientConfiguration(clientConfiguration));
     }
@@ -176,7 +176,7 @@ public class StsAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
     @Deprecated
     public StsAssumeRoleSessionCredentialsProvider(
             AwsCredentialsProvider longLivedCredentialsProvider, String roleArn,
-            String roleSessionName, ClientConfiguration clientConfiguration) {
+            String roleSessionName, LegacyClientConfiguration clientConfiguration) {
         this(new Builder(roleArn, roleSessionName)
                      .withLongLivedCredentialsProvider(longLivedCredentialsProvider)
                      .withClientConfiguration(clientConfiguration));
@@ -335,7 +335,7 @@ public class StsAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
 
         private AwsCredentialsProvider longLivedCredentialsProvider;
         private AwsCredentials longLivedCredentials;
-        private ClientConfiguration clientConfiguration;
+        private LegacyClientConfiguration clientConfiguration;
         private String roleExternalId;
         private String serviceEndpoint;
         private int roleSessionDurationSeconds;
@@ -398,7 +398,7 @@ public class StsAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
          *     to create an STS client.
          */
         @Deprecated
-        public Builder withClientConfiguration(ClientConfiguration clientConfiguration) {
+        public Builder withClientConfiguration(LegacyClientConfiguration clientConfiguration) {
             this.clientConfiguration = clientConfiguration;
             return this;
         }
@@ -529,7 +529,7 @@ public class StsAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
          * way to configure and create an STS client.
          *
          * <p><b>Note:</b> This setter is mutually exclusive to the deprecated {@link
-         * #withClientConfiguration(ClientConfiguration)}, {@link #withLongLivedCredentials(AwsCredentials)},
+         * #withClientConfiguration(LegacyClientConfiguration)}, {@link #withLongLivedCredentials(AwsCredentials)},
          * {@link #withLongLivedCredentialsProvider(AwsCredentialsProvider)}, and {@link
          * #withServiceEndpoint(String)} setters. Construct a fully configured STS client via the
          * {@link software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClientBuilder} and

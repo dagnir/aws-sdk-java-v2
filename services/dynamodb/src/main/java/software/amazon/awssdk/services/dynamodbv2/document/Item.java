@@ -67,7 +67,7 @@ import software.amazon.awssdk.util.json.Jackson;
  */
 public class Item {
     private static final String DUPLICATE_VALUES_FOUND_IN_INPUT = "Duplicate values found in input";
-    private static final ItemValueConformer valueConformer = new ItemValueConformer();
+    private static final ItemValueConformer VALUE_CONFORMER = new ItemValueConformer();
     private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
 
     /**
@@ -101,7 +101,7 @@ public class Item {
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> map = (Map<String, Object>)
-                valueConformer.transform(Jackson.fromJsonString(json, Map.class));
+                VALUE_CONFORMER.transform(Jackson.fromJsonString(json, Map.class));
         return fromMap(map);
     }
 
@@ -831,7 +831,7 @@ public class Item {
      */
     public Item withList(String attrName, List<?> val) {
         checkInvalidAttribute(attrName, val);
-        attributes.put(attrName, valueConformer.transform(val));
+        attributes.put(attrName, VALUE_CONFORMER.transform(val));
         return this;
     }
 
@@ -841,8 +841,8 @@ public class Item {
      */
     public Item withList(String attrName, Object... vals) {
         checkInvalidAttribute(attrName, vals);
-        List<Object> list = Arrays.asList(vals);
-        attributes.put(attrName, valueConformer.transform(list));
+        List<Object> list_in = Arrays.asList(vals);
+        attributes.put(attrName, VALUE_CONFORMER.transform(list_in));
         return this;
     }
 
@@ -962,7 +962,7 @@ public class Item {
      */
     public Item withMap(String attrName, Map<String, ?> val) {
         checkInvalidAttribute(attrName, val);
-        attributes.put(attrName, valueConformer.transform(val));
+        attributes.put(attrName, VALUE_CONFORMER.transform(val));
         return this;
     }
 
@@ -973,7 +973,7 @@ public class Item {
     public Item withJson(String attrName, String json) {
         checkInvalidAttribute(attrName, json);
         attributes.put(attrName,
-                       valueConformer.transform(Jackson.fromJsonString(json, Object.class)));
+                       VALUE_CONFORMER.transform(Jackson.fromJsonString(json, Object.class)));
         return this;
     }
 

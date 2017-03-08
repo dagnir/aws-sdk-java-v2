@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.auth.NoOpSigner;
 import software.amazon.awssdk.auth.Signer;
@@ -31,7 +31,7 @@ public class S3ClientConfigSignerTest {
 
     @Test
     public void clientConfigWithoutSigner() throws IOException {
-        AmazonS3Client client = createTestClient(new ClientConfiguration());
+        AmazonS3Client client = createTestClient(new LegacyClientConfiguration());
         DefaultRequest<GetObjectRequest> req =
                 new DefaultRequest<GetObjectRequest>(new GetObjectRequest("bucket", "key"),
                                                      Constants.S3_SERVICE_DISPLAY_NAME);
@@ -44,7 +44,7 @@ public class S3ClientConfigSignerTest {
     @Test
     public void clientConfigWithSigner() throws IOException {
         AmazonS3Client client = createTestClient(
-                new ClientConfiguration().withSignerOverride("NoOpSignerType"));
+                new LegacyClientConfiguration().withSignerOverride("NoOpSignerType"));
         DefaultRequest<GetObjectRequest> req =
                 new DefaultRequest<GetObjectRequest>(new GetObjectRequest("bucket", "key"),
                                                      Constants.S3_SERVICE_DISPLAY_NAME);
@@ -54,7 +54,7 @@ public class S3ClientConfigSignerTest {
         assertTrue(signer instanceof NoOpSigner);
     }
 
-    private AmazonS3Client createTestClient(ClientConfiguration config) throws IOException {
+    private AmazonS3Client createTestClient(LegacyClientConfiguration config) throws IOException {
         AmazonS3Client client = new AmazonS3Client(config);
         client.setEndpoint("s3.nonstandard.test.endpoint");
         return client;

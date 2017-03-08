@@ -2,10 +2,8 @@ package software.amazon.awssdk.services.securitytoken.auth;
 
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.securitytoken.model.transform.AssumeRoleRequestMarshaller;

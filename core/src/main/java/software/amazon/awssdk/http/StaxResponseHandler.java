@@ -45,7 +45,7 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
     /** Shared logger for profiling information. */
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.request");
     /** Shared factory for creating XML event readers. */
-    private static final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    private static final XMLInputFactory XML_INPUT_FACTORY = XMLInputFactory.newInstance();
     /** The StAX unmarshaller to use when handling the response. */
     private Unmarshaller<T, StaxUnmarshallerContext> responseUnmarshaller;
 
@@ -85,8 +85,8 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
         }
 
         XMLEventReader eventReader;
-        synchronized (xmlInputFactory) {
-            eventReader = xmlInputFactory.createXMLEventReader(content);
+        synchronized (XML_INPUT_FACTORY) {
+            eventReader = XML_INPUT_FACTORY.createXMLEventReader(content);
         }
 
         try {

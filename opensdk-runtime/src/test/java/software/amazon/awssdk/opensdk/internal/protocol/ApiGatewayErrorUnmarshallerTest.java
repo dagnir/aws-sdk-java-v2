@@ -14,21 +14,19 @@
  */
 package software.amazon.awssdk.opensdk.internal.protocol;
 
-import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.opensdk.SdkErrorHttpMetadata;
-import software.amazon.awssdk.opensdk.internal.BaseException;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.junit.Test;
-
-import java.util.Optional;
-
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
+import org.junit.Test;
+import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.opensdk.SdkErrorHttpMetadata;
+import software.amazon.awssdk.opensdk.internal.BaseException;
 
 public class ApiGatewayErrorUnmarshallerTest {
 

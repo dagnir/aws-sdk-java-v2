@@ -53,7 +53,7 @@ public class BucketNotificationTestUtils {
         statement.setResources(new ArrayList<Resource>(Arrays.asList(new Resource(resourceArn))));
         statement.setConditions(Arrays.asList(new Condition().withType("ArnEquals").withConditionKey("aws:SourceArn")
                                                              .withValues(sourceArn)));
-        statement.setPrincipals(Principal.All);
+        statement.setPrincipals(Principal.ALL);
         return statement;
     }
 

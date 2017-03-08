@@ -206,7 +206,7 @@ public class JsonPolicyReader {
         List<Principal> principals = new LinkedList<Principal>();
 
         if (principalNodes.asText().equals("*")) {
-            principals.add(Principal.All);
+            principals.add(Principal.ALL);
             return principals;
         }
 

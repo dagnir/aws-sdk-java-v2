@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
@@ -48,7 +48,7 @@ public class GzipConfigurationIntegrationTest extends AwsIntegrationTestBase {
     public static void setup() throws TableNeverTransitionedToStateException,
                                       InterruptedException {
         dynamo = new AmazonDynamoDBClient(getCredentials(),
-                                          new ClientConfiguration().withGzip(true));
+                                          new LegacyClientConfiguration().withGzip(true));
         createTable();
         // For this integration test, if the payload is not big enough, the service will not compress the data.
         putItems(ITEMS_COUNT);

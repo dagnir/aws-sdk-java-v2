@@ -20,7 +20,7 @@ import java.io.InputStream;
 import javax.net.ssl.SSLSocket;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.internal.io.MetricsInputStream;
-import software.amazon.awssdk.util.AwsRequestMetrics;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * A wrapper to SSLSocket with metric feature to record socket read time.

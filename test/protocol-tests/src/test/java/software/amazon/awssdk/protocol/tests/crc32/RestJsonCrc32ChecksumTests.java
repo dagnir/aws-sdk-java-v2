@@ -29,7 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
@@ -65,7 +65,7 @@ public class RestJsonCrc32ChecksumTests {
                                                                    .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
                                                                    .withBodyFile(JSON_BODY_GZIP)));
         AmazonProtocolRestJson client = new AmazonProtocolRestJsonCrc32TestClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                                  new ClientConfiguration().withGzip(true));
+                                                                                  new LegacyClientConfiguration().withGzip(true));
         client.setEndpoint("http://localhost:" + mockServer.port());
         AllTypesResult result =
                 client.allTypes(new AllTypesRequest());
@@ -80,7 +80,7 @@ public class RestJsonCrc32ChecksumTests {
                                                                    .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
                                                                    .withBodyFile(JSON_BODY_GZIP)));
         AmazonProtocolRestJson client = new AmazonProtocolRestJsonCrc32TestClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                                  new ClientConfiguration().withGzip(true));
+                                                                                  new LegacyClientConfiguration().withGzip(true));
         client.setEndpoint("http://localhost:" + mockServer.port());
         client.allTypes(new AllTypesRequest());
     }
@@ -93,7 +93,7 @@ public class RestJsonCrc32ChecksumTests {
                                                                    .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
                                                                    .withBodyFile(JSON_BODY_GZIP)));
         AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new ClientConfiguration().withGzip(true));
+                                                                         new LegacyClientConfiguration().withGzip(true));
         client.setEndpoint("http://localhost:" + mockServer.port());
         AllTypesResult result =
                 client.allTypes(new AllTypesRequest());
@@ -108,7 +108,7 @@ public class RestJsonCrc32ChecksumTests {
                                                                    .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
                                                                    .withBodyFile(JSON_BODY_GZIP)));
         AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new ClientConfiguration().withGzip(true));
+                                                                         new LegacyClientConfiguration().withGzip(true));
         client.setEndpoint("http://localhost:" + mockServer.port());
         client.allTypes(new AllTypesRequest());
     }
@@ -120,7 +120,7 @@ public class RestJsonCrc32ChecksumTests {
                                                                    .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
                                                                    .withBody(JSON_BODY)));
         AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new ClientConfiguration().withGzip(false));
+                                                                         new LegacyClientConfiguration().withGzip(false));
         client.setEndpoint("http://localhost:" + mockServer.port());
         AllTypesResult result =
                 client.allTypes(new AllTypesRequest());
@@ -134,14 +134,14 @@ public class RestJsonCrc32ChecksumTests {
                                                                    .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
                                                                    .withBody(JSON_BODY)));
         AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new ClientConfiguration().withGzip(false));
+                                                                         new LegacyClientConfiguration().withGzip(false));
         client.setEndpoint("http://localhost:" + mockServer.port());
         client.allTypes(new AllTypesRequest());
     }
 
     private static class AmazonProtocolRestJsonCrc32TestClient extends AmazonProtocolRestJsonClient {
 
-        public AmazonProtocolRestJsonCrc32TestClient(AwsCredentialsProvider credentialsProvider, ClientConfiguration config) {
+        public AmazonProtocolRestJsonCrc32TestClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration config) {
             super(credentialsProvider, config);
         }
 

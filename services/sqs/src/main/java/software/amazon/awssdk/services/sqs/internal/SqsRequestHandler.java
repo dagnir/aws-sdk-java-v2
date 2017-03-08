@@ -23,18 +23,18 @@ import software.amazon.awssdk.handlers.AbstractRequestHandler;
 
 public class SqsRequestHandler extends AbstractRequestHandler {
 
-    private static final Map<String, String> nonstandardEndpointMap = new HashMap<String, String>();
+    private static final Map<String, String> NONSTANDARD_ENDPOINT_MAP = new HashMap<String, String>();
 
     static {
-        nonstandardEndpointMap.put("queue.amazonaws.com", "sqs.us-east-1.amazonaws.com");
-        nonstandardEndpointMap.put("us-west-1.queue.amazonaws.com", "sqs.us-west-1.amazonaws.com");
-        nonstandardEndpointMap.put("us-west-2.queue.amazonaws.com", "sqs.us-west-2.amazonaws.com");
-        nonstandardEndpointMap.put("eu-west-1.queue.amazonaws.com", "sqs.eu-west-1.amazonaws.com");
-        nonstandardEndpointMap.put("ap-southeast-1.queue.amazonaws.com", "sqs.ap-southeast-1.amazonaws.com");
-        nonstandardEndpointMap.put("ap-northeast-1.queue.amazonaws.com", "sqs.ap-northeast-1.amazonaws.com");
-        nonstandardEndpointMap.put("sa-east-1.queue.amazonaws.com", "sqs.sa-east-1.amazonaws.com");
-        nonstandardEndpointMap.put("us-gov-west-1.queue.amazonaws.com", "sqs.us-gov-west-1.amazonaws.com");
-        nonstandardEndpointMap.put("ap-southeast-2.queue.amazonaws.com", "sqs.ap-southeast-2.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("queue.amazonaws.com", "sqs.us-east-1.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("us-west-1.queue.amazonaws.com", "sqs.us-west-1.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("us-west-2.queue.amazonaws.com", "sqs.us-west-2.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("eu-west-1.queue.amazonaws.com", "sqs.eu-west-1.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("ap-southeast-1.queue.amazonaws.com", "sqs.ap-southeast-1.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("ap-northeast-1.queue.amazonaws.com", "sqs.ap-northeast-1.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("sa-east-1.queue.amazonaws.com", "sqs.sa-east-1.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("us-gov-west-1.queue.amazonaws.com", "sqs.us-gov-west-1.amazonaws.com");
+        NONSTANDARD_ENDPOINT_MAP.put("ap-southeast-2.queue.amazonaws.com", "sqs.ap-southeast-2.amazonaws.com");
     }
 
     @Override
@@ -43,8 +43,8 @@ public class SqsRequestHandler extends AbstractRequestHandler {
 
         // If the request is using a non-standard endpoint, then
         // alter it to use the corresponding, standard endpoint
-        if (nonstandardEndpointMap.containsKey(endpoint.getHost())) {
-            String newHost = nonstandardEndpointMap.get(endpoint.getHost());
+        if (NONSTANDARD_ENDPOINT_MAP.containsKey(endpoint.getHost())) {
+            String newHost = NONSTANDARD_ENDPOINT_MAP.get(endpoint.getHost());
             String newEndpoint = endpoint.toString().replaceFirst(endpoint.getHost(), newHost);
             request.setEndpoint(URI.create(newEndpoint));
         }

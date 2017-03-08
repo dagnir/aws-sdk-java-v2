@@ -356,7 +356,7 @@ public class Statement {
      * which AWS accounts are affected by this policy statement.
      * <p>
      * If you don't want to restrict your policy to specific users, you can use
-     * {@link Principal#AllUsers} to apply the policy to any user trying to
+     * {@link Principal#ALL_USERS} to apply the policy to any user trying to
      * access your resource.
      *
      * @param principals
@@ -371,7 +371,7 @@ public class Statement {
      * which AWS accounts are affected by this policy statement.
      * <p>
      * If you don't want to restrict your policy to specific users, you can use
-     * {@link Principal#AllUsers} to apply the policy to any user trying to
+     * {@link Principal#ALL_USERS} to apply the policy to any user trying to
      * access your resource.
      *
      * @param principals
@@ -387,7 +387,7 @@ public class Statement {
      * affected by this policy statement.
      * <p>
      * If you don't want to restrict your policy to specific users, you can use
-     * {@link Principal#AllUsers} to apply the policy to any user trying to
+     * {@link Principal#ALL_USERS} to apply the policy to any user trying to
      * access your resource.
      *
      * @param principals

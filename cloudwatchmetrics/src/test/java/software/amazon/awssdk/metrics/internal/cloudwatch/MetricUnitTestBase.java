@@ -20,20 +20,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import org.junit.BeforeClass;
-
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
-import software.amazon.awssdk.test.AwsTestBase;
 
 /**
  * This class provides helper methods and performs the initial setup for SDK
  * Metrics unit testing.
  * 
  */
-public class MetricUnitTestBase extends AwsTestBase {
+public class MetricUnitTestBase {
     protected static final int QUEUE_TIMEOUT_MILLI = 2000;
 
     /** Client Object Reference for Amazon CloudWatch. */
@@ -46,7 +42,7 @@ public class MetricUnitTestBase extends AwsTestBase {
     protected static BlockingQueue<MetricDatum> queue;
 
     /** A list that holds the test metric records to be used for the testing. */
-    protected static List<String> records = new ArrayList<String>();
+    protected static List<String> records = new ArrayList<>();
 
     static {
 
@@ -88,11 +84,9 @@ public class MetricUnitTestBase extends AwsTestBase {
      */
     @BeforeClass
     public static void setUp() throws Exception {
-        setUpCredentials();
         cloudWatchClient = new AmazonCloudWatchTestClient();
-        queue = new LinkedBlockingQueue<MetricDatum>(CloudWatchMetricConfig.DEFAULT_METRICS_QSIZE);
+        queue = new LinkedBlockingQueue<>(CloudWatchMetricConfig.DEFAULT_METRICS_QSIZE);
         config = new CloudWatchMetricConfig().withQueuePollTimeoutMilli(QUEUE_TIMEOUT_MILLI);
-        config.setCredentialsProvider(new AwsStaticCredentialsProvider(credentials));
         formQueueWithMetricData();
     }
 
@@ -102,8 +96,8 @@ public class MetricUnitTestBase extends AwsTestBase {
     private static void formQueueWithMetricData() throws Exception {
 
         Iterator<String> it = records.iterator();
-        String record = null;
-        MetricDatum m = null;
+        String record;
+        MetricDatum m;
 
         while (it.hasNext()) {
             record = it.next();

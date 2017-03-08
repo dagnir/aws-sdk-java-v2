@@ -17,6 +17,7 @@ package software.amazon.awssdk.util;
 
 import org.junit.Assert;
 import software.amazon.awssdk.http.ExecutionContext;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 public class RetryTestUtils {
 

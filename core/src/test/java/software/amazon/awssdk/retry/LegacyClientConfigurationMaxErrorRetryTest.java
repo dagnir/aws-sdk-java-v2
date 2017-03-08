@@ -20,24 +20,24 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.util.RetryTestUtils;
 
 /**
  * Tests the behavior when both
- * {@link ClientConfiguration#setMaxErrorRetry(int)} and
- * {@link ClientConfiguration#setRetryPolicy(RetryPolicy)} are used.
+ * {@link LegacyClientConfiguration#setMaxErrorRetry(int)} and
+ * {@link LegacyClientConfiguration#setRetryPolicy(RetryPolicy)} are used.
  */
-public class ClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
+public class LegacyClientConfigurationMaxErrorRetryTest extends RetryPolicyTestBase {
 
     private static final Random RANDOM = new Random();
     private AmazonHttpClient testedClient;
 
     @Before
     public void resetClientConfiguration() {
-        clientConfiguration = new ClientConfiguration();
+        clientConfiguration = new LegacyClientConfiguration();
     }
 
     /**

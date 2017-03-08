@@ -27,30 +27,30 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * predefined S3 metrics.
  */
 public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricType {
-    public static final S3ServiceMetric S3DownloadByteCount = new S3ServiceMetric(
+    public static final S3ServiceMetric S3_DOWNLOAD_BYTE_COUNT = new S3ServiceMetric(
             metricName(DOWNLOAD_BYTE_COUNT_NAME_SUFFIX));
-    public static final S3ThroughputMetric S3DownloadThroughput = new S3ThroughputMetric(
+    public static final S3ThroughputMetric S3_DOWNLOAD_THROUGHPUT = new S3ThroughputMetric(
             metricName(DOWNLOAD_THROUGHPUT_NAME_SUFFIX)) {
         @Override
         public ServiceMetricType getByteCountMetricType() {
-            return S3DownloadByteCount;
+            return S3_DOWNLOAD_BYTE_COUNT;
         }
     };
-    public static final S3ServiceMetric S3UploadByteCount = new S3ServiceMetric(
+    public static final S3ServiceMetric S3_UPLOAD_BYTE_COUNT = new S3ServiceMetric(
             metricName(UPLOAD_BYTE_COUNT_NAME_SUFFIX));
-    public static final S3ThroughputMetric S3UploadThroughput = new S3ThroughputMetric(
+    public static final S3ThroughputMetric S3_UPLOAD_THROUGHPUT = new S3ThroughputMetric(
             metricName(UPLOAD_THROUGHPUT_NAME_SUFFIX)) {
         @Override
         public ServiceMetricType getByteCountMetricType() {
-            return S3UploadByteCount;
+            return S3_UPLOAD_BYTE_COUNT;
         }
     };
     static final String SERVICE_NAME_PREFIX = "S3";
-    private static final S3ServiceMetric[] values = {
-        S3DownloadThroughput,
-        S3DownloadByteCount,
-        S3UploadThroughput,
-        S3UploadByteCount
+    private static final S3ServiceMetric[] VALUES = {
+            S3_DOWNLOAD_THROUGHPUT,
+            S3_DOWNLOAD_BYTE_COUNT,
+            S3_UPLOAD_THROUGHPUT,
+            S3_UPLOAD_BYTE_COUNT
     };
     private final String name;
 
@@ -67,7 +67,7 @@ public class S3ServiceMetric extends SimpleMetricType implements ServiceMetricTy
     }
 
     public static S3ServiceMetric[] values() {
-        return values.clone();
+        return VALUES.clone();
     }
 
     public static S3ServiceMetric valueOf(String name) {

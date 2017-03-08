@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.util.IOUtils;
 
 /**
  * An internal utility used to provide both inter and intra JVM file locking.
@@ -45,7 +45,7 @@ public enum FileLocks {
     // so disabling for now (Ref: TT0047889941)
     private static final boolean EXTERNAL_LOCK = false;
     private static final Log log = LogFactory.getLog(FileLocks.class);
-    private static final Map<File, RandomAccessFile> lockedFiles = new TreeMap<File, RandomAccessFile>();
+    private static final Map<File, RandomAccessFile> LOCKED_FILES = new TreeMap<File, RandomAccessFile>();
 
     /**
      * Acquires an exclusive lock on the specified file, creating the file as
@@ -57,8 +57,8 @@ public enum FileLocks {
      * @throws FileLockException if we failed to lock the file
      */
     public static boolean lock(File file) {
-        synchronized (lockedFiles) {
-            if (lockedFiles.containsKey(file)) {
+        synchronized (LOCKED_FILES) {
+            if (LOCKED_FILES.containsKey(file)) {
                 return false;   // already locked
             }
         }
@@ -73,18 +73,18 @@ public enum FileLocks {
                 lock = channel.lock();
             }
         } catch (Exception e) {
-            IoUtils.closeQuietly(raf, log);
+            IOUtils.closeQuietly(raf, log);
             throw new FileLockException(e);
         }
         final boolean locked;
-        synchronized (lockedFiles) {
-            RandomAccessFile prev = lockedFiles.put(file, raf);
+        synchronized (LOCKED_FILES) {
+            RandomAccessFile prev = LOCKED_FILES.put(file, raf);
             if (prev == null) {
                 locked = true;
             } else {
                 // race condition: some other thread got locked it before this
                 locked = false;
-                lockedFiles.put(file, prev);    // put it back
+                LOCKED_FILES.put(file, prev);    // put it back
             }
         }
         if (locked) {
@@ -92,7 +92,7 @@ public enum FileLocks {
                 log.debug("Locked file " + file + " with " + lock);
             }
         } else {
-            IoUtils.closeQuietly(raf, log);
+            IOUtils.closeQuietly(raf, log);
         }
         return locked;
     }
@@ -101,8 +101,8 @@ public enum FileLocks {
      * Returns true if the specified file is currently locked; false otherwise.
      */
     public static boolean isFileLocked(File file) {
-        synchronized (lockedFiles) {
-            return lockedFiles.containsKey(file);
+        synchronized (LOCKED_FILES) {
+            return LOCKED_FILES.containsKey(file);
         }
     }
 
@@ -115,16 +115,16 @@ public enum FileLocks {
      *         have actually failed.
      */
     public static boolean unlock(File file) {
-        synchronized (lockedFiles) {
-            final RandomAccessFile raf = lockedFiles.get(file);
+        synchronized (LOCKED_FILES) {
+            final RandomAccessFile raf = LOCKED_FILES.get(file);
             if (raf == null) {
                 return false;
             } else {
                 // Must close out the channel before removing it from the map;
                 // or else risk giving a false negative (of no lock but in fact
                 // the file is still locked by the file system.)
-                IoUtils.closeQuietly(raf, log);
-                lockedFiles.remove(file);
+                IOUtils.closeQuietly(raf, log);
+                LOCKED_FILES.remove(file);
             }
         }
         if (log.isDebugEnabled()) {

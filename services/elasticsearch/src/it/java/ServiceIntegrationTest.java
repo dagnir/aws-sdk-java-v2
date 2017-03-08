@@ -9,11 +9,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.elasticsearch.AWSElasticsearch;
 import software.amazon.awssdk.services.elasticsearch.AWSElasticsearchClient;
 import software.amazon.awssdk.services.elasticsearch.model.AddTagsRequest;

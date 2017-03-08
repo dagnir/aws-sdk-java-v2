@@ -28,10 +28,10 @@ import software.amazon.awssdk.internal.io.Releasable;
 /**
  * Utilities for IO operations.
  */
-public enum IoUtils {
+public enum IOUtils {
     ;
     private static final int BUFFER_SIZE = 1024 * 4;
-    private static final Log defaultLog = LogFactory.getLog(IoUtils.class);
+    private static final Log DEFAULT_LOG = LogFactory.getLog(IOUtils.class);
 
     /**
      * Reads and returns the rest of the given input stream as a byte array.
@@ -69,7 +69,7 @@ public enum IoUtils {
             try {
                 is.close();
             } catch (IOException ex) {
-                Log logger = log == null ? defaultLog : log;
+                Log logger = log == null ? DEFAULT_LOG : log;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Ignore failure in closing the Closeable", ex);
                 }

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.S3IntegrationTestBase;
@@ -63,7 +63,7 @@ public class UploadObject2IntegrationTest extends S3IntegrationTestBase {
                                             .addDescription("name", "testsecretkey")
                                    ).addMaterial(new EncryptionMaterials(CryptoTestUtils.getTestPublicKeyPair())
                                                          .addDescription("name", "testpublickeypair")),
-                new ClientConfiguration(),
+                new LegacyClientConfiguration(),
                 new CryptoConfiguration()
                         .withCryptoMode(CryptoMode.AuthenticatedEncryption)
         );

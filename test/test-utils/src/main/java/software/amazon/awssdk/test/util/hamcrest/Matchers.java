@@ -69,7 +69,7 @@ public class Matchers {
     }
 
     private static <T> List<Matcher<? super T>> convertToMatchers(List<T> items) {
-        List<Matcher<? super T>> matchers = new ArrayList<Matcher<? super T>>();
+        List<Matcher<? super T>> matchers = new ArrayList<>();
         for (T item : items) {
             matchers.add(CoreMatchers.equalTo(item));
         }

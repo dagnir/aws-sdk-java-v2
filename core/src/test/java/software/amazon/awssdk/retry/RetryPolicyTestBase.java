@@ -38,7 +38,7 @@ import org.junit.Assert;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.AmazonHttpClient;
@@ -51,7 +51,7 @@ public class RetryPolicyTestBase {
 
     protected static final AmazonWebServiceRequest originalRequest = new TestAmazonWebServiceRequest();
     protected static final HttpResponseHandler<AmazonServiceException> errorResponseHandler = new TestHttpResponseHandler();
-    protected static ClientConfiguration clientConfiguration = new ClientConfiguration();
+    protected static LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration();
     /**
      * The retry condition and back-off strategy implementations that record all
      * the context data passed into shouldRetry and calculateSleepTime methods.

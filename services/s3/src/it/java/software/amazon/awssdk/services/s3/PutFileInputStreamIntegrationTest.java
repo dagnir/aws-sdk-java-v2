@@ -22,7 +22,7 @@ import junit.framework.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.services.s3.internal.AmazonS3TestClient;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
@@ -44,7 +44,7 @@ public class PutFileInputStreamIntegrationTest extends S3IntegrationTestBase {
     public static void setup() throws Exception {
         setUpCredentials();
         s3 = new AmazonS3TestClient(credentials,
-                                    new ClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
+                                    new LegacyClientConfiguration().withSignerOverride("AWSS3V4SignerType"));
         CryptoTestUtils.tryCreateBucket(s3, bucketName);
         // make the content length 100 byte larger than the default mark-and-reset limit
         contentLength = new PutObjectRequest(bucketName, key, file).getReadLimit() + 100;

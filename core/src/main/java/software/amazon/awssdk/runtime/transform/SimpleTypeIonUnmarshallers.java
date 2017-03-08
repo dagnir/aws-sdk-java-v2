@@ -24,10 +24,10 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 @SdkInternalApi
 public class SimpleTypeIonUnmarshallers {
     public static class StringIonUnmarshaller implements Unmarshaller<String, JsonUnmarshallerContext> {
-        private static final StringIonUnmarshaller instance = new StringIonUnmarshaller();
+        private static final StringIonUnmarshaller INSTANCE = new StringIonUnmarshaller();
 
         public static StringIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -38,10 +38,10 @@ public class SimpleTypeIonUnmarshallers {
 
 
     public static class DoubleIonUnmarshaller implements Unmarshaller<Double, JsonUnmarshallerContext> {
-        private static final DoubleIonUnmarshaller instance = new DoubleIonUnmarshaller();
+        private static final DoubleIonUnmarshaller INSTANCE = new DoubleIonUnmarshaller();
 
         public static DoubleIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -51,10 +51,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class IntegerIonUnmarshaller implements Unmarshaller<Integer, JsonUnmarshallerContext> {
-        private static final IntegerIonUnmarshaller instance = new IntegerIonUnmarshaller();
+        private static final IntegerIonUnmarshaller INSTANCE = new IntegerIonUnmarshaller();
 
         public static IntegerIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -64,10 +64,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class BigIntegerIonUnmarshaller implements Unmarshaller<BigInteger, JsonUnmarshallerContext> {
-        private static final BigIntegerIonUnmarshaller instance = new BigIntegerIonUnmarshaller();
+        private static final BigIntegerIonUnmarshaller INSTANCE = new BigIntegerIonUnmarshaller();
 
         public static BigIntegerIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -77,10 +77,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class BigDecimalIonUnmarshaller implements Unmarshaller<BigDecimal, JsonUnmarshallerContext> {
-        private static final BigDecimalIonUnmarshaller instance = new BigDecimalIonUnmarshaller();
+        private static final BigDecimalIonUnmarshaller INSTANCE = new BigDecimalIonUnmarshaller();
 
         public static BigDecimalIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -90,10 +90,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class BooleanIonUnmarshaller implements Unmarshaller<Boolean, JsonUnmarshallerContext> {
-        private static final BooleanIonUnmarshaller instance = new BooleanIonUnmarshaller();
+        private static final BooleanIonUnmarshaller INSTANCE = new BooleanIonUnmarshaller();
 
         public static BooleanIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -103,10 +103,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class FloatIonUnmarshaller implements Unmarshaller<Float, JsonUnmarshallerContext> {
-        private static final FloatIonUnmarshaller instance = new FloatIonUnmarshaller();
+        private static final FloatIonUnmarshaller INSTANCE = new FloatIonUnmarshaller();
 
         public static FloatIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -116,10 +116,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class LongIonUnmarshaller implements Unmarshaller<Long, JsonUnmarshallerContext> {
-        private static final LongIonUnmarshaller instance = new LongIonUnmarshaller();
+        private static final LongIonUnmarshaller INSTANCE = new LongIonUnmarshaller();
 
         public static LongIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -129,10 +129,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class ByteIonUnmarshaller implements Unmarshaller<Byte, JsonUnmarshallerContext> {
-        private static final ByteIonUnmarshaller instance = new ByteIonUnmarshaller();
+        private static final ByteIonUnmarshaller INSTANCE = new ByteIonUnmarshaller();
 
         public static ByteIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -142,10 +142,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class DateIonUnmarshaller implements Unmarshaller<Date, JsonUnmarshallerContext> {
-        private static final DateIonUnmarshaller instance = new DateIonUnmarshaller();
+        private static final DateIonUnmarshaller INSTANCE = new DateIonUnmarshaller();
 
         public static DateIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -155,10 +155,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class ByteBufferIonUnmarshaller implements Unmarshaller<ByteBuffer, JsonUnmarshallerContext> {
-        private static final ByteBufferIonUnmarshaller instance = new ByteBufferIonUnmarshaller();
+        private static final ByteBufferIonUnmarshaller INSTANCE = new ByteBufferIonUnmarshaller();
 
         public static ByteBufferIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override
@@ -168,10 +168,10 @@ public class SimpleTypeIonUnmarshallers {
     }
 
     public static class ShortIonUnmarshaller implements Unmarshaller<Short, JsonUnmarshallerContext> {
-        private static final ShortIonUnmarshaller instance = new ShortIonUnmarshaller();
+        private static final ShortIonUnmarshaller INSTANCE = new ShortIonUnmarshaller();
 
         public static ShortIonUnmarshaller getInstance() {
-            return instance;
+            return INSTANCE;
         }
 
         @Override

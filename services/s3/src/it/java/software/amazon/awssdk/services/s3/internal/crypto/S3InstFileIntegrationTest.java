@@ -38,7 +38,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.jmx.JmxInfoProviderSupport;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
@@ -148,7 +148,7 @@ public class S3InstFileIntegrationTest implements Headers {
             c = new S3CryptoTestClient(
                     awsTestCredentials(),
                     materialProvider,
-                    new ClientConfiguration().withConnectionTtl(1),
+                    new LegacyClientConfiguration().withConnectionTtl(1),
                     new CryptoConfiguration()
                             .withStorageMode(storageMode)
                             .withCryptoMode(cryptoMode)

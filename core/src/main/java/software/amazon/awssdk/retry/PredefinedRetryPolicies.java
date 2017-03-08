@@ -19,8 +19,8 @@ import java.io.IOException;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.retry.PredefinedBackoffStrategies.SdkDefaultBackoffStrategy;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.retry.PredefinedBackoffStrategies.SDKDefaultBackoffStrategy;
 
 /**
  * This class includes a set of pre-defined retry policies, including default
@@ -67,21 +67,21 @@ public class PredefinedRetryPolicies {
      *       clock skew errors.
      * </ul>
      */
-    public static final RetryPolicy.RetryCondition DEFAULT_RETRY_CONDITION = new SdkDefaultRetryCondition();
+    public static final RetryPolicy.RetryCondition DEFAULT_RETRY_CONDITION = new SDKDefaultRetryCondition();
 
     /**
      * The SDK default back-off strategy, which increases exponentially up to a max amount of delay. It also applies a larger
      * scale factor upon service throttling exception.
      */
     public static final RetryPolicy.BackoffStrategy DEFAULT_BACKOFF_STRATEGY =
-            new SdkDefaultBackoffStrategy();
+            new SDKDefaultBackoffStrategy();
 
     /**
      * The SDK default back-off strategy, which increases exponentially up to a max amount of delay. It also applies a larger
      * scale factor upon service throttling exception.
      */
     public static final V2CompatibleBackoffStrategy DEFAULT_BACKOFF_STRATEGY_V2 =
-            new SdkDefaultBackoffStrategy();
+            new SDKDefaultBackoffStrategy();
 
     /**
      * The default back-off strategy for DynamoDB client, which increases
@@ -89,20 +89,20 @@ public class PredefinedRetryPolicies {
      * back-off strategy, it applies a smaller scale factor.
      */
     public static final RetryPolicy.BackoffStrategy DYNAMODB_DEFAULT_BACKOFF_STRATEGY =
-            new SdkDefaultBackoffStrategy(PredefinedBackoffStrategies.DYNAMODB_DEFAULT_BASE_DELAY,
+            new SDKDefaultBackoffStrategy(PredefinedBackoffStrategies.DYNAMODB_DEFAULT_BASE_DELAY,
                                           PredefinedBackoffStrategies.SDK_DEFAULT_THROTTLED_BASE_DELAY,
                                           PredefinedBackoffStrategies.SDK_DEFAULT_MAX_BACKOFF_IN_MILLISECONDS);
 
     static {
         DEFAULT = getDefaultRetryPolicy();
-        DYNAMODB_DEFAULT = getDynamoDbDefaultRetryPolicy();
+        DYNAMODB_DEFAULT = getDynamoDBDefaultRetryPolicy();
     }
 
     /**
      * Returns the SDK default retry policy. This policy will honor the
      * maxErrorRetry set in ClientConfiguration.
      *
-     * @see ClientConfiguration#setMaxErrorRetry(int)
+     * @see LegacyClientConfiguration#setMaxErrorRetry(int)
      */
     public static RetryPolicy getDefaultRetryPolicy() {
         return new RetryPolicy(DEFAULT_RETRY_CONDITION,
@@ -115,9 +115,9 @@ public class PredefinedRetryPolicies {
      * Returns the default retry policy for DynamoDB client. This policy will
      * honor the maxErrorRetry set in ClientConfiguration.
      *
-     * @see ClientConfiguration#setMaxErrorRetry(int)
+     * @see LegacyClientConfiguration#setMaxErrorRetry(int)
      */
-    public static RetryPolicy getDynamoDbDefaultRetryPolicy() {
+    public static RetryPolicy getDynamoDBDefaultRetryPolicy() {
         return new RetryPolicy(DEFAULT_RETRY_CONDITION,
                                DYNAMODB_DEFAULT_BACKOFF_STRATEGY,
                                DYNAMODB_DEFAULT_MAX_ERROR_RETRY,
@@ -138,7 +138,7 @@ public class PredefinedRetryPolicies {
      * Returns the default retry policy for DynamoDB client with the specified
      * max retry count.
      */
-    public static RetryPolicy getDynamoDbDefaultRetryPolicyWithCustomMaxRetries(int maxErrorRetry) {
+    public static RetryPolicy getDynamoDBDefaultRetryPolicyWithCustomMaxRetries(int maxErrorRetry) {
         return new RetryPolicy(DEFAULT_RETRY_CONDITION,
                                DYNAMODB_DEFAULT_BACKOFF_STRATEGY,
                                maxErrorRetry,
@@ -157,7 +157,7 @@ public class PredefinedRetryPolicies {
      *       clock skew errors.
      * </ul>
      */
-    public static class SdkDefaultRetryCondition implements RetryPolicy.RetryCondition {
+    public static class SDKDefaultRetryCondition implements RetryPolicy.RetryCondition {
 
         @Override
         public boolean shouldRetry(AmazonWebServiceRequest originalRequest,

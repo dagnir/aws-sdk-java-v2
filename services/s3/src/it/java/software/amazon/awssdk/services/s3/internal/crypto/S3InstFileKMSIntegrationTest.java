@@ -38,7 +38,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import software.amazon.awssdk.ClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.jmx.JmxInfoProviderSupport;
 import software.amazon.awssdk.kms.utils.KmsTestKeyCache;
 import software.amazon.awssdk.regions.Regions;
@@ -203,7 +203,7 @@ public class S3InstFileKMSIntegrationTest extends S3IntegrationTestBase implemen
                     kms,
                     awsTestCredentials(),
                     materialProvider,
-                    new ClientConfiguration().withConnectionTtl(1),
+                    new LegacyClientConfiguration().withConnectionTtl(1),
                     new CryptoConfiguration()
                             .withStorageMode(storageMode)
                             .withCryptoMode(cryptoMode)

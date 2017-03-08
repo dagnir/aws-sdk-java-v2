@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import software.amazon.awssdk.services.dynamodbv2.document.Item;
 import software.amazon.awssdk.services.dynamodbv2.document.ItemCollection;
 import software.amazon.awssdk.services.dynamodbv2.document.ScanFilter;

@@ -13,22 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.s3;
+package software.amazon.awssdk.runtime.io;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
-import software.amazon.awssdk.annotation.SdkInternalApi;
+import java.io.InputStream;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 
-/*
- * Factory producing predefined {@link ClientConfiguration} instances for
- * the AmazonS3 client.
+/**
+ * Provides access to delegate stream for verification in unit tests. Should
+ * not be used outside of the SDK.
  */
-@SdkInternalApi
-class AmazonS3ClientConfigurationFactory extends ClientConfigurationFactory {
+@SdkTestInternalApi
+public interface WrappedInputStream {
 
-    @Override
-    protected ClientConfiguration getInRegionOptimizedConfig() {
-        return super.getInRegionOptimizedConfig().withSocketTimeout(21000);
-    }
-
+    InputStream getWrappedStream();
 }

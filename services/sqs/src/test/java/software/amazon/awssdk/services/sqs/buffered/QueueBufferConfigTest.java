@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.services.sqs.buffered;
 
-import software.amazon.awssdk.smoketest.ReflectionUtils;
-import org.junit.Test;
-
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+
+import org.junit.Test;
+import software.amazon.awssdk.smoketest.ReflectionUtils;
 
 public class QueueBufferConfigTest {
 

@@ -61,7 +61,7 @@ public final class IdleConnectionReaper extends Thread {
     @Deprecated
     private static final int DEFAULT_MAX_IDLE_MILLIS = 1000 * 60;
 
-    private static final Map<HttpClientConnectionManager, Long> connectionManagers = new ConcurrentHashMap<>();
+    private static final Map<HttpClientConnectionManager, Long> CONNECTION_MANAGERS = new ConcurrentHashMap<>();
     /**
      * Singleton instance of the connection reaper.
      */
@@ -107,7 +107,7 @@ public final class IdleConnectionReaper extends Thread {
                 }
             }
         }
-        return connectionManagers.put(connectionManager, maxIdleInMs) == null;
+        return CONNECTION_MANAGERS.put(connectionManager, maxIdleInMs) == null;
     }
 
     /**
@@ -117,15 +117,15 @@ public final class IdleConnectionReaper extends Thread {
      * @return true if the connection manager has been successfully removed, false otherwise.
      */
     public static boolean removeConnectionManager(HttpClientConnectionManager connectionManager) {
-        boolean wasRemoved = connectionManagers.remove(connectionManager) != null;
-        if (connectionManagers.isEmpty()) {
+        boolean wasRemoved = CONNECTION_MANAGERS.remove(connectionManager) != null;
+        if (CONNECTION_MANAGERS.isEmpty()) {
             shutdown();
         }
         return wasRemoved;
     }
 
     public static List<HttpClientConnectionManager> getRegisteredConnectionManagers() {
-        return new ArrayList<HttpClientConnectionManager>(connectionManagers.keySet());
+        return new ArrayList<HttpClientConnectionManager>(CONNECTION_MANAGERS.keySet());
     }
 
     /**
@@ -143,7 +143,7 @@ public final class IdleConnectionReaper extends Thread {
         if (instance != null) {
             instance.markShuttingDown();
             instance.interrupt();
-            connectionManagers.clear();
+            CONNECTION_MANAGERS.clear();
             instance = null;
             return true;
         }
@@ -156,7 +156,7 @@ public final class IdleConnectionReaper extends Thread {
      * reaper.
      */
     static int size() {
-        return connectionManagers.size();
+        return CONNECTION_MANAGERS.size();
     }
 
     private void markShuttingDown() {
@@ -174,7 +174,7 @@ public final class IdleConnectionReaper extends Thread {
             try {
                 Thread.sleep(PERIOD_MILLISECONDS);
 
-                for (Map.Entry<HttpClientConnectionManager, Long> entry : connectionManagers.entrySet()) {
+                for (Map.Entry<HttpClientConnectionManager, Long> entry : CONNECTION_MANAGERS.entrySet()) {
                     // When we release connections, the connection manager leaves them
                     // open so they can be reused.  We want to close out any idle
                     // connections so that they don't sit around in CLOSE_WAIT.

@@ -36,18 +36,18 @@ import java.util.Set;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.jmx.spi.JmxInfoProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
-import software.amazon.awssdk.metrics.MetricType;
+import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 
 class MachineMetricFactory {
-    private static final List<MachineMetric> memoryMetrics = Arrays.asList(
+    private static final List<MachineMetric> MEMORY_METRICS = Arrays.asList(
             TotalMemory, FreeMemory, UsedMemory, SpareMemory);
-    private static final List<MachineMetric> threadMetrics = Arrays.asList(
+    private static final List<MachineMetric> THREAD_METRICS = Arrays.asList(
             ThreadCount, DeadLockThreadCount, DaemonThreadCount,
             PeakThreadCount, TotalStartedThreadCount);
-    private static final List<MachineMetric> fdMetrics = Arrays.asList(
+    private static final List<MachineMetric> FD_METRICS = Arrays.asList(
             OpenFileDescriptorCount, SpareFileDescriptorCount);
     private final JmxInfoProvider jmxInfoProvider = JmxInfoProvider.Factory.getJmxInfoProvider();
 
@@ -214,7 +214,7 @@ class MachineMetricFactory {
      */
     private MetricValues memoryMetricValues(Set<MachineMetric> customSet,
                                             List<Long> values) {
-        return metricValues(customSet, MachineMetricFactory.memoryMetrics,
+        return metricValues(customSet, MachineMetricFactory.MEMORY_METRICS,
                             values);
     }
 
@@ -230,7 +230,7 @@ class MachineMetricFactory {
      */
     private MetricValues fdMetricValues(Set<MachineMetric> customSet,
                                         List<Long> values) {
-        return metricValues(customSet, MachineMetricFactory.fdMetrics, values);
+        return metricValues(customSet, MachineMetricFactory.FD_METRICS, values);
     }
 
     /**
@@ -245,7 +245,7 @@ class MachineMetricFactory {
      */
     private MetricValues threadMetricValues(Set<MachineMetric> customSet,
                                             List<Long> values) {
-        return metricValues(customSet, MachineMetricFactory.threadMetrics,
+        return metricValues(customSet, MachineMetricFactory.THREAD_METRICS,
                             values);
     }
 

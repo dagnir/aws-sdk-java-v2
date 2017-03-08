@@ -1,16 +1,14 @@
 package software.amazon.awssdk.services.securitytoken.auth;
 
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonServiceException;
-
-import org.junit.Test;
-import software.amazon.awssdk.function.SdkPredicate;
-
-import java.util.concurrent.Callable;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
+
+import java.util.concurrent.Callable;
+import org.junit.Test;
+import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.function.SdkPredicate;
 
 public class RefreshableTaskExceptionHandlingTest {
 
