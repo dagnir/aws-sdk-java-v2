@@ -146,7 +146,7 @@ public class InstanceProfileCredentialsProvider implements AwsCredentialsProvide
     private static class InstanceMetadataCredentialsEndpointProvider extends CredentialsEndpointProvider {
         @Override
         public URI getCredentialsEndpoint() throws URISyntaxException, IOException {
-            String host = EC2MetadataUtils.getHostAddressForEC2MetadataService();
+            String host = EC2MetadataUtils.getHostAddressForEc2MetadataService();
 
             String securityCredentialsList = EC2CredentialsUtils.getInstance().readResource(
                     new URI(host + EC2MetadataUtils.SECURITY_CREDENTIALS_RESOURCE));

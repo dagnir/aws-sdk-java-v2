@@ -117,7 +117,7 @@ public class SdkHttpResponseAdapterTest {
                 .content(content)
                 .build();
 
-        when(httpSettings.calculateCRC32FromCompressedData()).thenReturn(true);
+        when(httpSettings.calculateCrc32FromCompressedData()).thenReturn(true);
         HttpResponse adapted = adapt(httpResponse);
 
         assertThat(adapted.getContent(), instanceOf(GZIPInputStream.class));

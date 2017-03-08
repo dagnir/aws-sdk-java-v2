@@ -200,7 +200,7 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * Sets the value of the specified key to an object represented by the JSON
      * structure passed.
      */
-    public ValueMap withJSON(String key, String jsonValue) {
+    public ValueMap withJson(String key, String jsonValue) {
         super.put(key, VALUE_CONFORMER.transform(Jackson.fromJsonString(jsonValue, Object.class)));
         return this;
     }
@@ -210,7 +210,7 @@ public class ValueMap extends FluentHashMap<String, Object> {
      * value can be a
      * <ul>
      * <li>Number</li>
-     * <li>String</li>
+     * <li>String</li>DefaultMetricCollectorFactory
      * <li>binary (ie byte array or byte buffer)</li>
      * <li>boolean</li>
      * <li>null</li>

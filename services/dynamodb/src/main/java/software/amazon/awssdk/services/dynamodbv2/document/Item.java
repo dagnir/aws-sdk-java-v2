@@ -841,8 +841,8 @@ public class Item {
      */
     public Item withList(String attrName, Object... vals) {
         checkInvalidAttribute(attrName, vals);
-        List<Object> list_in = Arrays.asList(vals);
-        attributes.put(attrName, VALUE_CONFORMER.transform(list_in));
+        List<Object> listIn = Arrays.asList(vals);
+        attributes.put(attrName, VALUE_CONFORMER.transform(listIn));
         return this;
     }
 

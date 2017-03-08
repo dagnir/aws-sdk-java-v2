@@ -23,9 +23,9 @@ import software.amazon.awssdk.log.InternalLogFactory;
 /**
  * Utilities for IO operations.
  */
-public enum SdkIOUtils {
+public enum SdkIoUtils {
     ;
-    private static final InternalLogApi DEFAULT_LOG = InternalLogFactory.getLog(SdkIOUtils.class);
+    private static final InternalLogApi DEFAULT_LOG = InternalLogFactory.getLog(SdkIoUtils.class);
 
     public static void closeQuietly(Closeable is) {
         closeQuietly(is, null);

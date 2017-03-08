@@ -28,10 +28,10 @@ import software.amazon.awssdk.internal.io.Releasable;
 /**
  * Utilities for IO operations.
  */
-public enum IOUtils {
+public enum IoUtils {
     ;
     private static final int BUFFER_SIZE = 1024 * 4;
-    private static final Log DEFAULT_LOG = LogFactory.getLog(IOUtils.class);
+    private static final Log DEFAULT_LOG = LogFactory.getLog(IoUtils.class);
 
     /**
      * Reads and returns the rest of the given input stream as a byte array.

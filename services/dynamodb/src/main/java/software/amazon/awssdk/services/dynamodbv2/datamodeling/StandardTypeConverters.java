@@ -278,7 +278,7 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
             @Override
             <S, T> Converter<S, T> getConverter(Class<S> sourceType, Class<T> targetType) {
                 if (sourceType.isEnum() && STRING.map.isAssignableFrom(targetType)) {
-                    return (Converter<S, T>) new ToEnum.FROM_STRING(sourceType);
+                    return (Converter<S, T>) new ToEnum.FromString(sourceType);
                 }
                 return super.<S, T>getConverter(sourceType, targetType);
             }
@@ -729,10 +729,10 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
      * {@link Enum} from {@link String}
      */
     private abstract static class ToEnum<S extends Enum<S>, T> extends Converter<S, T> {
-        private static final class FROM_STRING<S extends Enum<S>> extends ToEnum<S, String> {
+        private static final class FromString<S extends Enum<S>> extends ToEnum<S, String> {
             private final Class<S> sourceType;
 
-            private FROM_STRING(final Class<S> sourceType) {
+            private FromString(final Class<S> sourceType) {
                 this.sourceType = sourceType;
             }
 

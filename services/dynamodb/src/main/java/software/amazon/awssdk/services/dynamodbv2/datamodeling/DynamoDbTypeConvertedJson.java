@@ -52,13 +52,13 @@ import java.lang.annotation.Target;
  *     <li><code>Currency(79.99,"USD")</code> = <code> "{\"amount\":79.99,\"unit\":\"USD\"}"</code></li>
  * </ul>
  *
- * @see software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConverted
+ * @see software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTypeConverted
  */
-@DynamoDBTypeConverted(converter = DynamoDBTypeConvertedJson.Converter.class)
-@DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
+@DynamoDbTypeConverted(converter = DynamoDbTypeConvertedJson.Converter.class)
+@DynamoDbTyped(DynamoDbMapperFieldModel.DynamoDbAttributeType.S)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
-public @interface DynamoDBTypeConvertedJson {
+public @interface DynamoDbTypeConvertedJson {
 
     /**
      * The value type to use when calling the JSON mapper's {@code readValue};
@@ -69,11 +69,11 @@ public @interface DynamoDBTypeConvertedJson {
     /**
      * JSON type converter.
      */
-    final class Converter<T> implements DynamoDBTypeConverter<String, T> {
+    final class Converter<T> implements DynamoDbTypeConverter<String, T> {
         private static final ObjectMapper MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         private final Class<T> targetType;
 
-        public Converter(Class<T> targetType, DynamoDBTypeConvertedJson annotation) {
+        public Converter(Class<T> targetType, DynamoDbTypeConvertedJson annotation) {
             this.targetType = annotation.targetType() == void.class ? targetType : (Class<T>) annotation.targetType();
         }
 
@@ -82,7 +82,7 @@ public @interface DynamoDBTypeConvertedJson {
             try {
                 return MAPPER.writeValueAsString(object);
             } catch (final Exception e) {
-                throw new DynamoDBMappingException("Unable to write object to JSON", e);
+                throw new DynamoDbMappingException("Unable to write object to JSON", e);
             }
         }
 
@@ -91,7 +91,7 @@ public @interface DynamoDBTypeConvertedJson {
             try {
                 return MAPPER.readValue(object, targetType);
             } catch (final Exception e) {
-                throw new DynamoDBMappingException("Unable to read JSON string", e);
+                throw new DynamoDbMappingException("Unable to read JSON string", e);
             }
         }
     }

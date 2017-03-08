@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.services.sqs;
 
-import software.amazon.awssdk.ClientConfiguration;
-import software.amazon.awssdk.ClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /*
@@ -24,10 +24,10 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  * the AmazonSQS client.
  */
 @SdkInternalApi
-class AmazonSqsClientConfigurationFactory extends ClientConfigurationFactory {
+class AmazonSqsClientConfigurationFactory extends LegacyClientConfigurationFactory {
 
     @Override
-    protected ClientConfiguration getInRegionOptimizedConfig() {
+    protected LegacyClientConfiguration getInRegionOptimizedConfig() {
         return super.getInRegionOptimizedConfig().withSocketTimeout(25000);
     }
 
