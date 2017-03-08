@@ -20,8 +20,6 @@ import static software.amazon.awssdk.codegen.poet.Utils.buildJavaFile;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 
 public final class PoetGeneratorTask implements GeneratorTask {
@@ -30,10 +28,9 @@ public final class PoetGeneratorTask implements GeneratorTask {
     private final ClassSpec classSpec;
     private final String fileHeader;
 
-    public PoetGeneratorTask(String baseDirectory, String fileHeader, ClassSpec classSpec) {
+    public PoetGeneratorTask(String outputDirectory, String fileHeader, ClassSpec classSpec) {
         this.fileHeader = fileHeader;
-        Path classDirectory = Paths.get(baseDirectory, classSpec.className().packageName().split("."));
-        this.writer = new CodeWriter(classDirectory.toString(), classSpec.className().simpleName());
+        this.writer = new CodeWriter(outputDirectory, classSpec.className().simpleName());
         this.classSpec = classSpec;
     }
 

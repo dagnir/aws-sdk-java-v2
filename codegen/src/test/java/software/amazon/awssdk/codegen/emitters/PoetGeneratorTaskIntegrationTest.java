@@ -63,7 +63,7 @@ public final class PoetGeneratorTaskIntegrationTest {
     }
 
     private Path determineOutputFile(ClassSpec classSpec, String randomBaseDirectory) {
-        return Paths.get(randomBaseDirectory, PACKAGE.split(".")).resolve(classSpec.className().simpleName() + ".java");
+        return Paths.get(randomBaseDirectory).resolve(classSpec.className().simpleName() + ".java");
     }
 
     private ClassSpec dummyClass() {
