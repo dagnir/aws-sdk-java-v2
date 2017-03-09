@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodbv2.document;
 
+import static java.util.Arrays.asList;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.checkInvalidAttrName;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.checkInvalidAttribute;
 import static software.amazon.awssdk.services.dynamodbv2.document.internal.InternalUtils.rejectNullInput;
@@ -527,7 +528,7 @@ public class Item {
      */
     public Item withStringSet(String attrName, String... val) {
         checkInvalidAttribute(attrName, val);
-        Set<String> strSet = new LinkedHashSet<String>(Arrays.asList(val));
+        Set<String> strSet = new LinkedHashSet<String>(asList(val));
         if (strSet.size() != val.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
         }
@@ -597,7 +598,7 @@ public class Item {
      */
     public Item withBigDecimalSet(String attrName, BigDecimal... vals) {
         checkInvalidAttribute(attrName, vals);
-        Set<BigDecimal> set = new LinkedHashSet<BigDecimal>(Arrays.asList(vals));
+        Set<BigDecimal> set = new LinkedHashSet<BigDecimal>(asList(vals));
         if (set.size() != vals.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
         }
@@ -759,7 +760,7 @@ public class Item {
      */
     public Item withBinarySet(String attrName, byte[]... vals) {
         checkInvalidAttribute(attrName, vals);
-        Set<byte[]> set = new LinkedHashSet<byte[]>(Arrays.asList(vals));
+        Set<byte[]> set = new LinkedHashSet<byte[]>(asList(vals));
         if (set.size() != vals.length) {
             throw new IllegalArgumentException(DUPLICATE_VALUES_FOUND_IN_INPUT);
         }
@@ -841,8 +842,7 @@ public class Item {
      */
     public Item withList(String attrName, Object... vals) {
         checkInvalidAttribute(attrName, vals);
-        List<Object> listIn = Arrays.asList(vals);
-        attributes.put(attrName, VALUE_CONFORMER.transform(listIn));
+        attributes.put(attrName, VALUE_CONFORMER.transform(asList(vals)));
         return this;
     }
 
