@@ -33,7 +33,7 @@ public interface ItemConverter {
      * @return the metadata of the DynamoDB attribute that the result of the
      *         getter will be converted to
      */
-    DynamoDBMapperFieldModel getFieldModel(Method getter);
+    DynamoDbMapperFieldModel getFieldModel(Method getter);
 
     /**
      * Converts a Java object into a DynamoDB AttributeValue. Potentially able

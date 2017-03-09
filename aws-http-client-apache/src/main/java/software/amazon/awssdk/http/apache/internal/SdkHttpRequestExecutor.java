@@ -25,7 +25,7 @@ import org.apache.http.conn.ManagedHttpClientConnection;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestExecutor;
 import software.amazon.awssdk.http.apache.internal.net.SdkMetricsSocket;
-import software.amazon.awssdk.http.apache.internal.net.SdkSSLMetricsSocket;
+import software.amazon.awssdk.http.apache.internal.net.SdkSslMetricsSocket;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
@@ -50,9 +50,9 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
             if (sock instanceof SdkMetricsSocket) {
                 SdkMetricsSocket sdkMetricsSocket = (SdkMetricsSocket) sock;
                 sdkMetricsSocket.setMetrics(awsRequestMetrics);
-            } else if (sock instanceof SdkSSLMetricsSocket) {
-                SdkSSLMetricsSocket sdkSSLMetricsSocket = (SdkSSLMetricsSocket) sock;
-                sdkSSLMetricsSocket.setMetrics(awsRequestMetrics);
+            } else if (sock instanceof SdkSslMetricsSocket) {
+                SdkSslMetricsSocket sdkSslMetricsSocket = (SdkSslMetricsSocket) sock;
+                sdkSslMetricsSocket.setMetrics(awsRequestMetrics);
             }
         }
         awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpClientSendRequestTime);

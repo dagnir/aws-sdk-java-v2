@@ -30,7 +30,7 @@ import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener.ExceptionReporter;
 import software.amazon.awssdk.event.ProgressTracker;
-import software.amazon.awssdk.event.SDKProgressPublisher;
+import software.amazon.awssdk.event.SdkProgressPublisher;
 import software.amazon.awssdk.event.request.Progress;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
@@ -73,7 +73,7 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
 
     private static void waitTillListenerCallbacksComplete() {
         try {
-            SDKProgressPublisher.waitTillCompletion();
+            SdkProgressPublisher.waitTillCompletion();
         } catch (InterruptedException e) {
             Assert.fail("Interrupted when waiting for the progress listener callbacks to return. "
                         + e.getMessage());

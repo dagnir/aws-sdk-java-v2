@@ -146,10 +146,10 @@ public class SdkHttpUtils {
     }
 
     public static boolean usePayloadForQueryParameters(SignableRequest<?> request) {
-        boolean requestIsPOST = HttpMethodName.POST.equals(request.getHttpMethod());
+        boolean requestIsPost = HttpMethodName.POST.equals(request.getHttpMethod());
         boolean requestHasNoPayload = (request.getContent() == null);
 
-        return requestIsPOST && requestHasNoPayload;
+        return requestIsPost && requestHasNoPayload;
     }
 
     /**
@@ -180,7 +180,7 @@ public class SdkHttpUtils {
             }
         }
 
-        return URLEncodedUtils.format(nameValuePairs, DEFAULT_ENCODING);
+        return UrlEncodedUtils.format(nameValuePairs, DEFAULT_ENCODING);
     }
 
     /**

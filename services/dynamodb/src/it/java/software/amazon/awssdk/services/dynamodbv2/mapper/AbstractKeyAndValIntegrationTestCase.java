@@ -24,7 +24,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.pojos.KeyAndVal;
 
@@ -41,8 +41,8 @@ public abstract class AbstractKeyAndValIntegrationTestCase extends DynamoDBMappe
     /**
      * Sets up the test case.
      */
-    protected final void setUpTest(final DynamoDBMapperConfig.SaveBehavior saveBehavior) {
-        this.util = new DynamoDbMapper(dynamo, new DynamoDBMapperConfig.Builder().withSaveBehavior(saveBehavior).build());
+    protected final void setUpTest(final DynamoDbMapperConfig.SaveBehavior saveBehavior) {
+        this.util = new DynamoDbMapper(dynamo, new DynamoDbMapperConfig.Builder().withSaveBehavior(saveBehavior).build());
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class AbstractKeyAndValIntegrationTestCase extends DynamoDBMappe
      */
     @Before
     public void setUpTest() {
-        setUpTest(DynamoDBMapperConfig.DEFAULT.getSaveBehavior());
+        setUpTest(DynamoDbMapperConfig.DEFAULT.getSaveBehavior());
     }
 
     /**

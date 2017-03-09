@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.FakeIoException;
 
 /**
  * Same as ByteArrayInputStream except it allows FakeIOException to be thrown
@@ -122,7 +122,7 @@ public class TestByteArrayInputStream extends InputStream {
      * @return the next byte of data, or <code>-1</code> if the end of the
      *          stream has been reached.
      */
-    public synchronized int read() throws FakeIOException {
+    public synchronized int read() throws FakeIoException {
         return (pos < count) ? (buf[pos++] & 0xff) : -1;
     }
 
@@ -155,7 +155,7 @@ public class TestByteArrayInputStream extends InputStream {
      * <code>len</code> is negative, or <code>len</code> is greater than
      * <code>b.length - off</code>
      */
-    public synchronized int read(byte b[], int off, int len) throws FakeIOException {
+    public synchronized int read(byte b[], int off, int len) throws FakeIoException {
         if (b == null) {
             throw new NullPointerException();
         } else if (off < 0 || len < 0 || len > b.length - off) {

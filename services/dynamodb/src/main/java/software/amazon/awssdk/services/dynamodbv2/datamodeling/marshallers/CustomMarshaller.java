@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.dynamodbv2.datamodeling.marshallers;
 
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentMarshaller.StringAttributeMarshaller;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMappingException;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
@@ -41,12 +41,12 @@ public class CustomMarshaller implements StringAttributeMarshaller {
             return (DynamoDbMarshaller<Object>) clazz.newInstance();
 
         } catch (InstantiationException e) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
 
         } catch (IllegalAccessException e) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
         }

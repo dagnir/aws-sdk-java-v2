@@ -28,12 +28,12 @@ public class CloudFunctionConfiguration extends NotificationConfiguration implem
     /**
      * The ARN for the IAM role to be used by Amazon S3.
      */
-    private final String invocationRoleARN;
+    private final String invocationRoleArn;
 
     /**
      * The ARN for the lambda function to be invoked.
      */
-    private final String cloudFunctionARN;
+    private final String cloudFunctionArn;
 
     /**
      * Creates a new lambda configuration with the given invocation role ,
@@ -49,8 +49,8 @@ public class CloudFunctionConfiguration extends NotificationConfiguration implem
     public CloudFunctionConfiguration(String invocationRole, String function,
                                       EnumSet<S3Event> events) {
         super(events);
-        this.invocationRoleARN = invocationRole;
-        this.cloudFunctionARN = function;
+        this.invocationRoleArn = invocationRole;
+        this.cloudFunctionArn = function;
     }
 
     /**
@@ -67,22 +67,22 @@ public class CloudFunctionConfiguration extends NotificationConfiguration implem
     public CloudFunctionConfiguration(String invocationRole, String function,
                                       String... events) {
         super(events);
-        this.invocationRoleARN = invocationRole;
-        this.cloudFunctionARN = function;
+        this.invocationRoleArn = invocationRole;
+        this.cloudFunctionArn = function;
     }
 
     /**
      * Returns the invocation role associated with this configuration.
      */
     public String getInvocationRoleArn() {
-        return invocationRoleARN;
+        return invocationRoleArn;
     }
 
     /**
      * Returns the ARN of the cloud function to be invoked.
      */
     public String getCloudFunctionArn() {
-        return cloudFunctionARN;
+        return cloudFunctionArn;
     }
 
 }

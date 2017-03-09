@@ -67,7 +67,7 @@ public class SseCustomerKey implements Serializable {
         }
 
         // Default to AES-256 encryption
-        this.algorithm = SSEAlgorithm.AES256.getAlgorithm();
+        this.algorithm = SseAlgorithm.AES256.getAlgorithm();
         this.base64EncodedKey = base64EncodedKey;
     }
 
@@ -89,7 +89,7 @@ public class SseCustomerKey implements Serializable {
         }
 
         // Default to AES-256 encryption
-        this.algorithm = SSEAlgorithm.AES256.getAlgorithm();
+        this.algorithm = SseAlgorithm.AES256.getAlgorithm();
         this.base64EncodedKey = Base64.encodeAsString(rawKeyMaterial);
     }
 
@@ -111,7 +111,7 @@ public class SseCustomerKey implements Serializable {
         }
 
         // Default to AES-256 encryption
-        this.algorithm = SSEAlgorithm.AES256.getAlgorithm();
+        this.algorithm = SseAlgorithm.AES256.getAlgorithm();
         this.base64EncodedKey = Base64.encodeAsString(key.getEncoded());
     }
 
@@ -128,7 +128,7 @@ public class SseCustomerKey implements Serializable {
      *
      * Currently, "AES256" is the only supported algorithm.
      *
-     * @see SSEAlgorithm#AES256
+     * @see SseAlgorithm#AES256
      *
      * @param algorithm
      *            The server-side encryption algorithm to use with this
@@ -138,7 +138,7 @@ public class SseCustomerKey implements Serializable {
      * @throws IllegalArgumentException
      *             if the input parameter is null.
      */
-    public static SseCustomerKey generateSSECustomerKeyForPresignUrl(
+    public static SseCustomerKey generateSseCustomerKeyForPresignUrl(
             String algorithm) {
         if (algorithm == null) {
             throw new IllegalArgumentException();
@@ -175,7 +175,7 @@ public class SseCustomerKey implements Serializable {
      *
      * Currently, "AES256" is the only supported algorithm.
      *
-     * @see SSEAlgorithm#AES256
+     * @see SseAlgorithm#AES256
      *
      * @param algorithm
      *            The server-side encryption algorithm to use with this
@@ -192,7 +192,7 @@ public class SseCustomerKey implements Serializable {
      *
      * Currently, "AES256" is the only supported algorithm.
      *
-     * @see SSEAlgorithm#AES256
+     * @see SseAlgorithm#AES256
      *
      * @param algorithm
      *            The server-side encryption algorithm to use with this

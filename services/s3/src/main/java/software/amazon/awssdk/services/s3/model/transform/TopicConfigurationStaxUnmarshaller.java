@@ -33,7 +33,7 @@ class TopicConfigurationStaxUnmarshaller extends NotificationConfigurationStaxUn
     protected boolean handleXmlEvent(TopicConfiguration topicConfig, StaxUnmarshallerContext context, int targetDepth)
             throws Exception {
         if (context.testExpression("Topic", targetDepth)) {
-            topicConfig.setTopicARN(StringStaxUnmarshaller.getInstance().unmarshall(context));
+            topicConfig.setTopicArn(StringStaxUnmarshaller.getInstance().unmarshall(context));
             return true;
         }
         return false;

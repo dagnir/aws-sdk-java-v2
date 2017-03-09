@@ -54,7 +54,7 @@ enum MachineMetric implements MetricType {
     }
 
     /** Returns the metric name for OS metrics. */
-    static String getOSMetricName() {
+    static String getOsMetricName() {
         return MetricName.OSMetric.name();
     }
 

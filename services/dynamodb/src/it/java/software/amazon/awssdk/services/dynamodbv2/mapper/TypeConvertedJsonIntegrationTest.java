@@ -20,8 +20,8 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedJson;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTypeConvertedJson;
 import software.amazon.awssdk.services.dynamodbv2.pojos.AutoKeyAndVal;
 import software.amazon.awssdk.services.dynamodbv2.pojos.Currency;
 
@@ -60,9 +60,9 @@ public class TypeConvertedJsonIntegrationTest extends AbstractKeyAndValIntegrati
     /**
      * An object with a complex type.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndCurrency extends AutoKeyAndVal<Currency> {
-        @DynamoDBTypeConvertedJson
+        @DynamoDbTypeConvertedJson
         public Currency getVal() {
             return super.getVal();
         }
@@ -76,9 +76,9 @@ public class TypeConvertedJsonIntegrationTest extends AbstractKeyAndValIntegrati
     /**
      * An object with a complex type.
      */
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class KeyAndCurrencyList extends AutoKeyAndVal<List<Currency>> {
-        @DynamoDBTypeConvertedJson(targetType = CurrencyListType.class)
+        @DynamoDbTypeConvertedJson(targetType = CurrencyListType.class)
         public List<Currency> getVal() {
             return super.getVal();
         }

@@ -30,8 +30,8 @@ public class ServerSideEncryptionHeaderHandler<T extends ServerSideEncryptionRes
      */
     @Override
     public void handle(T result, HttpResponse response) {
-        result.setSSEAlgorithm(response.getHeaders().get(Headers.SERVER_SIDE_ENCRYPTION));
-        result.setSSECustomerAlgorithm(response.getHeaders().get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_ALGORITHM));
-        result.setSSECustomerKeyMd5(response.getHeaders().get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5));
+        result.setSseAlgorithm(response.getHeaders().get(Headers.SERVER_SIDE_ENCRYPTION));
+        result.setSseCustomerAlgorithm(response.getHeaders().get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_ALGORITHM));
+        result.setSseCustomerKeyMd5(response.getHeaders().get(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5));
     }
 }

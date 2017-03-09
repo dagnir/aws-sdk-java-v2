@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.stepfunctions.builder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class TestResourceLoader {
 
@@ -34,7 +34,7 @@ public class TestResourceLoader {
 
     public static String loadAsString(String resourcePath) {
         try {
-            return IOUtils.toString(TestResourceLoader.class.getResourceAsStream("/resources/state_machines/" + resourcePath));
+            return IoUtils.toString(TestResourceLoader.class.getResourceAsStream("/resources/state_machines/" + resourcePath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

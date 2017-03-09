@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.internal.io.Releasable;
 import software.amazon.awssdk.runtime.MetricAware;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.SdkRuntime;
 
 /**
@@ -78,7 +78,7 @@ public abstract class SdkInputStream extends InputStream implements
     @Override
     public void release() {
         // Don't call IOUtils.release(in, null) or else could lead to infinite loop
-        IOUtils.closeQuietly(this, null);
+        IoUtils.closeQuietly(this, null);
         InputStream in = getWrappedInputStream();
         if (in instanceof Releasable) {
             // This allows any underlying stream that has the close operation

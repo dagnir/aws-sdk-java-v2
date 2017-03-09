@@ -40,7 +40,7 @@ import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
 import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringInputStream;
 
 public class ApacheDefaultHttpRequestFactoryTest {
@@ -65,7 +65,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            IOUtils.closeQuietly(byteArrayOutputStream, null);
+            IoUtils.closeQuietly(byteArrayOutputStream, null);
         }
     }
 
@@ -114,7 +114,7 @@ public class ApacheDefaultHttpRequestFactoryTest {
         Assert.assertEquals("foo=bar", requestBase.getURI().getQuery());
         Assert.assertThat(requestBase, Matchers.instanceOf(HttpPost
                                                                    .class));
-        Assert.assertEquals(payload, IOUtils.toString(((HttpPost) requestBase).getEntity().getContent()));
+        Assert.assertEquals(payload, IoUtils.toString(((HttpPost) requestBase).getEntity().getContent()));
     }
 
     @Test

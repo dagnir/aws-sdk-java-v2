@@ -1,6 +1,6 @@
 <#macro content operationModel metadata unmarshallerReference outputType>
     <#if metadata.syncInterface == "AmazonSimpleDB">
-        <#assign responseHandler="software.amazon.awssdk.services.simpledb.internal.SimpleDBStaxResponseHandler" />
+        <#assign responseHandler="software.amazon.awssdk.services.simpledb.internal.SimpleDbStaxResponseHandler" />
     <#else>
         <#assign responseHandler="StaxResponseHandler" />
     </#if>

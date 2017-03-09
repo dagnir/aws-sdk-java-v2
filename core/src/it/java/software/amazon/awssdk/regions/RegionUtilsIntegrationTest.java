@@ -16,7 +16,7 @@
 package software.amazon.awssdk.regions;
 
 import static org.junit.Assert.assertEquals;
-import static software.amazon.awssdk.SDKGlobalConfiguration.REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY;
+import static software.amazon.awssdk.SdkGlobalConfiguration.REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY;
 
 import org.junit.After;
 import org.junit.Before;

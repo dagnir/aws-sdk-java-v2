@@ -103,17 +103,17 @@ import software.amazon.awssdk.util.json.Jackson;
  */
 public class S3Link {
     private final S3ClientCache s3cc;
-    private final ID id;
+    private final Id id;
 
     S3Link(S3ClientCache s3cc, String bucketName, String key) {
-        this(s3cc, new ID(bucketName, key));
+        this(s3cc, new Id(bucketName, key));
     }
 
     S3Link(S3ClientCache s3cc, String region, String bucketName, String key) {
-        this(s3cc, new ID(region, bucketName, key));
+        this(s3cc, new Id(region, bucketName, key));
     }
 
-    private S3Link(S3ClientCache s3cc, ID id) {
+    private S3Link(S3ClientCache s3cc, Id id) {
         this.s3cc = s3cc;
         this.id = id;
 
@@ -129,7 +129,7 @@ public class S3Link {
      * Deserializes from a JSON string.
      */
     public static S3Link fromJson(S3ClientCache s3cc, String json) {
-        ID id = Jackson.fromJsonString(json, ID.class);
+        Id id = Jackson.fromJsonString(json, Id.class);
         return new S3Link(s3cc, id);
     }
 
@@ -415,22 +415,22 @@ public class S3Link {
      * <p>
      *  @see Region#US_Standard
      */
-    static class ID {
+    static class Id {
         @JsonProperty("s3")
         private S3 s3;
 
-        ID() {
+        Id() {
         } // used by Jackson to unmarshall
 
-        ID(String bucketName, String key) {
+        Id(String bucketName, String key) {
             this.s3 = new S3(bucketName, key);
         }
 
-        ID(String region, String bucketName, String key) {
+        Id(String region, String bucketName, String key) {
             this.s3 = new S3(region, bucketName, key);
         }
 
-        ID(S3 s3) {
+        Id(S3 s3) {
             this.s3 = s3;
         }
 
@@ -462,7 +462,7 @@ public class S3Link {
     /**
      * Internal class for JSON serialization purposes.
      * <p>
-     * @see ID
+     * @see Id
      */
     private static class S3 {
 
@@ -547,7 +547,7 @@ public class S3Link {
     /**
      * {@link S3Link} factory.
      */
-    public static final class Factory implements DynamoDBTypeConverter<String, S3Link> {
+    public static final class Factory implements DynamoDbTypeConverter<String, S3Link> {
         static final Factory DEFAULT = new Factory((S3ClientCache) null);
         private final S3ClientCache s3cc;
 

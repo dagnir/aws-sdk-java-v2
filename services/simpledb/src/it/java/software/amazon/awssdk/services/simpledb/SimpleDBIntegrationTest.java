@@ -184,7 +184,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
                 .withAttributes(new ReplaceableAttribute[] {emptyValueAttribute});
         sdb.putAttributes(request);
 
-        SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
 
@@ -231,7 +231,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         ListDomainsResult listDomainsResult = (ListDomainsResult) future.get();
         assertTrue(listDomainsResult.getDomainNames().contains(domainName));
 
-        SimpleDBResponseMetadata responseMetadata = sdbAsync.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata responseMetadata = sdbAsync.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
     }
@@ -299,7 +299,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setAttributes(FOO_ITEM.getAttributes());
         sdb.putAttributes(request);
 
-        SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
 
@@ -336,7 +336,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setItems(ITEM_LIST);
         sdb.batchPutAttributes(request);
 
-        SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
 
@@ -355,7 +355,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         assertItemsPresent(ITEM_LIST, selectResult.getItems());
         assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), selectResult.getItems());
 
-        SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
 
@@ -376,7 +376,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setDomainName(domainName);
         DomainMetadataResult domainMetadataResult = sdb.domainMetadata(request);
 
-        SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
 
@@ -410,7 +410,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
                                                  ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()});
 
         GetAttributesResult getAttributesResult = sdb.getAttributes(request);
-        SimpleDBResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
+        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
         assertTrue(responseMetadata.getBoxUsage() > 0);
         assertNotNull(responseMetadata.getRequestId());
 

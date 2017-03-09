@@ -20,16 +20,16 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBVersionAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbRangeKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbVersionAttribute;
 
 /**
  * Exhaustive exercise of DynamoDB domain mapping, exercising every supported
  * data type.
  */
-@DynamoDBTable(tableName = "aws-xsdk")
+@DynamoDbTable(tableName = "aws-xsdk")
 public class CrossSdkVerificationClass {
 
     private String key;
@@ -62,7 +62,7 @@ public class CrossSdkVerificationClass {
     // these are kind of pointless, but here for completeness
     private Set<Boolean> booleanSetAttribute;
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public String getKey() {
         return key;
     }
@@ -71,7 +71,7 @@ public class CrossSdkVerificationClass {
         this.key = key;
     }
 
-    @DynamoDBRangeKey
+    @DynamoDbRangeKey
     public String getRangeKey() {
         return rangeKey;
     }
@@ -80,7 +80,7 @@ public class CrossSdkVerificationClass {
         this.rangeKey = rangeKey;
     }
 
-    @DynamoDBVersionAttribute
+    @DynamoDbVersionAttribute
     public Long getVersion() {
         return version;
     }

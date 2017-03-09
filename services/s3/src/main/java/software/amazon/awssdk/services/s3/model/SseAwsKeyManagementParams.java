@@ -58,6 +58,6 @@ public class SseAwsKeyManagementParams implements Serializable {
      * the encryption is always "aws:kms".
      */
     public String getEncryption() {
-        return SSEAlgorithm.KMS.getAlgorithm();
+        return SseAlgorithm.KMS.getAlgorithm();
     }
 }

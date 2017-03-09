@@ -33,7 +33,7 @@ import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * Response handler for S3 error responses. S3 error responses are different
@@ -81,7 +81,7 @@ public class S3ErrorResponseHandler implements
 
         String content = null;
         try {
-            content = IOUtils.toString(is);
+            content = IoUtils.toString(is);
         } catch (IOException ioe) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed in parsing the error response : ", ioe);

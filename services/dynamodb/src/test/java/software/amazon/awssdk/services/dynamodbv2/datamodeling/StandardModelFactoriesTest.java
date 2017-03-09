@@ -33,7 +33,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperFieldModel.DynamoDbAttributeType;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
 import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
@@ -43,23 +43,23 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.DateRange;
 import software.amazon.awssdk.services.dynamodbv2.pojos.KeyAndVal;
 
 /**
- * Unit tests for {@link DynamoDBMapperModelFactory.TableFactory}.
+ * Unit tests for {@link DynamoDbMapperModelFactory.TableFactory}.
  */
 public class StandardModelFactoriesTest {
 
-    private static final DynamoDBMapperModelFactory factory = StandardModelFactories.of(S3Link.Factory.of(null));
-    private static final DynamoDBMapperModelFactory.TableFactory models = factory.getTableFactory(DynamoDBMapperConfig.DEFAULT);
+    private static final DynamoDbMapperModelFactory factory = StandardModelFactories.of(S3Link.Factory.of(null));
+    private static final DynamoDbMapperModelFactory.TableFactory models = factory.getTableFactory(DynamoDbMapperConfig.DEFAULT);
 
     @SuppressWarnings("unchecked")
-    private static <T> DynamoDBMapperTableModel<T> getTable(T object) {
+    private static <T> DynamoDbMapperTableModel<T> getTable(T object) {
         return models.getTable((Class<T>) object.getClass());
     }
 
     /**
      * Assert that the field key properties are correct.
      */
-    private static <T, V> void assertFieldKeyType(KeyType keyType, DynamoDBMapperFieldModel<T, V> field,
-                                                  DynamoDBMapperTableModel<T> model) {
+    private static <T, V> void assertFieldKeyType(KeyType keyType, DynamoDbMapperFieldModel<T, V> field,
+                                                  DynamoDbMapperTableModel<T> model) {
         assertEquals(keyType, field.keyType());
         if (keyType != null) {
             if (keyType == KeyType.HASH) {
@@ -74,8 +74,8 @@ public class StandardModelFactoriesTest {
     /**
      * Assert that the field contains the LSIs.
      */
-    private static <T, V> void assertFieldGsiNames(List<String> names, KeyType keyType, DynamoDBMapperFieldModel<T, V> field,
-                                                   DynamoDBMapperTableModel<T> model) {
+    private static <T, V> void assertFieldGsiNames(List<String> names, KeyType keyType, DynamoDbMapperFieldModel<T, V> field,
+                                                   DynamoDbMapperTableModel<T> model) {
         assertEquals(names == null ? 0 : names.size(), field.globalSecondaryIndexNames(keyType).size());
         assertEquals(true, field.indexed());
         if (names != null) {
@@ -90,8 +90,8 @@ public class StandardModelFactoriesTest {
     /**
      * Assert that the field contains the LSIs.
      */
-    private static <T, V> void assertFieldLsiNames(List<String> names, DynamoDBMapperFieldModel<T, V> field,
-                                                   DynamoDBMapperTableModel<T> model) {
+    private static <T, V> void assertFieldLsiNames(List<String> names, DynamoDbMapperFieldModel<T, V> field,
+                                                   DynamoDbMapperTableModel<T> model) {
         assertEquals(names == null ? 0 : names.size(), field.localSecondaryIndexNames().size());
         assertEquals(true, field.indexed());
         if (names != null) {
@@ -109,12 +109,12 @@ public class StandardModelFactoriesTest {
     @Test
     public void testHashAndRangeKey() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBHashKey(attributeName = "hk")
+            @DynamoDbHashKey(attributeName = "hk")
             public String getKey() {
                 return super.getKey();
             }
 
-            @DynamoDBRangeKey(attributeName = "rk")
+            @DynamoDbRangeKey(attributeName = "rk")
             public String getVal() {
                 return super.getVal();
             }
@@ -123,7 +123,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
         assertFieldKeyType(KeyType.HASH, model.field("hk"), model);
         assertFieldKeyType(KeyType.RANGE, model.field("rk"), model);
     }
@@ -131,11 +131,11 @@ public class StandardModelFactoriesTest {
     /**
      * Test mappings.
      */
-    @Test(expected = DynamoDBMappingException.class)
+    @Test(expected = DynamoDbMappingException.class)
     public void testHashAndRangeKeyConflict() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBHashKey
-            @DynamoDBRangeKey
+            @DynamoDbHashKey
+            @DynamoDbRangeKey
             public String getKey() {
                 return super.getKey();
             }
@@ -149,7 +149,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testNamed() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBNamed("value")
+            @DynamoDbNamed("value")
             public String getVal() {
                 return super.getVal();
             }
@@ -158,7 +158,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
         assertEquals(2, model.fields().size());
         assertNotNull(model.field("key"));
         assertNotNull(model.field("value"));
@@ -170,7 +170,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAttributeTypeAsNumber() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBTyped(DynamoDBAttributeType.N)
+            @DynamoDbTyped(DynamoDbAttributeType.N)
             public String getVal() {
                 return super.getVal();
             }
@@ -179,15 +179,15 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAttributeType.N, val.attributeType());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAttributeType.N, val.attributeType());
     }
 
     @Test
     public void testAttributeTypeAsAttributeValueNumber() {
         final Object obj = new AutoKeyAndVal<AttributeValue>() {
-            @DynamoDBTyped(DynamoDBAttributeType.N)
+            @DynamoDbTyped(DynamoDbAttributeType.N)
             public AttributeValue getVal() {
                 return super.getVal();
             }
@@ -196,9 +196,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, AttributeValue> val = model.field("val");
-        assertEquals(DynamoDBAttributeType.N, val.attributeType());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, AttributeValue> val = model.field("val");
+        assertEquals(DynamoDbAttributeType.N, val.attributeType());
         assertEquals("123", val.convert(new AttributeValue().withN("123")).getN());
         assertEquals("123", val.unconvert(new AttributeValue().withN("123")).getN());
     }
@@ -206,7 +206,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAttributeTypeAsAttributeValueMap() {
         final Object obj = new AutoKeyAndVal<AttributeValue>() {
-            @DynamoDBTyped(DynamoDBAttributeType.M)
+            @DynamoDbTyped(DynamoDbAttributeType.M)
             public AttributeValue getVal() {
                 return super.getVal();
             }
@@ -215,9 +215,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, AttributeValue> val = model.field("val");
-        assertEquals(DynamoDBAttributeType.M, val.attributeType());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, AttributeValue> val = model.field("val");
+        assertEquals(DynamoDbAttributeType.M, val.attributeType());
 
         Map<String, AttributeValue> map = new HashMap<String, AttributeValue>();
         map.put("A", new AttributeValue().withN("123"));
@@ -233,12 +233,12 @@ public class StandardModelFactoriesTest {
     @Test
     public void testScalarAttributeStringTimeZone() {
         final Object obj = new AutoKeyAndVal<TimeZone>() {
-            @DynamoDBHashKey
+            @DynamoDbHashKey
             public String getKey() {
                 return super.getKey();
             }
 
-            @DynamoDBScalarAttribute(type = ScalarAttributeType.S)
+            @DynamoDbScalarAttribute(type = ScalarAttributeType.S)
             public TimeZone getVal() {
                 return super.getVal();
             }
@@ -247,9 +247,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, TimeZone> val = model.field("val");
-        assertEquals(DynamoDBAttributeType.S, val.attributeType());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, TimeZone> val = model.field("val");
+        assertEquals(DynamoDbAttributeType.S, val.attributeType());
         assertEquals("America/New_York", val.convert(TimeZone.getTimeZone("America/New_York")).getS());
         assertEquals("America/New_York", val.unconvert(new AttributeValue().withS("America/New_York")).getID());
     }
@@ -260,12 +260,12 @@ public class StandardModelFactoriesTest {
     @Test
     public void testScalarAttributeStringLocale() {
         final Object obj = new AutoKeyAndVal<Locale>() {
-            @DynamoDBHashKey
+            @DynamoDbHashKey
             public String getKey() {
                 return super.getKey();
             }
 
-            @DynamoDBScalarAttribute(type = ScalarAttributeType.S)
+            @DynamoDbScalarAttribute(type = ScalarAttributeType.S)
             public Locale getVal() {
                 return super.getVal();
             }
@@ -274,9 +274,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Locale> val = model.field("val");
-        assertEquals(DynamoDBAttributeType.S, val.attributeType());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Locale> val = model.field("val");
+        assertEquals(DynamoDbAttributeType.S, val.attributeType());
         assertEquals("en-CA", val.convert(new Locale("en", "CA")).getS());
         assertEquals("en-CA", val.unconvert(new AttributeValue().withS("en-CA")).toString().replaceAll("_", "-"));
     }
@@ -287,12 +287,12 @@ public class StandardModelFactoriesTest {
     @Test
     public void testScalarAttributeBinaryUuid() {
         final Object obj = new AutoKeyAndVal<UUID>() {
-            @DynamoDBHashKey
+            @DynamoDbHashKey
             public String getKey() {
                 return super.getKey();
             }
 
-            @DynamoDBScalarAttribute(type = ScalarAttributeType.B)
+            @DynamoDbScalarAttribute(type = ScalarAttributeType.B)
             public UUID getVal() {
                 return super.getVal();
             }
@@ -301,8 +301,8 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        assertEquals(DynamoDBAttributeType.B, model.field("val").attributeType());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        assertEquals(DynamoDbAttributeType.B, model.field("val").attributeType());
         final UUID val = UUID.randomUUID();
         final AttributeValue converted = model.field("val").convert(val);
         assertNotNull(converted.getB());
@@ -312,12 +312,12 @@ public class StandardModelFactoriesTest {
     @Test
     public void testScalarAttributeAttributeName() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBHashKey
+            @DynamoDbHashKey
             public String getKey() {
                 return super.getKey();
             }
 
-            @DynamoDBScalarAttribute(attributeName = "value", type = ScalarAttributeType.S)
+            @DynamoDbScalarAttribute(attributeName = "value", type = ScalarAttributeType.S)
             public String getVal() {
                 return super.getVal();
             }
@@ -326,9 +326,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = models.getTable((Class<Object>) obj.getClass());
-        final DynamoDBMapperFieldModel<Object, String> val = model.field("value");
-        assertEquals(DynamoDBAttributeType.S, val.attributeType());
+        final DynamoDbMapperTableModel<Object> model = models.getTable((Class<Object>) obj.getClass());
+        final DynamoDbMapperFieldModel<Object, String> val = model.field("value");
+        assertEquals(DynamoDbAttributeType.S, val.attributeType());
     }
 
     /**
@@ -339,7 +339,7 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<String>() {
             private String ignore;
 
-            @DynamoDBAttribute(attributeName = "value")
+            @DynamoDbAttribute(attributeName = "value")
             public String getVal() {
                 return super.getVal();
             }
@@ -348,8 +348,8 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBIgnore
-            @DynamoDBAttribute(attributeName = "ignore")
+            @DynamoDbIgnore
+            @DynamoDbAttribute(attributeName = "ignore")
             public String getIgnore() {
                 return this.ignore;
             }
@@ -358,7 +358,7 @@ public class StandardModelFactoriesTest {
                 this.ignore = ignore;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
         assertEquals(2, model.fields().size());
         assertNotNull(model.field("key"));
         assertNotNull(model.field("value"));
@@ -370,7 +370,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testConvertedBool() {
         final Object obj = new AutoKeyAndVal<Boolean>() {
-            @DynamoDBConvertedBool(DynamoDBConvertedBool.Format.Y_N)
+            @DynamoDbConvertedBool(DynamoDbConvertedBool.Format.Y_N)
             public Boolean getVal() {
                 return super.getVal();
             }
@@ -379,9 +379,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Boolean> val = model.field("val");
-        assertEquals(DynamoDBAttributeType.S, val.attributeType());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Boolean> val = model.field("val");
+        assertEquals(DynamoDbAttributeType.S, val.attributeType());
         assertEquals("Y", val.convert(Boolean.TRUE).getS());
         assertEquals(Boolean.TRUE, val.unconvert(new AttributeValue().withS("Y")));
         assertEquals("N", val.convert(Boolean.FALSE).getS());
@@ -395,7 +395,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedHashKeyString() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBAttribute
+            @DynamoDbAttribute
             public String getVal() {
                 return super.getVal();
             }
@@ -404,10 +404,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> key = model.field("key");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> key = model.field("key");
         assertFieldKeyType(KeyType.HASH, key, model);
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, key.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, key.getGenerateStrategy());
         assertNotNull(key.generate(null));
         assertNotNull(key.generate(UUID.randomUUID().toString()));
     }
@@ -418,8 +418,8 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedRangeKeyUuid() {
         final Object obj = new AutoKeyAndVal<UUID>() {
-            @DynamoDBRangeKey
-            @DynamoDBAutoGeneratedKey
+            @DynamoDbRangeKey
+            @DynamoDbAutoGeneratedKey
             public UUID getVal() {
                 return super.getVal();
             }
@@ -428,10 +428,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         assertFieldKeyType(KeyType.RANGE, val, model);
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertNotNull(val.generate(null));
         assertNotNull(val.generate(UUID.randomUUID()));
     }
@@ -439,26 +439,26 @@ public class StandardModelFactoriesTest {
     /**
      * Test mappings.
      */
-    @Test(expected = DynamoDBMappingException.class)
+    @Test(expected = DynamoDbMappingException.class)
     public void testAutoGeneratedConflict() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBHashKey
-            @DynamoDBAutoGeneratedKey
-            @DynamoDBVersionAttribute
+            @DynamoDbHashKey
+            @DynamoDbAutoGeneratedKey
+            @DynamoDbVersionAttribute
             public String getKey() {
                 return super.getKey();
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
     }
 
     /**
      * Test mappings.
      */
-    @Test(expected = DynamoDBMappingException.class)
+    @Test(expected = DynamoDbMappingException.class)
     public void testAutoGeneratedVersionUuid() {
         final Object obj = new AutoKeyAndVal<UUID>() {
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public UUID getVal() {
                 return super.getVal();
             }
@@ -467,8 +467,8 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         val.generate(null); //<- should fail
     }
 
@@ -478,7 +478,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedVersionBigInteger() {
         final Object obj = new AutoKeyAndVal<BigInteger>() {
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public BigInteger getVal() {
                 return super.getVal();
             }
@@ -487,10 +487,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         assertEquals(true, val.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertEquals(BigInteger.ONE, val.generate(null));
         assertEquals(BigInteger.valueOf((int) 2), val.generate(BigInteger.ONE));
     }
@@ -501,7 +501,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedVersionByte() {
         final Object obj = new AutoKeyAndVal<Byte>() {
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public Byte getVal() {
                 return super.getVal();
             }
@@ -510,10 +510,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         assertEquals(true, val.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertEquals(Byte.valueOf((byte) 1), val.generate(null));
         assertEquals(Byte.valueOf((byte) 2), val.generate(Byte.valueOf((byte) 1)));
     }
@@ -526,7 +526,7 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<String>() {
             private byte rvn;
 
-            @DynamoDBAttribute
+            @DynamoDbAttribute
             public String getVal() {
                 return super.getVal();
             }
@@ -535,7 +535,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public byte getRvn() {
                 return this.rvn;
             }
@@ -544,10 +544,10 @@ public class StandardModelFactoriesTest {
                 this.rvn = rvn;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> rvn = model.field("rvn");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> rvn = model.field("rvn");
         assertEquals(true, rvn.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
         assertEquals(Byte.valueOf((byte) 1), rvn.generate(null));
         assertEquals(Byte.valueOf((byte) 2), rvn.generate(Byte.valueOf((byte) 1)));
     }
@@ -558,7 +558,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedVersionInteger() {
         final Object obj = new AutoKeyAndVal<Integer>() {
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public Integer getVal() {
                 return super.getVal();
             }
@@ -567,10 +567,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         assertEquals(true, val.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertEquals(Integer.valueOf((int) 1), val.generate(null));
         assertEquals(Integer.valueOf((int) 2), val.generate(Integer.valueOf((int) 1)));
     }
@@ -583,7 +583,7 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<String>() {
             private int rvn;
 
-            @DynamoDBAttribute
+            @DynamoDbAttribute
             public String getVal() {
                 return super.getVal();
             }
@@ -592,7 +592,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public int getRvn() {
                 return this.rvn;
             }
@@ -601,10 +601,10 @@ public class StandardModelFactoriesTest {
                 this.rvn = rvn;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> rvn = model.field("rvn");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> rvn = model.field("rvn");
         assertEquals(true, rvn.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
         assertEquals(Integer.valueOf((int) 1), rvn.generate(null));
         assertEquals(Integer.valueOf((int) 2), rvn.generate(Integer.valueOf((int) 1)));
     }
@@ -615,7 +615,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedVersionLong() {
         final Object obj = new AutoKeyAndVal<Long>() {
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public Long getVal() {
                 return super.getVal();
             }
@@ -624,10 +624,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         assertEquals(true, val.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertEquals(Long.valueOf((long) 1), val.generate(null));
         assertEquals(Long.valueOf((long) 2), val.generate(Long.valueOf((long) 1)));
     }
@@ -640,7 +640,7 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<String>() {
             private long rvn;
 
-            @DynamoDBAttribute
+            @DynamoDbAttribute
             public String getVal() {
                 return super.getVal();
             }
@@ -649,7 +649,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public long getRvn() {
                 return this.rvn;
             }
@@ -658,10 +658,10 @@ public class StandardModelFactoriesTest {
                 this.rvn = rvn;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> rvn = model.field("rvn");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> rvn = model.field("rvn");
         assertEquals(true, rvn.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
         assertEquals(Long.valueOf((long) 1), rvn.generate(null));
         assertEquals(Long.valueOf((long) 2), rvn.generate(Long.valueOf((long) 1)));
     }
@@ -672,7 +672,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedVersionShort() {
         final Object obj = new AutoKeyAndVal<Short>() {
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public Short getVal() {
                 return super.getVal();
             }
@@ -681,10 +681,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         assertEquals(true, val.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertEquals(Short.valueOf((short) 1), val.generate(null));
         assertEquals(Short.valueOf((short) 2), val.generate(Short.valueOf((short) 1)));
     }
@@ -697,7 +697,7 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<String>() {
             private short rvn;
 
-            @DynamoDBAttribute
+            @DynamoDbAttribute
             public String getVal() {
                 return super.getVal();
             }
@@ -706,7 +706,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBVersionAttribute
+            @DynamoDbVersionAttribute
             public short getRvn() {
                 return this.rvn;
             }
@@ -715,10 +715,10 @@ public class StandardModelFactoriesTest {
                 this.rvn = rvn;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> rvn = model.field("rvn");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> rvn = model.field("rvn");
         assertEquals(true, rvn.versioned());
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, rvn.getGenerateStrategy());
         assertEquals(Short.valueOf((short) 1), rvn.generate(null));
         assertEquals(Short.valueOf((short) 2), rvn.generate(Short.valueOf((short) 1)));
     }
@@ -726,10 +726,10 @@ public class StandardModelFactoriesTest {
     /**
      * Test mappings.
      */
-    @Test(expected = DynamoDBMappingException.class)
+    @Test(expected = DynamoDbMappingException.class)
     public void testAutoGeneratedTimestampUuid() {
         final Object obj = new AutoKeyAndVal<UUID>() {
-            @DynamoDBAutoGeneratedTimestamp
+            @DynamoDbAutoGeneratedTimestamp
             public UUID getVal() {
                 return super.getVal();
             }
@@ -738,7 +738,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
     }
 
     /**
@@ -747,7 +747,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedTimestampCalendar() {
         final Object obj = new AutoKeyAndVal<Calendar>() {
-            @DynamoDBAutoGeneratedTimestamp
+            @DynamoDbAutoGeneratedTimestamp
             public Calendar getVal() {
                 return super.getVal();
             }
@@ -756,9 +756,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertNotNull(val.generate(null));
         assertNotNull(val.generate(Calendar.getInstance()));
     }
@@ -769,8 +769,8 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedTimestampDateKey() {
         final Object obj = new AutoKeyAndVal<Date>() {
-            @DynamoDBRangeKey
-            @DynamoDBAutoGeneratedTimestamp(strategy = DynamoDBAutoGenerateStrategy.CREATE)
+            @DynamoDbRangeKey
+            @DynamoDbAutoGeneratedTimestamp(strategy = DynamoDbAutoGenerateStrategy.CREATE)
             public Date getVal() {
                 return super.getVal();
             }
@@ -779,10 +779,10 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
         assertFieldKeyType(KeyType.RANGE, val, model);
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertNotNull(val.generate(null));
         assertNotNull(val.generate(new Date()));
     }
@@ -793,7 +793,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedTimestampDateVal() {
         final Object obj = new AutoKeyAndVal<Date>() {
-            @DynamoDBAutoGeneratedTimestamp
+            @DynamoDbAutoGeneratedTimestamp
             public Date getVal() {
                 return super.getVal();
             }
@@ -802,9 +802,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertNotNull(val.generate(null));
         assertNotNull(val.generate(new Date()));
     }
@@ -815,7 +815,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedTimestampLong() {
         final Object obj = new AutoKeyAndVal<Long>() {
-            @DynamoDBAutoGeneratedTimestamp
+            @DynamoDbAutoGeneratedTimestamp
             public Long getVal() {
                 return super.getVal();
             }
@@ -824,9 +824,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.ALWAYS, val.getGenerateStrategy());
         assertNotNull(val.generate(null));
         assertNotNull(val.generate(System.currentTimeMillis()));
     }
@@ -837,7 +837,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultByteBuffer() {
         final Object obj = new AutoKeyAndVal<ByteBuffer>() {
-            @DynamoDBAutoGeneratedDefault("default-val")
+            @DynamoDbAutoGeneratedDefault("default-val")
             public ByteBuffer getVal() {
                 return super.getVal();
             }
@@ -846,9 +846,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertNotNull(val.generate(null));
     }
 
@@ -858,7 +858,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultBigDecimal() {
         final Object obj = new AutoKeyAndVal<BigDecimal>() {
-            @DynamoDBAutoGeneratedDefault("1234.5")
+            @DynamoDbAutoGeneratedDefault("1234.5")
             public BigDecimal getVal() {
                 return super.getVal();
             }
@@ -867,9 +867,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(BigDecimal.valueOf(1234.5D), val.generate(null));
     }
 
@@ -879,7 +879,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultBigInteger() {
         final Object obj = new AutoKeyAndVal<BigInteger>() {
-            @DynamoDBAutoGeneratedDefault("1234")
+            @DynamoDbAutoGeneratedDefault("1234")
             public BigInteger getVal() {
                 return super.getVal();
             }
@@ -888,9 +888,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(BigInteger.valueOf(1234), val.generate(null));
     }
 
@@ -900,7 +900,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultBoolean_true() {
         final Object obj = new AutoKeyAndVal<Boolean>() {
-            @DynamoDBAutoGeneratedDefault("true")
+            @DynamoDbAutoGeneratedDefault("true")
             public Boolean getVal() {
                 return super.getVal();
             }
@@ -909,9 +909,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Boolean.TRUE, val.generate(null));
     }
 
@@ -921,7 +921,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultBoolean_0() {
         final Object obj = new AutoKeyAndVal<Boolean>() {
-            @DynamoDBAutoGeneratedDefault("0")
+            @DynamoDbAutoGeneratedDefault("0")
             public Boolean getVal() {
                 return super.getVal();
             }
@@ -930,9 +930,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Boolean.FALSE, val.generate(null));
     }
 
@@ -942,7 +942,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultBoolean_1() {
         final Object obj = new AutoKeyAndVal<Boolean>() {
-            @DynamoDBAutoGeneratedDefault("1")
+            @DynamoDbAutoGeneratedDefault("1")
             public Boolean getVal() {
                 return super.getVal();
             }
@@ -951,9 +951,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Boolean.TRUE, val.generate(null));
     }
 
@@ -963,7 +963,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultBoolean_y() {
         final Object obj = new AutoKeyAndVal<Boolean>() {
-            @DynamoDBAutoGeneratedDefault("y")
+            @DynamoDbAutoGeneratedDefault("y")
             public Boolean getVal() {
                 return super.getVal();
             }
@@ -972,9 +972,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Boolean.TRUE, val.generate(null));
     }
 
@@ -984,7 +984,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultBoolean_Y() {
         final Object obj = new AutoKeyAndVal<Boolean>() {
-            @DynamoDBAutoGeneratedDefault("Y")
+            @DynamoDbAutoGeneratedDefault("Y")
             public Boolean getVal() {
                 return super.getVal();
             }
@@ -993,9 +993,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Boolean.TRUE, val.generate(null));
     }
 
@@ -1005,7 +1005,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultByte() {
         final Object obj = new AutoKeyAndVal<Byte>() {
-            @DynamoDBAutoGeneratedDefault("1")
+            @DynamoDbAutoGeneratedDefault("1")
             public Byte getVal() {
                 return super.getVal();
             }
@@ -1014,9 +1014,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Byte.valueOf((byte) 1), val.generate(null));
     }
 
@@ -1026,7 +1026,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultCharacter() {
         final Object obj = new AutoKeyAndVal<Character>() {
-            @DynamoDBAutoGeneratedDefault("A")
+            @DynamoDbAutoGeneratedDefault("A")
             public Character getVal() {
                 return super.getVal();
             }
@@ -1035,9 +1035,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Character.valueOf('A'), val.generate(null));
     }
 
@@ -1047,7 +1047,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultCurrency() {
         final Object obj = new AutoKeyAndVal<java.util.Currency>() {
-            @DynamoDBAutoGeneratedDefault("CAD")
+            @DynamoDbAutoGeneratedDefault("CAD")
             public java.util.Currency getVal() {
                 return super.getVal();
             }
@@ -1056,9 +1056,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(java.util.Currency.getInstance("CAD"), val.generate(null));
     }
 
@@ -1068,7 +1068,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultDouble() {
         final Object obj = new AutoKeyAndVal<Double>() {
-            @DynamoDBAutoGeneratedDefault("1234.5")
+            @DynamoDbAutoGeneratedDefault("1234.5")
             public Double getVal() {
                 return super.getVal();
             }
@@ -1077,9 +1077,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Double.valueOf(1234.5D), val.generate(null));
     }
 
@@ -1089,8 +1089,8 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultEnum() {
         final Object obj = new AutoKeyAndVal<TimeUnit>() {
-            @DynamoDBTypeConvertedEnum
-            @DynamoDBAutoGeneratedDefault("SECONDS")
+            @DynamoDbTypeConvertedEnum
+            @DynamoDbAutoGeneratedDefault("SECONDS")
             public TimeUnit getVal() {
                 return super.getVal();
             }
@@ -1099,9 +1099,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(TimeUnit.SECONDS, val.generate(null));
         assertEquals(TimeUnit.SECONDS, val.generate(TimeUnit.MILLISECONDS));
     }
@@ -1112,7 +1112,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultFloat() {
         final Object obj = new AutoKeyAndVal<Float>() {
-            @DynamoDBAutoGeneratedDefault("1234.5")
+            @DynamoDbAutoGeneratedDefault("1234.5")
             public Float getVal() {
                 return super.getVal();
             }
@@ -1121,9 +1121,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Float.valueOf(1234.5F), val.generate(null));
     }
 
@@ -1133,7 +1133,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultInteger() {
         final Object obj = new AutoKeyAndVal<Integer>() {
-            @DynamoDBAutoGeneratedDefault("1234")
+            @DynamoDbAutoGeneratedDefault("1234")
             public Integer getVal() {
                 return super.getVal();
             }
@@ -1142,9 +1142,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Integer.valueOf((int) 1234), val.generate(null));
     }
 
@@ -1154,7 +1154,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultLong() {
         final Object obj = new AutoKeyAndVal<Long>() {
-            @DynamoDBAutoGeneratedDefault("1234")
+            @DynamoDbAutoGeneratedDefault("1234")
             public Long getVal() {
                 return super.getVal();
             }
@@ -1163,9 +1163,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Long.valueOf((long) 1234), val.generate(null));
     }
 
@@ -1175,7 +1175,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultShort() {
         final Object obj = new AutoKeyAndVal<Short>() {
-            @DynamoDBAutoGeneratedDefault("1234")
+            @DynamoDbAutoGeneratedDefault("1234")
             public Short getVal() {
                 return super.getVal();
             }
@@ -1184,9 +1184,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(Short.valueOf((short) 1234), val.generate(null));
     }
 
@@ -1196,7 +1196,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultString() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBAutoGeneratedDefault("default-val")
+            @DynamoDbAutoGeneratedDefault("default-val")
             public String getVal() {
                 return super.getVal();
             }
@@ -1205,9 +1205,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals("default-val", val.generate(null));
         assertEquals("default-val", val.generate("not-default"));
     }
@@ -1218,7 +1218,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultTimeZone() {
         final Object obj = new AutoKeyAndVal<TimeZone>() {
-            @DynamoDBAutoGeneratedDefault("America/New_York")
+            @DynamoDbAutoGeneratedDefault("America/New_York")
             public TimeZone getVal() {
                 return super.getVal();
             }
@@ -1227,9 +1227,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(TimeZone.getTimeZone("America/New_York"), val.generate(null));
         assertEquals(TimeZone.getTimeZone("America/New_York"), val.generate(TimeZone.getTimeZone("America/Los_Angeles")));
     }
@@ -1240,7 +1240,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testAutoGeneratedDefaultUuid() {
         final Object obj = new AutoKeyAndVal<UUID>() {
-            @DynamoDBAutoGeneratedDefault("12345678-1234-1234-1234-123456789012")
+            @DynamoDbAutoGeneratedDefault("12345678-1234-1234-1234-123456789012")
             public UUID getVal() {
                 return super.getVal();
             }
@@ -1249,9 +1249,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("val");
-        assertEquals(DynamoDBAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("val");
+        assertEquals(DynamoDbAutoGenerateStrategy.CREATE, val.getGenerateStrategy());
         assertEquals(UUID.fromString("12345678-1234-1234-1234-123456789012"), val.generate(null));
     }
 
@@ -1261,7 +1261,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testIndexHashKeyGlobalSecondaryIndexName() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexName = "gsi")
+            @DynamoDbIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexName = "gsi")
             public String getVal() {
                 return super.getVal();
             }
@@ -1270,8 +1270,8 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
         assertFieldGsiNames(Arrays.asList("gsi"), KeyType.HASH, gsi_hk, model);
         assertFieldGsiNames(null, KeyType.RANGE, gsi_hk, model);
         assertFieldLsiNames(null, gsi_hk, model);
@@ -1283,7 +1283,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testIndexHashKeyGlobalSecondaryIndexNames() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexNames = "gsi")
+            @DynamoDbIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexNames = "gsi")
             public String getVal() {
                 return super.getVal();
             }
@@ -1292,8 +1292,8 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
         assertFieldGsiNames(Arrays.asList("gsi"), KeyType.HASH, gsi_hk, model);
         assertFieldGsiNames(null, KeyType.RANGE, gsi_hk, model);
         assertFieldLsiNames(null, gsi_hk, model);
@@ -1307,7 +1307,7 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<String>() {
             private String gsi;
 
-            @DynamoDBIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexName = "gsi")
+            @DynamoDbIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexName = "gsi")
             public String getVal() {
                 return super.getVal();
             }
@@ -1316,7 +1316,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBIndexRangeKey(attributeName = "gsi_rk", globalSecondaryIndexName = "gsi")
+            @DynamoDbIndexRangeKey(attributeName = "gsi_rk", globalSecondaryIndexName = "gsi")
             public String getGsi() {
                 return this.gsi;
             }
@@ -1325,12 +1325,12 @@ public class StandardModelFactoriesTest {
                 this.gsi = gsi;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
         assertFieldGsiNames(Arrays.asList("gsi"), KeyType.HASH, gsi_hk, model);
         assertFieldGsiNames(null, KeyType.RANGE, gsi_hk, model);
         assertFieldLsiNames(null, gsi_hk, model);
-        final DynamoDBMapperFieldModel<Object, Object> gsi_rk = model.field("gsi_rk");
+        final DynamoDbMapperFieldModel<Object, Object> gsi_rk = model.field("gsi_rk");
         assertFieldGsiNames(null, KeyType.HASH, gsi_rk, model);
         assertFieldGsiNames(Arrays.asList("gsi"), KeyType.RANGE, gsi_rk, model);
         assertFieldLsiNames(null, gsi_rk, model);
@@ -1344,7 +1344,7 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<String>() {
             private String gsi;
 
-            @DynamoDBIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexName = "gsi")
+            @DynamoDbIndexHashKey(attributeName = "gsi_hk", globalSecondaryIndexName = "gsi")
             public String getVal() {
                 return super.getVal();
             }
@@ -1353,7 +1353,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBIndexRangeKey(attributeName = "gsi_rk", globalSecondaryIndexNames = "gsi")
+            @DynamoDbIndexRangeKey(attributeName = "gsi_rk", globalSecondaryIndexNames = "gsi")
             public String getGsi() {
                 return this.gsi;
             }
@@ -1362,12 +1362,12 @@ public class StandardModelFactoriesTest {
                 this.gsi = gsi;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> gsi_hk = model.field("gsi_hk");
         assertFieldGsiNames(Arrays.asList("gsi"), KeyType.HASH, gsi_hk, model);
         assertFieldGsiNames(null, KeyType.RANGE, gsi_hk, model);
         assertFieldLsiNames(null, gsi_hk, model);
-        final DynamoDBMapperFieldModel<Object, Object> gsi_rk = model.field("gsi_rk");
+        final DynamoDbMapperFieldModel<Object, Object> gsi_rk = model.field("gsi_rk");
         assertFieldGsiNames(null, KeyType.HASH, gsi_rk, model);
         assertFieldGsiNames(Arrays.asList("gsi"), KeyType.RANGE, gsi_rk, model);
         assertFieldLsiNames(null, gsi_rk, model);
@@ -1379,7 +1379,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testIndexRangeKeyiLocalSecondaryIndexName() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBIndexRangeKey(attributeName = "lsi_rk", localSecondaryIndexName = "lsi")
+            @DynamoDbIndexRangeKey(attributeName = "lsi_rk", localSecondaryIndexName = "lsi")
             public String getVal() {
                 return super.getVal();
             }
@@ -1388,8 +1388,8 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> lsi_rk = model.field("lsi_rk");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> lsi_rk = model.field("lsi_rk");
         assertFieldLsiNames(Arrays.asList("lsi"), lsi_rk, model);
     }
 
@@ -1399,7 +1399,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testIndexRangeKeyLocalSecondaryIndexNames() {
         final Object obj = new AutoKeyAndVal<String>() {
-            @DynamoDBIndexRangeKey(attributeName = "lsi_rk", localSecondaryIndexNames = "lsi")
+            @DynamoDbIndexRangeKey(attributeName = "lsi_rk", localSecondaryIndexNames = "lsi")
             public String getVal() {
                 return super.getVal();
             }
@@ -1408,8 +1408,8 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
-        final DynamoDBMapperFieldModel<Object, Object> lsi_rk = model.field("lsi_rk");
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperFieldModel<Object, Object> lsi_rk = model.field("lsi_rk");
         assertFieldLsiNames(Arrays.asList("lsi"), lsi_rk, model);
     }
 
@@ -1419,9 +1419,9 @@ public class StandardModelFactoriesTest {
     @Test
     public void testFlattened() {
         final Object obj = new AutoKeyAndVal<DateRange>() {
-            @DynamoDBFlattened(attributes = {
-                    @DynamoDBAttribute(mappedBy = "start", attributeName = "DateRangeStart"),
-                    @DynamoDBAttribute(mappedBy = "end", attributeName = "DateRangeEnd")})
+            @DynamoDbFlattened(attributes = {
+                    @DynamoDbAttribute(mappedBy = "start", attributeName = "DateRangeStart"),
+                    @DynamoDbAttribute(mappedBy = "end", attributeName = "DateRangeEnd")})
             public DateRange getVal() {
                 return super.getVal();
             }
@@ -1430,7 +1430,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
         assertEquals(3, model.fields().size());
         assertEquals("DateRangeStart", model.field("DateRangeStart").name());
         assertEquals("DateRangeEnd", model.field("DateRangeEnd").name());
@@ -1442,8 +1442,8 @@ public class StandardModelFactoriesTest {
     @Test
     public void testFlattenedNotAllSpecified() {
         final Object obj = new AutoKeyAndVal<DateRange>() {
-            @DynamoDBFlattened(attributes = {
-                    @DynamoDBAttribute(mappedBy = "start", attributeName = "DateRangeStart")})
+            @DynamoDbFlattened(attributes = {
+                    @DynamoDbAttribute(mappedBy = "start", attributeName = "DateRangeStart")})
             public DateRange getVal() {
                 return super.getVal();
             }
@@ -1452,7 +1452,7 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
         assertEquals(2, model.fields().size());
         assertEquals("DateRangeStart", model.field("DateRangeStart").name());
     }
@@ -1460,12 +1460,12 @@ public class StandardModelFactoriesTest {
     /**
      * Test mappings.
      */
-    @Test(expected = DynamoDBMappingException.class)
+    @Test(expected = DynamoDbMappingException.class)
     public void testFlattenedInvalidMappedBy() {
         final Object obj = new AutoKeyAndVal<DateRange>() {
-            @DynamoDBFlattened(attributes = {
-                    @DynamoDBAttribute(mappedBy = "xstart", attributeName = "DateRangeStart"),
-                    @DynamoDBAttribute(mappedBy = "xend", attributeName = "DateRangeEnd")})
+            @DynamoDbFlattened(attributes = {
+                    @DynamoDbAttribute(mappedBy = "xstart", attributeName = "DateRangeStart"),
+                    @DynamoDbAttribute(mappedBy = "xend", attributeName = "DateRangeEnd")})
             public DateRange getVal() {
                 return super.getVal();
             }
@@ -1485,9 +1485,9 @@ public class StandardModelFactoriesTest {
         final Object obj = new AutoKeyAndVal<Currency>() {
             private Currency other;
 
-            @DynamoDBFlattened(attributes = {
-                    @DynamoDBAttribute(mappedBy = "amount", attributeName = "firstAmount"),
-                    @DynamoDBAttribute(mappedBy = "unit", attributeName = "firstUnit")})
+            @DynamoDbFlattened(attributes = {
+                    @DynamoDbAttribute(mappedBy = "amount", attributeName = "firstAmount"),
+                    @DynamoDbAttribute(mappedBy = "unit", attributeName = "firstUnit")})
             public Currency getVal() {
                 return super.getVal();
             }
@@ -1496,9 +1496,9 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
 
-            @DynamoDBFlattened(attributes = {
-                    @DynamoDBAttribute(mappedBy = "amount", attributeName = "secondAmount"),
-                    @DynamoDBAttribute(mappedBy = "unit", attributeName = "secondUnit")})
+            @DynamoDbFlattened(attributes = {
+                    @DynamoDbAttribute(mappedBy = "amount", attributeName = "secondAmount"),
+                    @DynamoDbAttribute(mappedBy = "unit", attributeName = "secondUnit")})
             public Currency getOther() {
                 return this.other;
             }
@@ -1507,7 +1507,7 @@ public class StandardModelFactoriesTest {
                 this.other = other;
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
         assertEquals(5, model.fields().size());
         assertEquals("firstAmount", model.field("firstAmount").name());
         assertEquals("firstUnit", model.field("firstUnit").name());
@@ -1529,7 +1529,7 @@ public class StandardModelFactoriesTest {
     @Test
     public void testInheritedWithNoTable() {
         final Object obj = new KeyAndVal<String, String>() {
-            @DynamoDBHashKey(attributeName = "hk")
+            @DynamoDbHashKey(attributeName = "hk")
             public String getKey() {
                 return super.getKey();
             }
@@ -1538,7 +1538,7 @@ public class StandardModelFactoriesTest {
                 super.setKey(key);
             }
 
-            @DynamoDBAttribute(attributeName = "value")
+            @DynamoDbAttribute(attributeName = "value")
             public String getVal() {
                 return super.getVal();
             }
@@ -1547,16 +1547,16 @@ public class StandardModelFactoriesTest {
                 super.setVal(val);
             }
         };
-        final DynamoDBMapperTableModel<Object> model = getTable(obj);
+        final DynamoDbMapperTableModel<Object> model = getTable(obj);
 
-        final DynamoDBMapperFieldModel<Object, Object> key = model.field("hk");
+        final DynamoDbMapperFieldModel<Object, Object> key = model.field("hk");
         assertNotNull(key);
         assertEquals(KeyType.HASH, key.keyType());
-        assertEquals(DynamoDBAttributeType.S, key.attributeType());
+        assertEquals(DynamoDbAttributeType.S, key.attributeType());
 
-        final DynamoDBMapperFieldModel<Object, Object> val = model.field("value");
+        final DynamoDbMapperFieldModel<Object, Object> val = model.field("value");
         assertNotNull(val);
-        assertEquals(DynamoDBAttributeType.S, val.attributeType());
+        assertEquals(DynamoDbAttributeType.S, val.attributeType());
     }
 
     /**
@@ -1564,9 +1564,9 @@ public class StandardModelFactoriesTest {
      */
     @Test
     public void testFindRelevantGettersWithBridgeMethod() {
-        final DynamoDBMapperTableModel<SubClass> model = models.getTable(SubClass.class);
+        final DynamoDbMapperTableModel<SubClass> model = models.getTable(SubClass.class);
         assertEquals("only two getter should be returned", 2, model.fields().size());
-        assertEquals("return type should be Integer rather than Object", DynamoDBAttributeType.N, model.field("t").attributeType());
+        assertEquals("return type should be Integer rather than Object", DynamoDbAttributeType.N, model.field("t").attributeType());
     }
 
     /**
@@ -1574,7 +1574,7 @@ public class StandardModelFactoriesTest {
      */
     @Test
     public void testNonMappedInheritedProperties() {
-        final DynamoDBMapperTableModel<NonMappedInheritedProperties> model = models.getTable(NonMappedInheritedProperties.class);
+        final DynamoDbMapperTableModel<NonMappedInheritedProperties> model = models.getTable(NonMappedInheritedProperties.class);
         assertEquals(2, model.fields().size());
         assertNotNull(model.field("doUse"));
     }
@@ -1584,11 +1584,11 @@ public class StandardModelFactoriesTest {
      */
     @Test
     public void testInheritedProperties() {
-        final DynamoDBMapperTableModel<BaseTablePojo> model1 = models.getTable(BaseTablePojo.class);
+        final DynamoDbMapperTableModel<BaseTablePojo> model1 = models.getTable(BaseTablePojo.class);
         assertEquals(3, model1.fields().size());
         assertNotNull(model1.field("hashKeyOnField"));
         assertNotNull(model1.field("rangeKeyOnGetter"));
-        final DynamoDBMapperTableModel<TablePojoSubclass> model2 = models.getTable(TablePojoSubclass.class);
+        final DynamoDbMapperTableModel<TablePojoSubclass> model2 = models.getTable(TablePojoSubclass.class);
         assertEquals(4, model2.fields().size());
         assertNotNull(model2.field("hashKeyOnField"));
         assertNotNull(model2.field("rangeKeyOnGetter"));
@@ -1623,23 +1623,23 @@ public class StandardModelFactoriesTest {
      */
     private static enum PojoAsserts {
         hashKey(KeyType.HASH, null),
-        rangeKey(KeyType.RANGE, DynamoDBAutoGenerateStrategy.CREATE),
+        rangeKey(KeyType.RANGE, DynamoDbAutoGenerateStrategy.CREATE),
         indexHashKey(null, null),
         indexRangeKey(null, null),
         actualAttrName(null, null),
-        versionedAttr(null, DynamoDBAutoGenerateStrategy.ALWAYS),
+        versionedAttr(null, DynamoDbAutoGenerateStrategy.ALWAYS),
         marshallingAttr(null, null);
-        private final DynamoDBAutoGenerateStrategy generateStrategy;
+        private final DynamoDbAutoGenerateStrategy generateStrategy;
         private final KeyType keyType;
 
-        private PojoAsserts(final KeyType keyType, final DynamoDBAutoGenerateStrategy generateStrategy) {
+        private PojoAsserts(final KeyType keyType, final DynamoDbAutoGenerateStrategy generateStrategy) {
             this.generateStrategy = generateStrategy;
             this.keyType = keyType;
         }
 
-        public static <T> void assertAll(final DynamoDBMapperTableModel<T> model) {
+        public static <T> void assertAll(final DynamoDbMapperTableModel<T> model) {
             for (final PojoAsserts asserts : PojoAsserts.values()) {
-                final DynamoDBMapperFieldModel<T, Object> field = model.field(asserts.name());
+                final DynamoDbMapperFieldModel<T, Object> field = model.field(asserts.name());
                 assertNotNull(field);
                 assertFieldKeyType(asserts.keyType, field, model);
                 assertEquals(asserts.generateStrategy, field.getGenerateStrategy());
@@ -1649,8 +1649,8 @@ public class StandardModelFactoriesTest {
         }
     }
 
-    @DynamoDBDocument
-    @DynamoDBTable(tableName = "")
+    @DynamoDbDocument
+    @DynamoDbTable(tableName = "")
     public static class TableAndDocument extends AutoKeyAndVal<String> {
         public String getVal() {
             return super.getVal();
@@ -1661,11 +1661,11 @@ public class StandardModelFactoriesTest {
         }
     }
 
-    @DynamoDBTable(tableName = "")
+    @DynamoDbTable(tableName = "")
     private abstract static class SuperGenericClass<T> {
         private String id;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public final String getId() {
             return this.id;
         }
@@ -1679,7 +1679,7 @@ public class StandardModelFactoriesTest {
         public abstract void setT(T t);
     }
 
-    @DynamoDBTable(tableName = "GenericString")
+    @DynamoDbTable(tableName = "GenericString")
     private static class SubClass extends SuperGenericClass<Integer> {
         private Integer t;
 
@@ -1694,13 +1694,13 @@ public class StandardModelFactoriesTest {
         }
     }
 
-    @DynamoDBTable(tableName = "table")
+    @DynamoDbTable(tableName = "table")
     private static class BaseTablePojo {
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKeyOnField;
         private String rangeKeyOnGetter;
         private String attrNoAnnotation;
-        @DynamoDBIgnore
+        @DynamoDbIgnore
         private String ignoredAttr;
 
         public String getHashKeyOnField() {
@@ -1711,7 +1711,7 @@ public class StandardModelFactoriesTest {
             this.hashKeyOnField = hashKeyOnField;
         }
 
-        @DynamoDBRangeKey
+        @DynamoDbRangeKey
         public String getRangeKeyOnGetter() {
             return rangeKeyOnGetter;
         }
@@ -1737,7 +1737,7 @@ public class StandardModelFactoriesTest {
         }
     }
 
-    @DynamoDBTable(tableName = "table")
+    @DynamoDbTable(tableName = "table")
     private static class TablePojoSubclass extends BaseTablePojo {
         private String ignoredAttr;
 
@@ -1755,7 +1755,7 @@ public class StandardModelFactoriesTest {
     /**
      * A POJO model that uses getter annotations.
      */
-    @DynamoDBTable(tableName = "table")
+    @DynamoDbTable(tableName = "table")
     private static class PojoWithGetterAnnotations {
         private String hashKey;
         private String rangeKey;
@@ -1766,7 +1766,7 @@ public class StandardModelFactoriesTest {
         private String marshallingAttr;
         private String ignoredAttr;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getHashKey() {
             return hashKey;
         }
@@ -1775,8 +1775,8 @@ public class StandardModelFactoriesTest {
             this.hashKey = hashKey;
         }
 
-        @DynamoDBRangeKey
-        @DynamoDBAutoGeneratedKey
+        @DynamoDbRangeKey
+        @DynamoDbAutoGeneratedKey
         public String getRangeKey() {
             return rangeKey;
         }
@@ -1785,7 +1785,7 @@ public class StandardModelFactoriesTest {
             this.rangeKey = rangeKey;
         }
 
-        @DynamoDBIndexHashKey(globalSecondaryIndexName = "index")
+        @DynamoDbIndexHashKey(globalSecondaryIndexName = "index")
         public String getIndexHashKey() {
             return indexHashKey;
         }
@@ -1794,7 +1794,7 @@ public class StandardModelFactoriesTest {
             this.indexHashKey = indexHashKey;
         }
 
-        @DynamoDBIndexRangeKey(globalSecondaryIndexName = "index")
+        @DynamoDbIndexRangeKey(globalSecondaryIndexName = "index")
         public String getIndexRangeKey() {
             return indexRangeKey;
         }
@@ -1803,7 +1803,7 @@ public class StandardModelFactoriesTest {
             this.indexRangeKey = indexRangeKey;
         }
 
-        @DynamoDBAttribute(attributeName = "actualAttrName")
+        @DynamoDbAttribute(attributeName = "actualAttrName")
         public String getAnnotatedAttr() {
             return annotatedAttr;
         }
@@ -1812,7 +1812,7 @@ public class StandardModelFactoriesTest {
             this.annotatedAttr = annotatedAttr;
         }
 
-        @DynamoDBVersionAttribute
+        @DynamoDbVersionAttribute
         public Long getVersionedAttr() {
             return versionedAttr;
         }
@@ -1821,7 +1821,7 @@ public class StandardModelFactoriesTest {
             this.versionedAttr = versionedAttr;
         }
 
-        @DynamoDBTypeConverted(converter = RandomUUIDMarshaller.class)
+        @DynamoDbTypeConverted(converter = RandomUUIDMarshaller.class)
         public String getMarshallingAttr() {
             return marshallingAttr;
         }
@@ -1830,7 +1830,7 @@ public class StandardModelFactoriesTest {
             this.marshallingAttr = marshallingAttr;
         }
 
-        @DynamoDBIgnore
+        @DynamoDbIgnore
         public String getIgnoredAttr() {
             return ignoredAttr;
         }
@@ -1844,24 +1844,24 @@ public class StandardModelFactoriesTest {
      * The same model as defined in PojoWithGetterAnnotations, but uses field
      * annotations instead.
      */
-    @DynamoDBTable(tableName = "table")
+    @DynamoDbTable(tableName = "table")
     private static class PojoWithFieldAnnotations {
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKey;
-        @DynamoDBRangeKey
-        @DynamoDBAutoGeneratedKey
+        @DynamoDbRangeKey
+        @DynamoDbAutoGeneratedKey
         private String rangeKey;
-        @DynamoDBIndexHashKey(globalSecondaryIndexName = "index")
+        @DynamoDbIndexHashKey(globalSecondaryIndexName = "index")
         private String indexHashKey;
-        @DynamoDBIndexRangeKey(globalSecondaryIndexName = "index")
+        @DynamoDbIndexRangeKey(globalSecondaryIndexName = "index")
         private String indexRangeKey;
-        @DynamoDBAttribute(attributeName = "actualAttrName")
+        @DynamoDbAttribute(attributeName = "actualAttrName")
         private String annotatedAttr;
-        @DynamoDBVersionAttribute
+        @DynamoDbVersionAttribute
         private Long versionedAttr;
-        @DynamoDBTypeConverted(converter = RandomUUIDMarshaller.class)
+        @DynamoDbTypeConverted(converter = RandomUUIDMarshaller.class)
         private String marshallingAttr;
-        @DynamoDBIgnore
+        @DynamoDbIgnore
         private String ignoredAttr;
 
         public String getHashKey() {
@@ -1933,18 +1933,18 @@ public class StandardModelFactoriesTest {
      * The same model as defined in PojoWithGetterAnnotations, but uses both getter and field
      * annotations.
      */
-    @DynamoDBTable(tableName = "table")
+    @DynamoDbTable(tableName = "table")
     private static class PojoWithMixedAnnotations {
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKey;
         private String rangeKey;
-        @DynamoDBIndexHashKey(globalSecondaryIndexName = "index")
+        @DynamoDbIndexHashKey(globalSecondaryIndexName = "index")
         private String indexHashKey;
         private String indexRangeKey;
-        @DynamoDBAttribute(attributeName = "actualAttrName")
+        @DynamoDbAttribute(attributeName = "actualAttrName")
         private String annotatedAttr;
         private Long versionedAttr;
-        @DynamoDBTypeConverted(converter = RandomUUIDMarshaller.class)
+        @DynamoDbTypeConverted(converter = RandomUUIDMarshaller.class)
         private String marshallingAttr;
         private String ignoredAttr;
 
@@ -1956,8 +1956,8 @@ public class StandardModelFactoriesTest {
             this.hashKey = hashKey;
         }
 
-        @DynamoDBRangeKey
-        @DynamoDBAutoGeneratedKey
+        @DynamoDbRangeKey
+        @DynamoDbAutoGeneratedKey
         public String getRangeKey() {
             return rangeKey;
         }
@@ -1974,7 +1974,7 @@ public class StandardModelFactoriesTest {
             this.indexHashKey = indexHashKey;
         }
 
-        @DynamoDBIndexRangeKey(globalSecondaryIndexName = "index")
+        @DynamoDbIndexRangeKey(globalSecondaryIndexName = "index")
         public String getIndexRangeKey() {
             return indexRangeKey;
         }
@@ -1991,7 +1991,7 @@ public class StandardModelFactoriesTest {
             this.annotatedAttr = annotatedAttr;
         }
 
-        @DynamoDBVersionAttribute
+        @DynamoDbVersionAttribute
         public Long getVersionedAttr() {
             return versionedAttr;
         }
@@ -2008,7 +2008,7 @@ public class StandardModelFactoriesTest {
             this.marshallingAttr = marshallingAttr;
         }
 
-        @DynamoDBIgnore
+        @DynamoDbIgnore
         public String getIgnoredAttr() {
             return ignoredAttr;
         }
@@ -2030,12 +2030,12 @@ public class StandardModelFactoriesTest {
         }
     }
 
-    @DynamoDBTable(tableName = "aws-java-sdk-test")
+    @DynamoDbTable(tableName = "aws-java-sdk-test")
     public class NonMappedInheritedProperties extends AbstractNonMappedInheritedProperties {
         private String id;
         private String doUse;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public final String getId() {
             return this.id;
         }

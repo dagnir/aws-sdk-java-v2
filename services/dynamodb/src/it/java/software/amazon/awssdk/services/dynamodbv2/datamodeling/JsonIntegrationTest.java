@@ -26,8 +26,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.ConsistentReads;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.TableNameOverride;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.ConsistentReads;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.TableNameOverride;
 import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodbv2.model.ResourceNotFoundException;
@@ -49,7 +49,7 @@ public class JsonIntegrationTest extends AwsTestBase {
 
         mapper = new DynamoDbMapper(
                 client,
-                new DynamoDBMapperConfig.Builder()
+                new DynamoDbMapperConfig.Builder()
                         .withConversionSchema(ConversionSchemas.V2)
                         .withTableNameOverride(TableNameOverride
                                                        .withTableNameReplacement(TABLE_NAME))
@@ -140,14 +140,14 @@ public class JsonIntegrationTest extends AwsTestBase {
         Assert.assertEquals(test, result);
     }
 
-    @DynamoDBTable(tableName = "")
+    @DynamoDbTable(tableName = "")
     public static class TestClass {
 
         private String id;
         private List<Map<String, ChildClass>> listOfMaps;
         private Map<String, List<ChildClass>> mapOfLists;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getId() {
             return id;
         }
@@ -188,7 +188,7 @@ public class JsonIntegrationTest extends AwsTestBase {
         }
     }
 
-    @DynamoDBDocument
+    @DynamoDbDocument
     public static class ChildClass {
 
         private boolean bool;

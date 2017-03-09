@@ -1063,8 +1063,8 @@ public class TransferManager {
 
         GetObjectMetadataRequest getObjectMetadataRequest = new GetObjectMetadataRequest(
                 getObjectRequest.getBucketName(), getObjectRequest.getKey(), getObjectRequest.getVersionId());
-        if (getObjectRequest.getSSECustomerKey() != null) {
-            getObjectMetadataRequest.setSSECustomerKey(getObjectRequest.getSSECustomerKey());
+        if (getObjectRequest.getSseCustomerKey() != null) {
+            getObjectMetadataRequest.setSseCustomerKey(getObjectRequest.getSseCustomerKey());
         }
         final ObjectMetadata objectMetadata = s3.getObjectMetadata(getObjectMetadataRequest);
 
@@ -1823,7 +1823,7 @@ public class TransferManager {
 
         GetObjectMetadataRequest getObjectMetadataRequest = new GetObjectMetadataRequest(
                 copyObjectRequest.getSourceBucketName(), copyObjectRequest.getSourceKey())
-                .withSSECustomerKey(copyObjectRequest.getSourceSseCustomerKey())
+                .withSseCustomerKey(copyObjectRequest.getSourceSseCustomerKey())
                 .withRequesterPays(copyObjectRequest.isRequesterPays());
 
         ObjectMetadata metadata = srcS3.getObjectMetadata(getObjectMetadataRequest);

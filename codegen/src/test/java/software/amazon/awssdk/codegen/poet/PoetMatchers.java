@@ -24,7 +24,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.ComparisonFailure;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public final class PoetMatchers {
 
@@ -53,7 +53,7 @@ public final class PoetMatchers {
 
     private static String getExpectedClass(ClassSpec spec, String testFile) {
         try {
-            return IOUtils.toString(spec.getClass().getResourceAsStream(testFile));
+            return IoUtils.toString(spec.getClass().getResourceAsStream(testFile));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

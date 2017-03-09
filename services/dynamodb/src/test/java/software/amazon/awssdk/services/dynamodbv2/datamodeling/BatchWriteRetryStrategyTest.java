@@ -15,12 +15,6 @@
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,13 +25,15 @@ import org.easymock.IExpectationSetters;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.BatchWriteRetryStrategy;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.BatchWriteRetryStrategy;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchWriteItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchWriteItemResult;
 import software.amazon.awssdk.services.dynamodbv2.model.PutRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
+
+import static org.easymock.EasyMock.*;
 
 public class BatchWriteRetryStrategyTest {
 
@@ -148,9 +144,9 @@ public class BatchWriteRetryStrategyTest {
                 .andThrow(e);
     }
 
-    private DynamoDBMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
+    private DynamoDbMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
             BatchWriteRetryStrategy batchWriteRetryStrategy) {
-        return new DynamoDBMapperConfig.Builder()
+        return new DynamoDbMapperConfig.Builder()
                 .withBatchWriteRetryStrategy(batchWriteRetryStrategy)
                 .build();
     }
@@ -179,7 +175,7 @@ public class BatchWriteRetryStrategyTest {
 
     }
 
-    @DynamoDBTable(tableName = TABLE_NAME)
+    @DynamoDbTable(tableName = TABLE_NAME)
     public static class Item {
 
         private String hash;
@@ -188,8 +184,8 @@ public class BatchWriteRetryStrategyTest {
             this.hash = hash;
         }
 
-        @DynamoDBHashKey
-        @DynamoDBAttribute(attributeName = HASH_ATTR)
+        @DynamoDbHashKey
+        @DynamoDbAttribute(attributeName = HASH_ATTR)
         public String getHash() {
             return hash;
         }

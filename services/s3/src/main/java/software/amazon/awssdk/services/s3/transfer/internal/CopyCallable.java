@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.transfer.internal;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -223,13 +223,13 @@ public class CopyCallable implements Callable<CopyResult> {
 
         InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(
                 origReq.getDestinationBucketName(),
-                origReq.getDestinationKey()).withCannedACL(
+                origReq.getDestinationKey()).withCannedAcl(
                 origReq.getCannedAccessControlList());
 
         request.withAccessControlList(origReq.getAccessControlList())
                .withStorageClass(origReq.getStorageClass())
-               .withSSECustomerKey(origReq.getDestinationSseCustomerKey())
-               .withSSEAwsKeyManagementParams(origReq.getSseAwsKeyManagementParams())
+               .withSseCustomerKey(origReq.getDestinationSseCustomerKey())
+               .withSseAwsKeyManagementParams(origReq.getSseAwsKeyManagementParams())
                .withGeneralProgressListener(origReq.getGeneralProgressListener())
                .withRequestMetricCollector(origReq.getRequestMetricCollector());
 

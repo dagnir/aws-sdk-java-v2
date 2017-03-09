@@ -31,7 +31,7 @@ import software.amazon.awssdk.auth.profile.internal.Profile;
 import software.amazon.awssdk.auth.profile.internal.ProfileAssumeRoleCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.ProfileStaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
-import software.amazon.awssdk.auth.profile.internal.securitytoken.STSProfileCredentialsServiceLoader;
+import software.amazon.awssdk.auth.profile.internal.securitytoken.StsProfileCredentialsServiceLoader;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 import software.amazon.awssdk.util.ValidationUtils;
 
@@ -122,7 +122,7 @@ public class ProfilesConfigFile {
      * parameter to the constructor.
      */
     public ProfilesConfigFile(File file) throws SdkClientException {
-        this(file, STSProfileCredentialsServiceLoader.getInstance());
+        this(file, StsProfileCredentialsServiceLoader.getInstance());
     }
 
     /**

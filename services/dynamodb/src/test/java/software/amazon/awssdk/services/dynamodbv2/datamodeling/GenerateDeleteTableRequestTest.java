@@ -37,20 +37,20 @@ public class GenerateDeleteTableRequestTest {
 
     @Test
     public void tableNameOverriddenInConfig_UsesPrefixedOverrideTableName() {
-        DynamoDBMapperConfig.TableNameOverride tableNameOverride = DynamoDBMapperConfig.TableNameOverride
+        DynamoDbMapperConfig.TableNameOverride tableNameOverride = DynamoDbMapperConfig.TableNameOverride
                 .withTableNamePrefix(TABLE_PREFIX);
-        DynamoDBMapperConfig config = new DynamoDBMapperConfig(tableNameOverride);
+        DynamoDbMapperConfig config = new DynamoDbMapperConfig(tableNameOverride);
         DynamoDbMapper dynamoDBMapper = new DynamoDbMapper(null, config);
 
         DeleteTableRequest deleteTableRequest = dynamoDBMapper.generateDeleteTableRequest(ObjectORMExample.class);
         assertEquals(deleteTableRequest.getTableName(), TABLE_PREFIX.concat(TABLE_NAME));
     }
 
-    @DynamoDBTable(tableName = TABLE_NAME)
+    @DynamoDbTable(tableName = TABLE_NAME)
     private static class ObjectORMExample {
         private String id;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public final String getId() {
             return this.id;
         }

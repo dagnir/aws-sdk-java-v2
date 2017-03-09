@@ -18,13 +18,15 @@ package software.amazon.awssdk.regions;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.config.Builder;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 
 /**
@@ -35,7 +37,7 @@ import software.amazon.awssdk.util.IOUtils;
 public class LegacyRegionXmlMetadataBuilder implements Builder<RegionMetadata> {
 
     private static final String REGIONS_FILE_OVERRIDE =
-            SDKGlobalConfiguration.REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY;
+            SdkGlobalConfiguration.REGIONS_FILE_OVERRIDE_SYSTEM_PROPERTY;
 
     private static final String OVERRIDE_ENDPOINTS_RESOURCE_PATH =
             "/software/amazon/awssdk/regions/override/regions.xml";
@@ -55,7 +57,7 @@ public class LegacyRegionXmlMetadataBuilder implements Builder<RegionMetadata> {
                     .getResourceAsStream(OVERRIDE_ENDPOINTS_RESOURCE_PATH);
             if (override != null) {
                 metadata = loadFromStream(override);
-                IOUtils.closeQuietly(override, LOG);
+                IoUtils.closeQuietly(override, LOG);
             }
         }
 

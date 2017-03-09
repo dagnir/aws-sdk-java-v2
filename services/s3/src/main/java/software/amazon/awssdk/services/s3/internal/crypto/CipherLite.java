@@ -44,7 +44,7 @@ import javax.crypto.SecretKey;
  *
  * @author Hanson Char
  *
- * @see GCMCipherLite
+ * @see GcmCipherLite
  */
 class CipherLite {
     /**

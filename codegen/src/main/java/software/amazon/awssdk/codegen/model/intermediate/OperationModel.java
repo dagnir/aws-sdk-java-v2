@@ -17,7 +17,7 @@ package software.amazon.awssdk.codegen.model.intermediate;
 
 import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHtmlTags;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
@@ -141,7 +141,7 @@ public class OperationModel extends DocumentationModel {
 
         if (input != null) {
             docBuilder.append(LINE_SEPARATOR).append("@param ").append(input.getVariableName())
-                    .append(" ").append(stripHTMLTags(input.getDocumentation()));
+                    .append(" ").append(stripHtmlTags(input.getDocumentation()));
         }
 
         if (methodType == MethodType.ASYNC_WITH_HANDLER) {
@@ -170,7 +170,7 @@ public class OperationModel extends DocumentationModel {
             for (ExceptionModel exception : exceptions) {
                 docBuilder.append(LINE_SEPARATOR).append("@throws ")
                         .append(exception.getExceptionName()).append(" ")
-                        .append(stripHTMLTags(exception.getDocumentation()));
+                        .append(stripHtmlTags(exception.getDocumentation()));
             }
         }
 

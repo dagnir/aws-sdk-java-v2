@@ -75,7 +75,7 @@ public class TT0035900619IntegrationTest {
                     new UnreliableTestConfig()
                     .withMaxNumErrors(1)
                     .withBytesReadBeforeException(10)
-                    .withFakeIOException(false)
+                    .withFakeIoException(false)
                     .withResetIntervalBeforeException(2)
             );
             System.out.println(client .describeTable(TABLE_NAME));
@@ -91,7 +91,7 @@ public class TT0035900619IntegrationTest {
                 new UnreliableTestConfig()
                 .withMaxNumErrors(1)
                 .withBytesReadBeforeException(10)
-                .withFakeIOException(true)
+                .withFakeIoException(true)
                 .withResetIntervalBeforeException(2)
         );
         System.out.println(client.describeTable(TABLE_NAME));
@@ -103,7 +103,7 @@ public class TT0035900619IntegrationTest {
                 new UnreliableTestConfig()
                 .withMaxNumErrors(PredefinedRetryPolicies.DYNAMODB_DEFAULT_MAX_ERROR_RETRY)
                 .withBytesReadBeforeException(10)
-                .withFakeIOException(true)
+                .withFakeIoException(true)
                 .withResetIntervalBeforeException(2)
         );
         System.out.println(client.describeTable(TABLE_NAME));
@@ -115,7 +115,7 @@ public class TT0035900619IntegrationTest {
                 new UnreliableTestConfig()
                 .withMaxNumErrors(PredefinedRetryPolicies.DYNAMODB_DEFAULT_MAX_ERROR_RETRY+1)
                 .withBytesReadBeforeException(10)
-                .withFakeIOException(true)
+                .withFakeIoException(true)
                 .withResetIntervalBeforeException(2)
         );
         try {

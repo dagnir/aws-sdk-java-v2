@@ -89,7 +89,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void getObject_InvolvesSseC_ShouldSkipClientSideValidation() {
         GetObjectRequest request = newGetObjectRequest();
-        request.setSSECustomerKey(new SseCustomerKey("some-key"));
+        request.setSseCustomerKey(new SseCustomerKey("some-key"));
         assertTrue(strategy.skipClientSideValidationPerRequest(request));
     }
 
@@ -118,7 +118,7 @@ public class SkipMd5CheckStrategyTest {
     public void putObject_InvolvesSse_ShouldNotSkipServerSideValidation() throws UnsupportedEncodingException {
         PutObjectRequest request = newPutObjectRequest();
         request.setMetadata(new ObjectMetadata());
-        request.getMetadata().setSSEAlgorithm("some-algorithm");
+        request.getMetadata().setSseAlgorithm("some-algorithm");
         assertFalse(strategy.skipServerSideValidation(request));
     }
 
@@ -152,7 +152,7 @@ public class SkipMd5CheckStrategyTest {
     public void putObject_InvolvesSse_ShouldNotSkipClientSideValidation() throws UnsupportedEncodingException {
         PutObjectRequest request = newPutObjectRequest();
         request.setMetadata(new ObjectMetadata());
-        request.getMetadata().setSSEAlgorithm("some-algorithm");
+        request.getMetadata().setSseAlgorithm("some-algorithm");
         assertFalse(strategy.skipClientSideValidationPerRequest(request));
     }
 
@@ -221,7 +221,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void uploadPart_InvolvesSseC_ShouldSkipClientSideValidation() {
         UploadPartRequest request = new UploadPartRequest();
-        request.setSSECustomerKey(new SseCustomerKey("some-key"));
+        request.setSseCustomerKey(new SseCustomerKey("some-key"));
         assertTrue(strategy.skipClientSideValidationPerRequest(request));
     }
 
@@ -256,7 +256,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void skipValidationPerResponse_InvolvesSse_ShouldNotSkipClientSideValidation() {
         ObjectMetadata metadata = newObjectMetadata();
-        metadata.setSSEAlgorithm("some-algorithm");
+        metadata.setSseAlgorithm("some-algorithm");
         assertFalse(strategy.skipClientSideValidationPerGetResponse(metadata));
     }
 
@@ -267,8 +267,8 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void skipValidationPerResponse_InvolvesSseC_ShouldSkipClientSideValidation() {
         ObjectMetadata metadata = newObjectMetadata();
-        metadata.setSSECustomerAlgorithm("some-algorithim");
-        metadata.setSSECustomerKeyMd5("md5digest");
+        metadata.setSseCustomerAlgorithm("some-algorithim");
+        metadata.setSseCustomerKeyMd5("md5digest");
         assertTrue(strategy.skipClientSideValidationPerGetResponse(metadata));
     }
 
@@ -279,7 +279,7 @@ public class SkipMd5CheckStrategyTest {
     @Test
     public void skipValidationPerResponse_InvolvesSseKms_ShouldSkipClientSideValidation() {
         ObjectMetadata metadata = newObjectMetadata();
-        metadata.setSSEAlgorithm("some-kms-algoritim");
+        metadata.setSseAlgorithm("some-kms-algoritim");
         metadata.setHeader(Headers.SERVER_SIDE_ENCRYPTION_AWS_KMS_KEYID, "some-kms-key-id");
         assertTrue(strategy.skipClientSideValidationPerGetResponse(metadata));
     }

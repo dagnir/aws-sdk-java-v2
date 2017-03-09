@@ -33,7 +33,7 @@ public interface ArgumentUnmarshaller {
 
     /**
      * Unmarshalls the {@link AttributeValue} given into an instance of the
-     * appropriate type, as determined by {@link DynamoDBReflector} and
+     * appropriate type, as determined by {@link DynamoDbReflector} and
      * {@link DynamoDbMapper}
      *
      * @throws ParseException when unable to parse a date string

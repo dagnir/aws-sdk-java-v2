@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers;
 
 import java.lang.reflect.Method;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentUnmarshaller;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMappingException;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**
@@ -42,7 +42,7 @@ public class BooleanUnmarshaller implements ArgumentUnmarshaller {
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
         if (value.getN() == null && value.getBOOL() == null) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Expected either N or BOOL in value " + value
                     + " when invoking " + setter);
         }

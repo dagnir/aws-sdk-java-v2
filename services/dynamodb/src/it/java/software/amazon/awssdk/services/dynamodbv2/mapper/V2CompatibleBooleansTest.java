@@ -33,14 +33,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ConversionSchema;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ConversionSchemas;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTyped;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperFieldModel;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMappingException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTyped;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbNativeBoolean;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.GetItemResult;
@@ -91,7 +92,7 @@ public class V2CompatibleBooleansTest {
     }
 
     private DynamoDbMapper buildMapper(ConversionSchema schema) {
-        return new DynamoDbMapper(ddb, DynamoDBMapperConfig.builder()
+        return new DynamoDbMapper(ddb, DynamoDbMapperConfig.builder()
                                                            .withConversionSchema(schema)
                                                            .build());
     }
@@ -124,7 +125,7 @@ public class V2CompatibleBooleansTest {
     }
 
     /**
-     * {@link software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBNativeBoolean} or {@link DynamoDBTyped} can force
+     * {@link DynamoDbNativeBoolean} or {@link DynamoDbTyped} can force
      * native
      * boolean marshalling.
      */
@@ -154,7 +155,7 @@ public class V2CompatibleBooleansTest {
     }
 
     /**
-     * {@link DynamoDBTyped} can force numeric boolean conversion even when using V2 schema.
+     * {@link DynamoDbTyped} can force numeric boolean conversion even when using V2 schema.
      */
     @Test
     public void saveCoercedNumericBooleanUsingDefaultConverters_MarshallsIntoNumericBool() {
@@ -240,14 +241,14 @@ public class V2CompatibleBooleansTest {
     /**
      * V1 schema does not handle native bool types by default
      */
-    @Test(expected = DynamoDBMappingException.class)
+    @Test(expected = DynamoDbMappingException.class)
     public void loadNativeBooleanUsingV1Schema_FailsToUnmarshall() {
         stubGetItemRequest("booleanAttr", new AttributeValue().withBOOL(true));
         loadPojo(v1Mapper);
     }
 
     /**
-     * Native bool support can be forced in V1 schema with @{@link DynamoDBTyped}.
+     * Native bool support can be forced in V1 schema with @{@link DynamoDbTyped}.
      */
     @Test
     public void loadCoercedNativeBooleanUsingV1Schema_UnmarshallsCorrectly() {
@@ -324,19 +325,19 @@ public class V2CompatibleBooleansTest {
                                          attributeName, attributeValue));
     }
 
-    @DynamoDBTable(tableName = "UnitTestTable")
+    @DynamoDbTable(tableName = "UnitTestTable")
     public static class UnitTestPojo {
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKey;
 
-        @DynamoDBAttribute
+        @DynamoDbAttribute
         private Boolean booleanAttr;
 
-        @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.BOOL)
+        @DynamoDbTyped(DynamoDbMapperFieldModel.DynamoDbAttributeType.BOOL)
         private Boolean nativeBoolean;
 
-        @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
+        @DynamoDbTyped(DynamoDbMapperFieldModel.DynamoDbAttributeType.N)
         private Boolean numericBoolean;
 
 
@@ -380,7 +381,7 @@ public class V2CompatibleBooleansTest {
 
     public static class UnitTestPojoWithList extends UnitTestPojo {
 
-        @DynamoDBAttribute
+        @DynamoDbAttribute
         private List<Boolean> booleanList;
 
         public List<Boolean> getBooleanList() {

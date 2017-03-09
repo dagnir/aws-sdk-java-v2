@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * Simple struct like class to hold both the raw json string content and it's parsed JsonNode
@@ -55,7 +55,7 @@ public class JsonContent {
         byte[] rawJsonContent = null;
         try {
             if (httpResponse.getContent() != null) {
-                rawJsonContent = IOUtils.toByteArray(httpResponse.getContent());
+                rawJsonContent = IoUtils.toByteArray(httpResponse.getContent());
             }
         } catch (Exception e) {
             LOG.info("Unable to read HTTP response content", e);

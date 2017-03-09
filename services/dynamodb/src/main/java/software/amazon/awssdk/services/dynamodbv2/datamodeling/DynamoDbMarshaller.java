@@ -20,12 +20,12 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling;
  * Implementors provide methods to transform instances of a class to and from
  * Strings.
  *
- * @deprecated Replaced by {@link DynamoDBTypeConverter}
+ * @deprecated Replaced by {@link DynamoDbTypeConverter}
  *
- * <p>A {@link DynamoDBTypeConverted} with {@link String} as source would
+ * <p>A {@link DynamoDbTypeConverted} with {@link String} as source would
  * perform the same conversion. Please consider, if your marshaller is thread
  * safe before replacing. In the new implementation, a single instance of
- * {@link DynamoDBTypeConverted} is created per field/attribute. In the old,
+ * {@link DynamoDbTypeConverted} is created per field/attribute. In the old,
  * an new instance of the marshaller was created for each call to
  * {@code marshall} and {@code unmarshall}. If your marshaller/converter is not
  * thread safe, it is recomended to specify a converter which will instantiate

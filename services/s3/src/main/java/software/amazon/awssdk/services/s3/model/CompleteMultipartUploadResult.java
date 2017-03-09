@@ -19,14 +19,14 @@ import java.io.Serializable;
 import java.util.Date;
 import software.amazon.awssdk.services.s3.internal.ObjectExpirationResult;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
-import software.amazon.awssdk.services.s3.internal.SSEResultBase;
+import software.amazon.awssdk.services.s3.internal.SseResultBase;
 
 
 /**
  * The CompleteMultipartUploadResult contains all the information about the
  * CompleteMultipartUpload method.
  */
-public class CompleteMultipartUploadResult extends SSEResultBase
+public class CompleteMultipartUploadResult extends SseResultBase
         implements ObjectExpirationResult, S3RequesterChargedResult, Serializable {
 
     /** The name of the bucket containing the completed multipart upload. */

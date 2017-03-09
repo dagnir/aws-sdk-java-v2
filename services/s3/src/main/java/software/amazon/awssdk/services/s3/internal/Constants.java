@@ -18,9 +18,9 @@ package software.amazon.awssdk.services.s3.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.RequestClientOptions;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.s3.model.SSEAlgorithm;
+import software.amazon.awssdk.services.s3.model.SseAlgorithm;
 
 /**
  * Constants used by the AWS S3 Java client.
@@ -89,7 +89,7 @@ public class Constants {
     // Constant indicating the requester pays for data transfer cost for a bucket.
     public static final String REQUESTER_PAYS = "requester";
     public static final String SSE_AWS_KMS_ENCRYPTION_SCHEME =
-            SSEAlgorithm.KMS.getAlgorithm();
+            SseAlgorithm.KMS.getAlgorithm();
     /** Shared logger for client events. */
     private static Log log = LogFactory.getLog(AmazonS3Client.class);
 
@@ -101,7 +101,7 @@ public class Constants {
     public static int getStreamBufferSize() {
         int streamBufferSize = DEFAULT_STREAM_BUFFER_SIZE;
         String bufferSizeOverride =
-                System.getProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
+                System.getProperty(SdkGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
 
         if (bufferSizeOverride != null) {
             try {
@@ -115,13 +115,13 @@ public class Constants {
 
     /**
      * Returns the value of the system property
-     * {@link SDKGlobalConfiguration#DEFAULT_S3_STREAM_BUFFER_SIZE} as an
+     * {@link SdkGlobalConfiguration#DEFAULT_S3_STREAM_BUFFER_SIZE} as an
      * Integer; or null if not set. This method exists for backward
      * compatibility reasons.
      */
     public static Integer getS3StreamBufferSize() {
         String s =
-                System.getProperty(SDKGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
+                System.getProperty(SdkGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
         if (s == null) {
             return null;
         }

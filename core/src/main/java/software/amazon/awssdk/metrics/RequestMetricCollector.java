@@ -40,7 +40,7 @@ public abstract class RequestMetricCollector {
     /**
      * Used to collect the metric at the end of a request/response cycle.
      *
-     * @see Request#getAWSRequestMetrics()
+     * @see Request#getAwsRequestMetrics()
      */
     public abstract void collectMetrics(Request<?> request, Response<?> response);
 

@@ -25,7 +25,7 @@ import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
  * @author Hanson Char
  *
  * @see CipherLite
- * @see GCMCipherLite
+ * @see GcmCipherLite
  */
 public class CipherLiteInputStream extends SdkFilterInputStream {
     private static final int MAX_RETRY = 1000;

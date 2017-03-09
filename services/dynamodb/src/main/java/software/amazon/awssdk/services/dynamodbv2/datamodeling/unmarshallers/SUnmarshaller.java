@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling.unmarshallers;
 
 import java.lang.reflect.Method;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentUnmarshaller;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMappingException;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 abstract class SUnmarshaller implements ArgumentUnmarshaller {
@@ -25,7 +25,7 @@ abstract class SUnmarshaller implements ArgumentUnmarshaller {
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
         if (value.getS() == null) {
-            throw new DynamoDBMappingException("Expected S in value " + value + " when invoking " + setter);
+            throw new DynamoDbMappingException("Expected S in value " + value + " when invoking " + setter);
         }
     }
 

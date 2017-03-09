@@ -25,7 +25,7 @@ import software.amazon.awssdk.util.DateUtils;
  * An unmarshaller that unmarshals sets of ISO-8601-formatted dates as sets of
  * Java {@code Date} objects.
  */
-public class DateSetUnmarshaller extends SSUnmarshaller {
+public class DateSetUnmarshaller extends SsUnmarshaller {
 
     private static final DateSetUnmarshaller INSTANCE =
             new DateSetUnmarshaller();

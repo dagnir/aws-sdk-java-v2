@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.simplesystemsmanagement.model.DocumentDes
 import software.amazon.awssdk.services.simplesystemsmanagement.model.GetDocumentRequest;
 import software.amazon.awssdk.services.simplesystemsmanagement.model.GetDocumentResult;
 import software.amazon.awssdk.services.simplesystemsmanagement.model.ListDocumentsResult;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class SSMServiceIntegrationTest extends IntegrationTestBase {
 
@@ -52,7 +52,7 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void testAll() throws Exception {
 
-        String documentContent = IOUtils.toString(getClass().getResourceAsStream(DOCUMENT_LOCATION));
+        String documentContent = IoUtils.toString(getClass().getResourceAsStream(DOCUMENT_LOCATION));
         testCreateDocument(DOCUMENT_NAME, documentContent);
         testDescribeDocument();
     }

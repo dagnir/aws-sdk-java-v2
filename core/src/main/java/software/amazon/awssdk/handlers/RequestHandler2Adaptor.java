@@ -46,7 +46,7 @@ final class RequestHandler2Adaptor extends RequestHandler2 {
     @Override
     public void afterResponse(Request<?> request, Response<?> response) {
         AwsRequestMetrics awsRequestMetrics = request == null ? null : request
-                .getAWSRequestMetrics();
+                .getAwsRequestMetrics();
         Object awsResponse = response == null ? null : response
                 .getAwsResponse();
         TimingInfo timingInfo = awsRequestMetrics == null ? null

@@ -51,10 +51,10 @@ public class ItemTest {
 
     private void doJsonDoubleTest(double value) {
         Item item1 = new Item().withDouble("double", value);
-        final String json = item1.toJSONPretty();
+        final String json = item1.toJsonPretty();
         System.out.println(json);
-        Item item2 = Item.fromJSON(json);
-        assertEquals(json, item2.toJSONPretty());
+        Item item2 = Item.fromJson(json);
+        assertEquals(json, item2.toJsonPretty());
     }
 
     @Test
@@ -475,19 +475,19 @@ public class ItemTest {
 
     @Test
     public void toJSON_null() {
-        assertNull(new Item().getJSON("test"));
-        assertNull(new Item().getJSONPretty("test"));
+        assertNull(new Item().getJson("test"));
+        assertNull(new Item().getJsonPretty("test"));
     }
 
     @Test
     public void fromJSON_null() {
-        assertNull(Item.fromJSON(null));
+        assertNull(Item.fromJson(null));
     }
 
     @Test
     public void fromJSON_array() {
         Item item = new Item()
-                .withJSON("arrayJson", "[\"foo\", \"bar\"]");
+                .withJson("arrayJson", "[\"foo\", \"bar\"]");
         List<String> arrayJson = item.getList("arrayJson");
         String[] expectedArray = new String[] {"foo", "bar"};
         Assert.assertArrayEquals(expectedArray, arrayJson.toArray());
@@ -496,7 +496,7 @@ public class ItemTest {
     @Test
     public void fromJSON_map() {
         Item item = new Item()
-                .withJSON("mapJson", "{\"foo\": \"bar\"}");
+                .withJson("mapJson", "{\"foo\": \"bar\"}");
         Map<String, String> mapJson = item.getMap("mapJson");
         Assert.assertEquals("bar", mapJson.get("foo"));
     }
@@ -510,7 +510,7 @@ public class ItemTest {
                 .withBinary("binaryA", new byte[] {1, 2, 3})
                 .withBoolean("booleanA", true)
                 .withNull("nullA")
-                .withJSON("jsonA", "{\"myjson\": 321}")
+                .withJson("jsonA", "{\"myjson\": 321}")
                 .withList("listA", "a", "b", "c")
                 .withMap("mapA", new ValueMap().with("map-a", "a").with("map-b", "b"))
                 .withStringSet("strSetA", "sa", "sb", "sc")
@@ -519,14 +519,14 @@ public class ItemTest {
                 .withBinarySet("byteBufferSetA",
                                ByteBuffer.wrap(new byte[] {44, 55}),
                                ByteBuffer.wrap(new byte[] {66, 77}));
-        String json = item.toJSONPretty();
+        String json = item.toJsonPretty();
         System.out.println(json);
         System.out.println("byte[]{1,2,3} => " + Base64.encodeAsString(new byte[] {1, 2, 3}));
         System.out.println("byte[]{00,11} => " + Base64.encodeAsString(new byte[] {00, 11}));
         System.out.println("byte[]{22,33} => " + Base64.encodeAsString(new byte[] {22, 33}));
         System.out.println("byte[]{44,44} => " + Base64.encodeAsString(new byte[] {44, 55}));
         System.out.println("byte[]{66,77} => " + Base64.encodeAsString(new byte[] {66, 77}));
-        Item itemTo = Item.fromJSON(json);
+        Item itemTo = Item.fromJson(json);
         System.out.println(itemTo);
         assertTrue(List.class.isAssignableFrom(itemTo.getTypeOf("binarySetA")));
         assertTrue(List.class.isAssignableFrom(itemTo.getTypeOf("byteBufferSetA")));
@@ -642,7 +642,7 @@ public class ItemTest {
     @Test(expected = IncompatibleTypeException.class)
     public void getBOOL_null() {
         Item item = new Item();
-        item.getBOOL("test");
+        item.getBool("test");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -658,27 +658,27 @@ public class ItemTest {
     @Test(expected = IncompatibleTypeException.class)
     public void getBOOL_invalidValue() {
         Item item = new Item().withInt("test", 123);
-        item.getBOOL("test");
+        item.getBool("test");
     }
 
     @Test
     public void getBOOL_Boolean() {
         Item item = new Item().withBoolean("test", Boolean.TRUE);
-        assertEquals(Boolean.TRUE, item.getBOOL("test"));
+        assertEquals(Boolean.TRUE, item.getBool("test"));
         item.withBoolean("test", Boolean.FALSE);
-        assertEquals(Boolean.FALSE, item.getBOOL("test"));
+        assertEquals(Boolean.FALSE, item.getBool("test"));
     }
 
     @Test
     public void getBOOL_01() {
         Item item = new Item().withString("test", "1");
-        assertEquals(Boolean.TRUE, item.getBOOL("test"));
+        assertEquals(Boolean.TRUE, item.getBool("test"));
         item.withString("test", "0");
-        assertEquals(Boolean.FALSE, item.getBOOL("test"));
+        assertEquals(Boolean.FALSE, item.getBool("test"));
         item.withString("test", "true");
-        assertEquals(Boolean.TRUE, item.getBOOL("test"));
+        assertEquals(Boolean.TRUE, item.getBool("test"));
         item.withString("test", "false");
-        assertEquals(Boolean.FALSE, item.getBOOL("test"));
+        assertEquals(Boolean.FALSE, item.getBool("test"));
     }
 
     @Test

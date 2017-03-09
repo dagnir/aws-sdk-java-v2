@@ -118,7 +118,7 @@ public class EncryptionMaterials implements Serializable {
      *
      * @return false by default
      */
-    public boolean isKMSEnabled() {
+    public boolean isKmsEnabled() {
         return false;
     }
 

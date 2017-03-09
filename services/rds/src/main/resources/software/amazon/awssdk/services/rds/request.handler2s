@@ -1,2 +1,2 @@
-software.amazon.awssdk.services.rds.CopyDBSnapshotPresignHandler
-software.amazon.awssdk.services.rds.CreateDBInstanceReadReplicaPresignHandler
+software.amazon.awssdk.services.rds.CopyDbSnapshotPresignHandler
+software.amazon.awssdk.services.rds.CreateDbInstanceReadReplicaPresignHandler

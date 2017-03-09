@@ -27,7 +27,7 @@ public class ItemEqualityIntegrationTest extends IntegrationTestBase {
         Table table = dynamo.getTable(HASH_ONLY_TABLE_NAME);
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "user123")
-                .withJSON(
+                .withJson(
                         "Details",
                         "{ \"UserID1\": 0}");
         table.putItem(item);
@@ -35,7 +35,7 @@ public class ItemEqualityIntegrationTest extends IntegrationTestBase {
                                                                               KeyAttribute(HASH_KEY_NAME, "user123"))
                                                       .withConsistentRead(true));
         assertEquals(item.asMap(), itemGet.asMap());
-        assertEquals(Item.fromJSON(item.toJSON()), Item.fromJSON(itemGet.toJSON()));
+        assertEquals(Item.fromJson(item.toJson()), Item.fromJson(itemGet.toJson()));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ItemEqualityIntegrationTest extends IntegrationTestBase {
         Item item = new Item()
                 .withString(HASH_KEY_NAME, "user123")
                 .withString("DateTime", "1357306017")
-                .withJSON(
+                .withJson(
                         "Details",
                         "{ \"UserID1\": 0, \"UserID2\": 0, \"Message\": \"my message\", \"DateTime\": 0}");
         table.putItem(item);

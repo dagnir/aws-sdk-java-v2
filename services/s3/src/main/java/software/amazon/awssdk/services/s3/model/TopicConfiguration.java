@@ -26,7 +26,7 @@ public class TopicConfiguration extends NotificationConfiguration implements Ser
     /**
      * The Amazon SNS topic ARN for this configuration.
      */
-    private String topicARN;
+    private String topicArn;
 
     public TopicConfiguration() {
         super();
@@ -35,55 +35,55 @@ public class TopicConfiguration extends NotificationConfiguration implements Ser
     /**
      * Creates a new topic configuration with the given topic arn and set of events.
      *
-     * @param topicARN
+     * @param topicArn
      *            the Amazon SNS topic arn to which the notifications are to be sent.
      * @param events
      *            the events for which the notifications are to be sent
      */
-    public TopicConfiguration(String topicARN, EnumSet<S3Event> events) {
+    public TopicConfiguration(String topicArn, EnumSet<S3Event> events) {
         super(events);
-        this.topicARN = topicARN;
+        this.topicArn = topicArn;
     }
 
     /**
      * Creates a new topic configuration with the given topic arn and set of events.
      *
-     * @param topicARN
+     * @param topicArn
      *            the Amazon SNS topic arn to which the notifications are to be sent.
      * @param events
      *            the events for which the notifications are to be sent
      */
-    public TopicConfiguration(String topicARN, String... events) {
+    public TopicConfiguration(String topicArn, String... events) {
         super(events);
-        this.topicARN = topicARN;
+        this.topicArn = topicArn;
     }
 
     /**
      * Returns the topic arn for this notification configuration.
      */
-    public String getTopicARN() {
-        return topicARN;
+    public String getTopicArn() {
+        return topicArn;
     }
 
     /**
      * Sets the topic ARN for this configuration
      *
-     * @param topicARN
+     * @param topicArn
      *            ARN for the SNS topic
      */
-    public void setTopicARN(String topicARN) {
-        this.topicARN = topicARN;
+    public void setTopicArn(String topicArn) {
+        this.topicArn = topicArn;
     }
 
     /**
      * Fluent method to set the topic ARN for this configuration
      *
-     * @param topicARN
+     * @param topicArn
      *            ARN for the SNS topic
      * @return This object for method chaining
      */
-    public TopicConfiguration withTopicARN(String topicARN) {
-        setTopicARN(topicARN);
+    public TopicConfiguration withTopicArn(String topicArn) {
+        setTopicArn(topicArn);
         return this;
     }
 }

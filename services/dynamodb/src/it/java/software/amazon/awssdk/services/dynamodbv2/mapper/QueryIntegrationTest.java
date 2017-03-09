@@ -29,8 +29,8 @@ import java.util.Random;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodbv2.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbQueryExpression;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.ComparisonOperator;
@@ -51,7 +51,7 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     public static void setUp() throws Exception {
         setUpTableWithRangeAttribute();
 
-        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(DynamoDBMapperConfig.ConsistentReads.CONSISTENT);
+        DynamoDbMapperConfig mapperConfig = new DynamoDbMapperConfig(DynamoDbMapperConfig.ConsistentReads.CONSISTENT);
         mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         putTestData(mapper, TEST_ITEM_NUMBER);
@@ -78,8 +78,8 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
     @Test
     public void testQueryWithPrimaryRangeKey() throws Exception {
-        DynamoDBQueryExpression<RangeKeyClass> queryExpression =
-                new DynamoDBQueryExpression<RangeKeyClass>()
+        DynamoDbQueryExpression<RangeKeyClass> queryExpression =
+                new DynamoDbQueryExpression<RangeKeyClass>()
                         .withHashKeyValues(hashKeyObject)
                         .withRangeKeyCondition(
                                 "rangeKey",
@@ -112,7 +112,7 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         /**
          * Tests query with only hash key
          */
-        queryExpression = new DynamoDBQueryExpression<RangeKeyClass>().withHashKeyValues(hashKeyObject);
+        queryExpression = new DynamoDbQueryExpression<RangeKeyClass>().withHashKeyValues(hashKeyObject);
         list = mapper.query(RangeKeyClass.class, queryExpression);
         assertEquals(TEST_ITEM_NUMBER, list.size());
     }
@@ -133,8 +133,8 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         /*
          * (1) Apply the filter on the range key, in form of key condition
          */
-        DynamoDBQueryExpression<RangeKeyClass> queryWithRangeKeyCondition =
-                new DynamoDBQueryExpression<RangeKeyClass>()
+        DynamoDbQueryExpression<RangeKeyClass> queryWithRangeKeyCondition =
+                new DynamoDbQueryExpression<RangeKeyClass>()
                         .withHashKeyValues(hashKeyObject)
                         .withRangeKeyCondition("rangeKey", filterCondition);
         List<RangeKeyClass> rangeKeyConditionResult = mapper.query(RangeKeyClass.class, queryWithRangeKeyCondition);
@@ -142,8 +142,8 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         /*
          * (2) Apply the filter on the bigDecimalAttribute, in form of query filter
          */
-        DynamoDBQueryExpression<RangeKeyClass> queryWithQueryFilterCondition =
-                new DynamoDBQueryExpression<RangeKeyClass>()
+        DynamoDbQueryExpression<RangeKeyClass> queryWithQueryFilterCondition =
+                new DynamoDbQueryExpression<RangeKeyClass>()
                         .withHashKeyValues(hashKeyObject)
                         .withQueryFilter(Collections.singletonMap("bigDecimalAttribute", filterCondition));
         List<RangeKeyClass> queryFilterResult = mapper.query(RangeKeyClass.class, queryWithQueryFilterCondition);
@@ -165,7 +165,7 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             long hashKey = System.currentTimeMillis();
             RangeKeyClass keyObject = new RangeKeyClass();
             keyObject.setKey(hashKey);
-            DynamoDBQueryExpression<RangeKeyClass> queryExpression = new DynamoDBQueryExpression<RangeKeyClass>()
+            DynamoDbQueryExpression<RangeKeyClass> queryExpression = new DynamoDbQueryExpression<RangeKeyClass>()
                     .withHashKeyValues(keyObject);
             queryExpression.withRangeKeyCondition("rangeKey",
                                                   new Condition().withComparisonOperator(ComparisonOperator.GT.toString())

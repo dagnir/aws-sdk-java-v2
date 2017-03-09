@@ -25,7 +25,7 @@ public interface SdkHttpClientSettings {
 
     boolean useBrowserCompatibleHostNameVerifier();
 
-    boolean calculateCRC32FromCompressedData();
+    boolean calculateCrc32FromCompressedData();
 
     int getMaxConnections();
 
@@ -57,7 +57,7 @@ public interface SdkHttpClientSettings {
 
     int getConnectionPoolRequestTimeout();
 
-    long getConnectionPoolTTL();
+    long getConnectionPoolTtl();
 
     long getMaxIdleConnectionTime();
 

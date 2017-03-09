@@ -16,7 +16,6 @@
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricCollector;
@@ -27,7 +26,7 @@ import software.amazon.awssdk.services.cloudwatch.AmazonCloudWatch;
 /**
  * The default AWS SDK metric collector factory.  This class is instantiated
  * via reflection if the default AWS SDK metrics is enabled via the
- * system property {@link SDKGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY}.
+ * system property {@link software.amazon.awssdk.SdkGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY}.
  */
 public class DefaultMetricCollectorFactory
         implements MetricCollector.Factory {

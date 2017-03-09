@@ -85,6 +85,6 @@ class AesGcm extends ContentCryptoScheme {
 
     @Override
     protected CipherLite newCipherLite(Cipher cipher, SecretKey cek, int cipherMode) {
-        return new GCMCipherLite(cipher, cek, cipherMode);
+        return new GcmCipherLite(cipher, cek, cipherMode);
     }
 }

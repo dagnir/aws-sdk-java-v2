@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.Reflect;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperFieldModel.Reflect;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.FieldMap;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.StandardAnnotationMaps.TableMap;
 import software.amazon.awssdk.util.StringUtils;
@@ -70,15 +70,15 @@ final class StandardBeanProperties {
      * Cache of {@link Bean} mappings by class type.
      */
     static final class Beans<T> {
-        private final DynamoDBMapperTableModel.Properties<T> properties;
+        private final DynamoDbMapperTableModel.Properties<T> properties;
         private final Map<String, Bean<T, Object>> map;
 
         private Beans(TableMap<T> annotations, Map<String, Bean<T, Object>> map) {
-            this.properties = new DynamoDBMapperTableModel.Properties.Immutable<T>(annotations);
+            this.properties = new DynamoDbMapperTableModel.Properties.Immutable<T>(annotations);
             this.map = Collections.unmodifiableMap(map);
         }
 
-        final DynamoDBMapperTableModel.Properties<T> properties() {
+        final DynamoDbMapperTableModel.Properties<T> properties() {
             return this.properties;
         }
 
@@ -91,17 +91,17 @@ final class StandardBeanProperties {
      * Holds the reflection bean properties for a given property.
      */
     static final class Bean<T, V> {
-        private final DynamoDBMapperFieldModel.Properties<V> properties;
+        private final DynamoDbMapperFieldModel.Properties<V> properties;
         private final ConvertibleType<V> type;
         private final Reflect<T, V> reflect;
 
         private Bean(FieldMap<V> annotations, Reflect<T, V> reflect, Method getter) {
-            this.properties = new DynamoDBMapperFieldModel.Properties.Immutable<V>(annotations);
+            this.properties = new DynamoDbMapperFieldModel.Properties.Immutable<V>(annotations);
             this.type = ConvertibleType.<V>of(getter, annotations);
             this.reflect = reflect;
         }
 
-        final DynamoDBMapperFieldModel.Properties<V> properties() {
+        final DynamoDbMapperFieldModel.Properties<V> properties() {
             return this.properties;
         }
 
@@ -141,7 +141,7 @@ final class StandardBeanProperties {
             try {
                 return (V) getter.invoke(object);
             } catch (final Exception e) {
-                throw new DynamoDBMappingException("could not invoke " + getter + " on " + object.getClass(), e);
+                throw new DynamoDbMappingException("could not invoke " + getter + " on " + object.getClass(), e);
             }
         }
 
@@ -150,7 +150,7 @@ final class StandardBeanProperties {
             try {
                 setter.invoke(object, value);
             } catch (final Exception e) {
-                throw new DynamoDBMappingException("could not invoke " + setter + " on " + object.getClass() +
+                throw new DynamoDbMappingException("could not invoke " + setter + " on " + object.getClass() +
                                                    " with value " + value + " of type " +
                                                    (value == null ? null : value.getClass()), e);
             }
@@ -175,7 +175,7 @@ final class StandardBeanProperties {
             try {
                 return targetType.newInstance();
             } catch (final Exception e) {
-                throw new DynamoDBMappingException("could not instantiate " + targetType, e);
+                throw new DynamoDbMappingException("could not instantiate " + targetType, e);
             }
         }
 
@@ -227,7 +227,7 @@ final class StandardBeanProperties {
             } else {
                 final Bean<T, V> bean = new Bean<T, V>(annotations, reflect, getter);
                 if (put(bean.properties().attributeName(), bean) != null) {
-                    throw new DynamoDBMappingException("duplicate attribute name");
+                    throw new DynamoDbMappingException("duplicate attribute name");
                 }
             }
         }
@@ -247,7 +247,7 @@ final class StandardBeanProperties {
                 }
             }
             if (!attributes.isEmpty()) { //<- this should be empty by now
-                throw new DynamoDBMappingException("contains unknown flattened attribute(s): " + attributes);
+                throw new DynamoDbMappingException("contains unknown flattened attribute(s): " + attributes);
             }
         }
 

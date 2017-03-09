@@ -27,28 +27,28 @@ import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
  */
 public class SdkSslMetricsSocket extends DelegateSslSocket {
 
-    private MetricsInputStream metricsIS;
+    private MetricsInputStream metricsIs;
 
     public SdkSslMetricsSocket(SSLSocket sock) {
         super(sock);
     }
 
     public void setMetrics(AwsRequestMetrics metrics) throws IOException {
-        // make sure metricsIS is initialized.
+        // make sure metricsIs is initialized.
         getInputStream();
-        metricsIS.setMetrics(metrics);
+        metricsIs.setMetrics(metrics);
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        if (metricsIS == null) {
-            metricsIS = new MetricsInputStream(sock.getInputStream());
+        if (metricsIs == null) {
+            metricsIs = new MetricsInputStream(sock.getInputStream());
         }
-        return metricsIS;
+        return metricsIs;
     }
 
     @SdkTestInternalApi
     MetricsInputStream getMetricsInputStream() {
-        return metricsIS;
+        return metricsIs;
     }
 }

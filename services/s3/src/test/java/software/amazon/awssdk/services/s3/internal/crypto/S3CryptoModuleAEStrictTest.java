@@ -26,7 +26,7 @@ public class S3CryptoModuleAEStrictTest extends S3CryptoModuleAETest {
     protected S3CryptoModuleBase<?> createS3CryptoModule(S3Direct s3,
                                                          EncryptionMaterialsProvider provider,
                                                          CryptoConfiguration cryptoConfig) {
-        return new S3CryptoModuleAE(s3, provider,
+        return new S3CryptoModuleAe(s3, provider,
                                     cryptoConfig.clone()
                                                 .withCryptoMode(StrictAuthenticatedEncryption)
                                                 .readOnly());

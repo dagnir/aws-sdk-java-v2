@@ -96,7 +96,7 @@ public class Item {
      * @return an <code>Item</code> initialized from the given JSON document;
      *     or null if the input is null.
      */
-    public static Item fromJSON(String json) {
+    public static Item fromJson(String json) {
         if (json == null) {
             return null;
         }
@@ -970,7 +970,7 @@ public class Item {
      * Sets the value of the specified attribute in the current item to the
      * given JSON document in the form of a string.
      */
-    public Item withJSON(String attrName, String json) {
+    public Item withJson(String attrName, String json) {
         checkInvalidAttribute(attrName, json);
         attributes.put(attrName,
                        VALUE_CONFORMER.transform(Jackson.fromJsonString(json, Object.class)));
@@ -987,7 +987,7 @@ public class Item {
      * @see #isPresent(String) #isPresent(String) to check if the attribute
      *      value is present.
      */
-    public String getJSON(String attrName) {
+    public String getJson(String attrName) {
         checkInvalidAttrName(attrName);
         Object val = attributes.get(attrName);
         return val == null ? null : Jackson.toJsonString(val);
@@ -1003,7 +1003,7 @@ public class Item {
      * @see #isPresent(String) #isPresent(String) to check if the attribute
      *      value is present.
      */
-    public String getJSONPretty(String attrName) {
+    public String getJsonPretty(String attrName) {
         checkInvalidAttrName(attrName);
         Object val = attributes.get(attrName);
         return val == null ? null : Jackson.toJsonPrettyString(val);
@@ -1022,7 +1022,7 @@ public class Item {
      * @see #isPresent(String) #isPresent(String) to check if the attribute
      *      value is present.
      */
-    public Boolean getBOOL(String attrName) {
+    public Boolean getBool(String attrName) {
         final Object val = attributes.get(attrName);
         if (val instanceof Boolean) {
             return (Boolean) val;
@@ -1050,7 +1050,7 @@ public class Item {
      *             value cannot be converted into a boolean value
      */
     public boolean getBoolean(String attrName) {
-        final Boolean b = getBOOL(attrName);
+        final Boolean b = getBool(attrName);
         return b.booleanValue();
     }
 
@@ -1293,7 +1293,7 @@ public class Item {
      * Returns this item as a JSON string.  Note all binary data will become
      * base-64 encoded in the resultant string.
      */
-    public String toJSON() {
+    public String toJson() {
         return Jackson.toJsonString(this.attributes);
     }
 
@@ -1305,7 +1305,7 @@ public class Item {
      *            names of binary attributes or binary set attributes currently
      *            base-64 encoded (typically when converted from a JSON string.)
      *
-     * @see #fromJSON(String)
+     * @see #fromJson(String)
      */
     public Item base64Decode(String... binaryAttrNames) {
         rejectNullInput(binaryAttrNames);
@@ -1348,7 +1348,7 @@ public class Item {
      * @param listAttrNames
      *            names of attributes to be converted.
      *
-     * @see #fromJSON(String)
+     * @see #fromJson(String)
      */
     public Item convertListsToSets(String... listAttrNames) {
         rejectNullInput(listAttrNames);
@@ -1419,7 +1419,7 @@ public class Item {
      * Returns this item as a pretty JSON string. Note all binary data will
      * become base-64 encoded in the resultant string.
      */
-    public String toJSONPretty() {
+    public String toJsonPretty() {
         return Jackson.toJsonPrettyString(this.attributes);
     }
 

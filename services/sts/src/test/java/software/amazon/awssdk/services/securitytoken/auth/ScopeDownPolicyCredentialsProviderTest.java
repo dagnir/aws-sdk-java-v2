@@ -45,7 +45,7 @@ public class ScopeDownPolicyCredentialsProviderTest {
         ArgumentCaptor<AssumeRoleRequest> argumentCaptor = ArgumentCaptor
                 .forClass(AssumeRoleRequest.class);
 
-        new STSAssumeRoleSessionCredentialsProvider.Builder(
+        new StsAssumeRoleSessionCredentialsProvider.Builder(
                 "some-role-arn", "role-session-name")
                 .withScopeDownPolicy("{...}")
                 .withStsClient(this.sts)

@@ -48,32 +48,32 @@ public class JmxInfoProviderSupport implements JmxInfoProvider {
 
     @Override
     public int getThreadCount() {
-        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-        return threadMXBean.getThreadCount();
+        ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+        return threadMxBean.getThreadCount();
     }
 
     @Override
     public int getDaemonThreadCount() {
-        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-        return threadMXBean.getDaemonThreadCount();
+        ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+        return threadMxBean.getDaemonThreadCount();
     }
 
     @Override
     public int getPeakThreadCount() {
-        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-        return threadMXBean.getPeakThreadCount();
+        ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+        return threadMxBean.getPeakThreadCount();
     }
 
     @Override
     public long getTotalStartedThreadCount() {
-        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-        return threadMXBean.getTotalStartedThreadCount();
+        ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+        return threadMxBean.getTotalStartedThreadCount();
     }
 
     @Override
     public long[] findDeadlockedThreads() {
-        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-        return threadMXBean.findDeadlockedThreads();
+        ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+        return threadMxBean.findDeadlockedThreads();
     }
 
     @Override

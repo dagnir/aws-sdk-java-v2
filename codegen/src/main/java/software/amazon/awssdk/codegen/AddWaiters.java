@@ -33,7 +33,7 @@ import software.amazon.awssdk.codegen.model.service.Acceptor;
 import software.amazon.awssdk.codegen.model.service.WaiterDefinition;
 import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 class AddWaiters {
 
@@ -88,14 +88,14 @@ class AddWaiters {
             final Process p = executeToAstProcess(argument);
 
             if (p.exitValue() != 0) {
-                throw new RuntimeException(IOUtils.toString(p.getErrorStream()));
+                throw new RuntimeException(IoUtils.toString(p.getErrorStream()));
             }
 
-            JsonNode jsonNode = MAPPER.readTree(IOUtils.toString(p.getInputStream()));
+            JsonNode jsonNode = MAPPER.readTree(IoUtils.toString(p.getInputStream()));
             JmesPathExpression ast = AstJsonToAstJava.fromAstJsonToAstJava(jsonNode);
 
             argumentToAstMap.put(argument, ast);
-            IOUtils.closeQuietly(p.getInputStream(), null);
+            IoUtils.closeQuietly(p.getInputStream(), null);
 
             return ast;
 

@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
  * An unmarshaller that unmarshals DynamoDB StringSets as sets of Java
  * {@code String} objects.
  */
-public class StringSetUnmarshaller extends SSUnmarshaller {
+public class StringSetUnmarshaller extends SsUnmarshaller {
 
     private static final StringSetUnmarshaller INSTANCE =
             new StringSetUnmarshaller();

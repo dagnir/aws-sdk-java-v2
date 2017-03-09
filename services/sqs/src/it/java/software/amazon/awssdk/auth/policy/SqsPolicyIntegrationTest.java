@@ -26,7 +26,7 @@ import software.amazon.awssdk.auth.policy.conditions.DateCondition;
 import software.amazon.awssdk.auth.policy.conditions.DateCondition.DateComparisonType;
 import software.amazon.awssdk.services.sqs.AmazonSQSAsync;
 import software.amazon.awssdk.services.sqs.IntegrationTestBase;
-import software.amazon.awssdk.services.sqs.auth.policy.resources.SQSQueueResource;
+import software.amazon.awssdk.services.sqs.auth.policy.resources.SqsQueueResource;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 
 /**
@@ -59,7 +59,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
 
         Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withPrincipals(Principal.ALL_USERS)
                                                                                .withActions(SQSActions.SendMessage, SQSActions.ReceiveMessage)
-                                                                               .withResources(new SQSQueueResource(ACCOUNT_ID, queueName))
+                                                                               .withResources(new SqsQueueResource(ACCOUNT_ID, queueName))
                                                                                .withConditions(new DateCondition(DateComparisonType.DateLessThan,
                                                                                                                  new Date())));
         setQueuePolicy(policy);

@@ -43,13 +43,13 @@ import software.amazon.awssdk.services.dynamodbv2.pojos.UnannotatedSubClass;
 
 public class StandardModelFactoriesV2Test {
 
-    protected static final DynamoDBMapperConfig CONFIG = new DynamoDBMapperConfig.Builder()
-            .withTypeConverterFactory(DynamoDBMapperConfig.DEFAULT.getTypeConverterFactory())
+    protected static final DynamoDbMapperConfig CONFIG = new DynamoDbMapperConfig.Builder()
+            .withTypeConverterFactory(DynamoDbMapperConfig.DEFAULT.getTypeConverterFactory())
             .withConversionSchema(ConversionSchemas.V2)
             .build();
 
-    private static final DynamoDBMapperModelFactory factory = StandardModelFactories.of(S3Link.Factory.of(null));
-    private static final DynamoDBMapperModelFactory.TableFactory models = factory.getTableFactory(CONFIG);
+    private static final DynamoDbMapperModelFactory factory = StandardModelFactories.of(S3Link.Factory.of(null));
+    private static final DynamoDbMapperModelFactory.TableFactory models = factory.getTableFactory(CONFIG);
 
     protected <T> AttributeValue convert(Class<T> clazz, Method getter, Object value) {
         final StandardAnnotationMaps.FieldMap<Object> map = StandardAnnotationMaps.of(getter, null);
@@ -361,7 +361,7 @@ public class StandardModelFactoriesV2Test {
                     new UnannotatedSubClass());
 
             Assert.fail("Expected DynamoDBMappingException");
-        } catch (DynamoDBMappingException e) {
+        } catch (DynamoDbMappingException e) {
             // Ignored or expected.
         }
     }

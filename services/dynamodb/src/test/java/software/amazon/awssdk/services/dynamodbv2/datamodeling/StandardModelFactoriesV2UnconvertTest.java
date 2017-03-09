@@ -42,13 +42,13 @@ import software.amazon.awssdk.services.s3.model.Region;
 
 public class StandardModelFactoriesV2UnconvertTest {
 
-    protected static final DynamoDBMapperConfig CONFIG = new DynamoDBMapperConfig.Builder()
-            .withTypeConverterFactory(DynamoDBMapperConfig.DEFAULT.getTypeConverterFactory())
+    protected static final DynamoDbMapperConfig CONFIG = new DynamoDbMapperConfig.Builder()
+            .withTypeConverterFactory(DynamoDbMapperConfig.DEFAULT.getTypeConverterFactory())
             .withConversionSchema(ConversionSchemas.V2)
             .build();
 
-    private static final DynamoDBMapperModelFactory factory = StandardModelFactories.of(new S3Link.Factory(new S3ClientCache((AwsCredentialsProvider) null)));
-    private static final DynamoDBMapperModelFactory.TableFactory models = factory.getTableFactory(CONFIG);
+    private static final DynamoDbMapperModelFactory factory = StandardModelFactories.of(new S3Link.Factory(new S3ClientCache((AwsCredentialsProvider) null)));
+    private static final DynamoDbMapperModelFactory.TableFactory models = factory.getTableFactory(CONFIG);
 
     protected <T> Object unconvert(Class<T> clazz, Method getter, Method setter, AttributeValue value) {
         final StandardAnnotationMaps.FieldMap<Object> map = StandardAnnotationMaps.of(getter, null);
@@ -485,7 +485,7 @@ public class StandardModelFactoriesV2UnconvertTest {
         try {
             unconvert(UnannotatedSubClass.class, getter, setter, new AttributeValue().withS(""));
             Assert.fail("Expected DynamoDBMappingException");
-        } catch (DynamoDBMappingException e) {
+        } catch (DynamoDbMappingException e) {
             // Ignored or expected.
         }
     }

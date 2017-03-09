@@ -16,9 +16,9 @@
 package software.amazon.awssdk.services.dynamodbv2.pojos;
 
 import java.nio.ByteBuffer;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbDocument;
 
-@DynamoDBDocument
+@DynamoDbDocument
 public class SubClass {
 
     private String name;

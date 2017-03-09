@@ -52,7 +52,7 @@ public class UpdateItemIntegrationTest {
     private static final Long FIRST_CUSTOMER_ID = 1000L;
     private static final String ADDRESS_TYPE_HOME = "home";
     private static final String ADDRESS_TYPE_WORK = "work";
-    private static DynamoDB dynamoDB;
+    private static DynamoDb dynamoDb;
     private static String TABLE_NAME = "UpdateItemIntegrationTest";
     private static String CREDENTIALS_FILE_SUFFIX = "/.aws/awsTestAccount.properties";
     private static String HASH_KEY = "customer_id";
@@ -63,14 +63,14 @@ public class UpdateItemIntegrationTest {
         AmazonDynamoDB client = new AmazonDynamoDBClient(
                 new PropertiesFileCredentialsProvider(
                         System.getProperty("user.home") + CREDENTIALS_FILE_SUFFIX));
-        dynamoDB = new DynamoDB(client);
+        dynamoDb = new DynamoDb(client);
 
         createTable();
         fillInData();
     }
 
     private static void createTable() throws Exception {
-        Table table = dynamoDB.getTable(TABLE_NAME);
+        Table table = dynamoDb.getTable(TABLE_NAME);
         TableDescription desc = table.waitForActiveOrDelete();
         if (desc == null) {
             // table doesn't exist; let's create it
@@ -85,13 +85,13 @@ public class UpdateItemIntegrationTest {
                                     new AttributeDefinition(RANGE_KEY, ScalarAttributeType.S))
                             .withProvisionedThroughput(
                                     new ProvisionedThroughput(READ_CAPACITY, WRITE_CAPACITY));
-            table = dynamoDB.createTable(createTableRequest);
+            table = dynamoDb.createTable(createTableRequest);
             table.waitForActive();
         }
     }
 
     private static void fillInData() {
-        Table table = dynamoDB.getTable(TABLE_NAME);
+        Table table = dynamoDb.getTable(TABLE_NAME);
         table.putItem(new Item().with(HASH_KEY, FIRST_CUSTOMER_ID)
                                 .with(RANGE_KEY, ADDRESS_TYPE_WORK)
                                 .with("AddressLine1", "1918 8th Aven")
@@ -110,7 +110,7 @@ public class UpdateItemIntegrationTest {
     public static void shutDown() {
         //        Table table = dynamoDB.getTable(TABLE_NAME);
         //        table.delete();
-        dynamoDB.shutdown();
+        dynamoDb.shutdown();
     }
 
     /**
@@ -124,7 +124,7 @@ public class UpdateItemIntegrationTest {
         phoneNumbers.add(phoneNumber1);
 
         // Adds a new attribute to the row.
-        Table table = dynamoDB.getTable(TABLE_NAME);
+        Table table = dynamoDb.getTable(TABLE_NAME);
         table.updateItem(HASH_KEY, FIRST_CUSTOMER_ID, RANGE_KEY, ADDRESS_TYPE_WORK,
                          new AttributeUpdate("phone").put(phoneNumbers));
         Item item = table.getItem(new GetItemSpec()
@@ -198,7 +198,7 @@ public class UpdateItemIntegrationTest {
         final String phoneNumber2 = "987-654-3210";
         final Set<String> phoneNumbers = new HashSet<String>();
         phoneNumbers.add(phoneNumber1);
-        Table table = dynamoDB.getTable(TABLE_NAME);
+        Table table = dynamoDb.getTable(TABLE_NAME);
         try {
             table.updateItem(
                     HASH_KEY, FIRST_CUSTOMER_ID,
@@ -229,7 +229,7 @@ public class UpdateItemIntegrationTest {
         final Map<String, Object> valueMap = new HashMap<String, Object>();
         valueMap.put(":phoneAtributeValue", phoneNumbers);
 
-        Table table = dynamoDB.getTable(TABLE_NAME);
+        Table table = dynamoDb.getTable(TABLE_NAME);
         table.updateItem(
                 HASH_KEY, FIRST_CUSTOMER_ID,
                 RANGE_KEY, ADDRESS_TYPE_WORK,
@@ -252,7 +252,7 @@ public class UpdateItemIntegrationTest {
      */
     @Test
     public void testUpdateItemWithConditionExpression() {
-        Table table = dynamoDB.getTable(TABLE_NAME);
+        Table table = dynamoDb.getTable(TABLE_NAME);
         try {
             table.updateItem(
                     HASH_KEY, FIRST_CUSTOMER_ID,

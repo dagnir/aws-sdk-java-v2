@@ -54,7 +54,7 @@ public class SdkHttpResponseAdapter {
                                           HttpResponse httpResponse) {
         final Optional<Long> crc32Checksum = getCrc32Checksum(httpResponse);
         if (shouldDecompress(httpResponse)) {
-            if (httpSettings.calculateCRC32FromCompressedData() && crc32Checksum.isPresent()) {
+            if (httpSettings.calculateCrc32FromCompressedData() && crc32Checksum.isPresent()) {
                 return decompressing(crc32Validating(awsHttpResponse.getContent(), crc32Checksum.get()));
             } else if (crc32Checksum.isPresent()) {
                 return crc32Validating(decompressing(awsHttpResponse.getContent()), crc32Checksum.get());

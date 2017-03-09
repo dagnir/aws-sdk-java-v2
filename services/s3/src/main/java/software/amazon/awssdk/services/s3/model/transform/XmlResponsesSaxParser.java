@@ -347,9 +347,9 @@ public class XmlResponsesSaxParser {
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
      */
-    public ListBucketHandler parseListBucketObjectsResponse(InputStream inputStream, final boolean shouldSDKDecodeResponse)
+    public ListBucketHandler parseListBucketObjectsResponse(InputStream inputStream, final boolean shouldSdkDecodeResponse)
             throws IOException {
-        ListBucketHandler handler = new ListBucketHandler(shouldSDKDecodeResponse);
+        ListBucketHandler handler = new ListBucketHandler(shouldSdkDecodeResponse);
         parseXmlInputStream(handler, sanitizeXmlDocument(handler, inputStream));
 
         return handler;
@@ -363,9 +363,9 @@ public class XmlResponsesSaxParser {
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
      */
-    public ListObjectsV2Handler parseListObjectsV2Response(InputStream inputStream, final boolean shouldSDKDecodeResponse)
+    public ListObjectsV2Handler parseListObjectsV2Response(InputStream inputStream, final boolean shouldSdkDecodeResponse)
             throws IOException {
-        ListObjectsV2Handler handler = new ListObjectsV2Handler(shouldSDKDecodeResponse);
+        ListObjectsV2Handler handler = new ListObjectsV2Handler(shouldSdkDecodeResponse);
         parseXmlInputStream(handler, sanitizeXmlDocument(handler, inputStream));
 
         return handler;
@@ -379,9 +379,9 @@ public class XmlResponsesSaxParser {
      * @return the XML handler object populated with data parsed from the XML
      *         stream.
      */
-    public ListVersionsHandler parseListVersionsResponse(InputStream inputStream, final boolean shouldSDKDecodeResponse)
+    public ListVersionsHandler parseListVersionsResponse(InputStream inputStream, final boolean shouldSdkDecodeResponse)
             throws IOException {
-        ListVersionsHandler handler = new ListVersionsHandler(shouldSDKDecodeResponse);
+        ListVersionsHandler handler = new ListVersionsHandler(shouldSdkDecodeResponse);
         parseXmlInputStream(handler, sanitizeXmlDocument(handler, inputStream));
         return handler;
     }
@@ -603,14 +603,14 @@ public class XmlResponsesSaxParser {
      */
     public static class ListBucketHandler extends AbstractHandler {
         private final ObjectListing objectListing = new ObjectListing();
-        private final boolean shouldSDKDecodeResponse;
+        private final boolean shouldSdkDecodeResponse;
 
         private S3ObjectSummary currentObject = null;
         private Owner currentOwner = null;
         private String lastKey = null;
 
-        public ListBucketHandler(final boolean shouldSDKDecodeResponse) {
-            this.shouldSDKDecodeResponse = shouldSDKDecodeResponse;
+        public ListBucketHandler(final boolean shouldSdkDecodeResponse) {
+            this.shouldSdkDecodeResponse = shouldSdkDecodeResponse;
         }
 
         public ObjectListing getObjectListing() {
@@ -676,22 +676,22 @@ public class XmlResponsesSaxParser {
                     }
 
                 } else if (name.equals("Prefix")) {
-                    objectListing.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    objectListing.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
 
                 } else if (name.equals("Marker")) {
-                    objectListing.setMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    objectListing.setMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
 
                 } else if (name.equals("NextMarker")) {
-                    objectListing.setNextMarker(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
+                    objectListing.setNextMarker(decodeIfSpecified(getText(), shouldSdkDecodeResponse));
 
                 } else if (name.equals("MaxKeys")) {
                     objectListing.setMaxKeys(parseInt(getText()));
 
                 } else if (name.equals("Delimiter")) {
-                    objectListing.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    objectListing.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
 
                 } else if (name.equals("EncodingType")) {
-                    objectListing.setEncodingType(shouldSDKDecodeResponse ?
+                    objectListing.setEncodingType(shouldSdkDecodeResponse ?
                                                   null : checkForEmptyString(getText()));
                 } else if (name.equals("IsTruncated")) {
                     String isTruncatedStr =
@@ -714,7 +714,7 @@ public class XmlResponsesSaxParser {
             } else if (in("ListBucketResult", "Contents")) {
                 if (name.equals("Key")) {
                     lastKey = getText();
-                    currentObject.setKey(decodeIfSpecified(lastKey, shouldSDKDecodeResponse));
+                    currentObject.setKey(decodeIfSpecified(lastKey, shouldSdkDecodeResponse));
                 } else if (name.equals("LastModified")) {
                     currentObject.setLastModified(
                             ServiceUtils.parseIso8601Date(getText()));
@@ -742,7 +742,7 @@ public class XmlResponsesSaxParser {
                 }
             } else if (in("ListBucketResult", "CommonPrefixes")) {
                 if (name.equals("Prefix")) {
-                    objectListing.getCommonPrefixes().add(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
+                    objectListing.getCommonPrefixes().add(decodeIfSpecified(getText(), shouldSdkDecodeResponse));
                 }
             }
         }
@@ -753,14 +753,14 @@ public class XmlResponsesSaxParser {
      */
     public static class ListObjectsV2Handler extends AbstractHandler {
         private final ListObjectsV2Result result = new ListObjectsV2Result();
-        private final boolean shouldSDKDecodeResponse;
+        private final boolean shouldSdkDecodeResponse;
 
         private S3ObjectSummary currentObject = null;
         private Owner currentOwner = null;
         private String lastKey = null;
 
-        public ListObjectsV2Handler(final boolean shouldSDKDecodeResponse) {
-            this.shouldSDKDecodeResponse = shouldSDKDecodeResponse;
+        public ListObjectsV2Handler(final boolean shouldSdkDecodeResponse) {
+            this.shouldSdkDecodeResponse = shouldSdkDecodeResponse;
         }
 
         public ListObjectsV2Result getResult() {
@@ -822,7 +822,7 @@ public class XmlResponsesSaxParser {
                     }
 
                 } else if (name.equals("Prefix")) {
-                    result.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    result.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
 
                 } else if (name.equals("MaxKeys")) {
                     result.setMaxKeys(parseInt(getText()));
@@ -834,13 +834,13 @@ public class XmlResponsesSaxParser {
                     result.setContinuationToken(getText());
 
                 } else if (name.equals("StartAfter")) {
-                    result.setStartAfter(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
+                    result.setStartAfter(decodeIfSpecified(getText(), shouldSdkDecodeResponse));
 
                 } else if (name.equals("KeyCount")) {
                     result.setKeyCount(parseInt(getText()));
 
                 } else if (name.equals("Delimiter")) {
-                    result.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    result.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
 
                 } else if (name.equals("EncodingType")) {
                     result.setEncodingType(checkForEmptyString(getText()));
@@ -865,7 +865,7 @@ public class XmlResponsesSaxParser {
             } else if (in("ListBucketResult", "Contents")) {
                 if (name.equals("Key")) {
                     lastKey = getText();
-                    currentObject.setKey(decodeIfSpecified(lastKey, shouldSDKDecodeResponse));
+                    currentObject.setKey(decodeIfSpecified(lastKey, shouldSdkDecodeResponse));
                 } else if (name.equals("LastModified")) {
                     currentObject.setLastModified(
                             ServiceUtils.parseIso8601Date(getText()));
@@ -893,7 +893,7 @@ public class XmlResponsesSaxParser {
                 }
             } else if (in("ListBucketResult", "CommonPrefixes")) {
                 if (name.equals("Prefix")) {
-                    result.getCommonPrefixes().add(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
+                    result.getCommonPrefixes().add(decodeIfSpecified(getText(), shouldSdkDecodeResponse));
                 }
             }
         }
@@ -1308,13 +1308,13 @@ public class XmlResponsesSaxParser {
     public static class ListVersionsHandler extends AbstractHandler {
 
         private final VersionListing versionListing = new VersionListing();
-        private final boolean shouldSDKDecodeResponse;
+        private final boolean shouldSdkDecodeResponse;
 
         private S3VersionSummary currentVersionSummary;
         private Owner currentOwner;
 
-        public ListVersionsHandler(final boolean shouldSDKDecodeResponse) {
-            this.shouldSDKDecodeResponse = shouldSDKDecodeResponse;
+        public ListVersionsHandler(final boolean shouldSdkDecodeResponse) {
+            this.shouldSdkDecodeResponse = shouldSdkDecodeResponse;
         }
 
         public VersionListing getListing() {
@@ -1359,9 +1359,9 @@ public class XmlResponsesSaxParser {
                     versionListing.setBucketName(getText());
 
                 } else if (name.equals("Prefix")) {
-                    versionListing.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setPrefix(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
                 } else if (name.equals("KeyMarker")) {
-                    versionListing.setKeyMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setKeyMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
                 } else if (name.equals("VersionIdMarker")) {
                     versionListing.setVersionIdMarker(checkForEmptyString(
                             getText()));
@@ -1370,13 +1370,13 @@ public class XmlResponsesSaxParser {
                     versionListing.setMaxKeys(Integer.parseInt(getText()));
 
                 } else if (name.equals("Delimiter")) {
-                    versionListing.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setDelimiter(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
 
                 } else if (name.equals("EncodingType")) {
-                    versionListing.setEncodingType(shouldSDKDecodeResponse ?
+                    versionListing.setEncodingType(shouldSdkDecodeResponse ?
                                                    null : checkForEmptyString(getText()));
                 } else if (name.equals("NextKeyMarker")) {
-                    versionListing.setNextKeyMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSDKDecodeResponse));
+                    versionListing.setNextKeyMarker(decodeIfSpecified(checkForEmptyString(getText()), shouldSdkDecodeResponse));
 
                 } else if (name.equals("NextVersionIdMarker")) {
                     versionListing.setNextVersionIdMarker(getText());
@@ -1396,14 +1396,14 @@ public class XmlResponsesSaxParser {
                 if (name.equals("Prefix")) {
                     final String commonPrefix = checkForEmptyString(getText());
                     versionListing.getCommonPrefixes()
-                                  .add(shouldSDKDecodeResponse ?
+                                  .add(shouldSdkDecodeResponse ?
                                        SdkHttpUtils.urlDecode(commonPrefix) : commonPrefix);
                 }
             } else if (in("ListVersionsResult", "Version")
                        || in("ListVersionsResult", "DeleteMarker")) {
 
                 if (name.equals("Key")) {
-                    currentVersionSummary.setKey(decodeIfSpecified(getText(), shouldSDKDecodeResponse));
+                    currentVersionSummary.setKey(decodeIfSpecified(getText(), shouldSdkDecodeResponse));
 
                 } else if (name.equals("VersionId")) {
                     currentVersionSummary.setVersionId(getText());
@@ -2163,7 +2163,7 @@ public class XmlResponsesSaxParser {
                 }
             } else if (in(REPLICATION_CONFIG, RULE, DESTINATION)) {
                 if (name.equals(BUCKET)) {
-                    destinationConfig.setBucketARN(getText());
+                    destinationConfig.setBucketArn(getText());
                 } else if (name.equals(STORAGECLASS)) {
                     destinationConfig.setStorageClass(getText());
                 }

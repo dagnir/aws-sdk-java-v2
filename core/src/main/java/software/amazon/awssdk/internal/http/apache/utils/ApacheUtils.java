@@ -34,7 +34,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.FakeIoException;
 
 @SdkInternalApi
 public class ApacheUtils {
@@ -60,13 +60,13 @@ public class ApacheUtils {
      *
      * @param entity The HTTP entity to wrap with a buffered HTTP entity.
      * @return A new BufferedHttpEntity wrapping the specified entity.
-     * @throws FakeIOException only for test simulation
+     * @throws FakeIoException only for test simulation
      */
     public static HttpEntity newBufferedHttpEntity(HttpEntity entity) throws
-                                                                      FakeIOException {
+            FakeIoException {
         try {
             return new BufferedHttpEntity(entity);
-        } catch (FakeIOException e) {
+        } catch (FakeIoException e) {
             // Only for test simulation.
             throw e;
         } catch (IOException e) {

@@ -39,7 +39,7 @@ import software.amazon.awssdk.internal.http.apache.RepeatableInputStreamRequestE
 import software.amazon.awssdk.internal.http.apache.utils.ApacheUtils;
 import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-import software.amazon.awssdk.util.FakeIOException;
+import software.amazon.awssdk.util.FakeIoException;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
 /**
@@ -57,7 +57,7 @@ public class ApacheHttpRequestFactory implements
     public HttpRequestBase create(final Request<?> request,
                                   final HttpClientSettings settings)
             throws
-            FakeIOException {
+            FakeIoException {
         URI endpoint = request.getEndpoint();
 
         /*
@@ -115,7 +115,7 @@ public class ApacheHttpRequestFactory implements
     }
 
 
-    private HttpRequestBase createApacheRequest(Request<?> request, String uri, String encodedParams) throws FakeIOException {
+    private HttpRequestBase createApacheRequest(Request<?> request, String uri, String encodedParams) throws FakeIoException {
         switch (request.getHttpMethod()) {
             case HEAD:
                 return new HttpHead(uri);
@@ -138,7 +138,7 @@ public class ApacheHttpRequestFactory implements
 
     private HttpRequestBase wrapEntity(Request<?> request,
                                        HttpEntityEnclosingRequestBase entityEnclosingRequest,
-                                       String encodedParams) throws FakeIOException {
+                                       String encodedParams) throws FakeIoException {
 
         if (HttpMethodName.POST == request.getHttpMethod()) {
             /*

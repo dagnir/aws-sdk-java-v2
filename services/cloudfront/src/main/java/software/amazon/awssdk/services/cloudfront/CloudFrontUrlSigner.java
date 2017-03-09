@@ -171,7 +171,7 @@ public enum CloudFrontUrlSigner {
     public static String getSignedUrlWithCustomPolicy(String resourceUrlOrPath,
                                                       String keyPairId, PrivateKey privateKey, String policy) {
         try {
-            byte[] signatureBytes = SignerUtils.signWithSha1RSA(
+            byte[] signatureBytes = SignerUtils.signWithSha1Rsa(
                     policy.getBytes(UTF8), privateKey);
             String urlSafePolicy = SignerUtils.makeStringUrlSafe(policy);
             String urlSafeSignature = SignerUtils.makeBytesUrlSafe(signatureBytes);
@@ -221,7 +221,7 @@ public enum CloudFrontUrlSigner {
                                                       Date dateLessThan) {
         try {
             String cannedPolicy = SignerUtils.buildCannedPolicy(resourceUrlOrPath, dateLessThan);
-            byte[] signatureBytes = SignerUtils.signWithSha1RSA(cannedPolicy.getBytes(UTF8), privateKey);
+            byte[] signatureBytes = SignerUtils.signWithSha1Rsa(cannedPolicy.getBytes(UTF8), privateKey);
             String urlSafeSignature = SignerUtils.makeBytesUrlSafe(signatureBytes);
             String signedUrl = resourceUrlOrPath
                                + (resourceUrlOrPath.indexOf('?') >= 0 ? "&" : "?")
@@ -263,7 +263,7 @@ public enum CloudFrontUrlSigner {
      *            keypair used to generate the signed URL.
      * @param epochDateLessThan
      *            The UTC time and date when the signed URL will expire. REQUIRED.
-     * @param limitToIpAddressCIDR
+     * @param limitToIpAddressCidr
      *            An optional range of client IP addresses that will be allowed
      *            to access the distribution, specified as a CIDR range. If
      *            null, the CIDR will be <tt>0.0.0.0/0</tt> and any client will
@@ -277,7 +277,7 @@ public enum CloudFrontUrlSigner {
      */
     public static String buildCustomPolicyForSignedUrl(String resourcePath,
                                                        Date epochDateLessThan,
-                                                       String limitToIpAddressCIDR,
+                                                       String limitToIpAddressCidr,
                                                        Date epochDateGreaterThan) {
         if (epochDateLessThan == null) {
             throw new AmazonClientException("epochDateLessThan must be provided to sign CloudFront URLs");
@@ -285,9 +285,9 @@ public enum CloudFrontUrlSigner {
         if (resourcePath == null) {
             resourcePath = "*";
         }
-        String ipAddress = (limitToIpAddressCIDR == null
+        String ipAddress = (limitToIpAddressCidr == null
                             ? "0.0.0.0/0" // No IP restriction
-                            : limitToIpAddressCIDR);
+                            : limitToIpAddressCidr);
         return SignerUtils.buildCustomPolicy(resourcePath, epochDateLessThan,
                                              epochDateGreaterThan, ipAddress);
     }

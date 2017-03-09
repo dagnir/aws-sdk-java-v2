@@ -16,21 +16,21 @@
 package software.amazon.awssdk.services.dynamodbv2.pojos;
 
 import java.util.Set;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
 
 /**
  * Test domain class with a string set attribute and a string key
  */
-@DynamoDBTable(tableName = "aws-java-sdk-util")
+@DynamoDbTable(tableName = "aws-java-sdk-util")
 public class StringSetAttributeClass {
 
     private String key;
     private Set<String> stringSetAttribute;
     private Set<String> StringSetAttributeRenamed;
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public String getKey() {
         return key;
     }
@@ -39,7 +39,7 @@ public class StringSetAttributeClass {
         this.key = key;
     }
 
-    @DynamoDBAttribute
+    @DynamoDbAttribute
     public Set<String> getStringSetAttribute() {
         return stringSetAttribute;
     }
@@ -48,7 +48,7 @@ public class StringSetAttributeClass {
         this.stringSetAttribute = stringSetAttribute;
     }
 
-    @DynamoDBAttribute(attributeName = "originalName")
+    @DynamoDbAttribute(attributeName = "originalName")
     public Set<String> getStringSetAttributeRenamed() {
         return StringSetAttributeRenamed;
     }

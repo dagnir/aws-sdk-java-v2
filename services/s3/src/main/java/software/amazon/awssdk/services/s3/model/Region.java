@@ -305,7 +305,7 @@ public enum Region {
     /**
      * Returns the respective AWS region.
      */
-    public software.amazon.awssdk.regions.Region toAWSRegion() {
+    public software.amazon.awssdk.regions.Region toAwsRegion() {
         String s3regionId = getFirstRegionId();
         if (s3regionId == null) { // US Standard
             // TODO This is a bit of a hack but customers are relying on this returning us-east-1 rather then

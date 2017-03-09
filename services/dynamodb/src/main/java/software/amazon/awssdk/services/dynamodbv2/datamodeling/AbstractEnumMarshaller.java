@@ -29,7 +29,7 @@ import static software.amazon.awssdk.util.Throwables.failure;
  *
  * @see DynamoDbMarshaller
  *
- * @deprecated Replaced by {@link DynamoDBTypeConvertedEnum}
+ * @deprecated Replaced by {@link DynamoDbTypeConvertedEnum}
  */
 @Deprecated
 public abstract class AbstractEnumMarshaller<T extends Enum<T>> implements DynamoDbMarshaller<T> {

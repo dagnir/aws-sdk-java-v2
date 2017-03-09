@@ -54,8 +54,8 @@ public class SdkHttpRequestExecutor extends HttpRequestExecutor {
                 SdkMetricsSocket sdkMetricsSocket = (SdkMetricsSocket) sock;
                 sdkMetricsSocket.setMetrics(awsRequestMetrics);
             } else if (sock instanceof SdkSslMetricsSocket) {
-                SdkSslMetricsSocket sdkSSLMetricsSocket = (SdkSslMetricsSocket) sock;
-                sdkSSLMetricsSocket.setMetrics(awsRequestMetrics);
+                SdkSslMetricsSocket sdkSslMetricsSocket = (SdkSslMetricsSocket) sock;
+                sdkSslMetricsSocket.setMetrics(awsRequestMetrics);
             }
         }
         awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpClientSendRequestTime);

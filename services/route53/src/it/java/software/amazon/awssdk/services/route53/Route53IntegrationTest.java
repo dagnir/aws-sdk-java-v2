@@ -26,7 +26,7 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.ResponseMetadata;
-import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.route53.model.Change;
 import software.amazon.awssdk.services.route53.model.ChangeAction;
 import software.amazon.awssdk.services.route53.model.ChangeBatch;
@@ -272,9 +272,9 @@ public class Route53IntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkew() throws AmazonServiceException {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         AmazonRoute53Client clockSkewClient = new AmazonRoute53Client(credentials);
         clockSkewClient.listHostedZones();
-        assertTrue("Clockskew is fixed!", SDKGlobalTime.getGlobalTimeOffset() < 60);
+        assertTrue("Clockskew is fixed!", SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

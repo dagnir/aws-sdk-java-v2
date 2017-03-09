@@ -38,7 +38,7 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  * @see AmazonS3#generatePresignedUrl(GeneratePresignedUrlRequest)
  */
 public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
-        implements SSECustomerKeyProvider, Serializable {
+        implements SseCustomerKeyProvider, Serializable {
     /** The HTTP method (GET, PUT, DELETE, HEAD) to be used in this request and when the pre-signed URL is used. */
     private HttpMethod method;
 
@@ -173,7 +173,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      * Returns the SSE algorithm used for SSE (with server side key); or null if
      * SSE (with server side key) is not in use.
      */
-    public String getSSEAlgorithm() {
+    public String getSseAlgorithm() {
         return sseAlgorithm;
     }
 
@@ -182,7 +182,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *
      * @param currently supported values: "AES256" or "aws:kms".
      */
-    public void setSSEAlgorithm(String sseAlgorithm) {
+    public void setSseAlgorithm(String sseAlgorithm) {
         this.sseAlgorithm = sseAlgorithm;
     }
 
@@ -191,24 +191,24 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *
      * @param currently supported values: "AES256" or "aws:kms".
      */
-    public void setSSEAlgorithm(SSEAlgorithm sseAlgorithm) {
+    public void setSseAlgorithm(SseAlgorithm sseAlgorithm) {
         this.sseAlgorithm = sseAlgorithm.getAlgorithm();
     }
 
     /**
-     * Fluent API for {@link #setSSEAlgorithm(String)}
+     * Fluent API for {@link #setSseAlgorithm(String)}
      */
-    public GeneratePresignedUrlRequest withSSEAlgorithm(String sseAlgorithm) {
-        setSSEAlgorithm(sseAlgorithm);
+    public GeneratePresignedUrlRequest withSseAlgorithm(String sseAlgorithm) {
+        setSseAlgorithm(sseAlgorithm);
         return this;
 
     }
 
     /**
-     * Fluent API for {@link #setSSEAlgorithm(SSEAlgorithm)}
+     * Fluent API for {@link #setSseAlgorithm(SseAlgorithm)}
      */
-    public GeneratePresignedUrlRequest withSSEAlgorithm(SSEAlgorithm sseAlgorithm) {
-        setSSEAlgorithm(sseAlgorithm);
+    public GeneratePresignedUrlRequest withSseAlgorithm(SseAlgorithm sseAlgorithm) {
+        setSseAlgorithm(sseAlgorithm);
         return this;
     }
 
@@ -503,7 +503,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
     }
 
     @Override
-    public SseCustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSseCustomerKey() {
         return sseCustomerKey;
     }
 
@@ -515,7 +515,7 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *            The customer-provided server-side encryption key to use as
      *            part of the generated pre-signed URL.
      */
-    public void setSSECustomerKey(SseCustomerKey sseCustomerKey) {
+    public void setSseCustomerKey(SseCustomerKey sseCustomerKey) {
         this.sseCustomerKey = sseCustomerKey;
     }
 
@@ -531,8 +531,8 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public GeneratePresignedUrlRequest withSSECustomerKey(SseCustomerKey sseKey) {
-        setSSECustomerKey(sseKey);
+    public GeneratePresignedUrlRequest withSseCustomerKey(SseCustomerKey sseKey) {
+        setSseCustomerKey(sseKey);
         return this;
     }
 
@@ -546,24 +546,24 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
      *            is disabled. "AES256" is currently the only
      *            supported SSE-C encryption algorithm.
      */
-    public void setSSECustomerKeyAlgorithm(SSEAlgorithm sseAlgorithm) {
+    public void setSseCustomerKeyAlgorithm(SseAlgorithm sseAlgorithm) {
         if (sseAlgorithm == null) {
             this.sseCustomerKey = null;
-        } else if (sseAlgorithm.getAlgorithm().equals(SSEAlgorithm.AES256.getAlgorithm())) {
+        } else if (sseAlgorithm.getAlgorithm().equals(SseAlgorithm.AES256.getAlgorithm())) {
             this.sseCustomerKey =
-                    SseCustomerKey.generateSSECustomerKeyForPresignUrl(sseAlgorithm.getAlgorithm());
+                    SseCustomerKey.generateSseCustomerKeyForPresignUrl(sseAlgorithm.getAlgorithm());
         } else {
             throw new IllegalArgumentException(
                     "Currently the only supported Server Side Encryption algorithm is "
-                    + SSEAlgorithm.AES256);
+                    + SseAlgorithm.AES256);
         }
     }
 
     /**
-     * Fluent method for {@link #setSSECustomerKeyAlgorithm(SSEAlgorithm)}.
+     * Fluent method for {@link #setSseCustomerKeyAlgorithm(SseAlgorithm)}.
      */
-    public GeneratePresignedUrlRequest withSSECustomerKeyAlgorithm(SSEAlgorithm algorithm) {
-        setSSECustomerKeyAlgorithm(algorithm);
+    public GeneratePresignedUrlRequest withSseCustomerKeyAlgorithm(SseAlgorithm algorithm) {
+        setSseCustomerKeyAlgorithm(algorithm);
         return this;
     }
 
@@ -612,10 +612,10 @@ public class GeneratePresignedUrlRequest extends AmazonWebServiceRequest
                 throw new IllegalArgumentException("KMS CMK is not applicable for SSE-C");
             }
         } else if (this.kmsCmkId != null) {
-            if (!SSEAlgorithm.KMS.getAlgorithm().equals(sseAlgorithm)) {
+            if (!SseAlgorithm.KMS.getAlgorithm().equals(sseAlgorithm)) {
                 throw new IllegalArgumentException(
                         "For KMS server side encryption, the SSE algorithm must be set to "
-                        + SSEAlgorithm.KMS);
+                        + SseAlgorithm.KMS);
             }
         }
         /*

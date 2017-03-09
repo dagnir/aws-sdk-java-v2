@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 
 public class EC2MetadataUtilsIntegrationTest {
 
@@ -35,7 +35,7 @@ public class EC2MetadataUtilsIntegrationTest {
         SERVER.start();
 
         System.setProperty(
-                SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
+                SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
                 "http://localhost:" + SERVER.getLocalPort());
     }
 
@@ -45,13 +45,13 @@ public class EC2MetadataUtilsIntegrationTest {
             SERVER.stop();
         }
 
-        System.clearProperty(SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
+        System.clearProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
     }
 
     @Test
     public void testIamInfo() {
-        EC2MetadataUtils.IAMInfo info = EC2MetadataUtils
-                .getIAMInstanceProfileInfo();
+        EC2MetadataUtils.IamInfo info = EC2MetadataUtils
+                .getIamInstanceProfileInfo();
 
         Assert.assertEquals("Success", info.code);
         Assert.assertNull(info.message);
@@ -62,12 +62,12 @@ public class EC2MetadataUtilsIntegrationTest {
 
     @Test
     public void testIamCredentials() {
-        Map<String, EC2MetadataUtils.IAMSecurityCredential> map = EC2MetadataUtils
-                .getIAMSecurityCredentials();
+        Map<String, EC2MetadataUtils.IamSecurityCredential> map = EC2MetadataUtils
+                .getIamSecurityCredentials();
 
         Assert.assertEquals(2, map.size());
 
-        for (Map.Entry<String, EC2MetadataUtils.IAMSecurityCredential> entry : map
+        for (Map.Entry<String, EC2MetadataUtils.IamSecurityCredential> entry : map
                 .entrySet()) {
 
             Assert.assertNotNull(entry.getKey());

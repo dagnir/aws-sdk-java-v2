@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.util.EC2MetadataUtilsServer;
 
 /**
@@ -49,7 +49,7 @@ public class InstanceMetadataRegionProviderTest {
             server = new EC2MetadataUtilsServer("localhost", 0);
             server.start();
 
-            System.setProperty(SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
+            System.setProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
                                "http://localhost:" + server.getLocalPort());
         }
 
@@ -57,7 +57,7 @@ public class InstanceMetadataRegionProviderTest {
         public static void tearDownFixture() throws IOException {
             server.stop();
             System.clearProperty(
-                    SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
+                    SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
         }
 
         @Before
@@ -83,7 +83,7 @@ public class InstanceMetadataRegionProviderTest {
 
         @Before
         public void setup() {
-            System.setProperty(SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
+            System.setProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
                                "http://localhost:54123");
             regionProvider = new InstanceMetadataRegionProvider();
         }

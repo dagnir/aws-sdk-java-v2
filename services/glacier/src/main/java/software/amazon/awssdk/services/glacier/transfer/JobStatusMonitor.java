@@ -191,7 +191,7 @@ public class JobStatusMonitor {
 
         queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).getQueueUrl();
         topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
-        String queueARN = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl).withAttributeNames("QueueArn"))
+        String queueArn = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl).withAttributeNames("QueueArn"))
                              .getAttributes().get("QueueArn");
 
         Policy sqsPolicy =
@@ -199,11 +199,11 @@ public class JobStatusMonitor {
                         new Statement(Effect.Allow)
                                 .withPrincipals(Principal.ALL_USERS)
                                 .withActions(SQSActions.SendMessage)
-                                .withResources(new Resource(queueARN))
+                                .withResources(new Resource(queueArn))
                                 .withConditions(ConditionFactory.newSourceArnCondition(topicArn)));
         sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, newAttributes("Policy", sqsPolicy.toJson())));
 
-        sns.subscribe(new SubscribeRequest(topicArn, "sqs", queueARN));
+        sns.subscribe(new SubscribeRequest(topicArn, "sqs", queueArn));
     }
 
     private Map<String, String> newAttributes(String... keyValuePairs) {

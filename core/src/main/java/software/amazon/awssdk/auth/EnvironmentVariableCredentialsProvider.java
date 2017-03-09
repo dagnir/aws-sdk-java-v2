@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.util.StringUtils;
 
 /**
@@ -27,29 +27,29 @@ import software.amazon.awssdk.util.StringUtils;
 public class EnvironmentVariableCredentialsProvider implements AwsCredentialsProvider {
     @Override
     public AwsCredentials getCredentials() {
-        String accessKey = System.getenv(SDKGlobalConfiguration.ACCESS_KEY_ENV_VAR);
+        String accessKey = System.getenv(SdkGlobalConfiguration.ACCESS_KEY_ENV_VAR);
         if (accessKey == null) {
-            accessKey = System.getenv(SDKGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR);
+            accessKey = System.getenv(SdkGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR);
         }
 
-        String secretKey = System.getenv(SDKGlobalConfiguration.SECRET_KEY_ENV_VAR);
+        String secretKey = System.getenv(SdkGlobalConfiguration.SECRET_KEY_ENV_VAR);
         if (secretKey == null) {
-            secretKey = System.getenv(SDKGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR);
+            secretKey = System.getenv(SdkGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR);
         }
 
         accessKey = StringUtils.trim(accessKey);
         secretKey = StringUtils.trim(secretKey);
         String sessionToken =
-                StringUtils.trim(System.getenv(SDKGlobalConfiguration.AWS_SESSION_TOKEN_ENV_VAR));
+                StringUtils.trim(System.getenv(SdkGlobalConfiguration.AWS_SESSION_TOKEN_ENV_VAR));
 
         if (StringUtils.isNullOrEmpty(accessKey)
             || StringUtils.isNullOrEmpty(secretKey)) {
 
             throw new SdkClientException("Unable to load AWS credentials from environment variables (" +
-                                         SDKGlobalConfiguration.ACCESS_KEY_ENV_VAR + " (or " +
-                                         SDKGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR + ") and " +
-                                         SDKGlobalConfiguration.SECRET_KEY_ENV_VAR + " (or " +
-                                         SDKGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR + "))");
+                                         SdkGlobalConfiguration.ACCESS_KEY_ENV_VAR + " (or " +
+                                         SdkGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR + ") and " +
+                                         SdkGlobalConfiguration.SECRET_KEY_ENV_VAR + " (or " +
+                                         SdkGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR + "))");
         }
 
         return sessionToken == null ?

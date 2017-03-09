@@ -32,7 +32,7 @@ public class ValueMapAndWithJsonSupportTest {
 
     @Test(expected = AmazonClientException.class)
     public void valueMapCreationShouldFailIfNoJsonStringIsUsedAsValue() {
-        new ValueMap().withJSON("a", NO_JSON_STRING);
+        new ValueMap().withJson("a", NO_JSON_STRING);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class ValueMapAndWithJsonSupportTest {
     public void valueMapShouldReturnAProperDeserializedJsonMap() {
         String json = "{ \"fruit\" : \"pear\" , \"color\" : \"green\" }";
 
-        ValueMap valueMap = new ValueMap().withJSON(KEY, json);
+        ValueMap valueMap = new ValueMap().withJson(KEY, json);
         Map<String, Object> actual = (Map<String, Object>) valueMap.get(KEY);
 
         assertThat(actual.size(), is(2));
@@ -53,7 +53,7 @@ public class ValueMapAndWithJsonSupportTest {
     public void valueMapShouldReturnAProperDeserializedJsonList() {
         String json = "[\"red\",\"green\",\"blue\"]";
 
-        ValueMap valueMap = new ValueMap().withJSON(KEY, json);
+        ValueMap valueMap = new ValueMap().withJson(KEY, json);
         List<String> actual = (List<String>) valueMap.get(KEY);
 
         assertThat(actual.size(), is(3));

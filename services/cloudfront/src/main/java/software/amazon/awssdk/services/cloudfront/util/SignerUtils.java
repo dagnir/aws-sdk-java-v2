@@ -31,10 +31,10 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.services.cloudfront.auth.PEM;
-import software.amazon.awssdk.services.cloudfront.auth.RSA;
+import software.amazon.awssdk.services.cloudfront.auth.Pem;
+import software.amazon.awssdk.services.cloudfront.auth.Rsa;
 import software.amazon.awssdk.util.Base64;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringUtils;
 
 public class SignerUtils {
@@ -131,7 +131,7 @@ public class SignerUtils {
      * Signs the data given with the private key given, using the SHA1withRSA
      * algorithm provided by bouncy castle.
      */
-    public static byte[] signWithSha1RSA(byte[] dataToSign,
+    public static byte[] signWithSha1Rsa(byte[] dataToSign,
                                          PrivateKey privateKey) throws InvalidKeyException {
         Signature signature;
         try {
@@ -155,7 +155,7 @@ public class SignerUtils {
         if (StringUtils.lowerCase(privateKeyFile.getAbsolutePath()).endsWith(".pem")) {
             InputStream is = new FileInputStream(privateKeyFile);
             try {
-                return PEM.readPrivateKey(is);
+                return Pem.readPrivateKey(is);
             } finally {
                 try {
                     is.close();
@@ -166,7 +166,7 @@ public class SignerUtils {
         } else if (StringUtils.lowerCase(privateKeyFile.getAbsolutePath()).endsWith(".der")) {
             InputStream is = new FileInputStream(privateKeyFile);
             try {
-                return RSA.privateKeyFromPKCS8(IOUtils.toByteArray(is));
+                return Rsa.privateKeyFromPkcs8(IoUtils.toByteArray(is));
             } finally {
                 try {
                     is.close();

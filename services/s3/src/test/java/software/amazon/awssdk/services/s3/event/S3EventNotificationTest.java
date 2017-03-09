@@ -57,7 +57,7 @@ public class S3EventNotificationTest {
         Assert.assertEquals(record.getEventTime(), DateTime.parse(eventNode.get("eventTime").asText()));
         Assert.assertEquals(record.getEventName(), eventNode.get("eventName").asText());
         Assert.assertEquals(record.getUserIdentity().getPrincipalId(), eventNode.get("userIdentity").get("principalId").asText());
-        Assert.assertEquals(record.getRequestParameters().getSourceIPAddress(), eventNode.get("requestParameters").get("sourceIPAddress").asText());
+        Assert.assertEquals(record.getRequestParameters().getSourceIpAddress(), eventNode.get("requestParameters").get("sourceIPAddress").asText());
         Assert.assertEquals(record.getResponseElements().getxAmzRequestId(), eventNode.get("responseElements").get("x-amz-request-id").asText());
         Assert.assertEquals(record.getResponseElements().getxAmzId2(), eventNode.get("responseElements").get("x-amz-id-2").asText());
 
@@ -125,7 +125,7 @@ public class S3EventNotificationTest {
         Assert.assertEquals(record.getEventTime(), DateTime.parse(eventNode.get("eventTime").asText()));
         Assert.assertEquals(record.getEventName(), eventNode.get("eventName").asText());
         Assert.assertEquals(record.getUserIdentity().getPrincipalId(), eventNode.get("userIdentity").get("principalId").asText());
-        Assert.assertEquals(record.getRequestParameters().getSourceIPAddress(), eventNode.get("requestParameters").get("sourceIPAddress").asText());
+        Assert.assertEquals(record.getRequestParameters().getSourceIpAddress(), eventNode.get("requestParameters").get("sourceIPAddress").asText());
         Assert.assertEquals(record.getResponseElements().getxAmzRequestId(), eventNode.get("responseElements").get("x-amz-request-id").asText());
         Assert.assertEquals(record.getResponseElements().getxAmzId2(), eventNode.get("responseElements").get("x-amz-id-2").asText());
 

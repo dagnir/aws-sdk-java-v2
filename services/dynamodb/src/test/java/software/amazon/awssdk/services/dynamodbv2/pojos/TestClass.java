@@ -24,17 +24,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMarshalling;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBNativeBoolean;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMarshalling;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbNativeBoolean;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbTable;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.RandomUUIDMarshaller;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.S3Link;
 
-@DynamoDBTable(tableName = "nonexisting-test-tablename")
+@DynamoDbTable(tableName = "nonexisting-test-tablename")
 public class TestClass {
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public String getId() {
         return null;
     }
@@ -56,7 +56,7 @@ public class TestClass {
     public void setBoxedBoolean(Boolean value) {
     }
 
-    @DynamoDBNativeBoolean
+    @DynamoDbNativeBoolean
     public boolean getNativeBoolean() {
         return false;
     }
@@ -78,7 +78,7 @@ public class TestClass {
     public void setUuid(UUID u) {
     }
 
-    @DynamoDBMarshalling(marshallerClass = RandomUUIDMarshaller.class)
+    @DynamoDbMarshalling(marshallerClass = RandomUUIDMarshaller.class)
     public String getCustomString() {
         return null;
     }

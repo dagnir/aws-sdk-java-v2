@@ -15,11 +15,11 @@
 
 package software.amazon.awssdk.services.glacier.transfer;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseBytesDiscarded;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishResponseBytesDiscarded;
 import static software.amazon.awssdk.runtime.io.ResettableInputStream.newResettableInputStream;
-import static software.amazon.awssdk.util.IOUtils.closeQuietly;
-import static software.amazon.awssdk.util.IOUtils.release;
+import static software.amazon.awssdk.util.IoUtils.closeQuietly;
+import static software.amazon.awssdk.util.IoUtils.release;
 import static software.amazon.awssdk.util.Throwables.failure;
 
 import java.io.BufferedInputStream;
@@ -212,8 +212,8 @@ public class ArchiveTransferManager {
         this.credentialsProvider = null;
         this.clientConfiguration = null;
         this.glacier = params.getAmazonGlacier();
-        this.sqs = params.getAmazonSQS();
-        this.sns = params.getAmazonSNS();
+        this.sqs = params.getAmazonSqs();
+        this.sns = params.getAmazonSns();
     }
 
     /**

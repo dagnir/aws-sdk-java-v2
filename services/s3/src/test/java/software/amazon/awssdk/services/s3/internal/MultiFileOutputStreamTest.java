@@ -27,7 +27,7 @@ import java.util.Random;
 import org.junit.Test;
 import software.amazon.awssdk.services.s3.UploadObjectObserver;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class MultiFileOutputStreamTest {
 
@@ -46,7 +46,7 @@ public class MultiFileOutputStreamTest {
             public void onPartCreate(PartCreationEvent event) {
             }
         }, os.getPartSize(), os.getDiskLimit());
-        IOUtils.copy(new FileInputStream(tmpfile), os);
+        IoUtils.copy(new FileInputStream(tmpfile), os);
 
         assertTrue(Math.ceil(1.0 * size / os.getPartSize()) == os
                 .getNumFilesWritten());
@@ -77,7 +77,7 @@ public class MultiFileOutputStreamTest {
         File tmpfile = CryptoTestUtils.generateRandomAsciiFile(size);
         String prefix = os.getNamePrefix();
         File root = os.getRoot();
-        IOUtils.copy(new FileInputStream(tmpfile), os);
+        IoUtils.copy(new FileInputStream(tmpfile), os);
 
         assertTrue(Math.ceil(1.0 * size / os.getPartSize()) == os
                 .getNumFilesWritten());

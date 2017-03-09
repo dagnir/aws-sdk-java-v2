@@ -15,11 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.BatchLoadRetryStrategy;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.BatchLoadRetryStrategy;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapper.BatchGetItemException;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodbv2.model.BatchGetItemRequest;
@@ -79,8 +75,8 @@ public class BatchLoadRetryStrategyTest {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
                 .andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(1)))
                 .times(1);
-        DynamoDBMapperConfig config =
-                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.NoRetryBatchLoadRetryStrategy());
+        DynamoDbMapperConfig config =
+                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.NoRetryBatchLoadRetryStrategy());
         mapper = new DynamoDbMapper(ddbMock, config);
 
         replay(ddbMock);
@@ -106,8 +102,8 @@ public class BatchLoadRetryStrategyTest {
     public void testBatchReadCallSuccess_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(
                 buildDefaultGetItemResult().withUnprocessedKeys(new HashMap<>(1))).times(1);
-        DynamoDBMapperConfig config =
-                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy());
+        DynamoDbMapperConfig config =
+                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy());
         mapper = new DynamoDbMapper(ddbMock, config);
 
         replay(ddbMock);
@@ -120,8 +116,8 @@ public class BatchLoadRetryStrategyTest {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
                 .andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(3)))
                 .times(6);
-        DynamoDBMapperConfig config =
-                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy());
+        DynamoDbMapperConfig config =
+                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy());
         mapper = new DynamoDbMapper(ddbMock, config);
 
         replay(ddbMock);
@@ -135,8 +131,8 @@ public class BatchLoadRetryStrategyTest {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
                 .andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(3)))
                 .times(1);
-        DynamoDBMapperConfig config =
-                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.NoRetryBatchLoadRetryStrategy());
+        DynamoDbMapperConfig config =
+                getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.NoRetryBatchLoadRetryStrategy());
         mapper = new DynamoDbMapper(ddbMock, config);
 
         replay(ddbMock);
@@ -147,7 +143,7 @@ public class BatchLoadRetryStrategyTest {
 
     @Test
     public void testNoDelayOnPartialFailure_DefaultRetry() {
-        BatchLoadRetryStrategy defaultRetryStrategy = new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy();
+        BatchLoadRetryStrategy defaultRetryStrategy = new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy();
         expect(mockItemResult.getUnprocessedKeys()).andReturn(buildUnprocessedKeysMap(2));
         expect(mockItemRequest.getRequestItems()).andReturn(buildUnprocessedKeysMap(3));
         replay(mockItemRequest);
@@ -160,7 +156,7 @@ public class BatchLoadRetryStrategyTest {
 
     @Test
     public void testDelayOnPartialFailure_DefaultRetry() {
-        BatchLoadRetryStrategy defaultRetryStrategy = new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy();
+        BatchLoadRetryStrategy defaultRetryStrategy = new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy();
         expect(mockItemResult.getUnprocessedKeys()).andReturn(buildUnprocessedKeysMap(3));
         expect(mockItemRequest.getRequestItems()).andReturn(buildUnprocessedKeysMap(3));
         replay(mockItemRequest);
@@ -171,8 +167,8 @@ public class BatchLoadRetryStrategyTest {
         assertTrue(defaultRetryStrategy.getDelayBeforeNextRetry(context) > 0);
     }
 
-    private DynamoDBMapperConfig getConfigWithCustomBatchLoadRetryStrategy(final BatchLoadRetryStrategy batchReadRetryStrategy) {
-        return new DynamoDBMapperConfig.Builder().withBatchLoadRetryStrategy(batchReadRetryStrategy).build();
+    private DynamoDbMapperConfig getConfigWithCustomBatchLoadRetryStrategy(final BatchLoadRetryStrategy batchReadRetryStrategy) {
+        return new DynamoDbMapperConfig.Builder().withBatchLoadRetryStrategy(batchReadRetryStrategy).build();
     }
 
     private Map<String, KeysAndAttributes> buildUnprocessedKeysMap(final int size) {
@@ -218,7 +214,7 @@ public class BatchLoadRetryStrategyTest {
 
     }
 
-    @DynamoDBTable(tableName = TABLE_NAME)
+    @DynamoDbTable(tableName = TABLE_NAME)
     public static class Item {
 
         private String hash;
@@ -227,8 +223,8 @@ public class BatchLoadRetryStrategyTest {
             this.hash = hash;
         }
 
-        @DynamoDBAttribute(attributeName = HASH_ATTR)
-        @DynamoDBHashKey
+        @DynamoDbAttribute(attributeName = HASH_ATTR)
+        @DynamoDbHashKey
         public String getHash() {
             return hash;
         }
@@ -243,7 +239,7 @@ public class BatchLoadRetryStrategyTest {
         }
     }
 
-    @DynamoDBTable(tableName = TABLE_NAME2)
+    @DynamoDbTable(tableName = TABLE_NAME2)
     public static class Item2 {
 
         private String hash;
@@ -252,8 +248,8 @@ public class BatchLoadRetryStrategyTest {
             this.hash = hash;
         }
 
-        @DynamoDBAttribute(attributeName = HASH_ATTR)
-        @DynamoDBHashKey
+        @DynamoDbAttribute(attributeName = HASH_ATTR)
+        @DynamoDbHashKey
         public String getHash() {
             return hash;
         }
@@ -268,7 +264,7 @@ public class BatchLoadRetryStrategyTest {
         }
     }
 
-    @DynamoDBTable(tableName = TABLE_NAME3)
+    @DynamoDbTable(tableName = TABLE_NAME3)
     public static class Item3 {
 
         private String hash;
@@ -277,8 +273,8 @@ public class BatchLoadRetryStrategyTest {
             this.hash = hash;
         }
 
-        @DynamoDBAttribute(attributeName = HASH_ATTR)
-        @DynamoDBHashKey
+        @DynamoDbAttribute(attributeName = HASH_ATTR)
+        @DynamoDbHashKey
         public String getHash() {
             return hash;
         }

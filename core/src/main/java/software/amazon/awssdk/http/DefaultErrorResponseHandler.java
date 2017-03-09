@@ -28,7 +28,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.XpathUtils;
 
@@ -109,7 +109,7 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
 
     private String contentToString(InputStream content, String idString) throws Exception {
         try {
-            return IOUtils.toString(content);
+            return IoUtils.toString(content);
         } catch (Exception e) {
             LOG.info(String.format("Unable to read input stream to string (%s)", idString), e);
             throw e;

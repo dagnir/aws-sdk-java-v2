@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.dynamodbv2.datamodeling;
 import java.util.LinkedList;
 import java.util.List;
 import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
 import software.amazon.awssdk.services.dynamodbv2.model.ScanResult;
 
 /**
@@ -41,7 +41,7 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
     /** The current parallel scan task which contains all the information about the scan request. */
     private final ParallelScanTask parallelScanTask;
 
-    private final DynamoDBMapperConfig config;
+    private final DynamoDbMapperConfig config;
 
     public PaginatedParallelScanList(
             DynamoDbMapper mapper,
@@ -49,7 +49,7 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
             AmazonDynamoDB dynamo,
             ParallelScanTask parallelScanTask,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDBMapperConfig config) {
+            DynamoDbMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.parallelScanTask = parallelScanTask;

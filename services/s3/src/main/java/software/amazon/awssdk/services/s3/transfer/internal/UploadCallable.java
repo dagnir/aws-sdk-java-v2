@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.transfer.internal;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -138,7 +138,7 @@ public class UploadCallable implements Callable<UploadResult> {
      * Captures the state of the upload.
      */
     private void captureUploadStateIfPossible() {
-        if (origReq.getSSECustomerKey() == null) {
+        if (origReq.getSseCustomerKey() == null) {
             persistableUpload = new PersistableUpload(origReq.getBucketName(),
                                                       origReq.getKey(), origReq.getFile()
                                                                                .getAbsolutePath(), multipartUploadId,
@@ -327,13 +327,13 @@ public class UploadCallable implements Callable<UploadResult> {
         InitiateMultipartUploadRequest request = null;
         if (isUsingEncryption && origReq instanceof EncryptedPutObjectRequest) {
             request = new EncryptedInitiateMultipartUploadRequest(
-                    origReq.getBucketName(), origReq.getKey()).withCannedACL(
+                    origReq.getBucketName(), origReq.getKey()).withCannedAcl(
                     origReq.getCannedAcl()).withObjectMetadata(origReq.getMetadata());
             ((EncryptedInitiateMultipartUploadRequest) request)
                     .setMaterialsDescription(((EncryptedPutObjectRequest) origReq).getMaterialsDescription());
         } else {
             request = new InitiateMultipartUploadRequest(origReq.getBucketName(), origReq.getKey())
-                    .withCannedACL(origReq.getCannedAcl())
+                    .withCannedAcl(origReq.getCannedAcl())
                     .withObjectMetadata(origReq.getMetadata());
         }
 
@@ -342,8 +342,8 @@ public class UploadCallable implements Callable<UploadResult> {
         request.withAccessControlList(origReq.getAccessControlList())
                .withStorageClass(origReq.getStorageClass())
                .withRedirectLocation(origReq.getRedirectLocation())
-               .withSSECustomerKey(origReq.getSSECustomerKey())
-               .withSSEAwsKeyManagementParams(origReq.getSseAwsKeyManagementParams())
+               .withSseCustomerKey(origReq.getSseCustomerKey())
+               .withSseAwsKeyManagementParams(origReq.getSseAwsKeyManagementParams())
                .withGeneralProgressListener(origReq.getGeneralProgressListener())
                .withRequestMetricCollector(origReq.getRequestMetricCollector());
 

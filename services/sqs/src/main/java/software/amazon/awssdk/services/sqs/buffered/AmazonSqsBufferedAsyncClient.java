@@ -91,18 +91,18 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
                                             + VersionInfoUtils.getVersion();
 
     private final CachingMap buffers = new CachingMap(16, (float) 0.75, true);
-    private final AmazonSQSAsync realSQS;
+    private final AmazonSQSAsync realSqs;
     private final QueueBufferConfig bufferConfigExemplar;
 
-    public AmazonSqsBufferedAsyncClient(AmazonSQSAsync paramRealSQS) {
-        this(paramRealSQS, new QueueBufferConfig());
+    public AmazonSqsBufferedAsyncClient(AmazonSQSAsync paramRealSqs) {
+        this(paramRealSqs, new QueueBufferConfig());
     }
 
     // route all future constructors to the most general one, because validation
     // happens here
-    public AmazonSqsBufferedAsyncClient(AmazonSQSAsync paramRealSQS, QueueBufferConfig config) {
+    public AmazonSqsBufferedAsyncClient(AmazonSQSAsync paramRealSqs, QueueBufferConfig config) {
         config.validate();
-        realSQS = paramRealSQS;
+        realSqs = paramRealSqs;
         bufferConfigExemplar = config;
     }
 
@@ -112,21 +112,21 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
      */
     @Override
     public void setRegion(Region region) throws IllegalArgumentException {
-        realSQS.setRegion(region);
+        realSqs.setRegion(region);
     }
 
     public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest)
             throws AmazonServiceException,
                    AmazonClientException {
         ResultConverter.appendUserAgent(setQueueAttributesRequest, USER_AGENT);
-        return realSQS.setQueueAttributes(setQueueAttributesRequest);
+        return realSqs.setQueueAttributes(setQueueAttributesRequest);
     }
 
     public ChangeMessageVisibilityBatchResult changeMessageVisibilityBatch(
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(changeMessageVisibilityBatchRequest, USER_AGENT);
-        return realSQS.changeMessageVisibilityBatch(changeMessageVisibilityBatchRequest);
+        return realSqs.changeMessageVisibilityBatch(changeMessageVisibilityBatchRequest);
     }
 
     public ChangeMessageVisibilityResult changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest)
@@ -139,7 +139,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public SendMessageBatchResult sendMessageBatch(SendMessageBatchRequest sendMessageBatchRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(sendMessageBatchRequest, USER_AGENT);
-        return realSQS.sendMessageBatch(sendMessageBatchRequest);
+        return realSqs.sendMessageBatch(sendMessageBatchRequest);
     }
 
     public SendMessageResult sendMessage(SendMessageRequest sendMessageRequest) throws AmazonServiceException,
@@ -159,7 +159,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public DeleteMessageBatchResult deleteMessageBatch(DeleteMessageBatchRequest deleteMessageBatchRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(deleteMessageBatchRequest, USER_AGENT);
-        return realSQS.deleteMessageBatch(deleteMessageBatchRequest);
+        return realSqs.deleteMessageBatch(deleteMessageBatchRequest);
     }
 
     public DeleteMessageResult deleteMessage(DeleteMessageRequest deleteMessageRequest) throws AmazonServiceException,
@@ -173,7 +173,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
         for (QueueBuffer buffer : buffers.values()) {
             buffer.shutdown();
         }
-        realSQS.shutdown();
+        realSqs.shutdown();
     }
 
     /**
@@ -190,7 +190,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(changeMessageVisibilityBatchRequest, USER_AGENT);
-        return realSQS.changeMessageVisibilityBatchAsync(changeMessageVisibilityBatchRequest);
+        return realSqs.changeMessageVisibilityBatchAsync(changeMessageVisibilityBatchRequest);
     }
 
     public Future<ChangeMessageVisibilityResult> changeMessageVisibilityAsync(
@@ -205,7 +205,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public Future<SendMessageBatchResult> sendMessageBatchAsync(SendMessageBatchRequest sendMessageBatchRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(sendMessageBatchRequest, USER_AGENT);
-        return realSQS.sendMessageBatchAsync(sendMessageBatchRequest);
+        return realSqs.sendMessageBatchAsync(sendMessageBatchRequest);
     }
 
     public Future<SendMessageResult> sendMessageAsync(SendMessageRequest sendMessageRequest)
@@ -226,138 +226,138 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public Future<DeleteMessageBatchResult> deleteMessageBatchAsync(DeleteMessageBatchRequest deleteMessageBatchRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(deleteMessageBatchRequest, USER_AGENT);
-        return realSQS.deleteMessageBatchAsync(deleteMessageBatchRequest);
+        return realSqs.deleteMessageBatchAsync(deleteMessageBatchRequest);
     }
 
     public void setEndpoint(String endpoint) throws IllegalArgumentException {
-        realSQS.setEndpoint(endpoint);
+        realSqs.setEndpoint(endpoint);
     }
 
     public Future<SetQueueAttributesResult> setQueueAttributesAsync(SetQueueAttributesRequest setQueueAttributesRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(setQueueAttributesRequest, USER_AGENT);
-        return realSQS.setQueueAttributesAsync(setQueueAttributesRequest);
+        return realSqs.setQueueAttributesAsync(setQueueAttributesRequest);
     }
 
     public Future<GetQueueUrlResult> getQueueUrlAsync(GetQueueUrlRequest getQueueUrlRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(getQueueUrlRequest, USER_AGENT);
-        return realSQS.getQueueUrlAsync(getQueueUrlRequest);
+        return realSqs.getQueueUrlAsync(getQueueUrlRequest);
     }
 
     public Future<RemovePermissionResult> removePermissionAsync(RemovePermissionRequest removePermissionRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(removePermissionRequest, USER_AGENT);
-        return realSQS.removePermissionAsync(removePermissionRequest);
+        return realSqs.removePermissionAsync(removePermissionRequest);
     }
 
     public GetQueueUrlResult getQueueUrl(GetQueueUrlRequest getQueueUrlRequest) throws AmazonServiceException,
                                                                                        AmazonClientException {
         ResultConverter.appendUserAgent(getQueueUrlRequest, USER_AGENT);
-        return realSQS.getQueueUrl(getQueueUrlRequest);
+        return realSqs.getQueueUrl(getQueueUrlRequest);
     }
 
     public RemovePermissionResult removePermission(RemovePermissionRequest removePermissionRequest) throws AmazonServiceException,
                                                                                                            AmazonClientException {
         ResultConverter.appendUserAgent(removePermissionRequest, USER_AGENT);
-        return realSQS.removePermission(removePermissionRequest);
+        return realSqs.removePermission(removePermissionRequest);
     }
 
     public Future<GetQueueAttributesResult> getQueueAttributesAsync(GetQueueAttributesRequest getQueueAttributesRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(getQueueAttributesRequest, USER_AGENT);
-        return realSQS.getQueueAttributesAsync(getQueueAttributesRequest);
+        return realSqs.getQueueAttributesAsync(getQueueAttributesRequest);
     }
 
     public GetQueueAttributesResult getQueueAttributes(GetQueueAttributesRequest getQueueAttributesRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(getQueueAttributesRequest, USER_AGENT);
-        return realSQS.getQueueAttributes(getQueueAttributesRequest);
+        return realSqs.getQueueAttributes(getQueueAttributesRequest);
     }
 
     public Future<PurgeQueueResult> purgeQueueAsync(PurgeQueueRequest purgeQueueRequest) throws AmazonServiceException,
                                                                                                 AmazonClientException {
         ResultConverter.appendUserAgent(purgeQueueRequest, USER_AGENT);
-        return realSQS.purgeQueueAsync(purgeQueueRequest);
+        return realSqs.purgeQueueAsync(purgeQueueRequest);
     }
 
     public PurgeQueueResult purgeQueue(PurgeQueueRequest purgeQueueRequest) throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(purgeQueueRequest, USER_AGENT);
-        return realSQS.purgeQueue(purgeQueueRequest);
+        return realSqs.purgeQueue(purgeQueueRequest);
     }
 
     public Future<DeleteQueueResult> deleteQueueAsync(DeleteQueueRequest deleteQueueRequest) throws AmazonServiceException,
                                                                                                     AmazonClientException {
         ResultConverter.appendUserAgent(deleteQueueRequest, USER_AGENT);
-        return realSQS.deleteQueueAsync(deleteQueueRequest);
+        return realSqs.deleteQueueAsync(deleteQueueRequest);
     }
 
     public DeleteQueueResult deleteQueue(DeleteQueueRequest deleteQueueRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(deleteQueueRequest, USER_AGENT);
-        return realSQS.deleteQueue(deleteQueueRequest);
+        return realSqs.deleteQueue(deleteQueueRequest);
     }
 
     public Future<ListQueuesResult> listQueuesAsync(ListQueuesRequest listQueuesRequest) throws AmazonServiceException,
                                                                                                 AmazonClientException {
         ResultConverter.appendUserAgent(listQueuesRequest, USER_AGENT);
-        return realSQS.listQueuesAsync(listQueuesRequest);
+        return realSqs.listQueuesAsync(listQueuesRequest);
     }
 
     public ListQueuesResult listQueues(ListQueuesRequest listQueuesRequest) throws AmazonServiceException,
                                                                                    AmazonClientException {
         ResultConverter.appendUserAgent(listQueuesRequest, USER_AGENT);
-        return realSQS.listQueues(listQueuesRequest);
+        return realSqs.listQueues(listQueuesRequest);
     }
 
     public Future<CreateQueueResult> createQueueAsync(CreateQueueRequest createQueueRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(createQueueRequest, USER_AGENT);
-        return realSQS.createQueueAsync(createQueueRequest);
+        return realSqs.createQueueAsync(createQueueRequest);
     }
 
     public CreateQueueResult createQueue(CreateQueueRequest createQueueRequest) throws AmazonServiceException,
                                                                                        AmazonClientException {
         ResultConverter.appendUserAgent(createQueueRequest, USER_AGENT);
-        return realSQS.createQueue(createQueueRequest);
+        return realSqs.createQueue(createQueueRequest);
     }
 
     public Future<AddPermissionResult> addPermissionAsync(AddPermissionRequest addPermissionRequest)
             throws AmazonServiceException,
                    AmazonClientException {
         ResultConverter.appendUserAgent(addPermissionRequest, USER_AGENT);
-        return realSQS.addPermissionAsync(addPermissionRequest);
+        return realSqs.addPermissionAsync(addPermissionRequest);
     }
 
     @Override
     public Future<AddPermissionResult> addPermissionAsync(String queueUrl, String label,
-                                                          List<String> aWSAccountIds, List<String> actions) {
+                                                          List<String> awsAccountIds, List<String> actions) {
         return addPermissionAsync(new AddPermissionRequest(queueUrl, label,
-                                                           aWSAccountIds, actions));
+                                                           awsAccountIds, actions));
     }
 
     @Override
     public Future<AddPermissionResult> addPermissionAsync(String queueUrl, String label,
-                                                          List<String> aWSAccountIds, List<String> actions,
+                                                          List<String> awsAccountIds, List<String> actions,
                                                           AsyncHandler<AddPermissionRequest, AddPermissionResult> asyncHandler) {
         return addPermissionAsync(new AddPermissionRequest(queueUrl, label,
-                                                           aWSAccountIds, actions), asyncHandler);
+                                                           awsAccountIds, actions), asyncHandler);
     }
 
 
     public AddPermissionResult addPermission(AddPermissionRequest addPermissionRequest) throws AmazonServiceException,
                                                                                                AmazonClientException {
         ResultConverter.appendUserAgent(addPermissionRequest, USER_AGENT);
-        return realSQS.addPermission(addPermissionRequest);
+        return realSqs.addPermission(addPermissionRequest);
     }
 
     public ListQueuesResult listQueues() throws AmazonServiceException, AmazonClientException {
-        return realSQS.listQueues();
+        return realSqs.listQueues();
     }
 
     public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
         ResultConverter.appendUserAgent(request, USER_AGENT);
-        return realSQS.getCachedResponseMetadata(request);
+        return realSqs.getCachedResponseMetadata(request);
     }
 
     public Future<DeleteMessageResult> deleteMessageAsync(DeleteMessageRequest deleteMessageRequest)
@@ -379,7 +379,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
         QueueBuffer toReturn = buffers.get(qUrl);
         if (null == toReturn) {
             QueueBufferConfig config = new QueueBufferConfig(bufferConfigExemplar);
-            toReturn = new QueueBuffer(config, qUrl, realSQS);
+            toReturn = new QueueBuffer(config, qUrl, realSqs);
             buffers.put(qUrl, toReturn);
         }
         return toReturn;
@@ -479,13 +479,13 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             SetQueueAttributesRequest setQueueAttributesRequest,
             AsyncHandler<SetQueueAttributesRequest, SetQueueAttributesResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.setQueueAttributesAsync(setQueueAttributesRequest, asyncHandler);
+        return realSqs.setQueueAttributesAsync(setQueueAttributesRequest, asyncHandler);
     }
 
     public Future<SetQueueAttributesResult> setQueueAttributesAsync(String queueUrl,
                                                                     java.util.Map<String, String> attributes)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.setQueueAttributesAsync(queueUrl, attributes);
+        return realSqs.setQueueAttributesAsync(queueUrl, attributes);
     }
 
     public Future<SetQueueAttributesResult> setQueueAttributesAsync(
@@ -493,14 +493,14 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             Map<String, String> attributes,
             AsyncHandler<SetQueueAttributesRequest, SetQueueAttributesResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.setQueueAttributesAsync(queueUrl, attributes, asyncHandler);
+        return realSqs.setQueueAttributesAsync(queueUrl, attributes, asyncHandler);
     }
 
     public Future<ChangeMessageVisibilityBatchResult> changeMessageVisibilityBatchAsync(
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest,
             AsyncHandler<ChangeMessageVisibilityBatchRequest, ChangeMessageVisibilityBatchResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.changeMessageVisibilityBatchAsync(changeMessageVisibilityBatchRequest, asyncHandler);
+        return realSqs.changeMessageVisibilityBatchAsync(changeMessageVisibilityBatchRequest, asyncHandler);
     }
 
     @Override
@@ -523,7 +523,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public Future<GetQueueUrlResult> getQueueUrlAsync(GetQueueUrlRequest getQueueUrlRequest,
                                                       AsyncHandler<GetQueueUrlRequest, GetQueueUrlResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.getQueueUrlAsync(getQueueUrlRequest, asyncHandler);
+        return realSqs.getQueueUrlAsync(getQueueUrlRequest, asyncHandler);
     }
 
     @Override
@@ -541,7 +541,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             RemovePermissionRequest removePermissionRequest,
             AsyncHandler<RemovePermissionRequest, RemovePermissionResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.removePermissionAsync(removePermissionRequest, asyncHandler);
+        return realSqs.removePermissionAsync(removePermissionRequest, asyncHandler);
     }
 
     @Override
@@ -562,7 +562,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             GetQueueAttributesRequest getQueueAttributesRequest,
             AsyncHandler<GetQueueAttributesRequest, GetQueueAttributesResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.getQueueAttributesAsync(getQueueAttributesRequest, asyncHandler);
+        return realSqs.getQueueAttributesAsync(getQueueAttributesRequest, asyncHandler);
     }
 
     @Override
@@ -585,7 +585,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             SendMessageBatchRequest sendMessageBatchRequest,
             AsyncHandler<SendMessageBatchRequest, SendMessageBatchResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.sendMessageBatchAsync(sendMessageBatchRequest, asyncHandler);
+        return realSqs.sendMessageBatchAsync(sendMessageBatchRequest, asyncHandler);
     }
 
     @Override
@@ -607,13 +607,13 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public Future<PurgeQueueResult> purgeQueueAsync(PurgeQueueRequest purgeQueueRequest,
                                                     AsyncHandler<PurgeQueueRequest, PurgeQueueResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.purgeQueueAsync(purgeQueueRequest, asyncHandler);
+        return realSqs.purgeQueueAsync(purgeQueueRequest, asyncHandler);
     }
 
     public Future<DeleteQueueResult> deleteQueueAsync(DeleteQueueRequest deleteQueueRequest,
                                                       AsyncHandler<DeleteQueueRequest, DeleteQueueResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.deleteQueueAsync(deleteQueueRequest, asyncHandler);
+        return realSqs.deleteQueueAsync(deleteQueueRequest, asyncHandler);
     }
 
     @Override
@@ -630,7 +630,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public Future<ListQueuesResult> listQueuesAsync(ListQueuesRequest listQueuesRequest,
                                                     AsyncHandler<ListQueuesRequest, ListQueuesResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.listQueuesAsync(listQueuesRequest, asyncHandler);
+        return realSqs.listQueuesAsync(listQueuesRequest, asyncHandler);
     }
 
     @Override
@@ -660,7 +660,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             DeleteMessageBatchRequest deleteMessageBatchRequest,
             AsyncHandler<DeleteMessageBatchRequest, DeleteMessageBatchResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.deleteMessageBatchAsync(deleteMessageBatchRequest, asyncHandler);
+        return realSqs.deleteMessageBatchAsync(deleteMessageBatchRequest, asyncHandler);
     }
 
     @Override
@@ -682,7 +682,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public Future<CreateQueueResult> createQueueAsync(CreateQueueRequest createQueueRequest,
                                                       AsyncHandler<CreateQueueRequest, CreateQueueResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.createQueueAsync(createQueueRequest, asyncHandler);
+        return realSqs.createQueueAsync(createQueueRequest, asyncHandler);
     }
 
     @Override
@@ -699,7 +699,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     public Future<AddPermissionResult> addPermissionAsync(AddPermissionRequest addPermissionRequest,
                                                           AsyncHandler<AddPermissionRequest, AddPermissionResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.addPermissionAsync(addPermissionRequest, asyncHandler);
+        return realSqs.addPermissionAsync(addPermissionRequest, asyncHandler);
     }
 
     @Override
@@ -707,7 +707,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             ListDeadLetterSourceQueuesRequest listDeadLetterSourceQueuesRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(listDeadLetterSourceQueuesRequest, USER_AGENT);
-        return realSQS.listDeadLetterSourceQueues(listDeadLetterSourceQueuesRequest);
+        return realSqs.listDeadLetterSourceQueues(listDeadLetterSourceQueuesRequest);
     }
 
     @Override
@@ -715,7 +715,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             ListDeadLetterSourceQueuesRequest listDeadLetterSourceQueuesRequest)
             throws AmazonServiceException, AmazonClientException {
         ResultConverter.appendUserAgent(listDeadLetterSourceQueuesRequest, USER_AGENT);
-        return realSQS.listDeadLetterSourceQueuesAsync(listDeadLetterSourceQueuesRequest);
+        return realSqs.listDeadLetterSourceQueuesAsync(listDeadLetterSourceQueuesRequest);
     }
 
     @Override
@@ -723,7 +723,7 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
             ListDeadLetterSourceQueuesRequest listDeadLetterSourceQueuesRequest,
             AsyncHandler<ListDeadLetterSourceQueuesRequest, ListDeadLetterSourceQueuesResult> asyncHandler)
             throws AmazonServiceException, AmazonClientException {
-        return realSQS.listDeadLetterSourceQueuesAsync(listDeadLetterSourceQueuesRequest, asyncHandler);
+        return realSqs.listDeadLetterSourceQueuesAsync(listDeadLetterSourceQueuesRequest, asyncHandler);
     }
 
     @Override
@@ -796,9 +796,9 @@ public class AmazonSqsBufferedAsyncClient implements AmazonSQSAsync {
     }
 
     @Override
-    public AddPermissionResult addPermission(String queueUrl, String label, List<String> aWSAccountIds, List<String> actions)
+    public AddPermissionResult addPermission(String queueUrl, String label, List<String> awsAccountIds, List<String> actions)
             throws AmazonServiceException, AmazonClientException {
-        return addPermission(new AddPermissionRequest(queueUrl, label, aWSAccountIds, actions));
+        return addPermission(new AddPermissionRequest(queueUrl, label, awsAccountIds, actions));
     }
 
     @Override

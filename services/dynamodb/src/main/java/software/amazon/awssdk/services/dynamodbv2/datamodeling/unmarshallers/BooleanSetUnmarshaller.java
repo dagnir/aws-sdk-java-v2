@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import software.amazon.awssdk.services.dynamodbv2.datamodeling.ArgumentUnmarshaller;
-import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDBMappingException;
+import software.amazon.awssdk.services.dynamodbv2.datamodeling.DynamoDbMappingException;
 import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
 
 /**
@@ -43,7 +43,7 @@ public class BooleanSetUnmarshaller implements ArgumentUnmarshaller {
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
         if (value.getNS() == null && value.getL() == null) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Expected either L or NS in value " + value
                     + " when invoking " + setter);
         }
@@ -68,13 +68,13 @@ public class BooleanSetUnmarshaller implements ArgumentUnmarshaller {
             } else {
                 bool = value.getBOOL();
                 if (bool == null) {
-                    throw new DynamoDBMappingException(
+                    throw new DynamoDbMappingException(
                             value + " is not a boolean");
                 }
             }
 
             if (!result.add(bool)) {
-                throw new DynamoDBMappingException(
+                throw new DynamoDbMappingException(
                         "Duplicate value (" + bool + ") found in "
                         + values);
             }

@@ -118,9 +118,9 @@ public class RegionUtils {
      * @throws IOException on error fetching or parsing the XML file
      */
     @Deprecated
-    public static RegionMetadata loadMetadataFromURI(final URI uri)
+    public static RegionMetadata loadMetadataFromUri(final URI uri)
             throws IOException {
-        return loadMetadataFromURI(uri, null);
+        return loadMetadataFromUri(uri, null);
     }
 
     /**
@@ -133,7 +133,7 @@ public class RegionUtils {
      * @throws IOException on error fetching or parsing the XML file
      */
     @Deprecated
-    public static RegionMetadata loadMetadataFromURI(
+    public static RegionMetadata loadMetadataFromUri(
             final URI uri,
             final LegacyClientConfiguration config) throws IOException {
         return LegacyRegionXmlLoadUtils.load(uri, config);
@@ -233,7 +233,7 @@ public class RegionUtils {
      * are simply wanting to reinitialize from the bundled region metadata,
      * call {@code initialize}. If you want to maintain your own remote
      * copy of the region metadata and periodically refresh it at runtime,
-     * call {@code initializeFromURI}.
+     * call {@code initializeFromUri}.
      *
      * @deprecated in favor of {@link #initialize()}
      */
@@ -250,8 +250,8 @@ public class RegionUtils {
      * @throws SdkClientException on error
      */
     @Deprecated
-    public static synchronized void initializeFromURI(final URI uri) {
-        initializeFromURI(uri, null);
+    public static synchronized void initializeFromUri(final URI uri) {
+        initializeFromUri(uri, null);
     }
 
     /**
@@ -263,12 +263,12 @@ public class RegionUtils {
      * @throws SdkClientException on error
      */
     @Deprecated
-    public static synchronized void initializeFromURI(
+    public static synchronized void initializeFromUri(
             final URI uri,
             final LegacyClientConfiguration config) {
         try {
 
-            regionMetadata = loadMetadataFromURI(uri, config);
+            regionMetadata = loadMetadataFromUri(uri, config);
 
         } catch (IOException exception) {
             throw new SdkClientException(

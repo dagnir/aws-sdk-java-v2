@@ -124,19 +124,19 @@ public final class ArchiveTransferManagerBuilder {
         return glacierClient == null ? AmazonGlacierClientBuilder.defaultClient() : glacierClient;
     }
 
-    private AmazonSNS resolveSNSClient() {
+    private AmazonSNS resolveSnsClient() {
         return snsClient == null ? AmazonSNSClientBuilder.defaultClient() : snsClient;
     }
 
-    private AmazonSQS resolveSQSClient() {
+    private AmazonSQS resolveSqsClient() {
         return sqsClient == null ? AmazonSQSClientBuilder.defaultClient() : sqsClient;
     }
 
     private ArchiveTransferManagerParams getParams() {
         return new ArchiveTransferManagerParams()
                 .withAmazonGlacier(resolveGlacierClient())
-                .withAmazonSQS(resolveSQSClient())
-                .withAmazonSNS(resolveSNSClient());
+                .withAmazonSqs(resolveSqsClient())
+                .withAmazonSns(resolveSnsClient());
     }
 
     /**

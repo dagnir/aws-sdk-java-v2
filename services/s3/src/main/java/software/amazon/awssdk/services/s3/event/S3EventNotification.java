@@ -223,16 +223,17 @@ public class S3EventNotification {
 
     public static class RequestParametersEntity {
 
-        private final String sourceIPAddress;
+        private final String sourceIpAddress;
 
         @JsonCreator
         public RequestParametersEntity(
-                @JsonProperty(value = "sourceIPAddress") String sourceIPAddress) {
-            this.sourceIPAddress = sourceIPAddress;
+                @JsonProperty(value = "sourceIPAddress") String sourceIpAddress) {
+            this.sourceIpAddress = sourceIpAddress;
         }
 
-        public String getSourceIPAddress() {
-            return sourceIPAddress;
+        @JsonProperty("sourceIPAddress")
+        public String getSourceIpAddress() {
+            return sourceIpAddress;
         }
     }
 

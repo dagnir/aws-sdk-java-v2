@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 
@@ -67,20 +67,20 @@ public class SqsIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void clockSkewFailure_CorrectsGlobalTimeOffset() {
-        final int originalOffset = SDKGlobalConfiguration.getGlobalTimeOffset();
+        final int originalOffset = SdkGlobalConfiguration.getGlobalTimeOffset();
         final int skew = 3600;
 
-        SDKGlobalConfiguration.setGlobalTimeOffset(skew);
-        assertEquals(skew, SDKGlobalConfiguration.getGlobalTimeOffset());
+        SdkGlobalConfiguration.setGlobalTimeOffset(skew);
+        assertEquals(skew, SdkGlobalConfiguration.getGlobalTimeOffset());
         AmazonSQSAsyncClient sqsClient = createSqsAyncClient();
         sqsClient.listQueues();
-        assertThat("Clockskew is fixed!", SDKGlobalConfiguration.getGlobalTimeOffset(), lessThan(skew));
+        assertThat("Clockskew is fixed!", SdkGlobalConfiguration.getGlobalTimeOffset(), lessThan(skew));
         // subsequent changes to the global time offset won't affect existing client
-        SDKGlobalConfiguration.setGlobalTimeOffset(skew);
+        SdkGlobalConfiguration.setGlobalTimeOffset(skew);
         sqsClient.listQueues();
-        assertEquals(skew, SDKGlobalConfiguration.getGlobalTimeOffset());
+        assertEquals(skew, SdkGlobalConfiguration.getGlobalTimeOffset());
         sqsClient.shutdown();
 
-        SDKGlobalConfiguration.setGlobalTimeOffset(originalOffset);
+        SdkGlobalConfiguration.setGlobalTimeOffset(originalOffset);
     }
 }
