@@ -11,6 +11,7 @@
 
     <artifactId>utils</artifactId>
 
+    <name>AWS Java SDK :: Utilities</name>
 
     <dependencies>
         <dependency>
