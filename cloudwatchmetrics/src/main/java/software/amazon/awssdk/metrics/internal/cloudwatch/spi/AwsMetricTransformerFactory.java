@@ -22,7 +22,8 @@ import org.apache.commons.logging.LogFactory;
  * Service specific metric transformer factory.
  */
 public enum AwsMetricTransformerFactory {
-    DynamoDB,;
+    DynamoDb;
+
     public static final String DEFAULT_METRIC_TRANSFORM_PROVIDER_PACKAGE =
             "software.amazon.awssdk.metrics.internal.cloudwatch.provider.transform";
     private static final String REQUEST_TRANSFORMER_CLASSNAME_SUFFIX = "RequestMetricTransformer";

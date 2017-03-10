@@ -34,7 +34,7 @@ public class AWSMetricTransformerFactoryTest {
     public void customAdaptors() {
         String customProviderPackage = "testing.custom.transformer";
         AwsMetricTransformerFactory.setTransformerPackage(customProviderPackage);
-        RequestMetricTransformer a = AwsMetricTransformerFactory.DynamoDB
+        RequestMetricTransformer a = AwsMetricTransformerFactory.DynamoDb
             .getRequestMetricTransformer();
         assertEquals(customProviderPackage, 
             a.getClass().getPackage().getName());
@@ -49,6 +49,6 @@ public class AWSMetricTransformerFactoryTest {
     public void customPackageNotExist() {
         AwsMetricTransformerFactory.setTransformerPackage("i_dont_exist");
         assertSame(RequestMetricTransformer.NONE, 
-                AwsMetricTransformerFactory.DynamoDB.getRequestMetricTransformer());
+                AwsMetricTransformerFactory.DynamoDb.getRequestMetricTransformer());
     }
 }
