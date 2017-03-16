@@ -48,11 +48,11 @@ public class JsonErrorCodeParserTest {
     }
 
     private static HttpResponse httpResponseWithoutHeaders() {
-        return new HttpResponse(null, null);
+        return new HttpResponse(null);
     }
 
     private static HttpResponse httpResponseWithHeaders(String header, String value) {
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
         response.addHeader(header, value);
         return response;
     }

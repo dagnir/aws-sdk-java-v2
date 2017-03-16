@@ -24,10 +24,9 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -38,7 +37,6 @@ import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.http.JsonErrorCodeParser;
-import software.amazon.awssdk.protocol.json.JsonContent;
 import software.amazon.awssdk.runtime.http.JsonErrorMessageParser;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.util.StringInputStream;
@@ -61,13 +59,13 @@ public class JsonErrorResponseHandlerTest {
     public void setup() throws UnsupportedEncodingException {
         MockitoAnnotations.initMocks(this);
         when(errorCodeParser
-                     .parseErrorCode((HttpResponse) anyObject(), (JsonContent) anyObject()))
+                     .parseErrorCode(anyObject(), anyObject()))
                 .thenReturn(ERROR_CODE);
 
-        httpResponse = new HttpResponse(new DefaultRequest<String>(SERVICE_NAME), null);
+        httpResponse = new HttpResponse(new DefaultRequest<String>(SERVICE_NAME));
         httpResponse.setContent(new StringInputStream("{}"));
 
-        responseHandler = new JsonErrorResponseHandler(Arrays.asList(unmarshaller), errorCodeParser,
+        responseHandler = new JsonErrorResponseHandler(Collections.singletonList(unmarshaller), errorCodeParser,
                                                        JsonErrorMessageParser.DEFAULT_ERROR_MESSAGE_PARSER,
                                                        new JsonFactory());
     }
@@ -75,7 +73,7 @@ public class JsonErrorResponseHandlerTest {
     @Test
     public void handle_NoUnmarshallersAdded_ReturnsGenericAmazonServiceException() throws
                                                                                    Exception {
-        responseHandler = new JsonErrorResponseHandler(new ArrayList<JsonErrorUnmarshaller>(),
+        responseHandler = new JsonErrorResponseHandler(new ArrayList<>(),
                                                        new JsonErrorCodeParser(),
                                                        JsonErrorMessageParser.DEFAULT_ERROR_MESSAGE_PARSER,
                                                        new JsonFactory());
@@ -135,7 +133,7 @@ public class JsonErrorResponseHandlerTest {
     public void handle_UnmarshallerThrowsException_ReturnsGenericAmazonServiceException() throws
                                                                                           Exception {
         expectUnmarshallerMatches();
-        when(unmarshaller.unmarshall((JsonNode) anyObject())).thenThrow(new RuntimeException());
+        when(unmarshaller.unmarshall(anyObject())).thenThrow(new RuntimeException());
 
         AmazonServiceException ase = responseHandler.handle(httpResponse);
 
@@ -147,7 +145,7 @@ public class JsonErrorResponseHandlerTest {
     public void handle_UnmarshallerReturnsException_ClientErrorType() throws Exception {
         httpResponse.setStatusCode(400);
         expectUnmarshallerMatches();
-        when(unmarshaller.unmarshall((JsonNode) anyObject()))
+        when(unmarshaller.unmarshall(anyObject()))
                 .thenReturn(new CustomException("error"));
 
         AmazonServiceException ase = responseHandler.handle(httpResponse);
@@ -162,7 +160,7 @@ public class JsonErrorResponseHandlerTest {
     public void handle_UnmarshallerReturnsException_ServiceErrorType() throws Exception {
         httpResponse.setStatusCode(500);
         expectUnmarshallerMatches();
-        when(unmarshaller.unmarshall((JsonNode) anyObject()))
+        when(unmarshaller.unmarshall(anyObject()))
                 .thenReturn(new CustomException("error"));
 
         AmazonServiceException ase = responseHandler.handle(httpResponse);
@@ -175,7 +173,7 @@ public class JsonErrorResponseHandlerTest {
         httpResponse.setStatusCode(500);
         httpResponse.addHeader(HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER, "1234");
         expectUnmarshallerMatches();
-        when(unmarshaller.unmarshall((JsonNode) anyObject()))
+        when(unmarshaller.unmarshall(anyObject()))
                 .thenReturn(new CustomException("error"));
 
         AmazonServiceException ase = responseHandler.handle(httpResponse);
@@ -193,7 +191,7 @@ public class JsonErrorResponseHandlerTest {
         httpResponse.addHeader(StringUtils.upperCase(HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER),
                                "1234");
         expectUnmarshallerMatches();
-        when(unmarshaller.unmarshall((JsonNode) anyObject()))
+        when(unmarshaller.unmarshall(anyObject()))
                 .thenReturn(new CustomException("error"));
 
         AmazonServiceException ase = responseHandler.handle(httpResponse);
@@ -211,7 +209,7 @@ public class JsonErrorResponseHandlerTest {
         httpResponse.addHeader("FooHeader", "FooValue");
         httpResponse.addHeader(HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER, "1234");
         expectUnmarshallerMatches();
-        when(unmarshaller.unmarshall((JsonNode) anyObject()))
+        when(unmarshaller.unmarshall(anyObject()))
                 .thenReturn(new CustomException("error"));
 
         AmazonServiceException ase = responseHandler.handle(httpResponse);

@@ -23,7 +23,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
-import org.apache.http.client.methods.HttpGet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -58,7 +57,7 @@ public class StackedRequestHandlerTest {
             MockitoAnnotations.initMocks(this);
             stackedRequestHandler = new StackedRequestHandler(new ArrayList<>());
 
-            response = new Response<>("Dummy response", new HttpResponse(request, new HttpGet()));
+            response = new Response<>("Dummy response", new HttpResponse(request));
         }
 
         @Test
@@ -74,7 +73,7 @@ public class StackedRequestHandlerTest {
 
         @Test
         public void beforeUnmarshalling() {
-            stackedRequestHandler.beforeUnmarshalling(request, new HttpResponse(request, null));
+            stackedRequestHandler.beforeUnmarshalling(request, new HttpResponse(request));
         }
 
         @Test
@@ -110,7 +109,7 @@ public class StackedRequestHandlerTest {
             MockitoAnnotations.initMocks(this);
             stackedRequestHandler = new StackedRequestHandler(only);
 
-            response = new Response<String>("Dummy response", new HttpResponse(request, new HttpGet()));
+            response = new Response<>("Dummy response", new HttpResponse(request));
         }
 
         @Test
@@ -128,7 +127,7 @@ public class StackedRequestHandlerTest {
 
         @Test
         public void beforeUnmarshalling() {
-            HttpResponse httpResponse = new HttpResponse(request, null);
+            HttpResponse httpResponse = new HttpResponse(request);
             stackedRequestHandler.beforeUnmarshalling(request, httpResponse);
             verify(only).beforeUnmarshalling(request, httpResponse);
         }
@@ -177,7 +176,7 @@ public class StackedRequestHandlerTest {
             MockitoAnnotations.initMocks(this);
             stackedRequestHandler = new StackedRequestHandler(first, second, third);
 
-            response = new Response<String>("Dummy response", new HttpResponse(request, new HttpGet()));
+            response = new Response<>("Dummy response", new HttpResponse(request));
         }
 
         @Test

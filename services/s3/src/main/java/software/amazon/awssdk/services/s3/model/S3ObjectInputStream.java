@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.s3.model;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.EofSensorInputStream;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricFilterInputStream;
@@ -33,26 +32,20 @@ import software.amazon.awssdk.util.IOUtils;
  * {@link S3ObjectInputStream} supplies the abort() method, which will terminate
  * an HTTP connection to the S3 object.
  */
+// TODO reimplement auto abort and expose abort to customer
 public class S3ObjectInputStream extends SdkFilterInputStream {
 
-    private final HttpRequestBase httpRequest;
-
-    private boolean eof;
-
-    public S3ObjectInputStream(InputStream in, HttpRequestBase httpRequest) {
-        this(in, httpRequest, wrapWithByteCounting(in));
+    public S3ObjectInputStream(InputStream in) {
+        this(in, wrapWithByteCounting(in));
     }
 
     public S3ObjectInputStream(
             InputStream in,
-            HttpRequestBase httpRequest,
             boolean collectMetrics) {
 
         super(collectMetrics
-              ? new MetricFilterInputStream(S3ServiceMetric.S3_DOWNLOAD_THROUGHPUT, in)
-              : in);
-
-        this.httpRequest = httpRequest;
+                      ? new MetricFilterInputStream(S3ServiceMetric.S3_DOWNLOAD_THROUGHPUT, in)
+                      : in);
     }
 
     /**
@@ -98,17 +91,7 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
      * as protected to allow customers to completely prevent the abort behavior if there is a need
      */
     private void doAbort() {
-        if (httpRequest != null) {
-            httpRequest.abort();
-        }
         IOUtils.closeQuietly(in, null);
-    }
-
-    /**
-     * Returns the http request from which this input stream is derived.
-     */
-    public HttpRequestBase getHttpRequest() {
-        return httpRequest;
     }
 
     /**
@@ -131,18 +114,6 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
      * {@inheritDoc}
      */
     @Override
-    public int read() throws IOException {
-        int value = super.read();
-        if (value == -1) {
-            eof = true;
-        }
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
@@ -151,21 +122,8 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
      * {@inheritDoc}
      */
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        int value = super.read(b, off, len);
-        if (value == -1) {
-            eof = true;
-        }
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void reset() throws IOException {
         super.reset();
-        eof = false;
     }
 
     /**
@@ -178,10 +136,6 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
      */
     @Override
     public void close() throws IOException {
-        if (eof) {
-            super.close();
-        } else {
-            doAbort();
-        }
+        super.close();
     }
 }

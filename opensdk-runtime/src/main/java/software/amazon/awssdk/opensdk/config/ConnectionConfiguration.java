@@ -17,7 +17,6 @@ package software.amazon.awssdk.opensdk.config;
 
 import java.util.Optional;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 
 /**
  * Configuration options for the client's http connections like max number of open HTTP connections,

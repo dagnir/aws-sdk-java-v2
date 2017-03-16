@@ -81,7 +81,6 @@ public class LegacyClientConfigurationAdapterTest {
 
         assertNotNull(config.getRetryPolicy());
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
         assertFalse(config.isPreemptiveBasicProxyAuth());
     }
 
@@ -166,7 +165,6 @@ public class LegacyClientConfigurationAdapterTest {
 
         assertNotNull(config.getRetryPolicy());
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
     }
 
     /**
@@ -224,7 +222,6 @@ public class LegacyClientConfigurationAdapterTest {
 
         assertNotNull(config.getRetryPolicy());
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
         assertFalse(config.isPreemptiveBasicProxyAuth());
         assertFalse(config.useGzip());
     }
@@ -268,7 +265,6 @@ public class LegacyClientConfigurationAdapterTest {
         assertNull(config.getSignerOverride());
 
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
         assertFalse(config.isPreemptiveBasicProxyAuth());
     }
 

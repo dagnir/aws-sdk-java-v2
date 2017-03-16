@@ -54,7 +54,7 @@ public class S3ObjectResponseHandler extends AbstractS3ResponseHandler<S3Object>
         ObjectMetadata metadata = object.getObjectMetadata();
         populateObjectMetadata(response, metadata);
 
-        object.setObjectContent(new S3ObjectInputStream(response.getContent(), response.getHttpRequest()));
+        object.setObjectContent(new S3ObjectInputStream(response.getContent()));
 
         awsResponse.setResult(object);
         return awsResponse;

@@ -39,7 +39,7 @@ public class JsonErrorMessageParser {
     public static final JsonErrorMessageParser DEFAULT_ERROR_MESSAGE_PARSER = new JsonErrorMessageParser(
             DEFAULT_ERROR_MESSAGE_LOCATIONS);
 
-    private static final HttpResponse EMPTY_HTTP_RESPONSE = new HttpResponse(null, null);
+    private static final HttpResponse EMPTY_HTTP_RESPONSE = new HttpResponse(null);
 
     private final List<String> errorMessageJsonLocations;
 

@@ -1697,7 +1697,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             s3Object.setBucketName(getObjectRequest.getBucketName());
             s3Object.setKey(getObjectRequest.getKey());
             InputStream is = s3Object.getObjectContent();
-            HttpRequestBase httpRequest = s3Object.getObjectContent().getHttpRequest();
             // Hold a reference to this client while the InputStream is still
             // around - otherwise a finalizer in the HttpClient may reset the
             // underlying TCP connection out from under us.
@@ -1737,7 +1736,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             // Re-wrap within an S3ObjectInputStream. Explicitly do not collect
             // metrics here because we know we're ultimately wrapping another
             // S3ObjectInputStream which will take care of that.
-            s3Object.setObjectContent(new S3ObjectInputStream(is, httpRequest, false));
+            s3Object.setObjectContent(new S3ObjectInputStream(is, false));
 
             return s3Object;
         } catch (AmazonS3Exception ase) {

@@ -47,7 +47,7 @@ public class S3ObjectInputStreamTest {
      */
     private final class MockS3ObjectInputStream extends S3ObjectInputStream {
         private MockS3ObjectInputStream(InputStream in) {
-            super(in, null);
+            super(in);
         }
 
         @Override

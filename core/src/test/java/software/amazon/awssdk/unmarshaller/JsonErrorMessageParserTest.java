@@ -39,7 +39,7 @@ public class JsonErrorMessageParserTest {
     @Before
     public void setup() {
         jsonNode = JsonNodeFactory.instance.objectNode();
-        response = new HttpResponse(null, null);
+        response = new HttpResponse(null);
     }
 
     @Test
