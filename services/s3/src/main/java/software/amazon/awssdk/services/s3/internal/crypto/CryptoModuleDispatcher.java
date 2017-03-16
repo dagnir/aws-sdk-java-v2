@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
 import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
@@ -57,7 +57,7 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
     /** Authenticated encryption (AE) cryptographic module. */
     private final S3CryptoModuleAe ae;
 
-    public CryptoModuleDispatcher(AWSKMS kms, S3Direct s3,
+    public CryptoModuleDispatcher(KMSClient kms, S3Direct s3,
                                   AwsCredentialsProvider credentialsProvider,
                                   EncryptionMaterialsProvider encryptionMaterialsProvider,
                                   CryptoConfiguration cryptoConfig) {

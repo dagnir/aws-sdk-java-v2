@@ -22,14 +22,14 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.services.identitymanagement.model.AccessKeyMetadata;
-import software.amazon.awssdk.services.identitymanagement.model.CreateAccessKeyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateAccessKeyResult;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteAccessKeyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.LimitExceededException;
-import software.amazon.awssdk.services.identitymanagement.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListAccessKeysResult;
-import software.amazon.awssdk.services.identitymanagement.model.NoSuchEntityException;
+import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyRequest;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyResult;
+import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
+import software.amazon.awssdk.services.iam.model.LimitExceededException;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 
 /**
  * Integration tests for access key methods in IAM.
@@ -195,7 +195,7 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     @Test
     public void testClockSkew() {
         SDKGlobalConfiguration.setGlobalTimeOffset(3600);
-        iam.listAccessKeys();
+        iam.listAccessKeys(new ListAccessKeysRequest());
         assertTrue("Clockskew is fixed!", SDKGlobalConfiguration.getGlobalTimeOffset() < 60);
     }
 }

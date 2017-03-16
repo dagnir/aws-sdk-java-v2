@@ -77,7 +77,7 @@ public abstract class AwsAsyncClientBuilder<SubclassT extends AwsAsyncClientBuil
 
     @Override
     public final TypeToBuildT build() {
-        return configureMutableProperties(build(getAsyncClientParams()));
+        return build(getAsyncClientParams());
     }
 
     protected abstract TypeToBuildT build(AwsAsyncClientParams asyncClientParams);

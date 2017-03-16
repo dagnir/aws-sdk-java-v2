@@ -24,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.SdkGlobalTime;
+import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionRequest;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionResult;
 import software.amazon.awssdk.services.directconnect.model.DeleteConnectionRequest;
@@ -65,7 +66,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeConnections_ReturnsNonEmptyList() {
-        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections();
+        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(new DescribeConnectionsRequest());
         assertTrue(describeConnectionsResult.getConnections().size() > 0);
         assertNotNull(describeConnectionsResult.getConnections().get(0).getConnectionId());
         assertNotNull(describeConnectionsResult.getConnections().get(0).getConnectionName());
@@ -90,10 +91,13 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkew() {
-        SdkGlobalTime.setGlobalTimeOffset(3600);
-        AmazonDirectConnectClient clockSkewClient = new AmazonDirectConnectClient(credentials);
-        clockSkewClient.describeConnections();
-        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
+        SDKGlobalTime.setGlobalTimeOffset(3600);
+        DirectConnectClient clockSkewClient = DirectConnectClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .build();
+
+        clockSkewClient.describeConnections(new DescribeConnectionsRequest());
+        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
     }
 
 }

@@ -23,7 +23,9 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.services.inspector.model.AccessDeniedException;
 import software.amazon.awssdk.services.inspector.model.ListRulesPackagesRequest;
 
@@ -32,17 +34,21 @@ public class InspectorErrorUnmarshallingTest {
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
-    private AmazonInspector inspector;
+    private InspectorClient inspector;
 
     @Before
     public void setup() {
-        inspector = new AmazonInspectorClient(new BasicAwsCredentials("akid", "skid"));
-        inspector.setEndpoint("http://localhost:" + wireMock.port());
+        AwsStaticCredentialsProvider credsProvider = new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid"));
+        inspector = InspectorClient.builder()
+                .withCredentials(credsProvider)
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMock.port(), "us-east-1"))
+                .build();
     }
 
     /**
      * Some error shapes in Inspector define an errorCode member which clashes with the errorCode
-     * defined in {@link com.amazonaws.AmazonServiceException}. We've customized the name of the
+     * defined in {@link software.amazon.awssdk.AmazonServiceException}. We've customized the name of the
      * modeled error code so both can be used by customers. This test asserts that both are
      * unmarshalled correctly.
      */

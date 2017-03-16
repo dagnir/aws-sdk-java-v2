@@ -18,10 +18,10 @@ package software.amazon.awssdk.services.autoscaling;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.autoscaling.model.CreateAutoScalingGroupRequest;
 import software.amazon.awssdk.services.autoscaling.model.CreateLaunchConfigurationRequest;
-import software.amazon.awssdk.services.sns.AmazonSNS;
-import software.amazon.awssdk.services.sns.AmazonSNSClient;
+import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -40,11 +40,11 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     protected static final String AMI_ID = "ami-1ecae776";
     protected static final String INSTANCE_TYPE = "m1.small";
     /** Shared Autoscaling client for all tests to use. */
-    protected static AmazonAutoScalingClient autoscaling;
+    protected static AutoScalingClient autoscaling;
     /** Shared Autoscaling async client for tests to use. */
-    protected static AmazonAutoScalingAsyncClient autoscalingAsync;
+    protected static AutoScalingAsyncClient autoscalingAsync;
     /** Shared SNS client for tests to use. */
-    protected static AmazonSNS sns;
+    protected static SNSClient sns;
 
     /**
      * Loads the AWS account info for the integration tests and creates an AutoScaling client for
@@ -53,9 +53,10 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        autoscaling = new AmazonAutoScalingClient(credentials);
-        autoscalingAsync = new AmazonAutoScalingAsyncClient(credentials);
-        sns = new AmazonSNSClient(credentials);
+        autoscaling = AutoScalingClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        autoscalingAsync = AutoScalingAsyncClientBuilder.standard()
+                .withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        sns = SNSClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
     /*

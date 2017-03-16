@@ -50,7 +50,8 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.runtime.io.ReleasableInputStream;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyRequest;
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyResult;
 import software.amazon.awssdk.services.s3.Headers;
@@ -104,12 +105,12 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
     protected final Map<String, T> multipartUploadContexts =
             Collections.synchronizedMap(new HashMap<String, T>());
     protected final S3Direct s3;
-    protected final AWSKMS kms;
+    protected final KMSClient kms;
 
     /**
      * @param cryptoConfig a read-only copy of the crypto configuration.
      */
-    protected S3CryptoModuleBase(AWSKMS kms, S3Direct s3,
+    protected S3CryptoModuleBase(KMSClient kms, S3Direct s3,
                                  AwsCredentialsProvider credentialsProvider,
                                  EncryptionMaterialsProvider kekMaterialsProvider,
                                  CryptoConfiguration cryptoConfig) {
@@ -889,8 +890,6 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
      *
      * @param s3w
      *            an existing S3 object (wrapper)
-     * @param s3objectId
-     *            the object id used to retrieve the existing S3 object
      *
      * @return a non-null content crypto material.
      */

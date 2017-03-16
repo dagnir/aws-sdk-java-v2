@@ -33,8 +33,8 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.kms.AWSKMS;
-import software.amazon.awssdk.services.kms.AWSKMSClient;
+import software.amazon.awssdk.services.kms.KMSClient;
+import software.amazon.awssdk.services.kms.KMSClientBuilder;
 import software.amazon.awssdk.services.s3.internal.MultiFileOutputStream;
 import software.amazon.awssdk.services.s3.internal.PartCreationEvent;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
@@ -83,7 +83,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     public static final String USER_AGENT = AmazonS3EncryptionClient.class.getName()
                                             + "/" + VersionInfoUtils.getVersion();
     private final S3CryptoModule<?> crypto;
-    private final AWSKMS kms;
+    private final KMSClient kms;
     /**
      * True if the a default KMS client is constructed, which will be shut down
      * when this instance of S3 encryption client is shutdown.  False otherwise,
@@ -491,10 +491,10 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)} and
      *                 {@link AmazonS3EncryptionClientBuilder#withClientConfiguration(LegacyClientConfiguration)} and
      *                 {@link AmazonS3EncryptionClientBuilder#withMetricsCollector(RequestMetricCollector)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withKmsClient(AWSKMS)}
+     *                 {@link AmazonS3EncryptionClientBuilder#withKmsClient(KMSClient)}
      */
     @Deprecated
-    public AmazonS3EncryptionClient(AWSKMSClient kms,
+    public AmazonS3EncryptionClient(KMSClient kms,
                                     AwsCredentialsProvider credentialsProvider,
                                     EncryptionMaterialsProvider kekMaterialsProvider,
                                     LegacyClientConfiguration clientConfig,
@@ -538,15 +538,18 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      * Creates and returns a new instance of AWS KMS client in the case when
      * an explicit AWS KMS client is not specified.
      */
-    private AWSKMSClient newAwsKmsClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfig,
+    private KMSClient newAwsKmsClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfig,
                                          CryptoConfiguration cryptoConfig, RequestMetricCollector requestMetricCollector) {
-        final AWSKMSClient kmsClient = new AWSKMSClient(
-                credentialsProvider, clientConfig, requestMetricCollector);
+        final KMSClientBuilder builder = KMSClient.builder();
+
+        builder.withCredentials(credentialsProvider)
+                .withClientConfiguration(clientConfig)
+                .withMetricsCollector(requestMetricCollector);
         final Region kmsRegion = cryptoConfig.getAwsKmsRegion();
         if (kmsRegion != null) {
-            kmsClient.setRegion(kmsRegion);
+            builder.withRegion(kmsRegion.getName());
         }
-        return kmsClient;
+        return builder.build();
     }
 
     private void assertParameterNotNull(Object parameterValue,
@@ -675,8 +678,12 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     @Override
     public void shutdown() {
         super.shutdown();
-        if (isKmsClientInternal) {
-            kms.shutdown();
+        if (isKMSClientInternal) {
+            try {
+                kms.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

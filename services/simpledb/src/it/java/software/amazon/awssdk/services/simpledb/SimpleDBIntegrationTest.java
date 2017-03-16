@@ -113,7 +113,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testSimpleDB() throws Exception {
-        gotestExplicitDefaultPorts();
         gotestOverriddenRequestCredentials();
 
         gotestCreateDomain();
@@ -150,7 +149,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
      * Tests that overridden request credentials are correctly used when specified.
      */
     private void gotestOverriddenRequestCredentials() throws Exception {
-        sdb.listDomains();
+        sdb.listDomains(new ListDomainsRequest());
 
         ListDomainsRequest listDomainsRequest = new ListDomainsRequest();
         listDomainsRequest.setRequestCredentials(new BasicAwsCredentials("foo", "bar"));
@@ -163,19 +162,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
     }
 
     /**
-     * When a user specifies an endpoint and includes the default ports, we expect the requests to
-     * still complete successfully. Originally this broke because Apache HttpClient wasn't honoring
-     * our explicit Host header and was omitting the port when it was the default port.
-     */
-    private void gotestExplicitDefaultPorts() {
-        sdb.setEndpoint("http://sdb.amazonaws.com:80");
-        sdb.listDomains();
-
-        sdb.setEndpoint("https://sdb.amazonaws.com:443");
-        sdb.listDomains();
-    }
-
-    /**
      * Tests that empty string values are correct represented as the empty string, and not null.
      */
     private void gotestEmptyStringValues() throws Exception {
@@ -183,10 +169,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         PutAttributesRequest request = new PutAttributesRequest(domainName, "emptyStringTestItem", null)
                 .withAttributes(new ReplaceableAttribute[] {emptyValueAttribute});
         sdb.putAttributes(request);
-
-        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
-        assertTrue(responseMetadata.getBoxUsage() > 0);
-        assertNotNull(responseMetadata.getRequestId());
 
         List<Attribute> attributes = sdb.getAttributes(
                 new GetAttributesRequest(domainName, "emptyStringTestItem").withConsistentRead(Boolean.TRUE))
@@ -225,15 +207,11 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
      */
     private void gotestAsyncClient() throws Exception {
         ListDomainsRequest request = new ListDomainsRequest();
-        Future<?> future = sdbAsync.listDomainsAsync(request);
+        Future<?> future = sdbAsync.listDomains(request);
         assertFalse(future.isDone());
         assertFalse(future.isCancelled());
         ListDomainsResult listDomainsResult = (ListDomainsResult) future.get();
         assertTrue(listDomainsResult.getDomainNames().contains(domainName));
-
-        SimpleDbResponseMetadata responseMetadata = sdbAsync.getCachedResponseMetadata(request);
-        assertTrue(responseMetadata.getBoxUsage() > 0);
-        assertNotNull(responseMetadata.getRequestId());
     }
 
     /**
@@ -243,7 +221,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         DomainMetadataRequest request = new DomainMetadataRequest();
         request.setDomainName("FakeDomainThatDoesntExist");
 
-        Future<?> future = sdbAsync.domainMetadataAsync(request);
+        Future<?> future = sdbAsync.domainMetadata(request);
         try {
             future.get();
             fail("Expected NoSuchDomainException, but wasn't thrown");
@@ -283,7 +261,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
      * domain we previously created in this test.
      */
     private void gotestListDomains() {
-        ListDomainsResult listDomainsResult = sdb.listDomains();
+        ListDomainsResult listDomainsResult = sdb.listDomains(new ListDomainsRequest());
         List<String> domainNames = listDomainsResult.getDomainNames();
         assertTrue(domainNames.contains(domainName));
     }
@@ -298,10 +276,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setItemName(FOO_ITEM.getName());
         request.setAttributes(FOO_ITEM.getAttributes());
         sdb.putAttributes(request);
-
-        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
-        assertTrue(responseMetadata.getBoxUsage() > 0);
-        assertNotNull(responseMetadata.getRequestId());
 
         assertItemsStoredInDomain(sdb, newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), domainName);
     }
@@ -336,10 +310,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setItems(ITEM_LIST);
         sdb.batchPutAttributes(request);
 
-        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
-        assertTrue(responseMetadata.getBoxUsage() > 0);
-        assertNotNull(responseMetadata.getRequestId());
-
         assertItemsStoredInDomain(sdb, ITEM_LIST, domainName);
     }
 
@@ -354,10 +324,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         assertNull(selectResult.getNextToken());
         assertItemsPresent(ITEM_LIST, selectResult.getItems());
         assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), selectResult.getItems());
-
-        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
-        assertTrue(responseMetadata.getBoxUsage() > 0);
-        assertNotNull(responseMetadata.getRequestId());
 
         // Try again with the consistent read parameter enabled...
         sdb.select(request.withConsistentRead(Boolean.TRUE));
@@ -375,10 +341,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         DomainMetadataRequest request = new DomainMetadataRequest();
         request.setDomainName(domainName);
         DomainMetadataResult domainMetadataResult = sdb.domainMetadata(request);
-
-        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
-        assertTrue(responseMetadata.getBoxUsage() > 0);
-        assertNotNull(responseMetadata.getRequestId());
 
         int expectedItemCount = 0;
         int expectedAttributeValueCount = 0;
@@ -410,9 +372,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
                                                  ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()});
 
         GetAttributesResult getAttributesResult = sdb.getAttributes(request);
-        SimpleDbResponseMetadata responseMetadata = sdb.getCachedResponseMetadata(request);
-        assertTrue(responseMetadata.getBoxUsage() > 0);
-        assertNotNull(responseMetadata.getRequestId());
 
         List<Attribute> attributes = getAttributesResult.getAttributes();
         Map<String, String> attributeValuesByName = convertAttributesToMap(attributes);

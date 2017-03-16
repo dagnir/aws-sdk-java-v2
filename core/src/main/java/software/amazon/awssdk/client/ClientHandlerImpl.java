@@ -17,7 +17,9 @@ package software.amazon.awssdk.client;
 
 import java.net.URI;
 import java.util.List;
+
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.Response;
@@ -78,7 +80,7 @@ public class ClientHandlerImpl extends ClientHandler {
         AwsRequestMetrics awsRequestMetrics = executionContext.getAwsRequestMetrics();
         awsRequestMetrics.startEvent(AwsRequestMetrics.Field.ClientExecuteTime);
         Request<InputT> request = null;
-        Response<OutputT> response = null;
+        Response<AmazonWebServiceResponse<OutputT>> response = null;
 
         try {
             awsRequestMetrics.startEvent(AwsRequestMetrics.Field.RequestMarshallTime);
@@ -95,7 +97,9 @@ public class ClientHandlerImpl extends ClientHandler {
                               executionParams.getResponseHandler(),
                               executionParams.getErrorResponseHandler());
 
-            return response.getAwsResponse();
+            AmazonWebServiceResponse result = response.getAwsResponse();
+
+            return (OutputT) result.getResult();
 
         } finally {
 

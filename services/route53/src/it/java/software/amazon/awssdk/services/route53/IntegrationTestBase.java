@@ -26,7 +26,7 @@ import software.amazon.awssdk.test.AwsTestBase;
 public abstract class IntegrationTestBase extends AwsTestBase {
 
     /** Shared client for all tests to use. */
-    protected static AmazonRoute53Client route53;
+    protected static Route53Client route53;
 
 
     /**
@@ -36,8 +36,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @Before
     public void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        route53 = new AmazonRoute53Client(credentials);
-        route53.setEndpoint("https://route53.amazonaws.com");
+        route53 = Route53Client.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
 }

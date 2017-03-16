@@ -168,7 +168,9 @@ public class AwsClientBuilderTest {
     @Test
     public void endpointAndSigningRegionCanBeUsedInPlaceOfSetRegion() {
         AmazonConcreteClient client = new ConcreteSyncBuilder()
-                .withEndpointConfiguration(new EndpointConfiguration("https://mockprefix.ap-southeast-2.amazonaws.com", "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration(
+                        "https://mockprefix.ap-southeast-2.amazonaws.com",
+                        "us-east-1"))
                 .build();
         assertEquals("us-east-1", client.getSignerRegionOverride());
         assertEquals(URI.create("https://mockprefix.ap-southeast-2.amazonaws.com"), client.getEndpoint());
@@ -177,7 +179,9 @@ public class AwsClientBuilderTest {
     @Test(expected = IllegalStateException.class)
     public void cannotSetBothEndpointConfigurationAndRegionOnBuilder() {
         new ConcreteSyncBuilder()
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:3030", "us-west-2"))
+                .withEndpointConfiguration(new EndpointConfiguration(
+                        "http://localhost:3030",
+                        "us-west-2"))
                 .withRegion("us-east-1")
                 .build();
     }
@@ -291,6 +295,11 @@ public class AwsClientBuilderTest {
         protected AmazonConcreteClient build(AwsAsyncClientParams asyncClientParams) {
             return new AmazonConcreteClient(asyncClientParams);
         }
+
+        @Override
+        public String getServiceName() {
+            return "mockprefix";
+        }
     }
 
     private static class ConcreteSyncBuilder extends
@@ -302,6 +311,11 @@ public class AwsClientBuilderTest {
         @Override
         protected AmazonConcreteClient build(AwsSyncClientParams asyncClientParams) {
             return new AmazonConcreteClient(asyncClientParams);
+        }
+
+        @Override
+        public String getServiceName() {
+            return "mockprefix";
         }
     }
 

@@ -25,19 +25,19 @@ import org.hamcrest.TypeSafeMatcher;
 
 public class CollectionContainsOnlyInOrder<T> extends TypeSafeMatcher<Collection<T>> {
 
-    private final List<Matcher<? super T>> matchers;
+    private final List<Matcher<? extends T>> matchers;
 
-    private CollectionContainsOnlyInOrder(List<Matcher<? super T>> matchers) {
+    private CollectionContainsOnlyInOrder(List<Matcher<? extends T>> matchers) {
         this.matchers = matchers;
     }
 
-    static <T> TypeSafeMatcher<Collection<T>> containsOnlyInOrder(List<Matcher<? super T>> matchers) {
+    static <T> TypeSafeMatcher<Collection<T>> containsOnlyInOrder(List<Matcher<? extends T>> matchers) {
         return new CollectionContainsOnlyInOrder<T>(matchers);
     }
 
     @Override
     protected boolean matchesSafely(Collection<T> actualItems) {
-        final Queue<Matcher<? super T>> copyOfMatchers = new LinkedList<>(matchers);
+        final Queue<Matcher<? extends T>> copyOfMatchers = new LinkedList<>(matchers);
         for (T item : actualItems) {
             if (copyOfMatchers.isEmpty() || !copyOfMatchers.remove().matches(item)) {
                 return false;

@@ -28,8 +28,8 @@ import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.services.lambda.AWSLambda;
-import software.amazon.awssdk.services.lambda.AWSLambdaAsyncClientBuilder;
+import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
+import software.amazon.awssdk.services.lambda.LambdaAsyncClientBuilder;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResult;
@@ -84,7 +84,7 @@ public final class LambdaInvokerFactory {
      * @deprecated Use {@link LambdaInvokerFactory#builder()} to configure invoker factory.
      */
     @Deprecated
-    public static <T> T build(Class<T> interfaceClass, AWSLambda awsLambda) {
+    public static <T> T build(Class<T> interfaceClass, LambdaAsyncClient awsLambda) {
         return build(interfaceClass, awsLambda, new LambdaInvokerFactoryConfig());
     }
 
@@ -97,7 +97,7 @@ public final class LambdaInvokerFactory {
      * @deprecated Use {@link LambdaInvokerFactory#builder()} to configure invoker factory.
      */
     @Deprecated
-    public static <T> T build(Class<T> interfaceClass, AWSLambda awsLambda, LambdaInvokerFactoryConfig config) {
+    public static <T> T build(Class<T> interfaceClass, LambdaAsyncClient awsLambda, LambdaInvokerFactoryConfig config) {
         final Object proxy = Proxy.newProxyInstance(interfaceClass.getClassLoader(),
                                                     new Class<?>[] {interfaceClass},
                                                     new LambdaInvocationHandler(interfaceClass, awsLambda, config));
@@ -118,7 +118,7 @@ public final class LambdaInvokerFactory {
         private LambdaFunctionNameResolver functionNameResolver;
         private String functionAlias;
         private String functionVersion;
-        private AWSLambda lambda;
+        private LambdaAsyncClient lambda;
 
         /**
          * Sets a new Function name resolver to override the default behavior.
@@ -161,18 +161,18 @@ public final class LambdaInvokerFactory {
 
         /**
          * Sets the client to use to call AWS Lambda. If not set a default client is used (see {@link
-         * AWSLambdaAsyncClientBuilder#defaultClient()}).
+         * LambdaAsyncClientBuilder#defaultClient()}).
          *
          * @param lambda Client instance to use.
          * @return This current object for method chaining.
          */
-        public Builder lambdaClient(AWSLambda lambda) {
+        public Builder lambdaClient(LambdaAsyncClient lambda) {
             this.lambda = lambda;
             return this;
         }
 
-        private AWSLambda resolveLambdaClient() {
-            return lambda == null ? AWSLambdaAsyncClientBuilder.defaultClient() : lambda;
+        private LambdaAsyncClient resolveLambdaClient() {
+            return lambda == null ? LambdaAsyncClientBuilder.defaultClient() : lambda;
         }
 
         /**
@@ -193,11 +193,11 @@ public final class LambdaInvokerFactory {
 
     private static class LambdaInvocationHandler implements InvocationHandler {
 
-        private final AWSLambda awsLambda;
+        private final LambdaAsyncClient awsLambda;
         private final Log log;
         private final LambdaInvokerFactoryConfig config;
 
-        public LambdaInvocationHandler(Class<?> interfaceClass, AWSLambda awsLambda, LambdaInvokerFactoryConfig config) {
+        public LambdaInvocationHandler(Class<?> interfaceClass, LambdaAsyncClient awsLambda, LambdaInvokerFactoryConfig config) {
             this.awsLambda = awsLambda;
             this.log = LogFactory.getLog(interfaceClass);
             this.config = config;
@@ -211,7 +211,7 @@ public final class LambdaInvokerFactory {
 
             LambdaFunction annotation = validateInterfaceMethod(method, args);
             InvokeRequest invokeRequest = buildInvokeRequest(method, annotation, args == null ? null : args[0]);
-            InvokeResult invokeResult = awsLambda.invoke(invokeRequest);
+            InvokeResult invokeResult = awsLambda.invoke(invokeRequest).get();
             return processInvokeResult(method, invokeResult);
         }
 

@@ -29,12 +29,12 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 public class ECRIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String REPO_NAME = "java-sdk-test-repo-" + System.currentTimeMillis();
-    private static AmazonECR ecr;
+    private static ECRClient ecr;
 
     @BeforeClass
     public static void setUpClient() throws Exception {
         setUpCredentials();
-        ecr = new AmazonECRClient(getCredentials());
+        ecr = ECRClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass

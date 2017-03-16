@@ -15,28 +15,25 @@
 
 package software.amazon.awssdk.services.glacier.transfer;
 
-import software.amazon.awssdk.services.glacier.AmazonGlacier;
-import software.amazon.awssdk.services.glacier.AmazonGlacierClientBuilder;
-import software.amazon.awssdk.services.sns.AmazonSNS;
-import software.amazon.awssdk.services.sns.AmazonSNSClientBuilder;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
-import software.amazon.awssdk.services.sqs.AmazonSQSClientBuilder;
+import software.amazon.awssdk.services.glacier.GlacierClient;
+import software.amazon.awssdk.services.sns.SNSClient;
+import software.amazon.awssdk.services.sqs.SQSClient;
 
 /**
  * Fluent builder for {@link ArchiveTransferManager}. Use of the builder is preferred over
  * constructors for {@link ArchiveTransferManager}.
  */
 public final class ArchiveTransferManagerBuilder {
-    private AmazonGlacier glacierClient;
+    private GlacierClient glacierClient;
 
-    private AmazonSQS sqsClient;
+    private SQSClient sqsClient;
 
-    private AmazonSNS snsClient;
+    private SNSClient snsClient;
 
     /**
      * @return The client used for uploading and downloading data to and from Amazon Glacier.
      */
-    public AmazonGlacier getGlacierClient() {
+    public GlacierClient getGlacierClient() {
         return glacierClient;
     }
 
@@ -45,7 +42,7 @@ public final class ArchiveTransferManagerBuilder {
      *
      * @param glacierClient The Amazon Glacier client.
      */
-    public void setGlacierClient(AmazonGlacier glacierClient) {
+    public void setGlacierClient(GlacierClient glacierClient) {
         this.glacierClient = glacierClient;
     }
 
@@ -56,7 +53,7 @@ public final class ArchiveTransferManagerBuilder {
      *
      * @return This object for chaining.
      */
-    public ArchiveTransferManagerBuilder withGlacierClient(AmazonGlacier glacierClient) {
+    public ArchiveTransferManagerBuilder withGlacierClient(GlacierClient glacierClient) {
         setGlacierClient(glacierClient);
         return this;
     }
@@ -65,7 +62,7 @@ public final class ArchiveTransferManagerBuilder {
      * @return The client for working with Amazon SQS when polling for the archive retrieval job
      *     status.
      */
-    public AmazonSQS getSqsClient() {
+    public SQSClient getSqsClient() {
         return sqsClient;
     }
 
@@ -74,7 +71,7 @@ public final class ArchiveTransferManagerBuilder {
      *
      * @param sqsClient The SQS client.
      */
-    public void setSqsClient(AmazonSQS sqsClient) {
+    public void setSqsClient(SQSClient sqsClient) {
         this.sqsClient = sqsClient;
     }
 
@@ -86,7 +83,7 @@ public final class ArchiveTransferManagerBuilder {
      *
      * @return This object for chaining.
      */
-    public ArchiveTransferManagerBuilder withSqsClient(AmazonSQS sqsClient) {
+    public ArchiveTransferManagerBuilder withSqsClient(SQSClient sqsClient) {
         setSqsClient(sqsClient);
         return this;
     }
@@ -95,7 +92,7 @@ public final class ArchiveTransferManagerBuilder {
      * @return The client for working with Amazon SNS when polling for the archive retrieval job
      *     status.
      */
-    public AmazonSNS getSnsClient() {
+    public SNSClient getSnsClient() {
         return snsClient;
     }
 
@@ -104,7 +101,7 @@ public final class ArchiveTransferManagerBuilder {
      *
      * @param snsClient The SNS client.
      */
-    public void setSnsClient(AmazonSNS snsClient) {
+    public void setSnsClient(SNSClient snsClient) {
         this.snsClient = snsClient;
     }
 
@@ -115,21 +112,21 @@ public final class ArchiveTransferManagerBuilder {
      *
      * @return This object for chaining.
      */
-    public ArchiveTransferManagerBuilder withSnsClient(AmazonSNS snsClient) {
+    public ArchiveTransferManagerBuilder withSnsClient(SNSClient snsClient) {
         setSnsClient(snsClient);
         return this;
     }
 
-    private AmazonGlacier resolveGlacierClient() {
-        return glacierClient == null ? AmazonGlacierClientBuilder.defaultClient() : glacierClient;
+    private GlacierClient resolveGlacierClient() {
+        return glacierClient == null ? GlacierClient.create() : glacierClient;
     }
 
-    private AmazonSNS resolveSnsClient() {
-        return snsClient == null ? AmazonSNSClientBuilder.defaultClient() : snsClient;
+    private SNSClient resolveSNSClient() {
+        return snsClient == null ? SNSClient.create() : snsClient;
     }
 
-    private AmazonSQS resolveSqsClient() {
-        return sqsClient == null ? AmazonSQSClientBuilder.defaultClient() : sqsClient;
+    private SQSClient resolveSQSClient() {
+        return sqsClient == null ? SQSClient.create() : sqsClient;
     }
 
     private ArchiveTransferManagerParams getParams() {

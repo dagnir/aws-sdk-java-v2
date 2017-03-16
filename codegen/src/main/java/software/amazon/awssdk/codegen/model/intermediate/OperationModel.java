@@ -125,7 +125,7 @@ public class OperationModel extends DocumentationModel {
     }
 
     private String getDocumentation(final MethodType methodType, final Metadata md) {
-        StringBuilder docBuilder = new StringBuilder("/**");
+        StringBuilder docBuilder = new StringBuilder();
 
         if (documentation != null) {
             docBuilder.append(documentation);
@@ -180,8 +180,7 @@ public class OperationModel extends DocumentationModel {
             docBuilder.append(LINE_SEPARATOR).append(crosslink);
         }
 
-        docBuilder.append("*/");
-        return docBuilder.toString();
+        return docBuilder.toString().replace("$", "&#36;");
     }
 
     private String getSampleTagForMethodType(final MethodType methodType, final Metadata md) {
@@ -244,7 +243,7 @@ public class OperationModel extends DocumentationModel {
     }
 
     public String getAsyncFutureType() {
-        return "java.util.concurrent.Future<" + getAsyncReturnType() + ">";
+        return "CompletableFuture<" + getAsyncReturnType() + ">";
     }
 
     public String getAsyncCallableType() {

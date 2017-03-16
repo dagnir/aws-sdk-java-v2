@@ -40,11 +40,11 @@ public class AccountIdDefaultValueTest {
     @Rule
     public WireMockRule mockServer = new WireMockRule(0);
 
-    private AmazonGlacier glacier;
+    private GlacierClient glacier;
 
     @Before
     public void setup() {
-        glacier = AmazonGlacierClientBuilder.standard()
+        glacier = GlacierClient.builder()
                 .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(getEndpoint(), "us-west-2"))
                 .build();

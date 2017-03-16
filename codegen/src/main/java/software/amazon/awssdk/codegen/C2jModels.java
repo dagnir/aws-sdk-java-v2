@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.codegen;
 
-import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.ServiceExamples;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
@@ -29,15 +28,13 @@ public class C2jModels {
     private final ServiceModel serviceModel;
     private final Waiters waitersModel;
     private final ServiceExamples examplesModel;
-    private final BasicCodeGenConfig codeGenConfig;
     private final CustomizationConfig customizationConfig;
 
     private C2jModels(ServiceModel serviceModel, Waiters waitersModel, ServiceExamples examplesModel,
-                      BasicCodeGenConfig codeGenConfig, CustomizationConfig customizationConfig) {
+                      CustomizationConfig customizationConfig) {
         this.serviceModel = serviceModel;
         this.waitersModel = waitersModel;
         this.examplesModel = examplesModel;
-        this.codeGenConfig = codeGenConfig;
         this.customizationConfig = customizationConfig;
     }
 
@@ -57,10 +54,6 @@ public class C2jModels {
         return examplesModel;
     }
 
-    public BasicCodeGenConfig codeGenConfig() {
-        return codeGenConfig;
-    }
-
     public CustomizationConfig customizationConfig() {
         return customizationConfig;
     }
@@ -70,7 +63,6 @@ public class C2jModels {
         private ServiceModel serviceModel;
         private Waiters waitersModel;
         private ServiceExamples examplesModel;
-        private BasicCodeGenConfig codeGenConfig;
         private CustomizationConfig customizationConfig;
 
         private Builder() {
@@ -91,11 +83,6 @@ public class C2jModels {
             return this;
         }
 
-        public Builder codeGenConfig(BasicCodeGenConfig codeGenConfig) {
-            this.codeGenConfig = codeGenConfig;
-            return this;
-        }
-
         public Builder customizationConfig(CustomizationConfig customizationConfig) {
             this.customizationConfig = customizationConfig;
             return this;
@@ -104,7 +91,7 @@ public class C2jModels {
         public C2jModels build() {
             final Waiters waiters = waitersModel != null ? waitersModel : Waiters.NONE;
             final ServiceExamples examples = examplesModel != null ? examplesModel : ServiceExamples.NONE;
-            return new C2jModels(serviceModel, waiters, examples, codeGenConfig, customizationConfig);
+            return new C2jModels(serviceModel, waiters, examples, customizationConfig);
         }
     }
 }

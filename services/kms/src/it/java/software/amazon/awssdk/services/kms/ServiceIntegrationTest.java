@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.kms.model.GetKeyPolicyRequest;
 import software.amazon.awssdk.services.kms.model.GetKeyPolicyResult;
 import software.amazon.awssdk.services.kms.model.KeyMetadata;
 import software.amazon.awssdk.services.kms.model.KeyUsageType;
+import software.amazon.awssdk.services.kms.model.ListKeysRequest;
 import software.amazon.awssdk.services.kms.model.ListKeysResult;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
@@ -63,7 +64,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         kms.disableKey(new DisableKeyRequest().withKeyId(keyId));
 
         // ListKeys
-        ListKeysResult listKeysResult = kms.listKeys();
+        ListKeysResult listKeysResult = kms.listKeys(new ListKeysRequest());
         Assert.assertFalse(listKeysResult.getKeys().isEmpty());
 
         // CreateAlias

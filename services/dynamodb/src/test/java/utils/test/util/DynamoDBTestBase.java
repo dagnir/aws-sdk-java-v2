@@ -26,19 +26,19 @@ import java.util.Map;
 import java.util.Set;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
-import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
+import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
+import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import software.amazon.awssdk.test.AwsTestBase;
 
 public class DynamoDBTestBase extends AwsTestBase {
 
     protected static final String ENDPOINT = "http://dynamodb.us-east-1.amazonaws.com/";
 
-    protected static AmazonDynamoDBClient dynamo;
+    protected static DynamoDBClient dynamo;
 
     public static void setUpTestBase() {
         try {
@@ -47,11 +47,10 @@ public class DynamoDBTestBase extends AwsTestBase {
             throw new AmazonClientException("Unable to load credential property file.", e);
         }
 
-        dynamo = new AmazonDynamoDBClient(credentials);
-        dynamo.setEndpoint(ENDPOINT);
+        dynamo = DynamoDBClient.builder().withRegion(Regions.US_EAST_1).withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
-    public static AmazonDynamoDB getClient() {
+    public static DynamoDBClient getClient() {
         if (dynamo == null) {
             setUpTestBase();
         }
@@ -62,7 +61,7 @@ public class DynamoDBTestBase extends AwsTestBase {
         waitForTableToBecomeDeleted(dynamo, tableName);
     }
 
-    public static void waitForTableToBecomeDeleted(AmazonDynamoDB dynamo, String tableName) {
+    public static void waitForTableToBecomeDeleted(DynamoDBClient dynamo, String tableName) {
         System.out.println("Waiting for " + tableName + " to become Deleted...");
 
         long startTime = System.currentTimeMillis();

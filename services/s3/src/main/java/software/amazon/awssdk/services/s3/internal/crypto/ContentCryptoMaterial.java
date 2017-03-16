@@ -38,7 +38,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.DecryptRequest;
 import software.amazon.awssdk.services.kms.model.DecryptResult;
 import software.amazon.awssdk.services.kms.model.EncryptRequest;
@@ -111,8 +112,8 @@ final class ContentCryptoMaterial {
      */
     private static SecretKey cek(byte[] cekSecured, String keyWrapAlgo,
                                  EncryptionMaterials materials, Provider securityProvider,
-                                 ContentCryptoScheme contentCryptoScheme, AWSKMS kms) {
-        if (isKmsKeyWrapped(keyWrapAlgo)) {
+                                 ContentCryptoScheme contentCryptoScheme, KMSClient kms) {
+        if (isKMSKeyWrapped(keyWrapAlgo)) {
             return cekByKms(cekSecured, keyWrapAlgo, materials, contentCryptoScheme, kms);
         }
         Key kek;
@@ -164,7 +165,7 @@ final class ContentCryptoMaterial {
      */
     private static SecretKey cekByKms(byte[] cekSecured, String keyWrapAlgo,
                                       EncryptionMaterials materials,
-                                      ContentCryptoScheme contentCryptoScheme, AWSKMS kms) {
+                                      ContentCryptoScheme contentCryptoScheme, KMSClient kms) {
         DecryptRequest kmsreq = new DecryptRequest()
                 .withEncryptionContext(materials.getMaterialsDescription())
                 .withCiphertextBlob(ByteBuffer.wrap(cekSecured));
@@ -181,7 +182,7 @@ final class ContentCryptoMaterial {
             EncryptionMaterialsAccessor kekMaterialAccessor,
             Provider securityProvider,
             boolean keyWrapExpected,
-            AWSKMS kms) {
+            KMSClient kms) {
         return fromObjectMetadata0(metadata, kekMaterialAccessor,
                                    securityProvider, null, NONE, keyWrapExpected, kms);
     }
@@ -200,7 +201,7 @@ final class ContentCryptoMaterial {
             long[] range,
             ExtraMaterialsDescription extra,
             boolean keyWrapExpected,
-            AWSKMS kms) {
+            KMSClient kms) {
         return fromObjectMetadata0(metadata, kekMaterialAccessor,
                                    securityProvider, range, extra, keyWrapExpected, kms);
     }
@@ -215,7 +216,7 @@ final class ContentCryptoMaterial {
             long[] range,
             ExtraMaterialsDescription extra,
             boolean keyWrapExpected,
-            AWSKMS kms) {
+            KMSClient kms) {
         // CEK and IV
         Map<String, String> userMeta = metadata.getUserMetadata();
         String b64key = userMeta.get(Headers.CRYPTO_KEY_V2);
@@ -300,7 +301,7 @@ final class ContentCryptoMaterial {
             EncryptionMaterialsAccessor kekMaterialAccessor,
             Provider securityProvider,
             boolean keyWrapExpected,
-            AWSKMS kms) {
+            KMSClient kms) {
         return fromInstructionFile0(instFile, kekMaterialAccessor,
                                     securityProvider, null, NONE, keyWrapExpected, kms);
     }
@@ -319,7 +320,7 @@ final class ContentCryptoMaterial {
             long[] range,
             ExtraMaterialsDescription extra,
             boolean keyWrapExpected,
-            AWSKMS kms) {
+            KMSClient kms) {
         return fromInstructionFile0(instFile, kekMaterialAccessor,
                                     securityProvider, range, extra, keyWrapExpected, kms);
     }
@@ -334,7 +335,7 @@ final class ContentCryptoMaterial {
             long[] range,
             ExtraMaterialsDescription extra,
             boolean keyWrapExpected,
-            AWSKMS kms) {
+            KMSClient kms) {
         // CEK and IV
         String b64key = instFile.get(Headers.CRYPTO_KEY_V2);
         if (b64key == null) {
@@ -468,7 +469,7 @@ final class ContentCryptoMaterial {
                                         EncryptionMaterials kekMaterials,
                                         ContentCryptoScheme contentCryptoScheme,
                                         S3CryptoScheme targetScheme,
-                                        Provider provider, AWSKMS kms,
+                                        Provider provider, KMSClient kms,
                                         AmazonWebServiceRequest req) {
         return doCreate(cek, iv, kekMaterials, contentCryptoScheme,
                         targetScheme, provider, kms, req);
@@ -494,7 +495,7 @@ final class ContentCryptoMaterial {
     static ContentCryptoMaterial create(SecretKey cek, byte[] iv,
                                         EncryptionMaterials kekMaterials,
                                         S3CryptoScheme scheme,
-                                        Provider provider, AWSKMS kms,
+                                        Provider provider, KMSClient kms,
                                         AmazonWebServiceRequest req) {
         return doCreate(cek, iv, kekMaterials, scheme.getContentCryptoScheme(),
                         scheme, provider, kms, req);
@@ -532,7 +533,7 @@ final class ContentCryptoMaterial {
                                                   ContentCryptoScheme contentCryptoScheme,
                                                   S3CryptoScheme targetS3CryptoScheme,
                                                   Provider provider,
-                                                  AWSKMS kms,
+                                                  KMSClient kms,
                                                   AmazonWebServiceRequest req) {
         // Secure the envelope symmetric key either by encryption, key wrapping
         // or KMS.
@@ -567,13 +568,13 @@ final class ContentCryptoMaterial {
      * @param cek content encrypting key to be secured
      * @param materials used to provide the key-encryption-key (KEK); or if
      *     it is KMS-enabled, the customer master key id and material description.
-     * @param contentCryptoScheme the content crypto scheme
+     * @param kwScheme the content crypto scheme
      * @param p optional security provider; can be null if the default is used.
      * @return a secured CEK in the form of ciphertext or ciphertext blob.
      */
     private static SecuredCek secureCek(SecretKey cek,
                                         EncryptionMaterials materials, S3KeyWrapScheme kwScheme,
-                                        SecureRandom srand, Provider p, AWSKMS kms,
+                                        SecureRandom srand, Provider p, KMSClient kms,
                                         AmazonWebServiceRequest req) {
         final Map<String, String> matdesc;
 
@@ -836,8 +837,8 @@ final class ContentCryptoMaterial {
      */
     ContentCryptoMaterial recreate(Map<String, String> newKekMatDesc,
                                    EncryptionMaterialsAccessor accessor, S3CryptoScheme targetScheme,
-                                   Provider p, AWSKMS kms, AmazonWebServiceRequest req) {
-        if (!usesKmsKey() && newKekMatDesc.equals(kekMaterialsDescription)) {
+                                   Provider p, KMSClient kms, AmazonWebServiceRequest req) {
+        if (!usesKmsKey() && newKEKMatDesc.equals(kekMaterialsDescription)) {
             throw new SecurityException(
                     "Material description of the new KEK must differ from the current one");
         }
@@ -892,7 +893,7 @@ final class ContentCryptoMaterial {
      */
     ContentCryptoMaterial recreate(EncryptionMaterials newKek,
                                    EncryptionMaterialsAccessor accessor, S3CryptoScheme targetScheme,
-                                   Provider p, AWSKMS kms, AmazonWebServiceRequest req) {
+                                   Provider p, KMSClient kms, AmazonWebServiceRequest req) {
         if (!usesKmsKey()
             && newKek.getMaterialsDescription().equals(kekMaterialsDescription)) {
             throw new SecurityException(

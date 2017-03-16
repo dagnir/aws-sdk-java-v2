@@ -38,6 +38,11 @@ public final class ${metadata.syncClientBuilderClassName}
         super(CLIENT_CONFIG_FACTORY);
     }
 
+    @Override
+    public final String getServiceName() {
+        return ${metadata.syncInterface}.ENDPOINT_PREFIX;
+    }
+
     /**
      * Construct a synchronous implementation of ${metadata.syncInterface} using the current builder configuration.
      *

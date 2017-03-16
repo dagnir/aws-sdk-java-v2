@@ -16,19 +16,21 @@
 package utils.test.util;
 
 import org.junit.BeforeClass;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
-import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
-import software.amazon.awssdk.services.dynamodbv2.model.LocalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.Projection;
-import software.amazon.awssdk.services.dynamodbv2.model.ProjectionType;
-import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
-import software.amazon.awssdk.services.dynamodbv2.util.TableUtils;
+import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.LocalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.Projection;
+import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.util.TableUtils;
 
 public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
 
@@ -41,8 +43,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        dynamo = new AmazonDynamoDBClient(credentials);
-        dynamo.setEndpoint(ENDPOINT);
+        dynamo = DynamoDBClient.builder().withRegion(Regions.US_EAST_1).withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         // Create a table
         String keyName = KEY_NAME;
@@ -65,7 +66,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
      * reserved for the region.
      */
     public static void deleteAllTables() {
-        ListTablesResult listTables = dynamo.listTables();
+        ListTablesResult listTables = dynamo.listTables(new ListTablesRequest());
         for (String name : listTables.getTableNames()) {
             dynamo.deleteTable(new DeleteTableRequest().withTableName(name));
         }

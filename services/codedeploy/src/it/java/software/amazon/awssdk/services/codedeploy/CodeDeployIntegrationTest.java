@@ -34,6 +34,7 @@ import software.amazon.awssdk.services.codedeploy.model.CreateDeploymentGroupReq
 import software.amazon.awssdk.services.codedeploy.model.DeleteApplicationRequest;
 import software.amazon.awssdk.services.codedeploy.model.GetApplicationRequest;
 import software.amazon.awssdk.services.codedeploy.model.GetApplicationResult;
+import software.amazon.awssdk.services.codedeploy.model.ListApplicationsRequest;
 import software.amazon.awssdk.services.codedeploy.model.ListApplicationsResult;
 
 /**
@@ -80,7 +81,6 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
             codeDeploy.deleteApplication(new DeleteApplicationRequest()
                                                  .withApplicationName(APP_NAME));
         }
-        IntegrationTestBase.tearDown();
     }
 
     /**
@@ -89,7 +89,7 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testListApplication() {
-        ListApplicationsResult listResult = codeDeploy.listApplications();
+        ListApplicationsResult listResult = codeDeploy.listApplications(new ListApplicationsRequest());
         List<String> applicationList = listResult.getApplications();
         assertTrue(applicationList.size() >= 1);
         assertTrue(applicationList.contains(APP_NAME));

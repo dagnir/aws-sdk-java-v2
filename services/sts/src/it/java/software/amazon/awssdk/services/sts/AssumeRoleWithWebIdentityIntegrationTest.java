@@ -24,9 +24,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityRequest;
-import software.amazon.awssdk.services.securitytoken.model.AssumeRoleWithWebIdentityResult;
-import software.amazon.awssdk.services.securitytoken.model.InvalidIdentityTokenException;
+import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityRequest;
+import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityResult;
+import software.amazon.awssdk.services.sts.model.InvalidIdentityTokenException;
 
 
 public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBase {

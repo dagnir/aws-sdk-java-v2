@@ -15,12 +15,6 @@
 
 package software.amazon.awssdk.services.cloudformation;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-
-import java.util.Collections;
-import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +27,13 @@ import software.amazon.awssdk.services.cloudformation.model.Tag;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.waiters.WaiterParameters;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 /**
  * See https://github.com/aws/aws-sdk-java/issues/721. Cloudformation treats empty lists as removing
@@ -60,13 +61,13 @@ public class SendEmptyListIntegrationTest extends AwsIntegrationTestBase {
             "   }" +
             "}";
 
-    private AmazonCloudFormation cf;
+    private CloudFormationClient cf;
     private String stackName;
 
     @Before
     public void setup() {
         stackName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
-        cf = AmazonCloudFormationAsyncClientBuilder.standard()
+        cf = CloudFormationClient.builder().standard()
                                                    .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                                                    .withRegion(Regions.US_WEST_2)
                                                    .build();

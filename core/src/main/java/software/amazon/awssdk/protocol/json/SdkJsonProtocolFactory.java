@@ -27,6 +27,7 @@ import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.protocol.OperationInfo;
 import software.amazon.awssdk.protocol.Protocol;
 import software.amazon.awssdk.protocol.ProtocolRequestMarshaller;
+import software.amazon.awssdk.runtime.http.response.JsonResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
@@ -81,7 +82,7 @@ public class SdkJsonProtocolFactory {
      *
      * @param operationMetadata Additional context information about an operation to create the appropriate response handler.
      */
-    public <T> HttpResponseHandler<AmazonWebServiceResponse<T>> createResponseHandler(
+    public <T> JsonResponseHandler<T> createResponseHandler(
             JsonOperationMetadata operationMetadata,
             Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller) {
         return getSdkFactory().createResponseHandler(operationMetadata, responseUnmarshaller);

@@ -17,16 +17,23 @@ package software.amazon.awssdk.codegen.poet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
-import static software.amazon.awssdk.codegen.poet.Utils.buildJavaFile;
+import static software.amazon.awssdk.codegen.poet.PoetUtils.buildJavaFile;
 
 import java.io.IOException;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.ComparisonFailure;
-import software.amazon.awssdk.util.IoUtils;
+
+import software.amazon.awssdk.codegen.emitters.ContentProcessor;
+import software.amazon.awssdk.codegen.emitters.JavaCodeFormatter;
+import software.amazon.awssdk.codegen.emitters.UnusedImportRemover;
+import software.amazon.awssdk.util.IOUtils;
 
 public final class PoetMatchers {
+
+    private static final ContentProcessor processor = ContentProcessor.chain(new UnusedImportRemover(), new JavaCodeFormatter());
 
     public static Matcher<ClassSpec> generatesTo(String expectedTestFile) {
         return new TypeSafeMatcher<ClassSpec>() {
@@ -66,6 +73,6 @@ public final class PoetMatchers {
         } catch (IOException e) {
             throw new RuntimeException("Failed to generate class", e);
         }
-        return output.toString();
+        return processor.apply(output.toString());
     }
 }

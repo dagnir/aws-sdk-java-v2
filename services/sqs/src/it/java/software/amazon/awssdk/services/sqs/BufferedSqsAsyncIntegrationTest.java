@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.buffered.AmazonSqsBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -61,12 +61,12 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
     private static final int NUM_MESSAGES = 50;
     private static final int NUM_OF_CONSUMERS = 5;
 
-    private AmazonSqsBufferedAsyncClient buffSqs;
+    private SQSBufferedAsyncClient buffSqs;
     private String queueUrl;
 
     @Before
     public void setup() {
-        buffSqs = new AmazonSqsBufferedAsyncClient(createSqsAyncClient(),
+        buffSqs = new SQSBufferedAsyncClient(createSqsAyncClient(),
                                                    new QueueBufferConfig().withLongPollWaitTimeoutSeconds(60));
         queueUrl = createQueue(buffSqs);
     }

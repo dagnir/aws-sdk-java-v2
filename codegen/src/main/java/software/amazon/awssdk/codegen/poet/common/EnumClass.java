@@ -16,18 +16,20 @@
 package software.amazon.awssdk.codegen.poet.common;
 
 import static java.util.Collections.singletonList;
+import static software.amazon.awssdk.codegen.poet.PoetUtils.addDeprecated;
+import static software.amazon.awssdk.codegen.poet.PoetUtils.addJavadoc;
+import static software.amazon.awssdk.codegen.poet.PoetUtils.createEnumBuilder;
+import static software.amazon.awssdk.codegen.poet.PoetUtils.toStringBuilder;
 import static software.amazon.awssdk.codegen.poet.StaticImport.staticMethodImport;
-import static software.amazon.awssdk.codegen.poet.Utils.addDeprecated;
-import static software.amazon.awssdk.codegen.poet.Utils.addJavadoc;
-import static software.amazon.awssdk.codegen.poet.Utils.createEnumBuilder;
-import static software.amazon.awssdk.codegen.poet.Utils.toStringBuilder;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
+
 import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
+
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.StaticImport;

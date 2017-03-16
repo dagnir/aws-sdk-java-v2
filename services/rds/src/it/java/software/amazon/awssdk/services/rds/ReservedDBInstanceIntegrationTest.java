@@ -19,7 +19,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import software.amazon.awssdk.services.rds.model.DescribeReservedDBInstancesOfferingsRequest;
 import software.amazon.awssdk.services.rds.model.DescribeReservedDBInstancesOfferingsResult;
+import software.amazon.awssdk.services.rds.model.DescribeReservedDBInstancesRequest;
 import software.amazon.awssdk.services.rds.model.DescribeReservedDBInstancesResult;
 import software.amazon.awssdk.services.rds.model.ReservedDBInstance;
 import software.amazon.awssdk.services.rds.model.ReservedDBInstancesOffering;
@@ -32,7 +34,8 @@ public class ReservedDBInstanceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testDescribeReservedInstanceOfferings() throws Exception {
-        DescribeReservedDBInstancesOfferingsResult result = rds.describeReservedDBInstancesOfferings();
+        DescribeReservedDBInstancesOfferingsResult result =
+                rds.describeReservedDBInstancesOfferings(new DescribeReservedDBInstancesOfferingsRequest());
         assertNotNull(result);
         assertNotNull(result.getReservedDBInstancesOfferings());
         assertTrue(result.getReservedDBInstancesOfferings().size() > 0);
@@ -52,7 +55,7 @@ public class ReservedDBInstanceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testDescribeReservedInstances() throws Exception {
-        DescribeReservedDBInstancesResult result = rds.describeReservedDBInstances();
+        DescribeReservedDBInstancesResult result = rds.describeReservedDBInstances(new DescribeReservedDBInstancesRequest());
         assertNotNull(result);
         assertNotNull(result.getReservedDBInstances());
 

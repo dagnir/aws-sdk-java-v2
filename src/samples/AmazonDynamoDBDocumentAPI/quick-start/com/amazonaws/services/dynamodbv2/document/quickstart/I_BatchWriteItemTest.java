@@ -12,20 +12,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
+package software.amazon.awssdk.services.dynamodb.document.quickstart;
 
 import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.document.BatchWriteItemOutcome;
-import software.amazon.awssdk.services.dynamodbv2.document.Item;
-import software.amazon.awssdk.services.dynamodbv2.document.ItemCollection;
-import software.amazon.awssdk.services.dynamodbv2.document.RangeKeyCondition;
-import software.amazon.awssdk.services.dynamodbv2.document.TableWriteItems;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
-import software.amazon.awssdk.services.dynamodbv2.model.WriteRequest;
+import software.amazon.awssdk.services.dynamodb.document.BatchWriteItemOutcome;
+import software.amazon.awssdk.services.dynamodb.document.Item;
+import software.amazon.awssdk.services.dynamodb.document.ItemCollection;
+import software.amazon.awssdk.services.dynamodb.document.RangeKeyCondition;
+import software.amazon.awssdk.services.dynamodb.document.TableWriteItems;
+import software.amazon.awssdk.services.dynamodb.document.utils.AbstractQuickStart;
+import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 /**
  * Sample code to perform batch write item to DynamoDB.

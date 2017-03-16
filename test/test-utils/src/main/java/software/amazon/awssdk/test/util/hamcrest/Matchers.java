@@ -31,7 +31,7 @@ public class Matchers {
      * For example:
      * <pre>assertThat(Arrays.asList("foo", "bar"), containsOnlyInOrder(startsWith("f"), endsWith("ar")))</pre>
      */
-    public static <T> Matcher<Collection<T>> containsOnlyInOrder(Matcher<? super T>... matchers) {
+    public static <T> Matcher<Collection<T>> containsOnlyInOrder(Matcher<? extends T>... matchers) {
         return CollectionContainsOnlyInOrder.containsOnlyInOrder(Arrays.asList(matchers));
     }
 
@@ -53,7 +53,7 @@ public class Matchers {
      * For example:
      * <pre>assertThat(Arrays.asList("bar", "foo"), containsOnly(startsWith("f"), endsWith("ar")))</pre>
      */
-    public static <T> Matcher<Collection<T>> containsOnly(Matcher<? super T>... matchers) {
+    public static <T> Matcher<Collection<T>> containsOnly(Matcher<? extends T>... matchers) {
         return CollectionContainsOnly.containsOnly(Arrays.asList(matchers));
     }
 
@@ -68,8 +68,8 @@ public class Matchers {
         return CollectionContainsOnly.containsOnly(convertToMatchers(Arrays.asList(items)));
     }
 
-    private static <T> List<Matcher<? super T>> convertToMatchers(List<T> items) {
-        List<Matcher<? super T>> matchers = new ArrayList<>();
+    private static <T> List<Matcher<? extends T>> convertToMatchers(List<T> items) {
+        List<Matcher<? extends T>> matchers = new ArrayList<>();
         for (T item : items) {
             matchers.add(CoreMatchers.equalTo(item));
         }

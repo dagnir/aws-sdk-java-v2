@@ -71,10 +71,10 @@ public class MarshallerGeneratorTasks extends BaseGeneratorTasks {
             return Stream.of(
                     createMarshallerTask(javaShapeName,
                                          freemarker.getRequestMarshallerTemplate(),
-                                         javaShapeName + "ProtocolMarshaller"),
+                                         javaShapeName + "Marshaller"),
                     createMarshallerTask(javaShapeName,
                                          freemarker.getModelMarshallerTemplate(),
-                                         javaShapeName + "Marshaller"));
+                                         javaShapeName + "ModelMarshaller"));
         } else {
             return Stream.of(
                     createMarshallerTask(javaShapeName,

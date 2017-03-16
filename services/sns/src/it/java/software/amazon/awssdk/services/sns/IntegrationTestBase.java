@@ -27,10 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.sns.model.Subscription;
 import software.amazon.awssdk.services.sns.model.Topic;
-import software.amazon.awssdk.services.sqs.AmazonSQSClient;
+import software.amazon.awssdk.services.sqs.SQSClient;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
@@ -41,8 +42,8 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
  */
 public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
-    protected static AmazonSNSClient sns;
-    protected static AmazonSQSClient sqs;
+    protected static SNSClient sns;
+    protected static SQSClient sqs;
 
     /**
      * Loads the AWS account info for the integration tests and creates SNS and SQS clients for
@@ -50,10 +51,15 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
-        sns = new AmazonSNSClient(getCredentials());
-        sns.configureRegion(Regions.US_WEST_2);
-        sqs = new AmazonSQSClient(getCredentials());
-        sqs.configureRegion(Regions.US_WEST_2);
+        sns = SNSClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .withRegion(Regions.US_WEST_2)
+                .build();
+
+        sqs = SQSClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .withRegion(Regions.US_WEST_2)
+                .build();
     }
 
     /**

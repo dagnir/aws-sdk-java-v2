@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
@@ -415,8 +416,9 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     public void testClockSkew() {
         SDKGlobalTime.setGlobalTimeOffset(3600);
         // Need to create a new client to have the time offset take affect
-        AmazonCloudFormationClient clockSkewClient = new AmazonCloudFormationClient(credentials);
-        clockSkewClient.describeStacks();
+        CloudFormationClient clockSkewClient = CloudFormationClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        clockSkewClient.describeStacks(new DescribeStacksRequest());
         assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

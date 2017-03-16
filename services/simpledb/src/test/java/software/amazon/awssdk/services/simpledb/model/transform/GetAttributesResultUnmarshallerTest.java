@@ -35,7 +35,7 @@ public class GetAttributesResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("GetAttributesResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        GetAttributesResult result = (GetAttributesResult) new GetAttributesResultStaxUnmarshaller()
+        GetAttributesResult result = new GetAttributesResultUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
         assertTrue(!result.getAttributes().isEmpty());

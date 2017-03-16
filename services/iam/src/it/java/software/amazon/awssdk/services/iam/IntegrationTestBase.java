@@ -18,8 +18,7 @@ package software.amazon.awssdk.services.iam;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Before;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagement;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -32,7 +31,7 @@ import software.amazon.awssdk.test.AwsTestBase;
 public class IntegrationTestBase extends AwsTestBase {
 
     /** The IAM client for all tests to use. */
-    protected AmazonIdentityManagement iam;
+    protected IAMClient iam;
 
     /**
      * Loads the AWS account info for the integration tests and creates an
@@ -41,7 +40,7 @@ public class IntegrationTestBase extends AwsTestBase {
     @Before
     public void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        iam = new AmazonIdentityManagementClient(credentials);
+        iam = IAMClientBuilder.standard().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
 }

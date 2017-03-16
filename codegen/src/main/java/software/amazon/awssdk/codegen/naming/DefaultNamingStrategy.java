@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.awssdk.codegen.internal.Utils;
-import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.service.Output;
@@ -74,14 +73,12 @@ public class DefaultNamingStrategy implements NamingStrategy {
     };
 
     private final ServiceModel serviceModel;
-    private final BasicCodeGenConfig codeGenConfig;
     private final CustomizationConfig customizationConfig;
 
-    public DefaultNamingStrategy(ServiceModel serviceModel, BasicCodeGenConfig codeGenConfig,
+    public DefaultNamingStrategy(ServiceModel serviceModel,
                                  CustomizationConfig customizationConfig) {
         this.serviceModel = serviceModel;
         this.customizationConfig = customizationConfig;
-        this.codeGenConfig = codeGenConfig;
     }
 
     private static boolean isJavaKeyword(String word) {

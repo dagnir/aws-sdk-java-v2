@@ -15,15 +15,18 @@
 
 package software.amazon.awssdk.services.cloudformation;
 
-import java.io.File;
-import java.util.Iterator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Action;
+import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.test.AwsTestBase;
+
+import java.io.File;
+import java.util.Iterator;
 
 /**
  * Base class for CloudFormation integration tests. Loads AWS credentials from a properties file and
@@ -31,7 +34,7 @@ import software.amazon.awssdk.test.AwsTestBase;
  */
 public class CloudFormationIntegrationTestBase extends AwsTestBase {
 
-    protected static AmazonCloudFormation cf;
+    protected static CloudFormationClient cf;
     protected static String bucketName = "cloudformation-templates" + System.currentTimeMillis();
     protected static String template1 = "sampleTemplate";
     protected static String templateForCloudFormationIntegrationTests = "templateForCloudFormationIntegrationTests";
@@ -49,8 +52,10 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        cf = new AmazonCloudFormationClient(credentials);
-        cf.setEndpoint("https://cloudformation.ap-northeast-1.amazonaws.com");
+        cf = CloudFormationClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .withRegion(Regions.AP_NORTHEAST_1)
+                .build();
         s3 = new AmazonS3Client(credentials);
         s3.createBucket(bucketName);
         s3.putObject(bucketName, templateForCloudFormationIntegrationTests, new File("tst/" +

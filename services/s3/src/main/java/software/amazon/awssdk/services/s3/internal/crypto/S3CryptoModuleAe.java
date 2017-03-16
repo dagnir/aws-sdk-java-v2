@@ -34,7 +34,7 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.CryptoMode;
@@ -62,7 +62,7 @@ class S3CryptoModuleAe extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
     /**
      * @param cryptoConfig a read-only copy of the crypto configuration.
      */
-    S3CryptoModuleAe(AWSKMS kms, S3Direct s3,
+    S3CryptoModuleAE(KMSClient kms, S3Direct s3,
                      AwsCredentialsProvider credentialsProvider,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
@@ -88,7 +88,7 @@ class S3CryptoModuleAe extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
     /**
      * Used for testing purposes only.
      */
-    S3CryptoModuleAe(AWSKMS kms, S3Direct s3,
+    S3CryptoModuleAE(KMSClient kms, S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
         this(kms, s3, new DefaultAwsCredentialsProviderChain(),

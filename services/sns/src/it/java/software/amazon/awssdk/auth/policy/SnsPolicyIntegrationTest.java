@@ -46,7 +46,7 @@ public class SnsPolicyIntegrationTest extends IntegrationTestBase {
         topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
 
         Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withActions(SNSActions.Subscribe)
-                                                                               .withPrincipals(Principal.AllUsers).withResources(new Resource(topicArn))
+                                                                               .withPrincipals(Principal.ALL_USERS).withResources(new Resource(topicArn))
                                                                                .withConditions(SNSConditionFactory.newEndpointCondition("*@amazon.com"),
                                                                                                SNSConditionFactory.newProtocolCondition("email")));
         sns.setTopicAttributes(new SetTopicAttributesRequest(topicArn, "Policy", policy.toJson()));

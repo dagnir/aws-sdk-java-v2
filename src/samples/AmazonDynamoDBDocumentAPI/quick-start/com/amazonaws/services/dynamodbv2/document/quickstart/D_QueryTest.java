@@ -12,21 +12,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
+package software.amazon.awssdk.services.dynamodb.document.quickstart;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.document.Item;
-import software.amazon.awssdk.services.dynamodbv2.document.ItemCollection;
-import software.amazon.awssdk.services.dynamodbv2.document.LowLevelResultListener;
-import software.amazon.awssdk.services.dynamodbv2.document.QueryFilter;
-import software.amazon.awssdk.services.dynamodbv2.document.QueryOutcome;
-import software.amazon.awssdk.services.dynamodbv2.document.RangeKeyCondition;
-import software.amazon.awssdk.services.dynamodbv2.document.Table;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.NameMap;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.ValueMap;
+import software.amazon.awssdk.services.dynamodb.document.Item;
+import software.amazon.awssdk.services.dynamodb.document.ItemCollection;
+import software.amazon.awssdk.services.dynamodb.document.LowLevelResultListener;
+import software.amazon.awssdk.services.dynamodb.document.QueryFilter;
+import software.amazon.awssdk.services.dynamodb.document.QueryOutcome;
+import software.amazon.awssdk.services.dynamodb.document.RangeKeyCondition;
+import software.amazon.awssdk.services.dynamodb.document.Table;
+import software.amazon.awssdk.services.dynamodb.document.utils.AbstractQuickStart;
+import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
+import software.amazon.awssdk.services.dynamodb.document.utils.ValueMap;
 
 /**
  * Sample code to query items from DynamoDB table.

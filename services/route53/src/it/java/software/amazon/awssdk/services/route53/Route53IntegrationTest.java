@@ -116,9 +116,6 @@ public class Route53IntegrationTest extends IntegrationTestBase {
         GetHostedZoneResult getHostedZoneResult = route53.getHostedZone(getHostedZoneRequest);
         assertValidDelegationSet(getHostedZoneResult.getDelegationSet());
         assertValidCreatedHostedZone(getHostedZoneResult.getHostedZone());
-        ResponseMetadata metadata = route53.getCachedResponseMetadata(getHostedZoneRequest);
-        assertNotNull(metadata);
-        assertNotNull(metadata.getRequestId());
 
         // Create a health check
         HealthCheckConfig config = new HealthCheckConfig().withType("TCP").withPort(PORT_NUM).withIPAddress(IP_ADDRESS);
@@ -272,9 +269,9 @@ public class Route53IntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkew() throws AmazonServiceException {
-        SdkGlobalTime.setGlobalTimeOffset(3600);
-        AmazonRoute53Client clockSkewClient = new AmazonRoute53Client(credentials);
-        clockSkewClient.listHostedZones();
-        assertTrue("Clockskew is fixed!", SdkGlobalTime.getGlobalTimeOffset() < 60);
+        SDKGlobalTime.setGlobalTimeOffset(3600);
+        Route53Client clockSkewClient = Route53Client.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        clockSkewClient.listHostedZones(new ListHostedZonesRequest());
+        assertTrue("Clockskew is fixed!", SDKGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

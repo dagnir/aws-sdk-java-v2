@@ -30,7 +30,7 @@ import software.amazon.awssdk.test.AwsTestBase;
  */
 public abstract class IntegrationTestBase extends AwsTestBase {
 
-    protected static AmazonImportExport ie;
+    protected static ImportExportClient ie;
     protected static AmazonS3 s3;
 
     /**
@@ -40,7 +40,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        ie = new AmazonImportExportClient(credentials);
+        ie = ImportExportClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
         s3 = new AmazonS3Client(credentials);
     }
 

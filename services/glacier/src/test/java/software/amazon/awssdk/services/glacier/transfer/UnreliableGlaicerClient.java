@@ -17,11 +17,12 @@ package software.amazon.awssdk.services.glacier.transfer;
 
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.services.glacier.AmazonGlacierClient;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.services.glacier.GlacierClient;
 import software.amazon.awssdk.services.glacier.model.GetJobOutputRequest;
 import software.amazon.awssdk.services.glacier.model.GetJobOutputResult;
+import software.amazon.awssdk.services.glacier.waiters.GlacierClientWaiters;
 import software.amazon.awssdk.test.util.UnreliableRandomInputStream;
 
 /**
@@ -29,7 +30,7 @@ import software.amazon.awssdk.test.util.UnreliableRandomInputStream;
  * bad checksum for the test.
  *
  */
-public class UnreliableGlaicerClient extends AmazonGlacierClient {
+public class UnreliableGlaicerClient implements GlacierClient {
 
     private static int count = 0;
     private static int M = 1024 * 1024;
@@ -37,18 +38,20 @@ public class UnreliableGlaicerClient extends AmazonGlacierClient {
     boolean recoverable = true;
     private boolean reliable = false;
 
+    private final GlacierClient client;
+
     /**
      * Set the an unreliable AWS Glacier java client.
      */
     public UnreliableGlaicerClient(AwsCredentials awsCredentials) {
-        super(awsCredentials, new LegacyClientConfiguration());
+        client = GlacierClient.builder().withCredentials(new AwsStaticCredentialsProvider(awsCredentials)).build();
     }
 
     /**
      * Set the an unreliable AWS Glacier java client, and denote it whether is recoverable or not.
      */
     public UnreliableGlaicerClient(AwsCredentials awsCredentials, boolean recoverable) {
-        super(awsCredentials, new LegacyClientConfiguration());
+        client = GlacierClient.builder().withCredentials(new AwsStaticCredentialsProvider(awsCredentials)).build();
         this.recoverable = recoverable;
     }
 
@@ -64,10 +67,9 @@ public class UnreliableGlaicerClient extends AmazonGlacierClient {
      *  Override the getJobOutput method in AWS Glacier Java Client to have the
      *  ability to trigger IO exception and bad checksum.
      */
-    @Override
     public GetJobOutputResult getJobOutput(GetJobOutputRequest getJobOutputRequest)
             throws AmazonServiceException, AmazonClientException {
-        GetJobOutputResult result = super.getJobOutput(getJobOutputRequest);
+        GetJobOutputResult result = client.getJobOutput(getJobOutputRequest);
         if (reliable == true) {
             return result;
         }
@@ -101,5 +103,15 @@ public class UnreliableGlaicerClient extends AmazonGlacierClient {
         }
 
         return result;
+    }
+
+    @Override
+    public GlacierClientWaiters waiters() {
+        return null;
+    }
+
+    @Override
+    public void close() throws Exception {
+        client.close();
     }
 }

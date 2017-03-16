@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.sqs;
 
 import org.junit.Test;
-import software.amazon.awssdk.services.securitytoken.auth.StsSessionCredentialsProvider;
+import software.amazon.awssdk.services.sts.auth.StsSessionCredentialsProvider;
 
 /**
  * Smoke test of using session-based auth to connect to SQS

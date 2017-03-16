@@ -70,8 +70,8 @@
             <version>3.4</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
             <scope>test</scope>
         </dependency>
         <dependency>

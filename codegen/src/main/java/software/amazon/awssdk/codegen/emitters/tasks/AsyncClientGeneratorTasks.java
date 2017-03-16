@@ -18,9 +18,13 @@ package software.amazon.awssdk.codegen.emitters.tasks;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.emitters.PoetGeneratorTask;
+import software.amazon.awssdk.codegen.poet.ClassSpec;
+import software.amazon.awssdk.codegen.poet.client.AsyncClientInterface;
 
 public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {
 
@@ -35,7 +39,6 @@ public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting Async client classes");
         return Arrays.asList(createClientClassTask(),
-                             createClientAbstractClassTask(),
                              createClientBuilderTask(),
                              createClientInterfaceTask());
     }
@@ -48,14 +51,6 @@ public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {
                 model);
     }
 
-    private GeneratorTask createClientAbstractClassTask() throws IOException {
-        return new FreemarkerGeneratorTask(
-                baseDirectory,
-                model.getMetadata().getAsyncAbstractClass(),
-                freemarker.getAsyncAbstractClassTemplate(),
-                model);
-    }
-
     private GeneratorTask createClientBuilderTask() throws IOException {
         return new FreemarkerGeneratorTask(
                 baseDirectory,
@@ -65,10 +60,8 @@ public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {
     }
 
     private GeneratorTask createClientInterfaceTask() throws IOException {
-        return new FreemarkerGeneratorTask(
-                baseDirectory,
-                model.getMetadata().getAsyncInterface(),
-                freemarker.getAsyncInterfaceTemplate(),
-                model);
+        ClassSpec syncClientClass = new AsyncClientInterface(model);
+
+        return new PoetGeneratorTask(baseDirectory, model.getFileHeader(), syncClientClass);
     }
 }

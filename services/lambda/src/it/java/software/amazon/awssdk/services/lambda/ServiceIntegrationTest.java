@@ -46,6 +46,7 @@ import software.amazon.awssdk.services.lambda.model.InvokeAsyncRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeAsyncResult;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResult;
+import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResult;
 import software.amazon.awssdk.services.lambda.model.LogType;
 import software.amazon.awssdk.services.lambda.model.Runtime;
@@ -176,7 +177,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         checkValid_GetFunctionConfigurationResult(getConfig);
 
         // List functions
-        ListFunctionsResult listFunc = lambda.listFunctions();
+        ListFunctionsResult listFunc = lambda.listFunctions(new ListFunctionsRequest());
         Assert.assertFalse(listFunc.getFunctions().isEmpty());
         for (FunctionConfiguration funcConfig : listFunc.getFunctions()) {
             checkValid_FunctionConfiguration(funcConfig);

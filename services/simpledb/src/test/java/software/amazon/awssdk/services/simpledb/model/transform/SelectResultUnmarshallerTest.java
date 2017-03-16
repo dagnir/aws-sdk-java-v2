@@ -35,7 +35,7 @@ public class SelectResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("SelectResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        SelectResult result = (SelectResult) new SelectResultStaxUnmarshaller().unmarshall(unmarshallerContext);
+        SelectResult result = new SelectResultUnmarshaller().unmarshall(unmarshallerContext);
 
         assertTrue(!result.getItems().isEmpty());
         assertTrue(result.getItems().size() == 2);

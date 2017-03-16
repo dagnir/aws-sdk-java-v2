@@ -24,9 +24,11 @@ public class Constants {
 
     public static final String CUSTOMIZATION_CONFIG_FILE = "customization.config";
 
-    public static final String ASYNC_SUFFIX = "Async";
+    public static final String ASYNC_SUFFIX = "AsyncClient";
 
-    public static final String CLIENT_NAME_SUFFIX = "Client";
+    public static final String INTERFACE_NAME_SUFFIX = "Client";
+
+    public static final String CLIENT_NAME_PREFIX = "Default";
 
     public static final String PROTOCOL_CONFIG_LOCATION = "/protocol-config/%s.json";
 

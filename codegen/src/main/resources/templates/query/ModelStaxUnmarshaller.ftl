@@ -21,7 +21,7 @@ import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.*;
  */
 
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
-public class ${shape.shapeName}StaxUnmarshaller implements Unmarshaller<${shape.shapeName}, StaxUnmarshallerContext> {
+public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shapeName}, StaxUnmarshallerContext> {
 
 <#if shape.members?has_content>
 <#list shape.members as memberModel>
@@ -61,7 +61,7 @@ public class ${shape.shapeName}StaxUnmarshaller implements Unmarshaller<${shape.
             <#if memberModel.variable.simpleType == "Date">
                 software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
             <#else>
-                ${memberModel.variable.simpleType}StaxUnmarshaller.getInstance().unmarshall(context));
+                ${memberModel.variable.simpleType}Unmarshaller.getInstance().unmarshall(context));
             </#if>
 
         </#if>
@@ -88,7 +88,7 @@ public class ${shape.shapeName}StaxUnmarshaller implements Unmarshaller<${shape.
     <#assign artificialWrapper = shape.customization.artificialResultWrapper />
     <#-- If it's a result wrapper created by the customization, then we skip xpath test and directly invoke the unmarshaller for the wrapped member -->
                 ${shape.variable.variableName}.set${artificialWrapper.wrappedMemberName}(
-                    ${artificialWrapper.wrappedMemberSimpleType}StaxUnmarshaller.getInstance().unmarshall(context)
+                    ${artificialWrapper.wrappedMemberSimpleType}Unmarshaller.getInstance().unmarshall(context)
                     );
                 continue;
   <#else>
@@ -107,9 +107,9 @@ public class ${shape.shapeName}StaxUnmarshaller implements Unmarshaller<${shape.
         }
     }
 
-    private static ${shape.shapeName}StaxUnmarshaller INSTANCE;
-    public static ${shape.shapeName}StaxUnmarshaller getInstance() {
-        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}StaxUnmarshaller();
+    private static ${shape.shapeName}Unmarshaller INSTANCE;
+    public static ${shape.shapeName}Unmarshaller getInstance() {
+        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}Unmarshaller();
         return INSTANCE;
     }
 }

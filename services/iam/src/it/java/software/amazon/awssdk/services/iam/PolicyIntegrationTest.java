@@ -23,22 +23,22 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.CreateGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteGroupPolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteUserPolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetGroupPolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetGroupPolicyResult;
-import software.amazon.awssdk.services.identitymanagement.model.GetUserPolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetUserPolicyResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListGroupPoliciesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListGroupPoliciesResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListUserPoliciesResult;
-import software.amazon.awssdk.services.identitymanagement.model.MalformedPolicyDocumentException;
-import software.amazon.awssdk.services.identitymanagement.model.NoSuchEntityException;
-import software.amazon.awssdk.services.identitymanagement.model.PutGroupPolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.PutUserPolicyRequest;
+import software.amazon.awssdk.services.iam.model.CreateGroupRequest;
+import software.amazon.awssdk.services.iam.model.DeleteGroupPolicyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
+import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
+import software.amazon.awssdk.services.iam.model.GetGroupPolicyRequest;
+import software.amazon.awssdk.services.iam.model.GetGroupPolicyResult;
+import software.amazon.awssdk.services.iam.model.GetUserPolicyRequest;
+import software.amazon.awssdk.services.iam.model.GetUserPolicyResult;
+import software.amazon.awssdk.services.iam.model.ListGroupPoliciesRequest;
+import software.amazon.awssdk.services.iam.model.ListGroupPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.MalformedPolicyDocumentException;
+import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
+import software.amazon.awssdk.services.iam.model.PutGroupPolicyRequest;
+import software.amazon.awssdk.services.iam.model.PutUserPolicyRequest;
 
 /**
  * Integration tests of the policy APIs of IAM.

@@ -21,6 +21,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 
+import com.amazonaws.services.shorea.ApiGatewayProtocolClient;
+import com.amazonaws.services.shorea.model.ApiGatewayProtocolClientException;
+import com.amazonaws.services.shorea.model.NoModeledExceptionsRequest;
+import com.amazonaws.services.shorea.model.SameShapeDifferentStatusCodesRequest;
+import com.amazonaws.services.shorea.model.SharedExceptionsAcrossOperationsWithDifferentStatusCodesRequest;
+import com.amazonaws.services.shorea.model.SomeModeledException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,18 +35,12 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.shorea.ApiGatewayProtocol;
-import software.amazon.awssdk.services.shorea.model.ApiGatewayProtocolException;
-import software.amazon.awssdk.services.shorea.model.NoModeledExceptionsRequest;
-import software.amazon.awssdk.services.shorea.model.SameShapeDifferentStatusCodesRequest;
-import software.amazon.awssdk.services.shorea.model.SharedExceptionsAcrossOperationsWithDifferentStatusCodesRequest;
-import software.amazon.awssdk.services.shorea.model.SomeModeledException;
 
 @RunWith(Enclosed.class)
 public class ApiGatewayExceptionTests {
 
-    private static ApiGatewayProtocol buildClient(WireMockRule wireMock) {
-        return ApiGatewayProtocol.builder()
+    private static ApiGatewayProtocolClient buildClient(WireMockRule wireMock) {
+        return ApiGatewayProtocolClient.builder()
                                  .endpoint("http://localhost:" + wireMock.port())
                                  .iamCredentials(
                                          new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
@@ -62,8 +62,8 @@ public class ApiGatewayExceptionTests {
     private static void assertIsBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (ApiGatewayProtocolException e) {
-            assertEquals(ApiGatewayProtocolException.class, e.getClass());
+        } catch (ApiGatewayProtocolClientException e) {
+            assertEquals(ApiGatewayProtocolClientException.class, e.getClass());
         }
     }
 
@@ -78,7 +78,7 @@ public class ApiGatewayExceptionTests {
         @Rule
         public WireMockRule wireMock = new WireMockRule(0);
 
-        private ApiGatewayProtocol client;
+        private ApiGatewayProtocolClient client;
 
         @Before
         public void setup() {
@@ -126,7 +126,7 @@ public class ApiGatewayExceptionTests {
         @Rule
         public WireMockRule wireMock = new WireMockRule(0);
 
-        private ApiGatewayProtocol client;
+        private ApiGatewayProtocolClient client;
 
         @Before
         public void setup() {
@@ -171,7 +171,7 @@ public class ApiGatewayExceptionTests {
         @Rule
         public WireMockRule wireMock = new WireMockRule(0);
 
-        private ApiGatewayProtocol client;
+        private ApiGatewayProtocolClient client;
 
         @Before
         public void setup() {
@@ -215,7 +215,7 @@ public class ApiGatewayExceptionTests {
         @Rule
         public WireMockRule wireMock = new WireMockRule(0);
 
-        private ApiGatewayProtocol client;
+        private ApiGatewayProtocolClient client;
 
         @Before
         public void setup() {

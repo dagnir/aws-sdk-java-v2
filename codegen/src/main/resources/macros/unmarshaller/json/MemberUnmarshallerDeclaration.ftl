@@ -24,6 +24,6 @@
         </#if>
         new MapUnmarshaller<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}>(${keyUnmarshaller}, ${valueUnmarshaller})
     <#else>
-        ${memberModel.variable.simpleType}JsonUnmarshaller.getInstance()
+        ${memberModel.variable.simpleType}Unmarshaller.getInstance()
     </#if>
 </#macro>

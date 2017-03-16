@@ -15,13 +15,13 @@
 
 package utils.resources.tables;
 
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
-import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import utils.test.resources.DynamoDBTableResource;
 import utils.test.util.DynamoDBTestBase;
 
@@ -35,7 +35,7 @@ public class BasicTempTable extends DynamoDBTableResource {
             new ProvisionedThroughput().withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(WRITE_CAPACITY);
 
     @Override
-    protected AmazonDynamoDB getClient() {
+    protected DynamoDBClient getClient() {
         return DynamoDBTestBase.getClient();
     }
 

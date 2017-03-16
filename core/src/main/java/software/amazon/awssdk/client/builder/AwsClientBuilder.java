@@ -15,15 +15,18 @@
 
 package software.amazon.awssdk.client.builder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
+import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -31,21 +34,26 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.Signer;
+import software.amazon.awssdk.auth.SignerFactory;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.AwsRegionProvider;
 import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 
 /**
  * Base class for all service specific client builders.
  *
- * @param <SubclassT> Concrete builder type, used for better fluent methods.
- * @param <TypeToBuildT>  Type that this builder builds.
+ * @param <SubclassT>    Concrete builder type, used for better fluent methods.
+ * @param <TypeToBuildT> Type that this builder builds.
  */
 @NotThreadSafe
 @SdkProtectedApi
@@ -161,7 +169,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      */
     private LegacyClientConfiguration resolveClientConfiguration() {
         return (clientConfig == null) ? clientConfigFactory.getConfig() :
-               new LegacyClientConfiguration(clientConfig);
+                new LegacyClientConfiguration(clientConfig);
     }
 
     /**
@@ -226,7 +234,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
             } else {
                 throw new SdkClientException(
                         "Unable to find a region via the region provider chain. " +
-                        "Must provide an explicit region in the builder or setup environment to supply a region.");
+                                "Must provide an explicit region in the builder or setup environment to supply a region.");
             }
         }
     }
@@ -236,7 +244,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * service endpoint (eg: https://sns.us-west-1.amazonaws.com) and signing region (eg: us-west-1)
      * for requests. If neither region or endpoint configuration {@link #setEndpointConfiguration(EndpointConfiguration)}
      * are explicitly provided in the builder the {@link #DEFAULT_REGION_PROVIDER} is consulted.
-     *
+     * <p>
      * <p> For regions not explicitly in the {@link Regions} enum use the {@link
      * #withRegion(String)} overload.</p>
      *
@@ -286,7 +294,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * Sets the endpoint configuration (service endpoint & signing region) to be used for requests. If neither region
      * {@link #setRegion(String)} or endpoint configuration are explicitly provided in the builder the
      * {@link #DEFAULT_REGION_PROVIDER} is consulted.
-     *
+     * <p>
      * <p><b>Only use this if using a non-standard service endpoint - the recommended approach for configuring a client is to use
      * {@link #setRegion(String)}</b>
      *
@@ -300,7 +308,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * Sets the endpoint configuration (service endpoint & signing region) to be used for requests. If neither region
      * {@link #withRegion(String)} or endpoint configuration are explicitly provided in the builder the
      * {@link #DEFAULT_REGION_PROVIDER} is consulted.
-     *
+     * <p>
      * <p><b>Only use this if using a non-standard service endpoint - the recommended approach for configuring a client is to use
      * {@link #withRegion(String)}</b>
      *
@@ -317,7 +325,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      */
     public final List<RequestHandler2> getRequestHandlers() {
         return this.requestHandlers == null ? null :
-               Collections.unmodifiableList(this.requestHandlers);
+                Collections.unmodifiableList(this.requestHandlers);
     }
 
     /**
@@ -346,22 +354,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      */
     private List<RequestHandler2> resolveRequestHandlers() {
         return (requestHandlers == null) ? new ArrayList<RequestHandler2>() :
-               new ArrayList<RequestHandler2>(requestHandlers);
-    }
-
-    /**
-     * Region and endpoint logic is tightly coupled to the client class right now so it's easier to
-     * set them after client creation and let the normal logic kick in. Ideally this should resolve
-     * the endpoint and signer information here and just pass that information as is to the client.
-     *
-     * @param clientInterface Client to configure
-     */
-    @SdkInternalApi
-    final TypeToBuildT configureMutableProperties(TypeToBuildT clientInterface) {
-        AmazonWebServiceClient client = (AmazonWebServiceClient) clientInterface;
-        setRegion(client);
-        client.makeImmutable();
-        return clientInterface;
+                new ArrayList<RequestHandler2>(requestHandlers);
     }
 
     /**
@@ -370,6 +363,8 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * @return Client instance to make API calls with.
      */
     public abstract TypeToBuildT build();
+
+    public abstract String getServiceName();
 
     /**
      * @return An instance of AwsSyncClientParams that has all params to be used in the sync client constructor.
@@ -407,8 +402,8 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
         /**
          * @param serviceEndpoint the service endpoint either with or without the protocol
-         *     (e.g. https://sns.us-west-1.amazonaws.com or sns.us-west-1.amazonaws.com)
-         * @param signingRegion the region to use for SigV4 signing of requests (e.g. us-west-1)
+         *                        (e.g. https://sns.us-west-1.amazonaws.com or sns.us-west-1.amazonaws.com)
+         * @param signingRegion   the region to use for SigV4 signing of requests (e.g. us-west-1)
          */
         public EndpointConfiguration(String serviceEndpoint, String signingRegion) {
             this.serviceEndpoint = serviceEndpoint;
@@ -460,6 +455,32 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         @Override
         public List<RequestHandler2> getRequestHandlers() {
             return this.requestHandlers;
+        }
+
+        @Override
+        public SignerProvider getSignerProvider() {
+            Region clientRegion = region != null ? region : RegionUtils.getRegion(determineRegionFromRegionProvider());
+
+            Signer signer = SignerFactory.getSigner(getServiceName(), clientRegion.getName());
+
+            return new DefaultSignerProvider(signer);
+        }
+
+        @Override
+        public URI getEndpoint() {
+            if (endpointConfiguration != null) {
+                return URI.create(endpointConfiguration.getServiceEndpoint());
+            }
+
+            Region clientRegion = region;
+
+            if (clientRegion == null) {
+                clientRegion = RegionUtils.getRegion(determineRegionFromRegionProvider());
+            }
+
+            return new DefaultServiceEndpointBuilder(getServiceName(), Protocol.HTTPS.toString())
+                    .withRegion(clientRegion)
+                    .getServiceEndpoint();
         }
 
         @Override

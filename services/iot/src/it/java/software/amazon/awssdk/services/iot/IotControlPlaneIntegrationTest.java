@@ -66,14 +66,13 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
                                              "    }\n" +
                                              "  ]\n" +
                                              "}";
-    private static AWSIotClient client;
+    private static IoTClient client;
     private static String certificateId = null;
 
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        client = new AWSIotClient(credentials);
-        client.configureRegion(Regions.US_WEST_2);
+        client = IoTClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_WEST_2).build();
         THING_ATTRIBUTES.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
     }
 
@@ -85,7 +84,6 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
             if (certificateId != null) {
                 client.deleteCertificate(new DeleteCertificateRequest().withCertificateId(certificateId));
             }
-            client.shutdown();
         }
     }
 

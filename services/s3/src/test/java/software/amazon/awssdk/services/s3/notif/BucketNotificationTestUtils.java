@@ -23,8 +23,8 @@ import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
-import software.amazon.awssdk.auth.policy.actions.SnsActions;
-import software.amazon.awssdk.services.sns.AmazonSNS;
+import software.amazon.awssdk.auth.policy.actions.SNSActions;
+import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesResult;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
@@ -57,7 +57,7 @@ public class BucketNotificationTestUtils {
         return statement;
     }
 
-    private static Policy getSnsPolicy(AmazonSNS sns, String topicArn) {
+    private static Policy getSnsPolicy(SNSClient sns, String topicArn) {
         GetTopicAttributesResult getTopicAttributesResult = sns.getTopicAttributes(new GetTopicAttributesRequest(
                 topicArn));
         String policyString = getTopicAttributesResult.getAttributes().get("Policy");
@@ -67,7 +67,7 @@ public class BucketNotificationTestUtils {
     /**
      * Configure the given SNS topic so that the S3 bucket can send event notifications to it.
      */
-    public static void authorizeS3ToSendToSns(AmazonSNS sns, String topicArn, String bucketName) {
+    public static void authorizeS3ToSendToSns(SNSClient sns, String topicArn, String bucketName) {
         Policy policy = getSnsPolicy(sns, topicArn);
         Statement s3AccessStatement = createAllowS3AccessToResourcePolicyStatement(bucketName, topicArn,
                                                                                    SnsActions.Publish);

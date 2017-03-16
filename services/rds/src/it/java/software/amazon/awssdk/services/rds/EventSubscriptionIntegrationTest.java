@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.rds.model.DescribeEventSubscriptionsReque
 import software.amazon.awssdk.services.rds.model.DescribeEventSubscriptionsResult;
 import software.amazon.awssdk.services.rds.model.EventSubscription;
 import software.amazon.awssdk.services.rds.model.RemoveSourceIdentifierFromSubscriptionRequest;
-import software.amazon.awssdk.services.sns.AmazonSNSClient;
+import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 
@@ -51,7 +51,7 @@ public class EventSubscriptionIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         IntegrationTestBase.setUp();
-        sns = new AmazonSNSClient(getCredentials());
+        sns = SNSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
         String topicName = "java-sns-policy-integ-test-" + System.currentTimeMillis();
         topicArn = sns.createTopic(new CreateTopicRequest().withName(topicName)).getTopicArn();
     }
@@ -83,7 +83,8 @@ public class EventSubscriptionIntegrationTest extends IntegrationTestBase {
         assertValidEventSubscription(eventSubscription, 1);
 
         // Describe the event subscription
-        DescribeEventSubscriptionsResult describeEventSubscriptionsResult = rds.describeEventSubscriptions();
+        DescribeEventSubscriptionsResult describeEventSubscriptionsResult =
+                rds.describeEventSubscriptions(new DescribeEventSubscriptionsRequest());
         assertTrue(describeEventSubscriptionsResult.getEventSubscriptionsList().size() > 0);
 
         describeEventSubscriptionsResult = rds.describeEventSubscriptions(

@@ -29,7 +29,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.services.sqs.buffered.AmazonSqsBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
@@ -44,14 +44,14 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
 
     private AmazonSQSAsyncClient sqsClient;
     private QueueBufferConfig config;
-    private AmazonSqsBufferedAsyncClient buffSqs;
+    private SQSBufferedAsyncClient buffSqs;
     private String queueUrl;
 
     @Before
     public void setup() {
         config = new QueueBufferConfig();
         sqsClient = createSqsAyncClient();
-        buffSqs = new AmazonSqsBufferedAsyncClient(sqsClient, config);
+        buffSqs = new SQSBufferedAsyncClient(sqsClient, config);
         queueUrl = createQueue(sqsClient);
     }
 

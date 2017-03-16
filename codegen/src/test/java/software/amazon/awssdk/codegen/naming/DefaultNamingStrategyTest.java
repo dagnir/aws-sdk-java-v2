@@ -25,14 +25,14 @@ public class DefaultNamingStrategyTest {
 
     @Test
     public void canConvertStringsWithNonAlphasToClassNames() {
-        NamingStrategy sut = new DefaultNamingStrategy(null, null, null);
+        NamingStrategy sut = new DefaultNamingStrategy(null, null);
         String anInvalidClassName = "a phrase-With_other.delimiters";
         assertThat(sut.getJavaClassName(anInvalidClassName), equalTo("APhraseWithOtherDelimiters"));
     }
 
     @Test
     public void canConvertAuthorizerStartingWithNumber() {
-        NamingStrategy sut = new DefaultNamingStrategy(null, null, null);
+        NamingStrategy sut = new DefaultNamingStrategy(null, null);
         String anInvalidClassName = "35-authorizer-implementation";
         assertThat(sut.getAuthorizerClassName(anInvalidClassName), equalTo("I35AuthorizerImplementation"));
     }

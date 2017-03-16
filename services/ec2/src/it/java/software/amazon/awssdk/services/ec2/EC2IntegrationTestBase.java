@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.ec2.model.CreateTagsRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesResult;
@@ -60,9 +61,7 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
     protected static final String KERNEL_ID = "aki-a71cf9ce";
     protected static final String RAMDISK_ID = "ari-a51cf9cc";
     /** Shared EC2 client for all tests to use. */
-    protected static AmazonEC2Client ec2;
-    /** Shared EC2 async client for tests to use. */
-    protected static AmazonEC2AsyncClient ec2Async;
+    protected static EC2Client ec2;
 
     /**
      * Loads the AWS account info for the integration tests and creates an EC2
@@ -71,8 +70,7 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setupClients() throws IOException {
-        ec2 = new AmazonEC2Client(getCredentials());
-        ec2Async = new AmazonEC2AsyncClient(getCredentials());
+        ec2 = EC2Client.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
     }
 
     /**

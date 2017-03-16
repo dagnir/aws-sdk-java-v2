@@ -22,12 +22,14 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.util.concurrent.CompletableFuture;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import software.amazon.awssdk.services.lambda.AWSLambda;
+import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResult;
 
@@ -48,7 +50,7 @@ public class LambdaInvokerFactoryNameResolutionTest {
     private static final String STATIC_FUNCTION_NAME = "StaticFunctionName";
 
     @Mock
-    private AWSLambda lambda;
+    private LambdaAsyncClient lambda;
 
     @Before
     public void setup() {
@@ -64,7 +66,7 @@ public class LambdaInvokerFactoryNameResolutionTest {
         InvokeResult result = new InvokeResult();
         result.setPayload(ByteBuffer.wrap(new byte[] {}));
         result.setStatusCode(200);
-        when(lambda.invoke(any(InvokeRequest.class))).thenReturn(result);
+        when(lambda.invoke(any(InvokeRequest.class))).thenReturn(CompletableFuture.completedFuture(result));
     }
 
     @Test

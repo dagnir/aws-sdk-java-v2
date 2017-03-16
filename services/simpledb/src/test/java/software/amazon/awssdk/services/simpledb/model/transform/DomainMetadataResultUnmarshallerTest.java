@@ -34,7 +34,7 @@ public class DomainMetadataResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("DomainMetadataResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        DomainMetadataResult result = (DomainMetadataResult) new DomainMetadataResultStaxUnmarshaller()
+        DomainMetadataResult result = new DomainMetadataResultUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
         assertTrue(result.getItemCount() == 25);

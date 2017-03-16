@@ -17,16 +17,18 @@ package utils.test.resources;
 
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndexDescription;
-import software.amazon.awssdk.services.dynamodbv2.model.LocalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.LocalSecondaryIndexDescription;
-import software.amazon.awssdk.services.dynamodbv2.model.Projection;
-import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
-import software.amazon.awssdk.services.dynamodbv2.model.TableStatus;
-import software.amazon.awssdk.services.dynamodbv2.util.TableUtils;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexDescription;
+import software.amazon.awssdk.services.dynamodb.model.LocalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.LocalSecondaryIndexDescription;
+import software.amazon.awssdk.services.dynamodb.model.Projection;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
+import software.amazon.awssdk.services.dynamodb.model.TableStatus;
+import software.amazon.awssdk.services.dynamodb.util.TableUtils;
 import software.amazon.awssdk.test.util.UnorderedCollectionComparator;
 import utils.resources.TestResource;
 import utils.test.util.DynamoDBTestBase;
@@ -92,7 +94,7 @@ public abstract class DynamoDBTableResource implements TestResource {
                 fromDescribeTableResult.getNonKeyAttributes());
     }
 
-    protected abstract AmazonDynamoDB getClient();
+    protected abstract DynamoDBClient getClient();
 
     protected abstract CreateTableRequest getCreateTableRequest();
 
@@ -118,7 +120,7 @@ public abstract class DynamoDBTableResource implements TestResource {
     @Override
     public void delete(boolean waitTillFinished) {
         System.out.println("Deleting " + this + "...");
-        getClient().deleteTable(getCreateTableRequest().getTableName());
+        getClient().deleteTable(new DeleteTableRequest(getCreateTableRequest().getTableName()));
 
         if (waitTillFinished) {
             System.out.println("Waiting for " + this + " to become deleted...");
@@ -131,8 +133,8 @@ public abstract class DynamoDBTableResource implements TestResource {
         CreateTableRequest createRequest = getCreateTableRequest();
         TableDescription table = null;
         try {
-            table = getClient().describeTable(
-                    createRequest.getTableName()).getTable();
+            table = getClient().describeTable(new DescribeTableRequest(
+                    createRequest.getTableName())).getTable();
         } catch (AmazonServiceException ase) {
             if (ase.getErrorCode().equalsIgnoreCase("ResourceNotFoundException")) {
                 return ResourceStatus.NOT_EXIST;

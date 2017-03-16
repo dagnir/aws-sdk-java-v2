@@ -31,7 +31,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.buffered.AmazonSqsBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -77,7 +77,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
         config.setMaxInflightOutboundBatches(1000);
         config.setMaxInflightReceiveBatches(100);
         config.setMaxDoneReceiveBatches(100);
-        AmazonSQSAsync buffSqs = new AmazonSqsBufferedAsyncClient(sqsClient, config);
+        AmazonSQSAsync buffSqs = new SQSBufferedAsyncClient(sqsClient, config);
 
         BasicConfigurator.resetConfiguration();
         Logger logger = Logger.getRootLogger();

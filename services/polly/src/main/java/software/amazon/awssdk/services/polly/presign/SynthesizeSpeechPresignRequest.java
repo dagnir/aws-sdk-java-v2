@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.polly.model.TextType;
 import software.amazon.awssdk.services.polly.model.VoiceId;
 
 /**
- * Presigning input for {@link AmazonPollyPresigners#getPresignedSynthesizeSpeechUrl(SynthesizeSpeechPresignRequest)}.
+ * Presigning input for {@link PollyClientPresigners#getPresignedSynthesizeSpeechUrl(SynthesizeSpeechPresignRequest)}.
  */
 public class SynthesizeSpeechPresignRequest implements Serializable {
 
@@ -46,7 +46,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
 
     /**
      * @return Expiration of the presigned request. Default is
-     *     {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
+     *     {@link PollyClientPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      */
     public Date getExpirationDate() {
         return expirationDate;
@@ -54,7 +54,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
 
     /**
      * Sets the expiration of the presigned request. Default is
-     * {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
+     * {@link PollyClientPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      */
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
@@ -62,7 +62,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
 
     /**
      * Sets the expiration of the presigned request. Default is
-     * {@link AmazonPollyPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
+     * {@link PollyClientPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      *
      * @return This object for method chaining.
      */

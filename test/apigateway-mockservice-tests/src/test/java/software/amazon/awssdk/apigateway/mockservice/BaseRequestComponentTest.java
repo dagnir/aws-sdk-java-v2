@@ -30,6 +30,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static software.amazon.awssdk.apigateway.mockservice.WireMockExtensions.anyRequestedFor;
 
+import com.amazonaws.services.apigateway.mockservice.MyServiceClient;
+import com.amazonaws.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
+import com.amazonaws.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.util.concurrent.TimeUnit;
@@ -40,9 +43,6 @@ import org.junit.Test;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.opensdk.SdkRequestConfig;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
 
 /**
  * For this test GETs are stubbed with a dummy successful response and PUTS are stubbed with a
@@ -57,13 +57,13 @@ public class BaseRequestComponentTest {
     @Rule
     public WireMockRule mockServer = new WireMockRule(wireMockConfig().dynamicPort());
 
-    private MyService client;
+    private MyServiceClient client;
 
     @Before
     public void setUp() {
         stubFor(get(URI).willReturn(aResponse()));
         stubFor(put(URI).willReturn(aResponse().withFixedDelay(DELAY_ON_PUTS)));
-        client = MyService.builder().endpoint("http://localhost:" + mockServer.port()).build();
+        client = MyServiceClient.builder().endpoint("http://localhost:" + mockServer.port()).build();
     }
 
     @Test

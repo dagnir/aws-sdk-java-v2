@@ -29,7 +29,6 @@ import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcesso
 import software.amazon.awssdk.codegen.customization.processors.DefaultCustomizationProcessor;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.codegen.internal.Utils;
-import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.AuthorizerModel;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
@@ -54,7 +53,6 @@ import software.amazon.awssdk.util.StringUtils;
 public class IntermediateModelBuilder {
 
     private final CustomizationConfig customConfig;
-    private final BasicCodeGenConfig codeGenConfig;
     private final ServiceModel service;
     private final ServiceExamples examples;
     private final NamingStrategy namingStrategy;
@@ -64,10 +62,9 @@ public class IntermediateModelBuilder {
 
     public IntermediateModelBuilder(C2jModels models) {
         this.customConfig = models.customizationConfig();
-        this.codeGenConfig = models.codeGenConfig();
         this.service = models.serviceModel();
         this.examples = models.examplesModel();
-        this.namingStrategy = new DefaultNamingStrategy(service, codeGenConfig, customConfig);
+        this.namingStrategy = new DefaultNamingStrategy(service, customConfig);
         this.typeUtils = new TypeUtils(namingStrategy);
         this.shapeProcessors = createShapeProcessors();
         this.waiters = models.waitersModel();
@@ -118,7 +115,7 @@ public class IntermediateModelBuilder {
         System.out.println(shapes.size() + " shapes found in total.");
 
         IntermediateModel fullModel = new IntermediateModel(
-                constructMetadata(service, codeGenConfig, customConfig), operations, shapes,
+                constructMetadata(service, customConfig), operations, shapes,
                 customConfig, examples, waiters, authorizers);
 
         customization.postprocess(fullModel);
@@ -215,10 +212,6 @@ public class IntermediateModelBuilder {
 
     public CustomizationConfig getCustomConfig() {
         return customConfig;
-    }
-
-    public BasicCodeGenConfig getCodeGenConfig() {
-        return codeGenConfig;
     }
 
     public ServiceModel getService() {

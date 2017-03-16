@@ -21,6 +21,10 @@ import java.util.List;
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.emitters.PoetGeneratorTask;
+import software.amazon.awssdk.codegen.poet.ClassSpec;
+import software.amazon.awssdk.codegen.poet.client.SyncClientClass;
+import software.amazon.awssdk.codegen.poet.client.SyncClientInterface;
 
 public class SyncClientGeneratorTasks extends BaseGeneratorTasks {
 
@@ -35,25 +39,13 @@ public class SyncClientGeneratorTasks extends BaseGeneratorTasks {
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting Sync client classes");
         return Arrays.asList(createClientClassTask(),
-                             createClientAbstractClassTask(),
                              createClientBuilderTask(),
                              createClientInterfaceTask());
     }
 
     private GeneratorTask createClientClassTask() throws IOException {
-        return new FreemarkerGeneratorTask(
-                baseDirectory,
-                model.getMetadata().getSyncClient(),
-                freemarker.getSyncClientTemplate(),
-                model);
-    }
-
-    private GeneratorTask createClientAbstractClassTask() throws IOException {
-        return new FreemarkerGeneratorTask(
-                baseDirectory,
-                model.getMetadata().getSyncAbstractClass(),
-                freemarker.getSyncAbstractClassTemplate(),
-                model);
+        ClassSpec syncClientClass = new SyncClientClass(model);
+        return new PoetGeneratorTask(baseDirectory, model.getFileHeader(), syncClientClass);
     }
 
     private GeneratorTask createClientBuilderTask() throws IOException {
@@ -65,10 +57,7 @@ public class SyncClientGeneratorTasks extends BaseGeneratorTasks {
     }
 
     private GeneratorTask createClientInterfaceTask() throws IOException {
-        return new FreemarkerGeneratorTask(
-                baseDirectory,
-                model.getMetadata().getSyncInterface(),
-                freemarker.getSyncInterfaceTemplate(),
-                model);
+        ClassSpec syncClientClass = new SyncClientInterface(model);
+        return new PoetGeneratorTask(baseDirectory, model.getFileHeader(), syncClientClass);
     }
 }

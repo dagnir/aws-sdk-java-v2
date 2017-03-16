@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
+import software.amazon.awssdk.services.iam.IAMClient;
+import software.amazon.awssdk.services.iam.model.GetUserRequest;
+import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.test.AwsTestBase;
@@ -45,7 +45,7 @@ public class IntegrationTestBase extends AwsTestBase {
     /** Random number used for naming message attributes. */
     private static final Random random = new Random(System.currentTimeMillis());
     /** The SQS client for all tests to use. */
-    private static AmazonSQSAsyncClient sqs;
+    private static SQSAsyncClient sqs;
     /**
      * Account ID of the AWS Account identified by the credentials provider setup in AWSTestBase.
      * Cached for performance
@@ -59,15 +59,18 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        sqs = new SharedSqsClient(credentials).withRegion(Region.getRegion(Regions.US_EAST_1));
+        sqs = SQSAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
     }
 
-    protected static AmazonSQSAsync getSharedSqsAsyncClient() {
+    protected static SQSAsyncClient getSharedSqsAsyncClient() {
         return sqs;
     }
 
-    public static AmazonSQSAsyncClient createSqsAyncClient() {
-        return new AmazonSQSAsyncClient(credentials).withRegion(Region.getRegion(Regions.US_EAST_1));
+    public static SQSAsyncClient createSqsAyncClient() {
+        return SQSAsyncClientBuilder.standard()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(Regions.US_EAST_1)
+                .build();
     }
 
     protected static MessageAttributeValue createRandomStringAttributeValue() {
@@ -112,8 +115,8 @@ public class IntegrationTestBase extends AwsTestBase {
      *
      * @return The queue url for the created queue
      */
-    protected String createQueue(AmazonSQS sqsClient) {
-        CreateQueueResult res = sqsClient.createQueue(getUniqueQueueName());
+    protected String createQueue(SQSAsyncClient sqsClient) {
+        CreateQueueResult res = sqsClient.createQueue(new CreateQueueRequest(getUniqueQueueName())).join();
         return res.getQueueUrl();
     }
 
@@ -129,8 +132,8 @@ public class IntegrationTestBase extends AwsTestBase {
      */
     protected String getAccountId() {
         if (accountId == null) {
-            AmazonIdentityManagementClient iamClient = new AmazonIdentityManagementClient(credentials);
-            accountId = parseAccountIdFromArn(iamClient.getUser().getUser().getArn());
+            IAMClient iamClient = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+            accountId = parseAccountIdFromArn(iamClient.getUser(new GetUserRequest()).getUser().getArn());
         }
         return accountId;
     }
@@ -151,23 +154,4 @@ public class IntegrationTestBase extends AwsTestBase {
         }
         return arnComponents[4];
     }
-
-    /**
-     * Creating new clients is expensive so we share one across tests when possible. Tests that need
-     * to do something special can create their own clients specifically for their test case. We
-     * subclass SQS client to prevent a test from accidently shutting down the client as that would
-     * cause subsequent tests to fail.
-     */
-    private static class SharedSqsClient extends AmazonSQSAsyncClient {
-        public SharedSqsClient(AwsCredentials credentials) {
-            super(credentials);
-        }
-
-        @Override
-        public void shutdown() {
-            throw new IllegalAccessError("Cannot shut down the shared client. "
-                                         + "If a test requires a client to be shutdown please create a new one specifically for that test");
-        }
-    }
-
 }

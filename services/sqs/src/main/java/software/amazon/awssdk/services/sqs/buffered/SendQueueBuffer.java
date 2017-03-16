@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
+import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequestEntry;
@@ -67,7 +67,7 @@ public class SendQueueBuffer {
     /**
      * The {@code AmazonSQS} client to use for this buffer's operations.
      */
-    private final AmazonSQS sqsClient;
+    private final SQSAsyncClient sqsClient;
     /**
      * The executor service for the batching tasks.
      */
@@ -113,7 +113,7 @@ public class SendQueueBuffer {
      */
     private final Semaphore inflightChangeMessageVisibilityBatches;
 
-    SendQueueBuffer(AmazonSQS sqsClient, Executor executor, QueueBufferConfig paramConfig, String url) {
+    SendQueueBuffer(SQSAsyncClient sqsClient, Executor executor, QueueBufferConfig paramConfig, String url) {
         this.sqsClient = sqsClient;
         this.executor = executor;
         this.config = paramConfig;
@@ -487,7 +487,7 @@ public class SendQueueBuffer {
             }
 
             SendMessageBatchRequest batchRequest = new SendMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, SQSBufferedAsyncClient.USER_AGENT);
 
             List<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>(requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
@@ -498,7 +498,10 @@ public class SendQueueBuffer {
             }
             batchRequest.setEntries(entries);
 
-            SendMessageBatchResult batchResult = sqsClient.sendMessageBatch(batchRequest);
+
+            SendMessageBatchResult batchResult;
+
+            batchResult = sqsClient.sendMessageBatch(batchRequest).join();
 
             for (SendMessageBatchResultEntry entry : batchResult.getSuccessful()) {
                 int index = Integer.parseInt(entry.getId());
@@ -513,7 +516,7 @@ public class SendQueueBuffer {
                     // retry.
                     try {
                         // this will retry internally up to 3 times.
-                        futures.get(index).setSuccess(sqsClient.sendMessage(requests.get(index)));
+                        futures.get(index).setSuccess(sqsClient.sendMessage(requests.get(index)).join());
                     } catch (AmazonClientException ace) {
                         futures.get(index).setFailure(ace);
                     }
@@ -535,7 +538,7 @@ public class SendQueueBuffer {
             }
 
             DeleteMessageBatchRequest batchRequest = new DeleteMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, SQSBufferedAsyncClient.USER_AGENT);
 
             List<DeleteMessageBatchRequestEntry> entries = new ArrayList<DeleteMessageBatchRequestEntry>(
                     requests.size());
@@ -545,7 +548,7 @@ public class SendQueueBuffer {
             }
             batchRequest.setEntries(entries);
 
-            DeleteMessageBatchResult batchResult = sqsClient.deleteMessageBatch(batchRequest);
+            DeleteMessageBatchResult batchResult = sqsClient.deleteMessageBatch(batchRequest).join();
 
             for (DeleteMessageBatchResultEntry entry : batchResult.getSuccessful()) {
                 int index = Integer.parseInt(entry.getId());
@@ -582,7 +585,7 @@ public class SendQueueBuffer {
 
             ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
                     .withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, SQSBufferedAsyncClient.USER_AGENT);
 
             List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                     requests.size());
@@ -594,7 +597,7 @@ public class SendQueueBuffer {
             }
             batchRequest.setEntries(entries);
 
-            ChangeMessageVisibilityBatchResult batchResult = sqsClient.changeMessageVisibilityBatch(batchRequest);
+            ChangeMessageVisibilityBatchResult batchResult = sqsClient.changeMessageVisibilityBatch(batchRequest).join();
 
             for (ChangeMessageVisibilityBatchResultEntry entry : batchResult.getSuccessful()) {
                 int index = Integer.parseInt(entry.getId());

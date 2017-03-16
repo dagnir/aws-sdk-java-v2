@@ -59,10 +59,10 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     private static final String AWS_ACCOUNT_PROPERTIES_FILE = "awsTestAccountPropertiesFile";
 
     /** Shared SimpleDB client for all tests to use. */
-    protected static AmazonSimpleDBClient sdb;
+    protected static SimpleDBClient sdb;
 
     /** Shared SimpleDB async client for tests to use. */
-    protected static AmazonSimpleDBAsyncClient sdbAsync;
+    protected static SimpleDBAsyncClient sdbAsync;
 
     /**
      * Loads the AWS account info for the integration tests and creates a SimpleDB client for tests
@@ -73,8 +73,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException, Exception {
         setUpCredentials();
-        sdb = new AmazonSimpleDBClient(credentials);
-        sdbAsync = new AmazonSimpleDBAsyncClient(credentials);
+        sdb = SimpleDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        sdbAsync = SimpleDBAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /**
@@ -204,7 +204,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      * @param domainName
      *            The name of the domain to check for the expected items.
      */
-    protected void assertItemsStoredInDomain(AmazonSimpleDB sdb, List<ReplaceableItem> expectedItems, String domainName) {
+    protected void assertItemsStoredInDomain(SimpleDBClient sdb, List<ReplaceableItem> expectedItems, String domainName) {
         try {
             Thread.sleep(4 * 1000);
         } catch (InterruptedException e) {
@@ -286,7 +286,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      * @return True if the specified attribute names exist for the specified item in the specified
      *         domain, otherwise false.
      */
-    protected boolean doAttributesExistForItem(AmazonSimpleDB sdb,
+    protected boolean doAttributesExistForItem(SimpleDBClient sdb,
                                                String itemName,
                                                String domainName,
                                                List<String> attributeNames) {

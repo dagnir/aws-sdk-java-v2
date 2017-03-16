@@ -4,7 +4,7 @@
     "apiVersion":"2016-03-11",
     "endpointPrefix":"query",
     "protocol":"query",
-    "serviceAbbreviation":"QueryProtocolTests",
+    "serviceAbbreviation":"AmazonProtocolQuery",
     "serviceFullName":"AWS DR Tools Query Protocol Tests",
     "signatureVersion":"v4",
     "targetPrefix":"ProtocolTestsQueryService",

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterialsProvider;
 
@@ -24,5 +24,5 @@ abstract class AmazonS3EncryptionClientParams extends AmazonS3ClientParams {
 
     abstract CryptoConfiguration getCryptoConfiguration();
 
-    abstract AWSKMS getKmsClient();
+    abstract KMSClient getKmsClient();
 }

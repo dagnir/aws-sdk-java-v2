@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.lambda.model.InvokeResult;
 import software.amazon.awssdk.util.CollectionUtils;
 
 /**

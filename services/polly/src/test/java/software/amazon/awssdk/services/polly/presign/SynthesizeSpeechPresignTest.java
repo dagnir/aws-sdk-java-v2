@@ -54,7 +54,7 @@ public class SynthesizeSpeechPresignTest {
     private static final AwsCredentialsProvider CREDENTIALS = new AwsStaticCredentialsProvider(
             new BasicAwsCredentials("akid", "skid"));
 
-    private AmazonPollyPresigners presigners;
+    private PollyClientPresigners presigners;
 
     private static Date getFixedDate() {
         Calendar c = new GregorianCalendar();
@@ -67,7 +67,7 @@ public class SynthesizeSpeechPresignTest {
 
     @Before
     public void setup() {
-        presigners = new AmazonPollyPresigners(
+        presigners = new PollyClientPresigners(
                 PresignerParams.builder()
                                .credentialsProvider(CREDENTIALS)
                                .endpoint(URI.create("https://polly.us-east-1.amazonaws.com"))
@@ -95,7 +95,7 @@ public class SynthesizeSpeechPresignTest {
                                    "Once accounted for, add to the ACKNOWLEDGED_FIELDS list above",
                                    field.getName(),
                                    SynthesizeSpeechRequest.class.getSimpleName(),
-                                   AmazonPollyPresigners.class.getSimpleName()));
+                                   PollyClientPresigners.class.getSimpleName()));
             }
         }
     }

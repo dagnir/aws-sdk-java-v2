@@ -22,16 +22,11 @@ import software.amazon.awssdk.test.AwsTestBase;
 
 public class IntegrationTestBase extends AwsTestBase {
 
-    protected static AmazonWorkspaces client;
+    protected static WorkSpacesClient client;
 
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        client = new AmazonWorkspacesClient(credentials);
-    }
-
-    @AfterClass
-    public static void tearDown() {
-        client.shutdown();
+        client = WorkSpacesClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

@@ -31,6 +31,7 @@ import java.io.RandomAccessFile;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
@@ -43,8 +44,7 @@ import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
-import software.amazon.awssdk.services.glacier.AmazonGlacier;
-import software.amazon.awssdk.services.glacier.AmazonGlacierClient;
+import software.amazon.awssdk.services.glacier.GlacierClient;
 import software.amazon.awssdk.services.glacier.TreeHashGenerator;
 import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;
 import software.amazon.awssdk.services.glacier.model.AbortMultipartUploadRequest;
@@ -63,10 +63,8 @@ import software.amazon.awssdk.services.glacier.model.UploadArchiveRequest;
 import software.amazon.awssdk.services.glacier.model.UploadArchiveResult;
 import software.amazon.awssdk.services.glacier.model.UploadMultipartPartRequest;
 import software.amazon.awssdk.services.s3.internal.InputSubstream;
-import software.amazon.awssdk.services.sns.AmazonSNS;
-import software.amazon.awssdk.services.sns.AmazonSNSClient;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
-import software.amazon.awssdk.services.sqs.AmazonSQSClient;
+import software.amazon.awssdk.services.sns.SNSClient;
+import software.amazon.awssdk.services.sqs.SQSClient;
 import software.amazon.awssdk.util.BinaryUtils;
 
 /**
@@ -74,41 +72,52 @@ import software.amazon.awssdk.util.BinaryUtils;
  */
 public class ArchiveTransferManager {
 
-    /** The maximum part size, in bytes, for a Glacier multipart upload. */
+    /**
+     * The maximum part size, in bytes, for a Glacier multipart upload.
+     */
     private static final long MAXIMUM_UPLOAD_PART_SIZE = 1024L * 1024 * 1024 * 4;
 
-    /** The default chunk size, in bytes, when downloading in multiple chunks using range retrieval. */
+    /**
+     * The default chunk size, in bytes, when downloading in multiple chunks using range retrieval.
+     */
     private static final long DEFAULT_DOWNLOAD_CHUNK_SIZE = 1024L * 1024 * 128;
 
-    /** The minimum part size, in bytes, for a Glacier multipart upload. */
+    /**
+     * The minimum part size, in bytes, for a Glacier multipart upload.
+     */
     private static final long MINIMUM_PART_SIZE = 1024L * 1024;
 
-    /** Threshold, in bytes, for when to use the multipart upload operations */
+    /**
+     * Threshold, in bytes, for when to use the multipart upload operations
+     */
     private static final long MULTIPART_UPLOAD_SIZE_THRESHOLD = 1024L * 1024L * 100;
 
-    /** Default retry time when downloading in multiple chunks using range retrieval */
+    /**
+     * Default retry time when downloading in multiple chunks using range retrieval
+     */
     private static final int DEFAULT_MAX_RETRIES = 3;
 
     private static final Log log = LogFactory.getLog(ArchiveTransferManager.class);
 
-    /** Glacier client used for making all requests. */
-    private final AmazonGlacier glacier;
+    /**
+     * Glacier client used for making all requests.
+     */
+    private final GlacierClient glacier;
 
     private final AwsCredentialsProvider credentialsProvider;
 
     private final LegacyClientConfiguration clientConfiguration;
 
-    private final AmazonSQS sqs;
+    private final SQSClient sqs;
 
-    private final AmazonSNS sns;
+    private final SNSClient sns;
 
 
     /**
      * Constructs a new ArchiveTransferManager, using the specified AWS
      * credentials to authenticate requests.
      *
-     * @param credentials
-     *            The AWS credentials used to authenticate requests.
+     * @param credentials The AWS credentials used to authenticate requests.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AwsCredentials credentials) {
@@ -119,27 +128,25 @@ public class ArchiveTransferManager {
      * Constructs a new ArchiveTransferManager, using the specified AWS credentials provider
      * and client configuration.
      *
-     * @param credentialsProvider
-     *            The AWS credentials provider used to authenticate requests.
-     * @param clientConfiguration
-     *            Client specific options, such as proxy settings, retries, and timeouts.
+     * @param credentialsProvider The AWS credentials provider used to authenticate requests.
+     * @param clientConfiguration Client specific options, such as proxy settings, retries, and timeouts.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
     public ArchiveTransferManager(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfiguration) {
-        this(new AmazonGlacierClient(credentialsProvider, clientConfiguration), credentialsProvider, clientConfiguration);
+        this(GlacierClient.builder().withCredentials(credentialsProvider).withClientConfiguration(clientConfiguration).build(),
+                credentialsProvider,
+                clientConfiguration);
     }
 
     /**
      * Constructs a new ArchiveTransferManager, using the specified Amazon
      * Glacier client and AWS credentials provider.
      *
-     * @param glacier
-     *            The client for working with Amazon Glacier.
-     * @param credentialsProvider
-     *            The AWS credentials provider used to authenticate requests.
+     * @param glacier             The client for working with Amazon Glacier.
+     * @param credentialsProvider The AWS credentials provider used to authenticate requests.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider) {
+    public ArchiveTransferManager(GlacierClient glacier, AwsCredentialsProvider credentialsProvider) {
         this(glacier, credentialsProvider, new LegacyClientConfiguration());
     }
 
@@ -147,13 +154,11 @@ public class ArchiveTransferManager {
      * Constructs a new ArchiveTransferManager, using the specified Amazon
      * Glacier client and AWS credentials.
      *
-     * @param glacier
-     *            The client for working with Amazon Glacier.
-     * @param credentials
-     *            The AWS credentials used to authenticate requests.
+     * @param glacier     The client for working with Amazon Glacier.
+     * @param credentials The AWS credentials used to authenticate requests.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentials credentials) {
+    public ArchiveTransferManager(GlacierClient glacier, AwsCredentials credentials) {
         this(glacier, new AwsStaticCredentialsProvider(credentials), new LegacyClientConfiguration());
     }
 
@@ -161,16 +166,13 @@ public class ArchiveTransferManager {
      * Constructs a new ArchiveTransferManager, using the specified Amazon
      * Glacier client, AWS credentials provider and client configuration.
      *
-     * @param glacier
-     *            The client for working with Amazon Glacier.
-     * @param credentialsProvider
-     *            The AWS credentials provider used to authenticate requests.
-     * @param clientConfiguration
-     *            Client specific options, such as proxy settings, retries, and
-     *            timeouts.
+     * @param glacier             The client for working with Amazon Glacier.
+     * @param credentialsProvider The AWS credentials provider used to authenticate requests.
+     * @param clientConfiguration Client specific options, such as proxy settings, retries, and
+     *                            timeouts.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AwsCredentialsProvider credentialsProvider,
+    public ArchiveTransferManager(GlacierClient glacier, AwsCredentialsProvider credentialsProvider,
                                   LegacyClientConfiguration clientConfiguration) {
         this.credentialsProvider = credentialsProvider;
         this.clientConfiguration = clientConfiguration;
@@ -189,17 +191,14 @@ public class ArchiveTransferManager {
      * the correct endpoint on each individual client object so that they all
      * operate in the same region.
      *
-     * @param glacier
-     *            The client for working with Amazon Glacier.
-     * @param sqs
-     *            The client for working with Amazon SQS when polling archive
-     *            retrieval job status.
-     * @param sns
-     *            The client for working with Amazon SNS when polling archive
-     *            retrieval job status.
+     * @param glacier The client for working with Amazon Glacier.
+     * @param sqs     The client for working with Amazon SQS when polling archive
+     *                retrieval job status.
+     * @param sns     The client for working with Amazon SNS when polling archive
+     *                retrieval job status.
      * @deprecated Use {@link ArchiveTransferManagerBuilder}.
      */
-    public ArchiveTransferManager(AmazonGlacierClient glacier, AmazonSQSClient sqs, AmazonSNSClient sns) {
+    public ArchiveTransferManager(GlacierClient glacier, SQSClient sqs, SNSClient sns) {
         this.credentialsProvider = null;
         this.clientConfiguration = null;
         this.glacier = glacier;
@@ -224,25 +223,17 @@ public class ArchiveTransferManager {
      * into multiple parts for better error recovery if any errors are
      * encountered while streaming the data to Amazon Glacier.
      *
-     * @param vaultName
-     *            The name of the vault to upload to.
-     * @param archiveDescription
-     *            The description of the new archive being uploaded.
-     * @param file
-     *            The file to upload to Amazon Glacier.
-     *
+     * @param vaultName          The name of the vault to upload to.
+     * @param archiveDescription The description of the new archive being uploaded.
+     * @param file               The file to upload to Amazon Glacier.
      * @return The result of the upload, including the archive ID needed to
-     *         access the upload later.
-     *
-     * @throws AmazonServiceException
-     *             If any problems were encountered while communicating with
-     *             AWS.
-     * @throws AmazonClientException
-     *             If any problems were encountered inside the AWS SDK for Java
-     *             client code in making requests or processing responses from
-     *             AWS.
-     * @throws FileNotFoundException
-     *             If the specified file to upload doesn't exist.
+     *      access the upload later.
+     * @throws AmazonServiceException If any problems were encountered while communicating with
+     *                                AWS.
+     * @throws AmazonClientException  If any problems were encountered inside the AWS SDK for Java
+     *                                client code in making requests or processing responses from
+     *                                AWS.
+     * @throws FileNotFoundException  If the specified file to upload doesn't exist.
      */
     public UploadResult upload(final String vaultName, final String archiveDescription, final File file)
             throws AmazonServiceException, AmazonClientException, FileNotFoundException {
@@ -257,30 +248,21 @@ public class ArchiveTransferManager {
      * into multiple parts for better error recovery if any errors are
      * encountered while streaming the data to Amazon Glacier.
      *
-     * @param accountId
-     *            The ID for the account which owns the Glacier vault being
-     *            uploaded to. To use the same account the developer is using to
-     *            make requests to AWS, the value <code>"-"</code> can be used
-     *            instead of the full account ID.
-     * @param vaultName
-     *            The name of the vault to upload to.
-     * @param archiveDescription
-     *            The description of the new archive being uploaded.
-     * @param file
-     *            The file to upload to Amazon Glacier.
-     *
+     * @param accountId          The ID for the account which owns the Glacier vault being
+     *                           uploaded to. To use the same account the developer is using to
+     *                           make requests to AWS, the value <code>"-"</code> can be used
+     *                           instead of the full account ID.
+     * @param vaultName          The name of the vault to upload to.
+     * @param archiveDescription The description of the new archive being uploaded.
+     * @param file               The file to upload to Amazon Glacier.
      * @return The result of the upload, including the archive ID needed to
-     *         access the upload later.
-     *
-     * @throws AmazonServiceException
-     *             If any problems were encountered while communicating with
-     *             AWS.
-     * @throws AmazonClientException
-     *             If any problems were encountered inside the AWS SDK for Java
-     *             client code in making requests or processing responses from
-     *             AWS.
-     * @throws FileNotFoundException
-     *             If the specified file to upload doesn't exist.
+     *      access the upload later.
+     * @throws AmazonServiceException If any problems were encountered while communicating with
+     *                                AWS.
+     * @throws AmazonClientException  If any problems were encountered inside the AWS SDK for Java
+     *                                client code in making requests or processing responses from
+     *                                AWS.
+     * @throws FileNotFoundException  If the specified file to upload doesn't exist.
      */
     public UploadResult upload(final String accountId, final String vaultName, final String archiveDescription, final File file)
             throws AmazonServiceException, AmazonClientException, FileNotFoundException {
@@ -297,42 +279,33 @@ public class ArchiveTransferManager {
      * an optional progress listener for receiving updates about the upload
      * status.
      *
-     * @param accountId
-     *            The ID for the account which owns the Glacier vault being
-     *            uploaded to. To use the same account the developer is using to
-     *            make requests to AWS, the value <code>"-"</code> can be used
-     *            instead of the full account ID.
-     * @param vaultName
-     *            The name of the vault to upload to.
-     * @param archiveDescription
-     *            The description of the new archive being uploaded.
-     * @param file
-     *            The file to upload to Amazon Glacier.
-     * @param progressListener
-     *            The optional progress listener for receiving updates about
-     *            the upload status.
-     *
+     * @param accountId          The ID for the account which owns the Glacier vault being
+     *                           uploaded to. To use the same account the developer is using to
+     *                           make requests to AWS, the value <code>"-"</code> can be used
+     *                           instead of the full account ID.
+     * @param vaultName          The name of the vault to upload to.
+     * @param archiveDescription The description of the new archive being uploaded.
+     * @param file               The file to upload to Amazon Glacier.
+     * @param progressListener   The optional progress listener for receiving updates about
+     *                           the upload status.
      * @return The result of the upload, including the archive ID needed to
-     *         access the upload later.
-     *
-     * @throws AmazonServiceException
-     *             If any problems were encountered while communicating with
-     *             AWS.
-     * @throws AmazonClientException
-     *             If any problems were encountered inside the AWS SDK for Java
-     *             client code in making requests or processing responses from
-     *             AWS.
+     *      access the upload later.
+     * @throws AmazonServiceException If any problems were encountered while communicating with
+     *                                AWS.
+     * @throws AmazonClientException  If any problems were encountered inside the AWS SDK for Java
+     *                                client code in making requests or processing responses from
+     *                                AWS.
      */
     public UploadResult upload(final String accountId, final String vaultName,
                                final String archiveDescription, final File file,
                                ProgressListener progressListener) throws AmazonServiceException,
-                                                                         AmazonClientException {
+            AmazonClientException {
         if (file.length() > MULTIPART_UPLOAD_SIZE_THRESHOLD) {
             return uploadInMultipleParts(accountId, vaultName,
-                                         archiveDescription, file, progressListener);
+                    archiveDescription, file, progressListener);
         } else {
             return uploadInSinglePart(accountId, vaultName, archiveDescription,
-                                      file, progressListener);
+                    file, progressListener);
         }
     }
 
@@ -348,20 +321,14 @@ public class ArchiveTransferManager {
      * recovery if any errors are encountered while streaming the data from
      * Amazon Glacier.
      *
-     * @param vaultName
-     *            The name of the vault to download the archive from.
-     * @param archiveId
-     *            The unique ID of the archive to download.
-     * @param file
-     *            The file in which to save the archive.
-     *
-     * @throws AmazonServiceException
-     *             If any problems were encountered while communicating with
-     *             AWS.
-     * @throws AmazonClientException
-     *             If any problems were encountered inside the AWS SDK for Java
-     *             client code in making requests or processing responses from
-     *             AWS.
+     * @param vaultName The name of the vault to download the archive from.
+     * @param archiveId The unique ID of the archive to download.
+     * @param file      The file in which to save the archive.
+     * @throws AmazonServiceException If any problems were encountered while communicating with
+     *                                AWS.
+     * @throws AmazonClientException  If any problems were encountered inside the AWS SDK for Java
+     *                                client code in making requests or processing responses from
+     *                                AWS.
      */
     public void download(final String vaultName, final String archiveId, final File file)
             throws AmazonServiceException, AmazonClientException {
@@ -377,25 +344,18 @@ public class ArchiveTransferManager {
      * the archive to be downloaded, this method will start downloading the data
      * and storing it in the specified file.
      *
-     * @param accountId
-     *            The ID for the account which owns the Glacier vault where the
-     *            archive is being downloaded from. To use the same account the
-     *            developer is using to make requests to AWS, the value
-     *            <code>"-"</code> can be used instead of the full account ID.
-     * @param vaultName
-     *            The name of the vault to download the archive from.
-     * @param archiveId
-     *            The unique ID of the archive to download.
-     * @param file
-     *           The file in which to save the archive.
-     *
-     * @throws AmazonServiceException
-     *             If any problems were encountered while communicating with
-     *             AWS.
-     * @throws AmazonClientException
-     *             If any problems were encountered inside the AWS SDK for Java
-     *             client code in making requests or processing responses from
-     *             AWS.
+     * @param accountId The ID for the account which owns the Glacier vault where the
+     *                  archive is being downloaded from. To use the same account the
+     *                  developer is using to make requests to AWS, the value
+     *                  <code>"-"</code> can be used instead of the full account ID.
+     * @param vaultName The name of the vault to download the archive from.
+     * @param archiveId The unique ID of the archive to download.
+     * @param file      The file in which to save the archive.
+     * @throws AmazonServiceException If any problems were encountered while communicating with
+     *                                AWS.
+     * @throws AmazonClientException  If any problems were encountered inside the AWS SDK for Java
+     *                                client code in making requests or processing responses from
+     *                                AWS.
      */
     public void download(final String accountId, final String vaultName, final String archiveId, final File file)
             throws AmazonServiceException, AmazonClientException {
@@ -412,33 +372,25 @@ public class ArchiveTransferManager {
      * and storing it in the specified file. You can also add an optional
      * progress listener for receiving updates about the download status.
      *
-     * @param accountId
-     *            The ID for the account which owns the Glacier vault where the
-     *            archive is being downloaded from. To use the same account the
-     *            developer is using to make requests to AWS, the value
-     *            <code>"-"</code> can be used instead of the full account ID.
-     * @param vaultName
-     *            The name of the vault to download the archive from.
-     * @param archiveId
-     *            The unique ID of the archive to download.
-     * @param file
-     *           The file in which to save the archive.
-     * @param progressListener
-     *            The optional progress listener for receiving updates about the
-     *            download status.
-     *
-     * @throws AmazonServiceException
-     *             If any problems were encountered while communicating with
-     *             AWS.
-     * @throws AmazonClientException
-     *             If any problems were encountered inside the AWS SDK for Java
-     *             client code in making requests or processing responses from
-     *             AWS.
+     * @param accountId        The ID for the account which owns the Glacier vault where the
+     *                         archive is being downloaded from. To use the same account the
+     *                         developer is using to make requests to AWS, the value
+     *                         <code>"-"</code> can be used instead of the full account ID.
+     * @param vaultName        The name of the vault to download the archive from.
+     * @param archiveId        The unique ID of the archive to download.
+     * @param file             The file in which to save the archive.
+     * @param progressListener The optional progress listener for receiving updates about the
+     *                         download status.
+     * @throws AmazonServiceException If any problems were encountered while communicating with
+     *                                AWS.
+     * @throws AmazonClientException  If any problems were encountered inside the AWS SDK for Java
+     *                                client code in making requests or processing responses from
+     *                                AWS.
      */
     public void download(final String accountId, final String vaultName,
                          final String archiveId, final File file,
                          ProgressListener progressListener) throws AmazonServiceException,
-                                                                   AmazonClientException {
+            AmazonClientException {
         JobStatusMonitor jobStatusMonitor = null;
         String jobId = null;
         publishProgress(progressListener, ProgressEventType.TRANSFER_PREPARING_EVENT);
@@ -456,9 +408,9 @@ public class ArchiveTransferManager {
                     .withSNSTopic(jobStatusMonitor.getTopicArn());
             InitiateJobResult archiveRetrievalResult =
                     glacier.initiateJob(new InitiateJobRequest()
-                                                .withAccountId(accountId)
-                                                .withVaultName(vaultName)
-                                                .withJobParameters(jobParameters));
+                            .withAccountId(accountId)
+                            .withVaultName(vaultName)
+                            .withJobParameters(jobParameters));
             jobId = archiveRetrievalResult.getJobId();
 
             jobStatusMonitor.waitForJobToComplete(jobId);
@@ -482,16 +434,12 @@ public class ArchiveTransferManager {
      * individual chunks of the data, one at a time, in order to handle any
      * transient errors along the way.
      *
-     * @param accountId
-     *            The account ID containing the job output to download (or null
-     *            if the current account should be used).
-     * @param vaultName
-     *            The name of the vault from where the job was initiated.
-     * @param jobId
-     *            The ID of the job whose output is to be downloaded. This job
-     *            must be a complete archive retrieval, not a range retrieval.
-     * @param file
-     *            The file to download the job output into.
+     * @param accountId The account ID containing the job output to download (or null
+     *                  if the current account should be used).
+     * @param vaultName The name of the vault from where the job was initiated.
+     * @param jobId     The ID of the job whose output is to be downloaded. This job
+     *                  must be a complete archive retrieval, not a range retrieval.
+     * @param file      The file to download the job output into.
      */
     public void downloadJobOutput(String accountId, String vaultName, String jobId, File file) {
         downloadJobOutput(accountId, vaultName, jobId, file, null);
@@ -505,19 +453,14 @@ public class ArchiveTransferManager {
      * transient errors along the way. You can also add an optional progress
      * listener for receiving updates about the download status.
      *
-     * @param accountId
-     *            The account ID containing the job output to download (or null
-     *            if the current account shoudl be used).
-     * @param vaultName
-     *            The name of the vault from where the job was initiated.
-     * @param jobId
-     *            The ID of the job whose output is to be downloaded. This job
-     *            must be a complete archive retrieval, not a range retrieval.
-     * @param file
-     *            The file to download the job output into.
-     * @param progressListener
-     *            The optional progress listener for receiving updates about the
-     *            download status.
+     * @param accountId        The account ID containing the job output to download (or null
+     *                         if the current account shoudl be used).
+     * @param vaultName        The name of the vault from where the job was initiated.
+     * @param jobId            The ID of the job whose output is to be downloaded. This job
+     *                         must be a complete archive retrieval, not a range retrieval.
+     * @param file             The file to download the job output into.
+     * @param progressListener The optional progress listener for receiving updates about the
+     *                         download status.
      */
     public void downloadJobOutput(String accountId, String vaultName,
                                   String jobId, File file, ProgressListener progressListener) {
@@ -562,7 +505,7 @@ public class ArchiveTransferManager {
                 // Download the chunk
                 try {
                     downloadOneChunk(accountId, vaultName, jobId, output,
-                                     currentPosition, endPosition, progressListener);
+                            currentPosition, endPosition, progressListener);
                 } catch (Throwable t) {
                     publishProgress(progressListener, ProgressEventType.TRANSFER_FAILED_EVENT);
                     throw failure(t);
@@ -624,11 +567,11 @@ public class ArchiveTransferManager {
                             log.debug("reverting " + chunkSize);
                         }
                         throw new IOException("Client side computed hash doesn't match server side hash; " +
-                                              "possible data corruption");
+                                "possible data corruption");
                     }
                 } else {
                     log.warn("Cannot validate the downloaded output since no tree-hash checksum is returned from Glacier. "
-                             + "Make sure the InitiateJob and GetJobOutput requests use tree-hash-aligned ranges.");
+                            + "Make sure the InitiateJob and GetJobOutput requests use tree-hash-aligned ranges.");
                 }
                 // Successfully download
                 return;
@@ -638,11 +581,11 @@ public class ArchiveTransferManager {
                     retries++;
                     if (log.isDebugEnabled()) {
                         log.debug(retries
-                                  + " retry downloadOneChunk accountId="
-                                  + accountId + ", vaultName=" + vaultName
-                                  + ", jobId=" + jobId + ", currentPosition="
-                                  + currentPosition + " endPosition="
-                                  + endPosition);
+                                + " retry downloadOneChunk accountId="
+                                + accountId + ", vaultName=" + vaultName
+                                + ", jobId=" + jobId + ", currentPosition="
+                                + currentPosition + " endPosition="
+                                + endPosition);
                     }
                     try {
                         output.seek(currentPosition);
@@ -680,9 +623,7 @@ public class ArchiveTransferManager {
      * 1MB, 2MB, 4MB, 8MB, etc). All parts must be the same size, except for the
      * last part.
      *
-     * @param fileSize
-     *            The size of the file being uploaded.
-     *
+     * @param fileSize The size of the file being uploaded.
      * @return The part size to use in the multipart upload.
      */
     private long calculatePartSize(long fileSize) {
@@ -717,7 +658,7 @@ public class ArchiveTransferManager {
         }
         publishProgress(progressListener, ProgressEventType.TRANSFER_STARTED_EVENT);
         final String fileNotFoundMsg = "Unable to find file '"
-                                       + file.getAbsolutePath() + "'";
+                + file.getAbsolutePath() + "'";
         try {
             List<byte[]> binaryChecksums = new LinkedList<byte[]>();
 
@@ -772,11 +713,11 @@ public class ArchiveTransferManager {
             String archiveSize = Long.toString(file.length());
             CompleteMultipartUploadResult completeMultipartUploadResult =
                     glacier.completeMultipartUpload(new CompleteMultipartUploadRequest()
-                                                            .withAccountId(accountId)
-                                                            .withArchiveSize(archiveSize)
-                                                            .withVaultName(vaultName)
-                                                            .withChecksum(checksum)
-                                                            .withUploadId(uploadId));
+                            .withAccountId(accountId)
+                            .withArchiveSize(archiveSize)
+                            .withVaultName(vaultName)
+                            .withChecksum(checksum)
+                            .withUploadId(uploadId));
 
             String artifactId = completeMultipartUploadResult.getArchiveId();
             publishProgress(progressListener, ProgressEventType.TRANSFER_COMPLETED_EVENT);

@@ -22,7 +22,7 @@ import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.services.kms.AWSKMSClient;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.AmazonS3EncryptionClient;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterials;
@@ -84,7 +84,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
         super(credentials, encryptionMaterials, cryptoConfig);
     }
 
-    public S3CryptoTestClient(AWSKMSClient kms, AwsCredentials credentials,
+    public S3CryptoTestClient(KMSClient kms, AwsCredentials credentials,
                               EncryptionMaterials encryptionMaterials,
                               CryptoConfiguration cryptoConfig) {
         super(kms, new AwsStaticCredentialsProvider(credentials),
@@ -113,7 +113,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
         super(credentials, encryptionMaterials, clientConfig, cryptoConfig);
     }
 
-    public S3CryptoTestClient(AWSKMSClient kms, AwsCredentials credentials,
+    public S3CryptoTestClient(KMSClient kms, AwsCredentials credentials,
                               EncryptionMaterialsProvider encryptionMaterialsProvider,
                               LegacyClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
         super(kms,
@@ -148,7 +148,7 @@ public class S3CryptoTestClient extends AmazonS3EncryptionClient {
     }
 
     public S3CryptoTestClient(
-            AWSKMSClient kms,
+            KMSClient kms,
             AwsCredentialsProvider credentialsProvider,
             EncryptionMaterialsProvider kekMaterialsProvider,
             LegacyClientConfiguration clientConfig,

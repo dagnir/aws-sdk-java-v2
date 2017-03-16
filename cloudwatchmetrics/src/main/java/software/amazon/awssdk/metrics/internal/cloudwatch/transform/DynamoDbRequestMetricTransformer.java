@@ -31,8 +31,8 @@ import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
-import software.amazon.awssdk.services.dynamodbv2.metrics.DynamoDbRequestMetric;
-import software.amazon.awssdk.services.dynamodbv2.model.ConsumedCapacity;
+import software.amazon.awssdk.services.dynamodb.metrics.DynamoDBRequestMetric;
+import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
 
 /**
  * An internal service provider implementation for an DyanmoDB specific request

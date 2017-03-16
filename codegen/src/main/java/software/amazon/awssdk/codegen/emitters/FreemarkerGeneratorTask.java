@@ -19,6 +19,7 @@ import static software.amazon.awssdk.codegen.internal.Utils.closeQuietly;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+
 import java.io.IOException;
 import java.io.Writer;
 

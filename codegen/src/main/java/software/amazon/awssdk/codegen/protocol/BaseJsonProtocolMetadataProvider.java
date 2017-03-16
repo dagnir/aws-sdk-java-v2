@@ -30,11 +30,6 @@ public abstract class BaseJsonProtocolMetadataProvider extends BaseProtocolMetad
         return "JsonUnmarshallerContext";
     }
 
-    @Override
-    public String getUnmarshallerClassSuffix() {
-        return "JsonUnmarshaller";
-    }
-
     /**
      * @return Exception unmarshaller is generic in JSON based protocols and completely encapsulated from the client.
      */

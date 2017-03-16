@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.s3.model.transform;
 
 import javax.xml.stream.events.XMLEvent;
-import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringUnmarshaller;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.FilterRule;
@@ -50,9 +50,9 @@ class FilterRuleStaxUnmarshaller implements Unmarshaller<FilterRule, StaxUnmarsh
             }
             if (xmlEvent.isAttribute() || xmlEvent.isStartElement()) {
                 if (context.testExpression("Name", targetDepth)) {
-                    filter.setName(StringStaxUnmarshaller.getInstance().unmarshall(context));
+                    filter.setName(StringUnmarshaller.getInstance().unmarshall(context));
                 } else if (context.testExpression("Value", targetDepth)) {
-                    filter.setValue(StringStaxUnmarshaller.getInstance().unmarshall(context));
+                    filter.setValue(StringUnmarshaller.getInstance().unmarshall(context));
                 }
             } else if (xmlEvent.isEndElement()) {
                 if (context.getCurrentDepth() < originalDepth) {

@@ -15,27 +15,20 @@
 
 package software.amazon.awssdk.internal.auth;
 
-import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 
 public class DefaultSignerProvider extends SignerProvider {
 
-    private final AmazonWebServiceClient awsClient;
     private final Signer signer;
 
-    public DefaultSignerProvider(final AmazonWebServiceClient awsClient,
-                                 final Signer signer) {
-        this.awsClient = awsClient;
+    public DefaultSignerProvider(final Signer signer) {
         this.signer = signer;
     }
 
     @Override
     public Signer getSigner(SignerProviderContext context) {
-        if (context.isRedirect()) {
-            return awsClient.getSignerByUri(context.getUri());
-        }
         return signer;
     }
 

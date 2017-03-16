@@ -16,6 +16,10 @@
 package software.amazon.awssdk.services.cloudhsm;
 
 import org.junit.Test;
+import software.amazon.awssdk.services.cloudhsm.model.ListAvailableZonesRequest;
+import software.amazon.awssdk.services.cloudhsm.model.ListHapgsRequest;
+import software.amazon.awssdk.services.cloudhsm.model.ListHsmsRequest;
+import software.amazon.awssdk.services.cloudhsm.model.ListLunaClientsRequest;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 
@@ -24,9 +28,9 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testOperations() {
-        client.listHsms().getHsmList();
-        client.listAvailableZones();
-        client.listHapgs();
-        client.listLunaClients();
+        client.listHsms(new ListHsmsRequest()).getHsmList();
+        client.listAvailableZones(new ListAvailableZonesRequest());
+        client.listHapgs(new ListHapgsRequest());
+        client.listLunaClients(new ListLunaClientsRequest());
     }
 }

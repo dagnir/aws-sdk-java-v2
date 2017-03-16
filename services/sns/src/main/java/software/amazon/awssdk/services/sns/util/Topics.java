@@ -28,9 +28,11 @@ import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SQSActions;
 import software.amazon.awssdk.auth.policy.conditions.ConditionFactory;
-import software.amazon.awssdk.services.sns.AmazonSNS;
+import software.amazon.awssdk.services.sns.SNSClient;
+import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeResult;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
+import software.amazon.awssdk.services.sqs.SQSClient;
+import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 
@@ -103,11 +105,11 @@ public class Topics {
      *             while attempting to make the request or handle the response.
      *             For example if a network connection is not available.
      * @throws AmazonServiceException
-     *             If an error response is returned by AmazonSNS indicating
+     *             If an error response is returned by SnsClient indicating
      *             either a problem with the data in the request, or a server
      *             side issue.
      */
-    public static String subscribeQueue(AmazonSNS sns, AmazonSQS sqs, String snsTopicArn, String sqsQueueUrl)
+    public static String subscribeQueue(SNSClient sns, SQSClient sqs, String snsTopicArn, String sqsQueueUrl)
             throws AmazonClientException, AmazonServiceException {
         return Topics.subscribeQueue(sns, sqs, snsTopicArn, sqsQueueUrl, false);
     }
@@ -174,16 +176,17 @@ public class Topics {
      *             while attempting to make the request or handle the response.
      *             For example if a network connection is not available.
      * @throws AmazonServiceException
-     *             If an error response is returned by AmazonSNS indicating
+     *             If an error response is returned by SnsClient indicating
      *             either a problem with the data in the request, or a server
      *             side issue.
      */
-    public static String subscribeQueue(AmazonSNS sns, AmazonSQS sqs, String snsTopicArn, String sqsQueueUrl,
+    public static String subscribeQueue(SNSClient sns, SQSClient sqs, String snsTopicArn, String sqsQueueUrl,
                                         boolean extendPolicy)
             throws AmazonClientException, AmazonServiceException {
         List<String> sqsAttrNames = Arrays.asList(QueueAttributeName.QueueArn.toString(),
                                                   QueueAttributeName.Policy.toString());
-        Map<String, String> sqsAttrs = sqs.getQueueAttributes(sqsQueueUrl, sqsAttrNames).getAttributes();
+        Map<String, String> sqsAttrs =
+                sqs.getQueueAttributes(new GetQueueAttributesRequest(sqsQueueUrl, sqsAttrNames)).getAttributes();
         String sqsQueueArn = sqsAttrs.get(QueueAttributeName.QueueArn.toString());
 
         String policyJson = sqsAttrs.get(QueueAttributeName.Policy.toString());
@@ -200,7 +203,7 @@ public class Topics {
         newAttrs.put(QueueAttributeName.Policy.toString(), policy.toJson());
         sqs.setQueueAttributes(new SetQueueAttributesRequest(sqsQueueUrl, newAttrs));
 
-        SubscribeResult subscribeResult = sns.subscribe(snsTopicArn, "sqs", sqsQueueArn);
+        SubscribeResult subscribeResult = sns.subscribe(new SubscribeRequest(snsTopicArn, "sqs", sqsQueueArn));
         return subscribeResult.getSubscriptionArn();
     }
 }

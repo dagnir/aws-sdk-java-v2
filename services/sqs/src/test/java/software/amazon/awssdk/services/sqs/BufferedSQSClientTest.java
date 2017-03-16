@@ -10,14 +10,16 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import org.easymock.Capture;
 import org.easymock.IAnswer;
+import org.easymock.IExpectationSetters;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.buffered.AmazonSqsBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
@@ -26,21 +28,21 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResult;
 
 public class BufferedSQSClientTest {
 
-    private AmazonSQSAsync mock;
-    private AmazonSqsBufferedAsyncClient client;
+    private SQSAsyncClient mock;
+    private SQSBufferedAsyncClient client;
 
     @Before
-    public void setup() {
-        mock = createMock(AmazonSQSAsync.class);
-        mock.shutdown();
+    public void setup() throws Exception{
+        mock = createMock(SQSAsyncClient.class);
+        mock.close();
         expectLastCall().asStub();
         makeThreadSafe(mock, false);
-        client = new AmazonSqsBufferedAsyncClient(mock);
+        client = new SQSBufferedAsyncClient(mock);
     }
 
     @After
-    public void tearDown() {
-        client.shutdown();
+    public void tearDown() throws Exception {
+        client.close();
     }
 
     @Test
@@ -53,19 +55,16 @@ public class BufferedSQSClientTest {
 
         // Artificially block the first request's response until we've
         // verified the second batch gets sent.
-        expect(mock.sendMessageBatch(capture(capture))).andAnswer(new IAnswer<SendMessageBatchResult>() {
-            @Override
-            public SendMessageBatchResult answer() throws Throwable {
-                latch.await();
-                return new SendMessageBatchResult().withSuccessful(new SendMessageBatchResultEntry().withId("0")
-                        .withMessageId("1"));
-            }
+        expect(mock.sendMessageBatch(capture(capture))).andAnswer(() -> {
+            latch.await();
+            return CompletableFuture.completedFuture(new SendMessageBatchResult().withSuccessful(new SendMessageBatchResultEntry().withId("0")
+                    .withMessageId("1")));
         });
 
         // Second request gets a response right away.
-        expect(mock.sendMessageBatch(capture(capture2))).andReturn(
+        expect(mock.sendMessageBatch(capture(capture2))).andReturn(CompletableFuture.completedFuture(
                 new SendMessageBatchResult().withSuccessful(new SendMessageBatchResultEntry().withId("0")
-                        .withMessageId("2")));
+                        .withMessageId("2"))));
 
         replay(mock);
 

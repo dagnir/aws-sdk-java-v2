@@ -38,6 +38,11 @@ public final class ${metadata.asyncClientBuilderClassName}
         super(CLIENT_CONFIG_FACTORY);
     }
 
+    @Override
+    public final String getServiceName() {
+        return ${metadata.asyncInterface}.ENDPOINT_PREFIX;
+    }
+
     /**
      * Construct an asynchronous implementation of ${metadata.asyncInterface} using the
      * current builder configuration.

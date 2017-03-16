@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.model.transform;
 
-import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringUnmarshaller;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.services.s3.model.TopicConfiguration;
 
@@ -33,7 +33,7 @@ class TopicConfigurationStaxUnmarshaller extends NotificationConfigurationStaxUn
     protected boolean handleXmlEvent(TopicConfiguration topicConfig, StaxUnmarshallerContext context, int targetDepth)
             throws Exception {
         if (context.testExpression("Topic", targetDepth)) {
-            topicConfig.setTopicArn(StringStaxUnmarshaller.getInstance().unmarshall(context));
+            topicConfig.setTopicARN(StringUnmarshaller.getInstance().unmarshall(context));
             return true;
         }
         return false;

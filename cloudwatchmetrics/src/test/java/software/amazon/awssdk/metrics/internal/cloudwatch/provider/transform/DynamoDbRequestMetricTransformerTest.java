@@ -9,10 +9,10 @@ import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
-import software.amazon.awssdk.services.dynamodbv2.metrics.DynamoDbRequestMetric;
-import software.amazon.awssdk.services.dynamodbv2.model.ConsumedCapacity;
-import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.PutItemResult;
+import software.amazon.awssdk.services.dynamodb.metrics.DynamoDBRequestMetric;
+import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
 
 public class DynamoDbRequestMetricTransformerTest {
     @Test

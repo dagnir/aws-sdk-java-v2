@@ -4,7 +4,7 @@
     "apiVersion":"2016-03-11",
     "endpointPrefix":"restxml",
     "protocol":"rest-xml",
-    "serviceAbbreviation":"RestXmlProtocolTests",
+    "serviceAbbreviation":"AmazonProtocolRestXml",
     "serviceFullName":"AWS DR Tools Rest-XML Protocol Tests",
     "signatureVersion":"v4",
     "targetPrefix":"ProtocolTestsRestXmlService",

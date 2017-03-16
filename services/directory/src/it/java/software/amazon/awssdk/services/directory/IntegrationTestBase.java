@@ -16,17 +16,18 @@
 package software.amazon.awssdk.services.directory;
 
 import org.junit.BeforeClass;
-import software.amazon.awssdk.services.ec2.AmazonEC2Client;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class IntegrationTestBase extends AwsIntegrationTestBase {
 
-    protected static AWSDirectoryServiceClient dsClient;
-    protected static AmazonEC2Client ec2Client;
+    protected static DirectoryClient dsClient;
+    protected static EC2Client ec2Client;
 
     @BeforeClass
     public static void baseSetupFixture() {
-        dsClient = new AWSDirectoryServiceClient(getCredentials());
-        ec2Client = new AmazonEC2Client(getCredentials());
+        dsClient = DirectoryClient.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
+        ec2Client = EC2Client.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
     }
 }

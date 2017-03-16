@@ -18,10 +18,11 @@ package software.amazon.awssdk.services.iam;
 import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.services.identitymanagement.model.CreateSAMLProviderRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteSAMLProviderRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetSAMLProviderRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListSAMLProvidersResult;
+import software.amazon.awssdk.services.iam.model.CreateSAMLProviderRequest;
+import software.amazon.awssdk.services.iam.model.DeleteSAMLProviderRequest;
+import software.amazon.awssdk.services.iam.model.GetSAMLProviderRequest;
+import software.amazon.awssdk.services.iam.model.ListSAMLProvidersRequest;
+import software.amazon.awssdk.services.iam.model.ListSAMLProvidersResult;
 
 /** Integration tests of the SAML provider APIs. */
 public class SAMLProviderIntegrationTest extends IntegrationTestBase {
@@ -57,7 +58,7 @@ public class SAMLProviderIntegrationTest extends IntegrationTestBase {
         }
 
         // No SAML providers
-        ListSAMLProvidersResult listSAMLProvidersResult = iam.listSAMLProviders();
+        ListSAMLProvidersResult listSAMLProvidersResult = iam.listSAMLProviders(new ListSAMLProvidersRequest());
         Assert.assertEquals(0, listSAMLProvidersResult.getSAMLProviderList().size());
 
         // Get/delete the imaginary SAML provider

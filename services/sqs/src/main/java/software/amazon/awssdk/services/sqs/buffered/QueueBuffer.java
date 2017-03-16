@@ -23,7 +23,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.handlers.AsyncHandler;
-import software.amazon.awssdk.services.sqs.AmazonSQSAsync;
+import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResult;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -61,10 +61,10 @@ class QueueBuffer {
     QueueBufferConfig config;
     private final SendQueueBuffer sendBuffer;
     private final ReceiveQueueBuffer receiveBuffer;
-    private final AmazonSQSAsync realSqs;
+    private final SQSAsyncClient realSqs;
 
 
-    QueueBuffer(QueueBufferConfig paramConfig, String url, AmazonSQSAsync sqs) {
+    QueueBuffer(QueueBufferConfig paramConfig, String url, SQSAsyncClient sqs) {
         realSqs = sqs;
         config = paramConfig;
         sendBuffer = new SendQueueBuffer(sqs, executor, paramConfig, url);
@@ -173,9 +173,9 @@ class QueueBuffer {
             future.setBuffer(this);
             return future;
         } else if (handler != null) {
-            return realSqs.receiveMessageAsync(rq, handler);
+            return realSqs.receiveMessage(rq);
         } else {
-            return realSqs.receiveMessageAsync(rq);
+            return realSqs.receiveMessage(rq);
         }
     }
 

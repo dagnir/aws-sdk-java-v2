@@ -16,10 +16,11 @@
 package software.amazon.awssdk.codegen.emitters;
 
 import static software.amazon.awssdk.codegen.internal.Utils.closeQuietly;
-import static software.amazon.awssdk.codegen.poet.Utils.buildJavaFile;
+import static software.amazon.awssdk.codegen.poet.PoetUtils.buildJavaFile;
 
 import java.io.IOException;
 import java.io.Writer;
+
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 
 public final class PoetGeneratorTask implements GeneratorTask {

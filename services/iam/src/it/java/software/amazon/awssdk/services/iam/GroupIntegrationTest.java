@@ -23,21 +23,21 @@ import static org.junit.Assert.fail;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.AddUserToGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteConflictException;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.EntityAlreadyExistsException;
-import software.amazon.awssdk.services.identitymanagement.model.GetGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetGroupResult;
-import software.amazon.awssdk.services.identitymanagement.model.Group;
-import software.amazon.awssdk.services.identitymanagement.model.ListGroupsRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListGroupsResult;
-import software.amazon.awssdk.services.identitymanagement.model.NoSuchEntityException;
-import software.amazon.awssdk.services.identitymanagement.model.RemoveUserFromGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.User;
+import software.amazon.awssdk.services.iam.model.AddUserToGroupRequest;
+import software.amazon.awssdk.services.iam.model.CreateGroupRequest;
+import software.amazon.awssdk.services.iam.model.CreateUserRequest;
+import software.amazon.awssdk.services.iam.model.DeleteConflictException;
+import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
+import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
+import software.amazon.awssdk.services.iam.model.EntityAlreadyExistsException;
+import software.amazon.awssdk.services.iam.model.GetGroupRequest;
+import software.amazon.awssdk.services.iam.model.GetGroupResult;
+import software.amazon.awssdk.services.iam.model.Group;
+import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
+import software.amazon.awssdk.services.iam.model.ListGroupsResult;
+import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
+import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
+import software.amazon.awssdk.services.iam.model.User;
 
 /**
  * Integration tests for group-related IAM interfaces.

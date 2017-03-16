@@ -12,18 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
+package software.amazon.awssdk.services.dynamodb.document.quickstart;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.document.Item;
-import software.amazon.awssdk.services.dynamodbv2.document.ItemCollection;
-import software.amazon.awssdk.services.dynamodbv2.document.ScanFilter;
-import software.amazon.awssdk.services.dynamodbv2.document.Table;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.NameMap;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.ValueMap;
+import software.amazon.awssdk.services.dynamodb.document.Item;
+import software.amazon.awssdk.services.dynamodb.document.ItemCollection;
+import software.amazon.awssdk.services.dynamodb.document.ScanFilter;
+import software.amazon.awssdk.services.dynamodb.document.Table;
+import software.amazon.awssdk.services.dynamodb.document.utils.AbstractQuickStart;
+import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
+import software.amazon.awssdk.services.dynamodb.document.utils.ValueMap;
 
 /**
  * Sample code to scan items from DynamoDB table.

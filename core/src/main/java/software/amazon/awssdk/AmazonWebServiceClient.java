@@ -479,7 +479,7 @@ public abstract class AmazonWebServiceClient {
     }
 
     protected SignerProvider createSignerProvider(Signer signer) {
-        return new DefaultSignerProvider(this, signer);
+        return new DefaultSignerProvider(signer);
     }
 
     /**

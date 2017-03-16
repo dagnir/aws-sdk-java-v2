@@ -37,7 +37,7 @@ import software.amazon.awssdk.test.AwsTestBase;
  */
 public abstract class ElasticBeanstalkIntegrationTestBase extends AwsTestBase {
 
-    protected static AWSElasticBeanstalkClient elasticbeanstalk;
+    protected static ElasticBeanstalkClient elasticbeanstalk;
     protected static AmazonS3Client s3;
 
     /**
@@ -47,8 +47,10 @@ public abstract class ElasticBeanstalkIntegrationTestBase extends AwsTestBase {
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
 
-        elasticbeanstalk = new AWSElasticBeanstalkClient(credentials);
-        elasticbeanstalk.configureRegion(Regions.US_EAST_1);
+        elasticbeanstalk = ElasticBeanstalkClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(Regions.US_EAST_1)
+                .build();
         s3 = new AmazonS3Client(credentials);
 
     }
