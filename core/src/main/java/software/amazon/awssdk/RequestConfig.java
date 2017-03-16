@@ -54,8 +54,6 @@ public abstract class RequestConfig {
      */
     public abstract Map<String, List<String>> getCustomQueryParameters();
 
-    public abstract Integer getRequestTimeout();
-
     public abstract Integer getClientExecutionTimeout();
 
     public abstract RequestClientOptions getRequestClientOptions();

@@ -17,39 +17,16 @@ package software.amazon.awssdk.internal.http.timers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import java.io.IOException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.apache.http.HttpEntity;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
-import org.apache.http.protocol.HttpContext;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.internal.http.apache.client.impl.ApacheHttpClientFactory;
-import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.internal.http.client.HttpClientFactory;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.internal.http.response.ErrorDuringUnmarshallingResponseHandler;
-import software.amazon.awssdk.internal.http.response.HttpResponseProxy;
 import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
-import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
-import software.amazon.awssdk.internal.http.timers.request.HttpRequestTimer;
 
 /**
  * Useful asserts and utilities for verifying behavior or the client execution timeout and request
@@ -65,44 +42,14 @@ public class ClientExecutionAndRequestTimerTestUtils {
     /**
      * Assert that the executor backing {@link ClientExecutionTimer} was never created or used
      */
-    public static void assertRequestTimerExecutorNotCreated(HttpRequestTimer requestTimer) {
-        assertNull(requestTimer.getExecutor());
-    }
-
-    /**
-     * Assert that the executor backing {@link ClientExecutionTimer} was never created or used
-     */
     public static void assertClientExecutionTimerExecutorNotCreated(ClientExecutionTimer clientExecutionTimer) {
         assertNull(clientExecutionTimer.getExecutor());
     }
 
     /**
-     * Assert response was buffered into memory to enforce the timeout on both connection
-     * established and reading of content
-     *
-     * @param responseProxy
-     *            Must by a spied {@link HttpResponseProxy}
-     */
-    public static void assertResponseIsBuffered(HttpResponseProxy responseProxy) {
-        verify(responseProxy).setEntity(any(BufferedHttpEntity.class));
-    }
-
-    /**
-     * Assert response was NOT buffered into memory as should be the case when client execution and
-     * request timeouts are disabled or an operation is streaming and it's content must be left open
-     *
-     * @param responseProxy
-     *            Must by a spied {@link HttpResponseProxy}
-     */
-    public static void assertResponseWasNotBuffered(HttpResponseProxy responseProxy) {
-        verify(responseProxy, never()).setEntity(any(BufferedHttpEntity.class));
-    }
-
-    /**
      * Waits until a little after the thread pools keep alive time and then asserts that all thre
      *
-     * @param timerExecutor
-     *            Executor used by timer implementation
+     * @param timerExecutor Executor used by timer implementation
      */
     public static void assertCoreThreadsShutDownAfterBeingIdle(ScheduledThreadPoolExecutor timerExecutor) {
         try {
@@ -117,8 +64,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
      * If the request completes successfully then the timer task should be canceled and should be
      * removed from the thread pool to prevent build up of canceled tasks
      *
-     * @param timerExecutor
-     *            Executor used by timer implementation
+     * @param timerExecutor Executor used by timer implementation
      */
     public static void assertCanceledTasksRemoved(ScheduledThreadPoolExecutor timerExecutor) {
         waitBeforeAssertOnExecutor();
@@ -129,8 +75,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
      * Asserts the timer never went off (I.E. no timeout was exceeded and no timer task was
      * executed)
      *
-     * @param timerExecutor
-     *            Executor used by timer implementation
+     * @param timerExecutor Executor used by timer implementation
      */
     public static void assertTimerNeverTriggered(ScheduledThreadPoolExecutor timerExecutor) {
         assertNumberOfTasksTriggered(timerExecutor, 0);
@@ -141,55 +86,10 @@ public class ClientExecutionAndRequestTimerTestUtils {
         assertNumberOfTasksTriggered(clientExecutionTimer.getExecutor(), expectedNumberOfTasks);
     }
 
-    public static void assertNumberOfTasksTriggered(HttpRequestTimer requestTimer, int expectedNumberOfTasks) {
-        assertNumberOfTasksTriggered(requestTimer.getExecutor(), expectedNumberOfTasks);
-    }
-
     private static void assertNumberOfTasksTriggered(ScheduledThreadPoolExecutor timerExecutor,
                                                      int expectedNumberOfTasks) {
         waitBeforeAssertOnExecutor();
         assertEquals(expectedNumberOfTasks, timerExecutor.getCompletedTaskCount());
-    }
-
-    /**
-     * Creates Apache {@link HttpClient} spy
-     *
-     * @param config
-     *            {@link LegacyClientConfiguration} for {@link HttpClientFactory}
-     * @return Real implementation of {@link HttpClient} with ability to verify method calls or
-     *         partially mock
-     */
-    public static ConnectionManagerAwareHttpClient createRawHttpClientSpy(LegacyClientConfiguration config) {
-        HttpClientFactory<ConnectionManagerAwareHttpClient> httpClientFactory = new ApacheHttpClientFactory();
-        return spy(httpClientFactory.create(HttpClientSettings.adapt(config, false)));
-    }
-
-    /**
-     * Creates Apache {@link HttpResponseProxy} spy
-     *
-     * @return Real implementation of {@link HttpResponseProxy} with ability to verify method calls
-     *         or partially mock
-     */
-    public static HttpResponseProxy createHttpResponseProxySpy() throws IOException {
-        StringEntity entity = new StringEntity("mock response body");
-        HttpResponseProxy responseProxy = spy(createHttpResponseProxy(entity));
-        doReturn(entity).when(responseProxy).getEntity();
-        return responseProxy;
-    }
-
-    /**
-     * Creates Apache {@link HttpResponseProxy} with a null entity
-     */
-    public static HttpResponseProxy createHttpHeadResponseProxy() throws IOException {
-        return createHttpResponseProxy(null);
-    }
-
-    private static HttpResponseProxy createHttpResponseProxy(HttpEntity entity) {
-        ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 1);
-        BasicStatusLine statusLine = new BasicStatusLine(protocolVersion, 200, "mock response");
-        BasicHttpResponse response = new BasicHttpResponse(statusLine);
-        response.setEntity(entity);
-        return new HttpResponseProxy(response);
     }
 
     public static Request<?> createMockGetRequest() {
@@ -197,28 +97,14 @@ public class ClientExecutionAndRequestTimerTestUtils {
         return new EmptyHttpRequest(localhostEndpoint, HttpMethodName.GET);
     }
 
-    public static Request<?> createMockHeadRequest() {
-        String localhostEndpoint = "http://localhost:0";
-        return new EmptyHttpRequest(localhostEndpoint, HttpMethodName.HEAD);
-    }
-
     /**
      * Execute the request with a dummy response handler and error response handler
      */
     public static void execute(AmazonHttpClient httpClient, Request<?> request) {
         httpClient.requestExecutionBuilder()
-                  .request(request)
-                  .errorResponseHandler(new NullErrorResponseHandler())
-                  .execute(new ErrorDuringUnmarshallingResponseHandler());
-    }
-
-    public static void assertNumberOfRetries(HttpClient spyClient, int expectedNumberOfRequests) {
-        try {
-            verify(spyClient, times(expectedNumberOfRequests)).execute(any(HttpRequestBase.class),
-                                                                       any(HttpContext.class));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+                .request(request)
+                .errorResponseHandler(new NullErrorResponseHandler())
+                .execute(new ErrorDuringUnmarshallingResponseHandler());
     }
 
     private static void waitBeforeAssertOnExecutor() {
@@ -240,8 +126,6 @@ public class ClientExecutionAndRequestTimerTestUtils {
                     e.printStackTrace();
                 }
             }
-
-            ;
         }.start();
     }
 

@@ -143,7 +143,8 @@ public class MockServer {
                         Socket socket = serverSocket.accept();
                         DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                         out.writeBytes("HTTP/1.1 200 OK\r\n");
-                        out.writeBytes("Content-Type: text/html\r\n\r\n");
+                        out.writeBytes("Content-Type: text/html\r\n");
+                        out.writeBytes("Content-Length: 500\r\n\r\n");
                         out.writeBytes("<html><head></head><body><h1>Hello.");
                         while (true) {
                             Thread.sleep(1 * 1000);

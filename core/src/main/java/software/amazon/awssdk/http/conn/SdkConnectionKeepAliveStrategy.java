@@ -27,8 +27,7 @@ import software.amazon.awssdk.annotation.SdkPublicApi;
  * maximum idle time for connections.
  */
 @SdkPublicApi
-public class SdkConnectionKeepAliveStrategy
-        implements ConnectionKeepAliveStrategy {
+public class SdkConnectionKeepAliveStrategy implements ConnectionKeepAliveStrategy {
 
     private final long maxIdleTime;
 

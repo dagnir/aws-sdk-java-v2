@@ -18,9 +18,9 @@ package software.amazon.awssdk.internal.http.settings;
 import java.net.InetAddress;
 import java.security.SecureRandom;
 import software.amazon.awssdk.ApacheHttpClientConfig;
-import software.amazon.awssdk.DnsResolver;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.SdkHttpClientSettings;
 import software.amazon.awssdk.util.ValidationUtils;
 
 /**
@@ -28,7 +28,7 @@ import software.amazon.awssdk.util.ValidationUtils;
  * underlying http client.
  */
 @SdkInternalApi
-public class HttpClientSettings {
+public class HttpClientSettings implements SdkHttpClientSettings {
 
     private final LegacyClientConfiguration config;
 
@@ -101,10 +101,6 @@ public class HttpClientSettings {
 
     public boolean useGzip() {
         return config.useGzip();
-    }
-
-    public DnsResolver getDnsResolver() {
-        return config.getDnsResolver();
     }
 
     public ApacheHttpClientConfig getApacheHttpClientConfig() {

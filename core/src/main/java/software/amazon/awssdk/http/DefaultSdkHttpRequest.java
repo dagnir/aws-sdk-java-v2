@@ -20,13 +20,14 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
  * Internal implementation of {@link SdkHttpRequest}. Provided to HTTP implement to execute a request.
  */
 @SdkInternalApi
-public class DefaultAwsHttpRequest implements SdkHttpRequest {
+public class DefaultSdkHttpRequest implements SdkHttpRequest {
 
     private final Map<String, List<String>> headers;
     private final String resourcePath;
@@ -35,7 +36,7 @@ public class DefaultAwsHttpRequest implements SdkHttpRequest {
     private final SdkHttpMethod httpMethod;
     private final InputStream content;
 
-    private DefaultAwsHttpRequest(Builder builder) {
+    private DefaultSdkHttpRequest(Builder builder) {
         this.headers = builder.headers;
         this.resourcePath = builder.resourcePath;
         this.queryParameters = builder.queryParameters;
@@ -47,6 +48,13 @@ public class DefaultAwsHttpRequest implements SdkHttpRequest {
     @Override
     public Map<String, List<String>> getHeaders() {
         return headers;
+    }
+
+    @Override
+    public Optional<String> getFirstHeader(String headerName) {
+        return Optional.ofNullable(headers.get(headerName))
+                .filter(h -> h.size() > 0)
+                .map(h -> h.get(0));
     }
 
     @Override
@@ -75,14 +83,14 @@ public class DefaultAwsHttpRequest implements SdkHttpRequest {
     }
 
     /**
-     * @return Builder instance to construct a {@link DefaultAwsHttpRequest}.
+     * @return Builder instance to construct a {@link DefaultSdkHttpRequest}.
      */
     static Builder builder() {
         return new Builder();
     }
 
     /**
-     * Builder for a {@link DefaultAwsHttpRequest}.
+     * Builder for a {@link DefaultSdkHttpRequest}.
      */
     public static final class Builder {
 
@@ -127,10 +135,10 @@ public class DefaultAwsHttpRequest implements SdkHttpRequest {
         }
 
         /**
-         * @return An immutable {@link DefaultAwsHttpRequest} object.
+         * @return An immutable {@link DefaultSdkHttpRequest} object.
          */
         public SdkHttpRequest build() {
-            return new DefaultAwsHttpRequest(this);
+            return new DefaultSdkHttpRequest(this);
         }
     }
 

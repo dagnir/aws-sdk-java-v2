@@ -35,17 +35,14 @@ public class RequestConfigAdapterTest {
     @Test
     public void timeoutsSetInBaseRequest_AreAdaptedToNonNullIntegers() {
         RequestConfigAdapter adapter = adapt(SdkRequestConfig.builder()
-                                                     .httpRequestTimeout(1000)
                                                      .totalExecutionTimeout(5000)
                                                      .build());
-        assertEquals(Integer.valueOf(1000), adapter.getRequestTimeout());
         assertEquals(Integer.valueOf(5000), adapter.getClientExecutionTimeout());
     }
 
     @Test
     public void timeoutsNotSetInBaseRequest_AreNullWhenAdapted() {
         RequestConfigAdapter adapter = adapt(SdkRequestConfig.builder().build());
-        assertNull(adapter.getRequestTimeout());
         assertNull(adapter.getClientExecutionTimeout());
     }
 
@@ -57,7 +54,6 @@ public class RequestConfigAdapterTest {
     @Test
     public void requestConfigNotSetInBaseResult_TimeoutsAreStillNullWhenAdapted() {
         RequestConfigAdapter adapter = new RequestConfigAdapter(new EmptyRequest());
-        assertNull(adapter.getRequestTimeout());
         assertNull(adapter.getClientExecutionTimeout());
     }
 

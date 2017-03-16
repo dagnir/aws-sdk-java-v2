@@ -66,11 +66,6 @@ public final class AmazonWebServiceRequestAdapter extends RequestConfig {
     }
 
     @Override
-    public Integer getRequestTimeout() {
-        return request.getSdkRequestTimeout();
-    }
-
-    @Override
     public Integer getClientExecutionTimeout() {
         return request.getSdkClientExecutionTimeout();
     }

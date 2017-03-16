@@ -18,20 +18,20 @@ package software.amazon.awssdk.internal.http.timers.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.protocol.HttpContext;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.TestPreConditions;
+import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.internal.http.response.ErrorDuringUnmarshallingResponseHandler;
-import software.amazon.awssdk.internal.http.response.HttpResponseProxy;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.internal.http.response.NullResponseHandler;
 import software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils;
 import software.amazon.awssdk.internal.http.timers.TimeoutTestConstants;
@@ -40,36 +40,42 @@ import software.amazon.awssdk.internal.http.timers.TimeoutTestConstants;
  * These tests don't actually start up a mock server. They use a partially mocked Apache HTTP client
  * to return the desired response
  */
+@RunWith(MockitoJUnitRunner.class)
 public class MockedClientTests {
 
-    private AmazonHttpClient httpClient;
+    @Mock
+    private SdkHttpClient sdkHttpClient;
 
-    @BeforeClass
-    public static void preConditions() {
-        TestPreConditions.assumeNotJava6();
+    @Mock
+    private AbortableCallable<SdkHttpResponse> sdkResponse;
+
+    @Before
+    public void setup() throws Exception {
+        when(sdkHttpClient.prepareRequest(any(), any())).thenReturn(sdkResponse);
+        when(sdkResponse.call()).thenReturn(SdkHttpResponse.builder()
+                                                    .statusCode(200)
+                                                    .build());
     }
 
     @Test
-    public void clientExecutionTimeoutEnabled_RequestCompletesWithinTimeout_TaskCanceledAndEntityBuffered()
-            throws Exception {
-        LegacyClientConfiguration
-                config = new LegacyClientConfiguration().withClientExecutionTimeout(TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT)
-                                                        .withMaxErrorRetry(0);
-        ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
+    public void clientExecutionTimeoutEnabled_RequestCompletesWithinTimeout_TaskCanceled() throws Exception {
+        LegacyClientConfiguration config = new LegacyClientConfiguration()
+                .withClientExecutionTimeout(TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT)
+                .withMaxErrorRetry(0);
 
-        HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpResponseProxySpy();
-        doReturn(responseProxy).when(rawHttpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-        httpClient = new AmazonHttpClient(config, rawHttpClient, null);
+        AmazonHttpClient httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(config)
+                .sdkHttpClient(sdkHttpClient)
+                .build();
 
         try {
-            ClientExecutionAndRequestTimerTestUtils.execute(httpClient, ClientExecutionAndRequestTimerTestUtils.createMockGetRequest());
+            ClientExecutionAndRequestTimerTestUtils
+                    .execute(httpClient, ClientExecutionAndRequestTimerTestUtils.createMockGetRequest());
             fail("Exception expected");
         } catch (AmazonClientException e) {
             NullResponseHandler.assertIsUnmarshallingException(e);
         }
 
-        ClientExecutionAndRequestTimerTestUtils.assertResponseIsBuffered(responseProxy);
         ScheduledThreadPoolExecutor requestTimerExecutor = httpClient.getClientExecutionTimer().getExecutor();
         ClientExecutionAndRequestTimerTestUtils.assertTimerNeverTriggered(requestTimerExecutor);
         ClientExecutionAndRequestTimerTestUtils.assertCanceledTasksRemoved(requestTimerExecutor);
@@ -77,50 +83,6 @@ public class MockedClientTests {
         // thread should exist
         assertEquals(1, requestTimerExecutor.getPoolSize());
         ClientExecutionAndRequestTimerTestUtils.assertCoreThreadsShutDownAfterBeingIdle(requestTimerExecutor);
-    }
-
-    @Test
-    public void clientExecutionTimeoutDisabled_RequestCompletesWithinTimeout_EntityNotBuffered() throws Exception {
-        LegacyClientConfiguration config = new LegacyClientConfiguration().withClientExecutionTimeout(0);
-        ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
-
-        HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpResponseProxySpy();
-        doReturn(responseProxy).when(rawHttpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-        httpClient = new AmazonHttpClient(config, rawHttpClient, null);
-
-        try {
-            ClientExecutionAndRequestTimerTestUtils
-                    .execute(httpClient, ClientExecutionAndRequestTimerTestUtils.createMockGetRequest());
-            fail("Exception expected");
-        } catch (AmazonClientException e) {
-            // Ignored or expected.
-        }
-
-        ClientExecutionAndRequestTimerTestUtils.assertResponseWasNotBuffered(responseProxy);
-    }
-
-    @Test
-    public void clientExecutionTimeoutEnabled_RequestCompletesWithinTimeout_EntityNotBufferedForStreamedResponse()
-            throws Exception {
-        LegacyClientConfiguration config =
-                new LegacyClientConfiguration().withClientExecutionTimeout(TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT);
-        ConnectionManagerAwareHttpClient rawHttpClient = ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy(config);
-
-        HttpResponseProxy responseProxy = ClientExecutionAndRequestTimerTestUtils.createHttpResponseProxySpy();
-        doReturn(responseProxy).when(rawHttpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-        httpClient = new AmazonHttpClient(config, rawHttpClient, null);
-
-        try {
-            httpClient.requestExecutionBuilder().request(ClientExecutionAndRequestTimerTestUtils.createMockGetRequest())
-                      .execute(new ErrorDuringUnmarshallingResponseHandler().leaveConnectionOpen());
-            fail("Exception expected");
-        } catch (AmazonClientException e) {
-            // Ignored or expected.
-        }
-
-        ClientExecutionAndRequestTimerTestUtils.assertResponseWasNotBuffered(responseProxy);
     }
 
 }

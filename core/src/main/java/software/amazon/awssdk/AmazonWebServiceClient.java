@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk;
 
+import static software.amazon.awssdk.util.FunctionalUtils.invokeSafely;
+
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -385,7 +387,7 @@ public abstract class AmazonWebServiceClient {
      * requests.
      */
     public void shutdown() {
-        client.shutdown();
+        invokeSafely(client::close);
     }
 
     /**

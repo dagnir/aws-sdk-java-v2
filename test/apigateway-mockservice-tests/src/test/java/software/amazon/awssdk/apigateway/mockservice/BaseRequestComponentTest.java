@@ -94,20 +94,6 @@ public class BaseRequestComponentTest {
 
     /**
      * Note that this is a time based test and may be subject to occasional flakiness. The only way
-     * to observe that request timeout is honored is to trigger the timeout.
-     */
-    @Test
-    public void customRequestTimeoutSetInBaseRequest_IsHonoredByRuntime() {
-        final int expectedTimeout = 100;
-        Runnable runnable = () -> {
-            SdkRequestConfig requestConfig = SdkRequestConfig.builder().httpRequestTimeout(expectedTimeout).build();
-            client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(requestConfig));
-        };
-        assertRequestTimeoutTriggered(expectedTimeout, runnable);
-    }
-
-    /**
-     * Note that this is a time based test and may be subject to occasional flakiness. The only way
      * to observe that client execution timeout is honored is to trigger the timeout.
      */
     @Test

@@ -15,30 +15,45 @@
 
 package software.amazon.awssdk.retry;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
-import java.util.Random;
-import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
- * Tests that {@link AmazonHttpClient#executeHelper()} method passes the correct
- * context information into the configured RetryPolicy.
+ * Tests that {@link AmazonHttpClient} passes the correct context information into the configured RetryPolicy.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
 
     private static final int EXPECTED_RETRY_COUNT = 5;
-    private static final Random RANDOM = new Random();
     private AmazonHttpClient testedClient;
 
-    /** Reset the RetryPolicy and restart collecting context data. */
+    @Mock
+    private SdkHttpClient sdkHttpClient;
+
+    @Mock
+    private AbortableCallable<SdkHttpResponse> abortableCallable;
+
+    /**
+     * Reset the RetryPolicy and restart collecting context data.
+     */
     @Before
     public void resetContextData() {
         retryCondition = new ContextDataCollectionRetryCondition();
@@ -49,7 +64,12 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
                                 backoffStrategy,
                                 EXPECTED_RETRY_COUNT, // max error retry
                                 false));              // ignore the maxErrorRetry in ClientConfiguration level
-        testedClient = new AmazonHttpClient(clientConfiguration);
+
+        when(sdkHttpClient.prepareRequest(any(), any())).thenReturn(abortableCallable);
+        testedClient = AmazonHttpClient.builder()
+                .sdkHttpClient(sdkHttpClient)
+                .clientConfiguration(clientConfiguration)
+                .build();
     }
 
     /**
@@ -57,12 +77,14 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      * request payload is repeatable.
      */
     @Test
-    public void testServiceExceptionHandling() {
-        int random500StatusCode = 500 + RANDOM.nextInt(100);
-        String randomErrorCode = UUID.randomUUID().toString();
-
+    public void testServiceExceptionHandling() throws Exception {
+        int statusCode = 500;
+        String statusText = "InternalServerError";
         // A mock HttpClient that always returns the specified status and error code.
-        injectMockHttpClient(testedClient, new ReturnServiceErrorHttpClient(random500StatusCode, randomErrorCode));
+        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
+                                                          .statusCode(statusCode)
+                                                          .statusText(statusText)
+                                                          .build());
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
@@ -74,15 +96,15 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         AmazonServiceException expectedServiceException = null;
         try {
             testedClient.requestExecutionBuilder()
-                        .request(testedRepeatableRequest)
-                        .errorResponseHandler(errorResponseHandler)
-                        .executionContext(context)
-                        .execute();
+                    .request(testedRepeatableRequest)
+                    .errorResponseHandler(errorResponseHandler)
+                    .executionContext(context)
+                    .execute();
             Assert.fail("AmazonServiceException is expected.");
         } catch (AmazonServiceException ase) {
             // We should see the original service exception
-            Assert.assertEquals(random500StatusCode, ase.getStatusCode());
-            Assert.assertEquals(randomErrorCode, ase.getErrorCode());
+            assertEquals(statusCode, ase.getStatusCode());
+            assertEquals(statusText, ase.getErrorCode());
             expectedServiceException = ase;
         }
 
@@ -96,11 +118,8 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
                                   expectedServiceException,
                                   EXPECTED_RETRY_COUNT);
 
-        // We also want to check the RequestCount metric is correctly captured.
-        Assert.assertEquals(
-                EXPECTED_RETRY_COUNT + 1, // request count = retries + 1
-                context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
+        // request count = retries + 1
+        assertRequestCountEquals(EXPECTED_RETRY_COUNT + 1, context.getAwsRequestMetrics());
     }
 
     /**
@@ -108,10 +127,11 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      * executing the http request when the request payload is repeatable.
      */
     @Test
-    public void testIoExceptionHandling() {
+    public void testIoExceptionHandling() throws Exception {
         // A mock HttpClient that always throws the specified IOException object
         IOException simulatedIoException = new IOException("fake IOException");
-        injectMockHttpClient(testedClient, new ThrowingExceptionHttpClient(simulatedIoException));
+
+        when(abortableCallable.call()).thenThrow(simulatedIoException);
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
@@ -123,10 +143,10 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         AmazonClientException expectedClientException = null;
         try {
             testedClient.requestExecutionBuilder()
-                        .request(testedRepeatableRequest)
-                        .errorResponseHandler(errorResponseHandler)
-                        .executionContext(context)
-                        .execute();
+                    .request(testedRepeatableRequest)
+                    .errorResponseHandler(errorResponseHandler)
+                    .executionContext(context)
+                    .execute();
             Assert.fail("AmazonClientException is expected.");
         } catch (AmazonClientException ace) {
             Assert.assertTrue(simulatedIoException == ace.getCause());
@@ -143,11 +163,8 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
                                   expectedClientException,
                                   EXPECTED_RETRY_COUNT);
 
-        // We also want to check the RequestCount metric is correctly captured.
-        Assert.assertEquals(
-                EXPECTED_RETRY_COUNT + 1, // request count = retries + 1
-                context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
+        // request count = retries + 1
+        assertRequestCountEquals(EXPECTED_RETRY_COUNT + 1, context.getAwsRequestMetrics());
     }
 
     /**
@@ -155,12 +172,14 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      * request payload is not repeatable.
      */
     @Test
-    public void testServiceExceptionHandlingWithNonRepeatableRequestContent() {
-        int random500StatusCode = 500 + RANDOM.nextInt(100);
-        String randomErrorCode = UUID.randomUUID().toString();
+    public void testServiceExceptionHandlingWithNonRepeatableRequestContent() throws Exception {
+        int statusCode = 513;
+        String statusText = "SomeError";
 
-        // A mock HttpClient that always returns the specified status and error code.
-        injectMockHttpClient(testedClient, new ReturnServiceErrorHttpClient(random500StatusCode, randomErrorCode));
+        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
+                                                          .statusCode(statusCode)
+                                                          .statusText(statusText)
+                                                          .build());
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
@@ -172,14 +191,14 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         // custom shouldRetry(..) method.
         try {
             testedClient.requestExecutionBuilder()
-                        .request(testedNonRepeatableRequest)
-                        .errorResponseHandler(errorResponseHandler)
-                        .executionContext(context)
-                        .execute();
+                    .request(testedNonRepeatableRequest)
+                    .errorResponseHandler(errorResponseHandler)
+                    .executionContext(context)
+                    .execute();
             Assert.fail("AmazonServiceException is expected.");
         } catch (AmazonServiceException ase) {
-            Assert.assertEquals(random500StatusCode, ase.getStatusCode());
-            Assert.assertEquals(randomErrorCode, ase.getErrorCode());
+            assertEquals(statusCode, ase.getStatusCode());
+            assertEquals(statusText, ase.getErrorCode());
         }
 
         // Verifies that shouldRetry and calculateSleepTime were never called
@@ -191,10 +210,8 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
                                   null,
                                   null,
                                   EXPECTED_RETRY_COUNT);
-        Assert.assertEquals(
-                EXPECTED_RETRY_COUNT + 1,   // request count = retries + 1
-                context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
+        // request count = retries + 1
+        assertRequestCountEquals(EXPECTED_RETRY_COUNT + 1, context.getAwsRequestMetrics());
     }
 
     /**
@@ -202,10 +219,11 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      * request payload is not repeatable.
      */
     @Test
-    public void testIoExceptionHandlingWithNonRepeatableRequestContent() {
+    public void testIoExceptionHandlingWithNonRepeatableRequestContent() throws Exception {
         // A mock HttpClient that always throws the specified IOException object
         IOException simulatedIOException = new IOException("fake IOException");
-        injectMockHttpClient(testedClient, new ThrowingExceptionHttpClient(simulatedIOException));
+
+        when(abortableCallable.call()).thenThrow(simulatedIOException);
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
@@ -218,10 +236,10 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         // custom shouldRetry(..) method.
         try {
             testedClient.requestExecutionBuilder()
-                        .request(testedRepeatableRequest)
-                        .errorResponseHandler(errorResponseHandler)
-                        .executionContext(context)
-                        .execute();
+                    .request(testedRepeatableRequest)
+                    .errorResponseHandler(errorResponseHandler)
+                    .executionContext(context)
+                    .execute();
             Assert.fail("AmazonClientException is expected.");
         } catch (AmazonClientException ace) {
             Assert.assertTrue(simulatedIOException == ace.getCause());
@@ -237,10 +255,8 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
                                   null,
                                   EXPECTED_RETRY_COUNT);
 
-        Assert.assertEquals(
-                EXPECTED_RETRY_COUNT + 1, // request count = retries + 1
-                context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
+        // request count = retries + 1
+        assertRequestCountEquals(EXPECTED_RETRY_COUNT + 1, context.getAwsRequestMetrics());
     }
 
     /**
@@ -248,10 +264,10 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
      * should be handled as an unexpected failure and not retried).
      */
     @Test
-    public void testUnexpectedFailureHandling() {
+    public void testUnexpectedFailureHandling() throws Exception {
         // A mock HttpClient that always throws an NPE
         NullPointerException simulatedNPE = new NullPointerException("fake NullPointerException");
-        injectMockHttpClient(testedClient, new ThrowingExceptionHttpClient(simulatedNPE));
+        when(abortableCallable.call()).thenThrow(simulatedNPE);
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
@@ -262,10 +278,10 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         // consulting the custom shouldRetry(..) method.
         try {
             testedClient.requestExecutionBuilder()
-                        .request(testedRepeatableRequest)
-                        .errorResponseHandler(errorResponseHandler)
-                        .executionContext(context)
-                        .execute();
+                    .request(testedRepeatableRequest)
+                    .errorResponseHandler(errorResponseHandler)
+                    .executionContext(context)
+                    .execute();
             Assert.fail("AmazonClientException is expected.");
         } catch (NullPointerException npe) {
             Assert.assertTrue(simulatedNPE == npe);
@@ -282,9 +298,13 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
                                   0);
 
         // The captured RequestCount should be 1
-        Assert.assertEquals(
-                1,
-                context.getAwsRequestMetrics()
-                       .getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
+        assertRequestCountEquals(1, context.getAwsRequestMetrics());
+    }
+
+    private void assertRequestCountEquals(int expectedCount, AwsRequestMetrics actualMetrics) {
+        assertEquals(
+                expectedCount,
+                actualMetrics.getTimingInfo().getCounter(AwsRequestMetrics.Field.RequestCount.toString()).intValue());
+
     }
 }

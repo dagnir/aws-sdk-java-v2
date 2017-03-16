@@ -94,8 +94,6 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
     public AmazonWebServiceResponse<T> handle(HttpResponse response) throws Exception {
         log.trace("Parsing service response JSON");
 
-        String crc32Checksum = response.getHeaders().get("x-amz-crc32");
-
         JsonParser jsonParser = null;
 
         if (shouldParsePayloadAsJson()) {
@@ -116,15 +114,6 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
                 IOUtils.drainInputStream(response.getContent());
             }
 
-            if (crc32Checksum != null) {
-                long serverSideCRC = Long.parseLong(crc32Checksum);
-                long clientSideCRC = response.getCRC32Checksum();
-                if (clientSideCRC != serverSideCRC) {
-                    throw new Crc32MismatchException(
-                            "Client calculated crc32 checksum didn't match that calculated by server side");
-                }
-            }
-
             awsResponse.setResult(result);
 
             Map<String, String> metadata = unmarshallerContext.getMetadata();
@@ -138,6 +127,9 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
             if (shouldParsePayloadAsJson()) {
                 try {
                     jsonParser.close();
+                } catch (Crc32MismatchException e) {
+                    // Throw back out the CRC exception
+                    throw e;
                 } catch (IOException e) {
                     log.warn("Error closing json parser", e);
                 }
@@ -149,9 +141,8 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
      * Hook for subclasses to override in order to collect additional metadata from service
      * responses.
      *
-     * @param unmarshallerContext
-     *            The unmarshaller context used to configure a service's response
-     *            data.
+     * @param unmarshallerContext The unmarshaller context used to configure a service's response
+     *                            data.
      */
     protected void registerAdditionalMetadataExpressions(
             JsonUnmarshallerContext unmarshallerContext) {

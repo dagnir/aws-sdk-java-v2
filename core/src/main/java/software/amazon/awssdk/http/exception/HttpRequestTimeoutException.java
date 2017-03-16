@@ -15,16 +15,20 @@
 
 package software.amazon.awssdk.http.exception;
 
-import java.io.IOException;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkPublicApi;
 
 /**
  * Signals that the http request could not complete within the specified timeout.
  */
 @SdkPublicApi
-public class HttpRequestTimeoutException extends IOException {
+public class HttpRequestTimeoutException extends SdkClientException {
 
     private static final long serialVersionUID = -2588353895012259837L;
+
+    public HttpRequestTimeoutException() {
+        this("Request did not complete before the request timeout configuration.");
+    }
 
     public HttpRequestTimeoutException(String message) {
         super(message);

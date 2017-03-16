@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.client;
 
+import static software.amazon.awssdk.util.FunctionalUtils.invokeSafely;
+
 import java.net.URI;
 import java.util.List;
 import software.amazon.awssdk.AmazonWebServiceRequest;
@@ -63,11 +65,11 @@ public class ClientHandlerImpl extends ClientHandler {
     private AmazonHttpClient buildHttpClient(ClientHandlerParams handlerParams) {
         final AwsSyncClientParams clientParams = handlerParams.getClientParams();
         return AmazonHttpClient.builder()
-                               .clientConfiguration(clientParams.getClientConfiguration())
-                               .retryPolicy(clientParams.getRetryPolicy())
-                               .requestMetricCollector(clientParams.getRequestMetricCollector())
-                               .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
-                               .build();
+                .clientConfiguration(clientParams.getClientConfiguration())
+                .retryPolicy(clientParams.getRetryPolicy())
+                .requestMetricCollector(clientParams.getRequestMetricCollector())
+                .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
+                .build();
     }
 
     @Override
@@ -108,16 +110,16 @@ public class ClientHandlerImpl extends ClientHandler {
 
     @Override
     public void shutdown() {
-        client.shutdown();
+        invokeSafely(client::close);
     }
 
     private ExecutionContext createExecutionContext(RequestConfig requestConfig) {
         boolean isMetricsEnabled = isRequestMetricsEnabled(requestConfig);
         return ExecutionContext.builder()
-                               .withRequestHandler2s(requestHandler2s)
-                               .withUseRequestMetrics(isMetricsEnabled)
-                               .withSignerProvider(signerProvider)
-                               .build();
+                .withRequestHandler2s(requestHandler2s)
+                .withUseRequestMetrics(isMetricsEnabled)
+                .withSignerProvider(signerProvider)
+                .build();
     }
 
     /**
@@ -148,7 +150,7 @@ public class ClientHandlerImpl extends ClientHandler {
      */
     private RequestMetricCollector requestMetricCollector() {
         return clientLevelMetricCollector != null ? clientLevelMetricCollector :
-               AwsSdkMetrics.getRequestMetricCollector();
+                AwsSdkMetrics.getRequestMetricCollector();
     }
 
 
@@ -196,11 +198,11 @@ public class ClientHandlerImpl extends ClientHandler {
                                                          HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
         request.setEndpoint(endpoint);
         return client.requestExecutionBuilder()
-                     .request(request)
-                     .requestConfig(requestConfig)
-                     .executionContext(executionContext)
-                     .errorResponseHandler(errorResponseHandler)
-                     .execute(responseHandler);
+                .request(request)
+                .requestConfig(requestConfig)
+                .executionContext(executionContext)
+                .errorResponseHandler(errorResponseHandler)
+                .execute(responseHandler);
     }
 
     /**

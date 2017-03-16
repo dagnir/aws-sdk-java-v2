@@ -62,7 +62,6 @@ public class ClientConfigurationAdapter {
             timeoutConfiguration -> {
                 bind(timeoutConfiguration::getSocketTimeout, adaptedConfiguration::setSocketTimeout);
                 bind(timeoutConfiguration::getConnectionTimeout, adaptedConfiguration::setConnectionTimeout);
-                bind(timeoutConfiguration::getHttpRequestTimeout, adaptedConfiguration::setRequestTimeout);
                 bind(timeoutConfiguration::getTotalExecutionTimeout, adaptedConfiguration::setClientExecutionTimeout);
             }
         );

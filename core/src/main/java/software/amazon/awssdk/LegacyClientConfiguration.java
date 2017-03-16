@@ -44,11 +44,6 @@ public class LegacyClientConfiguration {
     /**
      * The default timeout for a request. This is disabled by default.
      */
-    public static final int DEFAULT_REQUEST_TIMEOUT = 0;
-
-    /**
-     * The default timeout for a request. This is disabled by default.
-     */
     public static final int DEFAULT_CLIENT_EXECUTION_TIMEOUT = 0;
 
     /** The default max connection pool size. */
@@ -174,13 +169,6 @@ public class LegacyClientConfiguration {
      * giving up and timing out. A value of 0 means infinity, and is not recommended.
      */
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
-    /**
-     * The amount of time to wait (in milliseconds) for a request to complete before giving up and
-     * timing out. A value of 0 means infinity. Consider setting this if a harder guarantee is
-     * required on the maximum amount of time a request will take for non-streaming operations, and
-     * are willing to spin up a background thread to enforce it.
-     */
-    private int requestTimeout = DEFAULT_REQUEST_TIMEOUT;
     private int clientExecutionTimeout = DEFAULT_CLIENT_EXECUTION_TIMEOUT;
     private boolean throttleRetries = DEFAULT_THROTTLE_RETRIES;
     /**
@@ -253,10 +241,6 @@ public class LegacyClientConfiguration {
      */
     private int responseMetadataCacheSize = DEFAULT_RESPONSE_METADATA_CACHE_SIZE;
     /**
-     * The DNS Resolver to resolve IP addresses of Amazon Web Services.
-     */
-    private DnsResolver dnsResolver = new SystemDefaultDnsResolver();
-    /**
      * An instance of {@link SecureRandom} configured by the user; or the JDK default will be used
      * if it is set to null or not explicitly configured.
      */
@@ -309,7 +293,6 @@ public class LegacyClientConfiguration {
         this.nonProxyHosts = other.nonProxyHosts;
         this.preemptiveBasicProxyAuth = other.preemptiveBasicProxyAuth;
         this.socketTimeout = other.socketTimeout;
-        this.requestTimeout = other.requestTimeout;
         this.clientExecutionTimeout = other.clientExecutionTimeout;
         this.userAgentPrefix = other.userAgentPrefix;
         this.userAgentSuffix = other.userAgentSuffix;
@@ -319,7 +302,6 @@ public class LegacyClientConfiguration {
         this.socketSendBufferSizeHint = other.socketSendBufferSizeHint;
         this.signerOverride = other.signerOverride;
         this.responseMetadataCacheSize = other.responseMetadataCacheSize;
-        this.dnsResolver = other.dnsResolver;
         this.useExpectContinue = other.useExpectContinue;
         this.apacheHttpClientConfig = new ApacheHttpClientConfig(other.apacheHttpClientConfig);
         this.cacheResponseMetadata = other.cacheResponseMetadata;
@@ -1019,94 +1001,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the amount of time to wait (in milliseconds) for the request to complete before
-     * giving up and timing out. A non-positive value disables this feature.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * <p>
-     * <p>
-     * The request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this, the request timeout feature
-     * should not be used when absolute precision is needed.
-     * </p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
-     *
-     * @return The amount of time to wait (in milliseconds) for the request to complete before
-     *         giving up and timing out.
-     * @see {@link LegacyClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
-     *      all retries
-     */
-    public int getRequestTimeout() {
-        return requestTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for the request to complete before giving
-     * up and timing out. A non-positive value disables this feature.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * <p>
-     * <p>
-     * The request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this, the request timeout feature
-     * should not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
-     *
-     * @param requestTimeout
-     *            The amount of time to wait (in milliseconds) for the request to complete before
-     *            giving up and timing out.
-     * @see {@link LegacyClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
-     *      all retries
-     */
-    public void setRequestTimeout(int requestTimeout) {
-        this.requestTimeout = requestTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for the request to complete before giving
-     * up and timing out. A non-positive value disables this feature. Returns the updated
-     * ClientConfiguration object so that additional method calls may be chained together.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * <p>
-     * <p>
-     * The request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this, the request timeout feature
-     * should not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
-     *
-     * @param requestTimeout
-     *            The amount of time to wait (in milliseconds) for the request to complete before
-     *            giving up and timing out.
-     * @return The updated ClientConfiguration object.
-     * @see {@link LegacyClientConfiguration#setClientExecutionTimeout(int)} to enforce a timeout across
-     *      all retries
-     */
-    public LegacyClientConfiguration withRequestTimeout(int requestTimeout) {
-        setRequestTimeout(requestTimeout);
-        return this;
-    }
-
-    /**
      * Returns the amount of time (in milliseconds) to allow the client to complete the execution of
      * an API call. This timeout covers the entire client execution except for marshalling. This
      * includes request handler execution, all HTTP request including retries, unmarshalling, etc.
@@ -1122,19 +1016,9 @@ public class LegacyClientConfiguration {
      * seconds after the timer has been breached. Because of this, the client execution timeout
      * feature should not be used when absolute precision is needed.
      * </p>
-     * <p>
-     * This may be used together with {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce
-     * both a timeout on each individual HTTP request (i.e. each retry) and the total time spent on
-     * all requests across retries (i.e. the 'client execution' time). A non-positive value disables
-     * this feature.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
      *
      * @return The amount of time (in milliseconds) to allow the client to complete the execution of
      *         an API call.
-     * @see {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
      */
     public int getClientExecutionTimeout() {
         return this.clientExecutionTimeout;
@@ -1156,20 +1040,10 @@ public class LegacyClientConfiguration {
      * seconds after the timer has been breached. Because of this, the client execution timeout
      * feature should not be used when absolute precision is needed.
      * </p>
-     * <p>
-     * This may be used together with {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce
-     * both a timeout on each individual HTTP request (i.e. each retry) and the total time spent on
-     * all requests across retries (i.e. the 'client execution' time). A non-positive value disables
-     * this feature.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
      *
      * @param clientExecutionTimeout
      *            The amount of time (in milliseconds) to allow the client to complete the execution
      *            of an API call. A value of '0' disables this feature.
-     * @see {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
      */
     public void setClientExecutionTimeout(int clientExecutionTimeout) {
         this.clientExecutionTimeout = clientExecutionTimeout;
@@ -1191,21 +1065,11 @@ public class LegacyClientConfiguration {
      * seconds after the timer has been breached. Because of this, the client execution timeout
      * feature should not be used when absolute precision is needed.
      * </p>
-     * <p>
-     * This may be used together with {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce
-     * both a timeout on each individual HTTP request (i.e. each retry) and the total time spent on
-     * all requests across retries (i.e. the 'client execution' time). A non-positive value disables
-     * this feature.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
      *
      * @param clientExecutionTimeout
      *            The amount of time (in milliseconds) to allow the client to complete the execution
      *            of an API call. A value of '0' disables this feature.
      * @return The updated ClientConfiguration object for method chaining
-     * @see {@link LegacyClientConfiguration#setRequestTimeout(int)} to enforce a timeout per HTTP request
      */
     public LegacyClientConfiguration withClientExecutionTimeout(int clientExecutionTimeout) {
         setClientExecutionTimeout(clientExecutionTimeout);
@@ -1815,35 +1679,6 @@ public class LegacyClientConfiguration {
      */
     public LegacyClientConfiguration withTcpKeepAlive(final boolean use) {
         setUseTcpKeepAlive(use);
-        return this;
-    }
-
-    /**
-     * Returns the DnsResolver for resolving AWS IP addresses.
-     * Returns the {@link SystemDefaultDnsResolver} by default if not
-     * explicitly configured by the user.
-     */
-    public DnsResolver getDnsResolver() {
-        return dnsResolver;
-    }
-
-    /**
-     * Sets the DNS Resolver that should be used to for resolving AWS IP addresses.
-     */
-    public void setDnsResolver(final DnsResolver resolver) {
-        if (resolver == null) {
-            throw new IllegalArgumentException("resolver cannot be null");
-        }
-        this.dnsResolver = resolver;
-    }
-
-    /**
-     * Sets the DNS Resolver that should be used to for resolving AWS IP addresses.
-     *
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withDnsResolver(final DnsResolver resolver) {
-        setDnsResolver(resolver);
         return this;
     }
 

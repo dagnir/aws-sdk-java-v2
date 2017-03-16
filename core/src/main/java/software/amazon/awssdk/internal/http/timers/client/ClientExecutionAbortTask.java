@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.internal.http.timers.client;
 
-import org.apache.http.client.methods.HttpRequestBase;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.AbortableCallable;
 
 /**
  * Task to be scheduled by {@link ClientExecutionTimer}
@@ -27,16 +27,16 @@ public interface ClientExecutionAbortTask extends Runnable {
     /**
      * Client Execution timer task needs to abort the current running HTTP request when executed.
      */
-    public void setCurrentHttpRequest(HttpRequestBase newRequest);
+    void setCurrentHttpRequest(AbortableCallable<?> newRequest);
 
     /**
      * @return True if client execution has been aborted by the timer task. False otherwise
      */
-    public boolean hasClientExecutionAborted();
+    boolean hasClientExecutionAborted();
 
     /**
      * @return True if the timer task has been scheduled. False if client execution timeout is
      *         disabled for this request
      */
-    public boolean isEnabled();
+    boolean isEnabled();
 }

@@ -77,23 +77,12 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
          * InputStreamRequestEntity, then HttpClient will attempt to
          * buffer the entire stream contents into memory to determine
          * the content length.
-         *
-         * TODO: It'd be nice to have easier access to content length and
-         *       content type from the request, instead of having to look
-         *       directly into the headers.
          */
-        long contentLength = -1;
-        try {
-            String contentLengthString = request.getHeaders().get("Content-Length").get(0);
-            if (contentLengthString != null) {
-                contentLength = Long.parseLong(contentLengthString);
-            }
-        } catch (NumberFormatException nfe) {
-            LOG.warn("Unable to parse content length from request.  " +
-                     "Buffering contents in memory.");
-        }
+        long contentLength = request.getFirstHeader("Content-Length")
+                .map(this::parseContentLength)
+                .orElse(-1L);
 
-        String contentType = request.getHeaders().get("Content-Type").get(0);
+        String contentType = request.getFirstHeader("Content-Type").orElse(null);
 
         content = getContent(request);
         // TODO v2 MetricInputStreamEntity
@@ -103,6 +92,15 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
         setContent(content);
         setContentType(contentType);
         setContentLength(contentLength);
+    }
+
+    private long parseContentLength(String contentLength) {
+        try {
+            return Long.parseLong(contentLength);
+        } catch (NumberFormatException nfe) {
+            LOG.warn("Unable to parse content length from request. Buffering contents in memory.");
+            return -1;
+        }
     }
 
     /**

@@ -36,7 +36,6 @@ import software.amazon.awssdk.TestPreConditions;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.UnresponsiveMockServerTestBase;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
-import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.retry.FixedTimeBackoffStrategy;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
@@ -45,8 +44,6 @@ public class UnresponsiveServerIntegrationTests extends UnresponsiveMockServerTe
 
     private static final int LONGER_SOCKET_TIMEOUT = CLIENT_EXECUTION_TIMEOUT * PRECISION_MULTIPLIER;
     private static final int SHORTER_SOCKET_TIMEOUT = CLIENT_EXECUTION_TIMEOUT / PRECISION_MULTIPLIER;
-    private static final int LONGER_REQUEST_TIMEOUT = CLIENT_EXECUTION_TIMEOUT * PRECISION_MULTIPLIER;
-    private static final int SHORTER_REQUEST_TIMEOUT = CLIENT_EXECUTION_TIMEOUT / PRECISION_MULTIPLIER;
 
     private AmazonHttpClient httpClient;
 
@@ -57,7 +54,7 @@ public class UnresponsiveServerIntegrationTests extends UnresponsiveMockServerTe
 
     @Test(timeout = TEST_TIMEOUT)
     public void clientExecutionTimeoutDisabled_SocketTimeoutExceptionIsThrown_NoThreadsCreated() {
-        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withSocketTimeout(1 * 1000).withMaxErrorRetry(0));
+        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withSocketTimeout(1000).withMaxErrorRetry(0));
 
         try {
             httpClient.requestExecutionBuilder().request(newGetRequest()).execute();
@@ -78,12 +75,13 @@ public class UnresponsiveServerIntegrationTests extends UnresponsiveMockServerTe
     @Test(timeout = TEST_TIMEOUT)
     public void interruptCausedBySomethingOtherThanTimer_PropagatesInterruptToCaller() {
         final int socketTimeoutInMillis = 100;
-        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withSocketTimeout(socketTimeoutInMillis)
-                                                                         .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
-                                                                         .withRetryPolicy(
-                                                                           new RetryPolicy(PredefinedRetryPolicies.DEFAULT_RETRY_CONDITION,
-                                                                                           new FixedTimeBackoffStrategy(CLIENT_EXECUTION_TIMEOUT),
-                                                                                           1, false)));
+        httpClient = new AmazonHttpClient(new LegacyClientConfiguration()
+                                                  .withSocketTimeout(socketTimeoutInMillis)
+                                                  .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
+                                                  .withRetryPolicy(
+                                                          new RetryPolicy(PredefinedRetryPolicies.DEFAULT_RETRY_CONDITION,
+                                                                          new FixedTimeBackoffStrategy(CLIENT_EXECUTION_TIMEOUT),
+                                                                          1, false)));
 
         // We make sure the first connection has failed due to the socket timeout before
         // interrupting so we know that we are sleeping per the backoff strategy. Apache HTTP
@@ -102,8 +100,10 @@ public class UnresponsiveServerIntegrationTests extends UnresponsiveMockServerTe
     @Test(timeout = TEST_TIMEOUT)
     public void clientExecutionTimeoutEnabled_WithLongerSocketTimeout_ThrowsClientExecutionTimeoutException()
             throws IOException {
-        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
-                                                                         .withSocketTimeout(LONGER_SOCKET_TIMEOUT).withMaxErrorRetry(0));
+        httpClient = new AmazonHttpClient(new LegacyClientConfiguration()
+                                                  .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
+                                                  .withSocketTimeout(LONGER_SOCKET_TIMEOUT)
+                                                  .withMaxErrorRetry(0));
 
         try {
             httpClient.requestExecutionBuilder().request(newGetRequest()).execute();
@@ -117,8 +117,10 @@ public class UnresponsiveServerIntegrationTests extends UnresponsiveMockServerTe
     @Test(timeout = TEST_TIMEOUT)
     public void clientExecutionTimeoutEnabled_WithShorterSocketTimeout_ThrowsSocketTimeoutException()
             throws IOException {
-        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
-                                                                         .withSocketTimeout(SHORTER_SOCKET_TIMEOUT).withMaxErrorRetry(0));
+        httpClient = new AmazonHttpClient(new LegacyClientConfiguration()
+                                                  .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
+                                                  .withSocketTimeout(SHORTER_SOCKET_TIMEOUT)
+                                                  .withMaxErrorRetry(0));
 
         try {
             httpClient.requestExecutionBuilder().request(newGetRequest()).execute();
@@ -129,60 +131,4 @@ public class UnresponsiveServerIntegrationTests extends UnresponsiveMockServerTe
         }
     }
 
-    @Test(timeout = TEST_TIMEOUT)
-    public void clientExecutionTimeoutEnabled_WithShorterClientExecutionTimeout_ThrowsClientExecutionTimeoutException()
-            throws IOException {
-        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
-                                                                         .withRequestTimeout(LONGER_REQUEST_TIMEOUT).withMaxErrorRetry(0));
-
-        try {
-            httpClient.requestExecutionBuilder().request(newGetRequest()).execute();
-            fail("Exception expected");
-        } catch (AmazonClientException e) {
-            assertThat(e, instanceOf(ClientExecutionTimeoutException.class));
-            assertNumberOfTasksTriggered(httpClient.getClientExecutionTimer(), 1);
-            assertNumberOfTasksTriggered(httpClient.getHttpRequestTimer(), 0);
-        }
-    }
-
-    @Test(timeout = TEST_TIMEOUT)
-    public void clientExecutionTimeoutEnabled_WithShorterRequestTimeout_ThrowsHttpRequestTimeoutException()
-            throws IOException {
-        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
-                                                                         .withRequestTimeout(SHORTER_REQUEST_TIMEOUT).withMaxErrorRetry(0));
-
-        try {
-            httpClient.requestExecutionBuilder().request(newGetRequest()).execute();
-            fail("Exception expected");
-        } catch (AmazonClientException e) {
-            assertThat(e.getCause(), instanceOf(HttpRequestTimeoutException.class));
-            // Completed tasks means the client execution was aborted by the timer
-            assertNumberOfTasksTriggered(httpClient.getClientExecutionTimer(), 0);
-            assertNumberOfTasksTriggered(httpClient.getHttpRequestTimer(), 1);
-        }
-    }
-
-    @Test(timeout = TEST_TIMEOUT)
-    public void clientExecutionTimeoutEnabled_WithShorterRequestTimeoutAndRetry_ThrowsClientExecutionTimeoutException()
-            throws IOException {
-        final int clientExecutionTimeout = 1500;
-        final int requestTimeout = 1000;
-        final int backoffTime = 300;
-        httpClient = new AmazonHttpClient(new LegacyClientConfiguration().withClientExecutionTimeout(clientExecutionTimeout)
-                                                                         .withRequestTimeout(requestTimeout)
-                                                                         .withRetryPolicy(
-                                                                           new RetryPolicy(PredefinedRetryPolicies.DEFAULT_RETRY_CONDITION,
-                                                                                           new FixedTimeBackoffStrategy(backoffTime),
-                                                                                           Integer.MAX_VALUE, false)));
-
-        try {
-            httpClient.requestExecutionBuilder().request(newGetRequest()).execute();
-            fail("Exception expected");
-        } catch (AmazonClientException e) {
-            assertThat(e, instanceOf(ClientExecutionTimeoutException.class));
-            // Completed tasks means the client execution was aborted by the timer
-            assertNumberOfTasksTriggered(httpClient.getClientExecutionTimer(), 1);
-            assertNumberOfTasksTriggered(httpClient.getHttpRequestTimer(), 1);
-        }
-    }
 }

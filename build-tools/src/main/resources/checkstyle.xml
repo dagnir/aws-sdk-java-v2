@@ -323,9 +323,6 @@
         <!-- Javadoc @param, @return, etc. must not be empty (but may be excluded). -->
         <module name="NonEmptyAtclauseDescription"/>
 
-        <!-- When continuing a javadoc tag, 4 spaces must be used for indentation. -->
-        <module name="JavadocTagContinuationIndentation"/>
-
         <!-- Javadoc summaries must be a complete sentence, and must not say things like "This X" or "A X"... -->
         <module name="SummaryJavadoc">
             <property name="forbiddenSummaryFragments"

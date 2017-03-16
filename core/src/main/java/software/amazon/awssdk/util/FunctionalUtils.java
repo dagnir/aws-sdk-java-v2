@@ -25,6 +25,7 @@ public final class FunctionalUtils {
 
     /**
      * A wrapper around a Consumer that throws a checked exception.
+     *
      * @param unsafeConsumer - something that acts like a consumer but throws an exception
      * @return a consumer that is wrapped in a try-catch converting the checked exception into a runtime exception
      */
@@ -44,8 +45,8 @@ public final class FunctionalUtils {
      * exceptions.
      *
      * @param unsafeFunction Functional interface that throws checked exception.
-     * @param <T>        Input
-     * @param <R>        Output
+     * @param <T>            Input
+     * @param <R>            Output
      * @return New {@link Function} that handles checked exception.
      */
     public static <T, R> Function<T, R> safeFunction(UnsafeFunction<T, R> unsafeFunction) {
@@ -60,6 +61,7 @@ public final class FunctionalUtils {
 
     /**
      * A wrapper around a BiConsumer that throws a checked exception.
+     *
      * @param unsafeSupplier - something that acts like a BiConsumer but throws an exception
      * @return a consumer that is wrapped in a try-catch converting the checked exception into a runtime exception
      */
@@ -73,8 +75,28 @@ public final class FunctionalUtils {
         };
     }
 
+    /**
+     * A wrapper around a Runnable that throws a checked exception.
+     *
+     * @param unsafeRunnable Something that acts like a Runnable but throws an exception
+     * @return A Runnable that is wrapped in a try-catch converting the checked exception into a runtime exception
+     */
+    public static Runnable safeRunnable(UnsafeRunnable unsafeRunnable) {
+        return () -> {
+            try {
+                unsafeRunnable.run();
+            } catch (Exception e) {
+                throw asRuntimeException(e);
+            }
+        };
+    }
+
     public static <T> T invokeSafely(UnsafeSupplier<T> unsafeSupplier) {
         return safeSupplier(unsafeSupplier).get();
+    }
+
+    public static void invokeSafely(UnsafeRunnable unsafeRunnable) {
+        safeRunnable(unsafeRunnable).run();
     }
 
     /**
@@ -99,6 +121,14 @@ public final class FunctionalUtils {
     @FunctionalInterface
     public interface UnsafeSupplier<T> {
         T get() throws Exception;
+    }
+
+    /**
+     * Equivalent of {@link Runnable} that throws a checked exception.
+     */
+    @FunctionalInterface
+    public interface UnsafeRunnable {
+        void run() throws Exception;
     }
 
     private static RuntimeException asRuntimeException(Exception exception) {
