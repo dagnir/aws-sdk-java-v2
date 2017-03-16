@@ -17,22 +17,16 @@ package software.amazon.awssdk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
-import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.Random;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.junit.Test;
-import org.mockito.Mockito;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.util.ImmutableMapParameter;
@@ -46,43 +40,6 @@ public class LegacyClientConfigurationTest {
     private static final RetryPolicy CUSTOM_RETRY_POLICY = new RetryPolicy(
             PredefinedRetryPolicies.SDKDefaultRetryCondition.NO_RETRY_CONDITION,
             RetryPolicy.BackoffStrategy.NO_DELAY, 1000, false);
-
-    @Test
-    public void httpClientConfiguration() throws Exception {
-        LegacyClientConfiguration config = new LegacyClientConfiguration();
-        ApacheHttpClientConfig httpclientConfig = config.getApacheHttpClientConfig();
-        assertNotNull("httpclient config must never be null", httpclientConfig);
-
-        assertNull("default ssl socket factory is null",
-                   httpclientConfig.getSslSocketFactory());
-
-        SSLSocketFactory customFactory = new SSLSocketFactory((KeyStore) null);
-        config.getApacheHttpClientConfig().setSslSocketFactory(customFactory);
-        assertSame("custom ssl socket factory configured", customFactory,
-                   config.getApacheHttpClientConfig().getSslSocketFactory());
-
-        config.getApacheHttpClientConfig().setSslSocketFactory(null);
-        assertNull("no more custom ssl socket factory configured", config
-                .getApacheHttpClientConfig().getSslSocketFactory());
-
-        config.getApacheHttpClientConfig().withSslSocketFactory(customFactory);
-        assertSame("custom ssl socket factory configured via fluent API",
-                   customFactory,
-                   config.getApacheHttpClientConfig().getSslSocketFactory());
-
-        LegacyClientConfiguration config2 = new LegacyClientConfiguration(config);
-        assertSame("custom ssl socket factory copied via ctor",
-                   customFactory,
-                   config2.getApacheHttpClientConfig().getSslSocketFactory());
-
-        config.getApacheHttpClientConfig().setSslSocketFactory(null);
-        assertNull(
-                "ssl socket factory set to null for the original httpclient config",
-                config.getApacheHttpClientConfig().getSslSocketFactory());
-        assertNotNull(
-                "ssl soscket of the new httpclient config should not be affected",
-                config2.getApacheHttpClientConfig().getSslSocketFactory());
-    }
 
     private void clearProxyProperties() {
         System.clearProperty("http.proxyHost");
@@ -253,9 +210,6 @@ public class LegacyClientConfigurationTest {
                 field.set(customConfig, new SecureRandom());
             } else if (field.getName().equals("headers")) {
                 field.set(customConfig, ImmutableMapParameter.of("foo", "bar"));
-            } else if (clzz.isAssignableFrom(ApacheHttpClientConfig.class)) {
-                customConfig.getApacheHttpClientConfig()
-                            .setSslSocketFactory(Mockito.mock(ConnectionSocketFactory.class));
             } else {
                 throw new RuntimeException(
                         String.format("Field %s of type %s is not supported",

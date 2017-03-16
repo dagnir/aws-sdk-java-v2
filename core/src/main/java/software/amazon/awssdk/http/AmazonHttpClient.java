@@ -1276,7 +1276,7 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         private boolean isRequestSuccessful(int statusCode) {
-            return statusCode / 100 == 200 / 100;
+            return statusCode / 100 == HttpStatusCodes.OK / 100;
         }
 
         /**

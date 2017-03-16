@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.util.ValidationUtils;
@@ -267,13 +266,7 @@ public class LegacyClientConfiguration {
      */
     private int maxConsecutiveRetriesBeforeThrottling = DEFAULT_MAX_CONSECUTIVE_RETRIES_BEFORE_THROTTLING;
 
-    /**
-     * Can be used to specify custom specific Apache HTTP client configurations.
-     */
-    private final ApacheHttpClientConfig apacheHttpClientConfig;
-
     public LegacyClientConfiguration() {
-        apacheHttpClientConfig = new ApacheHttpClientConfig();
     }
 
     public LegacyClientConfiguration(LegacyClientConfiguration other) {
@@ -303,7 +296,6 @@ public class LegacyClientConfiguration {
         this.signerOverride = other.signerOverride;
         this.responseMetadataCacheSize = other.responseMetadataCacheSize;
         this.useExpectContinue = other.useExpectContinue;
-        this.apacheHttpClientConfig = new ApacheHttpClientConfig(other.apacheHttpClientConfig);
         this.cacheResponseMetadata = other.cacheResponseMetadata;
         this.connectionTtl = other.connectionTtl;
         this.connectionMaxIdleMillis = other.connectionMaxIdleMillis;
@@ -1764,14 +1756,6 @@ public class LegacyClientConfiguration {
     public LegacyClientConfiguration withResponseMetadataCacheSize(int responseMetadataCacheSize) {
         setResponseMetadataCacheSize(responseMetadataCacheSize);
         return this;
-    }
-
-    /**
-     * Returns a non-null object that can be used to specify Apache HTTP client specific custom
-     * configurations.
-     */
-    public ApacheHttpClientConfig getApacheHttpClientConfig() {
-        return apacheHttpClientConfig;
     }
 
     /**

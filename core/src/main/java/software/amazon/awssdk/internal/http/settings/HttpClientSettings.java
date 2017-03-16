@@ -17,7 +17,6 @@ package software.amazon.awssdk.internal.http.settings;
 
 import java.net.InetAddress;
 import java.security.SecureRandom;
-import software.amazon.awssdk.ApacheHttpClientConfig;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpClientSettings;
@@ -101,10 +100,6 @@ public class HttpClientSettings implements SdkHttpClientSettings {
 
     public boolean useGzip() {
         return config.useGzip();
-    }
-
-    public ApacheHttpClientConfig getApacheHttpClientConfig() {
-        return config.getApacheHttpClientConfig();
     }
 
     public int getSocketTimeout() {

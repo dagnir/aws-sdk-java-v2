@@ -56,9 +56,9 @@ public class StackedRequestHandlerTest {
         @Before
         public void setup() {
             MockitoAnnotations.initMocks(this);
-            stackedRequestHandler = new StackedRequestHandler(new ArrayList<RequestHandler2>());
+            stackedRequestHandler = new StackedRequestHandler(new ArrayList<>());
 
-            response = new Response<String>("Dummy response", new HttpResponse(request, new HttpGet()));
+            response = new Response<>("Dummy response", new HttpResponse(request, new HttpGet()));
         }
 
         @Test

@@ -17,15 +17,15 @@ package software.amazon.awssdk.retry;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.http.HttpStatus;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.http.HttpStatusCodes;
 
 public class RetryUtils {
 
-    static final Set<String> THROTTLING_ERROR_CODES = new HashSet<String>(9);
-    static final Set<String> CLOCK_SKEW_ERROR_CODES = new HashSet<String>(6);
-    static final Set<Integer> RETRYABLE_STATUS_CODES = new HashSet<Integer>(4);
+    static final Set<String> THROTTLING_ERROR_CODES = new HashSet<>(9);
+    static final Set<String> CLOCK_SKEW_ERROR_CODES = new HashSet<>(6);
+    static final Set<Integer> RETRYABLE_STATUS_CODES = new HashSet<>(4);
 
     static {
         THROTTLING_ERROR_CODES.add("Throttling");
@@ -44,18 +44,10 @@ public class RetryUtils {
         CLOCK_SKEW_ERROR_CODES.add("AuthFailure");
         CLOCK_SKEW_ERROR_CODES.add("RequestInTheFuture");
 
-        RETRYABLE_STATUS_CODES.add(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        RETRYABLE_STATUS_CODES.add(HttpStatus.SC_BAD_GATEWAY);
-        RETRYABLE_STATUS_CODES.add(HttpStatus.SC_SERVICE_UNAVAILABLE);
-        RETRYABLE_STATUS_CODES.add(HttpStatus.SC_GATEWAY_TIMEOUT);
-    }
-
-    /**
-     * @deprecated By {@link RetryUtils#isRetryableServiceException(SdkBaseException)}
-     */
-    @Deprecated
-    public static boolean isRetryableServiceException(AmazonServiceException exception) {
-        return isRetryableServiceException((SdkBaseException) exception);
+        RETRYABLE_STATUS_CODES.add(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+        RETRYABLE_STATUS_CODES.add(HttpStatusCodes.BAD_GATEWAY);
+        RETRYABLE_STATUS_CODES.add(HttpStatusCodes.SERVICE_UNAVAILABLE);
+        RETRYABLE_STATUS_CODES.add(HttpStatusCodes.GATEWAY_TIMEOUT);
     }
 
     /**
@@ -87,29 +79,13 @@ public class RetryUtils {
     }
 
     /**
-     * @deprecated By {@link RetryUtils#isRequestEntityTooLargeException(SdkBaseException)}
-     */
-    @Deprecated
-    public static boolean isRequestEntityTooLargeException(AmazonServiceException exception) {
-        return isRequestEntityTooLargeException((SdkBaseException) exception);
-    }
-
-    /**
      * Returns true if the specified exception is a request entity too large error.
      *
      * @param exception The exception to test.
      * @return True if the exception resulted from a request entity too large error message from a service, otherwise false.
      */
     public static boolean isRequestEntityTooLargeException(SdkBaseException exception) {
-        return isAse(exception) && toAse(exception).getStatusCode() == HttpStatus.SC_REQUEST_TOO_LONG;
-    }
-
-    /**
-     * @deprecated By {@link RetryUtils#isClockSkewError(SdkBaseException)}
-     */
-    @Deprecated
-    public static boolean isClockSkewError(AmazonServiceException exception) {
-        return isClockSkewError((SdkBaseException) exception);
+        return isAse(exception) && toAse(exception).getStatusCode() == HttpStatusCodes.REQUEST_TOO_LONG;
     }
 
     /**
