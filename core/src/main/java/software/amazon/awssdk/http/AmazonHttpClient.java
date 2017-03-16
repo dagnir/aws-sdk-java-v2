@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.http;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY;
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishRequestContentLength;
 import static software.amazon.awssdk.event.SDKProgressPublisher.publishResponseContentLength;
@@ -27,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,8 +81,6 @@ import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.retry.RetryPolicyAdapter;
 import software.amazon.awssdk.retry.RetryUtils;
-import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
-import software.amazon.awssdk.retry.internal.AuthRetryParameters;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.retry.v2.RetryPolicyContext;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
@@ -93,13 +89,11 @@ import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
 import software.amazon.awssdk.util.CapacityManager;
 import software.amazon.awssdk.util.CollectionUtils;
-import software.amazon.awssdk.util.CountingInputStream;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.MetadataCache;
 import software.amazon.awssdk.util.NullResponseMetadataCache;
 import software.amazon.awssdk.util.ResponseMetadataCache;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
-import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.UnreliableFilterInputStream;
 import software.amazon.awssdk.utils.StringUtils;
 
@@ -137,21 +131,6 @@ public class AmazonHttpClient implements AutoCloseable {
      * Used for testing via failure injection.
      */
     private static UnreliableTestConfig unreliableTestConfig;
-
-    static {
-        // Customers have reported XML parsing issues with the following
-        // JVM versions, which don't occur with more recent versions, so
-        // if we detect any of these, give customers a heads up.
-        // https://bugs.openjdk.java.net/browse/JDK-8028111
-        List<String> problematicJvmVersions = Arrays
-                .asList("1.6.0_06", "1.6.0_13", "1.6.0_17", "1.6.0_65", "1.7.0_45");
-        String jvmVersion = System.getProperty("java.version");
-        if (problematicJvmVersions.contains(jvmVersion)) {
-            LOG.warn("Detected a possible problem with the current JVM version (" + jvmVersion +
-                     ").  " +
-                     "If you experience XML parsing problems using the SDK, try upgrading to a more recent JVM update.");
-        }
-    }
 
     /**
      * Client configuration options, such as proxy httpClientSettings, max retries, etc.
@@ -317,11 +296,6 @@ public class AmazonHttpClient implements AutoCloseable {
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    private static boolean isTemporaryRedirect(HttpResponse response) {
-        return response.getStatusCode() == 307
-               && !StringUtils.isNullOrEmpty(response.getHeader("Location"));
     }
 
     /**
@@ -948,13 +922,12 @@ public class AmazonHttpClient implements AutoCloseable {
                     .addPropertyWith(AwsRequestMetrics.Field.ServiceEndpoint, request.getEndpoint());
             // Make a copy of the original request params and headers so that we can
             // permute it in this loop and start over with the original every time.
-            final Map<String, List<String>> originalParameters = new LinkedHashMap<String, List<String>>(request.getParameters());
-            final Map<String, String> originalHeaders = new HashMap<String, String>(request.getHeaders());
+            final Map<String, List<String>> originalParameters = new LinkedHashMap<>(request.getParameters());
+            final Map<String, String> originalHeaders = new HashMap<>(request.getHeaders());
             // Always mark the input stream before execution.
             final ExecOneRequestParams execOneParams = new ExecOneRequestParams();
             final InputStream originalContent = request.getContent();
-            if (originalContent != null && originalContent.markSupported()
-                && !(originalContent instanceof BufferedInputStream)) {
+            if (originalContent != null && originalContent.markSupported() && !(originalContent instanceof BufferedInputStream)) {
                 // Mark only once for non-BufferedInputStream
                 final int readLimit = requestConfig.getRequestClientOptions().getReadLimit();
                 originalContent.mark(readLimit);
@@ -967,21 +940,6 @@ public class AmazonHttpClient implements AutoCloseable {
                     originalContent.mark(readLimit);
                 }
                 execOneParams.initPerRetry();
-                if (execOneParams.redirectedUri != null) {
-                    /*
-                     * [scheme:][//authority][path][?query][#fragment]
-                     */
-                    String scheme = execOneParams.redirectedUri.getScheme();
-                    String beforeAuthority = scheme == null ? "" : scheme + "://";
-                    String authority = execOneParams.redirectedUri.getAuthority();
-                    String path = execOneParams.redirectedUri.getPath();
-
-                    request.setEndpoint(URI.create(beforeAuthority + authority));
-                    request.setResourcePath(SdkHttpUtils.urlEncode(path, true));
-                }
-                if (execOneParams.authRetryParam != null) {
-                    request.setEndpoint(execOneParams.authRetryParam.getEndpointForRetry());
-                }
                 awsRequestMetrics.setCounter(AwsRequestMetrics.Field.RequestCount, execOneParams.requestCount);
                 if (execOneParams.isRetry()) {
                     request.setParameters(originalParameters);
@@ -1134,7 +1092,6 @@ public class AmazonHttpClient implements AutoCloseable {
 
             checkInterrupted();
 
-
             final HttpResponse httpResponse = executeHttpRequest(execOneParams, listener);
             execOneParams.httpResponse = httpResponse;
 
@@ -1161,38 +1118,11 @@ public class AmazonHttpClient implements AutoCloseable {
                 }
                 return new Response<>(response, httpResponse);
             }
-            if (isTemporaryRedirect(httpResponse)) {
-                /*
-                 * S3 sends 307 Temporary Redirects if you try to delete an EU bucket from the US
-                 * endpoint. If we get a 307, we'll point the HTTP method to the redirected location,
-                 * and let the next retry deliver the request to the right location.
-                 */
-                String redirectedLocation = httpResponse.getHeader("Location");
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Redirecting to: " + redirectedLocation);
-                }
-                execOneParams.redirectedUri = URI.create(redirectedLocation);
-                awsRequestMetrics
-                        .addPropertyWith(AwsRequestMetrics.Field.StatusCode, httpResponse.getStatusCode())
-                        .addPropertyWith(AwsRequestMetrics.Field.RedirectLocation, redirectedLocation)
-                        .addPropertyWith(AwsRequestMetrics.Field.AWSRequestID, null);
-                return null; // => retry
-            }
             execOneParams.leaveHttpConnectionOpen = errorResponseHandler.needsConnectionLeftOpen();
             final SdkBaseException exception = handleErrorResponse(httpResponse);
-            // Check whether we should internally retry the auth error
-            execOneParams.authRetryParam = null;
-            AuthErrorRetryStrategy authRetry = executionContext.getAuthErrorRetryStrategy();
-            if (authRetry != null && exception instanceof AmazonServiceException) {
-                execOneParams.authRetryParam = authRetry
-                        .shouldRetryWithAuthParam(this.request, httpResponse, (AmazonServiceException) exception);
-            }
-            if (execOneParams.authRetryParam == null && !shouldRetry(httpResponse, execOneParams, exception)) {
+            if (!shouldRetry(httpResponse, execOneParams, exception)) {
                 throw exception;
             }
-            // Comment out for now. Ref: CR2662349
-            // Preserve the cause of retry before retrying
-            // awsRequestMetrics.addProperty(RetryCause, ase);
             if (RetryUtils.isThrottlingException(exception)) {
                 awsRequestMetrics.incrementCounterWith(AwsRequestMetrics.Field.ThrottleException)
                         .addProperty(AwsRequestMetrics.Field.ThrottleException, exception);
@@ -1268,8 +1198,7 @@ public class AmazonHttpClient implements AutoCloseable {
          * retry.
          */
         private void setSdkTransactionId(Request<?> request) {
-            request.addHeader(HEADER_SDK_TRANSACTION_ID,
-                              new UUID(random.nextLong(), random.nextLong()).toString());
+            request.addHeader(HEADER_SDK_TRANSACTION_ID, new UUID(random.nextLong(), random.nextLong()).toString());
         }
 
         /**
@@ -1363,16 +1292,8 @@ public class AmazonHttpClient implements AutoCloseable {
                                                                          InterruptedException {
             ProgressListener listener = requestConfig.getProgressListener();
             try {
-                /*
-                 * Apply the byte counting stream wrapper if the legacy runtime profiling is enabled.
-                 */
-                CountingInputStream countingInputStream = null;
                 InputStream is = httpResponse.getContent();
                 if (is != null) {
-                    if (System.getProperty(PROFILING_SYSTEM_PROPERTY) != null) {
-                        is = countingInputStream = new CountingInputStream(is);
-                        httpResponse.setContent(is);
-                    }
                     httpResponse.setContent(ProgressInputStream.inputStreamForResponse(is, listener));
                 }
                 Map<String, String> headers = httpResponse.getHeaders();
@@ -1390,17 +1311,12 @@ public class AmazonHttpClient implements AutoCloseable {
                 awsRequestMetrics.startEvent(AwsRequestMetrics.Field.ResponseProcessingTime);
                 publishProgress(listener, ProgressEventType.HTTP_RESPONSE_STARTED_EVENT);
                 try {
-                    awsResponse = responseHandler
-                            .handle(beforeUnmarshalling(httpResponse));
+                    awsResponse = responseHandler.handle(beforeUnmarshalling(httpResponse));
                 } finally {
                     awsRequestMetrics.endEvent(AwsRequestMetrics.Field.ResponseProcessingTime);
                 }
                 publishProgress(listener, ProgressEventType.HTTP_RESPONSE_COMPLETED_EVENT);
 
-                if (countingInputStream != null) {
-                    awsRequestMetrics
-                            .setCounter(AwsRequestMetrics.Field.BytesProcessed, countingInputStream.getByteCount());
-                }
                 return awsResponse;
             } catch (IOException | InterruptedException e) {
                 throw e;
@@ -1577,8 +1493,6 @@ public class AmazonHttpClient implements AutoCloseable {
              */
             long lastBackoffDelay = 0;
             SdkBaseException retriedException; // last retryable exception
-            URI redirectedUri;
-            AuthRetryParameters authRetryParam;
             /*
              * Depending on which response handler we end up choosing to handle the HTTP response, it
              * might require us to leave the underlying HTTP connection open, depending on whether or
@@ -1591,7 +1505,7 @@ public class AmazonHttpClient implements AutoCloseable {
             private HttpResponse httpResponse;
 
             boolean isRetry() {
-                return requestCount > 1 || redirectedUri != null || authRetryParam != null;
+                return requestCount > 1;
             }
 
             void initPerRetry() {
@@ -1604,28 +1518,14 @@ public class AmazonHttpClient implements AutoCloseable {
                         .builder()
                         .withRequest(request)
                         .withRequestConfig(requestConfig);
-                if (authRetryParam != null) {
-                    signerUri = authRetryParam.getEndpointForRetry();
-                    signer = authRetryParam.getSignerForRetry();
-                    // Push the local signer override back to the execution context
-                    execContext.setSigner(signer);
-                } else if (redirectedUri != null && !redirectedUri.equals(signerUri)) {
-                    signerUri = redirectedUri;
-                    signer = execContext.getSigner(signerProviderContext
-                                                           .withUri(signerUri)
-                                                           .withIsRedirect(true)
-                                                           .build());
-                } else if (signer == null) {
+                if (signer == null) {
                     signerUri = request.getEndpoint();
-                    signer = execContext
-                            .getSigner(signerProviderContext.withUri(signerUri).build());
+                    signer = execContext.getSigner(signerProviderContext.withUri(signerUri).build());
                 }
             }
 
             void resetBeforeHttpRequest() {
                 retriedException = null;
-                authRetryParam = null;
-                redirectedUri = null;
             }
 
         }

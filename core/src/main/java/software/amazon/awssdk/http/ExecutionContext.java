@@ -27,7 +27,6 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
-import software.amazon.awssdk.retry.internal.AuthErrorRetryStrategy;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.util.AwsRequestMetricsFullSupport;
@@ -51,12 +50,6 @@ public class ExecutionContext {
      * retries).
      */
     private AwsCredentialsProvider credentialsProvider;
-
-    /**
-     * An internal retry strategy for auth errors. This is currently only used by the S3 client for
-     * auto-resolving V4-required regions.
-     */
-    private AuthErrorRetryStrategy authErrorRetryStrategy;
 
     private ClientExecutionAbortTrackerTask clientExecutionTrackerTask;
 
@@ -173,28 +166,6 @@ public class ExecutionContext {
      */
     public void setCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
         this.credentialsProvider = credentialsProvider;
-    }
-
-    /**
-     * Returns the retry strategy for auth errors. This is currently only used by the S3 client for
-     * auto-resolving sigv4-required regions.
-     * <p>
-     * Note that this will be checked BEFORE the HTTP client consults the user-specified
-     * RetryPolicy. i.e. if the configured AuthErrorRetryStrategy says the request should be
-     * retried, the retry will be performed internally and the effect is transparent to the user's
-     * RetryPolicy.
-     */
-    public AuthErrorRetryStrategy getAuthErrorRetryStrategy() {
-        return authErrorRetryStrategy;
-    }
-
-    /**
-     * Sets the optional auth error retry strategy for this request execution.
-     *
-     * @see #getAuthErrorRetryStrategy()
-     */
-    public void setAuthErrorRetryStrategy(AuthErrorRetryStrategy authErrorRetryStrategy) {
-        this.authErrorRetryStrategy = authErrorRetryStrategy;
     }
 
     public ClientExecutionAbortTrackerTask getClientExecutionTrackerTask() {

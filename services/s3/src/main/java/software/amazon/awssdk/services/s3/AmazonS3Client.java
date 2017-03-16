@@ -127,7 +127,6 @@ import software.amazon.awssdk.services.s3.internal.S3RequestEndpointResolver;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedHeaderHandler;
 import software.amazon.awssdk.services.s3.internal.S3Signer;
 import software.amazon.awssdk.services.s3.internal.S3StringResponseHandler;
-import software.amazon.awssdk.services.s3.internal.S3V4AuthErrorRetryStrategy;
 import software.amazon.awssdk.services.s3.internal.S3VersionHeaderHandler;
 import software.amazon.awssdk.services.s3.internal.S3XmlResponseHandler;
 import software.amazon.awssdk.services.s3.internal.ServerSideEncryptionHeaderHandler;
@@ -4260,13 +4259,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
             Signer signer = createSigner(request, bucket, key, isAdditionalHeadRequestToFindRegion);
             signerProvider.setSigner(signer);
-
-            // Retry V4 auth errors if signer is explicitly overridden and
-            // signer is not a SigV4 signer.
-            if (isSignerOverridden() && !(signer instanceof AwsS3V4Signer)) {
-                executionContext.setAuthErrorRetryStrategy(
-                        new S3V4AuthErrorRetryStrategy(buildDefaultEndpointResolver(getProtocol(request), bucket, key)));
-            }
 
             executionContext.setCredentialsProvider(CredentialUtils.getCredentialsProvider(request.getOriginalRequest(),
                                                                                            awsCredentialsProvider));
