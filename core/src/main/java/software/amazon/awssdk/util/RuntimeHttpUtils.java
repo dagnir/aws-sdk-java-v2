@@ -15,25 +15,12 @@
 
 package software.amazon.awssdk.util;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.NTCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
@@ -46,66 +33,6 @@ public class RuntimeHttpUtils {
 
     private static final String AWS_EXECUTION_ENV_PREFIX = "exec-env/";
     private static final String AWS_EXECUTION_ENV_NAME = "AWS_EXECUTION_ENV";
-
-
-    /**
-     * Fetches a file from the URI given and returns an input stream to it.
-     *
-     * @param uri the uri of the file to fetch
-     * @param config optional configuration overrides
-     * @return an InputStream containing the retrieved data
-     * @throws IOException on error
-     */
-    @SuppressWarnings("deprecation")
-    public static InputStream fetchFile(
-            final URI uri,
-            final LegacyClientConfiguration config) throws IOException {
-
-        HttpParams httpClientParams = new BasicHttpParams();
-        HttpProtocolParams.setUserAgent(
-                httpClientParams, getUserAgent(config, null));
-
-        HttpConnectionParams.setConnectionTimeout(
-                httpClientParams, getConnectionTimeout(config));
-        HttpConnectionParams.setSoTimeout(
-                httpClientParams, getSocketTimeout(config));
-
-        DefaultHttpClient httpclient = new DefaultHttpClient(httpClientParams);
-
-        if (config != null) {
-            String proxyHost = config.getProxyHost();
-            int proxyPort = config.getProxyPort();
-
-            if (proxyHost != null && proxyPort > 0) {
-
-                HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-                httpclient.getParams().setParameter(
-                        ConnRoutePNames.DEFAULT_PROXY, proxy);
-
-                if (config.getProxyUsername() != null
-                    && config.getProxyPassword() != null) {
-
-                    httpclient.getCredentialsProvider().setCredentials(
-                            new AuthScope(proxyHost, proxyPort),
-                            new NTCredentials(config.getProxyUsername(),
-                                              config.getProxyPassword(),
-                                              config.getProxyWorkstation(),
-                                              config.getProxyDomain()));
-                }
-            }
-        }
-
-        HttpResponse response = httpclient.execute(new HttpGet(uri));
-
-        if (response.getStatusLine().getStatusCode() != 200) {
-            throw new IOException("Error fetching file from " + uri + ": "
-                                  + response);
-        }
-
-        return new HttpClientWrappingInputStream(
-                httpclient,
-                response.getEntity().getContent());
-    }
 
     public static String getUserAgent(final LegacyClientConfiguration config, final String userAgentMarker) {
         String userDefinedPrefix = config != null ? config.getUserAgentPrefix() : "";
