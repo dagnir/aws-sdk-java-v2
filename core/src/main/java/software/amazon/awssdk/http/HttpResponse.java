@@ -150,4 +150,11 @@ public class HttpResponse {
         this.statusCode = statusCode;
     }
 
+    /**
+     * If we get back any 2xx status code, then we know we should treat the service call as successful.
+     */
+    public boolean isSuccessful() {
+        return statusCode / 100 == HttpStatusCodes.OK / 100;
+    }
+
 }

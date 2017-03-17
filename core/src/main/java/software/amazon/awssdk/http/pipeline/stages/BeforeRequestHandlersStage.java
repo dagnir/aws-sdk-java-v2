@@ -1,0 +1,39 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.awssdk.http.pipeline.stages;
+
+import software.amazon.awssdk.Request;
+import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
+
+/**
+ * Runs the {@link RequestHandler2#beforeRequest(Request)} callback to pre-process the marshalled request before making
+ * an HTTP call.
+ */
+public class BeforeRequestHandlersStage implements RequestToRequestPipeline {
+
+    @Override
+    public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+        request.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, context.credentialsProvider().getCredentials());
+        // Apply any additional service specific request handlers that need to be run
+        for (RequestHandler2 requestHandler2 : context.requestHandler2s()) {
+            requestHandler2.beforeRequest(request);
+        }
+        return request;
+    }
+}

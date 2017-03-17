@@ -176,6 +176,10 @@ public class ExecutionContext {
         this.clientExecutionTrackerTask = clientExecutionTrackerTask;
     }
 
+    public SignerProvider getSignerProvider() {
+        return signerProvider;
+    }
+
     public static class Builder {
 
         private boolean useRequestMetrics;

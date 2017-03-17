@@ -24,11 +24,20 @@ import software.amazon.awssdk.http.HttpResponse;
  * @param <T> the underlying AWS response type.
  */
 public final class Response<T> {
+    private final boolean isSuccess;
     private final T response;
+    private final SdkBaseException exception;
     private final HttpResponse httpResponse;
 
+    @Deprecated
     public Response(T response, HttpResponse httpResponse) {
+        this(true, response, null, httpResponse);
+    }
+
+    private Response(boolean isSuccess, T response, SdkBaseException exception, HttpResponse httpResponse) {
+        this.isSuccess = isSuccess;
         this.response = response;
+        this.exception = exception;
         this.httpResponse = httpResponse;
     }
 
@@ -36,7 +45,28 @@ public final class Response<T> {
         return response;
     }
 
+    public SdkBaseException getException() {
+        return exception;
+    }
+
     public HttpResponse getHttpResponse() {
         return httpResponse;
+    }
+
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+
+    public boolean isFailure() {
+        return !isSuccess;
+    }
+
+    public static <T> Response<T> fromSuccess(T response, HttpResponse httpResponse) {
+        return new Response<>(true, response, null, httpResponse);
+    }
+
+    public static <T> Response<T> fromFailure(SdkBaseException exception, HttpResponse httpResponse) {
+        return new Response<>(false, null, exception, httpResponse);
     }
 }

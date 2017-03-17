@@ -39,6 +39,7 @@ import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodbv2.model.ListTablesResult;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
+import software.amazon.awssdk.util.IOUtils;
 import software.amazon.awssdk.util.StringInputStream;
 
 public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
@@ -112,8 +113,10 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
         RequestHandler2 requestHandler = new RequestHandler2() {
             @Override
             public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
-                final HttpResponse newHttpResponse = new HttpResponse(origHttpResponse.getRequest(),
-                                                                      origHttpResponse.getHttpRequest());
+                final HttpResponse newHttpResponse = new HttpResponse(origHttpResponse.getRequest());
+                // TODO we should be careful about letting customers replace the content in V2. We either need
+                // to hang on to the original to ensure it's properly closed or just not let them modify it.
+                IOUtils.drainInputStream(origHttpResponse.getContent());
                 newHttpResponse.setStatusCode(origHttpResponse.getStatusCode());
                 newHttpResponse.setStatusText(origHttpResponse.getStatusText());
 

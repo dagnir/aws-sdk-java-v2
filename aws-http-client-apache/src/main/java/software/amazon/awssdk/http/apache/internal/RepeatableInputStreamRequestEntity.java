@@ -82,16 +82,16 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
                 .map(this::parseContentLength)
                 .orElse(-1L);
 
-        String contentType = request.getFirstHeader("Content-Type").orElse(null);
-
         content = getContent(request);
         // TODO v2 MetricInputStreamEntity
         inputStreamRequestEntity = new InputStreamEntity(content, contentLength);
-        inputStreamRequestEntity.setContentType(contentType);
-
         setContent(content);
-        setContentType(contentType);
         setContentLength(contentLength);
+
+        request.getFirstHeader("Content-Type").ifPresent(contentType -> {
+            inputStreamRequestEntity.setContentType(contentType);
+            setContentType(contentType);
+        });
     }
 
     private long parseContentLength(String contentLength) {
