@@ -23,7 +23,7 @@ public class SdkBuilderTest {
 
     @Test
     public void canApplyAFunctionToTheBuilder() {
-        ClassToBuild builtClass = ClassToBuild.builder().apply(this::upperCaseName).build();
+        ClassToBuild builtClass = ClassToBuild.builder().name("jeffery").apply(this::upperCaseName).build();
 
         assertThat(builtClass.name).isEqualTo("JEFFERY");
     }
