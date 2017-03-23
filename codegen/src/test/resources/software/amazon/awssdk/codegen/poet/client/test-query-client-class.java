@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Generated;
 import org.w3c.dom.Node;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.client.ClientHandler;
@@ -508,17 +509,17 @@ import software.amazon.awssdk.services.iam.model.transform.UploadServerCertifica
 import software.amazon.awssdk.services.iam.model.transform.UploadServerCertificateResultUnmarshaller;
 import software.amazon.awssdk.services.iam.model.transform.UploadSigningCertificateRequestMarshaller;
 import software.amazon.awssdk.services.iam.model.transform.UploadSigningCertificateResultUnmarshaller;
-import software.amazon.awssdk.services.iam.waiters.IamClientWaiters;
+import software.amazon.awssdk.services.iam.waiters.IAMClientWaiters;
 
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
-public class DefaultIamClient implements IamClient, AutoCloseable {
+public class DefaultIAMClient implements IAMClient {
     private final ClientHandler clientHandler;
 
     private List<Unmarshaller<AmazonServiceException, Node>> exceptionUnmarshallers = new ArrayList<Unmarshaller<AmazonServiceException, Node>>();
 
-    private volatile IamClientWaiters waiters;
+    private volatile IAMClientWaiters waiters;
 
-    protected DefaultIamClient(AwsSyncClientParams clientParams) {
+    protected DefaultIAMClient(AwsSyncClientParams clientParams) {
         this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams));
         this.exceptionUnmarshallers = init();
     }
@@ -529,12 +530,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<AddClientIDToOpenIDConnectProviderResult> responseHandler = new StaxResponseHandler<AddClientIDToOpenIDConnectProviderResult>(
                 new AddClientIDToOpenIDConnectProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<AddClientIDToOpenIDConnectProviderRequest, AddClientIDToOpenIDConnectProviderResult>()
-                        .withMarshaller(new AddClientIDToOpenIDConnectProviderRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(addClientIDToOpenIDConnectProviderRequest));
+                .execute(
+                        new ClientExecutionParams<AddClientIDToOpenIDConnectProviderRequest, AmazonWebServiceResponse<AddClientIDToOpenIDConnectProviderResult>>()
+                                .withMarshaller(new AddClientIDToOpenIDConnectProviderRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(addClientIDToOpenIDConnectProviderRequest)).getResult();
     }
 
     @Override
@@ -542,10 +546,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<AddRoleToInstanceProfileResult> responseHandler = new StaxResponseHandler<AddRoleToInstanceProfileResult>(
                 new AddRoleToInstanceProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<AddRoleToInstanceProfileRequest, AddRoleToInstanceProfileResult>()
-                .withMarshaller(new AddRoleToInstanceProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(addRoleToInstanceProfileRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<AddRoleToInstanceProfileRequest, AmazonWebServiceResponse<AddRoleToInstanceProfileResult>>()
+                                .withMarshaller(new AddRoleToInstanceProfileRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(addRoleToInstanceProfileRequest)).getResult();
     }
 
     @Override
@@ -553,10 +562,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<AddUserToGroupResult> responseHandler = new StaxResponseHandler<AddUserToGroupResult>(
                 new AddUserToGroupResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<AddUserToGroupRequest, AddUserToGroupResult>()
-                .withMarshaller(new AddUserToGroupRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(addUserToGroupRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<AddUserToGroupRequest, AmazonWebServiceResponse<AddUserToGroupResult>>()
+                        .withMarshaller(new AddUserToGroupRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(addUserToGroupRequest)).getResult();
     }
 
     @Override
@@ -564,10 +576,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<AttachGroupPolicyResult> responseHandler = new StaxResponseHandler<AttachGroupPolicyResult>(
                 new AttachGroupPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<AttachGroupPolicyRequest, AttachGroupPolicyResult>()
-                .withMarshaller(new AttachGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(attachGroupPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<AttachGroupPolicyRequest, AmazonWebServiceResponse<AttachGroupPolicyResult>>()
+                        .withMarshaller(new AttachGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(attachGroupPolicyRequest)).getResult();
     }
 
     @Override
@@ -575,10 +590,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<AttachRolePolicyResult> responseHandler = new StaxResponseHandler<AttachRolePolicyResult>(
                 new AttachRolePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<AttachRolePolicyRequest, AttachRolePolicyResult>()
-                .withMarshaller(new AttachRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(attachRolePolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<AttachRolePolicyRequest, AmazonWebServiceResponse<AttachRolePolicyResult>>()
+                        .withMarshaller(new AttachRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(attachRolePolicyRequest)).getResult();
     }
 
     @Override
@@ -586,10 +604,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<AttachUserPolicyResult> responseHandler = new StaxResponseHandler<AttachUserPolicyResult>(
                 new AttachUserPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<AttachUserPolicyRequest, AttachUserPolicyResult>()
-                .withMarshaller(new AttachUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(attachUserPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<AttachUserPolicyRequest, AmazonWebServiceResponse<AttachUserPolicyResult>>()
+                        .withMarshaller(new AttachUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(attachUserPolicyRequest)).getResult();
     }
 
     @Override
@@ -597,10 +618,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ChangePasswordResult> responseHandler = new StaxResponseHandler<ChangePasswordResult>(
                 new ChangePasswordResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ChangePasswordRequest, ChangePasswordResult>()
-                .withMarshaller(new ChangePasswordRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(changePasswordRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ChangePasswordRequest, AmazonWebServiceResponse<ChangePasswordResult>>()
+                        .withMarshaller(new ChangePasswordRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(changePasswordRequest)).getResult();
     }
 
     @Override
@@ -608,10 +632,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateAccessKeyResult> responseHandler = new StaxResponseHandler<CreateAccessKeyResult>(
                 new CreateAccessKeyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateAccessKeyRequest, CreateAccessKeyResult>()
-                .withMarshaller(new CreateAccessKeyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createAccessKeyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateAccessKeyRequest, AmazonWebServiceResponse<CreateAccessKeyResult>>()
+                        .withMarshaller(new CreateAccessKeyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createAccessKeyRequest)).getResult();
     }
 
     @Override
@@ -619,10 +646,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateAccountAliasResult> responseHandler = new StaxResponseHandler<CreateAccountAliasResult>(
                 new CreateAccountAliasResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateAccountAliasRequest, CreateAccountAliasResult>()
-                .withMarshaller(new CreateAccountAliasRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createAccountAliasRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateAccountAliasRequest, AmazonWebServiceResponse<CreateAccountAliasResult>>()
+                        .withMarshaller(new CreateAccountAliasRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createAccountAliasRequest)).getResult();
     }
 
     @Override
@@ -630,10 +660,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateGroupResult> responseHandler = new StaxResponseHandler<CreateGroupResult>(
                 new CreateGroupResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateGroupRequest, CreateGroupResult>()
-                .withMarshaller(new CreateGroupRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createGroupRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateGroupRequest, AmazonWebServiceResponse<CreateGroupResult>>()
+                        .withMarshaller(new CreateGroupRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createGroupRequest)).getResult();
     }
 
     @Override
@@ -641,10 +674,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateInstanceProfileResult> responseHandler = new StaxResponseHandler<CreateInstanceProfileResult>(
                 new CreateInstanceProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateInstanceProfileRequest, CreateInstanceProfileResult>()
-                .withMarshaller(new CreateInstanceProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createInstanceProfileRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateInstanceProfileRequest, AmazonWebServiceResponse<CreateInstanceProfileResult>>()
+                        .withMarshaller(new CreateInstanceProfileRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createInstanceProfileRequest)).getResult();
     }
 
     @Override
@@ -652,10 +688,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateLoginProfileResult> responseHandler = new StaxResponseHandler<CreateLoginProfileResult>(
                 new CreateLoginProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateLoginProfileRequest, CreateLoginProfileResult>()
-                .withMarshaller(new CreateLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createLoginProfileRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateLoginProfileRequest, AmazonWebServiceResponse<CreateLoginProfileResult>>()
+                        .withMarshaller(new CreateLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createLoginProfileRequest)).getResult();
     }
 
     @Override
@@ -664,11 +703,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateOpenIDConnectProviderResult> responseHandler = new StaxResponseHandler<CreateOpenIDConnectProviderResult>(
                 new CreateOpenIDConnectProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<CreateOpenIDConnectProviderRequest, CreateOpenIDConnectProviderResult>()
-                        .withMarshaller(new CreateOpenIDConnectProviderRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(createOpenIDConnectProviderRequest));
+                .execute(
+                        new ClientExecutionParams<CreateOpenIDConnectProviderRequest, AmazonWebServiceResponse<CreateOpenIDConnectProviderResult>>()
+                                .withMarshaller(new CreateOpenIDConnectProviderRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(createOpenIDConnectProviderRequest)).getResult();
     }
 
     @Override
@@ -676,10 +719,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreatePolicyResult> responseHandler = new StaxResponseHandler<CreatePolicyResult>(
                 new CreatePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreatePolicyRequest, CreatePolicyResult>()
-                .withMarshaller(new CreatePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreatePolicyRequest, AmazonWebServiceResponse<CreatePolicyResult>>()
+                        .withMarshaller(new CreatePolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createPolicyRequest)).getResult();
     }
 
     @Override
@@ -687,10 +733,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreatePolicyVersionResult> responseHandler = new StaxResponseHandler<CreatePolicyVersionResult>(
                 new CreatePolicyVersionResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreatePolicyVersionRequest, CreatePolicyVersionResult>()
-                .withMarshaller(new CreatePolicyVersionRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createPolicyVersionRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreatePolicyVersionRequest, AmazonWebServiceResponse<CreatePolicyVersionResult>>()
+                        .withMarshaller(new CreatePolicyVersionRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createPolicyVersionRequest)).getResult();
     }
 
     @Override
@@ -698,10 +747,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateRoleResult> responseHandler = new StaxResponseHandler<CreateRoleResult>(
                 new CreateRoleResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateRoleRequest, CreateRoleResult>()
-                .withMarshaller(new CreateRoleRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createRoleRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateRoleRequest, AmazonWebServiceResponse<CreateRoleResult>>()
+                        .withMarshaller(new CreateRoleRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createRoleRequest)).getResult();
     }
 
     @Override
@@ -709,10 +761,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateSAMLProviderResult> responseHandler = new StaxResponseHandler<CreateSAMLProviderResult>(
                 new CreateSAMLProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateSAMLProviderRequest, CreateSAMLProviderResult>()
-                .withMarshaller(new CreateSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createSAMLProviderRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateSAMLProviderRequest, AmazonWebServiceResponse<CreateSAMLProviderResult>>()
+                        .withMarshaller(new CreateSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createSAMLProviderRequest)).getResult();
     }
 
     @Override
@@ -721,12 +776,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateServiceSpecificCredentialResult> responseHandler = new StaxResponseHandler<CreateServiceSpecificCredentialResult>(
                 new CreateServiceSpecificCredentialResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<CreateServiceSpecificCredentialRequest, CreateServiceSpecificCredentialResult>()
-                        .withMarshaller(new CreateServiceSpecificCredentialRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(createServiceSpecificCredentialRequest));
+                .execute(
+                        new ClientExecutionParams<CreateServiceSpecificCredentialRequest, AmazonWebServiceResponse<CreateServiceSpecificCredentialResult>>()
+                                .withMarshaller(new CreateServiceSpecificCredentialRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(createServiceSpecificCredentialRequest)).getResult();
     }
 
     @Override
@@ -734,10 +792,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateUserResult> responseHandler = new StaxResponseHandler<CreateUserResult>(
                 new CreateUserResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateUserRequest, CreateUserResult>()
-                .withMarshaller(new CreateUserRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createUserRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<CreateUserRequest, AmazonWebServiceResponse<CreateUserResult>>()
+                        .withMarshaller(new CreateUserRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(createUserRequest)).getResult();
     }
 
     @Override
@@ -745,10 +806,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<CreateVirtualMFADeviceResult> responseHandler = new StaxResponseHandler<CreateVirtualMFADeviceResult>(
                 new CreateVirtualMFADeviceResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<CreateVirtualMFADeviceRequest, CreateVirtualMFADeviceResult>()
-                .withMarshaller(new CreateVirtualMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(createVirtualMFADeviceRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<CreateVirtualMFADeviceRequest, AmazonWebServiceResponse<CreateVirtualMFADeviceResult>>()
+                                .withMarshaller(new CreateVirtualMFADeviceRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(createVirtualMFADeviceRequest)).getResult();
     }
 
     @Override
@@ -756,10 +822,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeactivateMFADeviceResult> responseHandler = new StaxResponseHandler<DeactivateMFADeviceResult>(
                 new DeactivateMFADeviceResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeactivateMFADeviceRequest, DeactivateMFADeviceResult>()
-                .withMarshaller(new DeactivateMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deactivateMFADeviceRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeactivateMFADeviceRequest, AmazonWebServiceResponse<DeactivateMFADeviceResult>>()
+                        .withMarshaller(new DeactivateMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deactivateMFADeviceRequest)).getResult();
     }
 
     @Override
@@ -767,10 +836,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteAccessKeyResult> responseHandler = new StaxResponseHandler<DeleteAccessKeyResult>(
                 new DeleteAccessKeyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteAccessKeyRequest, DeleteAccessKeyResult>()
-                .withMarshaller(new DeleteAccessKeyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteAccessKeyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteAccessKeyRequest, AmazonWebServiceResponse<DeleteAccessKeyResult>>()
+                        .withMarshaller(new DeleteAccessKeyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteAccessKeyRequest)).getResult();
     }
 
     @Override
@@ -778,10 +850,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteAccountAliasResult> responseHandler = new StaxResponseHandler<DeleteAccountAliasResult>(
                 new DeleteAccountAliasResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteAccountAliasRequest, DeleteAccountAliasResult>()
-                .withMarshaller(new DeleteAccountAliasRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteAccountAliasRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteAccountAliasRequest, AmazonWebServiceResponse<DeleteAccountAliasResult>>()
+                        .withMarshaller(new DeleteAccountAliasRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteAccountAliasRequest)).getResult();
     }
 
     @Override
@@ -790,11 +865,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteAccountPasswordPolicyResult> responseHandler = new StaxResponseHandler<DeleteAccountPasswordPolicyResult>(
                 new DeleteAccountPasswordPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<DeleteAccountPasswordPolicyRequest, DeleteAccountPasswordPolicyResult>()
-                        .withMarshaller(new DeleteAccountPasswordPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteAccountPasswordPolicyRequest));
+                .execute(
+                        new ClientExecutionParams<DeleteAccountPasswordPolicyRequest, AmazonWebServiceResponse<DeleteAccountPasswordPolicyResult>>()
+                                .withMarshaller(new DeleteAccountPasswordPolicyRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(deleteAccountPasswordPolicyRequest)).getResult();
     }
 
     @Override
@@ -802,10 +881,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteGroupResult> responseHandler = new StaxResponseHandler<DeleteGroupResult>(
                 new DeleteGroupResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteGroupRequest, DeleteGroupResult>()
-                .withMarshaller(new DeleteGroupRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteGroupRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteGroupRequest, AmazonWebServiceResponse<DeleteGroupResult>>()
+                        .withMarshaller(new DeleteGroupRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteGroupRequest)).getResult();
     }
 
     @Override
@@ -813,10 +895,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteGroupPolicyResult> responseHandler = new StaxResponseHandler<DeleteGroupPolicyResult>(
                 new DeleteGroupPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteGroupPolicyRequest, DeleteGroupPolicyResult>()
-                .withMarshaller(new DeleteGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteGroupPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteGroupPolicyRequest, AmazonWebServiceResponse<DeleteGroupPolicyResult>>()
+                        .withMarshaller(new DeleteGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteGroupPolicyRequest)).getResult();
     }
 
     @Override
@@ -824,10 +909,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteInstanceProfileResult> responseHandler = new StaxResponseHandler<DeleteInstanceProfileResult>(
                 new DeleteInstanceProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteInstanceProfileRequest, DeleteInstanceProfileResult>()
-                .withMarshaller(new DeleteInstanceProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteInstanceProfileRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteInstanceProfileRequest, AmazonWebServiceResponse<DeleteInstanceProfileResult>>()
+                        .withMarshaller(new DeleteInstanceProfileRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteInstanceProfileRequest)).getResult();
     }
 
     @Override
@@ -835,10 +923,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteLoginProfileResult> responseHandler = new StaxResponseHandler<DeleteLoginProfileResult>(
                 new DeleteLoginProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteLoginProfileRequest, DeleteLoginProfileResult>()
-                .withMarshaller(new DeleteLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteLoginProfileRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteLoginProfileRequest, AmazonWebServiceResponse<DeleteLoginProfileResult>>()
+                        .withMarshaller(new DeleteLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteLoginProfileRequest)).getResult();
     }
 
     @Override
@@ -847,11 +938,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteOpenIDConnectProviderResult> responseHandler = new StaxResponseHandler<DeleteOpenIDConnectProviderResult>(
                 new DeleteOpenIDConnectProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<DeleteOpenIDConnectProviderRequest, DeleteOpenIDConnectProviderResult>()
-                        .withMarshaller(new DeleteOpenIDConnectProviderRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteOpenIDConnectProviderRequest));
+                .execute(
+                        new ClientExecutionParams<DeleteOpenIDConnectProviderRequest, AmazonWebServiceResponse<DeleteOpenIDConnectProviderResult>>()
+                                .withMarshaller(new DeleteOpenIDConnectProviderRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(deleteOpenIDConnectProviderRequest)).getResult();
     }
 
     @Override
@@ -859,10 +954,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeletePolicyResult> responseHandler = new StaxResponseHandler<DeletePolicyResult>(
                 new DeletePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeletePolicyRequest, DeletePolicyResult>()
-                .withMarshaller(new DeletePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deletePolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeletePolicyRequest, AmazonWebServiceResponse<DeletePolicyResult>>()
+                        .withMarshaller(new DeletePolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deletePolicyRequest)).getResult();
     }
 
     @Override
@@ -870,10 +968,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeletePolicyVersionResult> responseHandler = new StaxResponseHandler<DeletePolicyVersionResult>(
                 new DeletePolicyVersionResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeletePolicyVersionRequest, DeletePolicyVersionResult>()
-                .withMarshaller(new DeletePolicyVersionRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deletePolicyVersionRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeletePolicyVersionRequest, AmazonWebServiceResponse<DeletePolicyVersionResult>>()
+                        .withMarshaller(new DeletePolicyVersionRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deletePolicyVersionRequest)).getResult();
     }
 
     @Override
@@ -881,10 +982,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteRoleResult> responseHandler = new StaxResponseHandler<DeleteRoleResult>(
                 new DeleteRoleResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteRoleRequest, DeleteRoleResult>()
-                .withMarshaller(new DeleteRoleRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteRoleRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteRoleRequest, AmazonWebServiceResponse<DeleteRoleResult>>()
+                        .withMarshaller(new DeleteRoleRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteRoleRequest)).getResult();
     }
 
     @Override
@@ -892,10 +996,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteRolePolicyResult> responseHandler = new StaxResponseHandler<DeleteRolePolicyResult>(
                 new DeleteRolePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteRolePolicyRequest, DeleteRolePolicyResult>()
-                .withMarshaller(new DeleteRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteRolePolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteRolePolicyRequest, AmazonWebServiceResponse<DeleteRolePolicyResult>>()
+                        .withMarshaller(new DeleteRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteRolePolicyRequest)).getResult();
     }
 
     @Override
@@ -903,10 +1010,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteSAMLProviderResult> responseHandler = new StaxResponseHandler<DeleteSAMLProviderResult>(
                 new DeleteSAMLProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteSAMLProviderRequest, DeleteSAMLProviderResult>()
-                .withMarshaller(new DeleteSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteSAMLProviderRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteSAMLProviderRequest, AmazonWebServiceResponse<DeleteSAMLProviderResult>>()
+                        .withMarshaller(new DeleteSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteSAMLProviderRequest)).getResult();
     }
 
     @Override
@@ -914,10 +1024,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteSSHPublicKeyResult> responseHandler = new StaxResponseHandler<DeleteSSHPublicKeyResult>(
                 new DeleteSSHPublicKeyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteSSHPublicKeyRequest, DeleteSSHPublicKeyResult>()
-                .withMarshaller(new DeleteSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteSSHPublicKeyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteSSHPublicKeyRequest, AmazonWebServiceResponse<DeleteSSHPublicKeyResult>>()
+                        .withMarshaller(new DeleteSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteSSHPublicKeyRequest)).getResult();
     }
 
     @Override
@@ -925,10 +1038,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteServerCertificateResult> responseHandler = new StaxResponseHandler<DeleteServerCertificateResult>(
                 new DeleteServerCertificateResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteServerCertificateRequest, DeleteServerCertificateResult>()
-                .withMarshaller(new DeleteServerCertificateRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteServerCertificateRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<DeleteServerCertificateRequest, AmazonWebServiceResponse<DeleteServerCertificateResult>>()
+                                .withMarshaller(new DeleteServerCertificateRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(deleteServerCertificateRequest)).getResult();
     }
 
     @Override
@@ -937,12 +1055,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteServiceSpecificCredentialResult> responseHandler = new StaxResponseHandler<DeleteServiceSpecificCredentialResult>(
                 new DeleteServiceSpecificCredentialResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<DeleteServiceSpecificCredentialRequest, DeleteServiceSpecificCredentialResult>()
-                        .withMarshaller(new DeleteServiceSpecificCredentialRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(deleteServiceSpecificCredentialRequest));
+                .execute(
+                        new ClientExecutionParams<DeleteServiceSpecificCredentialRequest, AmazonWebServiceResponse<DeleteServiceSpecificCredentialResult>>()
+                                .withMarshaller(new DeleteServiceSpecificCredentialRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(deleteServiceSpecificCredentialRequest)).getResult();
     }
 
     @Override
@@ -950,10 +1071,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteSigningCertificateResult> responseHandler = new StaxResponseHandler<DeleteSigningCertificateResult>(
                 new DeleteSigningCertificateResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteSigningCertificateRequest, DeleteSigningCertificateResult>()
-                .withMarshaller(new DeleteSigningCertificateRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteSigningCertificateRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<DeleteSigningCertificateRequest, AmazonWebServiceResponse<DeleteSigningCertificateResult>>()
+                                .withMarshaller(new DeleteSigningCertificateRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(deleteSigningCertificateRequest)).getResult();
     }
 
     @Override
@@ -961,10 +1087,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteUserResult> responseHandler = new StaxResponseHandler<DeleteUserResult>(
                 new DeleteUserResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteUserRequest, DeleteUserResult>()
-                .withMarshaller(new DeleteUserRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteUserRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteUserRequest, AmazonWebServiceResponse<DeleteUserResult>>()
+                        .withMarshaller(new DeleteUserRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteUserRequest)).getResult();
     }
 
     @Override
@@ -972,10 +1101,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteUserPolicyResult> responseHandler = new StaxResponseHandler<DeleteUserPolicyResult>(
                 new DeleteUserPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteUserPolicyRequest, DeleteUserPolicyResult>()
-                .withMarshaller(new DeleteUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteUserPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteUserPolicyRequest, AmazonWebServiceResponse<DeleteUserPolicyResult>>()
+                        .withMarshaller(new DeleteUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(deleteUserPolicyRequest)).getResult();
     }
 
     @Override
@@ -983,10 +1115,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DeleteVirtualMFADeviceResult> responseHandler = new StaxResponseHandler<DeleteVirtualMFADeviceResult>(
                 new DeleteVirtualMFADeviceResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DeleteVirtualMFADeviceRequest, DeleteVirtualMFADeviceResult>()
-                .withMarshaller(new DeleteVirtualMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteVirtualMFADeviceRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<DeleteVirtualMFADeviceRequest, AmazonWebServiceResponse<DeleteVirtualMFADeviceResult>>()
+                                .withMarshaller(new DeleteVirtualMFADeviceRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(deleteVirtualMFADeviceRequest)).getResult();
     }
 
     @Override
@@ -994,10 +1131,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DetachGroupPolicyResult> responseHandler = new StaxResponseHandler<DetachGroupPolicyResult>(
                 new DetachGroupPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DetachGroupPolicyRequest, DetachGroupPolicyResult>()
-                .withMarshaller(new DetachGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(detachGroupPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DetachGroupPolicyRequest, AmazonWebServiceResponse<DetachGroupPolicyResult>>()
+                        .withMarshaller(new DetachGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(detachGroupPolicyRequest)).getResult();
     }
 
     @Override
@@ -1005,10 +1145,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DetachRolePolicyResult> responseHandler = new StaxResponseHandler<DetachRolePolicyResult>(
                 new DetachRolePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DetachRolePolicyRequest, DetachRolePolicyResult>()
-                .withMarshaller(new DetachRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(detachRolePolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DetachRolePolicyRequest, AmazonWebServiceResponse<DetachRolePolicyResult>>()
+                        .withMarshaller(new DetachRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(detachRolePolicyRequest)).getResult();
     }
 
     @Override
@@ -1016,10 +1159,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<DetachUserPolicyResult> responseHandler = new StaxResponseHandler<DetachUserPolicyResult>(
                 new DetachUserPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<DetachUserPolicyRequest, DetachUserPolicyResult>()
-                .withMarshaller(new DetachUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(detachUserPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<DetachUserPolicyRequest, AmazonWebServiceResponse<DetachUserPolicyResult>>()
+                        .withMarshaller(new DetachUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(detachUserPolicyRequest)).getResult();
     }
 
     @Override
@@ -1027,10 +1173,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<EnableMFADeviceResult> responseHandler = new StaxResponseHandler<EnableMFADeviceResult>(
                 new EnableMFADeviceResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<EnableMFADeviceRequest, EnableMFADeviceResult>()
-                .withMarshaller(new EnableMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(enableMFADeviceRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<EnableMFADeviceRequest, AmazonWebServiceResponse<EnableMFADeviceResult>>()
+                        .withMarshaller(new EnableMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(enableMFADeviceRequest)).getResult();
     }
 
     @Override
@@ -1038,10 +1187,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GenerateCredentialReportResult> responseHandler = new StaxResponseHandler<GenerateCredentialReportResult>(
                 new GenerateCredentialReportResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GenerateCredentialReportRequest, GenerateCredentialReportResult>()
-                .withMarshaller(new GenerateCredentialReportRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(generateCredentialReportRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<GenerateCredentialReportRequest, AmazonWebServiceResponse<GenerateCredentialReportResult>>()
+                                .withMarshaller(new GenerateCredentialReportRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(generateCredentialReportRequest)).getResult();
     }
 
     @Override
@@ -1049,10 +1203,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetAccessKeyLastUsedResult> responseHandler = new StaxResponseHandler<GetAccessKeyLastUsedResult>(
                 new GetAccessKeyLastUsedResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetAccessKeyLastUsedRequest, GetAccessKeyLastUsedResult>()
-                .withMarshaller(new GetAccessKeyLastUsedRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getAccessKeyLastUsedRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetAccessKeyLastUsedRequest, AmazonWebServiceResponse<GetAccessKeyLastUsedResult>>()
+                        .withMarshaller(new GetAccessKeyLastUsedRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getAccessKeyLastUsedRequest)).getResult();
     }
 
     @Override
@@ -1061,12 +1218,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetAccountAuthorizationDetailsResult> responseHandler = new StaxResponseHandler<GetAccountAuthorizationDetailsResult>(
                 new GetAccountAuthorizationDetailsResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<GetAccountAuthorizationDetailsRequest, GetAccountAuthorizationDetailsResult>()
-                        .withMarshaller(new GetAccountAuthorizationDetailsRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(getAccountAuthorizationDetailsRequest));
+                .execute(
+                        new ClientExecutionParams<GetAccountAuthorizationDetailsRequest, AmazonWebServiceResponse<GetAccountAuthorizationDetailsResult>>()
+                                .withMarshaller(new GetAccountAuthorizationDetailsRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(getAccountAuthorizationDetailsRequest)).getResult();
     }
 
     @Override
@@ -1074,10 +1234,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetAccountPasswordPolicyResult> responseHandler = new StaxResponseHandler<GetAccountPasswordPolicyResult>(
                 new GetAccountPasswordPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetAccountPasswordPolicyRequest, GetAccountPasswordPolicyResult>()
-                .withMarshaller(new GetAccountPasswordPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getAccountPasswordPolicyRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<GetAccountPasswordPolicyRequest, AmazonWebServiceResponse<GetAccountPasswordPolicyResult>>()
+                                .withMarshaller(new GetAccountPasswordPolicyRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(getAccountPasswordPolicyRequest)).getResult();
     }
 
     @Override
@@ -1085,10 +1250,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetAccountSummaryResult> responseHandler = new StaxResponseHandler<GetAccountSummaryResult>(
                 new GetAccountSummaryResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetAccountSummaryRequest, GetAccountSummaryResult>()
-                .withMarshaller(new GetAccountSummaryRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getAccountSummaryRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetAccountSummaryRequest, AmazonWebServiceResponse<GetAccountSummaryResult>>()
+                        .withMarshaller(new GetAccountSummaryRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getAccountSummaryRequest)).getResult();
     }
 
     @Override
@@ -1097,12 +1265,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetContextKeysForCustomPolicyResult> responseHandler = new StaxResponseHandler<GetContextKeysForCustomPolicyResult>(
                 new GetContextKeysForCustomPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<GetContextKeysForCustomPolicyRequest, GetContextKeysForCustomPolicyResult>()
-                        .withMarshaller(new GetContextKeysForCustomPolicyRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(getContextKeysForCustomPolicyRequest));
+                .execute(
+                        new ClientExecutionParams<GetContextKeysForCustomPolicyRequest, AmazonWebServiceResponse<GetContextKeysForCustomPolicyResult>>()
+                                .withMarshaller(new GetContextKeysForCustomPolicyRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(getContextKeysForCustomPolicyRequest)).getResult();
     }
 
     @Override
@@ -1111,12 +1282,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetContextKeysForPrincipalPolicyResult> responseHandler = new StaxResponseHandler<GetContextKeysForPrincipalPolicyResult>(
                 new GetContextKeysForPrincipalPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<GetContextKeysForPrincipalPolicyRequest, GetContextKeysForPrincipalPolicyResult>()
-                        .withMarshaller(new GetContextKeysForPrincipalPolicyRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(getContextKeysForPrincipalPolicyRequest));
+                .execute(
+                        new ClientExecutionParams<GetContextKeysForPrincipalPolicyRequest, AmazonWebServiceResponse<GetContextKeysForPrincipalPolicyResult>>()
+                                .withMarshaller(new GetContextKeysForPrincipalPolicyRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(getContextKeysForPrincipalPolicyRequest)).getResult();
     }
 
     @Override
@@ -1124,10 +1298,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetCredentialReportResult> responseHandler = new StaxResponseHandler<GetCredentialReportResult>(
                 new GetCredentialReportResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetCredentialReportRequest, GetCredentialReportResult>()
-                .withMarshaller(new GetCredentialReportRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getCredentialReportRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetCredentialReportRequest, AmazonWebServiceResponse<GetCredentialReportResult>>()
+                        .withMarshaller(new GetCredentialReportRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getCredentialReportRequest)).getResult();
     }
 
     @Override
@@ -1135,10 +1312,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetGroupResult> responseHandler = new StaxResponseHandler<GetGroupResult>(
                 new GetGroupResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetGroupRequest, GetGroupResult>()
-                .withMarshaller(new GetGroupRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getGroupRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetGroupRequest, AmazonWebServiceResponse<GetGroupResult>>()
+                        .withMarshaller(new GetGroupRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getGroupRequest)).getResult();
     }
 
     @Override
@@ -1146,10 +1326,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetGroupPolicyResult> responseHandler = new StaxResponseHandler<GetGroupPolicyResult>(
                 new GetGroupPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetGroupPolicyRequest, GetGroupPolicyResult>()
-                .withMarshaller(new GetGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getGroupPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetGroupPolicyRequest, AmazonWebServiceResponse<GetGroupPolicyResult>>()
+                        .withMarshaller(new GetGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getGroupPolicyRequest)).getResult();
     }
 
     @Override
@@ -1157,10 +1340,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetInstanceProfileResult> responseHandler = new StaxResponseHandler<GetInstanceProfileResult>(
                 new GetInstanceProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetInstanceProfileRequest, GetInstanceProfileResult>()
-                .withMarshaller(new GetInstanceProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getInstanceProfileRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetInstanceProfileRequest, AmazonWebServiceResponse<GetInstanceProfileResult>>()
+                        .withMarshaller(new GetInstanceProfileRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getInstanceProfileRequest)).getResult();
     }
 
     @Override
@@ -1168,10 +1354,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetLoginProfileResult> responseHandler = new StaxResponseHandler<GetLoginProfileResult>(
                 new GetLoginProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetLoginProfileRequest, GetLoginProfileResult>()
-                .withMarshaller(new GetLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getLoginProfileRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetLoginProfileRequest, AmazonWebServiceResponse<GetLoginProfileResult>>()
+                        .withMarshaller(new GetLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getLoginProfileRequest)).getResult();
     }
 
     @Override
@@ -1179,10 +1368,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetOpenIDConnectProviderResult> responseHandler = new StaxResponseHandler<GetOpenIDConnectProviderResult>(
                 new GetOpenIDConnectProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetOpenIDConnectProviderRequest, GetOpenIDConnectProviderResult>()
-                .withMarshaller(new GetOpenIDConnectProviderRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getOpenIDConnectProviderRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<GetOpenIDConnectProviderRequest, AmazonWebServiceResponse<GetOpenIDConnectProviderResult>>()
+                                .withMarshaller(new GetOpenIDConnectProviderRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(getOpenIDConnectProviderRequest)).getResult();
     }
 
     @Override
@@ -1190,10 +1384,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetPolicyResult> responseHandler = new StaxResponseHandler<GetPolicyResult>(
                 new GetPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetPolicyRequest, GetPolicyResult>()
-                .withMarshaller(new GetPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetPolicyRequest, AmazonWebServiceResponse<GetPolicyResult>>()
+                        .withMarshaller(new GetPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getPolicyRequest)).getResult();
     }
 
     @Override
@@ -1201,10 +1398,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetPolicyVersionResult> responseHandler = new StaxResponseHandler<GetPolicyVersionResult>(
                 new GetPolicyVersionResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetPolicyVersionRequest, GetPolicyVersionResult>()
-                .withMarshaller(new GetPolicyVersionRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getPolicyVersionRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetPolicyVersionRequest, AmazonWebServiceResponse<GetPolicyVersionResult>>()
+                        .withMarshaller(new GetPolicyVersionRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getPolicyVersionRequest)).getResult();
     }
 
     @Override
@@ -1212,10 +1412,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetRoleResult> responseHandler = new StaxResponseHandler<GetRoleResult>(
                 new GetRoleResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetRoleRequest, GetRoleResult>()
-                .withMarshaller(new GetRoleRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getRoleRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetRoleRequest, AmazonWebServiceResponse<GetRoleResult>>()
+                        .withMarshaller(new GetRoleRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getRoleRequest)).getResult();
     }
 
     @Override
@@ -1223,10 +1426,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetRolePolicyResult> responseHandler = new StaxResponseHandler<GetRolePolicyResult>(
                 new GetRolePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetRolePolicyRequest, GetRolePolicyResult>()
-                .withMarshaller(new GetRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getRolePolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetRolePolicyRequest, AmazonWebServiceResponse<GetRolePolicyResult>>()
+                        .withMarshaller(new GetRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getRolePolicyRequest)).getResult();
     }
 
     @Override
@@ -1234,10 +1440,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetSAMLProviderResult> responseHandler = new StaxResponseHandler<GetSAMLProviderResult>(
                 new GetSAMLProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetSAMLProviderRequest, GetSAMLProviderResult>()
-                .withMarshaller(new GetSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getSAMLProviderRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetSAMLProviderRequest, AmazonWebServiceResponse<GetSAMLProviderResult>>()
+                        .withMarshaller(new GetSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getSAMLProviderRequest)).getResult();
     }
 
     @Override
@@ -1245,10 +1454,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetSSHPublicKeyResult> responseHandler = new StaxResponseHandler<GetSSHPublicKeyResult>(
                 new GetSSHPublicKeyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetSSHPublicKeyRequest, GetSSHPublicKeyResult>()
-                .withMarshaller(new GetSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getSSHPublicKeyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetSSHPublicKeyRequest, AmazonWebServiceResponse<GetSSHPublicKeyResult>>()
+                        .withMarshaller(new GetSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getSSHPublicKeyRequest)).getResult();
     }
 
     @Override
@@ -1256,10 +1468,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetServerCertificateResult> responseHandler = new StaxResponseHandler<GetServerCertificateResult>(
                 new GetServerCertificateResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetServerCertificateRequest, GetServerCertificateResult>()
-                .withMarshaller(new GetServerCertificateRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getServerCertificateRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetServerCertificateRequest, AmazonWebServiceResponse<GetServerCertificateResult>>()
+                        .withMarshaller(new GetServerCertificateRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getServerCertificateRequest)).getResult();
     }
 
     @Override
@@ -1267,10 +1482,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetUserResult> responseHandler = new StaxResponseHandler<GetUserResult>(
                 new GetUserResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetUserRequest, GetUserResult>()
-                .withMarshaller(new GetUserRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getUserRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetUserRequest, AmazonWebServiceResponse<GetUserResult>>()
+                        .withMarshaller(new GetUserRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getUserRequest)).getResult();
     }
 
     @Override
@@ -1278,10 +1496,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<GetUserPolicyResult> responseHandler = new StaxResponseHandler<GetUserPolicyResult>(
                 new GetUserPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<GetUserPolicyRequest, GetUserPolicyResult>()
-                .withMarshaller(new GetUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getUserPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<GetUserPolicyRequest, AmazonWebServiceResponse<GetUserPolicyResult>>()
+                        .withMarshaller(new GetUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(getUserPolicyRequest)).getResult();
     }
 
     @Override
@@ -1289,10 +1510,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListAccessKeysResult> responseHandler = new StaxResponseHandler<ListAccessKeysResult>(
                 new ListAccessKeysResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListAccessKeysRequest, ListAccessKeysResult>()
-                .withMarshaller(new ListAccessKeysRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listAccessKeysRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListAccessKeysRequest, AmazonWebServiceResponse<ListAccessKeysResult>>()
+                        .withMarshaller(new ListAccessKeysRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listAccessKeysRequest)).getResult();
     }
 
     @Override
@@ -1300,10 +1524,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListAccountAliasesResult> responseHandler = new StaxResponseHandler<ListAccountAliasesResult>(
                 new ListAccountAliasesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListAccountAliasesRequest, ListAccountAliasesResult>()
-                .withMarshaller(new ListAccountAliasesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listAccountAliasesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListAccountAliasesRequest, AmazonWebServiceResponse<ListAccountAliasesResult>>()
+                        .withMarshaller(new ListAccountAliasesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listAccountAliasesRequest)).getResult();
     }
 
     @Override
@@ -1312,11 +1539,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListAttachedGroupPoliciesResult> responseHandler = new StaxResponseHandler<ListAttachedGroupPoliciesResult>(
                 new ListAttachedGroupPoliciesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<ListAttachedGroupPoliciesRequest, ListAttachedGroupPoliciesResult>()
-                        .withMarshaller(new ListAttachedGroupPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(listAttachedGroupPoliciesRequest));
+                .execute(
+                        new ClientExecutionParams<ListAttachedGroupPoliciesRequest, AmazonWebServiceResponse<ListAttachedGroupPoliciesResult>>()
+                                .withMarshaller(new ListAttachedGroupPoliciesRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listAttachedGroupPoliciesRequest)).getResult();
     }
 
     @Override
@@ -1324,10 +1555,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListAttachedRolePoliciesResult> responseHandler = new StaxResponseHandler<ListAttachedRolePoliciesResult>(
                 new ListAttachedRolePoliciesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListAttachedRolePoliciesRequest, ListAttachedRolePoliciesResult>()
-                .withMarshaller(new ListAttachedRolePoliciesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listAttachedRolePoliciesRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<ListAttachedRolePoliciesRequest, AmazonWebServiceResponse<ListAttachedRolePoliciesResult>>()
+                                .withMarshaller(new ListAttachedRolePoliciesRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listAttachedRolePoliciesRequest)).getResult();
     }
 
     @Override
@@ -1335,10 +1571,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListAttachedUserPoliciesResult> responseHandler = new StaxResponseHandler<ListAttachedUserPoliciesResult>(
                 new ListAttachedUserPoliciesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListAttachedUserPoliciesRequest, ListAttachedUserPoliciesResult>()
-                .withMarshaller(new ListAttachedUserPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listAttachedUserPoliciesRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<ListAttachedUserPoliciesRequest, AmazonWebServiceResponse<ListAttachedUserPoliciesResult>>()
+                                .withMarshaller(new ListAttachedUserPoliciesRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listAttachedUserPoliciesRequest)).getResult();
     }
 
     @Override
@@ -1346,10 +1587,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListEntitiesForPolicyResult> responseHandler = new StaxResponseHandler<ListEntitiesForPolicyResult>(
                 new ListEntitiesForPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListEntitiesForPolicyRequest, ListEntitiesForPolicyResult>()
-                .withMarshaller(new ListEntitiesForPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listEntitiesForPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListEntitiesForPolicyRequest, AmazonWebServiceResponse<ListEntitiesForPolicyResult>>()
+                        .withMarshaller(new ListEntitiesForPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listEntitiesForPolicyRequest)).getResult();
     }
 
     @Override
@@ -1357,10 +1601,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListGroupPoliciesResult> responseHandler = new StaxResponseHandler<ListGroupPoliciesResult>(
                 new ListGroupPoliciesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListGroupPoliciesRequest, ListGroupPoliciesResult>()
-                .withMarshaller(new ListGroupPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listGroupPoliciesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListGroupPoliciesRequest, AmazonWebServiceResponse<ListGroupPoliciesResult>>()
+                        .withMarshaller(new ListGroupPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listGroupPoliciesRequest)).getResult();
     }
 
     @Override
@@ -1368,10 +1615,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListGroupsResult> responseHandler = new StaxResponseHandler<ListGroupsResult>(
                 new ListGroupsResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListGroupsRequest, ListGroupsResult>()
-                .withMarshaller(new ListGroupsRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listGroupsRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListGroupsRequest, AmazonWebServiceResponse<ListGroupsResult>>()
+                        .withMarshaller(new ListGroupsRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listGroupsRequest)).getResult();
     }
 
     @Override
@@ -1379,10 +1629,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListGroupsForUserResult> responseHandler = new StaxResponseHandler<ListGroupsForUserResult>(
                 new ListGroupsForUserResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListGroupsForUserRequest, ListGroupsForUserResult>()
-                .withMarshaller(new ListGroupsForUserRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listGroupsForUserRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListGroupsForUserRequest, AmazonWebServiceResponse<ListGroupsForUserResult>>()
+                        .withMarshaller(new ListGroupsForUserRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listGroupsForUserRequest)).getResult();
     }
 
     @Override
@@ -1390,10 +1643,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListInstanceProfilesResult> responseHandler = new StaxResponseHandler<ListInstanceProfilesResult>(
                 new ListInstanceProfilesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListInstanceProfilesRequest, ListInstanceProfilesResult>()
-                .withMarshaller(new ListInstanceProfilesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listInstanceProfilesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListInstanceProfilesRequest, AmazonWebServiceResponse<ListInstanceProfilesResult>>()
+                        .withMarshaller(new ListInstanceProfilesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listInstanceProfilesRequest)).getResult();
     }
 
     @Override
@@ -1402,11 +1658,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListInstanceProfilesForRoleResult> responseHandler = new StaxResponseHandler<ListInstanceProfilesForRoleResult>(
                 new ListInstanceProfilesForRoleResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<ListInstanceProfilesForRoleRequest, ListInstanceProfilesForRoleResult>()
-                        .withMarshaller(new ListInstanceProfilesForRoleRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(listInstanceProfilesForRoleRequest));
+                .execute(
+                        new ClientExecutionParams<ListInstanceProfilesForRoleRequest, AmazonWebServiceResponse<ListInstanceProfilesForRoleResult>>()
+                                .withMarshaller(new ListInstanceProfilesForRoleRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listInstanceProfilesForRoleRequest)).getResult();
     }
 
     @Override
@@ -1414,10 +1674,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListMFADevicesResult> responseHandler = new StaxResponseHandler<ListMFADevicesResult>(
                 new ListMFADevicesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListMFADevicesRequest, ListMFADevicesResult>()
-                .withMarshaller(new ListMFADevicesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listMFADevicesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListMFADevicesRequest, AmazonWebServiceResponse<ListMFADevicesResult>>()
+                        .withMarshaller(new ListMFADevicesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listMFADevicesRequest)).getResult();
     }
 
     @Override
@@ -1426,11 +1689,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListOpenIDConnectProvidersResult> responseHandler = new StaxResponseHandler<ListOpenIDConnectProvidersResult>(
                 new ListOpenIDConnectProvidersResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<ListOpenIDConnectProvidersRequest, ListOpenIDConnectProvidersResult>()
-                        .withMarshaller(new ListOpenIDConnectProvidersRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(listOpenIDConnectProvidersRequest));
+                .execute(
+                        new ClientExecutionParams<ListOpenIDConnectProvidersRequest, AmazonWebServiceResponse<ListOpenIDConnectProvidersResult>>()
+                                .withMarshaller(new ListOpenIDConnectProvidersRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listOpenIDConnectProvidersRequest)).getResult();
     }
 
     @Override
@@ -1438,10 +1705,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListPoliciesResult> responseHandler = new StaxResponseHandler<ListPoliciesResult>(
                 new ListPoliciesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListPoliciesRequest, ListPoliciesResult>()
-                .withMarshaller(new ListPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listPoliciesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListPoliciesRequest, AmazonWebServiceResponse<ListPoliciesResult>>()
+                        .withMarshaller(new ListPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listPoliciesRequest)).getResult();
     }
 
     @Override
@@ -1449,10 +1719,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListPolicyVersionsResult> responseHandler = new StaxResponseHandler<ListPolicyVersionsResult>(
                 new ListPolicyVersionsResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListPolicyVersionsRequest, ListPolicyVersionsResult>()
-                .withMarshaller(new ListPolicyVersionsRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listPolicyVersionsRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListPolicyVersionsRequest, AmazonWebServiceResponse<ListPolicyVersionsResult>>()
+                        .withMarshaller(new ListPolicyVersionsRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listPolicyVersionsRequest)).getResult();
     }
 
     @Override
@@ -1460,10 +1733,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListRolePoliciesResult> responseHandler = new StaxResponseHandler<ListRolePoliciesResult>(
                 new ListRolePoliciesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListRolePoliciesRequest, ListRolePoliciesResult>()
-                .withMarshaller(new ListRolePoliciesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listRolePoliciesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListRolePoliciesRequest, AmazonWebServiceResponse<ListRolePoliciesResult>>()
+                        .withMarshaller(new ListRolePoliciesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listRolePoliciesRequest)).getResult();
     }
 
     @Override
@@ -1471,10 +1747,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListRolesResult> responseHandler = new StaxResponseHandler<ListRolesResult>(
                 new ListRolesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListRolesRequest, ListRolesResult>()
-                .withMarshaller(new ListRolesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listRolesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListRolesRequest, AmazonWebServiceResponse<ListRolesResult>>()
+                        .withMarshaller(new ListRolesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listRolesRequest)).getResult();
     }
 
     @Override
@@ -1482,10 +1761,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListSAMLProvidersResult> responseHandler = new StaxResponseHandler<ListSAMLProvidersResult>(
                 new ListSAMLProvidersResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListSAMLProvidersRequest, ListSAMLProvidersResult>()
-                .withMarshaller(new ListSAMLProvidersRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listSAMLProvidersRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListSAMLProvidersRequest, AmazonWebServiceResponse<ListSAMLProvidersResult>>()
+                        .withMarshaller(new ListSAMLProvidersRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listSAMLProvidersRequest)).getResult();
     }
 
     @Override
@@ -1493,10 +1775,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListSSHPublicKeysResult> responseHandler = new StaxResponseHandler<ListSSHPublicKeysResult>(
                 new ListSSHPublicKeysResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListSSHPublicKeysRequest, ListSSHPublicKeysResult>()
-                .withMarshaller(new ListSSHPublicKeysRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listSSHPublicKeysRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListSSHPublicKeysRequest, AmazonWebServiceResponse<ListSSHPublicKeysResult>>()
+                        .withMarshaller(new ListSSHPublicKeysRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listSSHPublicKeysRequest)).getResult();
     }
 
     @Override
@@ -1504,10 +1789,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListServerCertificatesResult> responseHandler = new StaxResponseHandler<ListServerCertificatesResult>(
                 new ListServerCertificatesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListServerCertificatesRequest, ListServerCertificatesResult>()
-                .withMarshaller(new ListServerCertificatesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listServerCertificatesRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<ListServerCertificatesRequest, AmazonWebServiceResponse<ListServerCertificatesResult>>()
+                                .withMarshaller(new ListServerCertificatesRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listServerCertificatesRequest)).getResult();
     }
 
     @Override
@@ -1516,12 +1806,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListServiceSpecificCredentialsResult> responseHandler = new StaxResponseHandler<ListServiceSpecificCredentialsResult>(
                 new ListServiceSpecificCredentialsResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<ListServiceSpecificCredentialsRequest, ListServiceSpecificCredentialsResult>()
-                        .withMarshaller(new ListServiceSpecificCredentialsRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(listServiceSpecificCredentialsRequest));
+                .execute(
+                        new ClientExecutionParams<ListServiceSpecificCredentialsRequest, AmazonWebServiceResponse<ListServiceSpecificCredentialsResult>>()
+                                .withMarshaller(new ListServiceSpecificCredentialsRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listServiceSpecificCredentialsRequest)).getResult();
     }
 
     @Override
@@ -1529,10 +1822,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListSigningCertificatesResult> responseHandler = new StaxResponseHandler<ListSigningCertificatesResult>(
                 new ListSigningCertificatesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListSigningCertificatesRequest, ListSigningCertificatesResult>()
-                .withMarshaller(new ListSigningCertificatesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listSigningCertificatesRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<ListSigningCertificatesRequest, AmazonWebServiceResponse<ListSigningCertificatesResult>>()
+                                .withMarshaller(new ListSigningCertificatesRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listSigningCertificatesRequest)).getResult();
     }
 
     @Override
@@ -1540,10 +1838,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListUserPoliciesResult> responseHandler = new StaxResponseHandler<ListUserPoliciesResult>(
                 new ListUserPoliciesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListUserPoliciesRequest, ListUserPoliciesResult>()
-                .withMarshaller(new ListUserPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listUserPoliciesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListUserPoliciesRequest, AmazonWebServiceResponse<ListUserPoliciesResult>>()
+                        .withMarshaller(new ListUserPoliciesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listUserPoliciesRequest)).getResult();
     }
 
     @Override
@@ -1551,10 +1852,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListUsersResult> responseHandler = new StaxResponseHandler<ListUsersResult>(
                 new ListUsersResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListUsersRequest, ListUsersResult>()
-                .withMarshaller(new ListUsersRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listUsersRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListUsersRequest, AmazonWebServiceResponse<ListUsersResult>>()
+                        .withMarshaller(new ListUsersRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listUsersRequest)).getResult();
     }
 
     @Override
@@ -1562,10 +1866,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ListVirtualMFADevicesResult> responseHandler = new StaxResponseHandler<ListVirtualMFADevicesResult>(
                 new ListVirtualMFADevicesResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ListVirtualMFADevicesRequest, ListVirtualMFADevicesResult>()
-                .withMarshaller(new ListVirtualMFADevicesRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listVirtualMFADevicesRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ListVirtualMFADevicesRequest, AmazonWebServiceResponse<ListVirtualMFADevicesResult>>()
+                        .withMarshaller(new ListVirtualMFADevicesRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(listVirtualMFADevicesRequest)).getResult();
     }
 
     @Override
@@ -1573,10 +1880,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<PutGroupPolicyResult> responseHandler = new StaxResponseHandler<PutGroupPolicyResult>(
                 new PutGroupPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<PutGroupPolicyRequest, PutGroupPolicyResult>()
-                .withMarshaller(new PutGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(putGroupPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<PutGroupPolicyRequest, AmazonWebServiceResponse<PutGroupPolicyResult>>()
+                        .withMarshaller(new PutGroupPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(putGroupPolicyRequest)).getResult();
     }
 
     @Override
@@ -1584,10 +1894,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<PutRolePolicyResult> responseHandler = new StaxResponseHandler<PutRolePolicyResult>(
                 new PutRolePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<PutRolePolicyRequest, PutRolePolicyResult>()
-                .withMarshaller(new PutRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(putRolePolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<PutRolePolicyRequest, AmazonWebServiceResponse<PutRolePolicyResult>>()
+                        .withMarshaller(new PutRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(putRolePolicyRequest)).getResult();
     }
 
     @Override
@@ -1595,10 +1908,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<PutUserPolicyResult> responseHandler = new StaxResponseHandler<PutUserPolicyResult>(
                 new PutUserPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<PutUserPolicyRequest, PutUserPolicyResult>()
-                .withMarshaller(new PutUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(putUserPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<PutUserPolicyRequest, AmazonWebServiceResponse<PutUserPolicyResult>>()
+                        .withMarshaller(new PutUserPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(putUserPolicyRequest)).getResult();
     }
 
     @Override
@@ -1607,12 +1923,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<RemoveClientIDFromOpenIDConnectProviderResult> responseHandler = new StaxResponseHandler<RemoveClientIDFromOpenIDConnectProviderResult>(
                 new RemoveClientIDFromOpenIDConnectProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<RemoveClientIDFromOpenIDConnectProviderRequest, RemoveClientIDFromOpenIDConnectProviderResult>()
-                        .withMarshaller(new RemoveClientIDFromOpenIDConnectProviderRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(removeClientIDFromOpenIDConnectProviderRequest));
+                .execute(
+                        new ClientExecutionParams<RemoveClientIDFromOpenIDConnectProviderRequest, AmazonWebServiceResponse<RemoveClientIDFromOpenIDConnectProviderResult>>()
+                                .withMarshaller(new RemoveClientIDFromOpenIDConnectProviderRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(removeClientIDFromOpenIDConnectProviderRequest)).getResult();
     }
 
     @Override
@@ -1621,12 +1940,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<RemoveRoleFromInstanceProfileResult> responseHandler = new StaxResponseHandler<RemoveRoleFromInstanceProfileResult>(
                 new RemoveRoleFromInstanceProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<RemoveRoleFromInstanceProfileRequest, RemoveRoleFromInstanceProfileResult>()
-                        .withMarshaller(new RemoveRoleFromInstanceProfileRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(removeRoleFromInstanceProfileRequest));
+                .execute(
+                        new ClientExecutionParams<RemoveRoleFromInstanceProfileRequest, AmazonWebServiceResponse<RemoveRoleFromInstanceProfileResult>>()
+                                .withMarshaller(new RemoveRoleFromInstanceProfileRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(removeRoleFromInstanceProfileRequest)).getResult();
     }
 
     @Override
@@ -1634,10 +1956,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<RemoveUserFromGroupResult> responseHandler = new StaxResponseHandler<RemoveUserFromGroupResult>(
                 new RemoveUserFromGroupResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<RemoveUserFromGroupRequest, RemoveUserFromGroupResult>()
-                .withMarshaller(new RemoveUserFromGroupRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(removeUserFromGroupRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<RemoveUserFromGroupRequest, AmazonWebServiceResponse<RemoveUserFromGroupResult>>()
+                        .withMarshaller(new RemoveUserFromGroupRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(removeUserFromGroupRequest)).getResult();
     }
 
     @Override
@@ -1646,12 +1971,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ResetServiceSpecificCredentialResult> responseHandler = new StaxResponseHandler<ResetServiceSpecificCredentialResult>(
                 new ResetServiceSpecificCredentialResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<ResetServiceSpecificCredentialRequest, ResetServiceSpecificCredentialResult>()
-                        .withMarshaller(new ResetServiceSpecificCredentialRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(resetServiceSpecificCredentialRequest));
+                .execute(
+                        new ClientExecutionParams<ResetServiceSpecificCredentialRequest, AmazonWebServiceResponse<ResetServiceSpecificCredentialResult>>()
+                                .withMarshaller(new ResetServiceSpecificCredentialRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(resetServiceSpecificCredentialRequest)).getResult();
     }
 
     @Override
@@ -1659,10 +1987,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<ResyncMFADeviceResult> responseHandler = new StaxResponseHandler<ResyncMFADeviceResult>(
                 new ResyncMFADeviceResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<ResyncMFADeviceRequest, ResyncMFADeviceResult>()
-                .withMarshaller(new ResyncMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(resyncMFADeviceRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<ResyncMFADeviceRequest, AmazonWebServiceResponse<ResyncMFADeviceResult>>()
+                        .withMarshaller(new ResyncMFADeviceRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(resyncMFADeviceRequest)).getResult();
     }
 
     @Override
@@ -1670,10 +2001,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<SetDefaultPolicyVersionResult> responseHandler = new StaxResponseHandler<SetDefaultPolicyVersionResult>(
                 new SetDefaultPolicyVersionResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<SetDefaultPolicyVersionRequest, SetDefaultPolicyVersionResult>()
-                .withMarshaller(new SetDefaultPolicyVersionRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(setDefaultPolicyVersionRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<SetDefaultPolicyVersionRequest, AmazonWebServiceResponse<SetDefaultPolicyVersionResult>>()
+                                .withMarshaller(new SetDefaultPolicyVersionRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(setDefaultPolicyVersionRequest)).getResult();
     }
 
     @Override
@@ -1681,10 +2017,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<SimulateCustomPolicyResult> responseHandler = new StaxResponseHandler<SimulateCustomPolicyResult>(
                 new SimulateCustomPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<SimulateCustomPolicyRequest, SimulateCustomPolicyResult>()
-                .withMarshaller(new SimulateCustomPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(simulateCustomPolicyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<SimulateCustomPolicyRequest, AmazonWebServiceResponse<SimulateCustomPolicyResult>>()
+                        .withMarshaller(new SimulateCustomPolicyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(simulateCustomPolicyRequest)).getResult();
     }
 
     @Override
@@ -1692,10 +2031,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<SimulatePrincipalPolicyResult> responseHandler = new StaxResponseHandler<SimulatePrincipalPolicyResult>(
                 new SimulatePrincipalPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<SimulatePrincipalPolicyRequest, SimulatePrincipalPolicyResult>()
-                .withMarshaller(new SimulatePrincipalPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(simulatePrincipalPolicyRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<SimulatePrincipalPolicyRequest, AmazonWebServiceResponse<SimulatePrincipalPolicyResult>>()
+                                .withMarshaller(new SimulatePrincipalPolicyRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(simulatePrincipalPolicyRequest)).getResult();
     }
 
     @Override
@@ -1703,10 +2047,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateAccessKeyResult> responseHandler = new StaxResponseHandler<UpdateAccessKeyResult>(
                 new UpdateAccessKeyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateAccessKeyRequest, UpdateAccessKeyResult>()
-                .withMarshaller(new UpdateAccessKeyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateAccessKeyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<UpdateAccessKeyRequest, AmazonWebServiceResponse<UpdateAccessKeyResult>>()
+                        .withMarshaller(new UpdateAccessKeyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(updateAccessKeyRequest)).getResult();
     }
 
     @Override
@@ -1715,11 +2062,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateAccountPasswordPolicyResult> responseHandler = new StaxResponseHandler<UpdateAccountPasswordPolicyResult>(
                 new UpdateAccountPasswordPolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<UpdateAccountPasswordPolicyRequest, UpdateAccountPasswordPolicyResult>()
-                        .withMarshaller(new UpdateAccountPasswordPolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(updateAccountPasswordPolicyRequest));
+                .execute(
+                        new ClientExecutionParams<UpdateAccountPasswordPolicyRequest, AmazonWebServiceResponse<UpdateAccountPasswordPolicyResult>>()
+                                .withMarshaller(new UpdateAccountPasswordPolicyRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(updateAccountPasswordPolicyRequest)).getResult();
     }
 
     @Override
@@ -1727,10 +2078,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateAssumeRolePolicyResult> responseHandler = new StaxResponseHandler<UpdateAssumeRolePolicyResult>(
                 new UpdateAssumeRolePolicyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateAssumeRolePolicyRequest, UpdateAssumeRolePolicyResult>()
-                .withMarshaller(new UpdateAssumeRolePolicyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateAssumeRolePolicyRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<UpdateAssumeRolePolicyRequest, AmazonWebServiceResponse<UpdateAssumeRolePolicyResult>>()
+                                .withMarshaller(new UpdateAssumeRolePolicyRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(updateAssumeRolePolicyRequest)).getResult();
     }
 
     @Override
@@ -1738,10 +2094,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateGroupResult> responseHandler = new StaxResponseHandler<UpdateGroupResult>(
                 new UpdateGroupResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateGroupRequest, UpdateGroupResult>()
-                .withMarshaller(new UpdateGroupRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateGroupRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<UpdateGroupRequest, AmazonWebServiceResponse<UpdateGroupResult>>()
+                        .withMarshaller(new UpdateGroupRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(updateGroupRequest)).getResult();
     }
 
     @Override
@@ -1749,10 +2108,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateLoginProfileResult> responseHandler = new StaxResponseHandler<UpdateLoginProfileResult>(
                 new UpdateLoginProfileResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateLoginProfileRequest, UpdateLoginProfileResult>()
-                .withMarshaller(new UpdateLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateLoginProfileRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<UpdateLoginProfileRequest, AmazonWebServiceResponse<UpdateLoginProfileResult>>()
+                        .withMarshaller(new UpdateLoginProfileRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(updateLoginProfileRequest)).getResult();
     }
 
     @Override
@@ -1761,12 +2123,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateOpenIDConnectProviderThumbprintResult> responseHandler = new StaxResponseHandler<UpdateOpenIDConnectProviderThumbprintResult>(
                 new UpdateOpenIDConnectProviderThumbprintResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<UpdateOpenIDConnectProviderThumbprintRequest, UpdateOpenIDConnectProviderThumbprintResult>()
-                        .withMarshaller(new UpdateOpenIDConnectProviderThumbprintRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(updateOpenIDConnectProviderThumbprintRequest));
+                .execute(
+                        new ClientExecutionParams<UpdateOpenIDConnectProviderThumbprintRequest, AmazonWebServiceResponse<UpdateOpenIDConnectProviderThumbprintResult>>()
+                                .withMarshaller(new UpdateOpenIDConnectProviderThumbprintRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(updateOpenIDConnectProviderThumbprintRequest)).getResult();
     }
 
     @Override
@@ -1774,10 +2139,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateSAMLProviderResult> responseHandler = new StaxResponseHandler<UpdateSAMLProviderResult>(
                 new UpdateSAMLProviderResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateSAMLProviderRequest, UpdateSAMLProviderResult>()
-                .withMarshaller(new UpdateSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateSAMLProviderRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<UpdateSAMLProviderRequest, AmazonWebServiceResponse<UpdateSAMLProviderResult>>()
+                        .withMarshaller(new UpdateSAMLProviderRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(updateSAMLProviderRequest)).getResult();
     }
 
     @Override
@@ -1785,10 +2153,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateSSHPublicKeyResult> responseHandler = new StaxResponseHandler<UpdateSSHPublicKeyResult>(
                 new UpdateSSHPublicKeyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateSSHPublicKeyRequest, UpdateSSHPublicKeyResult>()
-                .withMarshaller(new UpdateSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateSSHPublicKeyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<UpdateSSHPublicKeyRequest, AmazonWebServiceResponse<UpdateSSHPublicKeyResult>>()
+                        .withMarshaller(new UpdateSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(updateSSHPublicKeyRequest)).getResult();
     }
 
     @Override
@@ -1796,10 +2167,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateServerCertificateResult> responseHandler = new StaxResponseHandler<UpdateServerCertificateResult>(
                 new UpdateServerCertificateResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateServerCertificateRequest, UpdateServerCertificateResult>()
-                .withMarshaller(new UpdateServerCertificateRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateServerCertificateRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<UpdateServerCertificateRequest, AmazonWebServiceResponse<UpdateServerCertificateResult>>()
+                                .withMarshaller(new UpdateServerCertificateRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(updateServerCertificateRequest)).getResult();
     }
 
     @Override
@@ -1808,12 +2184,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateServiceSpecificCredentialResult> responseHandler = new StaxResponseHandler<UpdateServiceSpecificCredentialResult>(
                 new UpdateServiceSpecificCredentialResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
+
         return clientHandler
-                .execute(new ClientExecutionParams<UpdateServiceSpecificCredentialRequest, UpdateServiceSpecificCredentialResult>()
-                        .withMarshaller(new UpdateServiceSpecificCredentialRequestMarshaller())
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(updateServiceSpecificCredentialRequest));
+                .execute(
+                        new ClientExecutionParams<UpdateServiceSpecificCredentialRequest, AmazonWebServiceResponse<UpdateServiceSpecificCredentialResult>>()
+                                .withMarshaller(new UpdateServiceSpecificCredentialRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(updateServiceSpecificCredentialRequest)).getResult();
     }
 
     @Override
@@ -1821,10 +2200,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateSigningCertificateResult> responseHandler = new StaxResponseHandler<UpdateSigningCertificateResult>(
                 new UpdateSigningCertificateResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateSigningCertificateRequest, UpdateSigningCertificateResult>()
-                .withMarshaller(new UpdateSigningCertificateRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateSigningCertificateRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<UpdateSigningCertificateRequest, AmazonWebServiceResponse<UpdateSigningCertificateResult>>()
+                                .withMarshaller(new UpdateSigningCertificateRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(updateSigningCertificateRequest)).getResult();
     }
 
     @Override
@@ -1832,10 +2216,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UpdateUserResult> responseHandler = new StaxResponseHandler<UpdateUserResult>(
                 new UpdateUserResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UpdateUserRequest, UpdateUserResult>()
-                .withMarshaller(new UpdateUserRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(updateUserRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<UpdateUserRequest, AmazonWebServiceResponse<UpdateUserResult>>()
+                        .withMarshaller(new UpdateUserRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(updateUserRequest)).getResult();
     }
 
     @Override
@@ -1843,10 +2230,13 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UploadSSHPublicKeyResult> responseHandler = new StaxResponseHandler<UploadSSHPublicKeyResult>(
                 new UploadSSHPublicKeyResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UploadSSHPublicKeyRequest, UploadSSHPublicKeyResult>()
-                .withMarshaller(new UploadSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(uploadSSHPublicKeyRequest));
+
+        return clientHandler.execute(
+                new ClientExecutionParams<UploadSSHPublicKeyRequest, AmazonWebServiceResponse<UploadSSHPublicKeyResult>>()
+                        .withMarshaller(new UploadSSHPublicKeyRequestMarshaller()).withResponseHandler(responseHandler)
+                        .withErrorResponseHandler(errorResponseHandler).withInput(uploadSSHPublicKeyRequest)).getResult();
     }
 
     @Override
@@ -1854,10 +2244,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UploadServerCertificateResult> responseHandler = new StaxResponseHandler<UploadServerCertificateResult>(
                 new UploadServerCertificateResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UploadServerCertificateRequest, UploadServerCertificateResult>()
-                .withMarshaller(new UploadServerCertificateRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(uploadServerCertificateRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<UploadServerCertificateRequest, AmazonWebServiceResponse<UploadServerCertificateResult>>()
+                                .withMarshaller(new UploadServerCertificateRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(uploadServerCertificateRequest)).getResult();
     }
 
     @Override
@@ -1865,10 +2260,15 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
 
         StaxResponseHandler<UploadSigningCertificateResult> responseHandler = new StaxResponseHandler<UploadSigningCertificateResult>(
                 new UploadSigningCertificateResultUnmarshaller());
+
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
-        return clientHandler.execute(new ClientExecutionParams<UploadSigningCertificateRequest, UploadSigningCertificateResult>()
-                .withMarshaller(new UploadSigningCertificateRequestMarshaller()).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(uploadSigningCertificateRequest));
+
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<UploadSigningCertificateRequest, AmazonWebServiceResponse<UploadSigningCertificateResult>>()
+                                .withMarshaller(new UploadSigningCertificateRequestMarshaller())
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(uploadSigningCertificateRequest)).getResult();
     }
 
     private List init() {
@@ -1899,11 +2299,11 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
         return unmarshallers;
     }
 
-    public IamClientWaiters waiters() {
+    public IAMClientWaiters waiters() {
         if (waiters == null) {
             synchronized (this) {
                 if (waiters == null) {
-                    waiters = new IamClientWaiters(this);
+                    waiters = new IAMClientWaiters(this);
                 }
             }
         }
@@ -1911,7 +2311,7 @@ public class DefaultIamClient implements IamClient, AutoCloseable {
     }
 
     @Override
-    public void close() {
-        clientHandler.shutdown();
+    public void close() throws Exception {
+        clientHandler.close();
     }
 }

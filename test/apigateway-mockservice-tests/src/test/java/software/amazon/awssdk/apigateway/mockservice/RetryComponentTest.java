@@ -23,15 +23,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static software.amazon.awssdk.apigateway.mockservice.WireMockExtensions.anyRequestedFor;
 
-import com.amazonaws.services.apigateway.mockservice.MyServiceClient;
-import com.amazonaws.services.apigateway.mockservice.MyServiceClientBuilder;
-import com.amazonaws.services.apigateway.mockservice.model.GetNoauthErrorsRequest;
-import com.amazonaws.services.apigateway.mockservice.model.InternalServerErrorException;
 import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthErrorsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.InternalServerErrorException;
 import software.amazon.awssdk.opensdk.retry.RetryPolicyBuilder;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 

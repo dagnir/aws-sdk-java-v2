@@ -54,7 +54,7 @@ public class ${metadata.asyncClient} implements ${metadata.asyncInterface} {
      * Shuts down the client, releasing all managed resources. This includes
      * forcibly terminating all pending asynchronous service calls.
      */
-    public void shutdown() {
-        syncClient.shutdown();
+    public void close() throws Exception{
+        syncClient.close();
     }
 }

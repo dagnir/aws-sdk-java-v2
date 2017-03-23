@@ -21,6 +21,7 @@ import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;
+import software.amazon.awssdk.runtime.http.response.JsonResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
@@ -46,7 +47,7 @@ public interface SdkStructuredJsonFactory {
      * @param operationMetadata Additional context information about an operation to create the
      *                          appropriate response handler.
      */
-    <T> HttpResponseHandler<AmazonWebServiceResponse<T>> createResponseHandler(
+    <T> JsonResponseHandler<T> createResponseHandler(
             JsonOperationMetadata operationMetadata,
             Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller);
 

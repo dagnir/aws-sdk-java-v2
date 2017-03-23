@@ -22,14 +22,14 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.S3Link;
 /**
  * Test domain class with a single string key, and two S3Links
  */
-@DynamoDbTable(tableName = "aws-java-sdk-util")
+@DynamoDBTable(tableName = "aws-java-sdk-util")
 public class S3LinksTestClass {
 
     private String key;
     private S3Link s3LinkWest;
     private S3Link s3LinkEast;
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public String getKey() {
         return key;
     }

@@ -34,10 +34,10 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
 
     @Before
     public void setup() {
-        dynamoDB = AmazonDynamoDBClientBuilder.standard()
-                                              .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
-                                              .withRegion(Regions.US_WEST_2)
-                                              .build();
+        dynamoDB = DynamoDBClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .withRegion(Regions.US_WEST_2)
+                .build();
     }
 
     @Test
@@ -45,7 +45,6 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
         ListTablesRequest request = new ListTablesRequest();
         ListTablesResult result = dynamoDB.listTables(request);
         assertNotNull(result.getSdkResponseMetadata());
-        assertEquals(dynamoDB.getCachedResponseMetadata(request), result.getSdkResponseMetadata());
     }
 
     @Test

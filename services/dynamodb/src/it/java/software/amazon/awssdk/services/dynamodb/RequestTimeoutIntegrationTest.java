@@ -19,6 +19,7 @@ import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class RequestTimeoutIntegrationTest extends AwsIntegrationTestBase {
@@ -33,12 +34,12 @@ public class RequestTimeoutIntegrationTest extends AwsIntegrationTestBase {
      */
     @Test
     public void requestTimeoutEnabled_CalculatesCorrectCrc32() {
-        AmazonDynamoDBClientBuilder
-                .standard()
+        DynamoDBClient
+                .builder()
                 .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                 .withRegion(Regions.US_WEST_2)
                 .withClientConfiguration(new LegacyClientConfiguration().withRequestTimeout(5000))
                 .build()
-                .listTables();
+                .listTables(new ListTablesRequest());
     }
 }

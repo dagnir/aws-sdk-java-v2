@@ -25,10 +25,12 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.TableNameOverride;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
@@ -39,17 +41,17 @@ public class JsonIntegrationTest extends AwsTestBase {
     private static final String TABLE_NAME = "test-table-"
                                              + UUID.randomUUID().toString();
 
-    private static AmazonDynamoDBClient client;
-    private static DynamoDbMapper mapper;
+    private static DynamoDBClient client;
+    private static DynamoDBMapper mapper;
 
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = new AmazonDynamoDBClient(credentials);
+        client = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        mapper = new DynamoDbMapper(
+        mapper = new DynamoDBMapper(
                 client,
-                new DynamoDbMapperConfig.Builder()
+                new DynamoDBMapperConfig.Builder()
                         .withConversionSchema(ConversionSchemas.V2)
                         .withTableNameOverride(TableNameOverride
                                                        .withTableNameReplacement(TABLE_NAME))
@@ -65,7 +67,7 @@ public class JsonIntegrationTest extends AwsTestBase {
         Thread.sleep(10000);
 
         while (true) {
-            String status = client.describeTable(TABLE_NAME)
+            String status = client.describeTable(new DescribeTableRequest(TABLE_NAME))
                                   .getTable()
                                   .getTableStatus();
 
@@ -86,7 +88,7 @@ public class JsonIntegrationTest extends AwsTestBase {
         }
 
         try {
-            client.deleteTable(TABLE_NAME);
+            client.deleteTable(new DeleteTableRequest(TABLE_NAME));
         } catch (ResourceNotFoundException e) {
             // Ignored or expected.
         }
@@ -140,14 +142,14 @@ public class JsonIntegrationTest extends AwsTestBase {
         Assert.assertEquals(test, result);
     }
 
-    @DynamoDbTable(tableName = "")
+    @DynamoDBTable(tableName = "")
     public static class TestClass {
 
         private String id;
         private List<Map<String, ChildClass>> listOfMaps;
         private Map<String, List<ChildClass>> mapOfLists;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getId() {
             return id;
         }
@@ -188,7 +190,7 @@ public class JsonIntegrationTest extends AwsTestBase {
         }
     }
 
-    @DynamoDbDocument
+    @DynamoDBDocument
     public static class ChildClass {
 
         private boolean bool;

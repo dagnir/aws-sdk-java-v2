@@ -26,16 +26,14 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static software.amazon.awssdk.apigateway.mockservice.WireMockExtensions.anyRequestedFor;
 
-import com.amazonaws.services.apigateway.mockservice.MyServiceClient;
-import com.amazonaws.services.apigateway.mockservice.MyServiceClientBuilder;
-import com.amazonaws.services.apigateway.mockservice.model.PutCustomauthScalarsRequest;
-import com.amazonaws.services.apigateway.mockservice.model.PutIamauthScalarsRequest;
-import com.amazonaws.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.apigateway.mockservice.model.PutCustomauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutIamauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;

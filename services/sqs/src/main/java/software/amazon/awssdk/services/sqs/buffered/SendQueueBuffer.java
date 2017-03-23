@@ -487,7 +487,7 @@ public class SendQueueBuffer {
             }
 
             SendMessageBatchRequest batchRequest = new SendMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SQSBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
             List<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>(requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
@@ -538,7 +538,7 @@ public class SendQueueBuffer {
             }
 
             DeleteMessageBatchRequest batchRequest = new DeleteMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SQSBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
             List<DeleteMessageBatchRequestEntry> entries = new ArrayList<DeleteMessageBatchRequestEntry>(
                     requests.size());
@@ -585,7 +585,7 @@ public class SendQueueBuffer {
 
             ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
                     .withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SQSBufferedAsyncClient.USER_AGENT);
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
             List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                     requests.size());

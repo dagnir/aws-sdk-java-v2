@@ -28,9 +28,9 @@ import software.amazon.awssdk.services.sqs.SQSClient;
 class ArchiveTransferManagerParams {
     private GlacierClient amazonGlacier;
 
-    private SQSClient amazonSQS;
+    private SQSClient amazonSqs;
 
-    private SNSClient amazonSNS;
+    private SNSClient amazonSns;
 
     public GlacierClient getAmazonGlacier() {
         return amazonGlacier;
@@ -45,29 +45,29 @@ class ArchiveTransferManagerParams {
         return this;
     }
 
-    public SQSClient getAmazonSQS() {
-        return amazonSQS;
+    public SQSClient getAmazonSqs() {
+        return amazonSqs;
     }
 
-    public void setAmazonSQS(SQSClient amazonSQS) {
-        this.amazonSQS = amazonSQS;
+    public void setAmazonSqs(SQSClient amazonSqs) {
+        this.amazonSqs = amazonSqs;
     }
 
-    public ArchiveTransferManagerParams withAmazonSQS(SQSClient amazonSQS) {
-        setAmazonSQS(amazonSQS);
+    public ArchiveTransferManagerParams withAmazonSqs(SQSClient amazonSqs) {
+        setAmazonSqs(amazonSqs);
         return this;
     }
 
-    public SNSClient getAmazonSNS() {
-        return amazonSNS;
+    public SNSClient getAmazonSns() {
+        return amazonSns;
     }
 
-    public void setAmazonSNS(SNSClient amazonSNS) {
-        this.amazonSNS = amazonSNS;
+    public void setAmazonSns(SNSClient amazonSns) {
+        this.amazonSns = amazonSns;
     }
 
-    public ArchiveTransferManagerParams withAmazonSNS(SNSClient amazonSNS) {
-        setAmazonSNS(amazonSNS);
+    public ArchiveTransferManagerParams withAmazonSns(SNSClient amazonSns) {
+        setAmazonSns(amazonSns);
         return this;
     }
 }

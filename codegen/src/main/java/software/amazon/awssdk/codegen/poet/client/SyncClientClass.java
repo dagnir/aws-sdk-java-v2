@@ -21,11 +21,11 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
+import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientHandler;
 import software.amazon.awssdk.client.ClientHandlerParams;
@@ -35,6 +35,7 @@ import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.codegen.poet.client.specs.ApiGatewayProtocolSpec;
 import software.amazon.awssdk.codegen.poet.client.specs.Ec2ProtocolSpec;
 import software.amazon.awssdk.codegen.poet.client.specs.JsonProtocolSpec;
 import software.amazon.awssdk.codegen.poet.client.specs.ProtocolSpec;
@@ -60,7 +61,6 @@ public class SyncClientClass implements ClassSpec {
 
         Builder classBuilder = PoetUtils.createClassBuilder(className)
                 .addSuperinterface(interfaceClass)
-                .addSuperinterface(AutoCloseable.class)
                 .addField(FieldSpec.builder(ClientHandler.class, "clientHandler")
                         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                         .build())
@@ -68,7 +68,7 @@ public class SyncClientClass implements ClassSpec {
                 .addMethod(constructor())
                 .addMethods(operations());
 
-        classBuilder = protocolSpec.createErrorResponseHandler(classBuilder);
+        protocolSpec.createErrorResponseHandler().ifPresent(classBuilder::addMethod);
 
         classBuilder.addMethod(protocolSpec.initProtocolFactory(model));
 
@@ -83,7 +83,7 @@ public class SyncClientClass implements ClassSpec {
 
         classBuilder.addMethod(shutdown());
 
-        protocolSpec.additionalMethods().forEach(classBuilder::addMethod);
+        classBuilder.addMethods(protocolSpec.additionalMethods());
 
         return classBuilder.build();
     }
@@ -141,11 +141,25 @@ public class SyncClientClass implements ClassSpec {
                 .build();
     }
 
+    private MethodSpec presigners() {
+        ClassName presigners = ClassName.get(basePackage + "presign", model.getMetadata().getSyncInterface() + "Presigners");
+        return MethodSpec.methodBuilder("presigners")
+                .returns(presigners)
+                .addStatement("return new $T($T.builder().endpoint($L).credentialsProvider($L).signerProvier($L()).build())",
+                        presigners,
+                        PresignerParams.class,
+                        "endpoint",
+                        "awsCredentialsProvider",
+                        "getSignerProvider")
+                .build();
+    }
+
     private MethodSpec shutdown() {
         return MethodSpec.methodBuilder("close")
                 .addAnnotation(Override.class)
-                .addStatement("clientHandler.shutdown()")
+                .addStatement("clientHandler.close()")
                 .addModifiers(Modifier.PUBLIC)
+                .addException(Exception.class)
                 .build();
     }
 
@@ -161,6 +175,8 @@ public class SyncClientClass implements ClassSpec {
             case CBOR:
             case ION:
                 return new JsonProtocolSpec(basePackage);
+            case API_GATEWAY:
+                return new ApiGatewayProtocolSpec(basePackage);
             default:
                 throw new RuntimeException("Unknown protocol: " + protocol.name());
         }

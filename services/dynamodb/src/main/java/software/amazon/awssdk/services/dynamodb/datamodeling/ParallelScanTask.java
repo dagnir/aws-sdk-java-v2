@@ -59,7 +59,7 @@ public class ParallelScanTask {
     private ExecutorService executorService;
 
     @Deprecated
-    public ParallelScanTask(DynamoDbMapper mapper, DynamoDBClient dynamo, List<ScanRequest> parallelScanRequests) {
+    public ParallelScanTask(DynamoDBMapper mapper, DynamoDBClient dynamo, List<ScanRequest> parallelScanRequests) {
         this(dynamo, parallelScanRequests);
     }
 
@@ -223,7 +223,7 @@ public class ParallelScanTask {
         } else {
             segmentScanRequest.setExclusiveStartKey(null);
         }
-        ScanResult scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(segmentScanRequest));
+        ScanResult scanResult = dynamo.scan(DynamoDBMapper.applyUserAgent(segmentScanRequest));
 
         /**
          * Cache the scan result in segmentScanResults.

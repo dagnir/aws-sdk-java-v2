@@ -38,9 +38,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
@@ -61,20 +62,20 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
     private static final int NUM_MESSAGES = 50;
     private static final int NUM_OF_CONSUMERS = 5;
 
-    private SQSBufferedAsyncClient buffSqs;
+    private SqsBufferedAsyncClient buffSqs;
     private String queueUrl;
 
     @Before
     public void setup() {
-        buffSqs = new SQSBufferedAsyncClient(createSqsAyncClient(),
+        buffSqs = new SqsBufferedAsyncClient(createSqsAyncClient(),
                                                    new QueueBufferConfig().withLongPollWaitTimeoutSeconds(60));
         queueUrl = createQueue(buffSqs);
     }
 
     @After
-    public void tearDown() {
-        buffSqs.deleteQueue(queueUrl);
-        buffSqs.shutdown();
+    public void tearDown() throws Exception {
+        buffSqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        buffSqs.close();
     }
 
     @Test
@@ -120,7 +121,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
             SendMessageRequest request = new SendMessageRequest().withMessageBody(body).withQueueUrl(queueUrl)
                                                                  .withMessageAttributes(ATTRIBUTES);
 
-            sendResults.add(buffSqs.sendMessageAsync(request));
+            sendResults.add(buffSqs.sendMessage(request));
             messages.add(body);
         }
         return messages;
@@ -129,12 +130,12 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
     private class MessageConsumer implements Callable<Void> {
 
         private static final int TIMEOUT_IN_SECONDS = 3 * 60;
-        private AmazonSQSAsync buffSqs;
+        private SQSAsyncClient buffSqs;
         private Set<String> resultSet;
         private String url;
         private Map<String, MessageAttributeValue> expectedAttributes;
 
-        public MessageConsumer(AmazonSQSAsync paramSQS, Set<String> set, String paramUrl,
+        public MessageConsumer(SQSAsyncClient paramSQS, Set<String> set, String paramUrl,
                                Map<String, MessageAttributeValue> expectedAttributes) {
             this.buffSqs = paramSQS;
             this.resultSet = set;
@@ -175,7 +176,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         private List<Message> recieveMessage() throws InterruptedException, ExecutionException {
             ReceiveMessageRequest recRequest = new ReceiveMessageRequest().withMaxNumberOfMessages(1).withQueueUrl(url)
                                                                           .withMessageAttributeNames("All");
-            Future<ReceiveMessageResult> future = buffSqs.receiveMessageAsync(recRequest);
+            Future<ReceiveMessageResult> future = buffSqs.receiveMessage(recRequest);
             List<Message> messages = future.get().getMessages();
             return messages;
         }
@@ -191,7 +192,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         private void deleteMessage(Message theMessage) throws InterruptedException, ExecutionException {
             DeleteMessageRequest deleteRequest = new DeleteMessageRequest().withQueueUrl(url).withReceiptHandle(
                     theMessage.getReceiptHandle());
-            buffSqs.deleteMessageAsync(deleteRequest).get();
+            buffSqs.deleteMessage(deleteRequest).get();
         }
 
     }

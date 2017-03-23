@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfi
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.TableNameOverride;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.TableNameResolver;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 
 /**
  * Tests of the configuration object
@@ -50,7 +50,7 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
 
     @Test
     public void testClobber() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo, new DynamoDbMapperConfig(SaveBehavior.CLOBBER));
+        DynamoDBMapper util = new DynamoDBMapper(dynamo, new DynamoDBMapperConfig(SaveBehavior.CLOBBER));
 
         NumberAttributeClassExtended obj = getUniqueObject();
         util.save(obj);
@@ -69,7 +69,7 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
         assertEquals(obj, util.load(obj.getClass(), obj.getKey()));
 
         copy = copy(obj);
-        util.save(copy, new DynamoDbMapperConfig(SaveBehavior.UPDATE));
+        util.save(copy, new DynamoDBMapperConfig(SaveBehavior.UPDATE));
         assertEquals(copy, util.load(copy.getClass(), obj.getKey()));
 
         // We shouldn't have lost any extra info
@@ -78,7 +78,7 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
 
     @Test
     public void testTableOverride() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
 
         TableOverrideTestClass obj = new TableOverrideTestClass();
         obj.setOtherField(UUID.randomUUID().toString());
@@ -90,7 +90,7 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
             // Ignored or expected.
         }
 
-        util.save(obj, new DynamoDbMapperConfig(new TableNameOverride("aws-java-sdk-util")));
+        util.save(obj, new DynamoDBMapperConfig(new TableNameOverride("aws-java-sdk-util")));
 
         try {
             util.load(TableOverrideTestClass.class, obj.getKey());
@@ -100,7 +100,7 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
         }
 
         Object loaded = util.load(TableOverrideTestClass.class, obj.getKey(),
-                                  new DynamoDbMapperConfig(TableNameOverride.withTableNamePrefix("aws-")));
+                                  new DynamoDBMapperConfig(TableNameOverride.withTableNamePrefix("aws-")));
         assertEquals(loaded, obj);
 
         try {
@@ -110,14 +110,14 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
             // Ignored or expected.
         }
 
-        util.delete(obj, new DynamoDbMapperConfig(TableNameOverride.withTableNamePrefix("aws-")));
+        util.delete(obj, new DynamoDBMapperConfig(TableNameOverride.withTableNamePrefix("aws-")));
     }
 
     @Test
     public void testTableNameResolver() {
         final String REAL_TABLE_NAME = "aws-java-sdk-util";
 
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
 
         final TableOverrideTestClass obj = new TableOverrideTestClass();
         obj.setOtherField(UUID.randomUUID().toString());
@@ -130,9 +130,9 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
         }
 
         // Use TableNameResolver to save to the real table
-        mapper.save(obj, new DynamoDbMapperConfig(new TableNameResolver() {
+        mapper.save(obj, new DynamoDBMapperConfig(new TableNameResolver() {
             @Override
-            public String getTableName(Class<?> clazz, DynamoDbMapperConfig config) {
+            public String getTableName(Class<?> clazz, DynamoDBMapperConfig config) {
                 if (clazz.equals(TableOverrideTestClass.class)) {
                     return REAL_TABLE_NAME;
                 }
@@ -149,9 +149,9 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
 
         // Use ObjectTableNameResolver to load from the real table
         Object loaded = mapper.load(obj,
-                                    new DynamoDbMapperConfig(new ObjectTableNameResolver() {
+                                    new DynamoDBMapperConfig(new ObjectTableNameResolver() {
                                         @Override
-                                        public String getTableName(Object objectToLoad, DynamoDbMapperConfig config) {
+                                        public String getTableName(Object objectToLoad, DynamoDBMapperConfig config) {
                                             if (objectToLoad == obj) {
                                                 return REAL_TABLE_NAME;
                                             }
@@ -170,17 +170,17 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
         // When used at the same time, ObjectTableNameResolver should have the highest priority
 
         final String NON_EXISTENT_TABLE_NAME = UUID.randomUUID().toString();
-        mapper.delete(obj, new DynamoDbMapperConfig.Builder()
+        mapper.delete(obj, new DynamoDBMapperConfig.Builder()
                 .withTableNameOverride(new TableNameOverride(NON_EXISTENT_TABLE_NAME))
                 .withTableNameResolver(new TableNameResolver() {
                     @Override
-                    public String getTableName(Class<?> clazz, DynamoDbMapperConfig config) {
+                    public String getTableName(Class<?> clazz, DynamoDBMapperConfig config) {
                         return NON_EXISTENT_TABLE_NAME;
                     }
                 })
                 .withObjectTableNameResolver(new ObjectTableNameResolver() {
                     @Override
-                    public String getTableName(Object object, DynamoDbMapperConfig config) {
+                    public String getTableName(Object object, DynamoDBMapperConfig config) {
                         return REAL_TABLE_NAME;
                     }
                 }).build());
@@ -232,7 +232,7 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
         return copy;
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static final class NumberAttributeClassExtended extends NumberAttributeClass {
 
         private String extraField;
@@ -276,14 +276,14 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
         }
     }
 
-    @DynamoDbTable(tableName = "java-sdk-util") // doesn't exist
+    @DynamoDBTable(tableName = "java-sdk-util") // doesn't exist
     public static final class TableOverrideTestClass {
 
         private String key;
         private String otherField;
 
-        @DynamoDbAutoGeneratedKey
-        @DynamoDbHashKey
+        @DynamoDBAutoGeneratedKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }

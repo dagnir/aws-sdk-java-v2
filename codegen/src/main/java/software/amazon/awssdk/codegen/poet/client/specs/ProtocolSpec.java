@@ -22,6 +22,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
@@ -38,7 +39,7 @@ public interface ProtocolSpec {
 
     CodeBlock executionHandler(OperationModel opModel);
 
-    TypeSpec.Builder createErrorResponseHandler(TypeSpec.Builder classBuilder);
+    Optional<MethodSpec> createErrorResponseHandler();
 
     List<CodeBlock> errorUnmarshallers(IntermediateModel model);
 

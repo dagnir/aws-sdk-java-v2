@@ -16,13 +16,17 @@
 package software.amazon.awssdk.services.dynamodb;
 
 import java.util.UUID;
+
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
-import software.amazon.awssdk.services.sts.AWSSecurityTokenServiceClient;
+import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.model.Credentials;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenRequest;
 import software.amazon.awssdk.test.AwsTestBase;
@@ -37,13 +41,13 @@ public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        ddb = new AmazonDynamoDBClient(credentials);
+        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @Test
     public void testResourceNotFoundException() {
         try {
-            ddb.describeTable(UUID.randomUUID().toString());
+            ddb.describeTable(new DescribeTableRequest(UUID.randomUUID().toString()));
             Assert.fail("ResourceNotFoundException is expected.");
         } catch (ResourceNotFoundException e) {
             Assert.assertNotNull(e.getErrorCode());
@@ -55,23 +59,23 @@ public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
 
     @Test
     public void testPermissionError() {
-        AWSSecurityTokenServiceClient sts =
-                new AWSSecurityTokenServiceClient(credentials);
+        STSClient sts = STSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         Credentials creds = sts.getFederationToken(new GetFederationTokenRequest()
-                                                           .withName("NoAccess")
-                                                           .withPolicy(
-                                                                   "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Deny\",\"Action\":\"*\",\"Resource\":\"*\"}]}")
-                                                           .withDurationSeconds(900)).getCredentials();
+                .withName("NoAccess")
+                .withPolicy(
+                        "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Deny\",\"Action\":\"*\",\"Resource\":\"*\"}]}")
+                .withDurationSeconds(900)).getCredentials();
 
 
-        AmazonDynamoDBClient client = new AmazonDynamoDBClient(new BasicSessionCredentials(
+        DynamoDBClient client = DynamoDBClient.builder().withCredentials(
+                new AwsStaticCredentialsProvider(new BasicSessionCredentials(
                 creds.getAccessKeyId(),
                 creds.getSecretAccessKey(),
-                creds.getSessionToken()));
+                creds.getSessionToken()))).build();
 
         try {
-            client.listTables();
+            client.listTables(new ListTablesRequest());
         } catch (AmazonServiceException e) {
             Assert.assertEquals("AccessDeniedException", e.getErrorCode());
             Assert.assertNotNull(e.getErrorMessage());

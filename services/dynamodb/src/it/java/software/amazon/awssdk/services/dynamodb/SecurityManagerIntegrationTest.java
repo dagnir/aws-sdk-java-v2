@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
 import org.junit.Test;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class SecurityManagerIntegrationTest extends AwsIntegrationTestBase {
@@ -40,8 +41,8 @@ public class SecurityManagerIntegrationTest extends AwsIntegrationTestBase {
         System.setProperty(JAVA_SECURITY_POLICY_PROPERTY, getPolicyUrl());
         SecurityManager securityManager = new SecurityManager();
         System.setSecurityManager(securityManager);
-        AmazonDynamoDBClient ddb = new AmazonDynamoDBClient(getCredentials());
-        assertNotNull(ddb.listTables());
+        DynamoDBClient ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        assertNotNull(ddb.listTables(new ListTablesRequest()));
     }
 
     private String getPolicyUrl() {

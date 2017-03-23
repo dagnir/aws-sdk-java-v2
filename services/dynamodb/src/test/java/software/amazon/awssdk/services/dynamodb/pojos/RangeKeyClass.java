@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBVersionAttr
 /**
  * Comprehensive domain class
  */
-@DynamoDbTable(tableName = "aws-java-sdk-range-test")
+@DynamoDBTable(tableName = "aws-java-sdk-range-test")
 public class RangeKeyClass {
 
     private long key;
@@ -38,7 +38,7 @@ public class RangeKeyClass {
     private BigDecimal bigDecimalAttribute;
     private String stringAttribute;
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public long getKey() {
         return key;
     }
@@ -47,7 +47,7 @@ public class RangeKeyClass {
         this.key = key;
     }
 
-    @DynamoDbRangeKey
+    @DynamoDBRangeKey
     public double getRangeKey() {
         return rangeKey;
     }
@@ -56,7 +56,7 @@ public class RangeKeyClass {
         this.rangeKey = rangeKey;
     }
 
-    @DynamoDbAttribute(attributeName = "integerSetAttribute")
+    @DynamoDBAttribute(attributeName = "integerSetAttribute")
     public Set<Integer> getIntegerAttribute() {
         return integerSetAttribute;
     }
@@ -65,7 +65,7 @@ public class RangeKeyClass {
         this.integerSetAttribute = integerAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<String> getStringSetAttribute() {
         return stringSetAttribute;
     }
@@ -74,7 +74,7 @@ public class RangeKeyClass {
         this.stringSetAttribute = stringSetAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public BigDecimal getBigDecimalAttribute() {
         return bigDecimalAttribute;
     }
@@ -83,7 +83,7 @@ public class RangeKeyClass {
         this.bigDecimalAttribute = bigDecimalAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public String getStringAttribute() {
         return stringAttribute;
     }
@@ -92,7 +92,7 @@ public class RangeKeyClass {
         this.stringAttribute = stringAttribute;
     }
 
-    @DynamoDbVersionAttribute
+    @DynamoDBVersionAttribute
     public Long getVersion() {
         return version;
     }

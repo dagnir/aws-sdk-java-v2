@@ -23,14 +23,14 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
 /**
  * Test domain class with byte[] attribute, byte[] set and a string key
  */
-@DynamoDbTable(tableName = "aws-java-sdk-util")
+@DynamoDBTable(tableName = "aws-java-sdk-util")
 public class BinaryAttributeByteArrayClass {
 
     private String key;
     private byte[] binaryAttribute;
     private Set<byte[]> binarySetAttribute;
 
-    @DynamoDbHashKey(attributeName = "key")
+    @DynamoDBHashKey(attributeName = "key")
     public String getKey() {
         return key;
     }
@@ -39,7 +39,7 @@ public class BinaryAttributeByteArrayClass {
         this.key = key;
     }
 
-    @DynamoDbAttribute(attributeName = "binaryAttribute")
+    @DynamoDBAttribute(attributeName = "binaryAttribute")
     public byte[] getBinaryAttribute() {
         return binaryAttribute;
     }
@@ -48,7 +48,7 @@ public class BinaryAttributeByteArrayClass {
         this.binaryAttribute = binaryAttribute;
     }
 
-    @DynamoDbAttribute(attributeName = "binarySetAttribute")
+    @DynamoDBAttribute(attributeName = "binarySetAttribute")
     public Set<byte[]> getBinarySetAttribute() {
         return binarySetAttribute;
     }

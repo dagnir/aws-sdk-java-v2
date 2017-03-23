@@ -113,7 +113,7 @@ final class ContentCryptoMaterial {
     private static SecretKey cek(byte[] cekSecured, String keyWrapAlgo,
                                  EncryptionMaterials materials, Provider securityProvider,
                                  ContentCryptoScheme contentCryptoScheme, KMSClient kms) {
-        if (isKMSKeyWrapped(keyWrapAlgo)) {
+        if (isKmsKeyWrapped(keyWrapAlgo)) {
             return cekByKms(cekSecured, keyWrapAlgo, materials, contentCryptoScheme, kms);
         }
         Key kek;
@@ -838,7 +838,7 @@ final class ContentCryptoMaterial {
     ContentCryptoMaterial recreate(Map<String, String> newKekMatDesc,
                                    EncryptionMaterialsAccessor accessor, S3CryptoScheme targetScheme,
                                    Provider p, KMSClient kms, AmazonWebServiceRequest req) {
-        if (!usesKmsKey() && newKEKMatDesc.equals(kekMaterialsDescription)) {
+        if (!usesKmsKey() && newKekMatDesc.equals(kekMaterialsDescription)) {
             throw new SecurityException(
                     "Material description of the new KEK must differ from the current one");
         }

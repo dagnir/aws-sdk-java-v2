@@ -25,8 +25,9 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AnonymousAwsCredentials;
-import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
@@ -42,12 +43,14 @@ import utils.test.util.DynamoDBTestBase;
  */
 public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
 
-    private static DynamoDbMapper mapper;
+    private static DynamoDBMapper mapper;
 
     @BeforeClass
     public static void setUp() {
-        dynamo = new AmazonDynamoDBClient(new AnonymousAwsCredentials());
-        mapper = new DynamoDbMapper(dynamo);
+        dynamo = DynamoDBClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()))
+                .build();
+        mapper = new DynamoDBMapper(dynamo);
     }
 
     private static boolean equalLsi(Collection<LocalSecondaryIndex> a, Collection<LocalSecondaryIndex> b) {

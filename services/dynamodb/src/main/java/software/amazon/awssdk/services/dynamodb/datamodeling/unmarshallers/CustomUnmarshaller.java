@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.dynamodb.datamodeling.unmarshallers;
 
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMarshaller;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMarshaller;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 /**
@@ -26,29 +26,29 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 public class CustomUnmarshaller extends SUnmarshaller {
 
     private final Class<?> targetClass;
-    private final Class<? extends DynamoDbMarshaller<?>> unmarshallerClass;
+    private final Class<? extends DynamoDBMarshaller<?>> unmarshallerClass;
 
     public CustomUnmarshaller(
             Class<?> targetClass,
-            Class<? extends DynamoDbMarshaller<?>> unmarshallerClass) {
+            Class<? extends DynamoDBMarshaller<?>> unmarshallerClass) {
 
         this.targetClass = targetClass;
         this.unmarshallerClass = unmarshallerClass;
     }
 
     @SuppressWarnings({"rawtypes"})
-    private static DynamoDbMarshaller createUnmarshaller(Class<?> clazz) {
+    private static DynamoDBMarshaller createUnmarshaller(Class<?> clazz) {
         try {
 
-            return (DynamoDbMarshaller) clazz.newInstance();
+            return (DynamoDBMarshaller) clazz.newInstance();
 
         } catch (InstantiationException e) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
 
         } catch (IllegalAccessException e) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
         }
@@ -62,7 +62,7 @@ public class CustomUnmarshaller extends SUnmarshaller {
         // do that now without a breaking change; user's unmarshallers
         // might not all be thread-safe.
 
-        DynamoDbMarshaller unmarshaller =
+        DynamoDBMarshaller unmarshaller =
                 createUnmarshaller(unmarshallerClass);
 
         return unmarshaller.unmarshall(targetClass, value.getS());

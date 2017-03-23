@@ -27,12 +27,12 @@ import static software.amazon.awssdk.util.Throwables.failure;
  * ensure that all systems have the correct code to map it from the item
  * record in DynamoDB to your objects.
  *
- * @see DynamoDbMarshaller
+ * @see DynamoDBMarshaller
  *
  * @deprecated Replaced by {@link DynamoDbTypeConvertedEnum}
  */
 @Deprecated
-public abstract class AbstractEnumMarshaller<T extends Enum<T>> implements DynamoDbMarshaller<T> {
+public abstract class AbstractEnumMarshaller<T extends Enum<T>> implements DynamoDBMarshaller<T> {
 
     @Override
     public String marshall(final T obj) {

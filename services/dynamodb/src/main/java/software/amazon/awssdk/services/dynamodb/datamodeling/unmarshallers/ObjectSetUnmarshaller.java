@@ -56,7 +56,7 @@ public class ObjectSetUnmarshaller extends LUnmarshaller {
             memberUnmarshaller.typeCheck(v, null);
             Object o = memberUnmarshaller.unmarshall(v);
             if (!objects.add(o)) {
-                throw new DynamoDbMappingException(
+                throw new DynamoDBMappingException(
                         "Duplicate value (" + o + ") found in " + values);
             }
         }

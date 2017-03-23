@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.metrics.internal.cloudwatch.provider.transform;
+package software.amazon.awssdk.metrics.internal.cloudwatch.transform;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,7 +44,7 @@ import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
  * @see AwsMetricTransformerFactory
  */
 @ThreadSafe
-public class DynamoDbRequestMetricTransformer implements RequestMetricTransformer {
+public class DynamoDBRequestMetricTransformer implements RequestMetricTransformer {
     @Override
     public List<MetricDatum> toMetricData(MetricType metricType,
                                           Request<?> request, Response<?> response) {
@@ -65,11 +65,11 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                                                                                          NoSuchMethodException,
                                                                                          IllegalAccessException,
                                                                                          InvocationTargetException {
-        if (!(metricType instanceof DynamoDbRequestMetric)) {
+        if (!(metricType instanceof DynamoDBRequestMetric)) {
             return null;
         }
         // Predefined metrics across all aws http clients
-        DynamoDbRequestMetric predefined = (DynamoDbRequestMetric) metricType;
+        DynamoDBRequestMetric predefined = (DynamoDBRequestMetric) metricType;
         switch (predefined) {
             case DynamoDBConsumedCapacity:
                 if (response == null) {
@@ -97,7 +97,7 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                                  .withValue(requestType(req)));
                 // table specific
                 dims.add(new Dimension()
-                                 .withName(DynamoDbDimensions.TableName.name())
+                                 .withName(DynamoDBDimensions.TableName.name())
                                  .withValue(tableName));
                 MetricDatum datum = new MetricDatum()
                         .withMetricName(req.getServiceName())

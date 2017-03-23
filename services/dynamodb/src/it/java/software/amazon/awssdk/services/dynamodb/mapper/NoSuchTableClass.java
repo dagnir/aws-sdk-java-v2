@@ -18,12 +18,12 @@ package software.amazon.awssdk.services.dynamodb.mapper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
 
-@DynamoDbTable(tableName = "tableNotExist")
+@DynamoDBTable(tableName = "tableNotExist")
 public class NoSuchTableClass {
 
     private String key;
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public String getKey() {
         return key;
     }

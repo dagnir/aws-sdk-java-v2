@@ -10,8 +10,8 @@ import javax.annotation.Generated;
  */
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
 public enum TestEnumClass {
-
     Available("available"),
+
     PermanentFailure("permanent-failure");
 
     private final String value;
@@ -28,16 +28,15 @@ public enum TestEnumClass {
     /**
      * Use this in place of valueOf.
      *
-     * @param value real value
+     * @param value
+     *        real value
      * @return TestEnumClass corresponding to the value
      */
     public static TestEnumClass fromValue(String value) {
         if (isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Value cannot be null or empty!");
         }
-        return Stream.of(TestEnumClass.values())
-                .filter(e -> e.toString().equals(value))
-                .findFirst()
+        return Stream.of(TestEnumClass.values()).filter(e -> e.toString().equals(value)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Cannot create enum from " + value + " value!"));
     }
 }

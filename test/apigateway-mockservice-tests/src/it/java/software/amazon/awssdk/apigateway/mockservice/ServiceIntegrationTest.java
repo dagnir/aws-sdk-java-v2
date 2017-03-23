@@ -33,56 +33,55 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.apigateway.mockservice.model.MyServiceClientException;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.model.AnonListsInput;
-import software.amazon.awssdk.services.apigateway.mockservice.model.AnonMapInput;
-import software.amazon.awssdk.services.apigateway.mockservice.model.AnonObjectInput;
-import software.amazon.awssdk.services.apigateway.mockservice.model.AnonymousListItem;
-import software.amazon.awssdk.services.apigateway.mockservice.model.AnonymousObject;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthErrorsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.InlineRefMember;
-import software.amazon.awssdk.services.apigateway.mockservice.model.InternalServerErrorException;
-import software.amazon.awssdk.services.apigateway.mockservice.model.LowercaseOperationNameRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.LowercaseOperationNameResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.MyServiceException;
-import software.amazon.awssdk.services.apigateway.mockservice.model.NotFoundException;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutApikeyRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutApikeyResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutComplexContainersInput;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutContainersInput;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutCustomauthScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutCustomauthScalarsResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutDefinitionsInput;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutIamauthScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutIamauthScalarsResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthAnonListsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthAnonListsResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthAnonMapRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthAnonMapResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthAnonObjectRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthAnonObjectResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthContainersComplexRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthContainersComplexResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthContainersSimpleRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthContainersSimpleResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthDefsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthDefsResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthMultiLocationRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonListOfScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonListOfScalarsResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonListRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonListResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonMapRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonMapResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonPrimitiveRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthRefsCanonPrimitiveResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthScalarsResult;
-import software.amazon.awssdk.services.apigateway.mockservice.model.ScalarTypes;
+import software.amazon.awssdk.apigateway.mockservice.model.AnonListsInput;
+import software.amazon.awssdk.apigateway.mockservice.model.AnonMapInput;
+import software.amazon.awssdk.apigateway.mockservice.model.AnonObjectInput;
+import software.amazon.awssdk.apigateway.mockservice.model.AnonymousListItem;
+import software.amazon.awssdk.apigateway.mockservice.model.AnonymousObject;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthErrorsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthScalarsResult;
+import software.amazon.awssdk.apigateway.mockservice.model.InlineRefMember;
+import software.amazon.awssdk.apigateway.mockservice.model.InternalServerErrorException;
+import software.amazon.awssdk.apigateway.mockservice.model.LowercaseOperationNameRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.LowercaseOperationNameResult;
+import software.amazon.awssdk.apigateway.mockservice.model.NotFoundException;
+import software.amazon.awssdk.apigateway.mockservice.model.PutApikeyRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutApikeyResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutComplexContainersInput;
+import software.amazon.awssdk.apigateway.mockservice.model.PutContainersInput;
+import software.amazon.awssdk.apigateway.mockservice.model.PutCustomauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutCustomauthScalarsResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutDefinitionsInput;
+import software.amazon.awssdk.apigateway.mockservice.model.PutIamauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutIamauthScalarsResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthAnonListsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthAnonListsResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthAnonMapRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthAnonMapResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthAnonObjectRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthAnonObjectResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthContainersComplexRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthContainersComplexResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthContainersSimpleRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthContainersSimpleResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthDefsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthDefsResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthMultiLocationRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonListOfScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonListOfScalarsResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonListRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonListResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonMapRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonMapResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonPrimitiveRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthRefsCanonPrimitiveResult;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthScalarsResult;
+import software.amazon.awssdk.apigateway.mockservice.model.ScalarTypes;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;
@@ -91,7 +90,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private MyService client;
+    private MyServiceClient client;
 
     private static void assertJsonEquals(Object expected, Object actual) throws IOException {
         assertEquals(toTree(expected), toTree(actual));
@@ -104,7 +103,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     @Before
     public void setup() {
         BasicConfigurator.configure();
-        client = MyService.builder()
+        client = MyServiceClient.builder()
                           .iamCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                           .signer(request -> "allow")
                           .apiKey("pcJeQMyqaZ4UIedQcnmN84ln4PGIzXWE8KugLPhI")
@@ -260,7 +259,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void customAuth_AccessDenied_ThrowsException() {
-        final MyService customAuthClient = MyService.builder()
+        final MyServiceClient customAuthClient = MyServiceClient.builder()
                                                     .signer(request -> "deny")
                                                     .build();
         assertForbiddenException(() -> customAuthClient
@@ -278,7 +277,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void iamAuth_InvalidCredentials_ThrowsException() {
-        final MyService iamAuthClient = MyService.builder()
+        final MyServiceClient iamAuthClient = MyServiceClient.builder()
                                                  .iamCredentials(new AwsStaticCredentialsProvider(
                                                          new BasicAwsCredentials("akid", "skid")))
                                                  .build();
@@ -297,7 +296,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void apiKeyRequired_MissingApiKey_ThrowsException() throws IOException {
-        final MyService missingApiKeyClient = MyService.builder()
+        final MyServiceClient missingApiKeyClient = MyServiceClient.builder()
                                                        .build();
         final PutApikeyRequest request = new PutApikeyRequest().scalarTypes(
                 new ScalarTypes().stringMember("foo"));
@@ -306,7 +305,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void apiKeyRequired_InvalidApiKey_ThrowsException() throws IOException {
-        final MyService invalidApiKeyClient = MyService.builder()
+        final MyServiceClient invalidApiKeyClient = MyServiceClient.builder()
                                                        .apiKey("invalidApiKey")
                                                        .build();
         final PutApikeyRequest request = new PutApikeyRequest().scalarTypes(
@@ -397,7 +396,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         try {
             client.getNoauthErrors(
                     new GetNoauthErrorsRequest().errorType("ResourceNotFoundException"));
-        } catch (MyServiceException e) {
+        } catch (MyServiceClientException e) {
             assertThat(e, IsInstanceOf.instanceOf(NotFoundException.class));
             assertEquals(e.sdkHttpMetadata().httpStatusCode(), 404);
             System.out.println("Class = " + e.getClass());
@@ -414,7 +413,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     private void assertForbiddenException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (MyServiceException expected) {
+        } catch (MyServiceClientException expected) {
             assertEquals(403, expected.sdkHttpMetadata().httpStatusCode());
         }
     }

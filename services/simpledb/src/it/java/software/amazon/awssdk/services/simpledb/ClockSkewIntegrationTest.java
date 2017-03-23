@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.simpledb;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;
 
 public class ClockSkewIntegrationTest extends IntegrationTestBase {
@@ -30,10 +30,10 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkewSdb() {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         SimpleDBClient clockSkewClient = SimpleDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
         clockSkewClient.listDomains(new ListDomainsRequest());
-        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 
     /**
@@ -43,12 +43,12 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkewAsync() {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         SimpleDBAsyncClient clockSkewClient = SimpleDBAsyncClientBuilder.standard()
                 .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
 
         clockSkewClient.listDomains(new ListDomainsRequest());
-        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

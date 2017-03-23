@@ -41,15 +41,15 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
     /** The current parallel scan task which contains all the information about the scan request. */
     private final ParallelScanTask parallelScanTask;
 
-    private final DynamoDbMapperConfig config;
+    private final DynamoDBMapperConfig config;
 
     public PaginatedParallelScanList(
-            DynamoDbMapper mapper,
+            DynamoDBMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             ParallelScanTask parallelScanTask,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDbMapperConfig config) {
+            DynamoDBMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.parallelScanTask = parallelScanTask;

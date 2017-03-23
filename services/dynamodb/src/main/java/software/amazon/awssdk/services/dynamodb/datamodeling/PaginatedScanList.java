@@ -41,19 +41,19 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
     /** The current scan request. */
     private final ScanRequest scanRequest;
 
-    private final DynamoDbMapperConfig config;
+    private final DynamoDBMapperConfig config;
 
     /** The current results for the last executed scan operation. */
     private ScanResult scanResult;
 
     public PaginatedScanList(
-            DynamoDbMapper mapper,
+            DynamoDBMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             ScanRequest scanRequest,
             ScanResult scanResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDbMapperConfig config) {
+            DynamoDBMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.scanRequest = scanRequest;
@@ -81,7 +81,7 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
     @Override
     protected synchronized List<T> fetchNextPage() {
         scanRequest.setExclusiveStartKey(scanResult.getLastEvaluatedKey());
-        scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(scanRequest));
+        scanResult = dynamo.scan(DynamoDBMapper.applyUserAgent(scanRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
                 scanResult.getItems(),
                 clazz,

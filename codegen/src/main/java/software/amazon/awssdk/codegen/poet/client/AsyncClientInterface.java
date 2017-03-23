@@ -45,14 +45,14 @@ public class AsyncClientInterface implements ClassSpec {
 
     @Override
     public TypeSpec poetSpec() {
-        TypeSpec.Builder classBuilder = PoetUtils.createInterfaceBuilder(className)
+        return PoetUtils.createInterfaceBuilder(className)
+                .addSuperinterface(AutoCloseable.class)
                 .addField(FieldSpec.builder(String.class, "ENDPOINT_PREFIX")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                         .initializer("$S", model.getMetadata().getEndpointPrefix())
                         .build())
-                .addMethods(operations());
-
-        return classBuilder.build();
+                .addMethods(operations())
+                .build();
     }
 
     @Override
@@ -61,10 +61,10 @@ public class AsyncClientInterface implements ClassSpec {
     }
 
     private Iterable<MethodSpec> operations() {
-        return model.getOperations().values().stream().map(this::operationMethodSpec).collect(Collectors.toList());
+        return model.getOperations().values().stream().map(this::toMethodSpec).collect(Collectors.toList());
     }
 
-    private MethodSpec operationMethodSpec(OperationModel opModel) {
+    private MethodSpec toMethodSpec(OperationModel opModel) {
         ClassName returnTypeClass = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
         TypeName returnType = ParameterizedTypeName.get(PoetUtils.COMPLETABLE_FUTURE, returnTypeClass);
         ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());

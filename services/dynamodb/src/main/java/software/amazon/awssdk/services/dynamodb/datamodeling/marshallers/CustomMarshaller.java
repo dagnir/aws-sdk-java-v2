@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodb.datamodeling.marshallers;
 
 import software.amazon.awssdk.services.dynamodb.datamodeling.ArgumentMarshaller.StringAttributeMarshaller;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMarshaller;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMarshaller;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 /**
@@ -26,27 +26,27 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
  */
 public class CustomMarshaller implements StringAttributeMarshaller {
 
-    private final Class<? extends DynamoDbMarshaller<?>> marshallerClass;
+    private final Class<? extends DynamoDBMarshaller<?>> marshallerClass;
 
     public CustomMarshaller(
-            Class<? extends DynamoDbMarshaller<?>> marshallerClass) {
+            Class<? extends DynamoDBMarshaller<?>> marshallerClass) {
 
         this.marshallerClass = marshallerClass;
     }
 
     @SuppressWarnings("unchecked")
-    private static DynamoDbMarshaller<Object> createMarshaller(Class<?> clazz) {
+    private static DynamoDBMarshaller<Object> createMarshaller(Class<?> clazz) {
         try {
 
-            return (DynamoDbMarshaller<Object>) clazz.newInstance();
+            return (DynamoDBMarshaller<Object>) clazz.newInstance();
 
         } catch (InstantiationException e) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
 
         } catch (IllegalAccessException e) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
         }
@@ -59,7 +59,7 @@ public class CustomMarshaller implements StringAttributeMarshaller {
         // do that now without a breaking change; user's marshalers might
         // not all be thread-safe.
 
-        DynamoDbMarshaller<Object> marshaler =
+        DynamoDBMarshaller<Object> marshaler =
                 createMarshaller(marshallerClass);
 
         String stringValue = marshaler.marshall(obj);

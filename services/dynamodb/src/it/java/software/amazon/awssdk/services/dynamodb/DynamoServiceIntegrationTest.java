@@ -51,6 +51,7 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
@@ -222,7 +223,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
     @Test
     public void testServiceOperations() throws Exception {
         // Describe all tables
-        ListTablesResult describeTablesResult = dynamo.listTables();
+        ListTablesResult describeTablesResult = dynamo.listTables(new ListTablesRequest());
 
         // Describe our new table
         DescribeTableRequest describeTablesRequest = new DescribeTableRequest().withTableName(tableName);

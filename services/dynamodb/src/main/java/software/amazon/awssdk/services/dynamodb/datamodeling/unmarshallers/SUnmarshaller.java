@@ -25,7 +25,7 @@ abstract class SUnmarshaller implements ArgumentUnmarshaller {
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
         if (value.getS() == null) {
-            throw new DynamoDbMappingException("Expected S in value " + value + " when invoking " + setter);
+            throw new DynamoDBMappingException("Expected S in value " + value + " when invoking " + setter);
         }
     }
 

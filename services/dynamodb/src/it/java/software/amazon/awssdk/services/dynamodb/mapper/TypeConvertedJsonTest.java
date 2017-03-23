@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTypeConvertedJson;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
@@ -43,7 +43,7 @@ public class TypeConvertedJsonTest {
 
     @Test
     public void responseWithUnmappedField_IgnoresUnknownFieldAndUnmarshallsCorrectly() {
-        final DynamoDbMapper mapper = new DynamoDbMapper(ddb);
+        final DynamoDBMapper mapper = new DynamoDBMapper(ddb);
         when(ddb.getItem(any(GetItemRequest.class)))
                 .thenReturn(new GetItemResult().withItem(
                         ImmutableMapParameter.of("hashKey", new AttributeValue(HASH_KEY),
@@ -55,13 +55,13 @@ public class TypeConvertedJsonTest {
         assertEquals("knownValue", pojo.getJsonMappedPojo().getKnownField());
     }
 
-    @DynamoDbTable(tableName = "TestTable")
+    @DynamoDBTable(tableName = "TestTable")
     public static class TopLevelPojo {
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         private String hashKey;
 
-        @DynamoDbTypeConvertedJson
+        @DynamoDBTypeConvertedJson
         private JsonMappedPojo jsonMappedPojo;
 
         public String getHashKey() {

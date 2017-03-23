@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodb.document;
 
+import static java.util.Arrays.asList;
 import static software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils.checkInvalidAttrName;
 import static software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils.checkInvalidAttribute;
 import static software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils.rejectNullInput;
@@ -28,7 +29,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -841,7 +841,7 @@ public class Item {
      */
     public Item withList(String attrName, Object... vals) {
         checkInvalidAttribute(attrName, vals);
-        List<Object> listIn = Arrays.asList(vals);
+        List<Object> listIn = asList(vals);
         attributes.put(attrName, VALUE_CONFORMER.transform(listIn));
         return this;
     }

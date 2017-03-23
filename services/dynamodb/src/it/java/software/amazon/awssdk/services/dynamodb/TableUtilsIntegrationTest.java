@@ -28,6 +28,7 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
@@ -54,12 +55,12 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
     private static final long WRITE_CAPACITY = 5L;
     private static final String HASH_KEY_NAME = "someHash";
 
-    private static AmazonDynamoDBClient ddb;
+    private static DynamoDBClient ddb;
     private String tableName;
 
     @BeforeClass
     public static void setupFixture() {
-        ddb = new AmazonDynamoDBClient(getCredentials());
+        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     private CreateTableRequest createTableRequest() {
@@ -90,7 +91,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
         if (getTableStatus() != null) {
             if (!getTableStatus().equals(TableStatus.DELETING)) {
                 TableUtils.waitUntilActive(ddb, tableName);
-                ddb.deleteTable(tableName);
+                ddb.deleteTable(new DeleteTableRequest(tableName));
             }
             waitUntilTableDeleted();
         }
@@ -101,7 +102,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
      */
     private String getTableStatus() {
         try {
-            return ddb.describeTable(tableName).getTable().getTableStatus();
+            return ddb.describeTable(new DescribeTableRequest(tableName)).getTable().getTableStatus();
         } catch (ResourceNotFoundException e) {
             return null;
         }
@@ -114,7 +115,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
         long endTime = startTime + 5 * 60 * 1000;
         while (System.currentTimeMillis() < endTime) {
             try {
-                ddb.describeTable(tableName);
+                ddb.describeTable(new DescribeTableRequest(tableName));
                 Thread.sleep(1000);
             } catch (ResourceNotFoundException e) {
                 return;
@@ -142,7 +143,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
         createTable();
         TableUtils.waitUntilActive(ddb, tableName);
         assertEquals(TableStatus.ACTIVE.toString(),
-                     ddb.describeTable(tableName).getTable().getTableStatus());
+                     ddb.describeTable(new DescribeTableRequest(tableName)).getTable().getTableStatus());
     }
 
     @Test(expected = TableNeverTransitionedToStateException.class, timeout = TEST_TIMEOUT)
@@ -163,7 +164,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
     public void waitUntilExists_MethodBlocksUntilTableExists() throws InterruptedException {
         createTable();
         TableUtils.waitUntilExists(ddb, tableName);
-        assertNotNull(ddb.describeTable(tableName));
+        assertNotNull(ddb.describeTable(new DescribeTableRequest(tableName)));
     }
 
     @Test(expected = AmazonClientException.class, timeout = TEST_TIMEOUT)

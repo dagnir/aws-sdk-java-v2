@@ -26,13 +26,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.s3.model.Region;
 
 public class S3LinkTest {
-    private DynamoDbMapper mapper;
+    private DynamoDBMapper mapper;
 
     @Before
     public void setUp() {
         AwsCredentials credentials = new BasicAwsCredentials("mock", "mock");
         DynamoDBClient db = DynamoDBClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
-        mapper = new DynamoDbMapper(db, new AwsStaticCredentialsProvider(credentials));
+        mapper = new DynamoDBMapper(db, new AwsStaticCredentialsProvider(credentials));
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -14,12 +14,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import org.easymock.Capture;
-import org.easymock.IAnswer;
-import org.easymock.IExpectationSetters;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
@@ -29,7 +27,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResult;
 public class BufferedSQSClientTest {
 
     private SQSAsyncClient mock;
-    private SQSBufferedAsyncClient client;
+    private SqsBufferedAsyncClient client;
 
     @Before
     public void setup() throws Exception{
@@ -37,7 +35,7 @@ public class BufferedSQSClientTest {
         mock.close();
         expectLastCall().asStub();
         makeThreadSafe(mock, false);
-        client = new SQSBufferedAsyncClient(mock);
+        client = new SqsBufferedAsyncClient(mock);
     }
 
     @After
@@ -68,13 +66,13 @@ public class BufferedSQSClientTest {
 
         replay(mock);
 
-        Future<SendMessageResult> future = client.sendMessageAsync(new SendMessageRequest().withQueueUrl(
+        Future<SendMessageResult> future = client.sendMessage(new SendMessageRequest().withQueueUrl(
                 "https://example.com/").withMessageBody("hello world"));
 
         // Wait for the first batch request to time out and get closed.
         Thread.sleep(250);
 
-        Future<SendMessageResult> future2 = client.sendMessageAsync(new SendMessageRequest().withQueueUrl(
+        Future<SendMessageResult> future2 = client.sendMessage(new SendMessageRequest().withQueueUrl(
                 "https://example.com/").withMessageBody("hello world 2"));
 
         // Make sure the second batch doesn't block waiting for the first batch

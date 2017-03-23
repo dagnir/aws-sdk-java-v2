@@ -21,7 +21,7 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
  * Client interface to invoke an API.
  */
 @SdkProtectedApi
-public abstract class ClientHandler {
+public abstract class ClientHandler implements AutoCloseable {
 
     /**
      * Execute's a web service request. Handles marshalling and unmarshalling of data and making the
@@ -33,9 +33,4 @@ public abstract class ClientHandler {
      * @return Unmarshalled output POJO type.
      */
     public abstract <InputT, OutputT> OutputT execute(ClientExecutionParams<InputT, OutputT> executionParams);
-
-    /**
-     * Shutdown and release any underlying resources.
-     */
-    public abstract void shutdown();
 }

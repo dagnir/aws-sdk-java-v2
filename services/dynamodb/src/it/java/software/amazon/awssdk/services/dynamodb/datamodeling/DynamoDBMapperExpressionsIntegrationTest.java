@@ -22,13 +22,15 @@ import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResult;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
@@ -46,12 +48,12 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
     /**
      * Reference to the mapper used for this testing
      */
-    protected static DynamoDbMapper mapper;
+    protected static DynamoDBMapper mapper;
 
     /**
      * Reference to the client being used by the mapper.
      */
-    protected static AmazonDynamoDBClient client;
+    protected static DynamoDBClient client;
 
     /**
      * Table name to be used for this testing
@@ -96,8 +98,8 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
     public static void setUp() throws FileNotFoundException, IOException,
                                       InterruptedException {
         setUpCredentials();
-        client = new AmazonDynamoDBClient(credentials);
-        mapper = new DynamoDbMapper(client);
+        client = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        mapper = new DynamoDBMapper(client);
         try {
             client.createTable(new CreateTableRequest()
                                        .withTableName(TABLENAME)
@@ -143,7 +145,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
     public static void waitForTableCreation() throws InterruptedException {
         while (true) {
             DescribeTableResult describeResult = client
-                    .describeTable(TABLENAME);
+                    .describeTable(new DescribeTableRequest(TABLENAME));
             if (TABLE_STATUS_ACTIVE.equals(describeResult.getTable()
                                                          .getTableStatus())) {
                 break;
@@ -153,16 +155,16 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
     }
 
     @AfterClass
-    public static void tearDown() {
+    public static void tearDown() throws Exception {
         try {
             if (client != null) {
-                client.deleteTable(TABLENAME);
+                client.deleteTable(new DeleteTableRequest(TABLENAME));
             }
         } catch (Exception e) {
             // Ignored or expected.
         } finally {
             if (client != null) {
-                client.shutdown();
+                client.close();
             }
         }
     }

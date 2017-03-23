@@ -25,12 +25,14 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
 import org.w3c.dom.Node;
 
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
@@ -76,7 +78,7 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
                 basePackage, opModel.getReturnType().getReturnType() + "Unmarshaller");
         ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
 
-        return CodeBlock.builder().add("\n$T<$T> responseHandler = new $T<$T>(new $T());",
+        return CodeBlock.builder().add("\n\n$T<$T> responseHandler = new $T<$T>(new $T());",
                 StaxResponseHandler.class,
                 returnType,
                 StaxResponseHandler.class,
@@ -87,7 +89,7 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
 
     @Override
     public CodeBlock errorResponseHandler(OperationModel opModel) {
-        return CodeBlock.builder().add("\n$T errorResponseHandler = new $T($N);",
+        return CodeBlock.builder().add("\n\n$T errorResponseHandler = new $T($N);",
                 DefaultErrorResponseHandler.class,
                 DefaultErrorResponseHandler.class,
                 "exceptionUnmarshallers")
@@ -99,10 +101,11 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
         ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
         ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
         ClassName marshaller = PoetUtils.getTransformClass(basePackage, opModel.getInputShape().getShapeName() + "Marshaller");
-        return CodeBlock.builder().add("\nreturn clientHandler.execute(new $T<$T, $T>()" +
-                ".withMarshaller(new $T()).withResponseHandler($N).withErrorResponseHandler($N).withInput($L));",
+        return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>()" +
+                ".withMarshaller(new $T()).withResponseHandler($N).withErrorResponseHandler($N).withInput($L)).getResult();",
                 ClientExecutionParams.class,
                 requestType,
+                AmazonWebServiceResponse.class,
                 returnType,
                 marshaller,
                 "responseHandler",
@@ -112,8 +115,8 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
     }
 
     @Override
-    public TypeSpec.Builder createErrorResponseHandler(TypeSpec.Builder builder) {
-        return builder;
+    public Optional<MethodSpec> createErrorResponseHandler() {
+        return Optional.empty();
     }
 
     @Override

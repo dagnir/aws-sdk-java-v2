@@ -61,7 +61,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
     /**
      * The DynamoDB asynchronous client to be used in this test.
      */
-    private static AmazonDynamoDBAsyncClient dynamoAsync;
+    private static DynamoDBAsyncClient dynamoAsync;
 
     /**
      * Overrding setUp() and tearDown in DynamoDBIntegrationTestBase.
@@ -69,15 +69,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        dynamoAsync = new AmazonDynamoDBAsyncClient(credentials);
-        dynamoAsync.setEndpoint(ENDPOINT);
-
-        /* Point the "dynamo" defined in test base to the reference of the
-         * async client object that we are using, so that the utility methods
-         * will use the async client.
-         */
-        dynamo = dynamoAsync;
-
+        dynamoAsync = DynamoDBAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass
@@ -85,7 +77,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
         System.out.println("**********************************************************");
         System.out.println("*****************  AfterClass Procedure  *****************");
         System.out.println("**********************************************************");
-        dynamoAsync.getExecutorService().shutdown();
+        dynamoAsync.close();
         for (String tableName : CREATED_TABLE_NAMES) {
             try {
                 TableUtils.waitUntilActive(dynamo, tableName);
@@ -124,7 +116,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                 .setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(20L).withWriteCapacityUnits(10L));
 
         // Call the async method to create the table
-        Future<CreateTableResult> futureCreateTableResult = dynamoAsync.createTableAsync(createTableRequest);
+        Future<CreateTableResult> futureCreateTableResult = dynamoAsync.createTable(createTableRequest);
         long startPollingTime = System.currentTimeMillis();
         while (!futureCreateTableResult.isDone()) {
             // POLLING....
@@ -207,7 +199,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
             }
         };
 
-        dynamoAsync.createTableAsync(createTableRequest, asyncHandler);
+        dynamoAsync.createTable(createTableRequest);
     }
 
     /**
@@ -236,8 +228,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                     fail("We are not supposed to be in onCompleted handler!");
                 }
             };
-            Future<DeleteTableResult> futureDeleteTableResult = dynamoAsync.deleteTableAsync(deleteNonexistentTableRequest,
-                                                                                             asyncHandler);
+            Future<DeleteTableResult> futureDeleteTableResult = dynamoAsync.deleteTable(deleteNonexistentTableRequest);
             // For backward compatibility, we need to make sure that the ASE is rethrown to the calling thread
             // So... we wait for it!!
             System.out.println("Waiting for the ServiceExeption rethrown into the main thread!");
@@ -275,7 +266,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                     fail("We are not supposed to be in onCompleted handler!");
                 }
             };
-            Future<CreateTableResult> futureDeleteTableResult = dynamoAsync.createTableAsync(createTableRequest, asyncHandler);
+            Future<CreateTableResult> futureDeleteTableResult = dynamoAsync.createTable(createTableRequest);
             // For backward compatibility, we need to make sure that the ACE is rethrown to the calling thread
             // So... we wait for it!!
             System.out.println("Waiting for the ClientExeption rethrown into the main thread!");
@@ -314,7 +305,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                                                                       .withWriteCapacityUnits((long) STRESS_TEST_REQUEST_NUM);
         createTableRequest.setProvisionedThroughput(throughput);
 
-        TableDescription createdTableDescription = dynamoAsync.createTable(createTableRequest).getTableDescription();
+        TableDescription createdTableDescription = dynamoAsync.createTable(createTableRequest).join().getTableDescription();
         System.out.println("Created Table: " + createdTableDescription);
         assertEquals(TABLE_CALLBACK_STRESSTEST, createdTableDescription.getTableName());
         assertNotNull(createdTableDescription.getTableStatus());
@@ -399,7 +390,7 @@ public class AsyncServiceIntegrationTest extends DynamoDBTestBase {
                         }
                     }
                 };
-                dynamoAsync.putItemAsync(putItemRequest, asyncHandler);
+                dynamoAsync.putItem(putItemRequest);
             }
         } catch (Exception e) {
             fail("Error during updating data by asynchronized method!");

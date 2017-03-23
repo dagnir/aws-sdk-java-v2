@@ -43,7 +43,7 @@ public class BooleanSetUnmarshaller implements ArgumentUnmarshaller {
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
         if (value.getNS() == null && value.getL() == null) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Expected either L or NS in value " + value
                     + " when invoking " + setter);
         }
@@ -68,13 +68,13 @@ public class BooleanSetUnmarshaller implements ArgumentUnmarshaller {
             } else {
                 bool = value.getBOOL();
                 if (bool == null) {
-                    throw new DynamoDbMappingException(
+                    throw new DynamoDBMappingException(
                             value + " is not a boolean");
                 }
             }
 
             if (!result.add(bool)) {
-                throw new DynamoDbMappingException(
+                throw new DynamoDBMappingException(
                         "Duplicate value (" + bool + ") found in "
                         + values);
             }

@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingExce
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBRangeKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBVersionAttribute;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
@@ -38,53 +38,53 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
  */
 public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testNoTableAnnotation() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.save(new NoTableAnnotation());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testNoTableAnnotationLoad() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.load(NoTableAnnotation.class, "abc");
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testNoDefaultConstructor() {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         NoDefaultConstructor obj = new NoDefaultConstructor("" + startKey++, "abc");
         util.save(obj);
         util.load(NoDefaultConstructor.class, obj.getKey());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testNoHashKeyGetter() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.save(new NoKeyGetterDefined());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testNoHashKeyGetterLoad() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.load(NoKeyGetterDefined.class, "abc");
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testPrivateKeyGetter() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.save(new PrivateKeyGetter());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testPrivateKeyGetterLoad() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.load(PrivateKeyGetter.class, "abc");
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testPrivateKeySetter() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.save(new PrivateKeySetter());
     }
 
@@ -92,91 +92,91 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
      * To trigger this error, we need for a service object to be present, so
      * we'll insert one manually.
      */
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testPrivateKeySetterLoad() throws Exception {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
         attr.put(KEY_NAME, new AttributeValue().withS("abc"));
         dynamo.putItem(new PutItemRequest().withTableName("aws-java-sdk-util").withItem(attr));
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.load(PrivateKeySetter.class, "abc");
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testPrivateSetterLoad() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         PrivateSetter object = new PrivateSetter();
         object.setStringProperty("value");
         util.save(object);
         util.load(PrivateSetter.class, object.getKey());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testOverloadedSetter() {
         OverloadedSetter obj = new OverloadedSetter();
         obj.setKey("" + startKey++);
         obj.setAttribute("abc", "123");
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
         mapper.save(obj);
 
         mapper.load(OverloadedSetter.class, obj.getKey());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testWrongTypeForSetter() {
         WrongTypeForSetter obj = new WrongTypeForSetter();
         obj.setKey("" + startKey++);
         obj.setAttribute(123);
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
         mapper.save(obj);
 
         mapper.load(WrongTypeForSetter.class, obj.getKey());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testWrongDataType() {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
         attr.put("integerProperty", new AttributeValue().withS("abc"));
         attr.put(KEY_NAME, new AttributeValue().withS("" + startKey++));
         dynamo.putItem(new PutItemRequest().withTableName("aws-java-sdk-util").withItem(attr));
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.load(NumericFields.class, attr.get(KEY_NAME).getS());
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testWrongDataType2() {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
         attr.put("integerProperty", new AttributeValue().withNS("1", "2", "3"));
         attr.put(KEY_NAME, new AttributeValue().withS("" + startKey++));
         dynamo.putItem(new PutItemRequest().withTableName("aws-java-sdk-util").withItem(attr));
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.load(NumericFields.class, attr.get(KEY_NAME).getS());
     }
 
     // Complex types are not supported by the V1 conversion schema
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testComplexTypeFailure() {
-        DynamoDbMapperConfig config = new DynamoDbMapperConfig(ConversionSchemas.V1);
-        DynamoDbMapper util = new DynamoDbMapper(dynamo, config);
+        DynamoDBMapperConfig config = new DynamoDBMapperConfig(ConversionSchemas.V1);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo, config);
 
         ComplexType complexType = new ComplexType("" + startKey++, new ComplexType("" + startKey++, null));
         util.save(complexType);
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testUnsupportedHashKeyType() {
         ComplexType complexType = new ComplexType("" + startKey++, new ComplexType("" + startKey++, null));
         ComplexHashKeyType obj = new ComplexHashKeyType();
         obj.setKey(complexType);
         obj.setAttribute("abc");
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.save(obj);
     }
 
     // Lists are not supported by the V1 conversion schema.
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testNonSetCollection() {
-        DynamoDbMapperConfig config = new DynamoDbMapperConfig(ConversionSchemas.V1);
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, config);
+        DynamoDBMapperConfig config = new DynamoDBMapperConfig(ConversionSchemas.V1);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, config);
 
         NonSetCollectionType obj = new NonSetCollectionType();
         obj.setKey("" + startKey++);
@@ -185,29 +185,29 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         mapper.save(obj);
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testFractionalVersionAttribute() {
         FractionalVersionAttribute obj = new FractionalVersionAttribute();
         obj.setKey("" + startKey++);
         obj.setVersion(0d);
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
         mapper.save(obj);
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testAutoGeneratedIntegerHashKey() {
         AutoGeneratedIntegerKey obj = new AutoGeneratedIntegerKey();
         obj.setValue("fdgfdsgf");
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
         mapper.save(obj);
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testAutoGeneratedIntegerRangeKey() {
         AutoGeneratedIntegerRangeKey obj = new AutoGeneratedIntegerRangeKey();
         obj.setKey("Bldadsfa");
         obj.setValue("fdgfdsgf");
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
         mapper.save(obj);
     }
 
@@ -215,7 +215,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
 
         private String key;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -226,7 +226,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
 
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class NoDefaultConstructor {
 
         private String key;
@@ -238,7 +238,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.attribute = attribute;
         }
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -256,20 +256,20 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class NoKeyGetterDefined {
 
         @SuppressWarnings("unused")
         private String key;
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class PrivateKeyGetter {
 
         private String key;
 
         @SuppressWarnings("unused")
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         private String getKey() {
             return key;
         }
@@ -280,13 +280,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class PrivateKeySetter {
 
         private String key;
 
-        @DynamoDbHashKey
-        @DynamoDbAutoGeneratedKey
+        @DynamoDBHashKey
+        @DynamoDBAutoGeneratedKey
         public String getKey() {
             return key;
         }
@@ -297,13 +297,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class PrivateSetter {
 
         private String key;
         private String stringProperty;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -321,13 +321,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class OverloadedSetter {
 
         private String key;
         private String attribute;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -345,13 +345,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class WrongTypeForSetter {
 
         private String key;
         private String attribute;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -370,13 +370,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
 
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class NumericFields {
 
         private String key;
         private Integer integerProperty;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -395,7 +395,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
 
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class ComplexType {
 
         public String key;
@@ -407,7 +407,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.type = type;
         }
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -425,13 +425,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class ComplexHashKeyType {
 
         private ComplexType key;
         private String attribute;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public ComplexType getKey() {
             return key;
         }
@@ -449,13 +449,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class NonSetCollectionType {
 
         private String key;
         private List<String> badlyMapped;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -473,13 +473,13 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         }
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class FractionalVersionAttribute {
 
         private String key;
         private Double version;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -488,7 +488,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.key = key;
         }
 
-        @DynamoDbVersionAttribute
+        @DynamoDBVersionAttribute
         public Double getVersion() {
             return version;
         }
@@ -499,14 +499,14 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
 
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class AutoGeneratedIntegerKey {
 
         private Integer key;
         private String value;
 
-        @DynamoDbHashKey
-        @DynamoDbAutoGeneratedKey
+        @DynamoDBHashKey
+        @DynamoDBAutoGeneratedKey
         public Integer getKey() {
             return key;
         }
@@ -525,14 +525,14 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
 
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class AutoGeneratedIntegerRangeKey {
 
         private String key;
         private Integer rangekey;
         private String value;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -541,8 +541,8 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.key = key;
         }
 
-        @DynamoDbAutoGeneratedKey
-        @DynamoDbRangeKey
+        @DynamoDBAutoGeneratedKey
+        @DynamoDBRangeKey
         public Integer getRangekey() {
             return rangekey;
         }

@@ -25,7 +25,7 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.StringSetAttributeClass;
@@ -67,7 +67,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
             StringSetAttributeClass x = util.load(StringSetAttributeClass.class, attr.get(KEY_NAME).getS());
@@ -82,7 +82,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
      */
     @Test
     public void testIncompleteObject() {
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
 
         StringSetAttributeClass obj = getUniqueObject();
         obj.setStringSetAttribute(null);
@@ -103,7 +103,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
             objs.add(obj);
         }
 
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         for (StringSetAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -122,7 +122,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
             objs.add(obj);
         }
 
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         for (StringSetAttributeClass obj : objs) {
             util.save(obj);
         }

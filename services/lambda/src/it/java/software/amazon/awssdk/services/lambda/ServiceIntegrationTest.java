@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -151,10 +152,10 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         }
 
         CreateFunctionResult result = lambda.createFunction(new CreateFunctionRequest()
-                                                                    .withDescription("My cloud function").withFunctionName(FUNCTION_NAME)
-                                                                    .withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(functionBits)))
-                                                                    .withHandler("helloworld.handler").withMemorySize(128).withRuntime(Runtime.Nodejs43).withTimeout(10)
-                                                                    .withRole(lambdaServiceRoleArn));
+                .withDescription("My cloud function").withFunctionName(FUNCTION_NAME)
+                .withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(functionBits)))
+                .withHandler("helloworld.handler").withMemorySize(128).withRuntime(Runtime.Nodejs43).withTimeout(10)
+                .withRole(lambdaServiceRoleArn)).join();
 
         checkValid_CreateFunctionResult(result);
     }
@@ -168,16 +169,16 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     public void testFunctionOperations() throws IOException {
 
         // Get function
-        GetFunctionResult getFunc = lambda.getFunction(new GetFunctionRequest().withFunctionName(FUNCTION_NAME));
+        GetFunctionResult getFunc = lambda.getFunction(new GetFunctionRequest().withFunctionName(FUNCTION_NAME)).join();
         checkValid_GetFunctionResult(getFunc);
 
         // Get function configuration
         GetFunctionConfigurationResult getConfig = lambda
-                .getFunctionConfiguration(new GetFunctionConfigurationRequest().withFunctionName(FUNCTION_NAME));
+                .getFunctionConfiguration(new GetFunctionConfigurationRequest().withFunctionName(FUNCTION_NAME)).join();
         checkValid_GetFunctionConfigurationResult(getConfig);
 
         // List functions
-        ListFunctionsResult listFunc = lambda.listFunctions(new ListFunctionsRequest());
+        ListFunctionsResult listFunc = lambda.listFunctions(new ListFunctionsRequest()).join();
         Assert.assertFalse(listFunc.getFunctions().isEmpty());
         for (FunctionConfiguration funcConfig : listFunc.getFunctions()) {
             checkValid_FunctionConfiguration(funcConfig);
@@ -185,20 +186,20 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         // Invoke the function
         InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(new InvokeAsyncRequest().withFunctionName(
-                FUNCTION_NAME).withInvokeArgs(new ByteArrayInputStream("{}".getBytes())));
+                FUNCTION_NAME).withInvokeArgs(new ByteArrayInputStream("{}".getBytes()))).join();
 
         Assert.assertEquals(202, invokeAsyncResult.getStatus().intValue());
 
         InvokeResult invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
-                                                                     .withInvocationType(InvocationType.Event).withPayload(ByteBuffer.wrap("{}".getBytes())));
+                .withInvocationType(InvocationType.Event).withPayload(ByteBuffer.wrap("{}".getBytes()))).join();
 
         Assert.assertEquals(202, invokeResult.getStatusCode().intValue());
         Assert.assertNull(invokeResult.getLogResult());
         Assert.assertEquals(0, invokeResult.getPayload().remaining());
 
         invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
-                                                        .withInvocationType(InvocationType.RequestResponse).withLogType(LogType.Tail)
-                                                        .withPayload(ByteBuffer.wrap("{}".getBytes())));
+                .withInvocationType(InvocationType.RequestResponse).withLogType(LogType.Tail)
+                .withPayload(ByteBuffer.wrap("{}".getBytes()))).join();
 
         Assert.assertEquals(200, invokeResult.getStatusCode().intValue());
 
@@ -213,14 +214,14 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         // AddEventSourceResult
         CreateEventSourceMappingResult addResult = lambda
                 .createEventSourceMapping(new CreateEventSourceMappingRequest().withFunctionName(FUNCTION_NAME)
-                                                                               .withEventSourceArn(streamArn).withStartingPosition("TRIM_HORIZON").withBatchSize(100));
+                        .withEventSourceArn(streamArn).withStartingPosition("TRIM_HORIZON").withBatchSize(100)).join();
         checkValid_CreateEventSourceMappingResult(addResult);
 
         String eventSourceUUID = addResult.getUUID();
 
         // GetEventSource
         GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(new GetEventSourceMappingRequest()
-                                                                                     .withUUID(eventSourceUUID));
+                .withUUID(eventSourceUUID)).join();
 
         // RemoveEventSource
         lambda.deleteEventSourceMapping(new DeleteEventSourceMappingRequest().withUUID(eventSourceUUID));

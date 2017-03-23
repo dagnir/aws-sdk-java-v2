@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBVersionAttr
  * Exhaustive exercise of DynamoDB domain mapping, exercising every supported
  * data type.
  */
-@DynamoDbTable(tableName = "aws-xsdk")
+@DynamoDBTable(tableName = "aws-xsdk")
 public class CrossSdkVerificationClass {
 
     private String key;
@@ -62,7 +62,7 @@ public class CrossSdkVerificationClass {
     // these are kind of pointless, but here for completeness
     private Set<Boolean> booleanSetAttribute;
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public String getKey() {
         return key;
     }
@@ -71,7 +71,7 @@ public class CrossSdkVerificationClass {
         this.key = key;
     }
 
-    @DynamoDbRangeKey
+    @DynamoDBRangeKey
     public String getRangeKey() {
         return rangeKey;
     }
@@ -80,7 +80,7 @@ public class CrossSdkVerificationClass {
         this.rangeKey = rangeKey;
     }
 
-    @DynamoDbVersionAttribute
+    @DynamoDBVersionAttribute
     public Long getVersion() {
         return version;
     }

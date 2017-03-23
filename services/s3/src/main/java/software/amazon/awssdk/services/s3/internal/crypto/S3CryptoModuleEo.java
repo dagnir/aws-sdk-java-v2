@@ -38,7 +38,7 @@ class S3CryptoModuleEo extends S3CryptoModuleBase<MultipartUploadCbcContext> {
     /**
      * @param cryptoConfig a read-only copy of the crypto configuration
      */
-    S3CryptoModuleEO(KMSClient kms, S3Direct s3,
+    S3CryptoModuleEo(KMSClient kms, S3Direct s3,
                      AwsCredentialsProvider credentialsProvider,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
@@ -62,7 +62,7 @@ class S3CryptoModuleEo extends S3CryptoModuleBase<MultipartUploadCbcContext> {
     /**
      * Used for testing purposes only.
      */
-    S3CryptoModuleEO(KMSClient kms, S3Direct s3,
+    S3CryptoModuleEo(KMSClient kms, S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
         this(kms, s3, new DefaultAwsCredentialsProviderChain(),

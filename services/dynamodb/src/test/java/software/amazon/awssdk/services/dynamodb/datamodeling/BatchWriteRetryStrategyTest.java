@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.BatchWriteRetryStrategy;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper.FailedBatch;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
@@ -55,12 +55,12 @@ public class BatchWriteRetryStrategyTest {
     }
 
     private DynamoDBClient ddbMock;
-    private DynamoDbMapper mapper;
+    private DynamoDBMapper mapper;
 
     @Before
     public void setup() {
         ddbMock = createMock(DynamoDBClient.class);
-        mapper = new DynamoDbMapper(
+        mapper = new DynamoDBMapper(
                 ddbMock,
                 getConfigWithCustomBatchWriteRetryStrategy(
                         new BatchWriteRetryStrategyWithNoDelay(MAX_RETRY)));
@@ -144,9 +144,9 @@ public class BatchWriteRetryStrategyTest {
                 .andThrow(e);
     }
 
-    private DynamoDbMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
+    private DynamoDBMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
             BatchWriteRetryStrategy batchWriteRetryStrategy) {
-        return new DynamoDbMapperConfig.Builder()
+        return new DynamoDBMapperConfig.Builder()
                 .withBatchWriteRetryStrategy(batchWriteRetryStrategy)
                 .build();
     }
@@ -175,7 +175,7 @@ public class BatchWriteRetryStrategyTest {
 
     }
 
-    @DynamoDbTable(tableName = TABLE_NAME)
+    @DynamoDBTable(tableName = TABLE_NAME)
     public static class Item {
 
         private String hash;
@@ -184,8 +184,8 @@ public class BatchWriteRetryStrategyTest {
             this.hash = hash;
         }
 
-        @DynamoDbHashKey
-        @DynamoDbAttribute(attributeName = HASH_ATTR)
+        @DynamoDBHashKey
+        @DynamoDBAttribute(attributeName = HASH_ATTR)
         public String getHash() {
             return hash;
         }

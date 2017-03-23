@@ -36,14 +36,11 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodb.mapper.NumberSetAttributeClass;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.RangeKeyClass;
 
@@ -54,7 +51,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     private static int start = 1;
     private static int byteStart = 1;
     private static int startKeyDebug = 1;
-    DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new DynamoDbMapperConfig(SaveBehavior.UPDATE,
+    DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new DynamoDBMapperConfig(SaveBehavior.UPDATE,
                                                                                 ConsistentReads.CONSISTENT, null));
 
     @BeforeClass
@@ -177,14 +174,14 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
             throws NoSuchFieldException, SecurityException,
                    IllegalArgumentException, IllegalAccessException {
         long startTime = System.currentTimeMillis();
-        long maxBackOffTimePerRetry = DynamoDbMapper.MAX_BACKOFF_IN_MILLISECONDS;
-        int NoOfRetries = DynamoDbMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
+        long maxBackOffTimePerRetry = DynamoDBMapper.MAX_BACKOFF_IN_MILLISECONDS;
+        int NoOfRetries = DynamoDBMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
 
         List<Object> objs = new ArrayList<Object>();
         NumberSetAttributeClass obj = getUniqueNumericObject();
         objs.add(obj);
-        DynamoDbMapper mapper = new DynamoDbMapper(
-                new AmazonDymanoDbClientMock());
+        DynamoDBMapper mapper = new DynamoDBMapper(
+                DynamoDBClient.create());
         try {
             mapper.batchLoad(objs);
             fail("Expecting an expection due to exceed of number of retries.");
@@ -232,28 +229,4 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     private String nextByte() {
         return "" + byteStart++ % Byte.MAX_VALUE;
     }
-
-    static class AmazonDymanoDbClientMock extends AmazonDynamoDBClient {
-
-        static final int SLEEP_TIME_IN_MILLIS = 3000;
-
-        @Override
-        public BatchGetItemResult batchGetItem(BatchGetItemRequest arg0) {
-
-            try {
-                Thread.sleep(SLEEP_TIME_IN_MILLIS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                fail("Unable to initialize necessary test data. Exception message : " + e.getMessage());
-            }
-            BatchGetItemResult result = new BatchGetItemResult();
-            result.setResponses(new HashMap<String, List<Map<String, AttributeValue>>>());
-            result.setUnprocessedKeys(arg0.getRequestItems());
-
-            return result;
-        }
-
-
-    }
-
 }

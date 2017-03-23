@@ -29,6 +29,7 @@ import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
@@ -39,9 +40,6 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.waiters.WaiterHandler;
 import software.amazon.awssdk.waiters.WaiterParameters;
 
-/**
- * Created by meghbyar on 6/15/16.
- */
 public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
 
     private String tableName;
@@ -50,8 +48,8 @@ public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
     @Before
     public void setup() {
         tableName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
-        client = AmazonDynamoDBClientBuilder
-                .standard()
+        client = DynamoDBClient
+                .builder()
                 .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
                 .withRegion(Regions.US_WEST_2)
                 .build();
@@ -68,12 +66,12 @@ public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
 
     public void deleteTableWaiterSync_ThrowsResourceNotFoundException_WhenDeleted(
             DynamoDBClient client, String tableName) throws Exception {
-        client.deleteTable(tableName);
+        client.deleteTable(new DeleteTableRequest(tableName));
         client.waiters()
               .tableNotExists()
               .run(new WaiterParameters().withRequest(new DescribeTableRequest(tableName)));
         try {
-            client.describeTable(tableName);
+            client.describeTable(new DescribeTableRequest(tableName));
             fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException re) {
             // Ignored or expected.
@@ -87,7 +85,7 @@ public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
               .run(new WaiterParameters<DescribeTableRequest>().withRequest(
                       new DescribeTableRequest(tableName)));
         Assert.assertEquals("Table status is not ACTIVE", "ACTIVE",
-                            client.describeTable(tableName).getTable().getTableStatus());
+                            client.describeTable(new DescribeTableRequest(tableName)).getTable().getTableStatus());
         deleteTableWaiterSync_ThrowsResourceNotFoundException_WhenDeleted(client, tableName);
 
     }
@@ -117,7 +115,7 @@ public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
         assertTrue(onWaitSuccessCalled.get());
         assertFalse(onWaitFailureCalled.get());
         Assert.assertEquals("Table status is not ACTIVE", "ACTIVE",
-                            client.describeTable(tableName).getTable().getTableStatus());
+                            client.describeTable(new DescribeTableRequest(tableName)).getTable().getTableStatus());
         deleteTableWaiterSync_ThrowsResourceNotFoundException_WhenDeleted(client, tableName);
     }
 

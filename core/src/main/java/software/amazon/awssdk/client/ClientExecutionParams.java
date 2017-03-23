@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.client;
 
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.SdkBaseException;
@@ -36,7 +35,7 @@ public class ClientExecutionParams<InputT, OutputT> {
 
     private InputT input;
     private Marshaller<Request<InputT>, InputT> marshaller;
-    private HttpResponseHandler<AmazonWebServiceResponse<OutputT>> responseHandler;
+    private HttpResponseHandler<OutputT> responseHandler;
     private HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
     private RequestConfig requestConfig;
 
@@ -59,12 +58,12 @@ public class ClientExecutionParams<InputT, OutputT> {
         return this;
     }
 
-    public HttpResponseHandler<AmazonWebServiceResponse<OutputT>> getResponseHandler() {
+    public HttpResponseHandler<OutputT> getResponseHandler() {
         return responseHandler;
     }
 
     public ClientExecutionParams<InputT, OutputT> withResponseHandler(
-            HttpResponseHandler<AmazonWebServiceResponse<OutputT>> responseHandler) {
+            HttpResponseHandler<OutputT> responseHandler) {
         this.responseHandler = responseHandler;
         return this;
     }

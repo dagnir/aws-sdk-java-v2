@@ -678,7 +678,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     @Override
     public void shutdown() {
         super.shutdown();
-        if (isKMSClientInternal) {
+        if (isKmsClientInternal) {
             try {
                 kms.close();
             } catch (Exception e) {

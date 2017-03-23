@@ -9,13 +9,13 @@ import software.amazon.awssdk.SignableRequest;
 </#if>
 import software.amazon.awssdk.auth.RequestSigner;
 import ${metadata.packageName}.${metadata.syncInterface};
-import ${metadata.packageName}.${metadata.syncClient}Builder;
+import ${metadata.packageName}.${metadata.syncInterface}Builder;
 
 /**
 <#if hasPlacement>
  * A default implementation of {@link RequestSigner} that puts a generated token into the ${authorizer.authTokenLocation}.
  * An implementation of this can to be supplied during construction of a {@link ${metadata.syncInterface}}
- * via {@link ${metadata.syncClient}Builder#signer(${className})} like so
+ * via {@link ${metadata.syncInterface}Builder#signer(${className})} like so
  *
  * <pre>
  * <code>

@@ -27,9 +27,10 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexDescription;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
@@ -50,19 +51,19 @@ import utils.test.util.DynamoDBTestBase;
 public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase {
 
     private static final ProvisionedThroughput DEFAULT_CAPACITY = new ProvisionedThroughput(5L, 5L);
-    private static DynamoDbMapper mapper;
+    private static DynamoDBMapper mapper;
     private static Set<String> testedTableName = new HashSet<String>();
 
     @BeforeClass
     public static void setUp() throws Exception {
         DynamoDBTestBase.setUpTestBase();
-        mapper = new DynamoDbMapper(dynamo);
+        mapper = new DynamoDBMapper(dynamo);
     }
 
     @AfterClass
     public static void tearDown() {
         for (String tableName : testedTableName) {
-            dynamo.deleteTable(tableName);
+            dynamo.deleteTable(new DeleteTableRequest(tableName));
         }
     }
 

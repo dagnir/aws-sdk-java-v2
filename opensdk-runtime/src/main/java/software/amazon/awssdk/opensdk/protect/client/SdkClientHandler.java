@@ -44,8 +44,8 @@ public class SdkClientHandler extends ClientHandler {
     }
 
     @Override
-    public void shutdown() {
-        delegateHandler.shutdown();
+    public void close() throws Exception {
+        delegateHandler.close();
     }
 
     private <InputT, OutputT>

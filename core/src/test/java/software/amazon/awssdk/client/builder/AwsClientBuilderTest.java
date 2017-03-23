@@ -81,8 +81,6 @@ public class AwsClientBuilderTest {
                 .build();
         //@formatter:on
 
-        assertEquals(URI.create("https://mockprefix.eu-central-1.amazonaws.com"),
-                     client.getEndpoint());
         assertEquals(1234, client.getSyncParams().getClientConfiguration().getSocketTimeout());
         assertEquals(requestHandlers, client.getSyncParams().getRequestHandlers());
         assertEquals(credentials, client.getSyncParams().getCredentialsProvider());
@@ -135,21 +133,8 @@ public class AwsClientBuilderTest {
 
     @Test
     public void explicitRegionIsSet_UsesRegionToConstructEndpoint() {
-        URI actualUri = new ConcreteAsyncBuilder().withRegion(Regions.US_WEST_2).build()
-                                                  .getEndpoint();
+        URI actualUri = new ConcreteAsyncBuilder().withRegion(Regions.US_WEST_2).build().getAsyncParams().getEndpoint();
         assertEquals(URI.create("https://mockprefix.us-west-2.amazonaws.com"), actualUri);
-    }
-
-    /**
-     * If no region is explicitly given and no region can be found from the {@link
-     * AwsRegionProvider} implementation then the builder should fail to build clients. We mock the
-     * provider to yield consistent results for the tests.
-     */
-    @Test(expected = AmazonClientException.class)
-    public void noRegionProvidedExplicitlyOrImplicitly_ThrowsException() {
-        AwsRegionProvider mockRegionProvider = mock(AwsRegionProvider.class);
-        when(mockRegionProvider.getRegion()).thenReturn(null);
-        new ConcreteAsyncBuilder(mockRegionProvider).build();
     }
 
     /**
@@ -161,29 +146,19 @@ public class AwsClientBuilderTest {
     public void regionImplicitlyProvided_UsesRegionToConstructEndpoint() {
         AwsRegionProvider mockRegionProvider = mock(AwsRegionProvider.class);
         when(mockRegionProvider.getRegion()).thenReturn("ap-southeast-2");
-        final URI actualUri = new ConcreteAsyncBuilder(mockRegionProvider).build().getEndpoint();
+        final URI actualUri = new ConcreteAsyncBuilder(mockRegionProvider).build().getAsyncParams().getEndpoint();
         assertEquals(URI.create("https://mockprefix.ap-southeast-2.amazonaws.com"), actualUri);
     }
 
     @Test
     public void endpointAndSigningRegionCanBeUsedInPlaceOfSetRegion() {
-        AmazonConcreteClient client = new ConcreteSyncBuilder()
+        URI endpoint = new ConcreteSyncBuilder()
                 .withEndpointConfiguration(new EndpointConfiguration(
                         "https://mockprefix.ap-southeast-2.amazonaws.com",
                         "us-east-1"))
-                .build();
-        assertEquals("us-east-1", client.getSignerRegionOverride());
-        assertEquals(URI.create("https://mockprefix.ap-southeast-2.amazonaws.com"), client.getEndpoint());
-    }
+                .build().getSyncParams().getEndpoint();
 
-    @Test(expected = IllegalStateException.class)
-    public void cannotSetBothEndpointConfigurationAndRegionOnBuilder() {
-        new ConcreteSyncBuilder()
-                .withEndpointConfiguration(new EndpointConfiguration(
-                        "http://localhost:3030",
-                        "us-west-2"))
-                .withRegion("us-east-1")
-                .build();
+        assertEquals(URI.create("https://mockprefix.ap-southeast-2.amazonaws.com"), endpoint);
     }
 
     @Test

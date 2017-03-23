@@ -28,8 +28,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import software.amazon.awssdk.handlers.AsyncHandler;
-import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
@@ -39,21 +40,21 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
 
     private static final int CALLBACK_TIMEOUT_IN_MILLIS = 10 * 1000;
 
-    private SQSBufferedAsyncClient buffSqs;
-    private AmazonSQSAsync realSqs;
+    private SqsBufferedAsyncClient buffSqs;
+    private SQSAsyncClient realSqs;
     private String queueUrl;
 
     @Before
     public void setup() {
         realSqs = createSqsAyncClient();
-        buffSqs = new SQSBufferedAsyncClient(realSqs, new QueueBufferConfig());
+        buffSqs = new SqsBufferedAsyncClient(realSqs, new QueueBufferConfig());
         queueUrl = createQueue(buffSqs);
     }
 
     @After
-    public void tearDown() {
-        buffSqs.deleteQueue(queueUrl);
-        buffSqs.shutdown();
+    public void tearDown() throws Exception{
+        buffSqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        buffSqs.close();
     }
 
     @Test
@@ -68,7 +69,7 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
                                                              .withMessageAttributes(createRandomAttributeValues(10));
 
         AsyncHandler<SendMessageRequest, SendMessageResult> sendCallback = mock(SendAsyncCallback.class);
-        Future<SendMessageResult> sendMessageResultFuture = buffSqs.sendMessageAsync(request, sendCallback);
+        Future<SendMessageResult> sendMessageResultFuture = buffSqs.sendMessage(request);
 
         SendMessageResult sendMessageResult = sendMessageResultFuture.get();
         verify(sendCallback, timeout(CALLBACK_TIMEOUT_IN_MILLIS)).onSuccess(Mockito.any(SendMessageRequest.class),
@@ -80,7 +81,7 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
         AsyncHandler<ReceiveMessageRequest, ReceiveMessageResult> receiveCallback = mock(ReceiveAsyncCallback.class);
 
         ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().withMaxNumberOfMessages(1).withQueueUrl(queueUrl);
-        buffSqs.receiveMessageAsync(receiveRq, receiveCallback).get();
+        buffSqs.receiveMessage(receiveRq).get();
 
         verify(receiveCallback, timeout(CALLBACK_TIMEOUT_IN_MILLIS)).onSuccess(
                 Mockito.any(ReceiveMessageRequest.class), Mockito.any(ReceiveMessageResult.class));
@@ -91,7 +92,7 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void receiveMessageWithNonStandardRequest_CallsOnSuccessHandlerAfterFetchingFromSqs() throws Exception {
-        realSqs.sendMessage(queueUrl, "test");
+        realSqs.sendMessage(new SendMessageRequest(queueUrl, "test"));
         AsyncHandler<ReceiveMessageRequest, ReceiveMessageResult> receiveCallback = mock(ReceiveAsyncCallback.class);
 
         // A custom visibility timeout and requesting message attributes will force the buffered
@@ -99,7 +100,7 @@ public class BufferedSqsCallbacksIntegrationTest extends IntegrationTestBase {
         // callback should be invoked
         ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().withMaxNumberOfMessages(1).withQueueUrl(queueUrl)
                                                                      .withMessageAttributeNames("All").withVisibilityTimeout(20);
-        buffSqs.receiveMessageAsync(receiveRq, receiveCallback).get();
+        buffSqs.receiveMessage(receiveRq).get();
 
         verify(receiveCallback, timeout(CALLBACK_TIMEOUT_IN_MILLIS)).onSuccess(
                 Mockito.any(ReceiveMessageRequest.class), Mockito.any(ReceiveMessageResult.class));

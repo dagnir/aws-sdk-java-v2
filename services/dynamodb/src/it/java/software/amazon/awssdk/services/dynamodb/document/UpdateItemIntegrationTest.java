@@ -33,7 +33,6 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.PropertiesFileCredentialsProvider;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.spec.GetItemSpec;
 import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
 import software.amazon.awssdk.services.dynamodb.document.utils.ValueMap;
@@ -52,7 +51,7 @@ public class UpdateItemIntegrationTest {
     private static final Long FIRST_CUSTOMER_ID = 1000L;
     private static final String ADDRESS_TYPE_HOME = "home";
     private static final String ADDRESS_TYPE_WORK = "work";
-    private static DynamoDb dynamoDb;
+    private static DynamoDB dynamoDb;
     private static String TABLE_NAME = "UpdateItemIntegrationTest";
     private static String CREDENTIALS_FILE_SUFFIX = "/.aws/awsTestAccount.properties";
     private static String HASH_KEY = "customer_id";
@@ -60,10 +59,10 @@ public class UpdateItemIntegrationTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        DynamoDBClient client = new AmazonDynamoDBClient(
+        DynamoDBClient client = DynamoDBClient.builder().withCredentials(
                 new PropertiesFileCredentialsProvider(
-                        System.getProperty("user.home") + CREDENTIALS_FILE_SUFFIX));
-        dynamoDb = new DynamoDb(client);
+                        System.getProperty("user.home") + CREDENTIALS_FILE_SUFFIX)).build();
+        dynamoDb = new DynamoDB(client);
 
         createTable();
         fillInData();
@@ -107,7 +106,7 @@ public class UpdateItemIntegrationTest {
     }
 
     @AfterClass
-    public static void shutDown() {
+    public static void shutDown() throws Exception {
         //        Table table = dynamoDB.getTable(TABLE_NAME);
         //        table.delete();
         dynamoDb.shutdown();

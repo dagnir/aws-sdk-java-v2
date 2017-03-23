@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.AddPermissionRequest;
 import software.amazon.awssdk.services.sqs.model.AddPermissionResult;
@@ -77,24 +76,24 @@ import software.amazon.awssdk.util.VersionInfoUtils;
  * The size of the buffer and the maximum number of threads used for prefetching are configurable. <br>
  * AmazonSQSBufferedAsyncClient is thread-safe.<br>
  */
-public class SQSBufferedAsyncClient implements SQSAsyncClient {
+public class SqsBufferedAsyncClient implements SQSAsyncClient {
 
-    public static final String USER_AGENT = SQSBufferedAsyncClient.class.getSimpleName() + "/"
+    public static final String USER_AGENT = SqsBufferedAsyncClient.class.getSimpleName() + "/"
                                             + VersionInfoUtils.getVersion();
 
     private final CachingMap buffers = new CachingMap(16, (float) 0.75, true);
-    private final SQSAsyncClient realSQS;
+    private final SQSAsyncClient realSqs;
     private final QueueBufferConfig bufferConfigExemplar;
 
-    public SQSBufferedAsyncClient(SQSAsyncClient paramRealSQS) {
-        this(paramRealSQS, new QueueBufferConfig());
+    public SqsBufferedAsyncClient(SQSAsyncClient paramRealSqs) {
+        this(paramRealSqs, new QueueBufferConfig());
     }
 
     // route all future constructors to the most general one, because validation
     // happens here
-    public SQSBufferedAsyncClient(SQSAsyncClient paramRealSQS, QueueBufferConfig config) {
+    public SqsBufferedAsyncClient(SQSAsyncClient paramRealSqs, QueueBufferConfig config) {
         config.validate();
-        realSQS = paramRealSQS;
+        realSqs = paramRealSqs;
         bufferConfigExemplar = config;
     }
 
@@ -102,14 +101,14 @@ public class SQSBufferedAsyncClient implements SQSAsyncClient {
             throws 
                    AmazonClientException {
         ResultConverter.appendUserAgent(setQueueAttributesRequest, USER_AGENT);
-        return realSQS.setQueueAttributes(setQueueAttributesRequest);
+        return realSqs.setQueueAttributes(setQueueAttributesRequest);
     }
 
     public CompletableFuture<ChangeMessageVisibilityBatchResult> changeMessageVisibilityBatch(
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest)
             throws  AmazonClientException {
         ResultConverter.appendUserAgent(changeMessageVisibilityBatchRequest, USER_AGENT);
-        return realSQS.changeMessageVisibilityBatch(changeMessageVisibilityBatchRequest);
+        return realSqs.changeMessageVisibilityBatch(changeMessageVisibilityBatchRequest);
     }
 
     public CompletableFuture<ChangeMessageVisibilityResult> changeMessageVisibility(
@@ -123,7 +122,7 @@ public class SQSBufferedAsyncClient implements SQSAsyncClient {
     public CompletableFuture<SendMessageBatchResult> sendMessageBatch(SendMessageBatchRequest sendMessageBatchRequest)
             throws  AmazonClientException {
         ResultConverter.appendUserAgent(sendMessageBatchRequest, USER_AGENT);
-        return realSQS.sendMessageBatch(sendMessageBatchRequest);
+        return realSqs.sendMessageBatch(sendMessageBatchRequest);
     }
 
     public CompletableFuture<SendMessageResult> sendMessage(SendMessageRequest sendMessageRequest) throws 
@@ -143,7 +142,7 @@ public class SQSBufferedAsyncClient implements SQSAsyncClient {
     public CompletableFuture<DeleteMessageBatchResult> deleteMessageBatch(DeleteMessageBatchRequest deleteMessageBatchRequest)
             throws  AmazonClientException {
         ResultConverter.appendUserAgent(deleteMessageBatchRequest, USER_AGENT);
-        return realSQS.deleteMessageBatch(deleteMessageBatchRequest);
+        return realSqs.deleteMessageBatch(deleteMessageBatchRequest);
     }
 
     public CompletableFuture<DeleteMessageResult> deleteMessage(DeleteMessageRequest deleteMessageRequest) throws
@@ -151,173 +150,6 @@ public class SQSBufferedAsyncClient implements SQSAsyncClient {
         ResultConverter.appendUserAgent(deleteMessageRequest, USER_AGENT);
         QueueBuffer buffer = getQBuffer(deleteMessageRequest.getQueueUrl());
         return CompletableFuture.completedFuture(buffer.deleteMessageSync(deleteMessageRequest));
-    }
-
-    /**
-     * Flushes all outstanding outbound requests. Calling this method will wait for
-     * the pending outbound tasks in the {@link QueueBuffer} to finish.
-     */
-    public void flush() {
-        for (QueueBuffer buffer : buffers.values()) {
-            buffer.flush();
-        }
-    }
-
-    public Future<ChangeMessageVisibilityBatchResult> changeMessageVisibilityBatchAsync(
-            ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(changeMessageVisibilityBatchRequest, USER_AGENT);
-        return realSQS.changeMessageVisibilityBatch(changeMessageVisibilityBatchRequest);
-    }
-
-    public Future<ChangeMessageVisibilityResult> changeMessageVisibilityAsync(
-            ChangeMessageVisibilityRequest changeMessageVisibilityRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(changeMessageVisibilityRequest, USER_AGENT);
-        QueueBuffer buffer = getQBuffer(changeMessageVisibilityRequest.getQueueUrl());
-        return buffer.changeMessageVisibility(changeMessageVisibilityRequest, null);
-
-    }
-
-    public Future<SendMessageBatchResult> sendMessageBatchAsync(SendMessageBatchRequest sendMessageBatchRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(sendMessageBatchRequest, USER_AGENT);
-        return realSQS.sendMessageBatch(sendMessageBatchRequest);
-    }
-
-    public Future<SendMessageResult> sendMessageAsync(SendMessageRequest sendMessageRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(sendMessageRequest, USER_AGENT);
-        QueueBuffer buffer = getQBuffer(sendMessageRequest.getQueueUrl());
-        return buffer.sendMessage(sendMessageRequest, null);
-
-    }
-
-    public Future<ReceiveMessageResult> receiveMessageAsync(ReceiveMessageRequest receiveMessageRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(receiveMessageRequest, USER_AGENT);
-        QueueBuffer buffer = getQBuffer(receiveMessageRequest.getQueueUrl());
-        return buffer.receiveMessage(receiveMessageRequest, null);
-    }
-
-    public Future<DeleteMessageBatchResult> deleteMessageBatchAsync(DeleteMessageBatchRequest deleteMessageBatchRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(deleteMessageBatchRequest, USER_AGENT);
-        return realSQS.deleteMessageBatch(deleteMessageBatchRequest);
-    }
-
-    public Future<SetQueueAttributesResult> setQueueAttributesAsync(SetQueueAttributesRequest setQueueAttributesRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(setQueueAttributesRequest, USER_AGENT);
-        return realSQS.setQueueAttributes(setQueueAttributesRequest);
-    }
-
-    public Future<GetQueueUrlResult> getQueueUrlAsync(GetQueueUrlRequest getQueueUrlRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(getQueueUrlRequest, USER_AGENT);
-        return realSQS.getQueueUrl(getQueueUrlRequest);
-    }
-
-    public Future<RemovePermissionResult> removePermissionAsync(RemovePermissionRequest removePermissionRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(removePermissionRequest, USER_AGENT);
-        return realSQS.removePermission(removePermissionRequest);
-    }
-
-    public CompletableFuture<GetQueueUrlResult> getQueueUrl(GetQueueUrlRequest getQueueUrlRequest) throws 
-                                                                                       AmazonClientException {
-        ResultConverter.appendUserAgent(getQueueUrlRequest, USER_AGENT);
-        return realSQS.getQueueUrl(getQueueUrlRequest);
-    }
-
-    public CompletableFuture<RemovePermissionResult> removePermission(RemovePermissionRequest removePermissionRequest) 
-            throws AmazonClientException {
-        ResultConverter.appendUserAgent(removePermissionRequest, USER_AGENT);
-        return realSQS.removePermission(removePermissionRequest);
-    }
-
-    public Future<GetQueueAttributesResult> getQueueAttributesAsync(GetQueueAttributesRequest getQueueAttributesRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(getQueueAttributesRequest, USER_AGENT);
-        return realSQS.getQueueAttributes(getQueueAttributesRequest);
-    }
-
-    public CompletableFuture<GetQueueAttributesResult> getQueueAttributes(GetQueueAttributesRequest getQueueAttributesRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(getQueueAttributesRequest, USER_AGENT);
-        return realSQS.getQueueAttributes(getQueueAttributesRequest);
-    }
-
-    public Future<PurgeQueueResult> purgeQueueAsync(PurgeQueueRequest purgeQueueRequest) throws 
-                                                                                                AmazonClientException {
-        ResultConverter.appendUserAgent(purgeQueueRequest, USER_AGENT);
-        return realSQS.purgeQueue(purgeQueueRequest);
-    }
-
-    public CompletableFuture<PurgeQueueResult> purgeQueue(PurgeQueueRequest purgeQueueRequest) throws AmazonClientException {
-        ResultConverter.appendUserAgent(purgeQueueRequest, USER_AGENT);
-        return realSQS.purgeQueue(purgeQueueRequest);
-    }
-
-    public Future<DeleteQueueResult> deleteQueueAsync(DeleteQueueRequest deleteQueueRequest) throws 
-                                                                                                    AmazonClientException {
-        ResultConverter.appendUserAgent(deleteQueueRequest, USER_AGENT);
-        return realSQS.deleteQueue(deleteQueueRequest);
-    }
-
-    public CompletableFuture<DeleteQueueResult> deleteQueue(DeleteQueueRequest deleteQueueRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(deleteQueueRequest, USER_AGENT);
-        return realSQS.deleteQueue(deleteQueueRequest);
-    }
-
-    public Future<ListQueuesResult> listQueuesAsync(ListQueuesRequest listQueuesRequest) throws 
-                                                                                                AmazonClientException {
-        ResultConverter.appendUserAgent(listQueuesRequest, USER_AGENT);
-        return realSQS.listQueues(listQueuesRequest);
-    }
-
-    public CompletableFuture<ListQueuesResult> listQueues(ListQueuesRequest listQueuesRequest) throws 
-                                                                                   AmazonClientException {
-        ResultConverter.appendUserAgent(listQueuesRequest, USER_AGENT);
-        return realSQS.listQueues(listQueuesRequest);
-    }
-
-    public Future<CreateQueueResult> createQueueAsync(CreateQueueRequest createQueueRequest)
-            throws  AmazonClientException {
-        ResultConverter.appendUserAgent(createQueueRequest, USER_AGENT);
-        return realSQS.createQueue(createQueueRequest);
-    }
-
-    public CompletableFuture<CreateQueueResult> createQueue(CreateQueueRequest createQueueRequest) throws 
-                                                                                       AmazonClientException {
-        ResultConverter.appendUserAgent(createQueueRequest, USER_AGENT);
-        return realSQS.createQueue(createQueueRequest);
-    }
-
-    public Future<AddPermissionResult> addPermissionAsync(AddPermissionRequest addPermissionRequest)
-            throws 
-                   AmazonClientException {
-        ResultConverter.appendUserAgent(addPermissionRequest, USER_AGENT);
-        return realSQS.addPermission(addPermissionRequest);
-    }
-
-    public CompletableFuture<AddPermissionResult> addPermission(AddPermissionRequest addPermissionRequest) 
-            throws AmazonClientException {
-        ResultConverter.appendUserAgent(addPermissionRequest, USER_AGENT);
-        return realSQS.addPermission(addPermissionRequest);
-    }
-
-    public CompletableFuture<ListQueuesResult> listQueues() throws  AmazonClientException {
-        return realSQS.listQueues(new ListQueuesRequest());
-    }
-
-    public Future<DeleteMessageResult> deleteMessageAsync(DeleteMessageRequest deleteMessageRequest)
-            throws 
-                   AmazonClientException {
-        ResultConverter.appendUserAgent(deleteMessageRequest, USER_AGENT);
-        QueueBuffer buffer = getQBuffer(deleteMessageRequest.getQueueUrl());
-        return buffer.deleteMessage(deleteMessageRequest, null);
     }
 
     /**
@@ -331,7 +163,7 @@ public class SQSBufferedAsyncClient implements SQSAsyncClient {
         QueueBuffer toReturn = buffers.get(qUrl);
         if (null == toReturn) {
             QueueBufferConfig config = new QueueBufferConfig(bufferConfigExemplar);
-            toReturn = new QueueBuffer(config, qUrl, realSQS);
+            toReturn = new QueueBuffer(config, qUrl, realSqs);
             buffers.put(qUrl, toReturn);
         }
         return toReturn;
@@ -342,12 +174,12 @@ public class SQSBufferedAsyncClient implements SQSAsyncClient {
             ListDeadLetterSourceQueuesRequest listDeadLetterSourceQueuesRequest)
             throws  AmazonClientException {
         ResultConverter.appendUserAgent(listDeadLetterSourceQueuesRequest, USER_AGENT);
-        return realSQS.listDeadLetterSourceQueues(listDeadLetterSourceQueuesRequest);
+        return realSqs.listDeadLetterSourceQueues(listDeadLetterSourceQueuesRequest);
     }
 
     @Override
     public void close() throws Exception {
-        realSQS.close();
+        realSqs.close();
     }
 
     class CachingMap extends LinkedHashMap<String, QueueBuffer> {

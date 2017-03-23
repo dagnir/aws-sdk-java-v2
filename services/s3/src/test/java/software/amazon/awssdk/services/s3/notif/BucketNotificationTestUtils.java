@@ -23,7 +23,7 @@ import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
-import software.amazon.awssdk.auth.policy.actions.SNSActions;
+import software.amazon.awssdk.auth.policy.actions.SnsActions;
 import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesResult;

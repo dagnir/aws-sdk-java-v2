@@ -134,7 +134,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * Test using {@code PhoneNumber}.
      */
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testKeyAndNoAttributeNamesPhoneNumber() {
         final KeyAndNoAttributeNamesPhoneNumber object = new KeyAndNoAttributeNamesPhoneNumber();
         object.setVal(new PhoneNumber("206", "867", "5309"));
@@ -144,7 +144,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * Test using {@code PhoneNumber}.
      */
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testExceptionOnPhoneNumberSet() {
         final KeyAndPhoneNumberSet object = new KeyAndPhoneNumberSet();
         object.setVal(Collections.<PhoneNumber>singleton(new PhoneNumber("206", "266", "1000")));
@@ -226,7 +226,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * Test marshalling.
      */
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testKeyAndNestedCurrency() {
         final KeyAndNestedCurrency object = new KeyAndNestedCurrency();
         object.setVal(new KeyAndNestedCurrency.Value());
@@ -238,9 +238,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code PhoneNumber}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndSpecialCharacterDelimitedierPhoneNumber extends AutoKeyAndVal<PhoneNumber> {
-        @DynamoDbDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '\\')
+        @DynamoDBDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '\\')
         public PhoneNumber getVal() {
             return super.getVal();
         }
@@ -254,9 +254,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code PhoneNumber}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndDefaultDelimitederPhoneNumber extends AutoKeyAndVal<PhoneNumber> {
-        @DynamoDbDelimited(attributeNames = {"areaCode", "exchange", "subscriber"})
+        @DynamoDBDelimited(attributeNames = {"areaCode", "exchange", "subscriber"})
         public PhoneNumber getVal() {
             return super.getVal();
         }
@@ -270,9 +270,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code PhoneNumber}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndPhoneNumber extends AutoKeyAndVal<PhoneNumber> {
-        @DynamoDbDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '-')
+        @DynamoDBDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '-')
         public PhoneNumber getVal() {
             return super.getVal();
         }
@@ -286,7 +286,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code PhoneNumber}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndPhoneNumberDelimitedOnType extends AutoKeyAndVal<KeyAndPhoneNumberDelimitedOnType.Value> {
         public Value getVal() {
             return super.getVal();
@@ -297,7 +297,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
             super.setVal(val);
         }
 
-        @DynamoDbDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '.')
+        @DynamoDBDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '.')
         public static class Value extends PhoneNumber {
         }
     }
@@ -305,9 +305,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code PhoneNumber}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndNoAttributeNamesPhoneNumber extends AutoKeyAndVal<PhoneNumber> {
-        @DynamoDbDelimited(attributeNames = {})
+        @DynamoDBDelimited(attributeNames = {})
         public PhoneNumber getVal() {
             return super.getVal();
         }
@@ -321,9 +321,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code PhoneNumber}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndPhoneNumberSet extends AutoKeyAndVal<Set<PhoneNumber>> {
-        @DynamoDbDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '-')
+        @DynamoDBDelimited(attributeNames = {"areaCode", "exchange", "subscriber"}, delimiter = '-')
         public Set<PhoneNumber> getVal() {
             return super.getVal();
         }
@@ -337,9 +337,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code DateRange}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndDateRange extends AutoKeyAndVal<DateRange> {
-        @DynamoDbDelimited(attributeNames = {"start", "end"})
+        @DynamoDBDelimited(attributeNames = {"start", "end"})
         public DateRange getVal() {
             return super.getVal();
         }
@@ -353,9 +353,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code DateRange}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndFormatDateRange extends AutoKeyAndVal<KeyAndFormatDateRange.FormatDateRange> {
-        @DynamoDbDelimited(attributeNames = {"start", "end"})
+        @DynamoDBDelimited(attributeNames = {"start", "end"})
         public FormatDateRange getVal() {
             return super.getVal();
         }
@@ -366,12 +366,12 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
         }
 
         public static class FormatDateRange extends DateRange {
-            @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSS")
+            @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSS")
             public Date getStart() {
                 return super.getStart();
             }
 
-            @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSS")
+            @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSS")
             public Date getEnd() {
                 return super.getEnd();
             }
@@ -381,10 +381,10 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with {@code DateRange}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class DelimitedKeyAndDate extends KeyAndVal<DelimitedKeyAndDate.Key, Date> {
-        @DynamoDbHashKey
-        @DynamoDbDelimited(attributeNames = {"key", "val"})
+        @DynamoDBHashKey
+        @DynamoDBDelimited(attributeNames = {"key", "val"})
         public DelimitedKeyAndDate.Key getKey() {
             return super.getKey();
         }
@@ -394,7 +394,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
             super.setKey(key);
         }
 
-        @DynamoDbAutoGeneratedTimestamp
+        @DynamoDBAutoGeneratedTimestamp
         public Date getVal() {
             return super.getVal();
         }
@@ -415,7 +415,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
                 super.setKey(key);
             }
 
-            @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMdd")
+            @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMdd")
             public Date getVal() {
                 return super.getVal();
             }
@@ -430,9 +430,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with a complex type.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndCurrency extends AutoKeyAndVal<Currency> {
-        @DynamoDbDelimited(attributeNames = {"amount", "unit"}, delimiter = '$')
+        @DynamoDBDelimited(attributeNames = {"amount", "unit"}, delimiter = '$')
         public Currency getVal() {
             return super.getVal();
         }
@@ -446,9 +446,9 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
     /**
      * An object with a complex type.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndNestedCurrency extends AutoKeyAndVal<KeyAndNestedCurrency.Value> {
-        @DynamoDbDelimited(attributeNames = {"key", "val"}, delimiter = '#')
+        @DynamoDBDelimited(attributeNames = {"key", "val"}, delimiter = '#')
         public KeyAndNestedCurrency.Value getVal() {
             return super.getVal();
         }

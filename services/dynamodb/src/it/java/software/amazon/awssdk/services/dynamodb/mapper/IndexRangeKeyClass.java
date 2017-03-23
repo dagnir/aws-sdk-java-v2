@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBVersionAttr
 /**
  * Comprehensive domain class
  */
-@DynamoDbTable(tableName = "aws-java-sdk-index-range-test")
+@DynamoDBTable(tableName = "aws-java-sdk-index-range-test")
 public class IndexRangeKeyClass {
 
     private long key;
@@ -39,7 +39,7 @@ public class IndexRangeKeyClass {
     private String fooAttribute;
     private String barAttribute;
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public long getKey() {
         return key;
     }
@@ -48,7 +48,7 @@ public class IndexRangeKeyClass {
         this.key = key;
     }
 
-    @DynamoDbRangeKey
+    @DynamoDBRangeKey
     public double getRangeKey() {
         return rangeKey;
     }
@@ -57,7 +57,7 @@ public class IndexRangeKeyClass {
         this.rangeKey = rangeKey;
     }
 
-    @DynamoDbIndexRangeKey(
+    @DynamoDBIndexRangeKey(
             localSecondaryIndexName = "index_foo",
             attributeName = "indexFooRangeKey"
     )
@@ -69,7 +69,7 @@ public class IndexRangeKeyClass {
         this.indexFooRangeKey = indexFooRangeKey;
     }
 
-    @DynamoDbIndexRangeKey(
+    @DynamoDBIndexRangeKey(
             localSecondaryIndexName = "index_bar"
     )
     public Double getIndexBarRangeKey() {
@@ -80,7 +80,7 @@ public class IndexRangeKeyClass {
         this.indexBarRangeKey = indexBarRangeKey;
     }
 
-    @DynamoDbIndexRangeKey(
+    @DynamoDBIndexRangeKey(
             localSecondaryIndexNames = {"index_foo_copy", "index_bar_copy"}
     )
     public Double getMultipleIndexRangeKey() {
@@ -91,7 +91,7 @@ public class IndexRangeKeyClass {
         this.multipleIndexRangeKey = multipleIndexRangeKey;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public String getFooAttribute() {
         return fooAttribute;
     }
@@ -100,7 +100,7 @@ public class IndexRangeKeyClass {
         this.fooAttribute = fooAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public String getBarAttribute() {
         return barAttribute;
     }
@@ -109,7 +109,7 @@ public class IndexRangeKeyClass {
         this.barAttribute = barAttribute;
     }
 
-    @DynamoDbVersionAttribute
+    @DynamoDBVersionAttribute
     public Long getVersion() {
         return version;
     }

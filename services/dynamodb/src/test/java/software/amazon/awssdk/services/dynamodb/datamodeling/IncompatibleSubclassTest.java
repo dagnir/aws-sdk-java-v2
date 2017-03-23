@@ -29,25 +29,25 @@ public class IncompatibleSubclassTest {
     public void testCompatibleSubclass() {
         // Doesn't try to override one of the deprecated/removed
         // transformAttributes methods; should be fine.
-        new CompatibleDynamoDbMapper();
+        new CompatibleDynamoDBMapper();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testIncompatibleSubclass1() {
         // "Overrides" transformAttributes(Class, Map); should fail fast.
-        new IncompatibleDynamoDbMapper1();
+        new IncompatibleDynamoDBMapper1();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testIncompatibleSubclass2() {
         // "Overrides" transformAttributes(String, String, Map); should fail
         // fast.
-        new IncompatibleDynamoDbMapper2();
+        new IncompatibleDynamoDBMapper2();
     }
 
-    private static class CompatibleDynamoDbMapper extends DynamoDbMapper {
+    private static class CompatibleDynamoDBMapper extends DynamoDBMapper {
 
-        public CompatibleDynamoDbMapper() {
+        public CompatibleDynamoDBMapper() {
             super(null);
         }
 
@@ -55,9 +55,9 @@ public class IncompatibleSubclassTest {
         }
     }
 
-    private static class IncompatibleDynamoDbMapper1 extends DynamoDbMapper {
+    private static class IncompatibleDynamoDBMapper1 extends DynamoDBMapper {
 
-        public IncompatibleDynamoDbMapper1() {
+        public IncompatibleDynamoDBMapper1() {
             super(null);
         }
 
@@ -69,9 +69,9 @@ public class IncompatibleSubclassTest {
         }
     }
 
-    private static class IncompatibleDynamoDbMapper2 extends DynamoDbMapper {
+    private static class IncompatibleDynamoDBMapper2 extends DynamoDBMapper {
 
-        public IncompatibleDynamoDbMapper2() {
+        public IncompatibleDynamoDBMapper2() {
             super(null);
         }
 

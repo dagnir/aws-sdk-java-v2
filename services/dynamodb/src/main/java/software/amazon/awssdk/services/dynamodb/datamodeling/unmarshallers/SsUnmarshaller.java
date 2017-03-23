@@ -16,17 +16,16 @@
 package software.amazon.awssdk.services.dynamodb.datamodeling.unmarshallers;
 
 import java.lang.reflect.Method;
-
 import software.amazon.awssdk.services.dynamodb.datamodeling.ArgumentUnmarshaller;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-abstract class NSUnmarshaller implements ArgumentUnmarshaller {
+abstract class SsUnmarshaller implements ArgumentUnmarshaller {
 
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
-        if (value.getNS() == null) {
-            throw new DynamoDBMappingException("Expected NS in value " + value + " when invoking " + setter);
+        if (value.getSS() == null) {
+            throw new DynamoDBMappingException("Expected SS in value " + value + " when invoking " + setter);
         }
     }
 

@@ -29,7 +29,7 @@ import org.junit.ComparisonFailure;
 import software.amazon.awssdk.codegen.emitters.ContentProcessor;
 import software.amazon.awssdk.codegen.emitters.JavaCodeFormatter;
 import software.amazon.awssdk.codegen.emitters.UnusedImportRemover;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public final class PoetMatchers {
 

@@ -25,19 +25,17 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 /**
  * A marshaller that marshals sets of Java {@code Object} objects into
  * DynamoDB StringSets.
- *
- * @author Sergei Egorov
  */
-public class UUIDSetToStringSetMarshaller
+public class UuidSetToStringSetMarshaller
         implements StringSetAttributeMarshaller {
 
-    private static final UUIDSetToStringSetMarshaller INSTANCE =
-            new UUIDSetToStringSetMarshaller();
+    private static final UuidSetToStringSetMarshaller INSTANCE =
+            new UuidSetToStringSetMarshaller();
 
-    private UUIDSetToStringSetMarshaller() {
+    private UuidSetToStringSetMarshaller() {
     }
 
-    public static UUIDSetToStringSetMarshaller instance() {
+    public static UuidSetToStringSetMarshaller instance() {
         return INSTANCE;
     }
 

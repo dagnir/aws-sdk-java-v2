@@ -41,7 +41,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testSaveIfNotExists() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
 
@@ -53,7 +53,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test(expected = ConditionalCheckFailedException.class)
     public void testSaveIfNotExistsWhenExists() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
 
@@ -66,7 +66,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testSaveWhenExists() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
 
@@ -79,7 +79,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test(expected = ConditionalCheckFailedException.class)
     public void testSaveIfExistsWhenNotExists() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setKey(UUID.randomUUID().toString());
@@ -92,7 +92,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testDeleteIfExistsWhenExists() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
 
@@ -105,7 +105,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test(expected = ConditionalCheckFailedException.class)
     public void testDeleteIfExistsWhenNotExists() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setKey(UUID.randomUUID().toString());
@@ -118,7 +118,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testBatchLoadItemList() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object1 = new KeyAndDateValue();
         final KeyAndDateValue object2 = new KeyAndDateValue();
@@ -134,7 +134,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testBatchLoadItemListOnNull() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         assertEquals(0, mapper.batchLoad((List<KeyAndDateValue>) null).size());
     }
@@ -144,7 +144,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testBatchLoadItemListOnEmpty() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         assertEquals(0, mapper.batchLoad(Collections.<KeyAndDateValue>emptyList()).size());
     }
@@ -154,14 +154,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryCount() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.count(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.count(new DynamoDBQueryExpression<KeyAndDateValue>()
                                              .withHashKeyValues(object).withConsistentRead(true)));
     }
 
@@ -170,14 +170,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryBeginsWith() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
                                                                                           .beginsWith(object.getQueryDate()))
@@ -189,14 +189,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryBetween() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
                                                                                           .between(object.getQueryDate(), object.getQueryDate()))
@@ -208,14 +208,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryGreaterThanOrEqualTo() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").ge(object.getQueryDate()))
@@ -227,14 +227,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryGreaterThan() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(0, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(0, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").gt(object.getQueryDate()))
@@ -246,14 +246,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryEqualTo() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").eq(object.getQueryDate()))
@@ -265,14 +265,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryIn() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").in(object.getQueryDate()))
@@ -284,14 +284,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryIsNull() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(0, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(0, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate").isNull())
                                         ).getResults().size());
@@ -302,14 +302,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryLessThanOrEqualTo() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").le(object.getQueryDate()))
@@ -321,14 +321,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryLessThan() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(0, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(0, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").lt(object.getQueryDate()))
@@ -340,14 +340,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryNotEqualTo() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(0, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(0, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate",
                                                                        mapper.field("queryDate").ne(object.getQueryDate()))
@@ -359,14 +359,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryNotNull() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate").notNull())
                                         ).getResults().size());
@@ -377,14 +377,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryAnyBetween() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
                                                                                           .betweenAny(object.getQueryDate(), object.getQueryDate()))
@@ -396,14 +396,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryAnyBetweenLoNull() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
                                                                                           .betweenAny(null, object.getQueryDate()))
@@ -415,14 +415,14 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
      */
     @Test
     public void testQueryAnyBetweenHiNull() {
-        final DynamoDbTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
+        final DynamoDBTableMapper<KeyAndDateValue, String, ?> mapper = util.newTableMapper(KeyAndDateValue.class);
 
         final KeyAndDateValue object = new KeyAndDateValue();
         object.setQueryDate(new Date());
 
         mapper.saveIfNotExists(object);
 
-        assertEquals(1, mapper.queryPage(new DynamoDbQueryExpression<KeyAndDateValue>()
+        assertEquals(1, mapper.queryPage(new DynamoDBQueryExpression<KeyAndDateValue>()
                                                  .withHashKeyValues(object).withConsistentRead(true)
                                                  .withQueryFilterEntry("queryDate", mapper.field("queryDate")
                                                                                           .betweenAny(object.getQueryDate(), null))
@@ -432,11 +432,11 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
     /**
      * An object with {@code Date}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndDateValue extends AutoKeyAndVal<Date> {
         private Date queryDate;
 
-        @DynamoDbAutoGeneratedTimestamp
+        @DynamoDBAutoGeneratedTimestamp
         public Date getVal() {
             return super.getVal();
         }
@@ -446,7 +446,7 @@ public class TableMapperIntegrationTest extends AbstractKeyAndValIntegrationTest
             super.setVal(val);
         }
 
-        @DynamoDbAttribute(attributeName = "queryDate")
+        @DynamoDBAttribute(attributeName = "queryDate")
         public Date getQueryDate() {
             return this.queryDate;
         }

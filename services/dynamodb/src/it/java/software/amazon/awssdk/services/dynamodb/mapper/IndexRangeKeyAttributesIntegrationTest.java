@@ -49,7 +49,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfi
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBQueryExpression;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
@@ -76,7 +76,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
     private static final int indexFooRangeStep = 2;
     private static final int indexBarRangeStep = 4;
     private static final int multipleIndexRangeStep = 8;
-    private static DynamoDbMapper mapper;
+    private static DynamoDBMapper mapper;
     // We don't start with the current system millis like other tests because
     // it's out of the range of some data types
     private static int start = 1;
@@ -120,8 +120,8 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             dynamo.putItem(new PutItemRequest(TABLE_WITH_INDEX_RANGE_ATTRIBUTE, attr));
         }
 
-        mapper = new DynamoDbMapper(dynamo,
-                                    new DynamoDbMapperConfig(ConsistentReads.CONSISTENT));
+        mapper = new DynamoDBMapper(dynamo,
+                                    new DynamoDBMapperConfig(ConsistentReads.CONSISTENT));
     }
 
     /**
@@ -234,7 +234,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
              * Query items by primary range key
              */
             List<IndexRangeKeyClass> result = mapper.query(IndexRangeKeyClass.class,
-                                                           new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                                                           new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                                                    .withHashKeyValues(hashKeyItem)
                                                                    .withRangeKeyCondition(RANGE_KEY,
                                                                                           new Condition()
@@ -255,7 +255,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
              * Query items on index_foo
              */
             result = mapper.query(IndexRangeKeyClass.class,
-                                  new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                                  new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                           .withHashKeyValues(hashKeyItem)
                                           .withRangeKeyCondition(INDEX_FOO_RANGE_KEY,
                                                                  new Condition()
@@ -273,7 +273,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
              * Query items on index_bar
              */
             result = mapper.query(IndexRangeKeyClass.class,
-                                  new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                                  new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                           .withHashKeyValues(hashKeyItem)
                                           .withRangeKeyCondition(INDEX_BAR_RANGE_KEY,
                                                                  new Condition()
@@ -298,14 +298,14 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
         hashKeyItem.setKey(0);
         try {
             mapper.query(IndexRangeKeyClass.class,
-                         new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                         new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                  .withHashKeyValues(hashKeyItem)
                                  .withRangeKeyCondition("some_range_key",
                                                         new Condition()
                                                                 .withAttributeValueList(new AttributeValue().withN("0"))
                                                                 .withComparisonOperator(ComparisonOperator.GE.toString())));
             fail("some_range_key is not a valid range key name.");
-        } catch (DynamoDbMappingException e) {
+        } catch (DynamoDBMappingException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {
             fail("Should trigger an DynamoDBMappingException.");
@@ -321,7 +321,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
         hashKeyItem.setKey(0);
         try {
             mapper.query(IndexRangeKeyClass.class,
-                         new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                         new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                  .withHashKeyValues(hashKeyItem)
                                  .withRangeKeyCondition(INDEX_BAR_RANGE_KEY,
                                                         new Condition()
@@ -350,7 +350,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
              * Query items by a range key that is shared by multiple indexes
              */
             List<IndexRangeKeyClass> result = mapper.query(IndexRangeKeyClass.class,
-                                                           new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                                                           new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                                                    .withHashKeyValues(hashKeyItem)
                                                                    .withRangeKeyCondition(MULTIPLE_INDEX_RANGE_KEY,
                                                                                           new Condition()
@@ -368,7 +368,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
                 assertNull(itemInFooIndex.getBarAttribute());
             }
             result = mapper.query(IndexRangeKeyClass.class,
-                                  new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                                  new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                           .withHashKeyValues(hashKeyItem)
                                           .withRangeKeyCondition(MULTIPLE_INDEX_RANGE_KEY,
                                                                  new Condition()
@@ -388,7 +388,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
              */
             try {
                 mapper.query(IndexRangeKeyClass.class,
-                             new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                             new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                      .withHashKeyValues(hashKeyItem)
                                      .withRangeKeyCondition(MULTIPLE_INDEX_RANGE_KEY,
                                                             new Condition()
@@ -406,7 +406,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
              */
             try {
                 mapper.query(IndexRangeKeyClass.class,
-                             new DynamoDbQueryExpression<IndexRangeKeyClass>()
+                             new DynamoDBQueryExpression<IndexRangeKeyClass>()
                                      .withHashKeyValues(hashKeyItem)
                                      .withRangeKeyCondition(MULTIPLE_INDEX_RANGE_KEY,
                                                             new Condition()

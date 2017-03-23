@@ -15,29 +15,35 @@
 
 package software.amazon.awssdk.services.dynamodb.datamodeling.unmarshallers;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 /**
- * An unmarshaller that unmarshals UUIDs as Java
- * {@code UUID} objects.
- *
- * @author Sergei Egorov
+ * An unmarshaller that unmarshals sets of UUIDs as sets of
+ * Java {@code UUID} objects.
  */
-public class UUIDUnmarshaller extends SUnmarshaller {
+public class UuidSetUnmarshaller extends SsUnmarshaller {
 
-    private static final UUIDUnmarshaller INSTANCE =
-            new UUIDUnmarshaller();
+    private static final UuidSetUnmarshaller INSTANCE =
+            new UuidSetUnmarshaller();
 
-    private UUIDUnmarshaller() {
+    private UuidSetUnmarshaller() {
     }
 
-    public static UUIDUnmarshaller instance() {
+    public static UuidSetUnmarshaller instance() {
         return INSTANCE;
     }
 
     @Override
-    public UUID unmarshall(AttributeValue value) {
-        return UUID.fromString(value.getS());
+    public Set<UUID> unmarshall(AttributeValue value) {
+        Set<UUID> result = new HashSet<UUID>();
+
+        for (String s : value.getSS()) {
+            result.add(UUID.fromString(s));
+        }
+
+        return result;
     }
 }

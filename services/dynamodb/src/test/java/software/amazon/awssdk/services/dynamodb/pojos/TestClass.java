@@ -28,13 +28,13 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMarshalling;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBNativeBoolean;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.RandomUUIDMarshaller;
+import software.amazon.awssdk.services.dynamodb.datamodeling.RandomUuidMarshaller;
 import software.amazon.awssdk.services.dynamodb.datamodeling.S3Link;
 
-@DynamoDbTable(tableName = "nonexisting-test-tablename")
+@DynamoDBTable(tableName = "nonexisting-test-tablename")
 public class TestClass {
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public String getId() {
         return null;
     }
@@ -56,7 +56,7 @@ public class TestClass {
     public void setBoxedBoolean(Boolean value) {
     }
 
-    @DynamoDbNativeBoolean
+    @DynamoDBNativeBoolean
     public boolean getNativeBoolean() {
         return false;
     }
@@ -78,7 +78,7 @@ public class TestClass {
     public void setUuid(UUID u) {
     }
 
-    @DynamoDbMarshalling(marshallerClass = RandomUUIDMarshaller.class)
+    @DynamoDBMarshalling(marshallerClass = RandomUuidMarshaller.class)
     public String getCustomString() {
         return null;
     }

@@ -40,9 +40,9 @@ public class ScalarAttributeIntegrationTest extends AbstractKeyAndValIntegration
     /**
      * An object with an enumeration.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndBinaryUuid extends AutoKeyAndVal<UUID> {
-        @DynamoDbScalarAttribute(type = ScalarAttributeType.B)
+        @DynamoDBScalarAttribute(type = ScalarAttributeType.B)
         public UUID getVal() {
             return super.getVal();
         }

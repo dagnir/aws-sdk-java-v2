@@ -121,11 +121,11 @@ public final class ArchiveTransferManagerBuilder {
         return glacierClient == null ? GlacierClient.create() : glacierClient;
     }
 
-    private SNSClient resolveSNSClient() {
+    private SNSClient resolveSnsClient() {
         return snsClient == null ? SNSClient.create() : snsClient;
     }
 
-    private SQSClient resolveSQSClient() {
+    private SQSClient resolveSqsClient() {
         return sqsClient == null ? SQSClient.create() : sqsClient;
     }
 

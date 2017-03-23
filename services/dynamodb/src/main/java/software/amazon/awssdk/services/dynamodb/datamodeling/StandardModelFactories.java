@@ -54,22 +54,22 @@ final class StandardModelFactories {
     private static final Log LOG = LogFactory.getLog(StandardModelFactories.class);
 
     /**
-     * Creates the standard {@link DynamoDbMapperModelFactory} factory.
+     * Creates the standard {@link DynamoDBMapperModelFactory} factory.
      */
-    static final DynamoDbMapperModelFactory of(S3Link.Factory s3Links) {
+    static final DynamoDBMapperModelFactory of(S3Link.Factory s3Links) {
         return new StandardModelFactory(s3Links);
     }
 
     /**
      * Creates a new set of conversion rules based on the configuration.
      */
-    private static final <T> RuleFactory<T> rulesOf(DynamoDbMapperConfig config, S3Link.Factory s3Links,
-                                                    DynamoDbMapperModelFactory models) {
+    private static final <T> RuleFactory<T> rulesOf(DynamoDBMapperConfig config, S3Link.Factory s3Links,
+                                                    DynamoDBMapperModelFactory models) {
         final boolean ver1 = (config.getConversionSchema() == ConversionSchemas.V1);
         final boolean ver2 = (config.getConversionSchema() == ConversionSchemas.V2);
         final boolean v2Compatible = (config.getConversionSchema() == ConversionSchemas.V2_COMPATIBLE);
 
-        final DynamoDbTypeConverterFactory.Builder scalars = config.getTypeConverterFactory().override();
+        final DynamoDBTypeConverterFactory.Builder scalars = config.getTypeConverterFactory().override();
         scalars.with(String.class, S3Link.class, s3Links);
 
         final Rules<T> factory = new Rules<T>(scalars.build());
@@ -97,9 +97,9 @@ final class StandardModelFactories {
     static interface Rule<T> {
         boolean isAssignableFrom(ConvertibleType<?> type);
 
-        DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type);
+        DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type);
 
-        DynamoDbAttributeType getAttributeType();
+        DynamoDBAttributeType getAttributeType();
     }
 
     /**
@@ -112,7 +112,7 @@ final class StandardModelFactories {
     /**
      * {@link TableFactory} mapped by {@link ConversionSchema}.
      */
-    private static final class StandardModelFactory implements DynamoDbMapperModelFactory {
+    private static final class StandardModelFactory implements DynamoDBMapperModelFactory {
         private final ConcurrentMap<ConversionSchema, TableFactory> cache;
         private final S3Link.Factory s3Links;
 
@@ -122,7 +122,7 @@ final class StandardModelFactories {
         }
 
         @Override
-        public TableFactory getTableFactory(DynamoDbMapperConfig config) {
+        public TableFactory getTableFactory(DynamoDBMapperConfig config) {
             final ConversionSchema schema = config.getConversionSchema();
             if (!cache.containsKey(schema)) {
                 RuleFactory<Object> rules = rulesOf(config, s3Links, this);
@@ -134,38 +134,38 @@ final class StandardModelFactories {
     }
 
     /**
-     * {@link DynamoDbMapperTableModel} mapped by the clazz.
+     * {@link DynamoDBMapperTableModel} mapped by the clazz.
      */
     private static final class StandardTableFactory implements TableFactory {
-        private final ConcurrentMap<Class<?>, DynamoDbMapperTableModel<?>> cache;
+        private final ConcurrentMap<Class<?>, DynamoDBMapperTableModel<?>> cache;
         private final RuleFactory<Object> rules;
 
         private StandardTableFactory(RuleFactory<Object> rules) {
-            this.cache = new ConcurrentHashMap<Class<?>, DynamoDbMapperTableModel<?>>();
+            this.cache = new ConcurrentHashMap<Class<?>, DynamoDBMapperTableModel<?>>();
             this.rules = rules;
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public <T> DynamoDbMapperTableModel<T> getTable(Class<T> clazz) {
+        public <T> DynamoDBMapperTableModel<T> getTable(Class<T> clazz) {
             if (!this.cache.containsKey(clazz)) {
                 this.cache.putIfAbsent(clazz, new TableBuilder<T>(clazz, rules).build());
             }
-            return (DynamoDbMapperTableModel<T>) this.cache.get(clazz);
+            return (DynamoDBMapperTableModel<T>) this.cache.get(clazz);
         }
     }
 
     /**
-     * {@link DynamoDbMapperTableModel} builder.
+     * {@link DynamoDBMapperTableModel} builder.
      */
-    private static final class TableBuilder<T> extends DynamoDbMapperTableModel.Builder<T> {
+    private static final class TableBuilder<T> extends DynamoDBMapperTableModel.Builder<T> {
         private TableBuilder(Class<T> clazz, Beans<T> beans, RuleFactory<Object> rules) {
             super(clazz, beans.properties());
             for (final Bean<T, Object> bean : beans.map().values()) {
                 try {
                     with(new FieldBuilder<T, Object>(clazz, bean, rules.getRule(bean.type())).build());
                 } catch (final RuntimeException e) {
-                    throw new DynamoDbMappingException(String.format(
+                    throw new DynamoDBMappingException(String.format(
                             "%s[%s] could not be mapped for type %s",
                             clazz.getSimpleName(), bean.properties().attributeName(), bean.type()
                                                                     ), e);
@@ -179,9 +179,9 @@ final class StandardModelFactories {
     }
 
     /**
-     * {@link DynamoDbMapperFieldModel} builder.
+     * {@link DynamoDBMapperFieldModel} builder.
      */
-    private static final class FieldBuilder<T, V> extends DynamoDbMapperFieldModel.Builder<T, V> {
+    private static final class FieldBuilder<T, V> extends DynamoDBMapperFieldModel.Builder<T, V> {
         private FieldBuilder(Class<T> clazz, Bean<T, V> bean, Rule<V> rule) {
             super(clazz, bean.properties());
             if (bean.type().attributeType() != null) {
@@ -199,9 +199,9 @@ final class StandardModelFactories {
      */
     private static final class Rules<T> implements RuleFactory<T> {
         private final Set<Rule<T>> rules = new LinkedHashSet<Rule<T>>();
-        private final DynamoDbTypeConverterFactory scalars;
+        private final DynamoDBTypeConverterFactory scalars;
 
-        private Rules(DynamoDbTypeConverterFactory scalars) {
+        private Rules(DynamoDBTypeConverterFactory scalars) {
             this.scalars = scalars;
         }
 
@@ -223,7 +223,7 @@ final class StandardModelFactories {
         /**
          * Gets the scalar converter for the given source and target types.
          */
-        private <S> DynamoDbTypeConverter<S, T> getConverter(Class<S> sourceType, ConvertibleType<T> type) {
+        private <S> DynamoDBTypeConverter<S, T> getConverter(Class<S> sourceType, ConvertibleType<T> type) {
             return scalars.getConverter(sourceType, type.targetType());
         }
 
@@ -231,7 +231,7 @@ final class StandardModelFactories {
          * Gets the nested converter for the given conversion type.
          * Also wraps the resulting converter with a nullable converter.
          */
-        private DynamoDbTypeConverter<AttributeValue, T> getConverter(ConvertibleType<T> type) {
+        private DynamoDBTypeConverter<AttributeValue, T> getConverter(ConvertibleType<T> type) {
             return new DelegateConverter<AttributeValue, T>(getRule(type).newConverter(type)) {
                 public final AttributeValue convert(T o) {
                     return o == null ? new AttributeValue().withNULL(true) : super.convert(o);
@@ -244,7 +244,7 @@ final class StandardModelFactories {
          */
         private class NativeType extends AbstractRule<AttributeValue, T> {
             private NativeType(boolean supported) {
-                super(DynamoDbAttributeType.NULL, supported);
+                super(DynamoDBAttributeType.NULL, supported);
             }
 
             @Override
@@ -253,7 +253,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
                 return joinAll(type.<AttributeValue>typeConverter());
             }
 
@@ -276,7 +276,7 @@ final class StandardModelFactories {
          */
         private class StringScalar extends AbstractRule<String, T> {
             private StringScalar(boolean supported) {
-                super(DynamoDbAttributeType.S, supported);
+                super(DynamoDBAttributeType.S, supported);
             }
 
             @Override
@@ -285,7 +285,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
                 return joinAll(getConverter(String.class, type), type.<String>typeConverter());
             }
 
@@ -310,7 +310,7 @@ final class StandardModelFactories {
          */
         private class NumberScalar extends AbstractRule<String, T> {
             private NumberScalar(boolean supported) {
-                super(DynamoDbAttributeType.N, supported);
+                super(DynamoDBAttributeType.N, supported);
             }
 
             @Override
@@ -319,7 +319,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
                 return joinAll(getConverter(String.class, type), type.<String>typeConverter());
             }
 
@@ -339,7 +339,7 @@ final class StandardModelFactories {
          */
         private class BinaryScalar extends AbstractRule<ByteBuffer, T> {
             private BinaryScalar(boolean supported) {
-                super(DynamoDbAttributeType.B, supported);
+                super(DynamoDBAttributeType.B, supported);
             }
 
             @Override
@@ -348,7 +348,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
                 return joinAll(getConverter(ByteBuffer.class, type), type.<ByteBuffer>typeConverter());
             }
 
@@ -368,7 +368,7 @@ final class StandardModelFactories {
          */
         private class StringScalarSet extends AbstractRule<List<String>, Collection<T>> {
             private StringScalarSet(boolean supported) {
-                super(DynamoDbAttributeType.SS, supported);
+                super(DynamoDBAttributeType.SS, supported);
             }
 
             @Override
@@ -377,7 +377,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
+            public DynamoDBTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
                 return joinAll(SET.join(getConverter(String.class, type.<T>param(0))), type.<List<String>>typeConverter());
             }
 
@@ -397,7 +397,7 @@ final class StandardModelFactories {
          */
         private class NumberScalarSet extends AbstractRule<List<String>, Collection<T>> {
             private NumberScalarSet(boolean supported) {
-                super(DynamoDbAttributeType.NS, supported);
+                super(DynamoDBAttributeType.NS, supported);
             }
 
             @Override
@@ -406,7 +406,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
+            public DynamoDBTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
                 return joinAll(SET.join(getConverter(String.class, type.<T>param(0))), type.<List<String>>typeConverter());
             }
 
@@ -426,7 +426,7 @@ final class StandardModelFactories {
          */
         private class BinaryScalarSet extends AbstractRule<List<ByteBuffer>, Collection<T>> {
             private BinaryScalarSet(boolean supported) {
-                super(DynamoDbAttributeType.BS, supported);
+                super(DynamoDBAttributeType.BS, supported);
             }
 
             @Override
@@ -435,7 +435,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
+            public DynamoDBTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
                 return joinAll(SET.join(getConverter(ByteBuffer.class, type.param(0))), type.typeConverter());
             }
 
@@ -464,7 +464,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
+            public DynamoDBTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
                 LOG.warn("Marshaling a set of non-String objects to a DynamoDB "
                          + "StringSet. You won't be able to read these objects back "
                          + "out of DynamoDB unless you REALLY know what you're doing: "
@@ -480,7 +480,7 @@ final class StandardModelFactories {
          */
         private class NativeBool extends AbstractRule<Boolean, T> {
             private NativeBool(boolean supported) {
-                super(DynamoDbAttributeType.BOOL, supported);
+                super(DynamoDBAttributeType.BOOL, supported);
             }
 
             @Override
@@ -489,7 +489,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
                 return joinAll(getConverter(Boolean.class, type), type.typeConverter());
             }
 
@@ -517,7 +517,7 @@ final class StandardModelFactories {
          */
         private class V2CompatibleBool extends AbstractRule<String, T> {
             private V2CompatibleBool(boolean supported) {
-                super(DynamoDbAttributeType.N, supported);
+                super(DynamoDBAttributeType.N, supported);
             }
 
             @Override
@@ -526,7 +526,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
                 return joinAll(getConverter(String.class, type), type.<String>typeConverter());
             }
 
@@ -545,7 +545,7 @@ final class StandardModelFactories {
 
             /**
              * For the V2 compatible schema we save as a numeric attribute value unless overridden by {@link
-             * DynamoDbNativeBoolean} or {@link DynamoDbTyped}.
+             * DynamoDBNativeBoolean} or {@link DynamoDBTyped}.
              */
             @Override
             public void set(AttributeValue o, String value) {
@@ -558,7 +558,7 @@ final class StandardModelFactories {
          */
         private class ObjectSet extends AbstractRule<List<AttributeValue>, Collection<T>> {
             private ObjectSet(boolean supported) {
-                super(DynamoDbAttributeType.L, supported);
+                super(DynamoDBAttributeType.L, supported);
             }
 
             @Override
@@ -567,7 +567,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
+            public DynamoDBTypeConverter<AttributeValue, Collection<T>> newConverter(ConvertibleType<Collection<T>> type) {
                 return joinAll(SET.join(getConverter(type.<T>param(0))), type.<List<AttributeValue>>typeConverter());
             }
 
@@ -609,7 +609,7 @@ final class StandardModelFactories {
          */
         private class ObjectList extends AbstractRule<List<AttributeValue>, List<T>> {
             private ObjectList(boolean supported) {
-                super(DynamoDbAttributeType.L, supported);
+                super(DynamoDBAttributeType.L, supported);
             }
 
             @Override
@@ -618,7 +618,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, List<T>> newConverter(ConvertibleType<List<T>> type) {
+            public DynamoDBTypeConverter<AttributeValue, List<T>> newConverter(ConvertibleType<List<T>> type) {
                 return joinAll(LIST.join(getConverter(type.<T>param(0))), type.<List<AttributeValue>>typeConverter());
             }
 
@@ -638,7 +638,7 @@ final class StandardModelFactories {
          */
         private class ObjectMap extends AbstractRule<Map<String, AttributeValue>, Map<String, T>> {
             private ObjectMap(boolean supported) {
-                super(DynamoDbAttributeType.M, supported);
+                super(DynamoDBAttributeType.M, supported);
             }
 
             @Override
@@ -647,7 +647,7 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, Map<String, T>> newConverter(ConvertibleType<Map<String, T>> type) {
+            public DynamoDBTypeConverter<AttributeValue, Map<String, T>> newConverter(ConvertibleType<Map<String, T>> type) {
                 return joinAll(
                         MAP.<String, AttributeValue, T>join(getConverter(type.<T>param(1))),
                         type.<Map<String, AttributeValue>>typeConverter()
@@ -669,11 +669,11 @@ final class StandardModelFactories {
          * All object conversions.
          */
         private class ObjectDocumentMap extends AbstractRule<Map<String, AttributeValue>, T> {
-            private final DynamoDbMapperModelFactory models;
-            private final DynamoDbMapperConfig config;
+            private final DynamoDBMapperModelFactory models;
+            private final DynamoDBMapperConfig config;
 
-            private ObjectDocumentMap(boolean supported, DynamoDbMapperModelFactory models, DynamoDbMapperConfig config) {
-                super(DynamoDbAttributeType.M, supported);
+            private ObjectDocumentMap(boolean supported, DynamoDBMapperModelFactory models, DynamoDBMapperConfig config) {
+                super(DynamoDBAttributeType.M, supported);
                 this.models = models;
                 this.config = config;
             }
@@ -684,8 +684,8 @@ final class StandardModelFactories {
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(final ConvertibleType<T> type) {
-                return joinAll(new DynamoDbTypeConverter<Map<String, AttributeValue>, T>() {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(final ConvertibleType<T> type) {
+                return joinAll(new DynamoDBTypeConverter<Map<String, AttributeValue>, T>() {
                     public final Map<String, AttributeValue> convert(final T o) {
                         return models.getTableFactory(config).getTable(type.targetType()).convert(o);
                     }
@@ -712,22 +712,22 @@ final class StandardModelFactories {
          */
         private class NotSupported extends AbstractRule<T, T> {
             private NotSupported() {
-                super(DynamoDbAttributeType.NULL, false);
+                super(DynamoDBAttributeType.NULL, false);
             }
 
             @Override
-            public DynamoDbTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
+            public DynamoDBTypeConverter<AttributeValue, T> newConverter(ConvertibleType<T> type) {
                 return this;
             }
 
             @Override
             public T get(AttributeValue value) {
-                throw new DynamoDbMappingException("not supported; requires @DynamoDBTyped or @DynamoDBTypeConverted");
+                throw new DynamoDBMappingException("not supported; requires @DynamoDBTyped or @DynamoDBTypeConverted");
             }
 
             @Override
             public void set(AttributeValue value, T o) {
-                throw new DynamoDbMappingException("not supported; requires @DynamoDBTyped or @DynamoDBTypeConverted");
+                throw new DynamoDBMappingException("not supported; requires @DynamoDBTyped or @DynamoDBTypeConverted");
             }
         }
     }
@@ -737,10 +737,10 @@ final class StandardModelFactories {
      */
     private abstract static class AbstractRule<S, T> extends AbstractConverter<AttributeValue, S>
             implements Reflect<AttributeValue, S>, Rule<T> {
-        protected final DynamoDbAttributeType attributeType;
+        protected final DynamoDBAttributeType attributeType;
         protected final boolean supported;
 
-        protected AbstractRule(DynamoDbAttributeType attributeType, boolean supported) {
+        protected AbstractRule(DynamoDBAttributeType attributeType, boolean supported) {
             this.attributeType = attributeType;
             this.supported = supported;
         }
@@ -751,7 +751,7 @@ final class StandardModelFactories {
         }
 
         @Override
-        public DynamoDbAttributeType getAttributeType() {
+        public DynamoDBAttributeType getAttributeType() {
             return this.attributeType;
         }
 
@@ -766,7 +766,7 @@ final class StandardModelFactories {
         public S unconvert(final AttributeValue o) {
             final S value = get(o);
             if (value == null && o.isNULL() == null) {
-                throw new DynamoDbMappingException("expected " + attributeType + " in value " + o);
+                throw new DynamoDBMappingException("expected " + attributeType + " in value " + o);
             }
             return value;
         }

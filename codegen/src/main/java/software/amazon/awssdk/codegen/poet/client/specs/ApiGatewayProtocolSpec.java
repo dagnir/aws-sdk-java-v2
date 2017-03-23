@@ -15,45 +15,39 @@
 
 package software.amazon.awssdk.codegen.poet.client.specs;
 
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceResponse;
+import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.protocol.json.JsonClientMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorResponseMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorShapeMetadata;
 import software.amazon.awssdk.protocol.json.JsonOperationMetadata;
-import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
 
-public class JsonProtocolSpec implements ProtocolSpec {
+public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
 
-    protected final String basePackage;
-
-    public JsonProtocolSpec(String basePackage) {
-        this.basePackage = basePackage;
+    public ApiGatewayProtocolSpec(String basePackage) {
+        super(basePackage);
     }
 
     @Override
     public FieldSpec protocolFactory(IntermediateModel model) {
-        return FieldSpec.builder(SdkJsonProtocolFactory.class, "protocolFactory")
+        ClassName protocolFactory = ClassName.get(basePackage, model.getMetadata().getProtocolFactory());
+        return FieldSpec.builder(protocolFactory, "protocolFactory")
                 .addModifiers(Modifier.PRIVATE, Modifier.FINAL).build();
     }
 
@@ -71,7 +65,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
                 .addModifiers(Modifier.PRIVATE)
                 .addCode("return new $T(new $T().withProtocolVersion($S).withSupportsCbor($L).withSupportsIon($L)" +
                                 ".withBaseServiceExceptionClass($L.class)",
-                        SdkJsonProtocolFactory.class,
+                        protocolFactory,
                         JsonClientMetadata.class,
                         model.getMetadata().getJsonVersion(),
                         model.getMetadata().isCborProtocol(),
@@ -80,8 +74,6 @@ public class JsonProtocolSpec implements ProtocolSpec {
         if (model.getMetadata().getContentType() != null) {
             methodSpec.addCode(".withContentTypeOverride($S)", model.getMetadata().getContentType());
         }
-
-        errorUnmarshallers(model).forEach(methodSpec::addCode);
 
         methodSpec.addCode(");");
 
@@ -97,16 +89,15 @@ public class JsonProtocolSpec implements ProtocolSpec {
 
         return CodeBlock
                 .builder()
-                .add("\n\n$T<$T<$T>> responseHandler = $L.createResponseHandler(new $T().withPayloadJson($L)" +
-                        ".withHasStreamingSuccessResponse($L), new $T());",
-                HttpResponseHandler.class,
-                AmazonWebServiceResponse.class,
-                returnType,
-                "protocolFactory",
-                JsonOperationMetadata.class,
-                !opModel.getHasBlobMemberAsPayload(),
-                isStreamingBody,
-                unmarshaller)
+                .add("\n\n$T<$T> responseHandler = $N.createResponseHandler(new $T().withPayloadJson($L)" +
+                                ".withHasStreamingSuccessResponse($L), new $T());",
+                        HttpResponseHandler.class,
+                        returnType,
+                        "protocolFactory",
+                        JsonOperationMetadata.class,
+                        !opModel.getHasBlobMemberAsPayload(),
+                        isStreamingBody,
+                        unmarshaller)
                 .build();
     }
 
@@ -115,7 +106,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
         return CodeBlock
                 .builder()
                 .add("\n\n$T<$T> errorResponseHandler = createErrorResponseHandler();",
-                        HttpResponseHandler.class, AmazonServiceException.class)
+                        HttpResponseHandler.class, SdkBaseException.class)
                 .build();
     }
 
@@ -126,11 +117,10 @@ public class JsonProtocolSpec implements ProtocolSpec {
         ClassName marshaller = PoetUtils.getTransformClass(
                 basePackage, opModel.getInputShape().getShapeName() + "Marshaller");
 
-        return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>().withMarshaller(new $T($N))" +
-                ".withResponseHandler($N).withErrorResponseHandler($N).withInput($L)).getResult();",
+        return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T>().withMarshaller(new $T($N))" +
+                ".withResponseHandler($N).withErrorResponseHandler($N).withInput($L));",
                 ClientExecutionParams.class,
                 requestType,
-                AmazonWebServiceResponse.class,
                 returnType,
                 marshaller,
                 "protocolFactory",
@@ -143,29 +133,19 @@ public class JsonProtocolSpec implements ProtocolSpec {
     @Override
     public Optional<MethodSpec> createErrorResponseHandler() {
         ClassName httpResponseHandler = ClassName.get(HttpResponseHandler.class);
-        ClassName sdkBaseException = ClassName.get(AmazonServiceException.class);
+        ClassName sdkBaseException = ClassName.get(SdkBaseException.class);
         TypeName responseHandlerOfException = ParameterizedTypeName.get(httpResponseHandler, sdkBaseException);
+        TypeName errorMetadataArray = ArrayTypeName.get(JsonErrorShapeMetadata[].class);
 
         return Optional.of(MethodSpec.methodBuilder("createErrorResponseHandler")
                 .returns(responseHandlerOfException)
+                .addParameter(errorMetadataArray, "errorShapeMetadata")
+                .varargs()
                 .addModifiers(Modifier.PRIVATE)
-                .addStatement("return protocolFactory.createErrorResponseHandler(new $T())", JsonErrorResponseMetadata.class)
+                .addStatement("return protocolFactory.createErrorResponseHandler(" +
+                        "new $T().withErrorShapes($T.asList(errorShapeMetadata)))",
+                        JsonErrorResponseMetadata.class,
+                        Arrays.class)
                 .build());
-    }
-
-    @Override
-    public List<CodeBlock> errorUnmarshallers(IntermediateModel model) {
-        List<ShapeModel> exceptions = model.getShapes().values().stream()
-                .filter(s -> s.getShapeType().equals(ShapeType.Exception))
-                .collect(Collectors.toList());
-
-        return exceptions.stream().map(s -> {
-            ClassName exceptionClass = PoetUtils.getModelClass(basePackage, s.getShapeName());
-            return CodeBlock.builder().add(".addErrorMetadata(new $T().withErrorCode($S).withModeledClass($T.class))",
-                    JsonErrorShapeMetadata.class,
-                    s.getErrorCode(),
-                    exceptionClass)
-                    .build();
-        }).collect(Collectors.toList());
     }
 }

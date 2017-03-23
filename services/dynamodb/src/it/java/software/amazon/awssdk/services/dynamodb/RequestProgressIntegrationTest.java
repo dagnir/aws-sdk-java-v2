@@ -129,7 +129,11 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
 
         }, PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, 0, false));
 
-        DynamoDBClient ddb_NoRetry = new AmazonDynamoDBClient(credentials, config);
+        DynamoDBClient ddb_NoRetry = DynamoDBClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withClientConfiguration(config)
+                .build();
+
         try {
             ddb_NoRetry.putItem(request);
             Assert.fail("Exception is expected since the PutItemRequest is invalid.");
@@ -159,7 +163,10 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
 
         }, PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, 2, false));
 
-        DynamoDBClient ddb_OneRetry = new AmazonDynamoDBClient(credentials, config);
+        DynamoDBClient ddb_OneRetry = DynamoDBClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withClientConfiguration(config)
+                .build();
 
         ExceptionReporter listener = ExceptionReporter.wrap(new ProgressListenerWithEventCodeVerification(
                 ProgressEventType.CLIENT_REQUEST_STARTED_EVENT,

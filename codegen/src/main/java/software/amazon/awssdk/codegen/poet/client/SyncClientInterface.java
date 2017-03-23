@@ -49,14 +49,12 @@ public final class SyncClientInterface implements ClassSpec {
                         .initializer("$S", model.getMetadata().getEndpointPrefix())
                         .build())
                 .addMethods(operations())
-                .addMethod(shutdown());
+                .addMethod(builder())
+                .addMethod(create())
+                .addSuperinterface(AutoCloseable.class);
 
         if (model.getHasWaiters()) {
             classBuilder.addMethod(waiters());
-        }
-
-        if (model.getCustomizationConfig().getPresignersFqcn() != null) {
-            classBuilder.addMethod(presigners());
         }
 
         return classBuilder.build();
@@ -69,6 +67,24 @@ public final class SyncClientInterface implements ClassSpec {
 
     private Iterable<MethodSpec> operations() {
         return model.getOperations().values().stream().map(this::operationMethodSpec).collect(Collectors.toList());
+    }
+
+    private MethodSpec builder() {
+        ClassName builder = ClassName.get(basePackage, model.getMetadata().getSyncInterface() + "Builder");
+        return MethodSpec.methodBuilder("builder")
+                .returns(builder)
+                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                .addStatement("return $T.standard()", builder)
+                .build();
+    }
+
+    private MethodSpec create() {
+        ClassName builder = ClassName.get(basePackage, model.getMetadata().getSyncInterface() + "Builder");
+        return MethodSpec.methodBuilder("create")
+                .returns(className)
+                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                .addStatement("return $T.standard().build()", builder)
+                .build();
     }
 
     private MethodSpec operationMethodSpec(OperationModel opModel) {
@@ -100,13 +116,6 @@ public final class SyncClientInterface implements ClassSpec {
         return MethodSpec.methodBuilder("presigners")
                 .returns(ClassName.get(basePath, className))
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .build();
-    }
-
-    private MethodSpec shutdown() {
-        return MethodSpec.methodBuilder("shutdown")
-                .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
-                .addStatement("throw new $T()", UnsupportedOperationException.class)
                 .build();
     }
 }

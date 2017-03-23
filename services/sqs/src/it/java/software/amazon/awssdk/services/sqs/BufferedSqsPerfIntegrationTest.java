@@ -31,8 +31,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
+import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -64,7 +65,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
      */
     private static final long RUN_TIME_MS = 60_000;
 
-    private final AmazonSQSAsync sqsClient = getSharedSqsAsyncClient();
+    private final SQSAsyncClient sqsClient = getSharedSqsAsyncClient();
     private final String queueName = getUniqueQueueName();
     private AtomicLong sendCounter = new AtomicLong(0);
     private AtomicLong receiveCounter = new AtomicLong(0);
@@ -77,14 +78,14 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
         config.setMaxInflightOutboundBatches(1000);
         config.setMaxInflightReceiveBatches(100);
         config.setMaxDoneReceiveBatches(100);
-        AmazonSQSAsync buffSqs = new SQSBufferedAsyncClient(sqsClient, config);
+        SQSAsyncClient buffSqs = new SqsBufferedAsyncClient(sqsClient, config);
 
         BasicConfigurator.resetConfiguration();
         Logger logger = Logger.getRootLogger();
         logger.setLevel(Level.ERROR);
         ExecutorService exec = Executors.newCachedThreadPool();
 
-        CreateQueueResult createRes = buffSqs.createQueue(queueName);
+        CreateQueueResult createRes = buffSqs.createQueue(new CreateQueueRequest(queueName)).join();
 
         AtomicBoolean keepGoing = new AtomicBoolean(true);
         List<Future<?>> allFutures = new LinkedList<Future<?>>();
@@ -191,12 +192,12 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
     class Sender implements Runnable {
 
         AtomicBoolean keepGoing;
-        AmazonSQSAsync sqs;
+        SQSAsyncClient sqs;
         AtomicLong counter;
         String url;
         Set<String> sent;
 
-        public Sender(AtomicBoolean paramGoing, AmazonSQSAsync paramSqs, AtomicLong paramCounter, String paramUrl,
+        public Sender(AtomicBoolean paramGoing, SQSAsyncClient paramSqs, AtomicLong paramCounter, String paramUrl,
                       Set<String> paramSent) {
             keepGoing = paramGoing;
             sqs = paramSqs;
@@ -214,7 +215,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
                 sendReq.setQueueUrl(url);
                 String body = BufferedSqsPerfIntegrationTest.BODY + counter.addAndGet(1) + "_" + System.nanoTime();
                 sendReq.setMessageBody(body);
-                sqs.sendMessageAsync(sendReq);
+                sqs.sendMessage(sendReq);
                 int size = 0;
                 synchronized (sent) {
                     sent.add(body);
@@ -239,13 +240,13 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
 
         final Random random = new Random();
         AtomicBoolean keepGoing;
-        AmazonSQSAsync sqs;
+        SQSAsyncClient sqs;
         AtomicLong recCount;
         String url;
         Set<String> sentSet;
         List<List<String>> hanldeListList;
 
-        public Consumer(AtomicBoolean paramGoing, AmazonSQSAsync paramSqs, AtomicLong paramRecCount, String paramUrl,
+        public Consumer(AtomicBoolean paramGoing, SQSAsyncClient paramSqs, AtomicLong paramRecCount, String paramUrl,
                         Set<String> paramSentSet, List<List<String>> paramHandleSet) {
             keepGoing = paramGoing;
             sqs = paramSqs;
@@ -261,7 +262,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
             while (keepGoing.get()) {
                 ReceiveMessageRequest recReq = new ReceiveMessageRequest();
                 recReq.setQueueUrl(url);
-                ReceiveMessageResult recRes = sqs.receiveMessage(recReq);
+                ReceiveMessageResult recRes = sqs.receiveMessage(recReq).join();
                 recCount.addAndGet(recRes.getMessages().size());
                 int listSize = 0;
                 for (Message m : recRes.getMessages()) {
@@ -293,12 +294,12 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
     class Deleter implements Runnable {
 
         AtomicBoolean keepGoing;
-        AmazonSQSAsync sqs;
+        SQSAsyncClient sqs;
         AtomicLong delCount;
         String url;
         List<List<String>> hanldeListList;
 
-        public Deleter(AtomicBoolean paramGoing, AmazonSQSAsync paramSqs, AtomicLong paramDelCount, String paramUrl,
+        public Deleter(AtomicBoolean paramGoing, SQSAsyncClient paramSqs, AtomicLong paramDelCount, String paramUrl,
                        List<List<String>> paramHandleSet) {
             keepGoing = paramGoing;
             sqs = paramSqs;
@@ -338,7 +339,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
                     DeleteMessageRequest delReq = new DeleteMessageRequest();
                     delReq.setQueueUrl(url);
                     delReq.setReceiptHandle(handle);
-                    sqs.deleteMessageAsync(delReq);
+                    sqs.deleteMessage(delReq);
                     delCount.addAndGet(1);
 
                 } else {

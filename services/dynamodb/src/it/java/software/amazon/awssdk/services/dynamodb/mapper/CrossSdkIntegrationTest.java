@@ -27,9 +27,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
@@ -56,7 +56,7 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     // @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        dynamo = new AmazonDynamoDBClient(credentials);
+        dynamo = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         // Create a table
         String keyName = DynamoDBMapperIntegrationTestBase.KEY_NAME;
@@ -88,7 +88,7 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     // this package so this can be run as a unit test.
     // @Test
     public void testLoad() throws Exception {
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
 
         CrossSdkVerificationClass obj = mapper.load(CrossSdkVerificationClass.class, HASH_KEY, RANGE_KEY);
 

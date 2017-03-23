@@ -56,7 +56,7 @@ public abstract class SdkStructuredJsonFactoryImpl implements SdkStructuredJsonF
                                                             String contentType);
 
     @Override
-    public <T> HttpResponseHandler<AmazonWebServiceResponse<T>> createResponseHandler(
+    public <T> JsonResponseHandler<T> createResponseHandler(
             JsonOperationMetadata operationMetadata,
             Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller) {
         return new JsonResponseHandler(responseUnmarshaller, unmarshallers, jsonFactory,

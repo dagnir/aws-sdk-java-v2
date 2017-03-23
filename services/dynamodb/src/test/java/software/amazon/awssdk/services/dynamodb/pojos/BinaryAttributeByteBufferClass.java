@@ -24,14 +24,14 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
 /**
  * Test domain class with byteBuffer attribute, byteBuffer set and a string key
  */
-@DynamoDbTable(tableName = "aws-java-sdk-util")
+@DynamoDBTable(tableName = "aws-java-sdk-util")
 public class BinaryAttributeByteBufferClass {
 
     private String key;
     private ByteBuffer binaryAttribute;
     private Set<ByteBuffer> binarySetAttribute;
 
-    @DynamoDbHashKey(attributeName = "key")
+    @DynamoDBHashKey(attributeName = "key")
     public String getKey() {
         return key;
     }
@@ -40,7 +40,7 @@ public class BinaryAttributeByteBufferClass {
         this.key = key;
     }
 
-    @DynamoDbAttribute(attributeName = "binaryAttribute")
+    @DynamoDBAttribute(attributeName = "binaryAttribute")
     public ByteBuffer getBinaryAttribute() {
         return binaryAttribute;
     }
@@ -49,7 +49,7 @@ public class BinaryAttributeByteBufferClass {
         this.binaryAttribute = binaryAttribute;
     }
 
-    @DynamoDbAttribute(attributeName = "binarySetAttribute")
+    @DynamoDBAttribute(attributeName = "binarySetAttribute")
     public Set<ByteBuffer> getBinarySetAttribute() {
         return binarySetAttribute;
     }

@@ -21,8 +21,7 @@ import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 
 /**
- * Client handler for Open SDK generated clients. Handles exception translation and delegates to the default implementation of
- * {@link ClientHandler}.
+ * Client handler for SDK clients.
  */
 @ThreadSafe
 @Immutable
@@ -41,8 +40,8 @@ public class SdkClientHandler extends ClientHandler {
     }
 
     @Override
-    public void shutdown() {
-        delegateHandler.shutdown();
+    public void close() throws Exception {
+        delegateHandler.close();
     }
 
     private <InputT, OutputT>

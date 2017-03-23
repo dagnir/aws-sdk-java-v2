@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.dynamodb.datamodeling;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
- * {@link DynamoDbMapper} table model factory.
+ * {@link DynamoDBMapper} table model factory.
  */
 @SdkInternalApi
 public interface DynamoDBMapperModelFactory {

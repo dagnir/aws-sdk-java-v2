@@ -48,7 +48,7 @@ public abstract class PaginatedList<T> implements List<T> {
      * Reference to the DynamoDB mapper for marshalling DynamoDB attributes back
      * into objects
      */
-    protected final DynamoDbMapper mapper;
+    protected final DynamoDBMapper mapper;
 
     /**
      * The class annotated with DynamoDB tags declaring how to load/store
@@ -82,7 +82,7 @@ public abstract class PaginatedList<T> implements List<T> {
     /**
      * Constructs a PaginatedList instance using the default PaginationLoadingStrategy
      */
-    public PaginatedList(DynamoDbMapper mapper, Class<T> clazz, DynamoDBClient dynamo) {
+    public PaginatedList(DynamoDBMapper mapper, Class<T> clazz, DynamoDBClient dynamo) {
         this(mapper, clazz, dynamo, null);
     }
 
@@ -101,7 +101,7 @@ public abstract class PaginatedList<T> implements List<T> {
      *            set in the mapper is not accessible here. If null value is
      *            provided, LAZY_LOADING will be set by default.
      */
-    public PaginatedList(DynamoDbMapper mapper, Class<T> clazz, DynamoDBClient dynamo,
+    public PaginatedList(DynamoDBMapper mapper, Class<T> clazz, DynamoDBClient dynamo,
                          PaginationLoadingStrategy paginationLoadingStrategy) {
         this.mapper = mapper;
         this.clazz = clazz;

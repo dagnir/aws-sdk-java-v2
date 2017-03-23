@@ -28,13 +28,14 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBIndexHashKe
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBIndexRangeKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBQueryExpression;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.PaginatedQueryList;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
@@ -81,7 +82,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
 
     @AfterClass
     public static void tearDown() throws Exception {
-        dynamo.deleteTable(HASH_KEY_ONLY_TABLE_NAME);
+        dynamo.deleteTable(new DeleteTableRequest(HASH_KEY_ONLY_TABLE_NAME));
     }
 
     /**
@@ -89,7 +90,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
      */
     @Test
     public void testGSIQuery() throws Exception {
-        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
         String status = "foo-status";
 
         User user = new User();
@@ -98,7 +99,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
         user.setTs("321");
         mapper.save(user);
 
-        DynamoDbQueryExpression<User> expr = new DynamoDbQueryExpression<User>()
+        DynamoDBQueryExpression<User> expr = new DynamoDBQueryExpression<User>()
                 .withIndexName("statusAndCreation")
                 .withLimit(100)
                 .withConsistentRead(false)
@@ -113,13 +114,13 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
         assertEquals(status, query.get(0).getStatus());
     }
 
-    @DynamoDbTable(tableName = HASH_KEY_ONLY_TABLE_NAME)
+    @DynamoDBTable(tableName = HASH_KEY_ONLY_TABLE_NAME)
     public static class User {
         private String id;
         private String status;
         private String ts;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getId() {
             return id;
         }
@@ -128,7 +129,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
             this.id = id;
         }
 
-        @DynamoDbIndexHashKey(globalSecondaryIndexName = "statusAndCreation")
+        @DynamoDBIndexHashKey(globalSecondaryIndexName = "statusAndCreation")
         public String getStatus() {
             return status;
         }
@@ -137,7 +138,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
             this.status = status;
         }
 
-        @DynamoDbIndexRangeKey(globalSecondaryIndexName = "statusAndCreation")
+        @DynamoDBIndexRangeKey(globalSecondaryIndexName = "statusAndCreation")
         public String getTs() {
             return ts;
         }

@@ -24,6 +24,7 @@ import java.util.Map;
 import org.junit.Test;
 import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
+import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 
 /**
@@ -33,30 +34,10 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
  */
 public class SqsIntegrationTest extends IntegrationTestBase {
 
-    /**
-     * Test using a client that points in one region, to work with a queue that's in a different
-     * region.
-     */
-    @Test
-    public void testCrossRegionQueueCalls() throws Exception {
-        final AmazonSQSAsyncClient sqsClient = createSqsAyncClient();
-        sqsClient.setEndpoint("sqs.eu-west-1.amazonaws.com");
-
-        // Create a queue in eu-west-1
-        String euQueueURL = createQueue(sqsClient);
-        assertNotNull(getQueueCreationDate(sqsClient, euQueueURL));
-
-        // Change the client's endpoint and verify that we can still access the eu-west-1 queue
-        sqsClient.setEndpoint("sqs.ap-southeast-2.amazonaws.com");
-        assertNotNull(getQueueCreationDate(sqsClient, euQueueURL));
-        sqsClient.deleteQueue(euQueueURL);
-        sqsClient.shutdown();
-    }
-
-    private String getQueueCreationDate(AmazonSQS sqs, String queueURL) {
+    private String getQueueCreationDate(SQSAsyncClient sqs, String queueURL) {
         GetQueueAttributesRequest request = new GetQueueAttributesRequest(queueURL)
                 .withAttributeNames(QueueAttributeName.CreatedTimestamp.toString());
-        Map<String, String> attributes = sqs.getQueueAttributes(request).getAttributes();
+        Map<String, String> attributes = sqs.getQueueAttributes(request).join().getAttributes();
         return attributes.get(QueueAttributeName.CreatedTimestamp.toString());
     }
 
@@ -66,20 +47,20 @@ public class SqsIntegrationTest extends IntegrationTestBase {
      * update.
      */
     @Test
-    public void clockSkewFailure_CorrectsGlobalTimeOffset() {
+    public void clockSkewFailure_CorrectsGlobalTimeOffset() throws Exception {
         final int originalOffset = SdkGlobalConfiguration.getGlobalTimeOffset();
         final int skew = 3600;
 
         SdkGlobalConfiguration.setGlobalTimeOffset(skew);
         assertEquals(skew, SdkGlobalConfiguration.getGlobalTimeOffset());
-        AmazonSQSAsyncClient sqsClient = createSqsAyncClient();
-        sqsClient.listQueues();
+        SQSAsyncClient sqsClient = createSqsAyncClient();
+        sqsClient.listQueues(new ListQueuesRequest());
         assertThat("Clockskew is fixed!", SdkGlobalConfiguration.getGlobalTimeOffset(), lessThan(skew));
         // subsequent changes to the global time offset won't affect existing client
         SdkGlobalConfiguration.setGlobalTimeOffset(skew);
-        sqsClient.listQueues();
+        sqsClient.listQueues(new ListQueuesRequest());
         assertEquals(skew, SdkGlobalConfiguration.getGlobalTimeOffset());
-        sqsClient.shutdown();
+        sqsClient.close();
 
         SdkGlobalConfiguration.setGlobalTimeOffset(originalOffset);
     }

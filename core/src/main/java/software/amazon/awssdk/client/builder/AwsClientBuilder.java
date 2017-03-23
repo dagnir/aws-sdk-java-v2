@@ -218,27 +218,6 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         withRegion(region);
     }
 
-    private void setRegion(AmazonWebServiceClient client) {
-        if (region != null && endpointConfiguration != null) {
-            throw new IllegalStateException("Only one of Region or EndpointConfiguration may be set.");
-        }
-        if (endpointConfiguration != null) {
-            client.setEndpoint(endpointConfiguration.getServiceEndpoint());
-            client.setSignerRegionOverride(endpointConfiguration.getSigningRegion());
-        } else if (region != null) {
-            client.setRegion(region);
-        } else {
-            final String region = determineRegionFromRegionProvider();
-            if (region != null) {
-                client.setRegion(RegionUtils.getRegion(region));
-            } else {
-                throw new SdkClientException(
-                        "Unable to find a region via the region provider chain. " +
-                                "Must provide an explicit region in the builder or setup environment to supply a region.");
-            }
-        }
-    }
-
     /**
      * Sets the region to be used by the client. This will be used to determine both the
      * service endpoint (eg: https://sns.us-west-1.amazonaws.com) and signing region (eg: us-west-1)

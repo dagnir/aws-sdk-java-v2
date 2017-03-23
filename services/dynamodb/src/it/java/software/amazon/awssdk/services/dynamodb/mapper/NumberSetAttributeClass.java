@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
 /**
  * Simple domain class with numeric attributes
  */
-@DynamoDbTable(tableName = "aws-java-sdk-util")
+@DynamoDBTable(tableName = "aws-java-sdk-util")
 public class NumberSetAttributeClass {
 
     private String key;
@@ -42,7 +42,7 @@ public class NumberSetAttributeClass {
     private Set<Calendar> calendarAttribute;
     private Set<Boolean> booleanAttribute;
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public String getKey() {
         return key;
     }
@@ -51,7 +51,7 @@ public class NumberSetAttributeClass {
         this.key = key;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Integer> getIntegerAttribute() {
         return integerAttribute;
     }
@@ -60,7 +60,7 @@ public class NumberSetAttributeClass {
         this.integerAttribute = integerAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Double> getDoubleObjectAttribute() {
         return doubleObjectAttribute;
     }
@@ -69,7 +69,7 @@ public class NumberSetAttributeClass {
         this.doubleObjectAttribute = doubleObjectAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Float> getFloatObjectAttribute() {
         return floatObjectAttribute;
     }
@@ -78,7 +78,7 @@ public class NumberSetAttributeClass {
         this.floatObjectAttribute = floatObjectAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<BigDecimal> getBigDecimalAttribute() {
         return bigDecimalAttribute;
     }
@@ -87,7 +87,7 @@ public class NumberSetAttributeClass {
         this.bigDecimalAttribute = bigDecimalAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<BigInteger> getBigIntegerAttribute() {
         return bigIntegerAttribute;
     }
@@ -96,7 +96,7 @@ public class NumberSetAttributeClass {
         this.bigIntegerAttribute = bigIntegerAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Long> getLongObjectAttribute() {
         return longObjectAttribute;
     }
@@ -105,7 +105,7 @@ public class NumberSetAttributeClass {
         this.longObjectAttribute = longObjectAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Byte> getByteObjectAttribute() {
         return byteObjectAttribute;
     }
@@ -114,7 +114,7 @@ public class NumberSetAttributeClass {
         this.byteObjectAttribute = byteObjectAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Date> getDateAttribute() {
         return dateAttribute;
     }
@@ -123,7 +123,7 @@ public class NumberSetAttributeClass {
         this.dateAttribute = dateAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Calendar> getCalendarAttribute() {
         return calendarAttribute;
     }
@@ -132,7 +132,7 @@ public class NumberSetAttributeClass {
         this.calendarAttribute = calendarAttribute;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public Set<Boolean> getBooleanAttribute() {
         return booleanAttribute;
     }

@@ -29,8 +29,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.services.sqs.buffered.SQSBufferedAsyncClient;
+import software.amazon.awssdk.services.sqs.buffered.SqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
@@ -42,28 +43,28 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
 
     private static final int MAX_SIZE_MESSAGE = 260 * 1024 - 1;
 
-    private AmazonSQSAsyncClient sqsClient;
+    private SQSAsyncClient sqsClient;
     private QueueBufferConfig config;
-    private SQSBufferedAsyncClient buffSqs;
+    private SqsBufferedAsyncClient buffSqs;
     private String queueUrl;
 
     @Before
     public void setup() {
         config = new QueueBufferConfig();
         sqsClient = createSqsAyncClient();
-        buffSqs = new SQSBufferedAsyncClient(sqsClient, config);
+        buffSqs = new SqsBufferedAsyncClient(sqsClient, config);
         queueUrl = createQueue(sqsClient);
     }
 
     @After
-    public void tearDown() {
-        buffSqs.deleteQueue(queueUrl);
-        buffSqs.shutdown();
+    public void tearDown() throws Exception {
+        buffSqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        buffSqs.close();
     }
 
     @Test
     public void receiveMessage_NoMessagesOnQueue_ReturnsEmptyListOfMessages() {
-        assertEquals(0, buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).getMessages().size());
+        assertEquals(0, buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join().getMessages().size());
     }
 
     @Test
@@ -78,10 +79,10 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
         }
         // Use the normal client so we don't have to wait for the buffered messages to be sent
         sqsClient.sendMessageBatch(new SendMessageBatchRequest(queueUrl).withEntries(messages));
-        assertThat(buffSqs.receiveMessage(queueUrl).getMessages().size(), greaterThan(0));
+        assertThat(buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join().getMessages().size(), greaterThan(0));
         // Make sure they are expired by waiting twice the timeout
         Thread.sleep((visiblityTimeoutSeconds * 2) * 1000);
-        assertThat(buffSqs.receiveMessage(queueUrl).getMessages().size(), greaterThan(0));
+        assertThat(buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join().getMessages().size(), greaterThan(0));
     }
 
     /**
@@ -117,7 +118,7 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
 
         ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().withMaxNumberOfMessages(1)
                                                                      .withWaitTimeSeconds(60).withQueueUrl(queueUrl);
-        List<Message> messages = buffSqs.receiveMessage(receiveRq).getMessages();
+        List<Message> messages = buffSqs.receiveMessage(receiveRq).join().getMessages();
         assertThat(messages, hasSize(1));
         assertEquals(body, messages.get(0).getBody());
 

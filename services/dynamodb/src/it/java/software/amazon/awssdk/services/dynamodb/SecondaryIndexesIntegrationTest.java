@@ -33,6 +33,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
@@ -80,7 +81,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
      */
     @Test
     public void testDescribeTempTableWithIndexes() {
-        TableDescription tableDescription = dynamo.describeTable(tableName).getTable();
+        TableDescription tableDescription = dynamo.describeTable(new DescribeTableRequest(tableName)).getTable();
         assertEquals(tableName, tableDescription.getTableName());
         assertNotNull(tableDescription.getTableStatus());
         assertEquals(2, tableDescription.getKeySchema().size());

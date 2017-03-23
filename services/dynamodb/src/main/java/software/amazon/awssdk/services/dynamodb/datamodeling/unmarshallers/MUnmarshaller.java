@@ -26,7 +26,7 @@ abstract class MUnmarshaller implements ArgumentUnmarshaller {
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
         if (value.getM() == null) {
-            throw new DynamoDbMappingException("Expected M in value " + value + " when invoking " + setter);
+            throw new DynamoDBMappingException("Expected M in value " + value + " when invoking " + setter);
         }
     }
 

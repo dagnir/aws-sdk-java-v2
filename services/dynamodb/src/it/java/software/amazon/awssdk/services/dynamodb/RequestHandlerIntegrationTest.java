@@ -36,6 +36,7 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
@@ -43,30 +44,26 @@ import software.amazon.awssdk.util.StringInputStream;
 
 public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
-    private static AmazonDynamoDBClient ddb;
+    private static DynamoDBClient ddb;
 
     private RequestHandler2 mockRequestHandler;
 
     @BeforeClass
-    public static void setupFixture() {
-        ddb = new AmazonDynamoDBClient(getCredentials());
-    }
-
-    @Before
-    public void setup() {
+    public void setupFixture() {
         mockRequestHandler = spy(new RequestHandler2() {
         });
-        ddb.addRequestHandler(mockRequestHandler);
+        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRequestHandlers(mockRequestHandler).build();
     }
 
     @After
-    public void tearDown() {
-        ddb.removeRequestHandler(mockRequestHandler);
+    public void tearDown() throws Exception {
+        ddb.close();
     }
 
     @Test
     public void successfulRequest_InvokesAllSuccessCallbacks() {
-        ddb.listTables();
+        ddb.listTables(new ListTablesRequest());
 
         verify(mockRequestHandler).beforeMarshalling(any(AmazonWebServiceRequest.class));
         verify(mockRequestHandler).beforeRequest(any(Request.class));
@@ -90,7 +87,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void failedRequest_InvokesAllErrorCallbacks() {
         try {
-            ddb.describeTable("some-nonexistent-table-name");
+            ddb.describeTable(new DescribeTableRequest("some-nonexistent-table-name"));
         } catch (AmazonServiceException expected) {
             // Ignored or expected.
         }
@@ -108,7 +105,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void beforeUnmarshalling_ModificationsToHttpResponse_AreReflectedInUnmarshalling() {
         final String injectedTableName = "SomeInjectedTableName";
-        AmazonDynamoDBClient ddb = new AmazonDynamoDBClient(getCredentials());
+        DynamoDBClient ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
         RequestHandler2 requestHandler = new RequestHandler2() {
             @Override
             public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
@@ -134,8 +131,9 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
                 return crc32.getValue();
             }
         };
-        ddb.addRequestHandler(requestHandler);
-        ListTablesResult result = ddb.listTables();
+        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRequestHandlers(requestHandler).build();
+        ListTablesResult result = ddb.listTables(new ListTablesRequest());
         // Assert that the unmarshalled response contains our injected table name and not the actual
         // list of tables
         assertThat(result.getTableNames().toArray(new String[0]), arrayContaining(injectedTableName));

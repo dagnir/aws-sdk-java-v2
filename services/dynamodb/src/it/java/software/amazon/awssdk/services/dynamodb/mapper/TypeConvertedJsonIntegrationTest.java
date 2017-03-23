@@ -60,9 +60,9 @@ public class TypeConvertedJsonIntegrationTest extends AbstractKeyAndValIntegrati
     /**
      * An object with a complex type.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndCurrency extends AutoKeyAndVal<Currency> {
-        @DynamoDbTypeConvertedJson
+        @DynamoDBTypeConvertedJson
         public Currency getVal() {
             return super.getVal();
         }
@@ -76,9 +76,9 @@ public class TypeConvertedJsonIntegrationTest extends AbstractKeyAndValIntegrati
     /**
      * An object with a complex type.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndCurrencyList extends AutoKeyAndVal<List<Currency>> {
-        @DynamoDbTypeConvertedJson(targetType = CurrencyListType.class)
+        @DynamoDBTypeConvertedJson(targetType = CurrencyListType.class)
         public List<Currency> getVal() {
             return super.getVal();
         }

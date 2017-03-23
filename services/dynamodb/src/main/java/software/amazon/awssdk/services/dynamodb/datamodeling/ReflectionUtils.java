@@ -47,7 +47,7 @@ class ReflectionUtils {
         }
 
         if (fieldNameWithUpperCamelCase.length() == 0) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Getter must begin with 'get' or 'is', and the field name must contain at least one character.");
         }
 
@@ -75,7 +75,7 @@ class ReflectionUtils {
         try {
             return clazz.getDeclaredField(fieldName);
         } catch (SecurityException e) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Denied access to the [" + fieldName + "] field in class [" + clazz + "].", e);
         } catch (NoSuchFieldException e) {
             return null;

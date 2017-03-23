@@ -128,7 +128,7 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * Test timestamp formatting.
      */
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testEmptyPattern() throws Exception {
         final KeyAndEmptyPattern object = new KeyAndEmptyPattern();
         object.setVal(Calendar.getInstance().getTime());
@@ -138,7 +138,7 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * Test timestamp formatting.
      */
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testInvalidPattern() throws Exception {
         final KeyAndInvalidPattern object = new KeyAndInvalidPattern();
         object.setVal(Calendar.getInstance().getTime());
@@ -148,9 +148,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Calendar}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndCalendarTimestamp extends AutoKeyAndVal<Calendar> {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
         public Calendar getVal() {
             return super.getVal();
         }
@@ -164,9 +164,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Date}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndDateTimestamp extends AutoKeyAndVal<Date> {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
         public Date getVal() {
             return super.getVal();
         }
@@ -180,9 +180,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Long}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndLongTimestamp extends AutoKeyAndVal<Long> {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
         public Long getVal() {
             return super.getVal();
         }
@@ -196,9 +196,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Calendar}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndEstCalendarTimestamp extends AutoKeyAndVal<Calendar> {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "America/New_York")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "America/New_York")
         public Calendar getVal() {
             return super.getVal();
         }
@@ -212,9 +212,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Date}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndEstDateTimestamp extends AutoKeyAndVal<Date> {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "America/New_York")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "America/New_York")
         public Date getVal() {
             return super.getVal();
         }
@@ -228,9 +228,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Long}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndEstLongTimestamp extends AutoKeyAndVal<Long> {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "America/New_York")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "America/New_York")
         public Long getVal() {
             return super.getVal();
         }
@@ -244,9 +244,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code String}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndStringTimestamp extends AutoKeyAndVal<String> {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz")
         public String getVal() {
             return super.getVal();
         }
@@ -260,9 +260,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Date}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndEmptyPattern extends KeyAndDateTimestamp {
-        @DynamoDbTypeConvertedTimestamp(pattern = "")
+        @DynamoDBTypeConvertedTimestamp(pattern = "")
         public Date getVal() {
             return super.getVal();
         }
@@ -276,9 +276,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Date}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndEmptyTimeZone extends KeyAndDateTimestamp {
-        @DynamoDbTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "")
+        @DynamoDBTypeConvertedTimestamp(pattern = "yyyyMMddHHmmssSSSz", timeZone = "")
         public Date getVal() {
             return super.getVal();
         }
@@ -292,9 +292,9 @@ public class TypeConvertedTimestampIntegrationTest extends AbstractKeyAndValInte
     /**
      * An object with {@code Date}.
      */
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class KeyAndInvalidPattern extends KeyAndDateTimestamp {
-        @DynamoDbTypeConvertedTimestamp(pattern = "invalid")
+        @DynamoDBTypeConvertedTimestamp(pattern = "invalid")
         public Date getVal() {
             return super.getVal();
         }

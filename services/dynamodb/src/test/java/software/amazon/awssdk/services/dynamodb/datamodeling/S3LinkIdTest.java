@@ -26,9 +26,9 @@ public class S3LinkIdTest {
     @Test
     public void testToFromJson() {
         String region = "ap-northeast-1";
-        S3Link.ID id = new S3Link.ID(region, "bucket", "key");
+        S3Link.Id id = new S3Link.Id(region, "bucket", "key");
         String json = id.toJson();
-        S3Link.ID twin = Jackson.fromJsonString(json, S3Link.ID.class);
+        S3Link.Id twin = Jackson.fromJsonString(json, S3Link.Id.class);
         assertEquals("bucket", twin.getBucket());
         assertEquals("key", twin.getKey());
         assertEquals(region, twin.getRegionId());
@@ -36,10 +36,10 @@ public class S3LinkIdTest {
 
     @Test
     public void testDefaultRegion() {
-        S3Link.ID id = new S3Link.ID("bucketname", "keyname");
+        S3Link.Id id = new S3Link.Id("bucketname", "keyname");
         assertEquals(Region.US_Standard.getFirstRegionId(), id.getRegionId());
         String json = id.toJson();
-        S3Link.ID twin = Jackson.fromJsonString(json, S3Link.ID.class);
+        S3Link.Id twin = Jackson.fromJsonString(json, S3Link.Id.class);
         assertEquals("bucketname", twin.getBucket());
         assertEquals("keyname", twin.getKey());
         assertEquals(Region.US_Standard.getFirstRegionId(), twin.getRegionId());

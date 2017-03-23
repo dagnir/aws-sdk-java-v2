@@ -42,7 +42,7 @@ public class BooleanUnmarshaller implements ArgumentUnmarshaller {
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
         if (value.getN() == null && value.getBOOL() == null) {
-            throw new DynamoDbMappingException(
+            throw new DynamoDBMappingException(
                     "Expected either N or BOOL in value " + value
                     + " when invoking " + setter);
         }

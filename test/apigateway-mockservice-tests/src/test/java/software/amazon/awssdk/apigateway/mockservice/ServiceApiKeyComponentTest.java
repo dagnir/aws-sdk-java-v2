@@ -24,14 +24,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 
-import com.amazonaws.services.apigateway.mockservice.MyServiceClient;
-import com.amazonaws.services.apigateway.mockservice.MyServiceClientBuilder;
-import com.amazonaws.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
 import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthScalarsRequest;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;

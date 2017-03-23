@@ -41,19 +41,19 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
     /** The current query request. */
     private final QueryRequest queryRequest;
 
-    private final DynamoDbMapperConfig config;
+    private final DynamoDBMapperConfig config;
 
     /** The current results for the last executed query operation. */
     private QueryResult queryResult;
 
     public PaginatedQueryList(
-            DynamoDbMapper mapper,
+            DynamoDBMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             QueryRequest queryRequest,
             QueryResult queryResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDbMapperConfig config) {
+            DynamoDBMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.queryRequest = queryRequest;
@@ -82,7 +82,7 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
     @Override
     protected synchronized List<T> fetchNextPage() {
         queryRequest.setExclusiveStartKey(queryResult.getLastEvaluatedKey());
-        queryResult = dynamo.query(DynamoDbMapper.applyUserAgent(queryRequest));
+        queryResult = dynamo.query(DynamoDBMapper.applyUserAgent(queryRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
                 queryResult.getItems(),
                 clazz,

@@ -65,12 +65,12 @@ import software.amazon.awssdk.services.acm.model.transform.ResendValidationEmail
 import software.amazon.awssdk.services.acm.model.transform.ResendValidationEmailResultUnmarshaller;
 
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
-public class DefaultAcmClient implements AcmClient, AutoCloseable {
+public class DefaultACMClient implements ACMClient {
     private final ClientHandler clientHandler;
 
     private final SdkJsonProtocolFactory protocolFactory;
 
-    protected DefaultAcmClient(AwsSyncClientParams clientParams) {
+    protected DefaultACMClient(AwsSyncClientParams clientParams) {
         this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams));
         this.protocolFactory = init();
     }
@@ -84,9 +84,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<AddTagsToCertificateRequest, AddTagsToCertificateResult>()
-                .withMarshaller(new AddTagsToCertificateRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(addTagsToCertificateRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<AddTagsToCertificateRequest, AmazonWebServiceResponse<AddTagsToCertificateResult>>()
+                        .withMarshaller(new AddTagsToCertificateRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(addTagsToCertificateRequest)).getResult();
     }
 
     @Override
@@ -98,9 +100,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<DeleteCertificateRequest, DeleteCertificateResult>()
-                .withMarshaller(new DeleteCertificateRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(deleteCertificateRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<DeleteCertificateRequest, AmazonWebServiceResponse<DeleteCertificateResult>>()
+                        .withMarshaller(new DeleteCertificateRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(deleteCertificateRequest)).getResult();
     }
 
     @Override
@@ -112,9 +116,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<DescribeCertificateRequest, DescribeCertificateResult>()
-                .withMarshaller(new DescribeCertificateRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(describeCertificateRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<DescribeCertificateRequest, AmazonWebServiceResponse<DescribeCertificateResult>>()
+                        .withMarshaller(new DescribeCertificateRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(describeCertificateRequest)).getResult();
     }
 
     @Override
@@ -126,9 +132,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<GetCertificateRequest, GetCertificateResult>()
-                .withMarshaller(new GetCertificateRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(getCertificateRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<GetCertificateRequest, AmazonWebServiceResponse<GetCertificateResult>>()
+                        .withMarshaller(new GetCertificateRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(getCertificateRequest)).getResult();
     }
 
     @Override
@@ -140,9 +148,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<ImportCertificateRequest, ImportCertificateResult>()
-                .withMarshaller(new ImportCertificateRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(importCertificateRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<ImportCertificateRequest, AmazonWebServiceResponse<ImportCertificateResult>>()
+                        .withMarshaller(new ImportCertificateRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(importCertificateRequest)).getResult();
     }
 
     @Override
@@ -154,9 +164,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<ListCertificatesRequest, ListCertificatesResult>()
-                .withMarshaller(new ListCertificatesRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(listCertificatesRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<ListCertificatesRequest, AmazonWebServiceResponse<ListCertificatesResult>>()
+                        .withMarshaller(new ListCertificatesRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(listCertificatesRequest)).getResult();
     }
 
     @Override
@@ -168,10 +180,12 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<ListTagsForCertificateRequest, ListTagsForCertificateResult>()
-                .withMarshaller(new ListTagsForCertificateRequestMarshaller(protocolFactory))
-                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                .withInput(listTagsForCertificateRequest));
+        return clientHandler
+                .execute(
+                        new ClientExecutionParams<ListTagsForCertificateRequest, AmazonWebServiceResponse<ListTagsForCertificateResult>>()
+                                .withMarshaller(new ListTagsForCertificateRequestMarshaller(protocolFactory))
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(listTagsForCertificateRequest)).getResult();
     }
 
     @Override
@@ -185,10 +199,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
         return clientHandler
-                .execute(new ClientExecutionParams<RemoveTagsFromCertificateRequest, RemoveTagsFromCertificateResult>()
-                        .withMarshaller(new RemoveTagsFromCertificateRequestMarshaller(protocolFactory))
-                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                        .withInput(removeTagsFromCertificateRequest));
+                .execute(
+                        new ClientExecutionParams<RemoveTagsFromCertificateRequest, AmazonWebServiceResponse<RemoveTagsFromCertificateResult>>()
+                                .withMarshaller(new RemoveTagsFromCertificateRequestMarshaller(protocolFactory))
+                                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                .withInput(removeTagsFromCertificateRequest)).getResult();
     }
 
     @Override
@@ -200,9 +215,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<RequestCertificateRequest, RequestCertificateResult>()
-                .withMarshaller(new RequestCertificateRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(requestCertificateRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<RequestCertificateRequest, AmazonWebServiceResponse<RequestCertificateResult>>()
+                        .withMarshaller(new RequestCertificateRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(requestCertificateRequest)).getResult();
     }
 
     @Override
@@ -214,9 +231,11 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(new ClientExecutionParams<ResendValidationEmailRequest, ResendValidationEmailResult>()
-                .withMarshaller(new ResendValidationEmailRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
-                .withErrorResponseHandler(errorResponseHandler).withInput(resendValidationEmailRequest));
+        return clientHandler.execute(
+                new ClientExecutionParams<ResendValidationEmailRequest, AmazonWebServiceResponse<ResendValidationEmailResult>>()
+                        .withMarshaller(new ResendValidationEmailRequestMarshaller(protocolFactory))
+                        .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                        .withInput(resendValidationEmailRequest)).getResult();
     }
 
     private HttpResponseHandler<AmazonServiceException> createErrorResponseHandler() {
@@ -228,7 +247,7 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
                 .withProtocolVersion("1.1")
                 .withSupportsCbor(false)
                 .withSupportsIon(false)
-                .withBaseServiceExceptionClass(software.amazon.awssdk.services.acm.model.AcmClientException.class)
+                .withBaseServiceExceptionClass(software.amazon.awssdk.services.acm.model.ACMClientException.class)
                 .addErrorMetadata(
                         new JsonErrorShapeMetadata().withErrorCode("InvalidTagException").withModeledClass(
                                 InvalidTagException.class))
@@ -259,7 +278,7 @@ public class DefaultAcmClient implements AcmClient, AutoCloseable {
     }
 
     @Override
-    public void close() {
-        clientHandler.shutdown();
+    public void close() throws Exception {
+        clientHandler.close();
     }
 }

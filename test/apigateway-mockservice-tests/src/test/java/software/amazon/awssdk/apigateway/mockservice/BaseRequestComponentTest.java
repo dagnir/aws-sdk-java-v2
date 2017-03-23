@@ -30,9 +30,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static software.amazon.awssdk.apigateway.mockservice.WireMockExtensions.anyRequestedFor;
 
-import com.amazonaws.services.apigateway.mockservice.MyServiceClient;
-import com.amazonaws.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
-import com.amazonaws.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import com.github.tomakehurst.wiremock.client.UrlMatchingStrategy;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +37,8 @@ import java.util.function.Consumer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.opensdk.SdkRequestConfig;

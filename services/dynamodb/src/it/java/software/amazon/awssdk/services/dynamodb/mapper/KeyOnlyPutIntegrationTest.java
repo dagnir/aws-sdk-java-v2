@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBSaveExpression;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
@@ -60,10 +60,10 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
             objs.add(obj);
         }
 
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         for (HashAndAttribute obj : objs) {
             try {
-                DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression();
+                DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
                 Map<String, ExpectedAttributeValue> expected = new HashMap<String, ExpectedAttributeValue>();
                 ExpectedAttributeValue expectedVersion = new ExpectedAttributeValue()
                         .withValue(new AttributeValue()
@@ -94,13 +94,13 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
         return obj;
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class HashAndAttribute {
 
         protected String key;
         protected String normalStringAttribute;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -109,7 +109,7 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
             this.key = key;
         }
 
-        @DynamoDbAttribute
+        @DynamoDBAttribute
         public String getNormalStringAttribute() {
             return normalStringAttribute;
         }

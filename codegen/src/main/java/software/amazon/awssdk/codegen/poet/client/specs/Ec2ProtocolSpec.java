@@ -28,6 +28,7 @@ import javax.lang.model.element.Modifier;
 
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
@@ -69,10 +70,11 @@ public class Ec2ProtocolSpec extends QueryXmlProtocolSpec {
                         StaxResponseHandler.class,
                         dryRunResult,
                         VoidStaxUnmarshaller.class)
-                .addStatement("\nclientHandler.execute(new $T<$T, $T>().withMarshaller($L).withResponseHandler($N)" +
+                .addStatement("\nclientHandler.execute(new $T<$T, $T<$T>>().withMarshaller($L).withResponseHandler($N)" +
                                 ".withInput($L))",
                         ClientExecutionParams.class,
                         Request.class,
+                        AmazonWebServiceResponse.class,
                         dryRunResult,
                         "null",
                         "responseHandler",

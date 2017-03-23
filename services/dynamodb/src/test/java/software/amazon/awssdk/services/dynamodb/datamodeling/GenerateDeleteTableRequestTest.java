@@ -21,7 +21,7 @@ import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 /**
- * Unit tests for {@link DynamoDbMapper#generateDeleteTableRequest(Class)}.
+ * Unit tests for {@link DynamoDBMapper#generateDeleteTableRequest(Class)}.
  */
 public class GenerateDeleteTableRequestTest {
 
@@ -30,27 +30,27 @@ public class GenerateDeleteTableRequestTest {
 
     @Test
     public void tableNameNotOverriden_UsesTableNameAttributeInAnnotation() {
-        DynamoDbMapper dynamoDBMapper = new DynamoDbMapper(null);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(null);
         DeleteTableRequest deleteTableRequest = dynamoDBMapper.generateDeleteTableRequest(ObjectORMExample.class);
         assertEquals(deleteTableRequest.getTableName(), TABLE_NAME);
     }
 
     @Test
     public void tableNameOverriddenInConfig_UsesPrefixedOverrideTableName() {
-        DynamoDbMapperConfig.TableNameOverride tableNameOverride = DynamoDbMapperConfig.TableNameOverride
+        DynamoDBMapperConfig.TableNameOverride tableNameOverride = DynamoDBMapperConfig.TableNameOverride
                 .withTableNamePrefix(TABLE_PREFIX);
-        DynamoDbMapperConfig config = new DynamoDbMapperConfig(tableNameOverride);
-        DynamoDbMapper dynamoDBMapper = new DynamoDbMapper(null, config);
+        DynamoDBMapperConfig config = new DynamoDBMapperConfig(tableNameOverride);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(null, config);
 
         DeleteTableRequest deleteTableRequest = dynamoDBMapper.generateDeleteTableRequest(ObjectORMExample.class);
         assertEquals(deleteTableRequest.getTableName(), TABLE_PREFIX.concat(TABLE_NAME));
     }
 
-    @DynamoDbTable(tableName = TABLE_NAME)
+    @DynamoDBTable(tableName = TABLE_NAME)
     private static class ObjectORMExample {
         private String id;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public final String getId() {
             return this.id;
         }

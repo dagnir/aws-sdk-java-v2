@@ -80,7 +80,7 @@ public class ClientHandlerImpl extends ClientHandler {
         AwsRequestMetrics awsRequestMetrics = executionContext.getAwsRequestMetrics();
         awsRequestMetrics.startEvent(AwsRequestMetrics.Field.ClientExecuteTime);
         Request<InputT> request = null;
-        Response<AmazonWebServiceResponse<OutputT>> response = null;
+        Response<OutputT> response = null;
 
         try {
             awsRequestMetrics.startEvent(AwsRequestMetrics.Field.RequestMarshallTime);
@@ -97,9 +97,7 @@ public class ClientHandlerImpl extends ClientHandler {
                               executionParams.getResponseHandler(),
                               executionParams.getErrorResponseHandler());
 
-            AmazonWebServiceResponse result = response.getAwsResponse();
-
-            return (OutputT) result.getResult();
+            return response.getAwsResponse();
 
         } finally {
 
@@ -111,7 +109,7 @@ public class ClientHandlerImpl extends ClientHandler {
     }
 
     @Override
-    public void shutdown() {
+    public void close() {
         client.shutdown();
     }
 

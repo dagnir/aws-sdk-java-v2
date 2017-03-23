@@ -24,29 +24,16 @@ import software.amazon.awssdk.test.AwsTestBase;
 
 public class StreamsIntegrationTest extends AwsTestBase {
 
-    private AmazonDynamoDBStreams streams;
+    private DynamoDBStreamsClient streams;
 
     @Before
     public void setup() throws Exception {
         setUpCredentials();
-        streams = new AmazonDynamoDBStreamsClient(credentials);
+        streams = DynamoDBStreamsClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @Test
     public void testDefaultEndpoint() {
         streams.listStreams(new ListStreamsRequest().withTableName("foo"));
     }
-
-    @Test
-    public void testSetEndpoint() {
-        streams.setEndpoint("streams.dynamodb.us-west-2.amazonaws.com");
-        streams.listStreams(new ListStreamsRequest().withTableName("foo"));
-    }
-
-    @Test
-    public void testSetRegion() {
-        streams.setRegion(Region.getRegion(Regions.EU_WEST_1));
-        streams.listStreams(new ListStreamsRequest().withTableName("foo"));
-    }
-
 }

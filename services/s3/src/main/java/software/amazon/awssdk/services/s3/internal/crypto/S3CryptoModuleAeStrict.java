@@ -31,7 +31,7 @@ class S3CryptoModuleAeStrict extends S3CryptoModuleAe {
     /**
      * @param cryptoConfig a read-only copy of the crypto configuration.
      */
-    S3CryptoModuleAEStrict(KMSClient kms, S3Direct s3,
+    S3CryptoModuleAeStrict(KMSClient kms, S3Direct s3,
                            AwsCredentialsProvider credentialsProvider,
                            EncryptionMaterialsProvider encryptionMaterialsProvider,
                            CryptoConfiguration cryptoConfig) {

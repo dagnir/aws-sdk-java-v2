@@ -127,7 +127,7 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
  * @param <H> The hash key value type.
  * @param <R> The range key value type; use <code>?</code> if no range key.
  *
- * @see DynamoDbMapper
+ * @see DynamoDBMapper
  * @see DynamoDBClient
  */
 public final class DynamoDBTableMapper<T extends Object, H extends Object, R extends Object> {
@@ -138,7 +138,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
     private final DynamoDBMapperFieldModel<T, H> hk;
     private final DynamoDBMapperFieldModel<T, R> rk;
     private final DynamoDBMapperConfig config;
-    private final DynamoDbMapper mapper;
+    private final DynamoDBMapper mapper;
     private final DynamoDBClient db;
 
     /**
@@ -147,7 +147,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * @param mapper The DynamoDB mapper.
      * @param db The service object to use for all service calls.
      */
-    protected DynamoDBTableMapper(DynamoDBClient db, DynamoDbMapper mapper, final DynamoDBMapperConfig config,
+    protected DynamoDBTableMapper(DynamoDBClient db, DynamoDBMapper mapper, final DynamoDBMapperConfig config,
                                   final DynamoDBMapperTableModel<T> model) {
         this.rk = model.rangeKeyIfExists();
         this.hk = model.hashKey();
@@ -191,7 +191,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * Retrieves multiple items from the table using their primary keys.
      * @param itemsToGet The items to get.
      * @return The list of objects.
-     * @see DynamoDbMapper#batchLoad
+     * @see DynamoDBMapper#batchLoad
      */
     public List<T> batchLoad(Iterable<T> itemsToGet) {
         final Map<String, List<Object>> results = mapper.batchLoad(itemsToGet);
@@ -205,9 +205,9 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * Saves the objects given using one or more calls to the batchWriteItem API.
      * @param objectsToSave The objects to save.
      * @return The list of failed batches.
-     * @see DynamoDbMapper#batchSave
+     * @see DynamoDBMapper#batchSave
      */
-    public List<DynamoDbMapper.FailedBatch> batchSave(Iterable<T> objectsToSave) {
+    public List<DynamoDBMapper.FailedBatch> batchSave(Iterable<T> objectsToSave) {
         return mapper.batchWrite(objectsToSave, (Iterable<T>) Collections.<T>emptyList());
     }
 
@@ -215,9 +215,9 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * Deletes the objects given using one or more calls to the batchWtiteItem API.
      * @param objectsToDelete The objects to delete.
      * @return The list of failed batches.
-     * @see DynamoDbMapper#batchDelete
+     * @see DynamoDBMapper#batchDelete
      */
-    public List<DynamoDbMapper.FailedBatch> batchDelete(Iterable<T> objectsToDelete) {
+    public List<DynamoDBMapper.FailedBatch> batchDelete(Iterable<T> objectsToDelete) {
         return mapper.batchWrite((Iterable<T>) Collections.<T>emptyList(), objectsToDelete);
     }
 
@@ -227,9 +227,9 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * @param objectsToWrite The objects to write.
      * @param objectsToDelete The objects to delete.
      * @return The list of failed batches.
-     * @see DynamoDbMapper#batchWrite
+     * @see DynamoDBMapper#batchWrite
      */
-    public List<DynamoDbMapper.FailedBatch> batchWrite(Iterable<T> objectsToWrite, Iterable<T> objectsToDelete) {
+    public List<DynamoDBMapper.FailedBatch> batchWrite(Iterable<T> objectsToWrite, Iterable<T> objectsToDelete) {
         return mapper.batchWrite(objectsToWrite, objectsToDelete);
     }
 
@@ -237,7 +237,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * Loads an object with the hash key given.
      * @param hashKey The hash key value.
      * @return The object.
-     * @see DynamoDbMapper#load
+     * @see DynamoDBMapper#load
      */
     public T load(H hashKey) {
         return mapper.<T>load(model.targetType(), hashKey);
@@ -248,7 +248,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * @param hashKey The hash key value.
      * @param rangeKey The range key value.
      * @return The object.
-     * @see DynamoDbMapper#load
+     * @see DynamoDBMapper#load
      */
     public T load(H hashKey, R rangeKey) {
         return mapper.<T>load(model.targetType(), hashKey, rangeKey);
@@ -257,7 +257,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
     /**
      * Saves the object given into DynamoDB.
      * @param object The object to save.
-     * @see DynamoDbMapper#save
+     * @see DynamoDBMapper#save
      */
     public void save(T object) {
         mapper.<T>save(object);
@@ -267,7 +267,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * Saves the object given into DynamoDB using the specified saveExpression.
      * @param object The object to save.
      * @param saveExpression The save expression.
-     * @see DynamoDbMapper#save
+     * @see DynamoDBMapper#save
      */
     public void save(T object, DynamoDBSaveExpression saveExpression) {
         mapper.<T>save(object, saveExpression);
@@ -278,7 +278,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * and if applicable, the range key, does not already exist.
      * @param object The object to create.
      * @throws ConditionalCheckFailedException If the object exists.
-     * @see DynamoDbMapper#save
+     * @see DynamoDBMapper#save
      * @see software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBSaveExpression
      * @see software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue
      */
@@ -296,7 +296,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * and, if applicable, the range key, already exist.
      * @param object The object to update.
      * @throws ConditionalCheckFailedException If the object does not exist.
-     * @see DynamoDbMapper#save
+     * @see DynamoDBMapper#save
      * @see software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBSaveExpression
      * @see software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue
      */
@@ -312,7 +312,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
     /**
      * Deletes the given object from its DynamoDB table.
      * @param object The object to delete.
-     * @see DynamoDbMapper#delete
+     * @see DynamoDBMapper#delete
      */
     public final void delete(final T object) {
         mapper.delete(object);
@@ -323,7 +323,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * deleteExpression.
      * @param object The object to delete.
      * @param deleteExpression The delete expression.
-     * @see DynamoDbMapper#delete
+     * @see DynamoDBMapper#delete
      */
     public final void delete(final T object, final DynamoDBDeleteExpression deleteExpression) {
         mapper.delete(object, deleteExpression);
@@ -334,7 +334,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * the hash and, if applicable, the range key, already exist.
      * @param object The object to delete.
      * @throws ConditionalCheckFailedException If the object does not exist.
-     * @see DynamoDbMapper#delete
+     * @see DynamoDBMapper#delete
      * @see software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBDeleteExpression
      * @see software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue
      */
@@ -352,7 +352,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * items, without returning any of the actual item data
      * @param queryExpression The query expression.
      * @return The count.
-     * @see DynamoDbMapper#count
+     * @see DynamoDBMapper#count
      */
     public int count(DynamoDBQueryExpression<T> queryExpression) {
         return mapper.<T>count(model.targetType(), queryExpression);
@@ -363,7 +363,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * unmodifiable list of instantiated objects.
      * @param queryExpression The query expression.
      * @return The query results.
-     * @see DynamoDbMapper#query
+     * @see DynamoDBMapper#query
      */
     public PaginatedQueryList<T> query(DynamoDBQueryExpression<T> queryExpression) {
         return mapper.<T>query(model.targetType(), queryExpression);
@@ -374,7 +374,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * results.
      * @param queryExpression The query expression.
      * @return The query results.
-     * @see DynamoDbMapper#query
+     * @see DynamoDBMapper#query
      */
     public QueryResultPage<T> queryPage(DynamoDBQueryExpression<T> queryExpression) {
         return mapper.<T>queryPage(model.targetType(), queryExpression);
@@ -385,7 +385,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * items, without returning any of the actual item data.
      * @param scanExpression The scan expression.
      * @return The count.
-     * @see DynamoDbMapper#count
+     * @see DynamoDBMapper#count
      */
     public int count(DynamoDBScanExpression scanExpression) {
         return mapper.count(model.targetType(), scanExpression);
@@ -396,7 +396,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * as an unmodifiable list of instantiated objects.
      * @param scanExpression The scan expression.
      * @return The scan results.
-     * @see DynamoDbMapper#scan
+     * @see DynamoDBMapper#scan
      */
     public PaginatedScanList<T> scan(DynamoDBScanExpression scanExpression) {
         return mapper.<T>scan(model.targetType(), scanExpression);
@@ -407,7 +407,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * matching results.
      * @param scanExpression The scan expression.
      * @return The scan results.
-     * @see DynamoDbMapper#scanPage
+     * @see DynamoDBMapper#scanPage
      */
     public ScanResultPage<T> scanPage(DynamoDBScanExpression scanExpression) {
         return mapper.<T>scanPage(model.targetType(), scanExpression);
@@ -420,7 +420,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * @param scanExpression The scan expression.
      * @param totalSegments The total segments.
      * @return The scan results.
-     * @see DynamoDbMapper#parallelScan
+     * @see DynamoDBMapper#parallelScan
      */
     public PaginatedParallelScanList<T> parallelScan(DynamoDBScanExpression scanExpression, int totalSegments) {
         return mapper.<T>parallelScan(model.targetType(), scanExpression, totalSegments);

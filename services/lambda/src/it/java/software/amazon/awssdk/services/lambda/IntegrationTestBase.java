@@ -53,7 +53,7 @@ public class IntegrationTestBase extends AwsTestBase {
                                                             + "\"Service\": \"lambda.amazonaws.com\"" + "}," + "\"Action\": \"sts:AssumeRole\"" + "}" + "]" + "}";
     private static final String KINESIS_STREAM_NAME = "lambda-java-sdk-test-kinesis-stream-"
                                                       + System.currentTimeMillis();
-    protected static LambdaClient lambda;
+    protected static LambdaAsyncClient lambda;
     protected static File cloudFuncZip;
     protected static String lambdaServiceRoleArn;
     protected static String streamArn;
@@ -64,7 +64,7 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        lambda = LambdaClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        lambda = LambdaAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         cloudFuncZip = setupFunctionZip(HELLOWORLD_JS);
 

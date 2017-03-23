@@ -15,13 +15,17 @@
 
 package software.amazon.awssdk.codegen.internal;
 
+import static java.util.stream.Collectors.joining;
 import static software.amazon.awssdk.codegen.internal.Constants.LOGGER;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
+import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeMarshaller;
@@ -71,7 +75,9 @@ public class Utils {
         baseName = baseName.trim();
         baseName = baseName.replaceAll("[^A-Za-z0-9]", "");
 
-        baseName = pascalCase(baseName);
+        if (baseName.endsWith("Service")) {
+            baseName = baseName.replace("Service", "");
+        }
 
         return baseName;
     }
@@ -85,17 +91,21 @@ public class Utils {
     }
 
     public static String pascalCase(String baseName) {
-        StringBuilder camelCaseBuilder = new StringBuilder();
-
-        for (String s : baseName.split("\\s+")) {
-            camelCaseBuilder.append(capitialize(StringUtils.lowerCase(s)));
-        }
-
-        return camelCaseBuilder.toString();
+        return Stream.of(baseName.split("\\s+")).map(StringUtils::lowerCase).map(Utils::capitialize).collect(joining());
     }
 
     public static String getClientName(String interfaceName) {
         return Constants.CLIENT_NAME_PREFIX + interfaceName;
+    }
+
+    public static String getPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        String lowerCased = StringUtils.lowerCase(serviceName);
+
+        if (customizationConfig.getPackageNameOverride() != null) {
+            return StringUtils.lowerCase(customizationConfig.getPackageNameOverride());
+        }
+
+        return lowerCased;
     }
 
     public static String unCapitialize(String name) {

@@ -22,14 +22,14 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
 /**
  * Test domain class with a single string attribute and a string key
  */
-@DynamoDbTable(tableName = "aws-java-sdk-util")
+@DynamoDBTable(tableName = "aws-java-sdk-util")
 public class StringAttributeClass {
 
     private String key;
     private String stringAttribute;
     private String renamedAttribute;
 
-    @DynamoDbHashKey
+    @DynamoDBHashKey
     public String getKey() {
         return key;
     }
@@ -38,7 +38,7 @@ public class StringAttributeClass {
         this.key = key;
     }
 
-    @DynamoDbAttribute
+    @DynamoDBAttribute
     public String getStringAttribute() {
         return stringAttribute;
     }
@@ -47,7 +47,7 @@ public class StringAttributeClass {
         this.stringAttribute = stringAttribute;
     }
 
-    @DynamoDbAttribute(attributeName = "originalName")
+    @DynamoDBAttribute(attributeName = "originalName")
     public String getRenamedAttribute() {
         return renamedAttribute;
     }

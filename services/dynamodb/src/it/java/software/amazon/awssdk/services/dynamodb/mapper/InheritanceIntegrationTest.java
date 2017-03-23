@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBAttribute;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 
 /**
  * Tests inheritance behavior in DynamoDB mapper.
@@ -41,7 +41,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
             objs.add(obj);
         }
 
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         for (Object obj : objs) {
             util.save(obj);
             assertEquals(util.load(SubClass.class, ((SubClass) obj).getKey()), obj);
@@ -58,14 +58,14 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
             objs.add(obj);
         }
 
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         for (SubSubClass obj : objs) {
             util.save(obj);
             assertEquals(util.load(SubSubClass.class, obj.getKey()), obj);
         }
     }
 
-    @Test(expected = DynamoDbMappingException.class)
+    @Test(expected = DynamoDBMappingException.class)
     public void testImplementation() throws Exception {
         List<Implementation> objs = new ArrayList<Implementation>();
         for (int i = 0; i < 5; i++) {
@@ -76,7 +76,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
         }
 
         // Saving new objects with a null version field should populate it
-        DynamoDbMapper util = new DynamoDbMapper(dynamo);
+        DynamoDBMapper util = new DynamoDBMapper(dynamo);
         for (Interface obj : objs) {
             util.save(obj);
             assertEquals(util.load(Implementation.class, obj.getKey()), obj);
@@ -89,27 +89,27 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
         return obj;
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static interface Interface {
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey();
 
         public void setKey(String key);
 
-        @DynamoDbAttribute
+        @DynamoDBAttribute
         public String getAttribute();
 
         public void setAttribute(String attribute);
     }
 
-    @DynamoDbTable(tableName = "aws-java-sdk-util")
+    @DynamoDBTable(tableName = "aws-java-sdk-util")
     public static class BaseClass {
 
         protected String key;
         protected String normalStringAttribute;
 
-        @DynamoDbHashKey
+        @DynamoDBHashKey
         public String getKey() {
             return key;
         }
@@ -118,7 +118,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
             this.key = key;
         }
 
-        @DynamoDbAttribute
+        @DynamoDBAttribute
         public String getNormalStringAttribute() {
             return normalStringAttribute;
         }
