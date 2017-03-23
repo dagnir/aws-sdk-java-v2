@@ -19,10 +19,8 @@ import java.time.Duration;
 import java.util.Collection;
 
 /**
- * Useful utilities to validate dependencies
- * @deprecated By utils module.
+ * Useful utilities to validate dependencies.
  */
-@Deprecated
 public class ValidationUtils {
 
     /**
