@@ -21,12 +21,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 
-import com.amazonaws.services.shorea.ApiGatewayProtocolClient;
-import com.amazonaws.services.shorea.model.ApiGatewayProtocolClientException;
-import com.amazonaws.services.shorea.model.NoModeledExceptionsRequest;
-import com.amazonaws.services.shorea.model.SameShapeDifferentStatusCodesRequest;
-import com.amazonaws.services.shorea.model.SharedExceptionsAcrossOperationsWithDifferentStatusCodesRequest;
-import com.amazonaws.services.shorea.model.SomeModeledException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,6 +29,12 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.apigateway.protocol.ApiGatewayProtocolClient;
+import software.amazon.awssdk.apigateway.protocol.model.ApiGatewayProtocolClientException;
+import software.amazon.awssdk.apigateway.protocol.model.NoModeledExceptionsRequest;
+import software.amazon.awssdk.apigateway.protocol.model.SameShapeDifferentStatusCodesRequest;
+import software.amazon.awssdk.apigateway.protocol.model.SharedExceptionsAcrossOperationsWithDifferentStatusCodesRequest;
+import software.amazon.awssdk.apigateway.protocol.model.SomeModeledException;
 
 @RunWith(Enclosed.class)
 public class ApiGatewayExceptionTests {
