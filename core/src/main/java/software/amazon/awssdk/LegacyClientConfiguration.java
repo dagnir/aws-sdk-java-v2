@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.config.ClientConfiguration;
 import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
@@ -31,8 +32,10 @@ import software.amazon.awssdk.util.VersionInfoUtils;
  * Client configuration options such as proxy settings, user agent string, max retry attempts, etc.
  *
  * @see PredefinedLegacyClientConfigurations
+ * @deprecated Replaced with {@link ClientConfiguration}.
  */
 @NotThreadSafe
+@Deprecated
 public class LegacyClientConfiguration {
 
     /** The default timeout for creating new connections. */
