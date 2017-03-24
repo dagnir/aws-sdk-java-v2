@@ -22,17 +22,17 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
-
 import java.util.Arrays;
 import java.util.Optional;
 import javax.lang.model.element.Modifier;
-
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.client.ClientExecutionParams;
+import software.amazon.awssdk.client.ClientHandler;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.opensdk.protect.client.SdkClientHandler;
 import software.amazon.awssdk.protocol.json.JsonClientMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorResponseMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorShapeMetadata;
@@ -128,6 +128,11 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
                 "errorResponseHandler",
                 opModel.getInput().getVariableName())
                 .build();
+    }
+
+    @Override
+    public Class<? extends ClientHandler> getClientHandlerClass() {
+        return SdkClientHandler.class;
     }
 
     @Override

@@ -100,7 +100,7 @@ public class SyncClientClass implements ClassSpec {
                 .addStatement(
                         "this.$N = new $T(new $T().withClientParams($N))",
                         "clientHandler",
-                        getClientHandlerClass(model.getMetadata().getProtocol()),
+                        protocolSpec.getClientHandlerClass(),
                         ClientHandlerParams.class,
                         "clientParams")
                 .addStatement("this.$N = init()", protocolSpec.protocolFactory(model).name)
@@ -161,13 +161,6 @@ public class SyncClientClass implements ClassSpec {
                 .addModifiers(Modifier.PUBLIC)
                 .addException(Exception.class)
                 .build();
-    }
-
-    private Class<? extends ClientHandler> getClientHandlerClass(Protocol protocol) {
-        switch (protocol) {
-            case API_GATEWAY: return software.amazon.awssdk.opensdk.protect.client.SdkClientHandler.class;
-            default: return SdkClientHandler.class;
-        }
     }
 
     private ProtocolSpec getProtocolSpecs(Protocol protocol) {
