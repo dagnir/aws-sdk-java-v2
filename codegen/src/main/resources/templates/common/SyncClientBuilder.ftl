@@ -7,6 +7,7 @@ import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.client.builder.AwsSyncClientBuilder;
 import software.amazon.awssdk.client.AwsSyncClientParams;
+import software.amazon.awssdk.handlers.HandlerChainFactory;
 
 /**
  * Fluent builder for {@link ${metadata.packageName + "." + metadata.syncInterface}}. Use of the
@@ -51,6 +52,11 @@ public final class ${metadata.syncClientBuilderClassName}
      */
     @Override
     protected ${metadata.syncInterface} build(AwsSyncClientParams params) {
+        HandlerChainFactory chainFactory = new HandlerChainFactory();
+        params.getRequestHandlers().addAll(chainFactory.newRequestHandlerChain(
+                "/${metadata.packagePath}/request.handlers"));
+        params.getRequestHandlers().addAll(chainFactory.newRequestHandler2Chain(
+                "/${metadata.packagePath}/request.handler2s"));
         return new ${metadata.syncClient}(params);
     }
 

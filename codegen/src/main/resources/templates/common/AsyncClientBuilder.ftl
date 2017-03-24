@@ -7,6 +7,7 @@ import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.client.builder.AwsAsyncClientBuilder;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
+import software.amazon.awssdk.handlers.HandlerChainFactory;
 
 /**
  * Fluent builder for {@link ${metadata.packageName + "." + metadata.asyncInterface}}. Use of the
@@ -52,6 +53,11 @@ public final class ${metadata.asyncClientBuilderClassName}
      */
     @Override
     protected ${metadata.asyncInterface} build(AwsAsyncClientParams params) {
+        HandlerChainFactory chainFactory = new HandlerChainFactory();
+        params.getRequestHandlers().addAll(chainFactory.newRequestHandlerChain(
+                "/${metadata.packagePath}/request.handlers"));
+        params.getRequestHandlers().addAll(chainFactory.newRequestHandler2Chain(
+                "/${metadata.packagePath}/request.handler2s"));
         return new ${metadata.asyncClient}(params);
     }
 
