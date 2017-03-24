@@ -21,15 +21,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
-import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -337,6 +334,17 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     }
 
     /**
+     * Resolve which signing region should be used with the client.
+     */
+    private Region resolveSigningRegion() {
+        if (endpointConfiguration != null) {
+            return RegionUtils.getRegion(endpointConfiguration.getSigningRegion());
+        }
+
+        return region != null ? region : RegionUtils.getRegion(determineRegionFromRegionProvider());
+    }
+
+    /**
      * Builds a client with the configure properties.
      *
      * @return Client instance to make API calls with.
@@ -408,12 +416,14 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         private final AwsCredentialsProvider credentials;
         private final RequestMetricCollector metricsCollector;
         private final List<RequestHandler2> requestHandlers;
+        private final Region signingRegion;
 
         protected SyncBuilderParams() {
             this.clientConfig = resolveClientConfiguration();
             this.credentials = resolveCredentials();
             this.metricsCollector = AwsClientBuilder.this.metricsCollector;
             this.requestHandlers = resolveRequestHandlers();
+            this.signingRegion = resolveSigningRegion();
         }
 
         @Override
@@ -438,9 +448,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
         @Override
         public SignerProvider getSignerProvider() {
-            Region clientRegion = region != null ? region : RegionUtils.getRegion(determineRegionFromRegionProvider());
-
-            Signer signer = SignerFactory.getSigner(getServiceName(), clientRegion.getName());
+            Signer signer = SignerFactory.getSigner(getServiceName(), signingRegion.getName());
 
             return new DefaultSignerProvider(signer);
         }
@@ -451,14 +459,8 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
                 return URI.create(endpointConfiguration.getServiceEndpoint());
             }
 
-            Region clientRegion = region;
-
-            if (clientRegion == null) {
-                clientRegion = RegionUtils.getRegion(determineRegionFromRegionProvider());
-            }
-
             return new DefaultServiceEndpointBuilder(getServiceName(), Protocol.HTTPS.toString())
-                    .withRegion(clientRegion)
+                    .withRegion(signingRegion)
                     .getServiceEndpoint();
         }
 
