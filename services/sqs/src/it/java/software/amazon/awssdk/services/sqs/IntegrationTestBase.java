@@ -15,16 +15,26 @@
 
 package software.amazon.awssdk.services.sqs;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.client.AwsAsyncClientParams;
+import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
+import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -42,10 +52,14 @@ import software.amazon.awssdk.util.StringUtils;
  */
 public class IntegrationTestBase extends AwsTestBase {
 
-    /** Random number used for naming message attributes. */
+    /**
+     * Random number used for naming message attributes.
+     */
     private static final Random random = new Random(System.currentTimeMillis());
-    /** The SQS client for all tests to use. */
-    private static SQSAsyncClient sqs;
+    /**
+     * The SQS client for all tests to use.
+     */
+    protected SQSAsyncClient sqs;
     /**
      * Account ID of the AWS Account identified by the credentials provider setup in AWSTestBase.
      * Cached for performance
@@ -56,14 +70,9 @@ public class IntegrationTestBase extends AwsTestBase {
      * Loads the AWS account info for the integration tests and creates an SQS client for tests to
      * use.
      */
-    @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
-        setUpCredentials();
-        sqs = SQSAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
-    }
-
-    protected static SQSAsyncClient getSharedSqsAsyncClient() {
-        return sqs;
+    @Before
+    public void setUp() {
+        sqs = createSqsAyncClient();
     }
 
     public static SQSAsyncClient createSqsAyncClient() {
@@ -141,11 +150,9 @@ public class IntegrationTestBase extends AwsTestBase {
     /**
      * Parse the account ID out of the IAM user arn
      *
-     * @param arn
-     *            IAM user ARN
+     * @param arn IAM user ARN
      * @return Account ID if it can be extracted
-     * @throws IllegalArgumentException
-     *             If ARN is not in a valid format
+     * @throws IllegalArgumentException If ARN is not in a valid format
      */
     private String parseAccountIdFromArn(String arn) throws IllegalArgumentException {
         String[] arnComponents = arn.split(":");

@@ -19,6 +19,8 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
+import software.amazon.awssdk.internal.http.response.AwsErrorResponseHandler;
+import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
  * Client handler for SDK clients.
@@ -36,7 +38,12 @@ public class SdkClientHandler extends ClientHandler {
     @Override
     public <InputT, OutputT> OutputT execute(
             ClientExecutionParams<InputT, OutputT> executionParams) {
-        return delegateHandler.execute(addRequestConfig(executionParams));
+        return delegateHandler.execute(
+                addRequestConfig(executionParams)
+                        // TODO this is a hack to get the build working. Also doesn't deal with AwsResponseHandlerAdapter
+                        .withErrorResponseHandler(
+                                new AwsErrorResponseHandler(executionParams.getErrorResponseHandler(), new AwsRequestMetrics())));
+
     }
 
     @Override
@@ -44,8 +51,8 @@ public class SdkClientHandler extends ClientHandler {
         delegateHandler.close();
     }
 
-    private <InputT, OutputT>
-        ClientExecutionParams<InputT, OutputT> addRequestConfig(ClientExecutionParams<InputT, OutputT> params) {
+    private <InputT, OutputT> ClientExecutionParams<InputT, OutputT> addRequestConfig(
+            ClientExecutionParams<InputT, OutputT> params) {
         return params.withRequestConfig(new AmazonWebServiceRequestAdapter((AmazonWebServiceRequest) params.getInput()));
     }
 

@@ -13,6 +13,7 @@ import software.amazon.awssdk.client.ClientHandlerParams;
 import software.amazon.awssdk.client.SdkClientHandler;
 import software.amazon.awssdk.http.DefaultErrorResponseHandler;
 import software.amazon.awssdk.http.StaxResponseHandler;
+import software.amazon.awssdk.runtime.transform.StandardErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.iam.model.AddClientIDToOpenIDConnectProviderRequest;
 import software.amazon.awssdk.services.iam.model.AddClientIDToOpenIDConnectProviderResult;
@@ -148,6 +149,7 @@ import software.amazon.awssdk.services.iam.model.GetUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.GetUserPolicyResult;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.iam.model.GetUserResult;
+import software.amazon.awssdk.services.iam.model.IAMClientException;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
 import software.amazon.awssdk.services.iam.model.ListAccountAliasesRequest;
@@ -2296,6 +2298,7 @@ public class DefaultIAMClient implements IAMClient {
         unmarshallers.add(new CredentialReportNotPresentExceptionUnmarshaller());
         unmarshallers.add(new UnrecognizedPublicKeyEncodingExceptionUnmarshaller());
         unmarshallers.add(new MalformedCertificateExceptionUnmarshaller());
+        unmarshallers.add(new StandardErrorUnmarshaller(IAMClientException.class));
         return unmarshallers;
     }
 

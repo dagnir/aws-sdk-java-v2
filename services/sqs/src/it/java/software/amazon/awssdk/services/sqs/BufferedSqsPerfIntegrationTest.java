@@ -65,7 +65,6 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
      */
     private static final long RUN_TIME_MS = 60_000;
 
-    private final SQSAsyncClient sqsClient = getSharedSqsAsyncClient();
     private final String queueName = getUniqueQueueName();
     private AtomicLong sendCounter = new AtomicLong(0);
     private AtomicLong receiveCounter = new AtomicLong(0);
@@ -78,7 +77,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
         config.setMaxInflightOutboundBatches(1000);
         config.setMaxInflightReceiveBatches(100);
         config.setMaxDoneReceiveBatches(100);
-        SQSAsyncClient buffSqs = new SqsBufferedAsyncClient(sqsClient, config);
+        SQSAsyncClient buffSqs = new SqsBufferedAsyncClient(sqs, config);
 
         BasicConfigurator.resetConfiguration();
         Logger logger = Logger.getRootLogger();
