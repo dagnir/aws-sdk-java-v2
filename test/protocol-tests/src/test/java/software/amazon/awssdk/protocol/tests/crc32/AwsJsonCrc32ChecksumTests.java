@@ -32,10 +32,14 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesResult;
+import software.amazon.awssdk.services.protocoljsonrpccustomized.ProtocolJsonRpcCustomizedClient;
+import software.amazon.awssdk.services.protocoljsonrpccustomized.model.SimpleRequest;
+import software.amazon.awssdk.services.protocoljsonrpccustomized.model.SimpleResult;
 
 public class AwsJsonCrc32ChecksumTests {
     @Rule
@@ -67,15 +71,13 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
                                                          .withBodyFile(JSON_BODY_GZIP)));
 
-        ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
+        ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
                 .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
                 .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
                 .build();
 
-        AllTypesResult result =
-                jsonRpc.allTypes(new AllTypesRequest());
+        SimpleResult result = jsonRpc.simple(new SimpleRequest());
         Assert.assertEquals("foo", result.getStringMember());
     }
 
@@ -93,15 +95,13 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withHeader("x-amz-crc32", JSON_BODY_EXTRA_DATA_GZIP_Crc32_CHECKSUM)
                                                          .withBodyFile(JSON_BODY_EXTRA_DATA_GZIP)));
 
-        ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
+        ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
                 .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
                 .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
                 .build();
 
-        AllTypesResult result =
-                jsonRpc.allTypes(new AllTypesRequest());
+        SimpleResult result = jsonRpc.simple(new SimpleRequest());
         Assert.assertEquals("foo", result.getStringMember());
     }
 
@@ -113,14 +113,13 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
                                                          .withBodyFile(JSON_BODY_GZIP)));
 
-        ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
+        ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
                 .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
                 .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
                 .build();
 
-        jsonRpc.allTypes(new AllTypesRequest());
+        jsonRpc.simple(new SimpleRequest());
     }
 
     @Test
@@ -133,8 +132,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
                 .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
                 .build();
 
@@ -153,8 +151,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
                 .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
                 .build();
 
@@ -170,8 +167,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
                 .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
                 .build();
 
@@ -189,8 +185,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
                 .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
                 .build();
 

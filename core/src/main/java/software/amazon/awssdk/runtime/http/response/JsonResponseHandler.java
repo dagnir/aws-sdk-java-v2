@@ -120,8 +120,8 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
                 long serverSideCrc = Long.parseLong(crc32Checksum);
                 long clientSideCrc = response.getCrc32Checksum();
                 if (clientSideCrc != serverSideCrc) {
-                    throw new Crc32MismatchException(
-                            "Client calculated crc32 checksum didn't match that calculated by server side");
+                    throw new Crc32MismatchException("Client calculated crc32 checksum (" + clientSideCrc
+                                                     + ") didn't match that calculated by server side (" + serverSideCrc + ").");
                 }
             }
 

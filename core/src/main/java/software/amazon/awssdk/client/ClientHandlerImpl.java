@@ -69,6 +69,7 @@ public class ClientHandlerImpl extends ClientHandler {
                                .retryPolicy(clientParams.getRetryPolicy())
                                .requestMetricCollector(clientParams.getRequestMetricCollector())
                                .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
+                               .calculateCrc32FromCompressedData(handlerParams.isCalculateCrc32FromCompressedDataEnabled())
                                .build();
     }
 

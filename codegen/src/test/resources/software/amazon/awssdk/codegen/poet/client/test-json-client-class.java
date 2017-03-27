@@ -71,7 +71,8 @@ public class DefaultACMClient implements ACMClient {
     private final SdkJsonProtocolFactory protocolFactory;
 
     protected DefaultACMClient(AwsSyncClientParams clientParams) {
-        this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams));
+        this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams)
+                .withCalculateCrc32FromCompressedDataEnabled(false));
         this.protocolFactory = init();
     }
 

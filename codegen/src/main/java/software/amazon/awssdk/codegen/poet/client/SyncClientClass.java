@@ -98,11 +98,12 @@ public class SyncClientClass implements ClassSpec {
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(AwsSyncClientParams.class, "clientParams")
                 .addStatement(
-                        "this.$N = new $T(new $T().withClientParams($N))",
+                        "this.$N = new $T(new $T().withClientParams($N).withCalculateCrc32FromCompressedDataEnabled($L))",
                         "clientHandler",
                         protocolSpec.getClientHandlerClass(),
                         ClientHandlerParams.class,
-                        "clientParams")
+                        "clientParams",
+                        model.getCustomizationConfig().isCalculateCrc32FromCompressedData())
                 .addStatement("this.$N = init()", protocolSpec.protocolFactory(model).name)
                 .build();
     }

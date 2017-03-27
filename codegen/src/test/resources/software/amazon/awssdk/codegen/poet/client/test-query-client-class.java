@@ -522,7 +522,8 @@ public class DefaultIAMClient implements IAMClient {
     private volatile IAMClientWaiters waiters;
 
     protected DefaultIAMClient(AwsSyncClientParams clientParams) {
-        this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams));
+        this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams)
+                .withCalculateCrc32FromCompressedDataEnabled(false));
         this.exceptionUnmarshallers = init();
     }
 
