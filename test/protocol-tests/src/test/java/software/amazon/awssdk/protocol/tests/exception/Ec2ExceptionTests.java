@@ -19,11 +19,12 @@ import static org.junit.Assert.assertEquals;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.services.protocolec2.ProtocolEc2Client;
 import software.amazon.awssdk.services.protocolec2.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolec2.model.ProtocolEc2ClientException;
@@ -34,11 +35,16 @@ public class Ec2ExceptionTests {
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
-    private final ProtocolEc2Client client = ProtocolEc2Client.builder()
-            .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-            .withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMock.port(), "us-east-1"))
-            .build();
+    private ProtocolEc2Client client;
+
+    @Before
+    public void setupClient() {
+        client = ProtocolEc2Client.builder()
+                                  .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                  .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                       "us-east-1"))
+                                  .build();
+    }
 
     @Test
     public void unmodeledException_UnmarshalledIntoBaseServiceException() {

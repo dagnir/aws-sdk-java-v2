@@ -21,11 +21,12 @@ import static org.junit.Assert.assertThat;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.services.protocolrestxml.ProtocolRestXmlClient;
 import software.amazon.awssdk.services.protocolrestxml.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestxml.model.EmptyModeledException;
@@ -39,11 +40,16 @@ public class RestXmlExceptionTests {
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
-    private final ProtocolRestXmlClient client = ProtocolRestXmlClient.builder()
-            .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-            .withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMock.port(), "us-east-1"))
-            .build();
+    private ProtocolRestXmlClient client;
+
+    @Before
+    public void setupClient() {
+        client = ProtocolRestXmlClient.builder()
+                                      .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                      .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                           "us-east-1"))
+                                      .build();
+    }
 
     @Test
     public void unmodeledException_UnmarshalledIntoBaseServiceException() {

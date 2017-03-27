@@ -18,15 +18,16 @@ package software.amazon.awssdk.protocol.tests.exception;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.services.protocolquery.ProtocolQueryClient;
 import software.amazon.awssdk.services.protocolquery.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolquery.model.EmptyModeledException;
@@ -39,11 +40,16 @@ public class QueryExceptionTests {
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
-    private final ProtocolQueryClient client = ProtocolQueryClient.builder()
-            .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-            .withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMock.port(), "us-east-1"))
-            .build();
+    private ProtocolQueryClient client;
+
+    @Before
+    public void setupClient() {
+        client = ProtocolQueryClient.builder()
+                                    .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                    .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                         "us-east-1"))
+                                    .build();
+    }
 
     @Test
     public void unmodeledException_UnmarshalledIntoBaseServiceException() {

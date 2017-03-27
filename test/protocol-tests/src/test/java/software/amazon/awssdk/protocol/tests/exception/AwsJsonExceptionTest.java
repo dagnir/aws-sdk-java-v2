@@ -21,11 +21,12 @@ import static org.junit.Assert.assertThat;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocoljsonrpc.model.EmptyModeledException;
@@ -40,11 +41,16 @@ public class AwsJsonExceptionTest {
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
-    private final ProtocolJsonRpcClient client = ProtocolJsonRpcClient.builder().withCredentials(
-            new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-            .withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMock.port(), "us-east-1"))
-            .build();
+    private ProtocolJsonRpcClient client;
+
+    @Before
+    public void setupClient() {
+        client = ProtocolJsonRpcClient.builder()
+                                      .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                      .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                           "us-east-1"))
+                                      .build();
+    }
 
     @Test
     public void unmodeledException_UnmarshalledIntoBaseServiceException() {
