@@ -15,12 +15,13 @@
 
 package software.amazon.awssdk.protocol.reflect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
@@ -70,37 +71,35 @@ public class ClientReflector {
      */
     private Object createClient() {
         try {
-            if (metadata.getProtocol().equals(Protocol.API_GATEWAY)) {
-                SdkSyncClientBuilder<?, ?> builder =
-                        (SdkSyncClientBuilder<?, ?>) interfaceClass.getMethod("builder").invoke(null);
+            // Reflectively create a builder, configure it, and then create the client.
+            Object untypedBuilder = interfaceClass.getMethod("builder").invoke(null);
+
+            if (metadata.getProtocol() == Protocol.API_GATEWAY) {
+                SdkSyncClientBuilder<?, ?> builder = (SdkSyncClientBuilder<?, ?>) untypedBuilder;
                 builder.getClass()
-                       .getMethod("iamCredentials", AwsCredentialsProvider.class)
-                       .invoke(builder, new AwsStaticCredentialsProvider(getMockCredentials()));
-                return builder
-                        .endpoint("http://localhost:" + WireMockUtils.port())
-                        .build();
+                       .getMethod("iamCredentials", AwsCredentialsProvider.class).invoke(builder, getMockCredentials());
+                builder.setEndpoint(getEndpoint());
+                return builder.build();
             } else {
-                return createAmazonServiceClient();
+                AwsClientBuilder<?, ?> builder = (AwsClientBuilder<?, ?>) untypedBuilder;
+                builder.setCredentials(getMockCredentials());
+                builder.setEndpointConfiguration(new EndpointConfiguration(getEndpoint(), "us-east-1"));
+                return builder.build();
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private AmazonWebServiceClient createAmazonServiceClient() throws Exception {
-        final Class<?> syncClientClass = Class.forName(getFqcn(metadata.getSyncClient()));
-        AmazonWebServiceClient amazonClient = (AmazonWebServiceClient) syncClientClass
-                .getConstructor(AwsCredentials.class)
-                .newInstance(getMockCredentials());
-        amazonClient.setEndpoint("http://localhost:" + WireMockUtils.port());
-        return amazonClient;
+    private String getEndpoint() {
+        return "http://localhost:" + WireMockUtils.port();
     }
 
     /**
      * @return Dummy credentials to create client with.
      */
-    private BasicAwsCredentials getMockCredentials() {
-        return new BasicAwsCredentials("akid", "skid");
+    private AwsStaticCredentialsProvider getMockCredentials() {
+        return new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid"));
     }
 
     /**
