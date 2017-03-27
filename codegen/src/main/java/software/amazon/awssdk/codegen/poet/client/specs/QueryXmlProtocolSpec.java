@@ -36,6 +36,7 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.http.DefaultErrorResponseHandler;
 import software.amazon.awssdk.http.StaxResponseHandler;
+import software.amazon.awssdk.runtime.transform.StandardErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 
 public class QueryXmlProtocolSpec implements ProtocolSpec {
@@ -63,6 +64,10 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
 
         methodSpec.addStatement("$T unmarshallers = new $T()", List.class, ArrayList.class);
         errorUnmarshallers(model).forEach(methodSpec::addCode);
+        methodSpec.addCode(CodeBlock.builder().add("unmarshallers.add(new $T($T.class));",
+                                                   StandardErrorUnmarshaller.class,
+                                                   PoetUtils.getModelClass(basePackage,
+                                                                           model.getSdkModeledExceptionBaseClassName())).build());
         methodSpec.addStatement("return $N", "unmarshallers");
 
         return methodSpec.build();
@@ -75,20 +80,20 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
         ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
 
         return CodeBlock.builder().add("\n\n$T<$T> responseHandler = new $T<$T>(new $T());",
-                StaxResponseHandler.class,
-                returnType,
-                StaxResponseHandler.class,
-                returnType,
-                unmarshaller)
+                                       StaxResponseHandler.class,
+                                       returnType,
+                                       StaxResponseHandler.class,
+                                       returnType,
+                                       unmarshaller)
                 .build();
     }
 
     @Override
     public CodeBlock errorResponseHandler(OperationModel opModel) {
         return CodeBlock.builder().add("\n\n$T errorResponseHandler = new $T($N);",
-                DefaultErrorResponseHandler.class,
-                DefaultErrorResponseHandler.class,
-                "exceptionUnmarshallers")
+                                       DefaultErrorResponseHandler.class,
+                                       DefaultErrorResponseHandler.class,
+                                       "exceptionUnmarshallers")
                 .build();
     }
 
@@ -98,15 +103,19 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
         ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
         ClassName marshaller = PoetUtils.getTransformClass(basePackage, opModel.getInputShape().getShapeName() + "Marshaller");
         return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>()" +
-                ".withMarshaller(new $T()).withResponseHandler($N).withErrorResponseHandler($N).withInput($L)).getResult();",
-                ClientExecutionParams.class,
-                requestType,
-                AmazonWebServiceResponse.class,
-                returnType,
-                marshaller,
-                "responseHandler",
-                "errorResponseHandler",
-                opModel.getInput().getVariableName())
+                                       ".withMarshaller(new $T())" +
+                                       ".withResponseHandler($N)" +
+                                       ".withErrorResponseHandler($N)" +
+                                       ".withInput($L))" +
+                                       ".getResult();",
+                                       ClientExecutionParams.class,
+                                       requestType,
+                                       AmazonWebServiceResponse.class,
+                                       returnType,
+                                       marshaller,
+                                       "responseHandler",
+                                       "errorResponseHandler",
+                                       opModel.getInput().getVariableName())
                 .build();
     }
 

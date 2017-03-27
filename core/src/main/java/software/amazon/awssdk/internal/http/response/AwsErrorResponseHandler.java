@@ -16,6 +16,7 @@
 package software.amazon.awssdk.internal.http.response;
 
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
@@ -25,12 +26,12 @@ import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
  * Wrapper around protocol specific error handler to deal with some default scenarios and fill in common information.
  */
 @SdkInternalApi
-public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServiceException> {
+public class AwsErrorResponseHandler implements HttpResponseHandler<SdkBaseException> {
 
-    private final HttpResponseHandler<AmazonServiceException> delegate;
+    private final HttpResponseHandler<? extends SdkBaseException> delegate;
     private final AwsRequestMetrics awsRequestMetrics;
 
-    public AwsErrorResponseHandler(HttpResponseHandler<AmazonServiceException> errorResponseHandler,
+    public AwsErrorResponseHandler(HttpResponseHandler<? extends SdkBaseException> errorResponseHandler,
                                    AwsRequestMetrics awsRequestMetrics) {
         this.delegate = errorResponseHandler;
         this.awsRequestMetrics = awsRequestMetrics;
@@ -38,7 +39,7 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServic
 
     @Override
     public AmazonServiceException handle(HttpResponse response) throws Exception {
-        final AmazonServiceException ase = handleAse(response);
+        final AmazonServiceException ase = (AmazonServiceException) handleAse(response);
         ase.setStatusCode(response.getStatusCode());
         ase.setServiceName(response.getRequest().getServiceName());
         awsRequestMetrics.addPropertyWith(AwsRequestMetrics.Field.AWSRequestID, ase.getRequestId())
@@ -47,7 +48,7 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<AmazonServic
         return ase;
     }
 
-    private AmazonServiceException handleAse(HttpResponse response) throws Exception {
+    private SdkBaseException handleAse(HttpResponse response) throws Exception {
         final int statusCode = response.getStatusCode();
         try {
             return delegate.handle(response);

@@ -63,7 +63,6 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
     private static final String ATTRIBUTE_NAME = "VisibilityTimeout";
     private static final String MESSAGE_BODY = "foobarbazbar";
 
-    private final SQSAsyncClient sqsClient = getSharedSqsAsyncClient();
     private final String queueName = getUniqueQueueName();
     private String queueUrl;
 
@@ -72,7 +71,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
      */
     @After
     public void tearDown() throws Exception {
-        sqsClient.deleteQueue(new DeleteQueueRequest(queueUrl));
+        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
     }
 
     @Test
@@ -91,17 +90,17 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
     }
 
     private void runCreateQueueTest() {
-        queueUrl = sqsClient.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
+        queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
         assertNotEmpty(queueUrl);
     }
 
     private void runGetQueueTest() {
-        GetQueueUrlResult getQueueUrlResult = sqsClient.getQueueUrl(new GetQueueUrlRequest(queueName)).join();
+        GetQueueUrlResult getQueueUrlResult = sqs.getQueueUrl(new GetQueueUrlRequest(queueName)).join();
         assertEquals(queueUrl, getQueueUrlResult.getQueueUrl());
     }
 
     private void runListQueuesTest() {
-        ListQueuesResult listQueuesResult = sqsClient.listQueues(new ListQueuesRequest(queueName)).join();
+        ListQueuesResult listQueuesResult = sqs.listQueues(new ListQueuesRequest(queueName)).join();
         assertEquals(1, listQueuesResult.getQueueUrls().size());
         assertEquals(queueUrl, listQueuesResult.getQueueUrls().get(0));
     }
@@ -109,10 +108,10 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
     private void runSetAttributesTest() throws InterruptedException {
         Map<String, String> attributes = new HashMap<String, String>();
         attributes.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
-        sqsClient.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes)).join();
+        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes)).join();
 
         Thread.sleep(1000 * 10);
-        GetQueueAttributesResult queueAttributesResult = sqsClient.getQueueAttributes(new GetQueueAttributesRequest(queueUrl,
+        GetQueueAttributesResult queueAttributesResult = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl,
                 Arrays.asList(ATTRIBUTE_NAME))).join();
         assertEquals(1, queueAttributesResult.getAttributes().size());
         Map<String, String> attributes2 = queueAttributesResult.getAttributes();
@@ -121,25 +120,25 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
     }
 
     private void runAddPermissionTest() {
-        sqsClient.addPermission(new AddPermissionRequest(queueUrl, "foo-label", Arrays.asList(getAccountId()),
+        sqs.addPermission(new AddPermissionRequest(queueUrl, "foo-label", Arrays.asList(getAccountId()),
                 Arrays.asList("SendMessage", "DeleteMessage"))).join();
     }
 
     private void runRemovePermissionTest() throws InterruptedException {
         Thread.sleep(1000 * 2);
-        sqsClient.removePermission(new RemovePermissionRequest(queueUrl, "foo-label")).join();
+        sqs.removePermission(new RemovePermissionRequest(queueUrl, "foo-label")).join();
     }
 
     private void runSendMessageTest() {
         for (int i = 0; i < 10; i++) {
-            SendMessageResult sendMessageResult = sqsClient.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)).join();
+            SendMessageResult sendMessageResult = sqs.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)).join();
             assertNotEmpty(sendMessageResult.getMessageId());
             assertNotEmpty(sendMessageResult.getMD5OfMessageBody());
         }
     }
 
     private ReceiveMessageResult runReceiveMessageTest() {
-        ReceiveMessageResult receiveMessageResult = sqsClient.receiveMessage(new ReceiveMessageRequest(queueUrl)).join();
+        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join();
         assertThat(receiveMessageResult.getMessages(), not(empty()));
         Message message = receiveMessageResult.getMessages().get(0);
         assertEquals(MESSAGE_BODY, message.getBody());
@@ -157,7 +156,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
     }
 
     private void runSendMessageBatchTest() {
-        SendMessageBatchResult sendMessageBatchResult = sqsClient.sendMessageBatch(new SendMessageBatchRequest(queueUrl, Arrays.asList(
+        SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest(queueUrl, Arrays.asList(
                 new SendMessageBatchRequestEntry().withId("1").withMessageBody("1"), new SendMessageBatchRequestEntry()
                         .withId("2").withMessageBody("2"), new SendMessageBatchRequestEntry().withId("3")
                         .withMessageBody("3"), new SendMessageBatchRequestEntry().withId("4").withMessageBody("4"),
@@ -172,11 +171,11 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 
     private String runChangeMessageVisibilityTest(ReceiveMessageResult receiveMessageResult) {
         String receiptHandle = (receiveMessageResult.getMessages().get(0)).getReceiptHandle();
-        sqsClient.changeMessageVisibility(new ChangeMessageVisibilityRequest(queueUrl, receiptHandle, 123));
+        sqs.changeMessageVisibility(new ChangeMessageVisibilityRequest(queueUrl, receiptHandle, 123));
         return receiptHandle;
     }
 
     private void runDeleteMessageTest(String receiptHandle) {
-        sqsClient.deleteMessage(new DeleteMessageRequest(queueUrl, receiptHandle));
+        sqs.deleteMessage(new DeleteMessageRequest(queueUrl, receiptHandle));
     }
 }

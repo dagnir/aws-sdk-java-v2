@@ -41,7 +41,6 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
      * Doesn't have to be a valid account id, just has to have a value
      **/
     private static final String ACCOUNT_ID = "123456789";
-    private final SQSAsyncClient sqsClient = getSharedSqsAsyncClient();
     private String queueUrl;
 
     /**
@@ -49,7 +48,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
      */
     @After
     public void tearDown() throws Exception {
-        sqsClient.deleteQueue(new DeleteQueueRequest(queueUrl));
+        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
     }
 
     /**
@@ -58,7 +57,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
     @Test
     public void testPolicies() throws Exception {
         String queueName = getUniqueQueueName();
-        queueUrl = sqsClient.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
+        queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
 
         Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withPrincipals(Principal.ALL_USERS)
                 .withActions(SQSActions.SendMessage, SQSActions.ReceiveMessage)
@@ -72,6 +71,6 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
         Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("Policy", policy.toJson());
 
-        sqsClient.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
+        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
     }
 }
