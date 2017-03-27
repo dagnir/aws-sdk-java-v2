@@ -86,6 +86,9 @@ public class FunctionalUtilsTest {
             .withCauseInstanceOf(InterruptedException.class);
 
         assertThat(Thread.currentThread().isInterrupted()).isTrue();
+
+        // Clear interrupt flag
+        Thread.interrupted();
     }
 
     private String methodThatThrows() throws Exception {
