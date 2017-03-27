@@ -37,7 +37,7 @@ public class OperationModel extends DocumentationModel {
 
     private ReturnTypeModel returnType;
 
-    private List<ExceptionModel> exceptions;
+    private List<ExceptionModel> exceptions = new ArrayList<ExceptionModel>();
 
     private List<SimpleMethodFormModel> simpleMethods;
 
@@ -264,9 +264,6 @@ public class OperationModel extends DocumentationModel {
     }
 
     public void addException(ExceptionModel exception) {
-        if (exceptions == null) {
-            exceptions = new ArrayList<ExceptionModel>();
-        }
         exceptions.add(exception);
     }
 

@@ -18,12 +18,9 @@ package software.amazon.awssdk.codegen.poet.client.specs;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import software.amazon.awssdk.client.ClientHandler;
 import software.amazon.awssdk.client.SdkClientHandler;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;

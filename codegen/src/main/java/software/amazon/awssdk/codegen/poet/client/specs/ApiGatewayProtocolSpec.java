@@ -28,8 +28,10 @@ import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.client.ClientHandler;
+import software.amazon.awssdk.codegen.model.intermediate.ExceptionModel;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
+import software.amazon.awssdk.codegen.poet.PoetCollectors;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.opensdk.protect.client.SdkClientHandler;
@@ -105,9 +107,32 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
     public CodeBlock errorResponseHandler(OperationModel opModel) {
         return CodeBlock
                 .builder()
-                .add("\n\n$T<$T> errorResponseHandler = createErrorResponseHandler();",
-                        HttpResponseHandler.class, SdkBaseException.class)
+                .add("\n\n$T<$T> errorResponseHandler = createErrorResponseHandler(",
+                     HttpResponseHandler.class,
+                     SdkBaseException.class)
+                .add(errorMetadata(opModel))
+                .add(");")
                 .build();
+    }
+
+    /**
+     * Load the error metadata parameter to be given to the error response handler. This metadata instructs the framework how to
+     * map a response code to a particular exception type.
+     */
+    private CodeBlock errorMetadata(OperationModel opModel) {
+        return opModel.getExceptions().stream()
+                      .map(this::exceptionModelToMetadata)
+                      .collect(PoetCollectors.toDelimitedCodeBlock(", "));
+    }
+
+    /**
+     * Convert the provided exception model into a piece of error metadata that should be given to the error response handler.
+     */
+    private CodeBlock exceptionModelToMetadata(ExceptionModel exception) {
+        ClassName exceptionClass = PoetUtils.getModelClass(basePackage, exception.getExceptionName());
+        return CodeBlock.of("new JsonErrorShapeMetadata().withModeledClass($T.class).withHttpStatusCode($L)",
+                            exceptionClass,
+                            exception.getHttpStatusCode());
     }
 
     @Override
