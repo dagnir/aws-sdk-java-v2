@@ -25,7 +25,7 @@ public enum AwsMetricTransformerFactory {
     DynamoDb;
 
     public static final String DEFAULT_METRIC_TRANSFORM_PROVIDER_PACKAGE =
-            "software.amazon.awssdk.metrics.internal.cloudwatch.provider.transform";
+            "software.amazon.awssdk.metrics.internal.cloudwatch.transform";
     private static final String REQUEST_TRANSFORMER_CLASSNAME_SUFFIX = "RequestMetricTransformer";
     public static volatile String transformerPackage = DEFAULT_METRIC_TRANSFORM_PROVIDER_PACKAGE;
     /**

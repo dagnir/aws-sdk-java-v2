@@ -44,7 +44,7 @@ import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
  * @see AwsMetricTransformerFactory
  */
 @ThreadSafe
-public class DynamoDBRequestMetricTransformer implements RequestMetricTransformer {
+public class DynamoDbRequestMetricTransformer implements RequestMetricTransformer {
     @Override
     public List<MetricDatum> toMetricData(MetricType metricType,
                                           Request<?> request, Response<?> response) {

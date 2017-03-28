@@ -8,23 +8,23 @@ import org.junit.Test;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.metrics.internal.cloudwatch.transform.DynamoDBRequestMetricTransformer;
+import software.amazon.awssdk.metrics.internal.cloudwatch.transform.DynamoDbRequestMetricTransformer;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.dynamodb.metrics.DynamoDBRequestMetric;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
 
-public class DynamoDBRequestMetricTransformerTest {
+public class DynamoDbRequestMetricTransformerTest {
     @Test
     public void trival() {
-        DynamoDBRequestMetricTransformer t = new DynamoDBRequestMetricTransformer();
+        DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
         assertNull(t.toMetricData(null, null, null));
     }
 
     @Test
     public void noConsumedCapacity() {
-        DynamoDBRequestMetricTransformer t = new DynamoDBRequestMetricTransformer();
+        DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
         PutItemRequest pi_req = new PutItemRequest();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
         PutItemResult pi_res = new PutItemResult();
@@ -35,7 +35,7 @@ public class DynamoDBRequestMetricTransformerTest {
 
     @Test
     public void consumedCapacity() {
-        DynamoDBRequestMetricTransformer t = new DynamoDBRequestMetricTransformer();
+        DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
         PutItemRequest pi_req = new PutItemRequest();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
         PutItemResult pi_res = new PutItemResult().withConsumedCapacity(
