@@ -24,6 +24,19 @@ import java.util.Collection;
 public class ValidationUtils {
 
     /**
+     * Assert that we are in a valid state, throwing an exception containing the provided message if we are not.
+     *
+     * @param expression The expression that should resolve to true.
+     * @param message The message to include in the illegal state exception if the expression is not true.
+     * @param values String.format parameters to the message.
+     */
+    public static void assertValidState(boolean expression, String message, Object... values) {
+        if (!expression) {
+            throw new IllegalStateException(String.format(message, values));
+        }
+    }
+
+    /**
      * Asserts that the given object is non-null and returns it.
      *
      * @param object

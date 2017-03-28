@@ -33,8 +33,8 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.kms.KMSClient;
-import software.amazon.awssdk.services.kms.KMSClientBuilder;
 import software.amazon.awssdk.services.s3.internal.MultiFileOutputStream;
 import software.amazon.awssdk.services.s3.internal.PartCreationEvent;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
@@ -540,16 +540,19 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     private KMSClient newAwsKmsClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfig,
                                          CryptoConfiguration cryptoConfig, RequestMetricCollector requestMetricCollector) {
-        final KMSClientBuilder builder = KMSClient.builder();
-
-        builder.withCredentials(credentialsProvider)
-                .withClientConfiguration(clientConfig)
-                .withMetricsCollector(requestMetricCollector);
-        final Region kmsRegion = cryptoConfig.getAwsKmsRegion();
-        if (kmsRegion != null) {
-            builder.withRegion(kmsRegion.getName());
+        Region kmsRegion = cryptoConfig.getAwsKmsRegion();
+        if (kmsRegion == null) {
+            // This is weird: we should probably be matching the S3 client's region, but this has always been the default behavior
+            // and there's no reason to change it now when we're going to rewrite the entire S3 client anyway in 2.0.
+            kmsRegion = RegionUtils.getRegion("us-east-1");
         }
-        return builder.build();
+
+        return KMSClient.builder()
+                        .withCredentials(credentialsProvider)
+                        .withClientConfiguration(clientConfig)
+                        .withMetricsCollector(requestMetricCollector)
+                        .withRegion(kmsRegion.getName())
+                        .build();
     }
 
     private void assertParameterNotNull(Object parameterValue,

@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.client.builder;
 
+import static software.amazon.awssdk.utils.ValidationUtils.assertValidState;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -410,8 +412,6 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * Presents a view of the builder to be used in a client constructor.
      */
     protected class SyncBuilderParams extends AwsAsyncClientParams {
-
-
         private final LegacyClientConfiguration clientConfig;
         private final AwsCredentialsProvider credentials;
         private final RequestMetricCollector metricsCollector;
@@ -424,6 +424,15 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
             this.metricsCollector = AwsClientBuilder.this.metricsCollector;
             this.requestHandlers = resolveRequestHandlers();
             this.signingRegion = resolveSigningRegion();
+            validateParams();
+        }
+
+        private void validateParams() {
+            assertValidState(region == null || endpointConfiguration == null,
+                             "Only one of Region or EndpointConfiguration may be set.");
+            assertValidState(signingRegion != null,
+                             "Signing region could not be determined. Please specify the region or endpoint.");
+            assertValidState(credentials != null, "Credentials could not be determined.");
         }
 
         @Override
@@ -468,7 +477,6 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         public ExecutorService getExecutor() {
             throw new UnsupportedOperationException("ExecutorService is not used for sync client.");
         }
-
     }
 
 }

@@ -51,7 +51,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -612,6 +611,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         this.skipMd5CheckStrategy = SkipMd5CheckStrategy.INSTANCE;
         setS3ClientOptions(s3ClientParams.getS3ClientOptions());
         init();
+
+        // This seems weird: we're updating the endpoint after we have initialized everything. This was the old behavior of the
+        // S3 client builder before the client refactor, so we've simply migrated the logic here to preserve compatibility. This
+        // will all get better when we completely change the S3 client.
+        setEndpoint(s3ClientParams.getClientParams().getEndpoint().toString());
     }
 
     static Map<String, String> getBucketRegionCache() {
