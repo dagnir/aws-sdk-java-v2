@@ -19,27 +19,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import org.junit.BeforeClass;
+import java.util.ArrayList;
+import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.DefaultDynamoDBClient;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBIndexHashKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBIndexRangeKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBQueryExpression;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBRangeKey;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResult;
-import software.amazon.awssdk.services.dynamodb.waiters.DynamoDBClientWaiters;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 
@@ -53,13 +54,13 @@ public class MapperQueryExpressionTest {
             .withAttributeValueList(new AttributeValue("some value"))
             .withComparisonOperator(ComparisonOperator.EQ);
 
-    private static CaptureDynamoDB capture;
+    private static DynamoDBClient mockClient;
     private static DynamoDBMapper mapper;
 
-    @BeforeClass
-    public static void setUp() throws SecurityException, NoSuchMethodException {
-        capture = new CaptureDynamoDB(Collections.<Map<String, AttributeValue>>emptyList());
-        mapper = new DynamoDBMapper(capture);
+    @Before
+    public void setUp() throws SecurityException, NoSuchMethodException {
+        mockClient = Mockito.mock(DynamoDBClient.class);
+        mapper = new DynamoDBMapper(mockClient);
     }
 
     private static <T> QueryRequest testCreateQueryRequestFromExpression(
@@ -71,12 +72,17 @@ public class MapperQueryExpressionTest {
             Class<T> clazz, DynamoDBQueryExpression<T> queryExpression,
             String expectedErrorMessage) {
         try {
+            Mockito.when(mockClient.query(any())).thenReturn(new QueryResult().withItems(new ArrayList<>()));
+
             mapper.queryPage(clazz, queryExpression, DynamoDBMapperConfig.DEFAULT);
             if (expectedErrorMessage != null) {
                 fail("Exception containing messsage ("
                      + expectedErrorMessage + ") is expected.");
             }
-            return capture.request;
+
+            ArgumentCaptor<QueryRequest> request = ArgumentCaptor.forClass(QueryRequest.class);
+            Mockito.verify(mockClient, atLeastOnce()).query(request.capture());
+            return request.getValue();
         } catch (RuntimeException e) {
             if (expectedErrorMessage != null && e.getMessage() != null) {
                 assertTrue("Exception message [" + e.getMessage() + "] does not contain " +
@@ -372,33 +378,6 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.getKeyConditions().size() == 1);
         assertTrue(queryRequest.getKeyConditions().containsKey("primaryHashKey"));
         assertEquals("LSI", queryRequest.getIndexName());
-    }
-
-    private static final class CaptureDynamoDB extends DefaultDynamoDBClient {
-        private QueryRequest request;
-        private QueryResult result;
-
-        private CaptureDynamoDB(final List<Map<String, AttributeValue>> items) {
-            super(null);
-            this.result = new QueryResult();
-            this.result.setItems(items);
-        }
-
-        @Override
-        public QueryResult query(QueryRequest request) {
-            this.request = request;
-            return this.result;
-        }
-
-        @Override
-        public DynamoDBClientWaiters waiters() {
-            return null;
-        }
-
-        @Override
-        public void close() throws Exception {
-
-        }
     }
 
     @DynamoDBTable(tableName = TABLE_NAME)
