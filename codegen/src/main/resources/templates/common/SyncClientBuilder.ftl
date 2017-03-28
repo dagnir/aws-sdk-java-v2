@@ -57,6 +57,7 @@ public final class ${metadata.syncClientBuilderClassName}
                 "/${metadata.packagePath}/request.handlers"));
         params.getRequestHandlers().addAll(chainFactory.newRequestHandler2Chain(
                 "/${metadata.packagePath}/request.handler2s"));
+        params.getRequestHandlers().addAll(chainFactory.getGlobalHandlers());
         return new ${metadata.syncClient}(params);
     }
 

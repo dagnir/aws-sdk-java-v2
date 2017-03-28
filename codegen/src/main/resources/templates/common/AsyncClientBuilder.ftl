@@ -58,6 +58,7 @@ public final class ${metadata.asyncClientBuilderClassName}
                 "/${metadata.packagePath}/request.handlers"));
         params.getRequestHandlers().addAll(chainFactory.newRequestHandler2Chain(
                 "/${metadata.packagePath}/request.handler2s"));
+        params.getRequestHandlers().addAll(chainFactory.getGlobalHandlers());
         return new ${metadata.asyncClient}(params);
     }
 

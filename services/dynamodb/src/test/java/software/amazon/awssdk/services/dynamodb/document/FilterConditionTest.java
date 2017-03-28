@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Assert;
 import org.junit.Test;
+import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
@@ -267,7 +268,7 @@ public class FilterConditionTest {
 
     @Test
     public void testScanFilter_DuplicateAttribute() {
-        Table fakeTable = new Table(DynamoDBClient.create(), "fake-table");
+        Table fakeTable = new Table(DynamoDBClient.builder().withRegion(Regions.US_WEST_2).build(), "fake-table");
         try {
             fakeTable.scan(
                     new ScanFilter("foo").eq("bar"),

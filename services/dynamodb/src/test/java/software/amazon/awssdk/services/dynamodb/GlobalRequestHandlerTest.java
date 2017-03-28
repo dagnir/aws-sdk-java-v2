@@ -39,6 +39,7 @@ public class GlobalRequestHandlerTest {
         assertFalse(TestGlobalRequestHandler.wasCalled());
         DynamoDBClient client = DynamoDBClient.builder()
                 .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                .withRegion(Regions.US_WEST_2)
                 .build();
         callApi(client);
         assertTrue(TestGlobalRequestHandler.wasCalled());

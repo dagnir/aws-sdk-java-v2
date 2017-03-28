@@ -25,6 +25,7 @@ import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.Immutable;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -86,7 +87,7 @@ public class ClientHandlerImpl extends ClientHandler {
         try {
             awsRequestMetrics.startEvent(AwsRequestMetrics.Field.RequestMarshallTime);
             try {
-                request = executionParams.getMarshaller().marshall(inputT);
+                request = executionParams.getMarshaller().marshall(tryBeforeMarshalling(inputT));
                 request.setAwsRequestMetrics(awsRequestMetrics);
             } finally {
                 awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RequestMarshallTime);
@@ -154,6 +155,17 @@ public class ClientHandlerImpl extends ClientHandler {
                AwsSdkMetrics.getRequestMetricCollector();
     }
 
+    /**
+     * Super big hack: beforeMarshalling requires an AmazonWebServiceRequest. Here we will try to call it if we can.
+     */
+    @SuppressWarnings("unchecked")
+    @ReviewBeforeRelease("This should be removed when we update the listener system.")
+    private <T> T tryBeforeMarshalling(T input) {
+        if (input instanceof AmazonWebServiceRequest) {
+            return (T) beforeMarshalling((AmazonWebServiceRequest) input);
+        }
+        return input;
+    }
 
     /**
      * Runs the {@code beforeMarshalling} method of any {@code RequestHandler2}s associated with
