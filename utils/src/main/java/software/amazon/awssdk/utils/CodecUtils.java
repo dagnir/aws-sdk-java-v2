@@ -15,11 +15,14 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * Codec internal utilities
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 public enum CodecUtils {
     ;
 

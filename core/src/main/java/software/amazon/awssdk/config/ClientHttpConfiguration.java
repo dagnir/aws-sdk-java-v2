@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.utils.ValidationUtils;
 
 /**
  * Configures the behavior of the AWS SDK HTTP client.

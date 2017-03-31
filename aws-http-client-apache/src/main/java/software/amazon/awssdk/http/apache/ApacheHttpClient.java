@@ -18,7 +18,6 @@ package software.amazon.awssdk.http.apache;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static software.amazon.awssdk.utils.ValidationUtils.assertNotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,6 +39,7 @@ import software.amazon.awssdk.http.apache.internal.impl.ApacheHttpRequestFactory
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.utils.Validate;
 
 public class ApacheHttpClient implements SdkHttpClient {
 
@@ -48,8 +48,8 @@ public class ApacheHttpClient implements SdkHttpClient {
     private final SdkHttpClientSettings httpClientSettings;
 
     ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient, SdkHttpClientSettings httpClientSettings) {
-        this.httpClient = assertNotNull(httpClient, "httpClient");
-        this.httpClientSettings = assertNotNull(httpClientSettings, "httpClientSettings");
+        this.httpClient = Validate.notNull(httpClient, "httpClient must not be null.");
+        this.httpClientSettings = Validate.notNull(httpClientSettings, "httpClientSettings must not be null.");
     }
 
     @Override

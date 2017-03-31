@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.client.builder;
 
-import static software.amazon.awssdk.utils.ValidationUtils.assertValidState;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +45,7 @@ import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
+import software.amazon.awssdk.utils.Validate;
 
 /**
  * Base class for all service specific client builders.
@@ -428,11 +427,11 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         }
 
         private void validateParams() {
-            assertValidState(region == null || endpointConfiguration == null,
-                             "Only one of Region or EndpointConfiguration may be set.");
-            assertValidState(signingRegion != null,
-                             "Signing region could not be determined. Please specify the region or endpoint.");
-            assertValidState(credentials != null, "Credentials could not be determined.");
+            Validate.validState(region == null || endpointConfiguration == null,
+                                "Only one of Region or EndpointConfiguration may be set.");
+            Validate.validState(signingRegion != null,
+                                "Signing region could not be determined. Please specify the region or endpoint.");
+            Validate.validState(credentials != null, "Credentials could not be determined.");
         }
 
         @Override

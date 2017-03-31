@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * A Base 32 codec API.
  *
@@ -22,6 +24,7 @@ package software.amazon.awssdk.utils;
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 public enum Base32 {
     ;
     private static final Base32Codec CODEC = new Base32Codec();

@@ -15,13 +15,15 @@
 
 package software.amazon.awssdk.config;
 
+import static software.amazon.awssdk.utils.StringUtils.isEmpty;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.utils.ValidationUtils;
+import software.amazon.awssdk.utils.Validate;
 
 /**
  * Configuration that defines how to communicate via an HTTP proxy.
@@ -246,10 +248,10 @@ public final class ClientHttpProxyConfiguration {
         @Override
         public Builder endpoint(URI endpoint) {
             if (endpoint != null) {
-                ValidationUtils.assertStringEmpty(endpoint.getUserInfo(), "Proxy endpoint user info");
-                ValidationUtils.assertStringEmpty(endpoint.getPath(), "Proxy endpoint path");
-                ValidationUtils.assertStringEmpty(endpoint.getQuery(), "Proxy endpoint query");
-                ValidationUtils.assertStringEmpty(endpoint.getFragment(), "Proxy endpoint fragment");
+                Validate.isTrue(isEmpty(endpoint.getUserInfo()), "Proxy endpoint user info is not supported.");
+                Validate.isTrue(isEmpty(endpoint.getPath()), "Proxy endpoint path is not supported.");
+                Validate.isTrue(isEmpty(endpoint.getQuery()), "Proxy endpoint query is not supported.");
+                Validate.isTrue(isEmpty(endpoint.getFragment()), "Proxy endpoint fragment is not supported.");
             }
 
             this.endpoint = endpoint;
