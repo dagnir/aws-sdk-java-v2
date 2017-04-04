@@ -45,7 +45,9 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setup() {
         CreateConnectionResult result = dc.createConnection(new CreateConnectionRequest()
-                                                                    .withConnectionName(CONNECTION_NAME).withBandwidth("1Gbps").withLocation("EqSV5"));
+                                                                    .withConnectionName(CONNECTION_NAME)
+                                                                    .withBandwidth("1Gbps")
+                                                                    .withLocation("EqSV5"));
         connectionId = result.getConnectionId();
     }
 

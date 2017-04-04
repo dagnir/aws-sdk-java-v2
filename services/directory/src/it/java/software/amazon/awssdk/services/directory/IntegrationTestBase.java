@@ -17,6 +17,7 @@ package software.amazon.awssdk.services.directory;
 
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
@@ -27,7 +28,13 @@ public class IntegrationTestBase extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void baseSetupFixture() {
-        dsClient = DirectoryClient.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
-        ec2Client = EC2Client.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
+        dsClient = DirectoryClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .withRegion(Regions.US_EAST_1)
+                .build();
+        ec2Client = EC2Client.builder()
+                .withRegion(Regions.US_EAST_1)
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .build();
     }
 }

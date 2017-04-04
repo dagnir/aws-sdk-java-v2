@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.services.autoscaling;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.autoscaling.model.CreateAutoScalingGroupRequest;
 import software.amazon.awssdk.services.autoscaling.model.CreateLaunchConfigurationRequest;
 import software.amazon.awssdk.services.sns.SNSClient;
@@ -32,6 +32,11 @@ import software.amazon.awssdk.test.AwsTestBase;
  * @author Jason Fulghum fulghum@amazon.com
  */
 public abstract class IntegrationTestBase extends AwsTestBase {
+
+    /**
+     * Region has to be us-east-1 to find AMI '{@value #AMI_ID}'.
+     */
+    private static final Regions REGION = Regions.US_EAST_1;
 
     /*
      * Test data values
@@ -51,12 +56,20 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      * tests to use.
      */
     @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
+    public static void setUp() throws IOException {
         setUpCredentials();
-        autoscaling = AutoScalingClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        autoscaling = AutoScalingClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .withRegion(REGION)
+                .build();
         autoscalingAsync = AutoScalingAsyncClientBuilder.standard()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
-        sns = SNSClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .withRegion(REGION)
+                .build();
+        sns = SNSClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .withRegion(REGION)
+                .build();
     }
 
     /*

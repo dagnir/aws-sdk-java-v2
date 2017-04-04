@@ -28,7 +28,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.zip.CRC32;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
@@ -48,12 +47,14 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
     private RequestHandler2 mockRequestHandler;
 
-    @BeforeClass
+    @Before
     public void setupFixture() {
         mockRequestHandler = spy(new RequestHandler2() {
         });
-        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRequestHandlers(mockRequestHandler).build();
+        ddb = DynamoDBClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRequestHandlers(mockRequestHandler)
+                .build();
     }
 
     @After
@@ -81,7 +82,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
         verify(mockRequestHandler).beforeMarshalling(any(AmazonWebServiceRequest.class));
         // Asserts that the request is actually replaced with what's returned by beforeMarshalling
-        verify(spiedRequest).getRequestCredentialsProvider();
+        verify(spiedRequest).getExclusiveStartTableName();
     }
 
     @Test

@@ -25,7 +25,6 @@ import java.util.UUID;
 import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.route53.model.Change;
 import software.amazon.awssdk.services.route53.model.ChangeAction;
@@ -68,17 +67,25 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     private static final String TYPE = "TCP";
     private static final String IP_ADDRESS = "12.12.12.12";
 
-    /** The ID of the zone we created in this test. */
+    /**
+     * The ID of the zone we created in this test.
+     */
     private static String createdZoneId;
 
-    /** The ID of the change that created our test zone. */
+    /**
+     * The ID of the change that created our test zone.
+     */
     private String createdZoneChangeId;
 
-    /** the ID of the health check. */
+    /**
+     * the ID of the health check.
+     */
     private String healthCheckId;
 
 
-    /** Ensures the HostedZone we create during this test is correctly released. */
+    /**
+     * Ensures the HostedZone we create during this test is correctly released.
+     */
     @AfterClass
     public static void tearDown() {
         try {
@@ -100,7 +107,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
                                                                          .withCallerReference(CALLER_REFERENCE)
                                                                          .withHostedZoneConfig(new HostedZoneConfig()
                                                                                                        .withComment(COMMENT))
-                                                                );
+        );
 
         createdZoneId = result.getHostedZone().getId();
         createdZoneChangeId = result.getChangeInfo().getId();
@@ -119,13 +126,15 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
         // Create a health check
         HealthCheckConfig config = new HealthCheckConfig().withType("TCP").withPort(PORT_NUM).withIPAddress(IP_ADDRESS);
-        CreateHealthCheckResult createHealthCheckResult = route53.createHealthCheck(new CreateHealthCheckRequest().withHealthCheckConfig(config).withCallerReference(CALLER_REFERENCE));
+        CreateHealthCheckResult createHealthCheckResult = route53.createHealthCheck(
+                new CreateHealthCheckRequest().withHealthCheckConfig(config).withCallerReference(CALLER_REFERENCE));
         healthCheckId = createHealthCheckResult.getHealthCheck().getId();
         assertNotNull(createHealthCheckResult.getLocation());
         assertValidHealthCheck(createHealthCheckResult.getHealthCheck());
 
         // Get the health check back
-        GetHealthCheckResult getHealthCheckResult = route53.getHealthCheck(new GetHealthCheckRequest().withHealthCheckId(healthCheckId));
+        GetHealthCheckResult getHealthCheckResult = route53
+                .getHealthCheck(new GetHealthCheckRequest().withHealthCheckId(healthCheckId));
         assertValidHealthCheck(getHealthCheckResult.getHealthCheck());
 
         // Delete the health check
@@ -180,9 +189,15 @@ public class Route53IntegrationTest extends IntegrationTestBase {
         changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
                                                               .withHostedZoneId(createdZoneId)
                                                               .withChangeBatch(new ChangeBatch().withComment(COMMENT)
-                                                                                                .withChanges(new Change().withAction(ChangeAction.DELETE).withResourceRecordSet(existingResourceRecordSet),
-                                                                                                             new Change().withAction(ChangeAction.CREATE).withResourceRecordSet(newResourceRecordSet))
-                                                                              )).getChangeInfo();
+                                                                                       .withChanges(new Change().withAction(
+                                                                                               ChangeAction.DELETE)
+                                                                                                            .withResourceRecordSet(
+                                                                                                                    existingResourceRecordSet),
+                                                                                                    new Change().withAction(
+                                                                                                            ChangeAction.CREATE)
+                                                                                                            .withResourceRecordSet(
+                                                                                                                    newResourceRecordSet))
+                                                              )).getChangeInfo();
         assertValidChangeInfo(changeInfo);
 
         // Add a weighted Resource Record Set so we can reproduce the bug reported by customers
@@ -201,8 +216,9 @@ public class Route53IntegrationTest extends IntegrationTestBase {
                                                               .withChangeBatch(
                                                                       new ChangeBatch().withComment(COMMENT).withChanges(
                                                                               new Change().withAction(ChangeAction.CREATE)
-                                                                                          .withResourceRecordSet(newResourceRecordSet)))
-                                                     ).getChangeInfo();
+                                                                                      .withResourceRecordSet(
+                                                                                              newResourceRecordSet)))
+        ).getChangeInfo();
         assertValidChangeInfo(changeInfo);
 
         // Clear up the RR Set
@@ -211,8 +227,9 @@ public class Route53IntegrationTest extends IntegrationTestBase {
                                                               .withChangeBatch(
                                                                       new ChangeBatch().withComment(COMMENT).withChanges(
                                                                               new Change().withAction(ChangeAction.DELETE)
-                                                                                          .withResourceRecordSet(newResourceRecordSet)))
-                                                     ).getChangeInfo();
+                                                                                      .withResourceRecordSet(
+                                                                                              newResourceRecordSet)))
+        ).getChangeInfo();
 
         // Delete Hosted Zone
         DeleteHostedZoneResult deleteHostedZoneResult = route53.deleteHostedZone(new DeleteHostedZoneRequest(createdZoneId));
@@ -235,6 +252,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
     /**
      * Asserts that the specified DelegationSet is valid.
+     *
      * @param delegationSet The delegation set to test.
      */
     private void assertValidDelegationSet(DelegationSet delegationSet) {
@@ -246,6 +264,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
     /**
      * Asserts that the specified ChangeInfo is valid.
+     *
      * @param change The ChangeInfo object to test.
      */
     private void assertValidChangeInfo(ChangeInfo change) {

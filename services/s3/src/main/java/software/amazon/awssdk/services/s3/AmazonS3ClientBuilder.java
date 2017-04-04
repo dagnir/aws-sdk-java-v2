@@ -66,8 +66,4 @@ public final class AmazonS3ClientBuilder extends AmazonS3Builder<AmazonS3ClientB
         return clientFactory.apply(new AmazonS3ClientParamsWrapper(clientParams, resolveS3ClientOptions()));
     }
 
-    @Override
-    public String getServiceName() {
-        return AmazonS3Client.S3_SERVICE_NAME;
-    }
 }

@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.Placement;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
@@ -88,6 +89,11 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     private static final String AVAILABILITY_ZONE_1 = "us-east-1a";
     private static final String AVAILABILITY_ZONE_2 = "us-east-1b";
 
+    /**
+     * Region to run tests against. Must be us-east-1 since AZ's are hardcoded
+     */
+    private static final Regions REGION = Regions.US_EAST_1;
+
     /** The ELB client used in these tests. */
     private static ElasticLoadBalancingClient elb;
 
@@ -116,10 +122,19 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
      * client for tests to use.
      */
     @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
-        elb = ElasticLoadBalancingClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
-        ec2 = EC2Client.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
-        iam = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+    public static void setUp() throws IOException {
+        elb = ElasticLoadBalancingClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(REGION)
+                .build();
+        ec2 = EC2Client.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(REGION)
+                .build();
+        iam = IAMClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(REGION)
+                .build();
 
         List<ServerCertificateMetadata> serverCertificates = iam.listServerCertificates(
                 new ListServerCertificatesRequest()).getServerCertificateMetadataList();

@@ -32,7 +32,7 @@ public class IntegrationTestBase extends AwsTestBase {
         setUpCredentials();
         dc = DirectConnectClient.builder()
                 .withCredentials(new AwsStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_WEST_2)
+                .withRegion(Regions.US_WEST_1)
                 .build();
     }
 }

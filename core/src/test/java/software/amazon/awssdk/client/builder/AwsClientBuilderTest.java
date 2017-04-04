@@ -275,6 +275,11 @@ public class AwsClientBuilderTest {
         public String getServiceName() {
             return "mockprefix";
         }
+
+        @Override
+        public String getEndpointPrefix() {
+            return "mockprefix";
+        }
     }
 
     private static class ConcreteSyncBuilder extends
@@ -290,6 +295,11 @@ public class AwsClientBuilderTest {
 
         @Override
         public String getServiceName() {
+            return "mockprefix";
+        }
+
+        @Override
+        public String getEndpointPrefix() {
             return "mockprefix";
         }
     }

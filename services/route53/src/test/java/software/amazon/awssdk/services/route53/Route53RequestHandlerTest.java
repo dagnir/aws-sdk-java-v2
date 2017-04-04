@@ -18,6 +18,8 @@ package software.amazon.awssdk.services.route53;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import software.amazon.awssdk.Response;
+import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.services.route53.internal.Route53IdRequestHandler;
 import software.amazon.awssdk.services.route53.model.CreateHostedZoneResult;
 import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResult;
@@ -54,35 +56,35 @@ public class Route53RequestHandlerTest {
         CreateHostedZoneResult createResult = new CreateHostedZoneResult()
                 .withDelegationSet(delegationSet);
 
-        requestHandler.afterResponse(null, createResult, null);
+        afterResponse(requestHandler, createResult);
 
         assertEquals(createResult.getDelegationSet().getId(), id);
 
         CreateReusableDelegationSetResult createResuableResult = new CreateReusableDelegationSetResult()
                 .withDelegationSet(delegationSet);
 
-        requestHandler.afterResponse(null, createResuableResult, null);
+        afterResponse(requestHandler, createResuableResult);
 
         assertEquals(createResuableResult.getDelegationSet().getId(), id);
 
         GetHostedZoneResult getZoneResult = new GetHostedZoneResult()
                 .withDelegationSet(delegationSet);
 
-        requestHandler.afterResponse(null, getZoneResult, null);
+        afterResponse(requestHandler, getZoneResult);
 
         assertEquals(getZoneResult.getDelegationSet().getId(), id);
 
         GetReusableDelegationSetResult getResuableResult = new GetReusableDelegationSetResult()
                 .withDelegationSet(delegationSet);
 
-        requestHandler.afterResponse(null, getResuableResult, null);
+        afterResponse(requestHandler, getResuableResult);
 
         assertEquals(getResuableResult.getDelegationSet().getId(), id);
 
         ListReusableDelegationSetsResult listResult = new ListReusableDelegationSetsResult()
                 .withDelegationSets(delegationSet);
 
-        requestHandler.afterResponse(null, listResult, null);
+        afterResponse(requestHandler, listResult);
 
         assertEquals(listResult.getDelegationSets().get(0).getId(), id);
 
@@ -91,9 +93,12 @@ public class Route53RequestHandlerTest {
         createResult = new CreateHostedZoneResult()
                 .withDelegationSet(delegationSet);
 
-        requestHandler.afterResponse(null, createResult, null);
+        afterResponse(requestHandler, createResult);
 
         assertEquals(createResult.getDelegationSet().getId(), id);
+    }
 
+    private void afterResponse(RequestHandler2 requestHandler2,Object responseObject) {
+        requestHandler2.afterResponse(null, new Response(responseObject, null));
     }
 }

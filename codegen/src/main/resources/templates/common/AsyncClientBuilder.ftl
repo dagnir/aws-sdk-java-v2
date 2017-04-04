@@ -41,7 +41,12 @@ public final class ${metadata.asyncClientBuilderClassName}
 
     @Override
     public final String getServiceName() {
-        return ${metadata.asyncInterface}.ENDPOINT_PREFIX;
+        return ${metadata.syncInterface}.SERVICE_NAME;
+    }
+
+    @Override
+    public final String getEndpointPrefix() {
+        return ${metadata.syncInterface}.ENDPOINT_PREFIX;
     }
 
     /**

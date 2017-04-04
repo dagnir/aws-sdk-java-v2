@@ -59,7 +59,7 @@ public class ClientHandlerImpl extends ClientHandler {
         this.requestHandler2s = handlerParams.getClientParams().getRequestHandlers();
         this.clientLevelMetricCollector = handlerParams.getClientParams().getRequestMetricCollector();
         this.client = buildHttpClient(handlerParams);
-    }
+   }
 
     private AmazonHttpClient buildHttpClient(ClientHandlerParams handlerParams) {
         final AwsSyncClientParams clientParams = handlerParams.getClientParams();
