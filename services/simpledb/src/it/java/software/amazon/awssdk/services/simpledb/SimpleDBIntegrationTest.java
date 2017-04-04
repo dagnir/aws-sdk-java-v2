@@ -130,9 +130,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         gotestEmptyStringValues();
         gotestNewlineValues();
 
-        gotestAsyncClient();
-        gotestAsyncClientExceptions();
-
         gotestDeleteAttributesWithNonMatchingUpdateCondition();
         gotestDeleteAttributes();
         gotestBatchDeleteAttributes();
@@ -200,36 +197,6 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         assertEquals("newline", ((Attribute) attributes.get(0)).getName());
         assertNotNull(((Attribute) attributes.get(0)).getValue());
         assertEquals(value, ((Attribute) attributes.get(0)).getValue());
-    }
-
-    /**
-     * Runs a few quick tests to verify that the async client interface works correctly.
-     */
-    private void gotestAsyncClient() throws Exception {
-        ListDomainsRequest request = new ListDomainsRequest();
-        Future<?> future = sdbAsync.listDomains(request);
-        assertFalse(future.isDone());
-        assertFalse(future.isCancelled());
-        ListDomainsResult listDomainsResult = (ListDomainsResult) future.get();
-        assertTrue(listDomainsResult.getDomainNames().contains(domainName));
-    }
-
-    /**
-     * Tests that exceptions are thrown correctly for the async client interface.
-     */
-    private void gotestAsyncClientExceptions() throws Exception {
-        DomainMetadataRequest request = new DomainMetadataRequest();
-        request.setDomainName("FakeDomainThatDoesntExist");
-
-        Future<?> future = sdbAsync.domainMetadata(request);
-        try {
-            future.get();
-            fail("Expected NoSuchDomainException, but wasn't thrown");
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
-            assertTrue(cause instanceof NoSuchDomainException);
-            assertValidException((AmazonServiceException) cause);
-        }
     }
 
     /**

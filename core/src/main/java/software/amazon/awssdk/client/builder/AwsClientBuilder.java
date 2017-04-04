@@ -354,6 +354,8 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
     public abstract String getServiceName();
 
+    public abstract String getEndpointPrefix();
+
     /**
      * @return An instance of AwsSyncClientParams that has all params to be used in the sync client constructor.
      */
@@ -467,7 +469,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
                 return URI.create(endpointConfiguration.getServiceEndpoint());
             }
 
-            return new DefaultServiceEndpointBuilder(getServiceName(), Protocol.HTTPS.toString())
+            return new DefaultServiceEndpointBuilder(getEndpointPrefix(), Protocol.HTTPS.toString())
                     .withRegion(signingRegion)
                     .getServiceEndpoint();
         }

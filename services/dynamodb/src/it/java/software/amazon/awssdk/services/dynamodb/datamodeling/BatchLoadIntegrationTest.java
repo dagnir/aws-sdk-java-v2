@@ -19,6 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,11 +39,16 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodb.mapper.NumberSetAttributeClass;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.RangeKeyClass;
 
@@ -180,12 +188,23 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
         List<Object> objs = new ArrayList<Object>();
         NumberSetAttributeClass obj = getUniqueNumericObject();
         objs.add(obj);
-        DynamoDBMapper mapper = new DynamoDBMapper(
-                DynamoDBClient.create());
+        DynamoDBClient mockClient = mock(DynamoDBClient.class);
+        when(mockClient.batchGetItem(any())).thenAnswer(new Answer<BatchGetItemResult>() {
+            @Override
+            public BatchGetItemResult answer(InvocationOnMock invocation) throws Throwable {
+                Thread.sleep(3000);
+                BatchGetItemResult result = new BatchGetItemResult();
+                result.setResponses(new HashMap<>());
+                result.setUnprocessedKeys(((BatchGetItemRequest) invocation.getArguments()[0]).getRequestItems());
+                return result;
+            }
+        });
+        DynamoDBMapper mapper = new DynamoDBMapper(mockClient);
         try {
             mapper.batchLoad(objs);
             fail("Expecting an expection due to exceed of number of retries.");
         } catch (Exception e) {
+            e.printStackTrace();
             long endTime = System.currentTimeMillis();
             assertTrue(((endTime - startTime)) > (maxBackOffTimePerRetry
                                                   * NoOfRetries));
