@@ -59,17 +59,17 @@ public class ClientHandlerImpl extends ClientHandler {
         this.requestHandler2s = handlerParams.getClientParams().getRequestHandlers();
         this.clientLevelMetricCollector = handlerParams.getClientParams().getRequestMetricCollector();
         this.client = buildHttpClient(handlerParams);
-   }
+    }
 
     private AmazonHttpClient buildHttpClient(ClientHandlerParams handlerParams) {
         final AwsSyncClientParams clientParams = handlerParams.getClientParams();
         return AmazonHttpClient.builder()
-                               .clientConfiguration(clientParams.getClientConfiguration())
-                               .retryPolicy(clientParams.getRetryPolicy())
-                               .requestMetricCollector(clientParams.getRequestMetricCollector())
-                               .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
-                               .calculateCrc32FromCompressedData(handlerParams.isCalculateCrc32FromCompressedDataEnabled())
-                               .build();
+                .clientConfiguration(clientParams.getClientConfiguration())
+                .retryPolicy(clientParams.getRetryPolicy())
+                .requestMetricCollector(clientParams.getRequestMetricCollector())
+                .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
+                .calculateCrc32FromCompressedData(handlerParams.isCalculateCrc32FromCompressedDataEnabled())
+                .build();
     }
 
     @Override
@@ -116,10 +116,10 @@ public class ClientHandlerImpl extends ClientHandler {
     private ExecutionContext createExecutionContext(RequestConfig requestConfig) {
         boolean isMetricsEnabled = isRequestMetricsEnabled(requestConfig);
         return ExecutionContext.builder()
-                               .withRequestHandler2s(requestHandler2s)
-                               .withUseRequestMetrics(isMetricsEnabled)
-                               .withSignerProvider(signerProvider)
-                               .build();
+                .withRequestHandler2s(requestHandler2s)
+                .withUseRequestMetrics(isMetricsEnabled)
+                .withSignerProvider(signerProvider)
+                .build();
     }
 
     /**
@@ -150,7 +150,7 @@ public class ClientHandlerImpl extends ClientHandler {
      */
     private RequestMetricCollector requestMetricCollector() {
         return clientLevelMetricCollector != null ? clientLevelMetricCollector :
-               AwsSdkMetrics.getRequestMetricCollector();
+                AwsSdkMetrics.getRequestMetricCollector();
     }
 
     /**
@@ -209,11 +209,11 @@ public class ClientHandlerImpl extends ClientHandler {
                                                          HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
         request.setEndpoint(endpoint);
         return client.requestExecutionBuilder()
-                     .request(request)
-                     .requestConfig(requestConfig)
-                     .executionContext(executionContext)
-                     .errorResponseHandler(errorResponseHandler)
-                     .execute(responseHandler);
+                .request(request)
+                .requestConfig(requestConfig)
+                .executionContext(executionContext)
+                .errorResponseHandler(errorResponseHandler)
+                .execute(responseHandler);
     }
 
     /**

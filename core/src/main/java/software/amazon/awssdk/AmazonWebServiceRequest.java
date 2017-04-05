@@ -123,7 +123,8 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      *            The optional AWS security credentials provider to use for this request, overriding the
      *            default credentials provider at the client level.
      */
-    @ReviewBeforeRelease("This has been broken by the client/interface refactoring. Figure out how to fix it if we are keeping it")
+    @ReviewBeforeRelease("This has been broken by the client/interface refactoring. " +
+                         "Figure out how to fix it if we are keeping it")
     public void setRequestCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
         this.credentialsProvider = credentialsProvider;
     }

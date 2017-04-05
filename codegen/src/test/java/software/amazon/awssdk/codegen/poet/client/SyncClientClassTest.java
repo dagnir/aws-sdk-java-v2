@@ -14,19 +14,19 @@
  */
 package software.amazon.awssdk.codegen.poet.client;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static software.amazon.awssdk.codegen.poet.PoetMatchers.generatesTo;
+
+import java.io.File;
 import org.junit.Test;
 import software.amazon.awssdk.codegen.C2jModels;
 import software.amazon.awssdk.codegen.IntermediateModelBuilder;
+import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
-
-import java.io.File;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static software.amazon.awssdk.codegen.poet.PoetMatchers.generatesTo;
 
 
 public class SyncClientClassTest {
@@ -39,7 +39,7 @@ public class SyncClientClassTest {
 
         IntermediateModel model = new IntermediateModelBuilder(models).build();
 
-        SyncClientClass syncClientClass = new SyncClientClass(model);
+        SyncClientClass syncClientClass = createClientClass(model);
         assertThat(syncClientClass, generatesTo("test-json-client-class.java"));
     }
 
@@ -59,8 +59,12 @@ public class SyncClientClassTest {
 
         IntermediateModel model = new IntermediateModelBuilder(models).build();
 
-        SyncClientClass syncClientClass = new SyncClientClass(model);
+        SyncClientClass syncClientClass = createClientClass(model);
         assertThat(syncClientClass, generatesTo("test-query-client-class.java"));
+    }
+
+    private SyncClientClass createClientClass(IntermediateModel model) {
+        return new SyncClientClass(GeneratorTaskParams.create(model, "sources/", "tests/"));
     }
 
     private ServiceModel getServiceModel(File file) {

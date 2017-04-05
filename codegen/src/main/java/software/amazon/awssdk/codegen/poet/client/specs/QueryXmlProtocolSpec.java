@@ -33,17 +33,19 @@ import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.http.DefaultErrorResponseHandler;
 import software.amazon.awssdk.http.StaxResponseHandler;
 import software.amazon.awssdk.runtime.transform.StandardErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class QueryXmlProtocolSpec implements ProtocolSpec {
-    protected final String basePackage;
 
-    public QueryXmlProtocolSpec(String basePackage) {
-        this.basePackage = basePackage;
+    private final PoetExtensions poetExtensions;
+
+    public QueryXmlProtocolSpec(PoetExtensions poetExtensions) {
+        this.poetExtensions = poetExtensions;
     }
 
     @Override
@@ -65,19 +67,28 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
         methodSpec.addStatement("$T unmarshallers = new $T()", List.class, ArrayList.class);
         errorUnmarshallers(model).forEach(methodSpec::addCode);
         methodSpec.addCode(CodeBlock.builder().add("unmarshallers.add(new $T($T.class));",
-                                                   StandardErrorUnmarshaller.class,
-                                                   PoetUtils.getModelClass(basePackage,
-                                                                           model.getSdkModeledExceptionBaseClassName())).build());
+                                                   getErrorUnmarshallerClass(model),
+                                                   poetExtensions.getModelClass(model.getSdkModeledExceptionBaseClassName()))
+                                   .build());
         methodSpec.addStatement("return $N", "unmarshallers");
 
         return methodSpec.build();
     }
 
+    private Class<?> getErrorUnmarshallerClass(IntermediateModel model) {
+        try {
+            return StringUtils.isNotBlank(model.getExceptionUnmarshallerImpl()) ?
+                    Class.forName(model.getExceptionUnmarshallerImpl()) :
+                    StandardErrorUnmarshaller.class;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public CodeBlock responseHandler(OperationModel opModel) {
-        ClassName unmarshaller = PoetUtils.getTransformClass(
-                basePackage, opModel.getReturnType().getReturnType() + "Unmarshaller");
-        ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
+        ClassName unmarshaller = poetExtensions.getTransformClass(opModel.getReturnType().getReturnType() + "Unmarshaller");
+        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
 
         return CodeBlock.builder().add("\n\n$T<$T> responseHandler = new $T<$T>(new $T());",
                                        StaxResponseHandler.class,
@@ -99,9 +110,9 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
 
     @Override
     public CodeBlock executionHandler(OperationModel opModel) {
-        ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
-        ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
-        ClassName marshaller = PoetUtils.getTransformClass(basePackage, opModel.getInputShape().getShapeName() + "Marshaller");
+        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
+        ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
+        ClassName marshaller = poetExtensions.getTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
         return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>()" +
                                        ".withMarshaller(new $T())" +
                                        ".withResponseHandler($N)" +
@@ -133,7 +144,7 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
                 .collect(Collectors.toList());
 
         return exceptions.stream().map(s -> {
-            ClassName exceptionClass = PoetUtils.getTransformClass(basePackage, s.getShapeName() + "Unmarshaller");
+            ClassName exceptionClass = poetExtensions.getTransformClass(s.getShapeName() + "Unmarshaller");
             return CodeBlock.builder()
                     .add("unmarshallers.add(new $T());", exceptionClass).build();
         }).collect(Collectors.toList());

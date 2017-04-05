@@ -32,7 +32,7 @@ import software.amazon.awssdk.codegen.model.intermediate.ExceptionModel;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.PoetCollectors;
-import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.opensdk.protect.client.SdkClientHandler;
 import software.amazon.awssdk.protocol.json.JsonClientMetadata;
@@ -42,13 +42,16 @@ import software.amazon.awssdk.protocol.json.JsonOperationMetadata;
 
 public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
 
-    public ApiGatewayProtocolSpec(String basePackage) {
-        super(basePackage);
+    private final PoetExtensions poetExtensions;
+
+    public ApiGatewayProtocolSpec(PoetExtensions poetExtensions) {
+        super(poetExtensions);
+        this.poetExtensions = poetExtensions;
     }
 
     @Override
     public FieldSpec protocolFactory(IntermediateModel model) {
-        ClassName protocolFactory = ClassName.get(basePackage, model.getMetadata().getProtocolFactory());
+        ClassName protocolFactory = poetExtensions.getTopLevelClass(model.getMetadata().getProtocolFactory());
         return FieldSpec.builder(protocolFactory, "protocolFactory")
                 .addModifiers(Modifier.PRIVATE, Modifier.FINAL).build();
     }
@@ -60,7 +63,7 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
 
         ClassName baseException = ClassName.get(exceptionPath, model.getSdkModeledExceptionBaseClassName());
 
-        ClassName protocolFactory = ClassName.get(basePackage, model.getMetadata().getProtocolFactory());
+        ClassName protocolFactory = poetExtensions.getTopLevelClass(model.getMetadata().getProtocolFactory());
 
         MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("init")
                 .returns(protocolFactory)
@@ -85,9 +88,8 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
     @Override
     public CodeBlock responseHandler(OperationModel opModel) {
         boolean isStreamingBody = opModel.getOutputShape() != null && opModel.getOutputShape().isHasStreamingMember();
-        ClassName unmarshaller = PoetUtils.getTransformClass(
-                basePackage, opModel.getReturnType().getReturnType() + "Unmarshaller");
-        ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
+        ClassName unmarshaller = poetExtensions.getTransformClass(opModel.getReturnType().getReturnType() + "Unmarshaller");
+        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
 
         return CodeBlock
                 .builder()
@@ -129,7 +131,7 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
      * Convert the provided exception model into a piece of error metadata that should be given to the error response handler.
      */
     private CodeBlock exceptionModelToMetadata(ExceptionModel exception) {
-        ClassName exceptionClass = PoetUtils.getModelClass(basePackage, exception.getExceptionName());
+        ClassName exceptionClass = poetExtensions.getModelClass(exception.getExceptionName());
         return CodeBlock.of("new JsonErrorShapeMetadata().withModeledClass($T.class).withHttpStatusCode($L)",
                             exceptionClass,
                             exception.getHttpStatusCode());
@@ -137,10 +139,9 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
 
     @Override
     public CodeBlock executionHandler(OperationModel opModel) {
-        ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
-        ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
-        ClassName marshaller = PoetUtils.getTransformClass(
-                basePackage, opModel.getInputShape().getShapeName() + "Marshaller");
+        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
+        ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
+        ClassName marshaller = poetExtensions.getTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
 
         return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T>().withMarshaller(new $T($N))" +
                 ".withResponseHandler($N).withErrorResponseHandler($N).withInput($L));",

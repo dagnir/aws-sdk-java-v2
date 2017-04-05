@@ -20,25 +20,25 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.lang.model.element.Modifier;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.client.ClientExecutionParams;
-import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.http.StaxResponseHandler;
 import software.amazon.awssdk.runtime.transform.VoidStaxUnmarshaller;
 
 public class Ec2ProtocolSpec extends QueryXmlProtocolSpec {
 
-    public Ec2ProtocolSpec(String basePackage) {
-        super(basePackage);
+    private final PoetExtensions poetExtensions;
+
+    public Ec2ProtocolSpec(PoetExtensions poetExtensions) {
+        super(poetExtensions);
+        this.poetExtensions = poetExtensions;
     }
 
     @Override
@@ -52,9 +52,9 @@ public class Ec2ProtocolSpec extends QueryXmlProtocolSpec {
 
     private MethodSpec dryRunMethod() {
         TypeVariableName typeVariableName = TypeVariableName.get("X", AmazonWebServiceRequest.class);
-        ClassName dryRunResult = PoetUtils.getModelClass(basePackage, "DryRunResult");
+        ClassName dryRunResult = poetExtensions.getModelClass("DryRunResult");
         TypeName dryRunResultGeneric = ParameterizedTypeName.get(dryRunResult, typeVariableName);
-        ClassName dryRunRequest = PoetUtils.getModelClass(basePackage, "DryRunSupportedRequest");
+        ClassName dryRunRequest = poetExtensions.getModelClass("DryRunSupportedRequest");
         TypeName dryRunRequestGeneric = ParameterizedTypeName.get(dryRunRequest, typeVariableName);
         return MethodSpec.methodBuilder("dryRun")
                 .returns(dryRunResultGeneric)

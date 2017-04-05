@@ -17,8 +17,4 @@ package software.amazon.awssdk.codegen.protocol;
 
 public class QueryProtocolMetadataProvider extends BaseXmlProtocolMetadataProvider {
 
-    @Override
-    public String getExceptionUnmarshallerImpl() {
-        return "StandardErrorUnmarshaller";
-    }
 }
