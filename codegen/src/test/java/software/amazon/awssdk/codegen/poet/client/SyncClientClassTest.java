@@ -35,7 +35,10 @@ public class SyncClientClassTest {
     public void syncClientClassJson() throws Exception {
         File serviceModel = new File(getClass().getResource("c2j/json/service-2.json").getFile());
         File customizationModel = new File(getClass().getResource("c2j/json/customization.config").getFile());
-        C2jModels models = C2jModels.builder().serviceModel(getServiceModel(serviceModel)).customizationConfig(getCustomizationConfig(customizationModel)).build();
+        C2jModels models = C2jModels.builder()
+                .serviceModel(getServiceModel(serviceModel))
+                .customizationConfig(getCustomizationConfig(customizationModel))
+                .build();
 
         IntermediateModel model = new IntermediateModelBuilder(models).build();
 

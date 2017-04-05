@@ -519,11 +519,14 @@ public class DefaultIAMClient implements IAMClient {
 
     private List<Unmarshaller<AmazonServiceException, Node>> exceptionUnmarshallers = new ArrayList<Unmarshaller<AmazonServiceException, Node>>();
 
+    private final AwsSyncClientParams clientParams;
+
     private volatile IAMClientWaiters waiters;
 
     protected DefaultIAMClient(AwsSyncClientParams clientParams) {
         this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams)
                 .withCalculateCrc32FromCompressedDataEnabled(false));
+        this.clientParams = clientParams;
         this.exceptionUnmarshallers = init();
     }
 

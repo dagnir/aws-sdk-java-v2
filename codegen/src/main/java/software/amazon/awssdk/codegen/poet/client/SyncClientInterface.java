@@ -20,10 +20,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
-
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
-
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
@@ -59,6 +57,9 @@ public final class SyncClientInterface implements ClassSpec {
 
         if (model.getHasWaiters()) {
             classBuilder.addMethod(waiters());
+        }
+        if (model.getCustomizationConfig().getPresignersFqcn() != null) {
+            classBuilder.addMethod(presigners());
         }
 
         return classBuilder.build();
@@ -113,12 +114,9 @@ public final class SyncClientInterface implements ClassSpec {
     }
 
     private MethodSpec presigners() {
-        String presignerFqcn = model.getCustomizationConfig().getPresignersFqcn();
-        String basePath = presignerFqcn.substring(0, presignerFqcn.lastIndexOf("."));
-        String className = presignerFqcn.substring(presignerFqcn.lastIndexOf(".") + 1);
-
+        ClassName presignerClassName = PoetUtils.classNameFromFqcn(model.getCustomizationConfig().getPresignersFqcn());
         return MethodSpec.methodBuilder("presigners")
-                .returns(ClassName.get(basePath, className))
+                .returns(presignerClassName)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .build();
     }

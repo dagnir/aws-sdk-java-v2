@@ -64,6 +64,7 @@ public class SyncClientClass implements ClassSpec {
                         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                         .build())
                 .addField(protocolSpec.protocolFactory(model))
+                .addField(clientParamsField())
                 .addMethod(constructor())
                 .addMethods(operations());
 
@@ -79,12 +80,21 @@ public class SyncClientClass implements ClassSpec {
                     .build());
             classBuilder.addMethod(waiters());
         }
+        if (model.getCustomizationConfig().getPresignersFqcn() != null) {
+            classBuilder.addMethod(presigners());
+        }
 
         classBuilder.addMethod(shutdown());
 
         classBuilder.addMethods(protocolSpec.additionalMethods());
 
         return classBuilder.build();
+    }
+
+    private FieldSpec clientParamsField() {
+        return FieldSpec.builder(AwsSyncClientParams.class, "clientParams")
+                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                .build();
     }
 
     @Override
@@ -103,6 +113,7 @@ public class SyncClientClass implements ClassSpec {
                         ClientHandlerParams.class,
                         "clientParams",
                         model.getCustomizationConfig().isCalculateCrc32FromCompressedData())
+                .addStatement("this.clientParams = clientParams")
                 .addStatement("this.$N = init()", protocolSpec.protocolFactory(model).name)
                 .build();
     }
@@ -142,15 +153,17 @@ public class SyncClientClass implements ClassSpec {
     }
 
     private MethodSpec presigners() {
-        ClassName presigners = poetExtensions.getPresignClass(model.getMetadata().getSyncInterface() + "Presigners");
+        ClassName presigners = PoetUtils.classNameFromFqcn(model.getCustomizationConfig().getPresignersFqcn());
         return MethodSpec.methodBuilder("presigners")
                 .returns(presigners)
-                .addStatement("return new $T($T.builder().endpoint($L).credentialsProvider($L).signerProvier($L()).build())",
-                        presigners,
-                        PresignerParams.class,
-                        "endpoint",
-                        "awsCredentialsProvider",
-                        "getSignerProvider")
+                .addModifiers(Modifier.PUBLIC)
+                .addStatement("return new $T($T.builder()" +
+                              ".endpoint(clientParams.getEndpoint())" +
+                              ".credentialsProvider(clientParams.getCredentialsProvider())" +
+                              ".signerProvider(clientParams.getSignerProvider())" +
+                              ".build())",
+                              presigners,
+                              PresignerParams.class)
                 .build();
     }
 

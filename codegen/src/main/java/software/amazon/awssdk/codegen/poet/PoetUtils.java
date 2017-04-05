@@ -88,6 +88,12 @@ public final class PoetUtils {
         return ClassName.get(basePackageDir + ".model.transform", className);
     }
 
+    public static ClassName classNameFromFqcn(String fqcn) {
+        String basePath = fqcn.substring(0, fqcn.lastIndexOf("."));
+        String className = fqcn.substring(fqcn.lastIndexOf(".") + 1);
+        return ClassName.get(basePath, className);
+    }
+
     public static JavaFile buildJavaFile(ClassSpec spec) {
         JavaFile.Builder builder = JavaFile.builder(spec.className().packageName(), spec.poetSpec()).skipJavaLangImports(true);
         spec.staticImports().forEach(i -> i.memberNames().forEach(m -> builder.addStaticImport(i.className(), m)));
