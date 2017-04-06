@@ -69,4 +69,8 @@ public interface SdkHttpClientSettings {
 
     boolean isUseExpectContinue();
 
+    default boolean trustAllCertificates() {
+        return false;
+    }
+
 }

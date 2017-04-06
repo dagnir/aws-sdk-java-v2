@@ -86,7 +86,7 @@ public class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
     /**
      * @return Builder instance to construct a {@link DefaultSdkHttpFullRequest}.
      */
-    static Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 

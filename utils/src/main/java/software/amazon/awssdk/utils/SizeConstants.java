@@ -13,18 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http.async;
+package software.amazon.awssdk.utils;
 
+public final class SizeConstants {
+    /** Kilobytes. */
+    public static final int KB = 1024;
 
-public interface SdkAsyncHttpClient extends AutoCloseable {
+    /** Megabytes. */
+    public static final int MB = 1024 * KB;
 
-    /**
-     * Create an {@link AbortableRunnable} that can be used to execute the HTTP request.
-     *
-     * @param requestProvider Representation of an HTTP requestProvider.
-     * @param handler The handler that will be called when data is received.
-     *
-     * @return Task that can execute an HTTP requestProvider and can be aborted.
-     */
-    AbortableRunnable prepareRequest(SdkHttpRequestProvider requestProvider, SdkHttpResponseHandler handler);
+    /** Gigabytes. */
+    public static final long GB = 1024 * MB;
+
+    private SizeConstants() {}
 }
