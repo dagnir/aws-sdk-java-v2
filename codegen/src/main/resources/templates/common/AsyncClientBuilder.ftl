@@ -7,6 +7,7 @@ import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.client.builder.AwsAsyncClientBuilder;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
+import software.amazon.awssdk.handlers.HandlerChainFactory;
 
 /**
  * Fluent builder for {@link ${metadata.packageName + "." + metadata.asyncInterface}}. Use of the
@@ -38,6 +39,16 @@ public final class ${metadata.asyncClientBuilderClassName}
         super(CLIENT_CONFIG_FACTORY);
     }
 
+    @Override
+    public final String getServiceName() {
+        return ${metadata.syncInterface}.SERVICE_NAME;
+    }
+
+    @Override
+    public final String getEndpointPrefix() {
+        return ${metadata.syncInterface}.ENDPOINT_PREFIX;
+    }
+
     /**
      * Construct an asynchronous implementation of ${metadata.asyncInterface} using the
      * current builder configuration.
@@ -47,6 +58,12 @@ public final class ${metadata.asyncClientBuilderClassName}
      */
     @Override
     protected ${metadata.asyncInterface} build(AwsAsyncClientParams params) {
+        HandlerChainFactory chainFactory = new HandlerChainFactory();
+        params.getRequestHandlers().addAll(chainFactory.newRequestHandlerChain(
+                "/${metadata.packagePath}/request.handlers"));
+        params.getRequestHandlers().addAll(chainFactory.newRequestHandler2Chain(
+                "/${metadata.packagePath}/request.handler2s"));
+        params.getRequestHandlers().addAll(chainFactory.getGlobalHandlers());
         return new ${metadata.asyncClient}(params);
     }
 

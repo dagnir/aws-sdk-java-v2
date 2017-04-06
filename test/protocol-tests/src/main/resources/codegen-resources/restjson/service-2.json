@@ -5,8 +5,8 @@
     "endpointPrefix":"restjson",
     "jsonVersion":"1.1",
     "protocol":"rest-json",
-    "serviceAbbreviation":"JsonProtocolTests",
-    "serviceFullName":"AWS DR Tools JSON Protocol Tests",
+    "serviceAbbreviation":"AmazonProtocolRestJson",
+    "serviceFullName":"Amazon Protocol Rest Json",
     "signatureVersion":"v4",
     "targetPrefix":"ProtocolTestsService",
     "timestampFormat":"unixTimestamp"

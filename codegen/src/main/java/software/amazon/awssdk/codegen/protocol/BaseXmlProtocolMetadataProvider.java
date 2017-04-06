@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen.protocol;
 
+import software.amazon.awssdk.runtime.transform.StandardErrorUnmarshaller;
+
 /**
  * Base class for all XML based protocols.
  */
@@ -31,13 +33,8 @@ public abstract class BaseXmlProtocolMetadataProvider extends BaseProtocolMetada
     }
 
     @Override
-    public String getUnmarshallerClassSuffix() {
-        return "StaxUnmarshaller";
-    }
-
-    @Override
     public String getExceptionUnmarshallerImpl() {
-        return "StandardErrorUnmarshaller";
+        return StandardErrorUnmarshaller.class.getName();
     }
 
     @Override

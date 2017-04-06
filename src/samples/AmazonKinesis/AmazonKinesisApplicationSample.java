@@ -19,7 +19,7 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.AWSCredentialsProvider;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
 import software.amazon.awssdk.services.kinesis.AmazonKinesis;
 import software.amazon.awssdk.services.kinesis.AmazonKinesisClient;
 import software.amazon.awssdk.services.kinesis.clientlibrary.interfaces.IRecordProcessorFactory;

@@ -20,15 +20,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteServerCertificateRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetServerCertificateRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetServerCertificateResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListServerCertificatesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListServerCertificatesResult;
-import software.amazon.awssdk.services.identitymanagement.model.ServerCertificateMetadata;
-import software.amazon.awssdk.services.identitymanagement.model.UpdateServerCertificateRequest;
-import software.amazon.awssdk.services.identitymanagement.model.UploadServerCertificateRequest;
-import software.amazon.awssdk.services.identitymanagement.model.UploadServerCertificateResult;
+import software.amazon.awssdk.services.iam.model.DeleteServerCertificateRequest;
+import software.amazon.awssdk.services.iam.model.GetServerCertificateRequest;
+import software.amazon.awssdk.services.iam.model.GetServerCertificateResult;
+import software.amazon.awssdk.services.iam.model.ListServerCertificatesRequest;
+import software.amazon.awssdk.services.iam.model.ListServerCertificatesResult;
+import software.amazon.awssdk.services.iam.model.ServerCertificateMetadata;
+import software.amazon.awssdk.services.iam.model.UpdateServerCertificateRequest;
+import software.amazon.awssdk.services.iam.model.UploadServerCertificateRequest;
+import software.amazon.awssdk.services.iam.model.UploadServerCertificateResult;
 
 /**
  * Integration tests of the server certificate APIs of IAM.

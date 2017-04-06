@@ -189,7 +189,7 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     }
 
     private void assertJobIsCancelled(String jobId) {
-        Job job = findJob(jobId, ie.listJobs().getJobs());
+        Job job = findJob(jobId, ie.listJobs(new ListJobsRequest()).getJobs());
         assertTrue(job.isCanceled());
     }
 

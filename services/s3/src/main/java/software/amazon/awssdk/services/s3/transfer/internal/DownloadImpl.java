@@ -179,7 +179,7 @@ public class DownloadImpl extends AbstractTransfer implements Download {
      */
     private PersistableDownload captureDownloadState(
             final GetObjectRequest getObjectRequest, final File file) {
-        if (getObjectRequest.getSSECustomerKey() == null) {
+        if (getObjectRequest.getSseCustomerKey() == null) {
             return new PersistableDownload(
                     getObjectRequest.getBucketName(), getObjectRequest.getKey(),
                     getObjectRequest.getVersionId(), getObjectRequest.getRange(),

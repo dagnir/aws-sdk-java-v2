@@ -33,10 +33,15 @@ import javax.mail.event.TransportEvent;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.simpleemail.model.RawMessage;
-import software.amazon.awssdk.services.simpleemail.model.SendRawEmailRequest;
-import software.amazon.awssdk.services.simpleemail.model.SendRawEmailResult;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.services.ses.SESClient;
+import software.amazon.awssdk.services.ses.SESClientBuilder;
+import software.amazon.awssdk.services.ses.model.RawMessage;
+import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
+import software.amazon.awssdk.services.ses.model.SendRawEmailResult;
+import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.VersionInfoUtils;
 
 /**
@@ -61,7 +66,7 @@ public class AwsJavaMailTransport extends Transport {
     public static final String AWS_ACCESS_KEY_PROPERTY = "mail.aws.user";
     private static final String USER_AGENT = AwsJavaMailTransport.class.getName() + "/" + VersionInfoUtils.getVersion();
 
-    private AmazonSimpleEmailServiceClient emailService;
+    private SESClient emailService;
     private final String accessKey;
     private final String secretKey;
     private final String httpsEndpoint;
@@ -309,6 +314,8 @@ public class AwsJavaMailTransport extends Transport {
     @Override
     protected boolean protocolConnect(String host, int port, String awsAccessKey,
             String awsSecretKey) {
+        SESClientBuilder builder = SESClient.builder();
+
         if (isConnected()) {
             throw new IllegalStateException("Already connected");
         }
@@ -319,7 +326,7 @@ public class AwsJavaMailTransport extends Transport {
                 // - Environment Variables
                 // - Java System Properties
                 // - Instance profile credentials delivered through the Amazon EC2 metadata service
-                this.emailService = new AmazonSimpleEmailServiceClient();
+                this.emailService = builder.build();
             }
             awsAccessKey = this.accessKey;
             awsSecretKey = this.secretKey;
@@ -327,14 +334,18 @@ public class AwsJavaMailTransport extends Transport {
 
         if (this.emailService == null) {
             // Use the supplied credentials.
-            this.emailService = new AmazonSimpleEmailServiceClient(new BasicAwsCredentials(awsAccessKey, awsSecretKey));
+            builder.withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials(awsAccessKey, awsSecretKey)));
         }
 
         if (!isNullOrEmpty(host)) {
-            this.emailService.setEndpoint(host);
+            String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
+            builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(host, region));
         } else if (this.httpsEndpoint != null) {
-            this.emailService.setEndpoint(this.httpsEndpoint);
+            String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
+            builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(httpsEndpoint, region));
         }
+
+        emailService = builder.build();
         super.setConnected(true);
         return true;
     }

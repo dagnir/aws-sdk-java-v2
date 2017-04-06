@@ -18,8 +18,6 @@ package software.amazon.awssdk.services.sts;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
-import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -30,11 +28,11 @@ import software.amazon.awssdk.test.AwsTestBase;
 public abstract class IntegrationTestBase extends AwsTestBase {
 
     /** The shared STS client for all tests to use. */
-    protected static AWSSecurityTokenService sts;
+    protected static STSClient sts;
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        sts = new AWSSecurityTokenServiceClient(credentials);
+        sts = STSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

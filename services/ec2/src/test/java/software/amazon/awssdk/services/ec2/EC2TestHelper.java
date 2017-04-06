@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.ec2.model.AssociateDhcpOptionsRequest;
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayRequest;
@@ -66,7 +67,7 @@ import software.amazon.awssdk.services.ec2.model.VpnGateway;
 public class EC2TestHelper {
 
     /** Shared EC2 client for all tests to use. */
-    public static AmazonEC2Client EC2;
+    public static EC2Client EC2;
 
     /** Shared AWS credentials, loaded from a properties file. */
     public static AwsCredentials CREDENTIALS;
@@ -82,8 +83,7 @@ public class EC2TestHelper {
                 }
             }
 
-            EC2 = new AmazonEC2Client(CREDENTIALS);
-            EC2.setEndpoint("http://ec2-shiraz.amazonaws.com");
+            EC2 = EC2Client.builder().withCredentials(new AwsStaticCredentialsProvider(CREDENTIALS)).build();
         } catch (Exception exception) {
             // Ignored or expected.
         }

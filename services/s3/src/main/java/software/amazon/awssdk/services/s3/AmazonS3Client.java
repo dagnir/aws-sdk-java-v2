@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 import static software.amazon.awssdk.runtime.io.ResettableInputStream.newResettableInputStream;
 import static software.amazon.awssdk.services.s3.model.S3DataSource.Utils.cleanupDataSource;
 import static software.amazon.awssdk.util.LengthCheckInputStream.EXCLUDE_SKIPPED_BYTES;
@@ -67,8 +67,8 @@ import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentials;
@@ -246,7 +246,6 @@ import software.amazon.awssdk.services.s3.model.RestoreObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3AccelerateUnsupported;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectInputStream;
-import software.amazon.awssdk.services.s3.model.SSECustomerKeyProvider;
 import software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.SetBucketAclRequest;
 import software.amazon.awssdk.services.s3.model.SetBucketAnalyticsConfigurationRequest;
@@ -271,6 +270,7 @@ import software.amazon.awssdk.services.s3.model.SetRequestPaymentConfigurationRe
 import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParams;
 import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParamsProvider;
 import software.amazon.awssdk.services.s3.model.SseCustomerKey;
+import software.amazon.awssdk.services.s3.model.SseCustomerKeyProvider;
 import software.amazon.awssdk.services.s3.model.StorageClass;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.services.s3.model.UploadObjectRequest;
@@ -299,7 +299,7 @@ import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.CredentialUtils;
 import software.amazon.awssdk.util.DateUtils;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.LengthCheckInputStream;
 import software.amazon.awssdk.util.Md5Utils;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
@@ -610,6 +610,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         this.skipMd5CheckStrategy = SkipMd5CheckStrategy.INSTANCE;
         setS3ClientOptions(s3ClientParams.getS3ClientOptions());
         init();
+
+        // This seems weird: we're updating the endpoint after we have initialized everything. This was the old behavior of the
+        // S3 client builder before the client refactor, so we've simply migrated the logic here to preserve compatibility. This
+        // will all get better when we completely change the S3 client.
+        setEndpoint(s3ClientParams.getClientParams().getEndpoint().toString());
     }
 
     static Map<String, String> getBucketRegionCache() {
@@ -623,9 +628,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
     private static PutObjectResult createPutObjectResult(ObjectMetadata metadata) {
         final PutObjectResult result = new PutObjectResult();
         result.setVersionId(metadata.getVersionId());
-        result.setSSEAlgorithm(metadata.getSSEAlgorithm());
-        result.setSSECustomerAlgorithm(metadata.getSSECustomerAlgorithm());
-        result.setSSECustomerKeyMd5(metadata.getSSECustomerKeyMd5());
+        result.setSseAlgorithm(metadata.getSseAlgorithm());
+        result.setSseCustomerAlgorithm(metadata.getSseCustomerAlgorithm());
+        result.setSseCustomerKeyMd5(metadata.getSseCustomerKeyMd5());
         result.setExpirationTime(metadata.getExpirationTime());
         result.setExpirationTimeRuleId(metadata.getExpirationTimeRuleId());
         result.setETag(metadata.getETag());
@@ -1070,7 +1075,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
          * only when the customers don't explicitly call {@link listVersionsRequest#setEncodingType(String)},
          * otherwise, it will be disabled for maintaining backwards compatibility.
          */
-        final boolean shouldSDKDecodeResponse = listVersionsRequest.getEncodingType() == null;
+        final boolean shouldSdkDecodeResponse = listVersionsRequest.getEncodingType() == null;
 
         Request<ListVersionsRequest> request = createRequest(listVersionsRequest.getBucketName(), null,
                                                              listVersionsRequest, HttpMethodName.GET);
@@ -1084,11 +1089,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         if (listVersionsRequest.getMaxResults() != null && listVersionsRequest.getMaxResults() >= 0) {
             request.addParameter("max-keys", listVersionsRequest.getMaxResults().toString());
         }
-        request.addParameter("encoding-type", shouldSDKDecodeResponse ? Constants.URL_ENCODING
+        request.addParameter("encoding-type", shouldSdkDecodeResponse ? Constants.URL_ENCODING
                                                                       : listVersionsRequest.getEncodingType());
 
         return invoke(request,
-                      new Unmarshallers.VersionListUnmarshaller(shouldSDKDecodeResponse),
+                      new Unmarshallers.VersionListUnmarshaller(shouldSdkDecodeResponse),
                       listVersionsRequest.getBucketName(), null);
     }
 
@@ -1115,7 +1120,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
          * only when the customers don't explicitly call {@link ListObjectsRequest#setEncodingType(String)},
          * otherwise, it will be disabled for maintaining backwards compatibility.
          */
-        final boolean shouldSDKDecodeResponse = listObjectsRequest.getEncodingType() == null;
+        final boolean shouldSdkDecodeResponse = listObjectsRequest.getEncodingType() == null;
 
         Request<ListObjectsRequest> request = createRequest(listObjectsRequest.getBucketName(), null,
                                                             listObjectsRequest, HttpMethodName.GET);
@@ -1125,11 +1130,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         if (listObjectsRequest.getMaxKeys() != null && listObjectsRequest.getMaxKeys().intValue() >= 0) {
             request.addParameter("max-keys", listObjectsRequest.getMaxKeys().toString());
         }
-        request.addParameter("encoding-type", shouldSDKDecodeResponse ? Constants.URL_ENCODING
+        request.addParameter("encoding-type", shouldSdkDecodeResponse ? Constants.URL_ENCODING
                                                                       : listObjectsRequest.getEncodingType());
 
         return invoke(request,
-                      new Unmarshallers.ListObjectsUnmarshaller(shouldSDKDecodeResponse),
+                      new Unmarshallers.ListObjectsUnmarshaller(shouldSdkDecodeResponse),
                       listObjectsRequest.getBucketName(), null);
     }
 
@@ -1169,10 +1174,10 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         /**
          * If URL encoding has been requested from S3 we'll automatically decode the response.
          */
-        final boolean shouldSDKDecodeResponse = listObjectsV2Request.getEncodingType() == Constants.URL_ENCODING;
+        final boolean shouldSdkDecodeResponse = listObjectsV2Request.getEncodingType() == Constants.URL_ENCODING;
 
         return invoke(request,
-                      new Unmarshallers.ListObjectsV2Unmarshaller(shouldSDKDecodeResponse),
+                      new Unmarshallers.ListObjectsV2Unmarshaller(shouldSdkDecodeResponse),
                       listObjectsV2Request.getBucketName(), null);
     }
 
@@ -1556,7 +1561,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         populateRequesterPaysHeader(request, getObjectMetadataRequest.isRequesterPays());
         addPartNumberIfNotNull(request, getObjectMetadataRequest.getPartNumber());
 
-        populateSseC(request, getObjectMetadataRequest.getSSECustomerKey());
+        populateSseC(request, getObjectMetadataRequest.getSseCustomerKey());
 
         return invoke(request, new S3MetadataResponseHandler(), bucketName, key);
     }
@@ -1682,7 +1687,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                             getObjectRequest.getNonmatchingETagConstraints());
 
         // Populate the SSE-C parameters to the request header
-        populateSseC(request, getObjectRequest.getSSECustomerKey());
+        populateSseC(request, getObjectRequest.getSseCustomerKey());
         final ProgressListener listener = getObjectRequest.getGeneralProgressListener();
         publishProgress(listener, ProgressEventType.TRANSFER_STARTED_EVENT);
 
@@ -1704,7 +1709,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             // used trigger a transfer complete event when the stream is entirely consumed
             is = new ProgressInputStream(is, listener) {
                 @Override
-                protected void onEOF() {
+                protected void onEof() {
                     publishProgress(getListener(), ProgressEventType.TRANSFER_COMPLETED_EVENT);
                 }
             };
@@ -1791,11 +1796,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
         S3Object object = getObject(bucketName, key);
         try {
-            return IOUtils.toString(object.getObjectContent());
+            return IoUtils.toString(object.getObjectContent());
         } catch (IOException e) {
             throw new SdkClientException("Error streaming content from S3 during download");
         } finally {
-            IOUtils.closeQuietly(object, log);
+            IoUtils.closeQuietly(object, log);
         }
     }
 
@@ -1972,7 +1977,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             populateRequesterPaysHeader(request, putObjectRequest.isRequesterPays());
 
             // Populate the SSE-C parameters to the request header
-            populateSseC(request, putObjectRequest.getSSECustomerKey());
+            populateSseC(request, putObjectRequest.getSseCustomerKey());
 
             // Populate the SSE AWS KMS parameters to the request header
             populateSseKms(request,
@@ -2168,9 +2173,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         copyObjectResult.setETag(copyObjectResultHandler.getETag());
         copyObjectResult.setLastModifiedDate(copyObjectResultHandler.getLastModified());
         copyObjectResult.setVersionId(copyObjectResultHandler.getVersionId());
-        copyObjectResult.setSSEAlgorithm(copyObjectResultHandler.getSSEAlgorithm());
-        copyObjectResult.setSSECustomerAlgorithm(copyObjectResultHandler.getSSECustomerAlgorithm());
-        copyObjectResult.setSSECustomerKeyMd5(copyObjectResultHandler.getSSECustomerKeyMd5());
+        copyObjectResult.setSseAlgorithm(copyObjectResultHandler.getSseAlgorithm());
+        copyObjectResult.setSseCustomerAlgorithm(copyObjectResultHandler.getSseCustomerAlgorithm());
+        copyObjectResult.setSseCustomerKeyMd5(copyObjectResultHandler.getSseCustomerKeyMd5());
         copyObjectResult.setExpirationTime(copyObjectResultHandler.getExpirationTime());
         copyObjectResult.setExpirationTimeRuleId(copyObjectResultHandler.getExpirationTimeRuleId());
         copyObjectResult.setRequesterCharged(copyObjectResultHandler.isRequesterCharged());
@@ -2306,9 +2311,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         copyPartResult.setPartNumber(copyPartRequest.getPartNumber());
         copyPartResult.setLastModifiedDate(copyObjectResultHandler.getLastModified());
         copyPartResult.setVersionId(copyObjectResultHandler.getVersionId());
-        copyPartResult.setSSEAlgorithm(copyObjectResultHandler.getSSEAlgorithm());
-        copyPartResult.setSSECustomerAlgorithm(copyObjectResultHandler.getSSECustomerAlgorithm());
-        copyPartResult.setSSECustomerKeyMd5(copyObjectResultHandler.getSSECustomerKeyMd5());
+        copyPartResult.setSseAlgorithm(copyObjectResultHandler.getSseAlgorithm());
+        copyPartResult.setSseCustomerAlgorithm(copyObjectResultHandler.getSseCustomerAlgorithm());
+        copyPartResult.setSseCustomerKeyMd5(copyObjectResultHandler.getSseCustomerKeyMd5());
 
         return copyPartResult;
     }
@@ -3140,10 +3145,10 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         addHeaderIfNotNull(request, Headers.CONTENT_MD5, req.getContentMd5());
 
         // SSE-C
-        populateSseC(request, req.getSSECustomerKey());
+        populateSseC(request, req.getSseCustomerKey());
         // SSE
         addHeaderIfNotNull(request, Headers.SERVER_SIDE_ENCRYPTION,
-                           req.getSSEAlgorithm());
+                           req.getSseAlgorithm());
         // SSE-KMS
         addHeaderIfNotNull(request,
                            Headers.SERVER_SIDE_ENCRYPTION_AWS_KMS_KEYID, req.getKmsCmkId());
@@ -3303,8 +3308,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
         if (initiateMultipartUploadRequest.getAccessControlList() != null) {
             addAclHeaders(request, initiateMultipartUploadRequest.getAccessControlList());
-        } else if (initiateMultipartUploadRequest.getCannedACL() != null) {
-            request.addHeader(Headers.S3_CANNED_ACL, initiateMultipartUploadRequest.getCannedACL().toString());
+        } else if (initiateMultipartUploadRequest.getCannedAcl() != null) {
+            request.addHeader(Headers.S3_CANNED_ACL, initiateMultipartUploadRequest.getCannedAcl().toString());
         }
 
         if (initiateMultipartUploadRequest.objectMetadata != null) {
@@ -3314,7 +3319,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         populateRequesterPaysHeader(request, initiateMultipartUploadRequest.isRequesterPays());
 
         // Populate the SSE-C parameters to the request header
-        populateSseC(request, initiateMultipartUploadRequest.getSSECustomerKey());
+        populateSseC(request, initiateMultipartUploadRequest.getSseCustomerKey());
 
         // Populate the SSE AWS KMS parameters to the request header
         populateSseKms(request,
@@ -3453,7 +3458,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         populateRequesterPaysHeader(request, uploadPartRequest.isRequesterPays());
 
         // Populate the SSE-C parameters to the request header
-        populateSseC(request, uploadPartRequest.getSSECustomerKey());
+        populateSseC(request, uploadPartRequest.getSseCustomerKey());
         InputStream isCurr = isOrig;
         try {
             if (fileOrig == null) {
@@ -3542,9 +3547,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             UploadPartResult result = new UploadPartResult();
             result.setETag(etag);
             result.setPartNumber(partNumber);
-            result.setSSEAlgorithm(metadata.getSSEAlgorithm());
-            result.setSSECustomerAlgorithm(metadata.getSSECustomerAlgorithm());
-            result.setSSECustomerKeyMd5(metadata.getSSECustomerKeyMd5());
+            result.setSseAlgorithm(metadata.getSseAlgorithm());
+            result.setSseCustomerAlgorithm(metadata.getSseCustomerAlgorithm());
+            result.setSseCustomerKeyMd5(metadata.getSseCustomerKeyMd5());
             result.setRequesterCharged(metadata.isRequesterCharged());
             return result;
         } catch (Throwable t) {
@@ -4185,7 +4190,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
     private ServiceEndpointBuilder getBuilder(URI endpoint, String protocol, boolean useDefaultBuilder) {
         if (clientOptions.isDualstackEnabled() && !clientOptions.isAccelerateModeEnabled()) {
-            return new DualstackEndpointBuilder(getServiceNameIntern(), protocol, getRegion().toAWSRegion());
+            return new DualstackEndpointBuilder(getServiceNameIntern(), protocol, getRegion().toAwsRegion());
         } else {
             if (useDefaultBuilder) {
                 return new DefaultServiceEndpointBuilder(getServiceName(), protocol);
@@ -4302,20 +4307,20 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             String error = String.format("While the %s system property is enabled, Amazon S3 clients cannot be used without " +
                                          "first configuring a region or explicitly enabling global bucket access discovery " +
                                          "in the S3 client builder.",
-                                         SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
+                                         SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
             throw new IllegalStateException(error);
         }
     }
 
     /**
-     * Returns true in the event that the {@link SDKGlobalConfiguration#DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY}
+     * Returns true in the event that the {@link SdkGlobalConfiguration#DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY}
      * is non-null and not "false".
      *
      * If this system property is set, S3 clients may not act in a cross-region manner unless cross-region behavior is
      * explicitly enabled, using options like {@link AmazonS3ClientBuilder#enableForceGlobalBucketAccess()}.
      */
     private boolean areImplicitGlobalClientsDisabled() {
-        String setting = System.getProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
+        String setting = System.getProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
         return setting != null && !setting.equals("false");
     }
 
@@ -4431,9 +4436,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      * without https.
      */
     private void checkHttps(AmazonWebServiceRequest req) {
-        if (req instanceof SSECustomerKeyProvider) {
-            SSECustomerKeyProvider p = (SSECustomerKeyProvider) req;
-            if (p.getSSECustomerKey() != null) {
+        if (req instanceof SseCustomerKeyProvider) {
+            SseCustomerKeyProvider p = (SseCustomerKeyProvider) req;
+            if (p.getSseCustomerKey() != null) {
                 assertHttps();
             }
         } else if (req instanceof CopyObjectRequest) {
@@ -4490,7 +4495,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
              * Extract the region string from the endpoint if it's not known to be a
              * global S3 endpoint.
              */
-            if (!ServiceUtils.isS3USStandardEndpoint(endpoint)) {
+            if (!ServiceUtils.isS3UsStandardEndpoint(endpoint)) {
                 clientRegion = AwsHostNameUtils.parseRegionName(this.endpoint.getHost(), S3_SERVICE_NAME);
             }
         }
@@ -4505,11 +4510,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         return new InitiateMultipartUploadRequest(
                 req.getBucketName(), req.getKey(), req.getMetadata())
                 .withRedirectLocation(req.getRedirectLocation())
-                .withSSEAwsKeyManagementParams(req.getSseAwsKeyManagementParams())
-                .withSSECustomerKey(req.getSSECustomerKey())
+                .withSseAwsKeyManagementParams(req.getSseAwsKeyManagementParams())
+                .withSseCustomerKey(req.getSseCustomerKey())
                 .withStorageClass(req.getStorageClass())
                 .withAccessControlList(req.getAccessControlList())
-                .withCannedACL(req.getCannedAcl())
+                .withCannedAcl(req.getCannedAcl())
                 .withGeneralProgressListener(req.getGeneralProgressListener())
                 .withRequestMetricCollector(req.getRequestMetricCollector())
                 ;
@@ -4534,11 +4539,11 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         }
 
         try {
-            IOUtils.copy(req.getInputStream(), os);
+            IoUtils.copy(req.getInputStream(), os);
         } finally {
             cleanupDataSource(req, fileOrig, isOrig,
                               req.getInputStream(), log);
-            IOUtils.closeQuietly(os, log);
+            IoUtils.closeQuietly(os, log);
         }
         return;
     }

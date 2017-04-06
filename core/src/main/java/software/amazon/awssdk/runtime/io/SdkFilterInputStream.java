@@ -21,7 +21,7 @@ import java.io.InputStream;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.internal.io.Releasable;
-import software.amazon.awssdk.internal.io.SdkIOUtils;
+import software.amazon.awssdk.internal.io.SdkIoUtils;
 import software.amazon.awssdk.runtime.MetricAware;
 import software.amazon.awssdk.util.SdkRuntime;
 
@@ -117,7 +117,7 @@ public class SdkFilterInputStream extends FilterInputStream
     @Override
     public void release() {
         // Don't call IOUtils.release(in, null) or else could lead to infinite loop
-        SdkIOUtils.closeQuietly(this);
+        SdkIoUtils.closeQuietly(this);
         if (in instanceof Releasable) {
             // This allows any underlying stream that has the close operation
             // disabled to be truly released

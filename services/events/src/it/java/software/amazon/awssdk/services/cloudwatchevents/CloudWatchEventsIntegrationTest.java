@@ -34,12 +34,12 @@ public class CloudWatchEventsIntegrationTest extends AwsIntegrationTestBase {
     private static final String RULE_DESCRIPTION = "ruleDescription";
     private static final String EVENT_PATTERN = "{ \"source\": [\"aws.ec2\"] }";
 
-    private static AmazonCloudWatchEvents events;
+    private static CloudWatchEventsClient events;
 
     @BeforeClass
     public static void setUpClient() throws Exception {
         setUpCredentials();
-        events = new AmazonCloudWatchEventsClient(getCredentials());
+        events = CloudWatchEventsClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         events.putRule(new PutRuleRequest()
                                .withName(RULE_NAME)

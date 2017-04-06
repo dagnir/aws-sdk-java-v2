@@ -403,6 +403,16 @@ public abstract class AmazonS3Builder<SubclassT extends AmazonS3Builder, TypeToB
         return getSubclass();
     }
 
+    @Override
+    public String getServiceName() {
+        return AmazonS3Client.S3_SERVICE_NAME;
+    }
+
+    @Override
+    public String getEndpointPrefix() {
+        return AmazonS3.ENDPOINT_PREFIX;
+    }
+
     protected S3ClientOptions resolveS3ClientOptions() {
         final S3ClientOptions.Builder builder = S3ClientOptions.builder();
         if (Boolean.TRUE.equals(this.chunkedEncodingDisabled)) {

@@ -17,7 +17,7 @@ package software.amazon.awssdk.http;
 
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.RequestExecutionContext;
-import software.amazon.awssdk.SDKGlobalTime;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
@@ -41,7 +41,7 @@ public class HttpClientDependencies {
      * Time offset may be mutated by {@link software.amazon.awssdk.http.pipeline.RequestPipeline} implementations
      * if a clock skew is detected.
      */
-    private volatile int timeOffset = SDKGlobalTime.getGlobalTimeOffset();
+    private volatile int timeOffset = SdkGlobalTime.getGlobalTimeOffset();
 
     private HttpClientDependencies(Builder builder) {
         this.config = builder.config;
@@ -115,7 +115,7 @@ public class HttpClientDependencies {
     public void updateTimeOffset(int timeOffset) {
         this.timeOffset = timeOffset;
         // TODO think about why we update global. I assume because it's more likely to have the client's clock skewed.
-        SDKGlobalTime.setGlobalTimeOffset(timeOffset);
+        SdkGlobalTime.setGlobalTimeOffset(timeOffset);
     }
 
 

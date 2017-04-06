@@ -17,13 +17,13 @@ package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import software.amazon.awssdk.services.s3.internal.SSEResultBase;
+import software.amazon.awssdk.services.s3.internal.SseResultBase;
 
 
 /**
  * Result of the copy part operation.
  */
-public class CopyPartResult extends SSEResultBase implements Serializable {
+public class CopyPartResult extends SseResultBase implements Serializable {
 
     /** The ETag value of the new part. */
     private String etag;

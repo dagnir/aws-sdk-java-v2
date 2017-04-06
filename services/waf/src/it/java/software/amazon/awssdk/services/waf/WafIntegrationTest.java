@@ -43,13 +43,13 @@ public class WafIntegrationTest extends AwsTestBase {
     private static final String IP_SET_NAME = "java-sdk-ipset-" + System.currentTimeMillis();
     private static final long SLEEP_TIME_MILLIS = 5000;
     private static final String IP_ADDRESS_RANGE = "192.0.2.0/24";
-    private static AWSWAF client = null;
+    private static WAFClient client = null;
     private static String ipSetId = null;
 
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        client = new AWSWAFClient(credentials);
+        client = WAFClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
     }
 
@@ -58,8 +58,6 @@ public class WafIntegrationTest extends AwsTestBase {
         if (client != null) {
 
             deleteIpSet();
-
-            client.shutdown();
         }
     }
 

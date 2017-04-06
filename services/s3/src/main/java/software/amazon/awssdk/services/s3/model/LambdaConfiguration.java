@@ -27,40 +27,40 @@ public class LambdaConfiguration extends NotificationConfiguration implements Se
     /**
      * The ARN for the lambda function to be invoked.
      */
-    private final String functionARN;
+    private final String functionArn;
 
     /**
      * Creates a new lambda configuration with the given cloud function arn
      * and set of events.
      *
-     * @param functionARN
+     * @param functionArn
      *            the ARN of the lambda function to be invoked
      * @param events
      *            the events for which the notifications are to be sent
      */
-    public LambdaConfiguration(String functionARN, EnumSet<S3Event> events) {
+    public LambdaConfiguration(String functionArn, EnumSet<S3Event> events) {
         super(events);
-        this.functionARN = functionARN;
+        this.functionArn = functionArn;
     }
 
     /**
      * Creates a new lambda configuration with the given cloud function arn
      * and set of events.
      *
-     * @param functionARN
+     * @param functionArn
      *            the ARN of the lambda function to be invoked
      * @param events
      *            the events for which the notifications are to be sent
      */
-    public LambdaConfiguration(String functionARN, String... events) {
+    public LambdaConfiguration(String functionArn, String... events) {
         super(events);
-        this.functionARN = functionARN;
+        this.functionArn = functionArn;
     }
 
     /**
      * Returns the ARN of the cloud function to be invoked.
      */
-    public String getFunctionARN() {
-        return functionARN;
+    public String getFunctionArn() {
+        return functionArn;
     }
 }

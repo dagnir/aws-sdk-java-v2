@@ -23,11 +23,11 @@ public class ElastiCacheIntegrationTestBase extends AwsTestBase {
     protected static final String MEMCACHED_ENGINE = "memcached";
     protected static final String REDIS_ENGINE = "redis";
 
-    protected static AmazonElastiCacheClient elasticache;
+    protected static ElastiCacheClient elasticache;
 
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        elasticache = new AmazonElastiCacheClient(credentials);
+        elasticache = ElastiCacheClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

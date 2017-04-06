@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import javax.xml.stream.events.XMLEvent;
-import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringUnmarshaller;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.CloudFunctionConfiguration;
@@ -71,15 +71,15 @@ class LambdaConfigurationStaxUnmarshaller implements
 
             if (xmlEvent.isAttribute() || xmlEvent.isStartElement()) {
                 if (context.testExpression("Id", targetDepth)) {
-                    id = StringStaxUnmarshaller.getInstance().unmarshall(context);
+                    id = StringUnmarshaller.getInstance().unmarshall(context);
                 } else if (context.testExpression("Event", targetDepth)) {
-                    events.add(StringStaxUnmarshaller.getInstance().unmarshall(context));
+                    events.add(StringUnmarshaller.getInstance().unmarshall(context));
                 } else if (context.testExpression("Filter", targetDepth)) {
                     filter = FilterStaxUnmarshaller.getInstance().unmarshall(context);
                 } else if (context.testExpression("CloudFunction", targetDepth)) {
-                    functionArn = StringStaxUnmarshaller.getInstance().unmarshall(context);
+                    functionArn = StringUnmarshaller.getInstance().unmarshall(context);
                 } else if (context.testExpression("InvocationRole", targetDepth)) {
-                    invocationRole = StringStaxUnmarshaller.getInstance().unmarshall(context);
+                    invocationRole = StringUnmarshaller.getInstance().unmarshall(context);
                 }
             } else if (xmlEvent.isEndElement()) {
                 if (context.getCurrentDepth() < originalDepth) {

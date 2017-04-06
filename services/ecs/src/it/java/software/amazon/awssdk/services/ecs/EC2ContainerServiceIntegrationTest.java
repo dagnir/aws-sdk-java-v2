@@ -26,6 +26,8 @@ import software.amazon.awssdk.services.ecs.model.CreateClusterRequest;
 import software.amazon.awssdk.services.ecs.model.CreateClusterResult;
 import software.amazon.awssdk.services.ecs.model.DeleteClusterRequest;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersRequest;
+import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
+import software.amazon.awssdk.services.ecs.model.ListTaskDefinitionsRequest;
 import software.amazon.awssdk.services.ecs.model.PortMapping;
 import software.amazon.awssdk.services.ecs.model.RegisterTaskDefinitionRequest;
 import software.amazon.awssdk.services.ecs.model.RegisterTaskDefinitionResult;
@@ -36,7 +38,7 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
     private static final String CLUSTER_NAME =
             "java-sdk-test-cluster-" + System.currentTimeMillis();
 
-    private static AmazonECSClient client;
+    private static ECSClient client;
     private static String clusterArn;
 
     @BeforeClass
@@ -45,7 +47,7 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
         setUpCredentials();
 
-        client = new AmazonECSClient(credentials);
+        client = ECSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         CreateClusterResult result = client.createCluster(
                 new CreateClusterRequest()
@@ -71,13 +73,12 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
     public static void cleanup() {
         if (client != null) {
             client.deleteCluster(new DeleteClusterRequest().withCluster(CLUSTER_NAME));
-            client.shutdown();
         }
     }
 
     @Test
     public void basicTest() {
-        List<String> arns = client.listClusters().getClusterArns();
+        List<String> arns = client.listClusters(new ListClustersRequest()).getClusterArns();
         Assert.assertNotNull(arns);
         Assert.assertTrue(arns.contains(clusterArn));
 
@@ -118,7 +119,7 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
         // Can't deregister task definitions yet... :(
 
-        List<String> taskArns = client.listTaskDefinitions()
+        List<String> taskArns = client.listTaskDefinitions(new ListTaskDefinitionsRequest())
                                       .getTaskDefinitionArns();
 
         Assert.assertNotNull(taskArns);

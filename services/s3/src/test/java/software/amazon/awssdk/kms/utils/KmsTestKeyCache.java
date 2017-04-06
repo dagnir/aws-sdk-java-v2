@@ -18,7 +18,9 @@ package software.amazon.awssdk.kms.utils;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.kms.KMSClient;
 
 /**
  * Caches the ids of both a non default KMS key reserved for s3 integration testing and the default
@@ -33,8 +35,7 @@ public class KmsTestKeyCache {
     private final String s3DefaultKeyId;
 
     public KmsTestKeyCache(Regions region, AwsCredentials awsCredentials) {
-        KmsClientTestExtensions kmsClient = new KmsClientTestExtensions(awsCredentials);
-        kmsClient.configureRegion(region);
+        KmsClientTestExtensions kmsClient = new KmsClientTestExtensions(awsCredentials, region);
         this.nonDefaultKeyId = kmsClient.getNonDefaultKeyId();
         this.s3DefaultKeyId = kmsClient.getDefaultS3KeyId();
     }

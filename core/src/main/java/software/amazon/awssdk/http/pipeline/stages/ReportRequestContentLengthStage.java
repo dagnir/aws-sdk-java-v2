@@ -16,7 +16,7 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishRequestContentLength;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishRequestContentLength;
 
 import java.util.Optional;
 import org.apache.commons.logging.Log;

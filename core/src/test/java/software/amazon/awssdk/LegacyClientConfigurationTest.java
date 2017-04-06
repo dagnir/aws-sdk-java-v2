@@ -38,7 +38,7 @@ public class LegacyClientConfigurationTest {
     private static final LegacyClientConfiguration DEFAULT_CLIENT_CONFIG = new LegacyClientConfiguration();
 
     private static final RetryPolicy CUSTOM_RETRY_POLICY = new RetryPolicy(
-            PredefinedRetryPolicies.SDKDefaultRetryCondition.NO_RETRY_CONDITION,
+            PredefinedRetryPolicies.SdkDefaultRetryCondition.NO_RETRY_CONDITION,
             RetryPolicy.BackoffStrategy.NO_DELAY, 1000, false);
 
     private void clearProxyProperties() {

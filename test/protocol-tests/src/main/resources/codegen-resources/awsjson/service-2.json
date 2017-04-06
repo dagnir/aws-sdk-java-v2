@@ -5,7 +5,7 @@
     "endpointPrefix":"jsonrpc",
     "jsonVersion":"1.1",
     "protocol":"json",
-    "serviceAbbreviation":"JsonProtocolTests",
+    "serviceAbbreviation":"AmazonProtocolJsonRpc",
     "serviceFullName":"AWS DR Tools JSON Protocol Tests",
     "signatureVersion":"v4",
     "targetPrefix":"ProtocolTestsJsonRpcService",

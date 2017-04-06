@@ -18,7 +18,7 @@ import static com.fasterxml.jackson.core.JsonToken.*;
  * ${shape.shapeName} JSON Unmarshaller
  */
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
-public class ${shape.shapeName}JsonUnmarshaller implements Unmarshaller<${shape.shapeName}, JsonUnmarshallerContext> {
+public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shapeName}, JsonUnmarshallerContext> {
 
     public ${shape.shapeName} unmarshall(JsonUnmarshallerContext context) throws Exception {
         ${shape.shapeName} ${shape.variable.variableName} = new ${shape.shapeName}();
@@ -56,9 +56,9 @@ public class ${shape.shapeName}JsonUnmarshaller implements Unmarshaller<${shape.
         java.io.InputStream is = context.getHttpResponse().getContent();
         if(is != null) {
             try {
-                ${shape.variable.variableName}.${explicitPayloadMember.setterMethodName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.util.IOUtils.toByteArray(is)));
+                ${shape.variable.variableName}.${explicitPayloadMember.setterMethodName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.util.IoUtils.toByteArray(is)));
             } finally {
-                software.amazon.awssdk.util.IOUtils.closeQuietly(is, null);
+                software.amazon.awssdk.util.IoUtils.closeQuietly(is, null);
             }
         }
     <#else>
@@ -71,9 +71,9 @@ public class ${shape.shapeName}JsonUnmarshaller implements Unmarshaller<${shape.
         return ${shape.variable.variableName};
     }
 
-    private static ${shape.shapeName}JsonUnmarshaller INSTANCE;
-    public static ${shape.shapeName}JsonUnmarshaller getInstance() {
-        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}JsonUnmarshaller();
+    private static ${shape.shapeName}Unmarshaller INSTANCE;
+    public static ${shape.shapeName}Unmarshaller getInstance() {
+        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}Unmarshaller();
         return INSTANCE;
     }
 }

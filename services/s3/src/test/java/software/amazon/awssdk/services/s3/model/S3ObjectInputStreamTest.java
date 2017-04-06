@@ -21,7 +21,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Test;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public class S3ObjectInputStreamTest {
 
@@ -39,7 +39,7 @@ public class S3ObjectInputStreamTest {
         mockInputStream.abort();
         assertEquals(-1, mockInputStream.read());
 
-        IOUtils.closeQuietly(mockInputStream, null);
+        IoUtils.closeQuietly(mockInputStream, null);
     }
 
     /**

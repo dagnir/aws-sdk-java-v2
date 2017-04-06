@@ -12,20 +12,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
+package software.amazon.awssdk.services.dynamodb.document.quickstart;
 
 import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.document.BatchGetItemOutcome;
-import software.amazon.awssdk.services.dynamodbv2.document.Item;
-import software.amazon.awssdk.services.dynamodbv2.document.TableKeysAndAttributes;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.NameMap;
-import software.amazon.awssdk.services.dynamodbv2.model.KeysAndAttributes;
-import software.amazon.awssdk.services.dynamodbv2.model.ReturnConsumedCapacity;
+import software.amazon.awssdk.services.dynamodb.document.BatchGetItemOutcome;
+import software.amazon.awssdk.services.dynamodb.document.Item;
+import software.amazon.awssdk.services.dynamodb.document.TableKeysAndAttributes;
+import software.amazon.awssdk.services.dynamodb.document.utils.AbstractQuickStart;
+import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
+import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
+import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 
 /**
  * Sample code to perform batch get items from DynamoDB.

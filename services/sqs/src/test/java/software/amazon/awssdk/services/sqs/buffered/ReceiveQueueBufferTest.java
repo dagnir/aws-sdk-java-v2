@@ -10,12 +10,12 @@ import static org.junit.Assert.assertEquals;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
+import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResult;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -40,12 +40,12 @@ public class ReceiveQueueBufferTest {
                 String.valueOf(VISIBILITY_TIMEOUT_SECONDS));
     }
 
-    private AmazonSQS mockSqs;
+    private SQSAsyncClient mockSqs;
     private ReceiveQueueBuffer buffer;
 
     @Before
     public void setup() {
-        mockSqs = createMock(AmazonSQS.class);
+        mockSqs = createMock(SQSAsyncClient.class);
         expectGetQueueAttributes(QUEUE_ATTRIBUTES);
         buffer = new ReceiveQueueBuffer(mockSqs, MoreExecutors.newDirectExecutorService(), getQueueBufferConfig(),
                 "some-queue");
@@ -105,7 +105,7 @@ public class ReceiveQueueBufferTest {
 
     private void expectGetQueueAttributes(Map<String, String> queueAttributes) {
         expect(mockSqs.getQueueAttributes(isA(GetQueueAttributesRequest.class))).andStubReturn(
-                new GetQueueAttributesResult().withAttributes(queueAttributes));
+                CompletableFuture.completedFuture(new GetQueueAttributesResult().withAttributes(queueAttributes)));
     }
 
     private void expectReceiveMessages(Message... messages) {
@@ -123,14 +123,11 @@ public class ReceiveQueueBufferTest {
      *            Messages to return
      */
     private void expectReceiveMessagesWithSleep(final int sleepSeconds, final Message... messages) {
-        expect(mockSqs.receiveMessage(isA(ReceiveMessageRequest.class))).andAnswer(new IAnswer<ReceiveMessageResult>() {
-            @Override
-            public ReceiveMessageResult answer() throws Throwable {
-                if (sleepSeconds > 0) {
-                    Thread.sleep(TimeUnit.SECONDS.toMillis(sleepSeconds));
-                }
-                return new ReceiveMessageResult().withMessages(asArray(messages));
+        expect(mockSqs.receiveMessage(isA(ReceiveMessageRequest.class))).andAnswer(() -> {
+            if (sleepSeconds > 0) {
+                Thread.sleep(TimeUnit.SECONDS.toMillis(sleepSeconds));
             }
+            return CompletableFuture.completedFuture(new ReceiveMessageResult().withMessages(asArray(messages)));
         });
     }
 

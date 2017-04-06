@@ -41,7 +41,7 @@ public class ProgressListenerChain implements ProgressListener, DeliveryMode {
      * True if synchronous callback to every listener in this chain is safe with
      * no risk of incurring undue latency.
      *
-     * @see SDKProgressPublisher
+     * @see SdkProgressPublisher
      */
     private volatile boolean syncCallSafe = true;
 

@@ -29,12 +29,10 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthScalarsRequest;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthScalarsRequest;
 
 public class ServiceApiKeyComponentTest {
     private static final UrlMatchingStrategy URI = urlMatching(".*");
@@ -50,7 +48,7 @@ public class ServiceApiKeyComponentTest {
     @Test
     public void canSpecifyAnAPIKeyOnClient() {
         String apiKey = randomAlphanumeric(20);
-        MyService service = createServiceBuilder().apiKey(apiKey).build();
+        MyServiceClient service = createServiceBuilder().apiKey(apiKey).build();
 
         service.getNoauthScalars(new GetNoauthScalarsRequest());
 
@@ -59,7 +57,7 @@ public class ServiceApiKeyComponentTest {
 
     @Test
     public void noApiKeyIsSentIfNotSpecified() {
-        MyService service = createServiceBuilder().build();
+        MyServiceClient service = createServiceBuilder().build();
 
         service.getNoauthScalars(new GetNoauthScalarsRequest());
 
@@ -67,7 +65,7 @@ public class ServiceApiKeyComponentTest {
     }
 
     private MyServiceClientBuilder createServiceBuilder() {
-        return MyService.builder()
+        return MyServiceClient.builder()
                         .endpoint("http://localhost:" + mockServer.port())
                         .iamCredentials(createCredentialsProvider());
     }

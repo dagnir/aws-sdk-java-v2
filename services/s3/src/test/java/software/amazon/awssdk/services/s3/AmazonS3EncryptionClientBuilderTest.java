@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.services.kms.AWSKMSClient;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterialsProvider;
 
@@ -29,7 +29,7 @@ public class AmazonS3EncryptionClientBuilderTest {
     public void canCreateAnS3EncryptionClient() {
         CryptoConfiguration cryptoConfig = new CryptoConfiguration();
         EncryptionMaterialsProvider encryptionMaterials = mock(EncryptionMaterialsProvider.class);
-        AWSKMSClient kmsClient = mock(AWSKMSClient.class);
+        KMSClient kmsClient = mock(KMSClient.class);
         LegacyClientConfiguration clientConfig = new LegacyClientConfiguration();
 
         AmazonS3EncryptionClientBuilder.standard()

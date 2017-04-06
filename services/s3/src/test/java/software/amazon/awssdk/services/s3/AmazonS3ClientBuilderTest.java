@@ -155,14 +155,14 @@ public class AmazonS3ClientBuilderTest {
         assertTrue(clientOptions.isDualstackEnabled());
     }
 
-    @Test(expected = SdkClientException.class)
+    @Test(expected = IllegalStateException.class)
     public void withCrossRegionDisabledAndNullRegion_ThrowsExceptionOnBuild() {
         builder.setRegion(null);
         builder.withForceGlobalBucketAccessEnabled(false);
         builder.build();
     }
 
-    @Test(expected = SdkClientException.class)
+    @Test(expected = IllegalStateException.class)
     public void withCrossRegionEnabledAndNullRegion_ThrowsExceptionOnBuild() {
         builder.setRegion(null);
         builder.withForceGlobalBucketAccessEnabled(true);

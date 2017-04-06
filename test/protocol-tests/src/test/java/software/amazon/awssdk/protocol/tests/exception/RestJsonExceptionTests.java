@@ -28,13 +28,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
-import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocol.restjson.model.AmazonProtocolRestJsonException;
-import software.amazon.awssdk.services.protocol.restjson.model.EmptyModeledException;
-import software.amazon.awssdk.services.protocol.restjson.model.HeadOperationRequest;
-import software.amazon.awssdk.services.protocol.restjson.model.MultiLocationOperationRequest;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
+import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
+import software.amazon.awssdk.services.protocolrestjson.model.EmptyModeledException;
+import software.amazon.awssdk.services.protocolrestjson.model.HeadOperationRequest;
+import software.amazon.awssdk.services.protocolrestjson.model.MultiLocationOperationRequest;
+import software.amazon.awssdk.services.protocolrestjson.model.ProtocolRestJsonClientException;
 
 /**
  * Exception related tests for AWS REST JSON.
@@ -46,13 +48,20 @@ public class RestJsonExceptionTests {
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
-    private final AmazonProtocolRestJsonClient client = new AmazonProtocolRestJsonClient(
-            new BasicAwsCredentials("akid", "skid"));
+    private ProtocolRestJsonClient client;
+
+    @Before
+    public void setupClient() {
+        client = ProtocolRestJsonClient.builder()
+                                       .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                       .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                            "us-east-1"))
+                                       .build();
+    }
 
     @Before
     public void setup() {
         BasicConfigurator.configure();
-        client.setEndpoint("http://localhost:" + wireMock.port());
     }
 
     @Test
@@ -114,7 +123,7 @@ public class RestJsonExceptionTests {
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {
-        assertThrowsException(runnable, AmazonProtocolRestJsonException.class);
+        assertThrowsException(runnable, ProtocolRestJsonClientException.class);
     }
 
     private void assertThrowsSdkClientException(Runnable runnable) {

@@ -30,11 +30,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import software.amazon.awssdk.services.lambda.AWSLambda;
+import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResult;
@@ -42,7 +44,7 @@ import software.amazon.awssdk.services.lambda.model.LogType;
 
 public class LambdaInvokerFactoryTest {
 
-    private AWSLambda mock;
+    private LambdaAsyncClient mock;
     private Invoker invoker;
 
     @Before
@@ -50,7 +52,7 @@ public class LambdaInvokerFactoryTest {
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
 
-        mock = mock(AWSLambda.class);
+        mock = mock(LambdaAsyncClient.class);
         invoker = LambdaInvokerFactory.builder()
                                       .lambdaClient(mock)
                                       .build(Invoker.class);
@@ -71,7 +73,7 @@ public class LambdaInvokerFactoryTest {
         InvokeRequest request = new InvokeRequest().withFunctionName("doIt").withInvocationType("RequestResponse")
                                                    .withLogType("None");
 
-        when(mock.invoke(request)).thenReturn(new InvokeResult().withStatusCode(204));
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(new InvokeResult().withStatusCode(204)));
 
         invoker.doIt();
     }
@@ -81,7 +83,7 @@ public class LambdaInvokerFactoryTest {
         InvokeRequest request = new InvokeRequest().withFunctionName("doIt").withInvocationType("Event")
                                                    .withLogType("None");
 
-        when(mock.invoke(request)).thenReturn(new InvokeResult().withStatusCode(202));
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(new InvokeResult().withStatusCode(202)));
 
         invoker.doItAsynchronously();
     }
@@ -92,7 +94,7 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("Tail");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult().withStatusCode(204).withLogResult("TG9nZ2l0eSBsb2dnaW5n"));
+                CompletableFuture.completedFuture(new InvokeResult().withStatusCode(204).withLogResult("TG9nZ2l0eSBsb2dnaW5n")));
 
         invoker.doItWithLogs();
     }
@@ -113,7 +115,7 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None");
 
         when(mock.invoke(request))
-                .thenReturn(getStringSuccessResult());
+                .thenReturn(CompletableFuture.completedFuture(getStringSuccessResult()));
 
         String result = invoker.getString();
         assertEquals("OK", result);
@@ -124,7 +126,7 @@ public class LambdaInvokerFactoryTest {
         InvokeRequest request = new InvokeRequest().withFunctionName("setString").withInvocationType("RequestResponse")
                                                    .withLogType("None").withPayload("\"Hello World\"");
 
-        when(mock.invoke(request)).thenReturn(new InvokeResult().withStatusCode(204));
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(new InvokeResult().withStatusCode(204)));
 
         invoker.setString("Hello World");
     }
@@ -135,7 +137,8 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None").withPayload("{\"a\":\"b\",\"c\":\"d\"}");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult().withStatusCode(200).withPayload(ByteBuffer.wrap("[\"a\",\"c\"]".getBytes())));
+                CompletableFuture.completedFuture(
+                        new InvokeResult().withStatusCode(200).withPayload(ByteBuffer.wrap("[\"a\",\"c\"]".getBytes()))));
 
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("a", "b");
@@ -156,8 +159,8 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None").withPayload("{\"string\":\"Hello World\",\"integer\":12345}");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult().withStatusCode(200).withPayload(
-                        ByteBuffer.wrap("{\"string\":\"Hello Test\",\"integer\":67890}".getBytes())));
+                CompletableFuture.completedFuture(new InvokeResult().withStatusCode(200).withPayload(
+                        ByteBuffer.wrap("{\"string\":\"Hello Test\",\"integer\":67890}".getBytes()))));
 
         Pojo pojo = new Pojo();
         pojo.setString("Hello World");
@@ -175,12 +178,12 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult()
+                CompletableFuture.completedFuture(new InvokeResult()
                         .withStatusCode(200)
                         .withFunctionError("Unhandled")
                         .withPayload(
                                 ByteBuffer.wrap("{\"errorMessage\":\"I'm the message\",\"errorType\":\"BOOM\"}"
-                                                        .getBytes())));
+                                                        .getBytes()))));
 
         try {
             invoker.fail();
@@ -200,13 +203,13 @@ public class LambdaInvokerFactoryTest {
                 .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult()
+                CompletableFuture.completedFuture(new InvokeResult()
                         .withStatusCode(200)
                         .withFunctionError("Unhandled")
                         .withPayload(
                                 ByteBuffer
                                         .wrap("{\"errorMessage\":\"I'm the message\",\"errorType\":\"BOOM\",\"unknownField\": \"foo\"}"
-                                                      .getBytes())));
+                                                      .getBytes()))));
 
         try {
             invoker.fail();
@@ -227,10 +230,10 @@ public class LambdaInvokerFactoryTest {
                 .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult()
+                CompletableFuture.completedFuture(new InvokeResult()
                         .withStatusCode(200)
                         .withFunctionError("Unhandled")
-                        .withPayload(ByteBuffer.wrap(exceptionJson.getBytes())));
+                        .withPayload(ByteBuffer.wrap(exceptionJson.getBytes()))));
 
         try {
             invoker.fail();
@@ -255,14 +258,14 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult()
+                CompletableFuture.completedFuture(new InvokeResult()
                         .withStatusCode(200)
                         .withFunctionError("Handled")
                         .withPayload(
                                 ByteBuffer.wrap(("{\"errorMessage\":\"I'm the message\"," +
                                                  "\"errorType\":\"BOOM\"," +
                                                  "\"cause\":{}," +
-                                                 "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes())));
+                                                 "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes()))));
 
         try {
             invoker.fail();
@@ -295,13 +298,13 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult()
+                CompletableFuture.completedFuture(new InvokeResult()
                         .withStatusCode(200)
                         .withFunctionError("Handled")
                         .withPayload(ByteBuffer.wrap((String.format(
                                 "{\"errorMessage\":\"I'm the message\"," +
                                 "\"errorType\":\"%s\",\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}",
-                                CustomException.class.getName())).getBytes())));
+                                CustomException.class.getName())).getBytes()))));
 
         try {
             invoker.fail();
@@ -332,12 +335,12 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult()
+                CompletableFuture.completedFuture(new InvokeResult()
                         .withStatusCode(200)
                         .withFunctionError("Handled")
                         .withPayload(
                                 ByteBuffer.wrap(("{\"errorMessage\":\"I'm the message\"," + "\"errorType\":\"CustomException\","
-                                                 + "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes())));
+                                                 + "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes()))));
 
         try {
             invoker.fail();
@@ -363,7 +366,8 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult().withStatusCode(200).withPayload(ByteBuffer.wrap("I'm not even JSON!".getBytes())));
+                CompletableFuture.completedFuture(
+                        new InvokeResult().withStatusCode(200).withPayload(ByteBuffer.wrap("I'm not even JSON!".getBytes()))));
 
         try {
             invoker.broken();
@@ -379,8 +383,8 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("Tail");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult().withStatusCode(200).withLogResult("I'm not valid Base-64")
-                                  .withPayload(ByteBuffer.wrap("I should be ignored".getBytes())));
+                CompletableFuture.completedFuture(new InvokeResult().withStatusCode(200).withLogResult("I'm not valid Base-64")
+                                  .withPayload(ByteBuffer.wrap("I should be ignored".getBytes()))));
 
         // Should not fail just because the logged data is invalid.
         invoker.doItWithLogs();
@@ -392,8 +396,8 @@ public class LambdaInvokerFactoryTest {
                                                    .withLogType("None");
 
         when(mock.invoke(request)).thenReturn(
-                new InvokeResult().withStatusCode(200).withFunctionError("Handled")
-                                  .withPayload(ByteBuffer.wrap("Bogus".getBytes())));
+                CompletableFuture.completedFuture(new InvokeResult().withStatusCode(200).withFunctionError("Handled")
+                                  .withPayload(ByteBuffer.wrap("Bogus".getBytes()))));
 
         try {
             invoker.fail();
@@ -421,7 +425,7 @@ public class LambdaInvokerFactoryTest {
         ArgumentCaptor<InvokeRequest> invokeArgCaptor = ArgumentCaptor
                 .forClass(InvokeRequest.class);
         when(mock.invoke(invokeArgCaptor.capture()))
-                .thenReturn(getStringSuccessResult());
+                .thenReturn(CompletableFuture.completedFuture(getStringSuccessResult()));
 
         invoker.getString();
 
@@ -439,7 +443,7 @@ public class LambdaInvokerFactoryTest {
         ArgumentCaptor<InvokeRequest> invokeArgCaptor = ArgumentCaptor
                 .forClass(InvokeRequest.class);
         when(mock.invoke(invokeArgCaptor.capture()))
-                .thenReturn(getStringSuccessResult());
+                .thenReturn(CompletableFuture.completedFuture(getStringSuccessResult()));
 
         invoker.getString();
 

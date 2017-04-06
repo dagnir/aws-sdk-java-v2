@@ -51,7 +51,7 @@ import software.amazon.awssdk.services.ec2.model.Snapshot;
 import software.amazon.awssdk.services.ec2.model.Volume;
 import software.amazon.awssdk.services.ec2.model.transform.CopySnapshotRequestMarshaller;
 import software.amazon.awssdk.services.ec2.model.transform.GeneratePreSignUrlRequestHandler;
-import software.amazon.awssdk.services.securitytoken.auth.STSSessionCredentialsProvider;
+import software.amazon.awssdk.services.sts.auth.StsSessionCredentialsProvider;
 
 /**
  * Integration tests for the EC2 snapshot operations.
@@ -322,7 +322,7 @@ public class EC2SnapshotIntegrationTest extends EC2IntegrationTestBase {
     public void copy_encrypted_snapshot_with_session_credentials() throws
                                                                    InterruptedException {
         AmazonEC2Client ec2WithSTS = new AmazonEC2Client(new
-                                                                 STSSessionCredentialsProvider(getCredentials()));
+                StsSessionCredentialsProvider(getCredentials()));
         ec2WithSTS.configureRegion(destinationRegion);
 
         CopySnapshotResult copyResult = ec2WithSTS

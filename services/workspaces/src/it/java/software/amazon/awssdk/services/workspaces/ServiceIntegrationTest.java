@@ -20,8 +20,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import software.amazon.awssdk.services.workspaces.model.CreateWorkspacesRequest;
 import software.amazon.awssdk.services.workspaces.model.CreateWorkspacesResult;
+import software.amazon.awssdk.services.workspaces.model.DescribeWorkspaceBundlesRequest;
 import software.amazon.awssdk.services.workspaces.model.DescribeWorkspaceBundlesResult;
+import software.amazon.awssdk.services.workspaces.model.DescribeWorkspaceDirectoriesRequest;
 import software.amazon.awssdk.services.workspaces.model.DescribeWorkspaceDirectoriesResult;
+import software.amazon.awssdk.services.workspaces.model.DescribeWorkspacesRequest;
 import software.amazon.awssdk.services.workspaces.model.DescribeWorkspacesResult;
 import software.amazon.awssdk.services.workspaces.model.WorkspaceRequest;
 
@@ -29,19 +32,19 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeWorkspaces() {
-        DescribeWorkspacesResult result = client.describeWorkspaces();
+        DescribeWorkspacesResult result = client.describeWorkspaces(new DescribeWorkspacesRequest());
         assertTrue(result.getWorkspaces().isEmpty());
     }
 
     @Test
     public void describeWorkspaceBundles() {
-        DescribeWorkspaceBundlesResult result = client.describeWorkspaceBundles();
+        DescribeWorkspaceBundlesResult result = client.describeWorkspaceBundles(new DescribeWorkspaceBundlesRequest());
         assertTrue(result.getBundles().isEmpty());
     }
 
     @Test
     public void describeWorkspaceDirectories() {
-        DescribeWorkspaceDirectoriesResult result = client.describeWorkspaceDirectories();
+        DescribeWorkspaceDirectoriesResult result = client.describeWorkspaceDirectories(new DescribeWorkspaceDirectoriesRequest());
         assertTrue(result.getDirectories().isEmpty());
     }
 

@@ -1,34 +1,4 @@
 {
-  "syncClient" : {
-    "mainTemplate" : "/templates/common/SyncClientClassBase.ftl",
-    "childTemplates" : [
-      {
-        "location" : "/macros/syncclientclass/awsquery/AdditionalSyncClientFields.ftl",
-        "importAsNamespace" : "AdditionalSyncClientFieldsMacro"
-      }, {
-        "location" : "/macros/syncclientclass/awsquery/ClientInitMethod.ftl",
-        "importAsNamespace" : "ClientInitMethodMacro"
-      }, {
-        "location" : "/macros/syncclientclass/common/ClientMethodForOperation.ftl",
-        "importAsNamespace" : "ClientMethodForOperation"
-      }, {
-        "location" : "/macros/syncclientclass/awsquery/ClientInvokeMethodErrorResponseHandlerCreation.ftl",
-        "importAsNamespace" : "ClientInvokeMethodErrorResponseHandlerCreation"
-      }, {
-        "location" : "/macros/syncclientclass/awsquery/ResponseHandlerCreation.ftl",
-        "importAsNamespace" : "ResponseHandlerCreation"
-      }, {
-        "location" : "/macros/syncclientclass/common/ClientMethodForOperationWithSimpleForm.ftl",
-        "importAsNamespace" : "ClientMethodForOperationWithSimpleForm"
-      }, {
-        "location" : "/macros/syncclientclass/common/ClientInvokeMethodInvocation.ftl",
-        "importAsNamespace" : "ClientInvokeMethodInvocation"
-      }, {
-        "location" : "/macros/marshaller/common/RequestMarshallerCreation.ftl",
-        "importAsNamespace" : "RequestMarshallerCreation"
-      }
-    ]
-  },
   "asyncClient": {
     "mainTemplate" : "/templates/common/AsyncClientClass.ftl",
     "childTemplates" : [
@@ -38,49 +8,6 @@
       }, {
         "location": "/macros/asyncclientclass/ClientMethodForOperationWithSimpleForm.ftl",
         "importAsNamespace": "AsyncClientMethodForOperationWithSimpleForm"
-      }
-    ]
-  },
-  "syncAbstractClass": {
-    "mainTemplate": "/templates/common/SyncClientAbstractClass.ftl",
-    "childTemplates": [
-      {
-        "location": "/macros/syncclientclass/common/ClientMethodForUnsupportedOperation.ftl",
-        "importAsNamespace": "ClientMethodForUnsupportedOperation"
-      },
-      {
-        "location": "/macros/syncclientclass/common/ClientMethodForOperationWithSimpleForm.ftl",
-        "importAsNamespace": "ClientMethodForOperationWithSimpleForm"
-      }
-    ]
-  },
-  "asyncAbstractClass": {
-    "mainTemplate": "/templates/common/AsyncClientAbstractClass.ftl",
-    "childTemplates": [
-      {
-        "location": "/macros/asyncclientclass/ClientMethodForUnsupportedOperation.ftl",
-        "importAsNamespace": "AsyncClientMethodForUnsupportedOperation"
-      }, {
-        "location": "/macros/asyncclientclass/ClientMethodForOperationWithSimpleForm.ftl",
-        "importAsNamespace": "AsyncClientMethodForOperationWithSimpleForm"
-      }
-    ]
-  },
-  "syncInterface": {
-    "mainTemplate" : "/templates/common/SyncClientInterface.ftl",
-    "childTemplates" : [
-      {
-        "location" : "/macros/syncclientinterface/InterfaceMethodForOperation.ftl",
-        "importAsNamespace" : "InterfaceMethodForOperationMacro"
-      }
-    ]
-  },
-  "asyncInterface": {
-    "mainTemplate" : "/templates/common/AsyncClientInterface.ftl",
-    "childTemplates" : [
-      {
-        "location" : "/macros/asyncclientinterface/InterfaceMethodForOperation.ftl",
-        "importAsNamespace" : "AsyncInterfaceMethodForOperationMacro"
       }
     ]
   },

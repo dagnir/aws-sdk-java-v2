@@ -120,7 +120,7 @@ public class VersionInfoUtils {
             version = "unknown-version";
             platform = "java";
         } finally {
-            IOUtils.closeQuietly(inputStream, log);
+            IoUtils.closeQuietly(inputStream, log);
         }
     }
 
@@ -226,7 +226,7 @@ public class VersionInfoUtils {
                 log.trace("Exception attempting to get Kotlin version.", e);
             }
         } finally {
-            IOUtils.closeQuietly(kotlinJar, log);
+            IoUtils.closeQuietly(kotlinJar, log);
         }
         return kotlinVersion;
     }

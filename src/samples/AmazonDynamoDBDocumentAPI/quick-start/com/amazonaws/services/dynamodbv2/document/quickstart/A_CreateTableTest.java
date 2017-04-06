@@ -12,22 +12,22 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
+package software.amazon.awssdk.services.dynamodb.document.quickstart;
 
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodbv2.document.Table;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
-import software.amazon.awssdk.services.dynamodbv2.model.LocalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.Projection;
-import software.amazon.awssdk.services.dynamodbv2.model.ProjectionType;
-import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
-import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
+import software.amazon.awssdk.services.dynamodb.document.Table;
+import software.amazon.awssdk.services.dynamodb.document.utils.AbstractQuickStart;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.LocalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.Projection;
+import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 /**
  * Sample code to create a DynamoDB table.

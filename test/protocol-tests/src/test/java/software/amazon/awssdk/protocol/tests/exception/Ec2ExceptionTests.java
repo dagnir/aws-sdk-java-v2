@@ -22,10 +22,12 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.protocol.ec2.AmazonProtocolEc2Client;
-import software.amazon.awssdk.services.protocol.ec2.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocol.ec2.model.AmazonProtocolEc2Exception;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.services.protocolec2.ProtocolEc2Client;
+import software.amazon.awssdk.services.protocolec2.model.AllTypesRequest;
+import software.amazon.awssdk.services.protocolec2.model.ProtocolEc2ClientException;
 
 public class Ec2ExceptionTests {
     private static final String PATH = "/";
@@ -33,12 +35,15 @@ public class Ec2ExceptionTests {
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
-    private final AmazonProtocolEc2Client client = new AmazonProtocolEc2Client(
-            new BasicAwsCredentials("akid", "skid"));
+    private ProtocolEc2Client client;
 
     @Before
-    public void setup() {
-        client.setEndpoint("http://localhost:" + wireMock.port());
+    public void setupClient() {
+        client = ProtocolEc2Client.builder()
+                                  .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                  .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                       "us-east-1"))
+                                  .build();
     }
 
     @Test
@@ -67,8 +72,8 @@ public class Ec2ExceptionTests {
     private void assertThrowsServiceBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (AmazonProtocolEc2Exception e) {
-            assertEquals(AmazonProtocolEc2Exception.class, e.getClass());
+        } catch (ProtocolEc2ClientException e) {
+            assertEquals(ProtocolEc2ClientException.class, e.getClass());
         }
     }
 }

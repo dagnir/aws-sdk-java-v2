@@ -140,6 +140,13 @@ public final class ${metadata.syncClientBuilderClassName}
         return new ${metadata.syncClient}(params);
     }
 
+    /**
+    * @return Create new instance of builder with all defaults set.
+    */
+    public static ${metadata.syncClientBuilderClassName} standard() {
+        return new ${metadata.syncClientBuilderClassName}();
+    }
+
     @Override
     protected URI defaultEndpoint() {
         return DEFAULT_ENDPOINT;

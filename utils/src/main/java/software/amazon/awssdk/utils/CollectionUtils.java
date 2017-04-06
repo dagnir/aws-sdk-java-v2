@@ -18,7 +18,9 @@ package software.amazon.awssdk.utils;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
 
+@SdkProtectedApi
 public class CollectionUtils {
 
     public static <T> boolean isNullOrEmpty(Collection<T> collection) {

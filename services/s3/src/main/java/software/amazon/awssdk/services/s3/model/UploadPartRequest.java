@@ -36,7 +36,7 @@ import software.amazon.awssdk.event.ProgressListener;
  * Required Parameters: BucketName, Key, UploadId, PartNumber
  */
 public class UploadPartRequest extends AmazonWebServiceRequest implements
-                                                               SSECustomerKeyProvider, S3DataSource, Serializable {
+        SseCustomerKeyProvider, S3DataSource, Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -569,7 +569,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
     }
 
     @Override
-    public SseCustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSseCustomerKey() {
         return sseCustomerKey;
     }
 
@@ -581,7 +581,7 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
      *            The optional customer-provided server-side encryption key to
      *            use to encrypt the object part being uploaded.
      */
-    public void setSSECustomerKey(SseCustomerKey sseKey) {
+    public void setSseCustomerKey(SseCustomerKey sseKey) {
         this.sseCustomerKey = sseKey;
     }
 
@@ -597,8 +597,8 @@ public class UploadPartRequest extends AmazonWebServiceRequest implements
      * @return This updated request object so that additional method calls can
      *         be chained together.
      */
-    public UploadPartRequest withSSECustomerKey(SseCustomerKey sseKey) {
-        setSSECustomerKey(sseKey);
+    public UploadPartRequest withSseCustomerKey(SseCustomerKey sseKey) {
+        setSseCustomerKey(sseKey);
         return this;
     }
 

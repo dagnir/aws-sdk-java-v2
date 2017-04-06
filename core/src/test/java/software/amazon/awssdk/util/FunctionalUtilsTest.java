@@ -79,6 +79,18 @@ public class FunctionalUtilsTest {
             .withCauseExactlyInstanceOf(Exception.class);
     }
 
+    @Test
+    public void interruptedExceptionShouldSetInterruptedOnTheThread() {
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> invokeSafely(this::methodThatThrowsInterruptedException))
+            .withCauseInstanceOf(InterruptedException.class);
+
+        assertThat(Thread.currentThread().isInterrupted()).isTrue();
+
+        // Clear interrupt flag
+        Thread.interrupted();
+    }
+
     private String methodThatThrows() throws Exception {
         throw new Exception("Ouch");
     }
@@ -89,6 +101,10 @@ public class FunctionalUtilsTest {
 
     private String methodWithCheckedSignatureThatThrowsRuntimeException() throws Exception {
         throw new RuntimeException("Uh oh");
+    }
+
+    private String methodThatThrowsInterruptedException() throws InterruptedException {
+        throw new InterruptedException();
     }
 
     private void consumerMethodWithChecked(Boolean shouldThrow) throws Exception {

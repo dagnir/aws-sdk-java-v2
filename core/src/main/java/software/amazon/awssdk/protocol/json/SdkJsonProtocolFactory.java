@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
@@ -27,6 +27,7 @@ import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.protocol.OperationInfo;
 import software.amazon.awssdk.protocol.Protocol;
 import software.amazon.awssdk.protocol.ProtocolRequestMarshaller;
+import software.amazon.awssdk.runtime.http.response.JsonResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
@@ -81,7 +82,7 @@ public class SdkJsonProtocolFactory {
      *
      * @param operationMetadata Additional context information about an operation to create the appropriate response handler.
      */
-    public <T> HttpResponseHandler<AmazonWebServiceResponse<T>> createResponseHandler(
+    public <T> JsonResponseHandler<T> createResponseHandler(
             JsonOperationMetadata operationMetadata,
             Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller) {
         return getSdkFactory().createResponseHandler(operationMetadata, responseUnmarshaller);
@@ -140,7 +141,7 @@ public class SdkJsonProtocolFactory {
     }
 
     private boolean isCborEnabled() {
-        return metadata.isSupportsCbor() && !SDKGlobalConfiguration.isCborDisabled();
+        return metadata.isSupportsCbor() && !SdkGlobalConfiguration.isCborDisabled();
     }
 
     private boolean isIonEnabled() {
@@ -148,6 +149,6 @@ public class SdkJsonProtocolFactory {
     }
 
     boolean isIonBinaryEnabled() {
-        return !SDKGlobalConfiguration.isIonBinaryDisabled();
+        return !SdkGlobalConfiguration.isIonBinaryDisabled();
     }
 }

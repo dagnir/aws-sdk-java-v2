@@ -16,11 +16,11 @@
 
                 if (xmlEvent.isAttribute() || xmlEvent.isStartElement()) {
                     if (context.testExpression("${memberModel.mapModel.keyLocationName}", targetDepth)) {
-                        entry.setKey(${memberModel.mapModel.keyType}StaxUnmarshaller.getInstance().unmarshall(context));
+                        entry.setKey(${memberModel.mapModel.keyType}Unmarshaller.getInstance().unmarshall(context));
                         continue;
                     }
                     if (context.testExpression("${memberModel.mapModel.valueLocationName}", targetDepth)) {
-                        entry.setValue(${memberModel.mapModel.valueModel.variable.simpleType}StaxUnmarshaller.getInstance().unmarshall(context));
+                        entry.setValue(${memberModel.mapModel.valueModel.variable.simpleType}Unmarshaller.getInstance().unmarshall(context));
                         continue;
                     }
                 } else if (xmlEvent.isEndElement()) {

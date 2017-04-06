@@ -27,9 +27,9 @@ import org.junit.Test;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.DryRunResult;
-import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
-import software.amazon.awssdk.services.securitytoken.model.Credentials;
-import software.amazon.awssdk.services.securitytoken.model.GetFederationTokenRequest;
+import software.amazon.awssdk.services.sts.AWSSecurityTokenServiceClient;
+import software.amazon.awssdk.services.sts.model.Credentials;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenRequest;
 
 public class EC2DryrunOperationsIntegrationTest extends EC2IntegrationTestBase {
 

@@ -28,8 +28,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.cloudsearchdomain.AmazonCloudSearchDomainClient;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.services.cloudsearchdomain.CloudSearchDomainClient;
 import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
 
 /**
@@ -41,11 +43,15 @@ public class SearchRequestUnitTest {
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(0);
 
-    private AmazonCloudSearchDomainClient searchClient;
+    private CloudSearchDomainClient searchClient;
 
     @Before
     public void testSetup() {
-        searchClient = new AmazonCloudSearchDomainClient(CREDENTIALS);
+        searchClient = CloudSearchDomainClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(CREDENTIALS))
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMockRule.port(), "us-east-1"))
+                .build();
     }
 
     /**
@@ -59,7 +65,6 @@ public class SearchRequestUnitTest {
                             .withStatus(200)
                             .withBody("{\"status\":{\"rid\":\"fooBar\",\"time-ms\":7},\"hits\":{\"found\":0,\"start\":0,\"hit\":[]}}")));
 
-        searchClient.setEndpoint("http://localhost:" + wireMockRule.port());
         searchClient.search(new SearchRequest().withQuery("Lord of the Rings"));
 
         verify(postRequestedFor(urlMatching("/.*")).withRequestBody(equalTo("format=sdk&pretty=true&q=Lord+of+the+Rings")));

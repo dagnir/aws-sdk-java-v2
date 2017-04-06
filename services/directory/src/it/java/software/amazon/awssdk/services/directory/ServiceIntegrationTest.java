@@ -27,6 +27,7 @@ import software.amazon.awssdk.services.directory.model.DirectorySize;
 import software.amazon.awssdk.services.directory.model.DirectoryVpcSettings;
 import software.amazon.awssdk.services.directory.model.InvalidNextTokenException;
 import software.amazon.awssdk.services.ec2.model.DescribeSubnetsRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeVpcsRequest;
 import software.amazon.awssdk.services.ec2.model.Filter;
 import software.amazon.awssdk.services.ec2.model.Subnet;
 import software.amazon.awssdk.services.ec2.model.Vpc;
@@ -56,7 +57,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     }
 
     private String getVpcId() {
-        List<Vpc> vpcs = ec2Client.describeVpcs().getVpcs();
+        List<Vpc> vpcs = ec2Client.describeVpcs(new DescribeVpcsRequest()).getVpcs();
         if (vpcs.isEmpty()) {
             Assert.fail("No VPC found in this account.");
         }

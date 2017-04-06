@@ -23,37 +23,54 @@ import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.ServiceMetadata;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
+import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.util.json.Jackson;
 
 /**
  * Constructs the metadata that is required for generating the java client from the service meta data.
  */
 final class AddMetadata {
 
+    private static final String AWS_PACKAGE_PREFIX = "software.amazon.awssdk.services.";
+
     public static Metadata constructMetadata(ServiceModel serviceModel,
                                              BasicCodeGenConfig codeGenConfig,
                                              CustomizationConfig customizationConfig) {
+
         final Metadata metadata = new Metadata();
 
         final ServiceMetadata serviceMetadata = serviceModel.getMetadata();
-        final String interfaceName = codeGenConfig.getInterfaceName();
-        final String packageName = codeGenConfig.getPackageName();
-        final String asyncInterface = Utils
-                .getAsyncInterfaceName(interfaceName);
+
+        final String serviceName;
+        final String packageName;
+
+        // API Gateway uses additional codegen.config settings
+        if (serviceMetadata.getProtocol().equals(Protocol.API_GATEWAY.getValue())) {
+            serviceName = codeGenConfig.getInterfaceName();
+            packageName = codeGenConfig.getPackageName();
+
+            metadata.withDefaultEndpoint(codeGenConfig.getEndpoint())
+                    .withDefaultEndpointWithoutHttpProtocol(
+                            Utils.getDefaultEndpointWithoutHttpProtocol(codeGenConfig.getEndpoint()))
+                    .withDefaultRegion(codeGenConfig.getDefaultRegion());
+        } else {
+            serviceName = Utils.getServiceName(serviceMetadata);
+            packageName = AWS_PACKAGE_PREFIX + Utils.getPackageName(serviceName, customizationConfig);
+        }
+
+        final String syncInterfaceName = Utils.getInterfaceName(serviceName);
+        final String asyncInterfaceName = Utils.getAsyncInterfaceName(serviceName);
 
         metadata.withApiVersion(serviceMetadata.getApiVersion())
-                .withAsyncClient(Utils.getClientName(asyncInterface))
-                .withAsyncInterface(asyncInterface)
-                .withDefaultEndpoint(codeGenConfig.getEndpoint())
-                .withDefaultEndpointWithoutHttpProtocol(
-                        Utils.getDefaultEndpointWithoutHttpProtocol(codeGenConfig.getEndpoint()))
-                .withDefaultRegion(codeGenConfig.getDefaultRegion())
+                .withAsyncClient(Utils.getClientName(asyncInterfaceName))
+                .withAsyncInterface(asyncInterfaceName)
                 .withDocumentation(serviceModel.getDocumentation())
                 .withPackageName(packageName)
                 .withPackagePath(packageName.replace(".", "/"))
                 .withServiceAbbreviation(serviceMetadata.getServiceAbbreviation())
                 .withServiceFullName(serviceMetadata.getServiceFullName())
-                .withSyncClient(Utils.getClientName(interfaceName))
-                .withSyncInterface(interfaceName)
+                .withSyncClient(Utils.getClientName(syncInterfaceName))
+                .withSyncInterface(syncInterfaceName)
                 .withProtocol(Protocol.fromValue(serviceMetadata.getProtocol()))
                 .withJsonVersion(serviceMetadata.getJsonVersion())
                 .withEndpointPrefix(serviceMetadata.getEndpointPrefix())

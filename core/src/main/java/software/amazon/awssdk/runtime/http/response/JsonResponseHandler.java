@@ -31,7 +31,7 @@ import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContextImpl;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.runtime.transform.VoidJsonUnmarshaller;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.ValidationUtils;
 
 /**
@@ -111,7 +111,7 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
             // Make sure we read all the data to get an accurate CRC32 calculation.
             // See https://github.com/aws/aws-sdk-java/issues/1018
             if (shouldParsePayloadAsJson() && response.getContent() != null) {
-                IOUtils.drainInputStream(response.getContent());
+                IoUtils.drainInputStream(response.getContent());
             }
 
             awsResponse.setResult(result);

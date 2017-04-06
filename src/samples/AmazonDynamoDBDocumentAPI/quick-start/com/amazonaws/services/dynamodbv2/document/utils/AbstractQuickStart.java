@@ -12,16 +12,16 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.utils;
+package software.amazon.awssdk.services.dynamodb.document.utils;
 
 import java.io.File;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
-import software.amazon.awssdk.services.dynamodbv2.document.DynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.document.quickstart.A_CreateTableTest;
+import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.document.DynamoDB;
+import software.amazon.awssdk.services.dynamodb.document.quickstart.A_CreateTableTest;
 
 /**
  * Common base class used to initialize and shutdown the DynamoDB instance.

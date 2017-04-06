@@ -33,6 +33,11 @@ public class ClientHandlerParams {
      */
     private boolean disableStrictHostnameVerification = false;
 
+    /**
+     * By default, the CRC 32 checksum is calculated based on the uncompressed data.
+     */
+    private boolean crc32FromCompressedDataEnabled = false;
+
     public AwsSyncClientParams getClientParams() {
         return clientParams;
     }
@@ -46,10 +51,17 @@ public class ClientHandlerParams {
         return disableStrictHostnameVerification;
     }
 
-
-    public ClientHandlerParams withDisableStrictHostnameVerification(
-            boolean disableStrictHostnameVerification) {
+    public ClientHandlerParams withDisableStrictHostnameVerification(boolean disableStrictHostnameVerification) {
         this.disableStrictHostnameVerification = disableStrictHostnameVerification;
+        return this;
+    }
+
+    public boolean isCalculateCrc32FromCompressedDataEnabled() {
+        return crc32FromCompressedDataEnabled;
+    }
+
+    public ClientHandlerParams withCalculateCrc32FromCompressedDataEnabled(boolean crc32FromCompressedDataEnabled) {
+        this.crc32FromCompressedDataEnabled = crc32FromCompressedDataEnabled;
         return this;
     }
 }

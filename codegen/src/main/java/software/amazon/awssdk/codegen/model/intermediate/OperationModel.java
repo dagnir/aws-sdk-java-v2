@@ -17,7 +17,7 @@ package software.amazon.awssdk.codegen.model.intermediate;
 
 import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHtmlTags;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class OperationModel extends DocumentationModel {
 
     private ReturnTypeModel returnType;
 
-    private List<ExceptionModel> exceptions;
+    private List<ExceptionModel> exceptions = new ArrayList<ExceptionModel>();
 
     private List<SimpleMethodFormModel> simpleMethods;
 
@@ -125,7 +125,7 @@ public class OperationModel extends DocumentationModel {
     }
 
     private String getDocumentation(final MethodType methodType, final Metadata md) {
-        StringBuilder docBuilder = new StringBuilder("/**");
+        StringBuilder docBuilder = new StringBuilder();
 
         if (documentation != null) {
             docBuilder.append(documentation);
@@ -141,7 +141,7 @@ public class OperationModel extends DocumentationModel {
 
         if (input != null) {
             docBuilder.append(LINE_SEPARATOR).append("@param ").append(input.getVariableName())
-                    .append(" ").append(stripHTMLTags(input.getDocumentation()));
+                    .append(" ").append(stripHtmlTags(input.getDocumentation()));
         }
 
         if (methodType == MethodType.ASYNC_WITH_HANDLER) {
@@ -170,7 +170,7 @@ public class OperationModel extends DocumentationModel {
             for (ExceptionModel exception : exceptions) {
                 docBuilder.append(LINE_SEPARATOR).append("@throws ")
                         .append(exception.getExceptionName()).append(" ")
-                        .append(stripHTMLTags(exception.getDocumentation()));
+                        .append(stripHtmlTags(exception.getDocumentation()));
             }
         }
 
@@ -180,8 +180,7 @@ public class OperationModel extends DocumentationModel {
             docBuilder.append(LINE_SEPARATOR).append(crosslink);
         }
 
-        docBuilder.append("*/");
-        return docBuilder.toString();
+        return docBuilder.toString().replace("$", "&#36;");
     }
 
     private String getSampleTagForMethodType(final MethodType methodType, final Metadata md) {
@@ -244,7 +243,7 @@ public class OperationModel extends DocumentationModel {
     }
 
     public String getAsyncFutureType() {
-        return "java.util.concurrent.Future<" + getAsyncReturnType() + ">";
+        return "CompletableFuture<" + getAsyncReturnType() + ">";
     }
 
     public String getAsyncCallableType() {
@@ -265,9 +264,6 @@ public class OperationModel extends DocumentationModel {
     }
 
     public void addException(ExceptionModel exception) {
-        if (exceptions == null) {
-            exceptions = new ArrayList<ExceptionModel>();
-        }
         exceptions.add(exception);
     }
 

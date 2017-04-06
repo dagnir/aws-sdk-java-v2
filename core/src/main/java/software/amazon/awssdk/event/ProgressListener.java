@@ -34,7 +34,7 @@ public interface ProgressListener {
     /**
      * Called when progress has changed, such as additional bytes transferred,
      * transfer failed, etc. The execution of the callback of this listener is managed
-     * by {@link SDKProgressPublisher}.  Implementation of this interface
+     * by {@link SdkProgressPublisher}.  Implementation of this interface
      * should never block.
      * <p>
      * If the implementation follows the best practice and doesn't block, it
@@ -47,7 +47,7 @@ public interface ProgressListener {
      * @param progressEvent
      *            The event describing the progress change.
      *
-     * @see SDKProgressPublisher
+     * @see SdkProgressPublisher
      * @see ExceptionReporter
      */
     public void progressChanged(ProgressEvent progressEvent);

@@ -15,17 +15,17 @@
 
 package utils.resources.tables;
 
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.GlobalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
-import software.amazon.awssdk.services.dynamodbv2.model.LocalSecondaryIndex;
-import software.amazon.awssdk.services.dynamodbv2.model.Projection;
-import software.amazon.awssdk.services.dynamodbv2.model.ProjectionType;
-import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.LocalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.Projection;
+import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import utils.test.resources.DynamoDBTableResource;
 import utils.test.util.DynamoDBTestBase;
 
@@ -46,7 +46,7 @@ public class TempTableWithSecondaryIndexes extends DynamoDBTableResource {
             5L, 5L);
 
     @Override
-    protected AmazonDynamoDB getClient() {
+    protected DynamoDBClient getClient() {
         return DynamoDBTestBase.getClient();
     }
 

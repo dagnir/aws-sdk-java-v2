@@ -192,6 +192,13 @@ public class CustomizationConfig {
      */
     private String transformDirectory = Constants.PACKAGE_NAME_TRANSFORM_SUFFIX;
 
+    /**
+     * The package name to use for this client. This allows to services to be within one
+     * logical package. For example, dynamodbstreams and dynamodb can both live within the
+     * package "dynamodb"
+     */
+    private String packageNameOverride;
+
     private CustomizationConfig() {
     }
 
@@ -474,6 +481,14 @@ public class CustomizationConfig {
     public CustomizationConfig setTransformDirectory(String transformDirectory) {
         this.transformDirectory = transformDirectory;
         return this;
+    }
+
+    public String getPackageNameOverride() {
+        return packageNameOverride;
+    }
+
+    public void setPackageNameOverride(String packageNameOverride) {
+        this.packageNameOverride = packageNameOverride;
     }
 
     public Set<DeprecatedSuppression> getDeprecatedSuppressions() {

@@ -25,11 +25,11 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class ServiceCatalogIntegrationTest extends AwsIntegrationTestBase {
 
-    private static AWSServiceCatalog serviceCatalog;
+    private static ServiceCatalogClient serviceCatalog;
 
     @Before
     public void setUp() throws Exception {
-        serviceCatalog = new AWSServiceCatalogClient(getCredentials());
+        serviceCatalog = ServiceCatalogClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @Test

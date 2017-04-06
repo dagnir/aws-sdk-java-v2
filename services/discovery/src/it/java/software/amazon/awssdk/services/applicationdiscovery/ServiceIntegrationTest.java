@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.applicationdiscovery;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.applicationdiscovery.model.ConfigurationItemType;
 import software.amazon.awssdk.services.applicationdiscovery.model.ListConfigurationsRequest;
 import software.amazon.awssdk.services.applicationdiscovery.model.ListConfigurationsResult;
@@ -25,11 +26,13 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
-    private static AWSApplicationDiscovery discoveryService;
+    private static ApplicationDiscoveryClient discoveryService;
 
     @BeforeClass
     public static void setUp() {
-        discoveryService = new AWSApplicationDiscoveryClient(getCredentials());
+        discoveryService = ApplicationDiscoveryClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .build();
     }
 
     @Test

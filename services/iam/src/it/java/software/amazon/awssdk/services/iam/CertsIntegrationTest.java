@@ -21,14 +21,14 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.LimitExceededException;
-import software.amazon.awssdk.services.identitymanagement.model.ListSigningCertificatesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListSigningCertificatesResult;
-import software.amazon.awssdk.services.identitymanagement.model.MalformedCertificateException;
-import software.amazon.awssdk.services.identitymanagement.model.SigningCertificate;
-import software.amazon.awssdk.services.identitymanagement.model.UpdateSigningCertificateRequest;
-import software.amazon.awssdk.services.identitymanagement.model.UploadSigningCertificateRequest;
-import software.amazon.awssdk.services.identitymanagement.model.UploadSigningCertificateResult;
+import software.amazon.awssdk.services.iam.model.LimitExceededException;
+import software.amazon.awssdk.services.iam.model.ListSigningCertificatesRequest;
+import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResult;
+import software.amazon.awssdk.services.iam.model.MalformedCertificateException;
+import software.amazon.awssdk.services.iam.model.SigningCertificate;
+import software.amazon.awssdk.services.iam.model.UpdateSigningCertificateRequest;
+import software.amazon.awssdk.services.iam.model.UploadSigningCertificateRequest;
+import software.amazon.awssdk.services.iam.model.UploadSigningCertificateResult;
 
 /**
  * Certs integ tests for IAM.

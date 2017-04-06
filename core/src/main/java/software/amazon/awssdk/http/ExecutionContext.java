@@ -72,7 +72,7 @@ public class ExecutionContext {
         this.signerProvider = new SignerProvider() {
             @Override
             public Signer getSigner(SignerProviderContext context) {
-                return getSignerByURI(context.getUri());
+                return getSignerByUri(context.getUri());
             }
         };
     }
@@ -141,7 +141,7 @@ public class ExecutionContext {
      * Returns the signer for the given uri. Note S3 in particular overrides this method.
      */
     @Deprecated
-    public Signer getSignerByURI(URI uri) {
+    public Signer getSignerByUri(URI uri) {
         return awsClient == null ? null : awsClient.getSignerByUri(uri);
     }
 

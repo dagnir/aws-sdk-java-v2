@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * A Base 16 codec API, which encodes into hex string in lower case.
  *
@@ -22,6 +24,7 @@ package software.amazon.awssdk.utils;
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 public enum Base16Lower {
     ;
     private static final Base16Codec CODEC = new Base16Codec(false);

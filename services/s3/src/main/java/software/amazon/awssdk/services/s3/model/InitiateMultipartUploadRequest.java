@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.s3.AmazonS3;
  * @see AmazonS3#initiateMultipartUpload(InitiateMultipartUploadRequest)
  */
 public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
-        implements SSECustomerKeyProvider, SseAwsKeyManagementParamsProvider, Serializable {
+        implements SseCustomerKeyProvider, SseAwsKeyManagementParamsProvider, Serializable {
     /**
      * Additional information about the new object being created, such as
      * content type, content encoding, user metadata, etc.
@@ -57,7 +57,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * An optional canned Access Control List (ACL) to set permissions for the
      * new object created when the multipart upload is completed.
      */
-    private CannedAccessControlList cannedACL;
+    private CannedAccessControlList cannedAcl;
 
     /**
      * An optional access control list to apply to the new upload. If specified,
@@ -229,22 +229,22 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      *
      * @see CannedAccessControlList
      */
-    public CannedAccessControlList getCannedACL() {
-        return cannedACL;
+    public CannedAccessControlList getCannedAcl() {
+        return cannedAcl;
     }
 
     /**
      * Sets the optional canned Access Control List (ACL) to set permissions for
      * the new object created when the multipart upload is completed.
      *
-     * @param cannedACL
+     * @param cannedAcl
      *            The canned Access Control List (ACL) to set permissions for
      *            the new object created when the multipart upload is completed.
      *
      * @see CannedAccessControlList
      */
-    public void setCannedACL(CannedAccessControlList cannedACL) {
-        this.cannedACL = cannedACL;
+    public void setCannedAcl(CannedAccessControlList cannedAcl) {
+        this.cannedAcl = cannedAcl;
     }
 
     /**
@@ -261,8 +261,8 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      *
      * @return This updated InitiateMultipartUploadRequest object.
      */
-    public InitiateMultipartUploadRequest withCannedACL(CannedAccessControlList acl) {
-        this.cannedACL = acl;
+    public InitiateMultipartUploadRequest withCannedAcl(CannedAccessControlList acl) {
+        this.cannedAcl = acl;
         return this;
     }
 
@@ -429,7 +429,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
     }
 
     @Override
-    public SseCustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSseCustomerKey() {
         return sseCustomerKey;
     }
 
@@ -441,7 +441,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      *            The optional customer-provided server-side encryption key to
      *            use to encrypt the upload being started.
      */
-    public void setSSECustomerKey(SseCustomerKey sseKey) {
+    public void setSseCustomerKey(SseCustomerKey sseKey) {
         if (sseKey != null && this.sseAwsKeyManagementParams != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
@@ -462,8 +462,8 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * @return The updated request object, so that additional method calls can
      *         be chained together.
      */
-    public InitiateMultipartUploadRequest withSSECustomerKey(SseCustomerKey sseKey) {
-        setSSECustomerKey(sseKey);
+    public InitiateMultipartUploadRequest withSseCustomerKey(SseCustomerKey sseKey) {
+        setSseCustomerKey(sseKey);
         return this;
     }
 
@@ -480,7 +480,7 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      * Sets the AWS Key Management System parameters used to encrypt the object
      * on server side.
      */
-    public void setSSEAwsKeyManagementParams(SseAwsKeyManagementParams params) {
+    public void setSseAwsKeyManagementParams(SseAwsKeyManagementParams params) {
         if (params != null && this.sseCustomerKey != null) {
             throw new IllegalArgumentException(
                     "Either SSECustomerKey or SSEAwsKeyManagementParams must not be set at the same time.");
@@ -494,9 +494,9 @@ public class InitiateMultipartUploadRequest extends AmazonWebServiceRequest
      *
      * @return returns the update InitiateMultipartUploadRequest
      */
-    public InitiateMultipartUploadRequest withSSEAwsKeyManagementParams(
+    public InitiateMultipartUploadRequest withSseAwsKeyManagementParams(
             SseAwsKeyManagementParams sseAwsKeyManagementParams) {
-        setSSEAwsKeyManagementParams(sseAwsKeyManagementParams);
+        setSseAwsKeyManagementParams(sseAwsKeyManagementParams);
         return this;
     }
 

@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.internal.ObjectExpirationResult;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
 import software.amazon.awssdk.services.s3.internal.S3VersionResult;
-import software.amazon.awssdk.services.s3.internal.SSEResultBase;
+import software.amazon.awssdk.services.s3.internal.SseResultBase;
 
 /**
  * Contains the data returned by Amazon S3 from the <code>putObject</code>
@@ -38,7 +38,7 @@ import software.amazon.awssdk.services.s3.internal.SSEResultBase;
  *      ObjectMetadata)
  * @see AmazonS3Client#putObject(PutObjectRequest)
  */
-public class PutObjectResult extends SSEResultBase
+public class PutObjectResult extends SseResultBase
         implements ObjectExpirationResult, S3RequesterChargedResult, S3VersionResult, Serializable {
 
     /**

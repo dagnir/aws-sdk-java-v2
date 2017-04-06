@@ -16,9 +16,9 @@
 package software.amazon.awssdk.services.glacier.transfer;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.glacier.AmazonGlacier;
-import software.amazon.awssdk.services.sns.AmazonSNS;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
+import software.amazon.awssdk.services.glacier.GlacierClient;
+import software.amazon.awssdk.services.sns.SNSClient;
+import software.amazon.awssdk.services.sqs.SQSClient;
 
 /**
  * Internal class to wrap all params needed by {@link ArchiveTransferManager}.  Used by {@link
@@ -26,48 +26,48 @@ import software.amazon.awssdk.services.sqs.AmazonSQS;
  */
 @SdkInternalApi
 class ArchiveTransferManagerParams {
-    private AmazonGlacier amazonGlacier;
+    private GlacierClient amazonGlacier;
 
-    private AmazonSQS amazonSQS;
+    private SQSClient amazonSqs;
 
-    private AmazonSNS amazonSNS;
+    private SNSClient amazonSns;
 
-    public AmazonGlacier getAmazonGlacier() {
+    public GlacierClient getAmazonGlacier() {
         return amazonGlacier;
     }
 
-    public void setAmazonGlacier(AmazonGlacier amazonGlacier) {
+    public void setAmazonGlacier(GlacierClient amazonGlacier) {
         this.amazonGlacier = amazonGlacier;
     }
 
-    public ArchiveTransferManagerParams withAmazonGlacier(AmazonGlacier amazonGlacier) {
+    public ArchiveTransferManagerParams withAmazonGlacier(GlacierClient amazonGlacier) {
         setAmazonGlacier(amazonGlacier);
         return this;
     }
 
-    public AmazonSQS getAmazonSQS() {
-        return amazonSQS;
+    public SQSClient getAmazonSqs() {
+        return amazonSqs;
     }
 
-    public void setAmazonSQS(AmazonSQS amazonSQS) {
-        this.amazonSQS = amazonSQS;
+    public void setAmazonSqs(SQSClient amazonSqs) {
+        this.amazonSqs = amazonSqs;
     }
 
-    public ArchiveTransferManagerParams withAmazonSQS(AmazonSQS amazonSQS) {
-        setAmazonSQS(amazonSQS);
+    public ArchiveTransferManagerParams withAmazonSqs(SQSClient amazonSqs) {
+        setAmazonSqs(amazonSqs);
         return this;
     }
 
-    public AmazonSNS getAmazonSNS() {
-        return amazonSNS;
+    public SNSClient getAmazonSns() {
+        return amazonSns;
     }
 
-    public void setAmazonSNS(AmazonSNS amazonSNS) {
-        this.amazonSNS = amazonSNS;
+    public void setAmazonSns(SNSClient amazonSns) {
+        this.amazonSns = amazonSns;
     }
 
-    public ArchiveTransferManagerParams withAmazonSNS(AmazonSNS amazonSNS) {
-        setAmazonSNS(amazonSNS);
+    public ArchiveTransferManagerParams withAmazonSns(SNSClient amazonSns) {
+        setAmazonSns(amazonSns);
         return this;
     }
 }

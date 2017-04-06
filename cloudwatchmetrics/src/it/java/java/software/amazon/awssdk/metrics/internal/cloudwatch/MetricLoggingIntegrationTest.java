@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 /**
  * Performs the integration testing for SDK Metrics feature.

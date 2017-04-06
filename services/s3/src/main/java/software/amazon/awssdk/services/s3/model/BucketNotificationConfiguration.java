@@ -313,7 +313,7 @@ public class BucketNotificationConfiguration implements Serializable {
          * @return The topic ARN for the topic to publish events to.
          */
         public String getTopic() {
-            return getTopicARN();
+            return getTopicArn();
         }
 
         /**

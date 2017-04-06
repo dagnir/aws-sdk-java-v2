@@ -25,7 +25,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.ValidationUtils;
 
 public class IntermediateModel {
@@ -162,7 +162,7 @@ public class IntermediateModel {
     private String loadDeafultFileHeader() throws IOException {
         try (InputStream inputStream = getClass()
                 .getResourceAsStream("/software/amazon/awssdk/codegen/DefaultFileHeader.txt")) {
-            return IOUtils.toString(inputStream)
+            return IoUtils.toString(inputStream)
                           .replaceFirst("%COPYRIGHT_DATE_RANGE%", getCopyrightDateRange());
         }
     }

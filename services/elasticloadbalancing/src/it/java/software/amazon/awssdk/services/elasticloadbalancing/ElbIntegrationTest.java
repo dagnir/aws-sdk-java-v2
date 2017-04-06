@@ -31,8 +31,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.ec2.AmazonEC2;
-import software.amazon.awssdk.services.ec2.AmazonEC2Client;
+import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.Placement;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.TerminateInstancesRequest;
@@ -50,6 +50,7 @@ import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeInstan
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerAttributesRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerAttributesResult;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerPoliciesRequest;
+import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerPolicyTypesRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancersRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DisableAvailabilityZonesForLoadBalancerRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.EnableAvailabilityZonesForLoadBalancerRequest;
@@ -66,10 +67,9 @@ import software.amazon.awssdk.services.elasticloadbalancing.model.PolicyTypeDesc
 import software.amazon.awssdk.services.elasticloadbalancing.model.RegisterInstancesWithLoadBalancerRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.SetLoadBalancerListenerSSLCertificateRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.SetLoadBalancerPoliciesOfListenerRequest;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagement;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
-import software.amazon.awssdk.services.identitymanagement.model.ListServerCertificatesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ServerCertificateMetadata;
+import software.amazon.awssdk.services.iam.IAMClient;
+import software.amazon.awssdk.services.iam.model.ListServerCertificatesRequest;
+import software.amazon.awssdk.services.iam.model.ServerCertificateMetadata;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
@@ -89,14 +89,19 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     private static final String AVAILABILITY_ZONE_1 = "us-east-1a";
     private static final String AVAILABILITY_ZONE_2 = "us-east-1b";
 
+    /**
+     * Region to run tests against. Must be us-east-1 since AZ's are hardcoded
+     */
+    private static final Regions REGION = Regions.US_EAST_1;
+
     /** The ELB client used in these tests. */
-    private static AmazonElasticLoadBalancing elb;
+    private static ElasticLoadBalancingClient elb;
 
     /** The EC2 client used to start an instance for the tests requiring one. */
-    private static AmazonEC2 ec2;
+    private static EC2Client ec2;
 
     /** IAM client used to retrieve certificateArn. */
-    private static AmazonIdentityManagement iam;
+    private static IAMClient iam;
 
     /** Existing SSL certificate ARN in IAM. */
     private static String certificateArn;
@@ -117,10 +122,19 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
      * client for tests to use.
      */
     @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
-        elb = new AmazonElasticLoadBalancingClient(getCredentials());
-        ec2 = new AmazonEC2Client(getCredentials());
-        iam = new AmazonIdentityManagementClient(getCredentials());
+    public static void setUp() throws IOException {
+        elb = ElasticLoadBalancingClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(REGION)
+                .build();
+        ec2 = EC2Client.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(REGION)
+                .build();
+        iam = IAMClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(REGION)
+                .build();
 
         List<ServerCertificateMetadata> serverCertificates = iam.listServerCertificates(
                 new ListServerCertificatesRequest()).getServerCertificateMetadataList();
@@ -321,7 +335,7 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
 
         // Describe LB Policy Types
         List<PolicyTypeDescription> policyTypeDescriptions = elb
-                .describeLoadBalancerPolicyTypes().getPolicyTypeDescriptions();
+                .describeLoadBalancerPolicyTypes(new DescribeLoadBalancerPolicyTypesRequest()).getPolicyTypeDescriptions();
         assertTrue(policyTypeDescriptions.size() > 0);
         assertNotNull(policyTypeDescriptions.get(0).getPolicyTypeName());
         assertTrue(policyTypeDescriptions.get(0)

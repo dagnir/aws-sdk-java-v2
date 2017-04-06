@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.cloudfront;
 
 import static org.junit.Assert.assertEquals;
-import static software.amazon.awssdk.test.util.DateUtils.yyMMdd_hhmmss;
+import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
 
 import java.io.File;
 import java.io.InputStream;
@@ -72,7 +72,7 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
     private static final String PRIVATE_KEY_ID = "APKAJM22QV32R3I2XVIQ";
     private static final String DEFAULT_ROOT_OBJECT = "key.html";
     private static final String DISTRIBUTION_COMMENT = "comment";
-    private static String callerReference = yyMMdd_hhmmss();
+    private static String callerReference = yyMMddhhmmss();
     private static final String bucketName = StringUtils.lowerCase(CloudFrontIntegrationTest.class.getSimpleName())
                                              + "." + callerReference;
     private static String dnsName;

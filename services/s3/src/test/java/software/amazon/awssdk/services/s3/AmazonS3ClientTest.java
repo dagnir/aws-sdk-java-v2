@@ -24,7 +24,7 @@ import static org.junit.Assert.assertSame;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.model.Region;
@@ -103,20 +103,20 @@ public class AmazonS3ClientTest {
     @Test(expected = IllegalStateException.class)
     public void deleteBucket_ThrowsIllegalStateException_When_RegionNullAndSystemPropertyProhibitsNullRegions() {
         try {
-            System.setProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY, "true");
+            System.setProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY, "true");
             s3.deleteBucket("test-bucket");
         } finally {
-            System.clearProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
+            System.clearProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
         }
     }
 
     @Test(expected = IllegalStateException.class)
     public void createBucket_ThrowsIllegalStateException_When_RegionNullAndSystemPropertyProhibitsNullRegions() {
         try {
-            System.setProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY, "true");
+            System.setProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY, "true");
             s3.createBucket("test-bucket", Region.US_West);
         } finally {
-            System.clearProperty(SDKGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
+            System.clearProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
         }
     }
 }

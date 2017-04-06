@@ -93,7 +93,7 @@ public class XpathUtils {
             log.debug("Ingore failure in speeding up DocumentBuilderFactory", t);
         }
         try {
-            speedUpDTMManager();
+            speedUpDtmManager();
         } catch (Throwable t) {
             log.debug("Ingore failure in speeding up DTMManager", t);
         }
@@ -104,14 +104,14 @@ public class XpathUtils {
      * a DTMManager is constructed as a result of constructing a Xalan xpath
      * context!
      */
-    private static void speedUpDTMManager() throws Exception {
+    private static void speedUpDtmManager() throws Exception {
         // https://github.com/aws/aws-sdk-java/issues/238
         // http://stackoverflow.com/questions/6340802/java-xpath-apache-jaxp-implementation-performance
         if (System.getProperty(DTM_MANAGER_DEFAULT_PROP_NAME) == null) {
             Class<?> xPathContextClass = Class.forName(XPATH_CONTEXT_CLASS_NAME);
-            Method getDTMManager = xPathContextClass.getMethod("getDTMManager");
+            Method getDtmManager = xPathContextClass.getMethod("getDTMManager");
             Object xPathContext = xPathContextClass.newInstance();
-            Object dtmManager = getDTMManager.invoke(xPathContext);
+            Object dtmManager = getDtmManager.invoke(xPathContext);
 
             if (DTM_MANAGER_IMPL_CLASS_NAME.equals(dtmManager.getClass().getName())) {
                 // This would avoid the file system to be accessed every time

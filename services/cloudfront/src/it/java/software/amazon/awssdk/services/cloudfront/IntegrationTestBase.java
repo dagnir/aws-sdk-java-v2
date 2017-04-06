@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionRequest;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionResult;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
@@ -32,7 +33,7 @@ import software.amazon.awssdk.test.AwsTestBase;
 public abstract class IntegrationTestBase extends AwsTestBase {
 
     /** Shared CloudFront client for all tests to use. */
-    protected static AmazonCloudFrontClient cloudfront;
+    protected static CloudFrontClient cloudfront;
 
     /** Shared S3 client for all tests to use. */
     protected static AmazonS3Client s3;
@@ -44,7 +45,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        cloudfront = new AmazonCloudFrontClient(credentials);
+        cloudfront = CloudFrontClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
         s3 = new AmazonS3Client(credentials);
     }
 

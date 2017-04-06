@@ -15,11 +15,14 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * A Base 32 codec implementation.
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 class Base32Codec extends AbstractBase32Codec {
     private static final int OFFSET_OF_2 = '2' - 26;
 

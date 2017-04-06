@@ -35,13 +35,11 @@ import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SQSActions;
 import software.amazon.awssdk.auth.policy.conditions.ConditionFactory;
 import software.amazon.awssdk.services.glacier.model.StatusCode;
-import software.amazon.awssdk.services.sns.AmazonSNS;
-import software.amazon.awssdk.services.sns.AmazonSNSClient;
+import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
-import software.amazon.awssdk.services.sqs.AmazonSQSClient;
+import software.amazon.awssdk.services.sqs.SQSClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
@@ -61,15 +59,15 @@ public class JobStatusMonitor {
 
     private static final Log log = LogFactory.getLog(JobStatusMonitor.class);
 
-    private AmazonSQS sqs;
-    private AmazonSNS sns;
+    private SQSClient sqs;
+    private SNSClient sns;
     private String queueUrl;
     private String topicArn;
 
 
     public JobStatusMonitor(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfiguration) {
-        sqs = new AmazonSQSClient(credentialsProvider, clientConfiguration);
-        sns = new AmazonSNSClient(credentialsProvider, clientConfiguration);
+        sqs = SQSClient.builder().withCredentials(credentialsProvider).withClientConfiguration(clientConfiguration).build();
+        sns = SNSClient.builder().withCredentials(credentialsProvider).withClientConfiguration(clientConfiguration).build();
         setupQueueAndTopic();
     }
 
@@ -84,24 +82,7 @@ public class JobStatusMonitor {
      *            The client for working with Amazon SNS when polling archive
      *            retrieval job status.
      */
-    public JobStatusMonitor(AmazonSQSClient sqs, AmazonSNSClient sns) {
-        this.sqs = sqs;
-        this.sns = sns;
-        setupQueueAndTopic();
-    }
-
-    /**
-     * Constructs a JobStatusMonitor that will use the specified clients for
-     * polling archive download job status.
-     *
-     * @param sqs
-     *            The client for working with Amazon SQS when polling archive
-     *            retrieval job status.
-     * @param sns
-     *            The client for working with Amazon SNS when polling archive
-     *            retrieval job status.
-     */
-    public JobStatusMonitor(AmazonSQS sqs, AmazonSNS sns) {
+    public JobStatusMonitor(SQSClient sqs, SNSClient sns) {
         this.sqs = sqs;
         this.sns = sns;
         setupQueueAndTopic();
@@ -191,7 +172,7 @@ public class JobStatusMonitor {
 
         queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).getQueueUrl();
         topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
-        String queueARN = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl).withAttributeNames("QueueArn"))
+        String queueArn = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl).withAttributeNames("QueueArn"))
                              .getAttributes().get("QueueArn");
 
         Policy sqsPolicy =
@@ -199,11 +180,11 @@ public class JobStatusMonitor {
                         new Statement(Effect.Allow)
                                 .withPrincipals(Principal.ALL_USERS)
                                 .withActions(SQSActions.SendMessage)
-                                .withResources(new Resource(queueARN))
+                                .withResources(new Resource(queueArn))
                                 .withConditions(ConditionFactory.newSourceArnCondition(topicArn)));
         sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, newAttributes("Policy", sqsPolicy.toJson())));
 
-        sns.subscribe(new SubscribeRequest(topicArn, "sqs", queueARN));
+        sns.subscribe(new SubscribeRequest(topicArn, "sqs", queueArn));
     }
 
     private Map<String, String> newAttributes(String... keyValuePairs) {

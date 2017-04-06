@@ -5,7 +5,7 @@
     "endpointPrefix": "7pa86qnoj3.execute-api",
     "jsonVersion": "1.1",
     "protocol": "api-gateway",
-    "serviceAbbreviation": "MyService",
+    "serviceAbbreviation": "ApiGatewayProtocol",
     "serviceFullName": "My Awesome Service",
     "signatureVersion": "v4"
   },

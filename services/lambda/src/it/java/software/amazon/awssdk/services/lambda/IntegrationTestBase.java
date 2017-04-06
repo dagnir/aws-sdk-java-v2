@@ -24,18 +24,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagement;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
-import software.amazon.awssdk.services.identitymanagement.model.AttachRolePolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreatePolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateRoleRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateRoleResult;
-import software.amazon.awssdk.services.identitymanagement.model.DeletePolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteRoleRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DetachRolePolicyRequest;
-import software.amazon.awssdk.services.kinesis.AmazonKinesis;
-import software.amazon.awssdk.services.kinesis.AmazonKinesisClient;
+import software.amazon.awssdk.services.iam.IAMClient;
+import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
+import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
+import software.amazon.awssdk.services.iam.model.CreateRoleRequest;
+import software.amazon.awssdk.services.iam.model.CreateRoleResult;
+import software.amazon.awssdk.services.iam.model.DeletePolicyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
+import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
+import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DeleteStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.StreamDescription;
 import software.amazon.awssdk.services.kinesis.model.StreamStatus;
 import software.amazon.awssdk.test.AwsTestBase;
@@ -53,18 +53,18 @@ public class IntegrationTestBase extends AwsTestBase {
                                                             + "\"Service\": \"lambda.amazonaws.com\"" + "}," + "\"Action\": \"sts:AssumeRole\"" + "}" + "]" + "}";
     private static final String KINESIS_STREAM_NAME = "lambda-java-sdk-test-kinesis-stream-"
                                                       + System.currentTimeMillis();
-    protected static AWSLambdaClient lambda;
+    protected static LambdaAsyncClient lambda;
     protected static File cloudFuncZip;
     protected static String lambdaServiceRoleArn;
     protected static String streamArn;
     private static String roleExecutionPolicyArn;
-    private static AmazonIdentityManagement iam;
-    private static AmazonKinesis kinesis;
+    private static IAMClient iam;
+    private static KinesisClient kinesis;
 
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        lambda = new AWSLambdaClient(credentials);
+        lambda = LambdaAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         cloudFuncZip = setupFunctionZip(HELLOWORLD_JS);
 
@@ -81,7 +81,7 @@ public class IntegrationTestBase extends AwsTestBase {
         iam.deleteRole(new DeleteRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME));
 
         if (kinesis != null) {
-            kinesis.deleteStream(KINESIS_STREAM_NAME);
+            kinesis.deleteStream(new DeleteStreamRequest().withStreamName(KINESIS_STREAM_NAME));
         }
     }
 
@@ -107,7 +107,7 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     private static void createLambdaServiceRole() {
-        iam = new AmazonIdentityManagementClient(credentials);
+        iam = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         CreateRoleResult result = iam.createRole(new CreateRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME)
                                                                         .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
@@ -124,11 +124,12 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     protected static void createKinesisStream() {
-        kinesis = new AmazonKinesisClient(credentials);
+        kinesis = KinesisClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         kinesis.createStream(new CreateStreamRequest().withStreamName(KINESIS_STREAM_NAME).withShardCount(1));
 
-        StreamDescription description = kinesis.describeStream(KINESIS_STREAM_NAME).getStreamDescription();
+        StreamDescription description = kinesis.describeStream(new DescribeStreamRequest().withStreamName(KINESIS_STREAM_NAME))
+                .getStreamDescription();
         streamArn = description.getStreamARN();
 
         // Wait till stream is active (less than a minute)
@@ -139,7 +140,8 @@ public class IntegrationTestBase extends AwsTestBase {
                 // Ignored or expected.
             }
 
-            description = kinesis.describeStream(KINESIS_STREAM_NAME).getStreamDescription();
+            description = kinesis.describeStream(new DescribeStreamRequest().withStreamName(KINESIS_STREAM_NAME))
+                    .getStreamDescription();
         }
     }
 

@@ -15,18 +15,17 @@
 
 package software.amazon.awssdk.regions;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.AWS_REGION_ENV_VAR;
-
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SdkGlobalConfiguration;
 
 /**
- * Loads region information from the '{@value software.amazon.awssdk.SDKGlobalConfiguration#AWS_REGION_ENV_VAR}'
+ * Loads region information from the '{@value SdkGlobalConfiguration#AWS_REGION_ENV_VAR}'
  * environment variable.
  */
 public class AwsEnvVarOverrideRegionProvider extends AwsRegionProvider {
 
     @Override
     public String getRegion() throws SdkClientException {
-        return System.getenv(AWS_REGION_ENV_VAR);
+        return System.getenv(SdkGlobalConfiguration.AWS_REGION_ENV_VAR);
     }
 }

@@ -18,7 +18,7 @@ package software.amazon.awssdk.event;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 
 import java.util.concurrent.CountDownLatch;
 import org.junit.Test;

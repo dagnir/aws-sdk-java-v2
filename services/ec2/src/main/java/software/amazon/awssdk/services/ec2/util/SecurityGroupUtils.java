@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.ec2.util;
 
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.services.ec2.AmazonEC2;
+import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.DescribeSecurityGroupsRequest;
 
 public class SecurityGroupUtils {
@@ -40,9 +40,7 @@ public class SecurityGroupUtils {
      *             either a problem with the data in the request, or a server
      *             side issue.
      */
-    public static boolean doesSecurityGroupExist(AmazonEC2 ec2,
-                                                 String securityGroupName) throws AmazonClientException,
-                                                                                  AmazonServiceException {
+    public static boolean doesSecurityGroupExist(EC2Client ec2, String securityGroupName) throws AmazonClientException {
 
         DescribeSecurityGroupsRequest securityGroupsRequest =
                 new DescribeSecurityGroupsRequest()

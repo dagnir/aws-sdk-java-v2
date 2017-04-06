@@ -12,11 +12,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
+package software.amazon.awssdk.services.dynamodb.document.quickstart;
 
-import software.amazon.awssdk.services.dynamodbv2.document.Table;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.AbstractQuickStart;
-import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
+import software.amazon.awssdk.services.dynamodb.document.Table;
+import software.amazon.awssdk.services.dynamodb.document.utils.AbstractQuickStart;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 /**
  * Sample code to delete a DynamoDB table.

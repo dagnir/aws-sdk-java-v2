@@ -149,7 +149,7 @@ public class EmptyHttpRequest implements Request<Object> {
     }
 
     @Override
-    public AwsRequestMetrics getAWSRequestMetrics() {
+    public AwsRequestMetrics getAwsRequestMetrics() {
         return null;
     }
 

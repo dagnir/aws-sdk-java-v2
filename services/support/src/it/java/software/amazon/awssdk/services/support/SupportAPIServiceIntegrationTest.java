@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.support.model.DescribeCommunicationsReque
 import software.amazon.awssdk.services.support.model.DescribeCommunicationsResult;
 import software.amazon.awssdk.services.support.model.DescribeServicesRequest;
 import software.amazon.awssdk.services.support.model.DescribeServicesResult;
+import software.amazon.awssdk.services.support.model.DescribeSeverityLevelsRequest;
 import software.amazon.awssdk.services.support.model.DescribeSeverityLevelsResult;
 import software.amazon.awssdk.services.support.model.DescribeTrustedAdvisorCheckRefreshStatusesRequest;
 import software.amazon.awssdk.services.support.model.DescribeTrustedAdvisorCheckRefreshStatusesResult;
@@ -81,7 +82,7 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
         assertNotNull(caseId);
 
         // Describe cases
-        DescribeCasesResult describeCasesResult = support.describeCases();
+        DescribeCasesResult describeCasesResult = support.describeCases(new DescribeCasesRequest());
         assertTrue(describeCasesResult.getCases().size() > 0);
 
         // Describe case with case Id
@@ -95,7 +96,7 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
         assertTrue(describeCasesResult.getCases().get(0).getRecentCommunications().getCommunications().size() > 0);
 
         // Describe services
-        DescribeServicesResult describeServicesResult = support.describeServices();
+        DescribeServicesResult describeServicesResult = support.describeServices(new DescribeServicesRequest());
         assertTrue(describeServicesResult.getServices().size() > 0);
         assertNotNull(describeServicesResult.getServices().get(0).getCode());
         assertNotNull(describeServicesResult.getServices().get(0).getName());
@@ -122,7 +123,7 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
         assertNotNull(describeCommunicationsResult.getCommunications().get(0).getTimeCreated());
 
         // Describe severity levels
-        DescribeSeverityLevelsResult describeSeverityLevelResult = support.describeSeverityLevels();
+        DescribeSeverityLevelsResult describeSeverityLevelResult = support.describeSeverityLevels(new DescribeSeverityLevelsRequest());
         assertTrue(describeSeverityLevelResult.getSeverityLevels().size() > 0);
         assertNotNull(describeSeverityLevelResult.getSeverityLevels().get(0).getName());
         assertNotNull(describeSeverityLevelResult.getSeverityLevels().get(0).getCode());

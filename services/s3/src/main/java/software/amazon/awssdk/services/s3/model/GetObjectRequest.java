@@ -52,7 +52,7 @@ import software.amazon.awssdk.services.s3.internal.Constants;
  * @see GetObjectMetadataRequest
  */
 public class GetObjectRequest extends AmazonWebServiceRequest implements
-                                                              SSECustomerKeyProvider, Serializable {
+        SseCustomerKeyProvider, Serializable {
     /**
      * Builder of an S3 object identifier.  This member field is never null.
      */
@@ -893,7 +893,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
     }
 
     @Override
-    public SseCustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSseCustomerKey() {
         return sseCustomerKey;
     }
 
@@ -905,7 +905,7 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      *            The optional customer-provided server-side encryption key to
      *            use to decrypt this object.
      */
-    public void setSSECustomerKey(SseCustomerKey sseKey) {
+    public void setSseCustomerKey(SseCustomerKey sseKey) {
         this.sseCustomerKey = sseKey;
     }
 
@@ -921,8 +921,8 @@ public class GetObjectRequest extends AmazonWebServiceRequest implements
      * @return The optional customer-provided server-side encryption key to use
      *         to decrypt this object.
      */
-    public GetObjectRequest withSSECustomerKey(SseCustomerKey sseKey) {
-        setSSECustomerKey(sseKey);
+    public GetObjectRequest withSseCustomerKey(SseCustomerKey sseKey) {
+        setSseCustomerKey(sseKey);
         return this;
     }
 

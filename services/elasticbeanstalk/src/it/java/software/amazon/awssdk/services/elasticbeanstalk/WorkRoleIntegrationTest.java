@@ -64,7 +64,7 @@ public class WorkRoleIntegrationTest extends ElasticBeanstalkIntegrationTestBase
         assertEquals(SOLUTION_STACK_NAME, createEnvironmentResult.getSolutionStackName());
         assertEquals(tier, createEnvironmentResult.getTier());
 
-        assertTrue(elasticbeanstalk.describeEnvironments().getEnvironments().size() > 0);
+        assertTrue(elasticbeanstalk.describeEnvironments(new DescribeEnvironmentsRequest()).getEnvironments().size() > 0);
 
         EnvironmentDescription environment = elasticbeanstalk
                 .describeEnvironments(new DescribeEnvironmentsRequest().withEnvironmentNames(environmentName))

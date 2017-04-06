@@ -33,20 +33,20 @@ public class HttpClientSettings implements SdkHttpClientSettings {
 
     private final boolean useBrowserCompatibleHostNameVerifier;
 
-    private final boolean calculateCRC32FromCompressedData;
+    private final boolean calculateCrc32FromCompressedData;
 
     HttpClientSettings(final LegacyClientConfiguration config,
                        final boolean useBrowserCompatibleHostNameVerifier,
-                       final boolean calculateCRC32FromCompressedData) {
+                       final boolean calculateCrc32FromCompressedData) {
         this.config = ValidationUtils.assertNotNull(config, "client configuration");
         this.useBrowserCompatibleHostNameVerifier = useBrowserCompatibleHostNameVerifier;
-        this.calculateCRC32FromCompressedData = calculateCRC32FromCompressedData;
+        this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
     }
 
     public static HttpClientSettings adapt(final LegacyClientConfiguration config,
                                            final boolean useBrowserCompatibleHostNameVerifier,
-                                           final boolean calculateCRC32FromCompressedData) {
-        return new HttpClientSettings(config, useBrowserCompatibleHostNameVerifier, calculateCRC32FromCompressedData);
+                                           final boolean calculateCrc32FromCompressedData) {
+        return new HttpClientSettings(config, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData);
     }
 
     public static HttpClientSettings adapt(final LegacyClientConfiguration config,
@@ -62,8 +62,8 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return useBrowserCompatibleHostNameVerifier;
     }
 
-    public boolean calculateCRC32FromCompressedData() {
-        return calculateCRC32FromCompressedData;
+    public boolean calculateCrc32FromCompressedData() {
+        return calculateCrc32FromCompressedData;
     }
 
     public int getMaxConnections() {
@@ -126,7 +126,7 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return config.getConnectionTimeout();
     }
 
-    public long getConnectionPoolTTL() {
+    public long getConnectionPoolTtl() {
         return config.getConnectionTtl();
     }
 

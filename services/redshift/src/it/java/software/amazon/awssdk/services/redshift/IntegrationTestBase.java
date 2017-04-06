@@ -21,11 +21,11 @@ import org.junit.BeforeClass;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class IntegrationTestBase extends AwsIntegrationTestBase {
-    protected static AmazonRedshiftClient redshift;
+    protected static RedshiftClient redshift;
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
-        redshift = new AmazonRedshiftClient(getCredentials());
+        redshift = RedshiftClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
 }

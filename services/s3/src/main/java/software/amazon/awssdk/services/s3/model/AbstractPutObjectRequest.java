@@ -25,7 +25,7 @@ import software.amazon.awssdk.event.ProgressListener;
  * Abstract base class for a put object or put object like request.
  */
 public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest implements
-                                                                               Cloneable, SSECustomerKeyProvider,
+                                                                               Cloneable, SseCustomerKeyProvider,
                                                                                SseAwsKeyManagementParamsProvider, S3DataSource,
                                                                                Serializable {
     /**
@@ -724,7 +724,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
     }
 
     @Override
-    public SseCustomerKey getSSECustomerKey() {
+    public SseCustomerKey getSseCustomerKey() {
         return sseCustomerKey;
     }
 
@@ -879,7 +879,7 @@ public abstract class AbstractPutObjectRequest extends AmazonWebServiceRequest i
                      .withRedirectLocation(getRedirectLocation())
                      .withStorageClass(getStorageClass())
                      .withSseAwsKeyManagementParams(getSseAwsKeyManagementParams())
-                     .withSseCustomerKey(getSSECustomerKey())
+                     .withSseCustomerKey(getSseCustomerKey())
                 ;
     }
 }

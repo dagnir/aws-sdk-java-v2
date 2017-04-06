@@ -23,14 +23,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.services.kinesisfirehose.model.BufferingHints;
-import software.amazon.awssdk.services.kinesisfirehose.model.CopyCommand;
-import software.amazon.awssdk.services.kinesisfirehose.model.CreateDeliveryStreamRequest;
-import software.amazon.awssdk.services.kinesisfirehose.model.DeliveryStreamDescription;
-import software.amazon.awssdk.services.kinesisfirehose.model.RedshiftDestinationConfiguration;
-import software.amazon.awssdk.services.kinesisfirehose.model.RedshiftDestinationUpdate;
-import software.amazon.awssdk.services.kinesisfirehose.model.S3DestinationConfiguration;
-import software.amazon.awssdk.services.kinesisfirehose.model.UpdateDestinationRequest;
+import software.amazon.awssdk.services.firehose.model.BufferingHints;
+import software.amazon.awssdk.services.firehose.model.CopyCommand;
+import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest;
+import software.amazon.awssdk.services.firehose.model.DeliveryStreamDescription;
+import software.amazon.awssdk.services.firehose.model.RedshiftDestinationConfiguration;
+import software.amazon.awssdk.services.firehose.model.RedshiftDestinationUpdate;
+import software.amazon.awssdk.services.firehose.model.S3DestinationConfiguration;
+import software.amazon.awssdk.services.firehose.model.UpdateDestinationRequest;
 import software.amazon.awssdk.util.StringUtils;
 
 /**

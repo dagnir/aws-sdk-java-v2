@@ -32,13 +32,13 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
-    private static AmazonGameLift gameLift;
+    private static GameLiftClient gameLift;
 
     private static String aliasId = null;
 
     @BeforeClass
     public static void setUp() throws IOException {
-        gameLift = new AmazonGameLiftClient(getCredentials());
+        gameLift = GameLiftClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass

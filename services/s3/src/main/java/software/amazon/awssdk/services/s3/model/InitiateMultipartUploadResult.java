@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedResult;
-import software.amazon.awssdk.services.s3.internal.SSEResultBase;
+import software.amazon.awssdk.services.s3.internal.SseResultBase;
 
 /**
  * Contains the results of initiating a multipart upload, particularly the
@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.s3.internal.SSEResultBase;
  *
  * @see AmazonS3#initiateMultipartUpload(InitiateMultipartUploadRequest)
  */
-public class InitiateMultipartUploadResult extends SSEResultBase
+public class InitiateMultipartUploadResult extends SseResultBase
         implements S3RequesterChargedResult, Serializable {
 
     /** The name of the bucket in which the new multipart upload was initiated. */

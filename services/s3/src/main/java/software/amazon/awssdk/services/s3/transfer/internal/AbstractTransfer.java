@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.transfer.internal;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 
 import java.util.Collection;
 import java.util.LinkedList;

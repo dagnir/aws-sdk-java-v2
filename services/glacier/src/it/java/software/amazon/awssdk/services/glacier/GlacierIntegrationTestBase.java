@@ -27,7 +27,7 @@ public class GlacierIntegrationTestBase extends AwsTestBase {
     /** Size of data to upload to Glacier. */
     static final long CONTENT_LENGTH = 1024 * 1024 * 5 + 123;
 
-    protected static AmazonGlacierClient glacier;
+    protected static GlacierClient glacier;
 
     protected static String accountId = "599169622985";
     protected static String vaultName = "java-sdk-1332366353936";
@@ -48,7 +48,7 @@ public class GlacierIntegrationTestBase extends AwsTestBase {
 
     protected void initializeClient() throws Exception {
         setUpCredentials();
-        glacier = new AmazonGlacierClient(credentials);
+        glacier = GlacierClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }
 

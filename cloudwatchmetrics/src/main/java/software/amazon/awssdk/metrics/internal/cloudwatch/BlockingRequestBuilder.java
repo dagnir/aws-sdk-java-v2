@@ -41,7 +41,7 @@ import software.amazon.awssdk.util.json.Jackson;
  * necessary.
  */
 class BlockingRequestBuilder {
-    private static final String OS_METRIC_NAME = MachineMetric.getOSMetricName();
+    private static final String OS_METRIC_NAME = MachineMetric.getOsMetricName();
     private final MachineMetricFactory machineMetricFactory = new MachineMetricFactory();
     private final BlockingQueue<MetricDatum> queue;
     private final long timeoutNano;
@@ -241,11 +241,11 @@ class BlockingRequestBuilder {
             // To do so, we copy the metric data to avoid mutability problems.
             Collection<MetricDatum> newData = new ArrayList<MetricDatum>(data.size());
             for (MetricDatum md : data) {
-                MetricDatum newMD = cloneMetricDatum(md);
+                MetricDatum newMd = cloneMetricDatum(md);
                 for (Dimension dim : extraDims) {
-                    newMD.withDimensions(dim);  // add the extra dimensions to the new metric datum
+                    newMd.withDimensions(dim);  // add the extra dimensions to the new metric datum
                 }
-                newData.add(newMD);
+                newData.add(newMd);
             }
             data = newData;
         }

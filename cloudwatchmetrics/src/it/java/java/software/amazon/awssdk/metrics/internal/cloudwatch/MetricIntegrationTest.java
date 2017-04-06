@@ -30,9 +30,9 @@ import software.amazon.awssdk.metrics.MetricCollector;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.SimpleMetricType;
 import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodbv2.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.util.AWSRequestMetrics;
 
 /**

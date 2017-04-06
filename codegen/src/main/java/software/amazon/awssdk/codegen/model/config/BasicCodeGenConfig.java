@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+
 package software.amazon.awssdk.codegen.model.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,7 +21,7 @@ import software.amazon.awssdk.util.StringUtils;
 
 public class BasicCodeGenConfig {
 
-    private static final String PACKAGE_PREFIX = "software.amazon.awssdk.services.";
+    private static final String PACKAGE_PREFIX = "software.amazon.awssdk.";
 
     private final String interfaceName;
     private final String packageName;

@@ -30,15 +30,15 @@ import software.amazon.awssdk.util.DateUtils;
  */
 public class SimpleTypeStaxUnmarshallers {
     /** Shared logger. */
-    private static Log log = LogFactory.getLog(SimpleTypeStaxUnmarshallers.class);
+    private static Log log = LogFactory.getLog(SimpleTypeUnmarshallers.class);
 
     /**
      * Unmarshaller for String values.
      */
-    public static class StringStaxUnmarshaller implements Unmarshaller<String, StaxUnmarshallerContext> {
-        private static final StringStaxUnmarshaller INSTANCE = new StringStaxUnmarshaller();
+    public static class StringUnmarshaller implements Unmarshaller<String, StaxUnmarshallerContext> {
+        private static final StringUnmarshaller INSTANCE = new StringUnmarshaller();
 
-        public static StringStaxUnmarshaller getInstance() {
+        public static StringUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -47,10 +47,10 @@ public class SimpleTypeStaxUnmarshallers {
         }
     }
 
-    public static class BigDecimalStaxUnmarshaller implements Unmarshaller<BigDecimal, StaxUnmarshallerContext> {
-        private static final BigDecimalStaxUnmarshaller INSTANCE = new BigDecimalStaxUnmarshaller();
+    public static class BigDecimalUnmarshaller implements Unmarshaller<BigDecimal, StaxUnmarshallerContext> {
+        private static final BigDecimalUnmarshaller INSTANCE = new BigDecimalUnmarshaller();
 
-        public static BigDecimalStaxUnmarshaller getInstance() {
+        public static BigDecimalUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -61,10 +61,10 @@ public class SimpleTypeStaxUnmarshallers {
         }
     }
 
-    public static class BigIntegerStaxUnmarshaller implements Unmarshaller<BigInteger, StaxUnmarshallerContext> {
-        private static final BigIntegerStaxUnmarshaller INSTANCE = new BigIntegerStaxUnmarshaller();
+    public static class BigIntegerUnmarshaller implements Unmarshaller<BigInteger, StaxUnmarshallerContext> {
+        private static final BigIntegerUnmarshaller INSTANCE = new BigIntegerUnmarshaller();
 
-        public static BigIntegerStaxUnmarshaller getInstance() {
+        public static BigIntegerUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -78,10 +78,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for Double values.
      */
-    public static class DoubleStaxUnmarshaller implements Unmarshaller<Double, StaxUnmarshallerContext> {
-        private static final DoubleStaxUnmarshaller INSTANCE = new DoubleStaxUnmarshaller();
+    public static class DoubleUnmarshaller implements Unmarshaller<Double, StaxUnmarshallerContext> {
+        private static final DoubleUnmarshaller INSTANCE = new DoubleUnmarshaller();
 
-        public static DoubleStaxUnmarshaller getInstance() {
+        public static DoubleUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -94,10 +94,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for Integer values.
      */
-    public static class IntegerStaxUnmarshaller implements Unmarshaller<Integer, StaxUnmarshallerContext> {
-        private static final IntegerStaxUnmarshaller INSTANCE = new IntegerStaxUnmarshaller();
+    public static class IntegerUnmarshaller implements Unmarshaller<Integer, StaxUnmarshallerContext> {
+        private static final IntegerUnmarshaller INSTANCE = new IntegerUnmarshaller();
 
-        public static IntegerStaxUnmarshaller getInstance() {
+        public static IntegerUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -110,10 +110,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for Boolean values.
      */
-    public static class BooleanStaxUnmarshaller implements Unmarshaller<Boolean, StaxUnmarshallerContext> {
-        private static final BooleanStaxUnmarshaller INSTANCE = new BooleanStaxUnmarshaller();
+    public static class BooleanUnmarshaller implements Unmarshaller<Boolean, StaxUnmarshallerContext> {
+        private static final BooleanUnmarshaller INSTANCE = new BooleanUnmarshaller();
 
-        public static BooleanStaxUnmarshaller getInstance() {
+        public static BooleanUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -126,10 +126,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for Float values.
      */
-    public static class FloatStaxUnmarshaller implements Unmarshaller<Float, StaxUnmarshallerContext> {
-        private static final FloatStaxUnmarshaller INSTANCE = new FloatStaxUnmarshaller();
+    public static class FloatUnmarshaller implements Unmarshaller<Float, StaxUnmarshallerContext> {
+        private static final FloatUnmarshaller INSTANCE = new FloatUnmarshaller();
 
-        public static FloatStaxUnmarshaller getInstance() {
+        public static FloatUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -142,10 +142,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for Long values.
      */
-    public static class LongStaxUnmarshaller implements Unmarshaller<Long, StaxUnmarshallerContext> {
-        private static final LongStaxUnmarshaller INSTANCE = new LongStaxUnmarshaller();
+    public static class LongUnmarshaller implements Unmarshaller<Long, StaxUnmarshallerContext> {
+        private static final LongUnmarshaller INSTANCE = new LongUnmarshaller();
 
-        public static LongStaxUnmarshaller getInstance() {
+        public static LongUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -158,10 +158,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for Byte values.
      */
-    public static class ByteStaxUnmarshaller implements Unmarshaller<Byte, StaxUnmarshallerContext> {
-        private static final ByteStaxUnmarshaller INSTANCE = new ByteStaxUnmarshaller();
+    public static class ByteUnmarshaller implements Unmarshaller<Byte, StaxUnmarshallerContext> {
+        private static final ByteUnmarshaller INSTANCE = new ByteUnmarshaller();
 
-        public static ByteStaxUnmarshaller getInstance() {
+        public static ByteUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -174,10 +174,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for Date values.
      */
-    public static class DateStaxUnmarshaller implements Unmarshaller<Date, StaxUnmarshallerContext> {
-        private static final DateStaxUnmarshaller INSTANCE = new DateStaxUnmarshaller();
+    public static class DateUnmarshaller implements Unmarshaller<Date, StaxUnmarshallerContext> {
+        private static final DateUnmarshaller INSTANCE = new DateUnmarshaller();
 
-        public static DateStaxUnmarshaller getInstance() {
+        public static DateUnmarshaller getInstance() {
             return INSTANCE;
         }
 
@@ -199,10 +199,10 @@ public class SimpleTypeStaxUnmarshallers {
     /**
      * Unmarshaller for ByteBuffer values.
      */
-    public static class ByteBufferStaxUnmarshaller implements Unmarshaller<ByteBuffer, StaxUnmarshallerContext> {
-        private static final ByteBufferStaxUnmarshaller INSTANCE = new ByteBufferStaxUnmarshaller();
+    public static class ByteBufferUnmarshaller implements Unmarshaller<ByteBuffer, StaxUnmarshallerContext> {
+        private static final ByteBufferUnmarshaller INSTANCE = new ByteBufferUnmarshaller();
 
-        public static ByteBufferStaxUnmarshaller getInstance() {
+        public static ByteBufferUnmarshaller getInstance() {
             return INSTANCE;
         }
 

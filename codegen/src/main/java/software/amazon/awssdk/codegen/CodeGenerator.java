@@ -76,8 +76,7 @@ public class CodeGenerator {
 
         } catch (Exception e) {
             throw new RuntimeException(
-                    "Failed to generate code. Exception message : "
-                    + e.getMessage(), e);
+                    "Failed to generate code. Exception message : " + e.getMessage(), e);
 
         }
     }

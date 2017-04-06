@@ -16,6 +16,7 @@
 package software.amazon.awssdk.util;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.UncheckedIOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -137,6 +138,9 @@ public final class FunctionalUtils {
         }
         if (exception instanceof IOException) {
             return new UncheckedIOException((IOException) exception);
+        }
+        if (exception instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
         }
         return new RuntimeException(exception);
     }

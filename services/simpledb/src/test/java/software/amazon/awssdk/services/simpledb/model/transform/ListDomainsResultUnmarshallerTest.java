@@ -34,7 +34,7 @@ public class ListDomainsResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("ListDomainsResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        ListDomainsResult result = (ListDomainsResult) new ListDomainsResultStaxUnmarshaller()
+        ListDomainsResult result = new ListDomainsResultUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
         assertTrue(!result.getDomainNames().isEmpty());

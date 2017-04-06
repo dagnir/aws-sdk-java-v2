@@ -22,17 +22,19 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
-import software.amazon.awssdk.services.identitymanagement.model.AttachRolePolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreatePolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateRoleRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeletePolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteRoleRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DetachRolePolicyRequest;
+import software.amazon.awssdk.services.iam.IAMClient;
+import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
+import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
+import software.amazon.awssdk.services.iam.model.CreateRoleRequest;
+import software.amazon.awssdk.services.iam.model.DeletePolicyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
+import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.DataSetType;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.GenerateDataSetRequest;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.sns.AmazonSNSClient;
+import software.amazon.awssdk.services.sns.SNSClient;
+import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
+import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class ServiceIntegrationTest extends AwsIntegrationTestBase {
@@ -49,10 +51,10 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private static final String BUCKET_NAME = "java-sdk-integ-mp-commerce-" + System.currentTimeMillis();
 
-    private AWSMarketplaceCommerceAnalyticsClient client;
+    private MarketplaceCommerceAnalyticsClient client;
     private AmazonS3Client s3;
-    private AmazonSNSClient sns;
-    private AmazonIdentityManagementClient iam;
+    private SNSClient sns;
+    private IAMClient iam;
 
     private String topicArn;
     private String roleArn;
@@ -68,19 +70,19 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         s3 = new AmazonS3Client(getCredentials());
         s3.configureRegion(Regions.US_EAST_1);
 
-        client = new AWSMarketplaceCommerceAnalyticsClient(getCredentials());
-        client.configureRegion(Regions.US_EAST_1);
+        client = MarketplaceCommerceAnalyticsClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(Regions.US_EAST_1)
+                .build();
 
-        sns = new AmazonSNSClient(getCredentials());
-        sns.configureRegion(Regions.US_EAST_1);
+        sns = SNSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
 
-        iam = new AmazonIdentityManagementClient(getCredentials());
-        iam.configureRegion(Regions.US_EAST_1);
+        iam = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
     }
 
     private void setupResources() throws IOException, Exception {
         s3.createBucket(BUCKET_NAME);
-        topicArn = sns.createTopic(TOPIC_NAME).getTopicArn();
+        topicArn = sns.createTopic(new CreateTopicRequest(TOPIC_NAME)).getTopicArn();
         policyArn = createPolicy();
         roleArn = createRole();
         iam.attachRolePolicy(new AttachRolePolicyRequest().withRoleName(ROLE_NAME).withPolicyArn(policyArn));
@@ -112,7 +114,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
             e.printStackTrace();
         }
         try {
-            sns.deleteTopic(topicArn);
+            sns.deleteTopic(new DeleteTopicRequest(topicArn));
         } catch (Exception e) {
             e.printStackTrace();
         }

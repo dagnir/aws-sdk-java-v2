@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;

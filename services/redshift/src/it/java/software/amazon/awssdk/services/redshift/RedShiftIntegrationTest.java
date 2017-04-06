@@ -30,6 +30,7 @@ import software.amazon.awssdk.services.redshift.model.DescribeClusterSnapshotsRe
 import software.amazon.awssdk.services.redshift.model.DescribeClusterSnapshotsResult;
 import software.amazon.awssdk.services.redshift.model.DescribeClustersRequest;
 import software.amazon.awssdk.services.redshift.model.DescribeClustersResult;
+import software.amazon.awssdk.services.redshift.model.DescribeEventsRequest;
 import software.amazon.awssdk.services.redshift.model.DescribeEventsResult;
 import software.amazon.awssdk.services.redshift.model.ModifyClusterRequest;
 import software.amazon.awssdk.services.redshift.model.RebootClusterRequest;
@@ -80,7 +81,7 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         isValidCluster(cluster, CLUSTER_ID);
 
         // Describe Clusters
-        DescribeClustersResult describeClusterResult = redshift.describeClusters();
+        DescribeClustersResult describeClusterResult = redshift.describeClusters(new DescribeClustersRequest());
         assertTrue(describeClusterResult.getClusters().size() > 0);
 
         describeClusterResult = redshift.describeClusters(new DescribeClustersRequest().withClusterIdentifier(CLUSTER_ID));
@@ -97,7 +98,8 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         isValidSnapshot(snapshot);
 
         // Describe snapshots
-        DescribeClusterSnapshotsResult describeClusterSnapshotResult = redshift.describeClusterSnapshots();
+        DescribeClusterSnapshotsResult describeClusterSnapshotResult =
+                redshift.describeClusterSnapshots(new DescribeClusterSnapshotsRequest());
         assertTrue(describeClusterSnapshotResult.getSnapshots().size() > 0);
         assertNotNull(describeClusterSnapshotResult.getSnapshots().get(0).getClusterCreateTime());
         assertTrue(describeClusterSnapshotResult.getSnapshots().get(0).getNumberOfNodes() > 0);
@@ -105,7 +107,8 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         assertNotNull(describeClusterSnapshotResult.getSnapshots().get(0).getSnapshotIdentifier());
         assertNotNull(describeClusterSnapshotResult.getSnapshots().get(0).getStatus());
 
-        describeClusterSnapshotResult = redshift.describeClusterSnapshots(new DescribeClusterSnapshotsRequest().withSnapshotIdentifier(SNAPSHOT_ID));
+        describeClusterSnapshotResult =
+                redshift.describeClusterSnapshots(new DescribeClusterSnapshotsRequest().withSnapshotIdentifier(SNAPSHOT_ID));
         assertEquals(1, describeClusterSnapshotResult.getSnapshots().size());
         isValidSnapshot(describeClusterSnapshotResult.getSnapshots().get(0));
 
@@ -143,7 +146,7 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         waitForClusterToBeAvailable(NEW_CLUSTER_ID);
 
         // Describe events
-        DescribeEventsResult describeEventsResult = redshift.describeEvents();
+        DescribeEventsResult describeEventsResult = redshift.describeEvents(new DescribeEventsRequest());
         assertTrue(describeEventsResult.getEvents().size() > 0);
         assertNotNull(describeEventsResult.getEvents().get(0).getSourceIdentifier());
         assertNotNull(describeEventsResult.getEvents().get(0).getDate());
@@ -155,7 +158,8 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         int count = 0;
         final int MAX_ITERATION_TIME = 30;
         while (true) {
-            DescribeClustersResult describeClusterResult = redshift.describeClusters(new DescribeClustersRequest().withClusterIdentifier(clusterId));
+            DescribeClustersResult describeClusterResult =
+                    redshift.describeClusters(new DescribeClustersRequest().withClusterIdentifier(clusterId));
             String status = describeClusterResult.getClusters().get(0).getClusterStatus();
             System.out.println(status);
             if (status.toLowerCase().equals("available")) {
@@ -175,7 +179,8 @@ public class RedShiftIntegrationTest extends IntegrationTestBase {
         int count = 0;
         final int MAX_ITERATION_TIME = 1800;
         while (true) {
-            DescribeClusterSnapshotsResult describeClusterSnapshotResult = redshift.describeClusterSnapshots(new DescribeClusterSnapshotsRequest().withSnapshotIdentifier(snapshotId));
+            DescribeClusterSnapshotsResult describeClusterSnapshotResult =
+                    redshift.describeClusterSnapshots(new DescribeClusterSnapshotsRequest().withSnapshotIdentifier(snapshotId));
             String status = describeClusterSnapshotResult.getSnapshots().get(0).getStatus();
             System.out.println(status);
             if (status.toLowerCase().equals("available")) {

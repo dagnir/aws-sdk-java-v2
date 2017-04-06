@@ -25,7 +25,7 @@ import software.amazon.awssdk.annotation.SdkTestInternalApi;
 class UnreliableTestConfig {
     private int maxNumErrors = 1;
     private int bytesReadBeforeException = 100;
-    private boolean isFakeIOException;
+    private boolean isFakeIoException;
     private int resetIntervalBeforeException = 2;
 
     int getMaxNumErrors() {
@@ -36,8 +36,8 @@ class UnreliableTestConfig {
         return bytesReadBeforeException;
     }
 
-    boolean isFakeIOException() {
-        return isFakeIOException;
+    boolean isFakeIoException() {
+        return isFakeIoException;
     }
 
     int getResetIntervalBeforeException() {
@@ -55,8 +55,8 @@ class UnreliableTestConfig {
         return this;
     }
 
-    UnreliableTestConfig withFakeIOException(boolean isFakeIOException) {
-        this.isFakeIOException = isFakeIOException;
+    UnreliableTestConfig withFakeIoException(boolean isFakeIoException) {
+        this.isFakeIoException = isFakeIoException;
         return this;
     }
 

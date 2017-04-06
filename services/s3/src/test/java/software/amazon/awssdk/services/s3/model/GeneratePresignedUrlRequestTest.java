@@ -43,22 +43,22 @@ public class GeneratePresignedUrlRequestTest {
     @Test
     public void sse() {
         new GeneratePresignedUrlRequest("bucket", "key")
-                .withSSEAlgorithm(SSEAlgorithm.getDefault())
+                .withSseAlgorithm(SseAlgorithm.getDefault())
                 .rejectIllegalArguments();
     }
 
     @Test
     public void sse_c() {
         new GeneratePresignedUrlRequest("bucket", "key")
-                .withSSECustomerKeyAlgorithm(SSEAlgorithm.getDefault())
+                .withSseCustomerKeyAlgorithm(SseAlgorithm.getDefault())
                 .rejectIllegalArguments();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void sse_and_sse_c() {
         new GeneratePresignedUrlRequest("bucket", "key")
-                .withSSECustomerKeyAlgorithm(SSEAlgorithm.getDefault())
-                .withSSEAlgorithm(SSEAlgorithm.getDefault())
+                .withSseCustomerKeyAlgorithm(SseAlgorithm.getDefault())
+                .withSseAlgorithm(SseAlgorithm.getDefault())
                 .rejectIllegalArguments();
 
     }
@@ -66,7 +66,7 @@ public class GeneratePresignedUrlRequestTest {
     @Test(expected = IllegalArgumentException.class)
     public void kmsCmkId_and_sse_c() {
         new GeneratePresignedUrlRequest("bucket", "key")
-                .withSSECustomerKeyAlgorithm(SSEAlgorithm.getDefault())
+                .withSseCustomerKeyAlgorithm(SseAlgorithm.getDefault())
                 .withKmsCmkId("kms_cmk_id")
                 .rejectIllegalArguments();
 
@@ -83,13 +83,13 @@ public class GeneratePresignedUrlRequestTest {
     @Test
     public void sse_kms_without_cmkId() {
         new GeneratePresignedUrlRequest("bucket", "key")
-                .withSSEAlgorithm(SSEAlgorithm.KMS)
+                .withSseAlgorithm(SseAlgorithm.KMS)
                 .rejectIllegalArguments();
     }
 
     public void sse_kms() {
         new GeneratePresignedUrlRequest("bucket", "key")
-                .withSSEAlgorithm(SSEAlgorithm.KMS)
+                .withSseAlgorithm(SseAlgorithm.KMS)
                 .withKmsCmkId("kms_cmk_id")
                 .rejectIllegalArguments();
 
@@ -98,7 +98,7 @@ public class GeneratePresignedUrlRequestTest {
     @Test(expected = IllegalArgumentException.class)
     public void sse_c_kms() {
         new GeneratePresignedUrlRequest("bucket", "key")
-                .withSSECustomerKeyAlgorithm(SSEAlgorithm.KMS)
+                .withSseCustomerKeyAlgorithm(SseAlgorithm.KMS)
         ;
     }
 }

@@ -17,14 +17,14 @@ package software.amazon.awssdk.services.s3;
 
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterialsProvider;
 
 public final class AmazonS3EncryptionClientBuilder extends AmazonS3Builder<AmazonS3EncryptionClientBuilder, AmazonS3Encryption> {
     private EncryptionMaterialsProvider encryptionMaterials;
     private CryptoConfiguration cryptoConfig;
-    private AWSKMS kms;
+    private KMSClient kms;
 
     /**
      * @return Create new instance of builder with all defaults set.
@@ -79,18 +79,18 @@ public final class AmazonS3EncryptionClientBuilder extends AmazonS3Builder<Amazo
 
     /**
      * Sets the KMS implementation to be used throughout the crypto process
-     * @param kms an {@link AWSKMS} implementation (e.g. {@link software.amazon.awssdk.services.kms.AWSKMSClient})
+     * @param kms an {@link KMSClient} implementation (e.g. {@link software.amazon.awssdk.services.kms.KMSClient})
      */
-    public void setKms(AWSKMS kms) {
+    public void setKms(KMSClient kms) {
         this.kms = kms;
     }
 
     /**
      * Sets the KMS implementation to be used throughout the crypto process
-     * @param kms an {@link AWSKMS} implementation (e.g. {@link software.amazon.awssdk.services.kms.AWSKMSClient})
+     * @param kms an {@link KMSClient} implementation (e.g. {@link software.amazon.awssdk.services.kms.KMSClient})
      * @return this object for method chaining
      */
-    public AmazonS3EncryptionClientBuilder withKmsClient(AWSKMS kms) {
+    public AmazonS3EncryptionClientBuilder withKmsClient(KMSClient kms) {
         setKms(kms);
         return this;
     }
@@ -108,5 +108,10 @@ public final class AmazonS3EncryptionClientBuilder extends AmazonS3Builder<Amazo
                                                           encryptionMaterials,
                                                           cryptoConfig != null ? cryptoConfig : new CryptoConfiguration(),
                                                           kms));
+    }
+
+    @Override
+    public String getServiceName() {
+        return AmazonS3Client.S3_SERVICE_NAME;
     }
 }

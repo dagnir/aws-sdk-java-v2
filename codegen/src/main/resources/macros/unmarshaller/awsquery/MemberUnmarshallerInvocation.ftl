@@ -24,7 +24,7 @@
             </#if>
 
                 if (context.testExpression("${listMemberPath}", targetDepth)) {
-                    ${shapeVarName}.with${memberModel.name}(${memberModel.listModel.simpleType}StaxUnmarshaller.getInstance().unmarshall(context));
+                    ${shapeVarName}.with${memberModel.name}(${memberModel.listModel.simpleType}Unmarshaller.getInstance().unmarshall(context));
                     continue;
                 }
 
@@ -42,7 +42,7 @@
 
 <#else>
                 if (context.testExpression("${unmarshallerLocationName}", targetDepth)) {
-                    ${shapeVarName}.${memberModel.setterMethodName}(${memberModel.variable.simpleType}StaxUnmarshaller.getInstance().unmarshall(context));
+                    ${shapeVarName}.${memberModel.setterMethodName}(${memberModel.variable.simpleType}Unmarshaller.getInstance().unmarshall(context));
                     continue;
                 }
 </#if>

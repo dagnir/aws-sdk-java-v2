@@ -40,6 +40,7 @@ import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttribute
 import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttributesResult;
 import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationRequest;
 import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationResult;
+import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsRequest;
 import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsResult;
 import software.amazon.awssdk.services.sns.model.PlatformApplication;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
@@ -69,7 +70,8 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             topicArn = createTopicResult.getTopicArn();
 
             // List platform applications
-            ListPlatformApplicationsResult listPlatformAppsResult = sns.listPlatformApplications();
+            ListPlatformApplicationsResult listPlatformAppsResult =
+                    sns.listPlatformApplications(new ListPlatformApplicationsRequest());
             int platformAppsCount = listPlatformAppsResult.getPlatformApplications().size();
             for (PlatformApplication platformApp : listPlatformAppsResult.getPlatformApplications()) {
                 assertNotNull(platformApp.getPlatformApplicationArn());
@@ -92,7 +94,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             platformApplicationArn = createPlatformAppResult.getPlatformApplicationArn();
 
             Thread.sleep(5 * 1000);
-            listPlatformAppsResult = sns.listPlatformApplications();
+            listPlatformAppsResult = sns.listPlatformApplications(new ListPlatformApplicationsRequest());
             assertEquals(platformAppsCount + 1, listPlatformAppsResult.getPlatformApplications().size());
 
             // Get attributes

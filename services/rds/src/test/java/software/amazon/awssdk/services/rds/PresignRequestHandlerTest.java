@@ -45,7 +45,7 @@ public class PresignRequestHandlerTest {
     private static final BasicAwsCredentials CREDENTIALS = new BasicAwsCredentials("foo", "bar");
     private static final Region DESTINATION_REGION = RegionUtils.getRegion("us-west-2");
 
-    private static PresignRequestHandler<CopyDBSnapshotRequest> presignHandler = new CopyDBSnapshotPresignHandler();
+    private static PresignRequestHandler<CopyDBSnapshotRequest> presignHandler = new CopyDbSnapshotPresignHandler();
     private final CopyDBSnapshotRequestMarshaller marshaller = new CopyDBSnapshotRequestMarshaller();
 
     @Test
@@ -74,7 +74,7 @@ public class PresignRequestHandlerTest {
         // Note: month is 0-based
         c.set(2016, 11, 21, 18, 7, 35);
 
-        PresignRequestHandler<CopyDBSnapshotRequest> handler = new CopyDBSnapshotPresignHandler(c.getTime());
+        PresignRequestHandler<CopyDBSnapshotRequest> handler = new CopyDbSnapshotPresignHandler(c.getTime());
 
         handler.beforeRequest(marshallRequest(request));
 

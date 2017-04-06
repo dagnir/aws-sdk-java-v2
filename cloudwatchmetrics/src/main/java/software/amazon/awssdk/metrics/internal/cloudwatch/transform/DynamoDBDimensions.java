@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.metrics.internal.cloudwatch.provider.transform;
+package software.amazon.awssdk.metrics.internal.cloudwatch.transform;
 
 /**
  * DynamoDB specific metric dimentsions.

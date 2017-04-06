@@ -148,10 +148,10 @@ public class SdkHttpUtils {
     }
 
     public static boolean usePayloadForQueryParameters(SdkHttpRequest request) {
-        boolean requestIsPOST = SdkHttpMethod.POST.equals(request.getHttpMethod());
+        boolean requestIsPost = SdkHttpMethod.POST.equals(request.getHttpMethod());
         boolean requestHasNoPayload = (request.getContent() == null);
 
-        return requestIsPOST && requestHasNoPayload;
+        return requestIsPost && requestHasNoPayload;
     }
 
     /**

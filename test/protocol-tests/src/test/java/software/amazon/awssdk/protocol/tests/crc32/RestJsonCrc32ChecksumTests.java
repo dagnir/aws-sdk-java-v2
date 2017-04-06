@@ -33,10 +33,14 @@ import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJson;
-import software.amazon.awssdk.services.protocol.restjson.AmazonProtocolRestJsonClient;
-import software.amazon.awssdk.services.protocol.restjson.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocol.restjson.model.AllTypesResult;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
+import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
+import software.amazon.awssdk.services.protocolrestjson.model.AllTypesResult;
+import software.amazon.awssdk.services.protocolrestjsoncustomized.ProtocolRestJsonCustomizedClient;
+import software.amazon.awssdk.services.protocolrestjsoncustomized.model.SimpleRequest;
+import software.amazon.awssdk.services.protocolrestjsoncustomized.model.SimpleResult;
 
 public class RestJsonCrc32ChecksumTests {
 
@@ -49,8 +53,9 @@ public class RestJsonCrc32ChecksumTests {
             new BasicAwsCredentials("foo", "bar"));
     @Rule
     public WireMockRule mockServer = new WireMockRule(WireMockConfiguration.wireMockConfig()
-                                                                           .port(0)
-                                                                           .fileSource(new SingleRootFileSource("src/test/resources")));
+            .port(0)
+            .fileSource(
+                    new SingleRootFileSource("src/test/resources")));
 
     @BeforeClass
     public static void setup() {
@@ -60,41 +65,49 @@ public class RestJsonCrc32ChecksumTests {
     @Test
     public void clientCalculatesCrc32FromCompressedData_WhenCrc32IsValid() {
         stubFor(post(urlEqualTo(RESOURCE_PATH)).willReturn(aResponse()
-                                                                   .withStatus(200)
-                                                                   .withHeader("Content-Encoding", "gzip")
-                                                                   .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
-                                                                   .withBodyFile(JSON_BODY_GZIP)));
-        AmazonProtocolRestJson client = new AmazonProtocolRestJsonCrc32TestClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                                  new LegacyClientConfiguration().withGzip(true));
-        client.setEndpoint("http://localhost:" + mockServer.port());
-        AllTypesResult result =
-                client.allTypes(new AllTypesRequest());
+                .withStatus(200)
+                .withHeader("Content-Encoding", "gzip")
+                .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
+                .withBodyFile(JSON_BODY_GZIP)));
+        ProtocolRestJsonCustomizedClient client = ProtocolRestJsonCustomizedClient.builder()
+                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .build();
+
+        SimpleResult result = client.simple(new SimpleRequest());
         Assert.assertEquals("foo", result.getStringMember());
     }
 
     @Test(expected = AmazonClientException.class)
     public void clientCalculatesCrc32FromCompressedData_WhenCrc32IsInvalid_ThrowsException() {
         stubFor(post(urlEqualTo(RESOURCE_PATH)).willReturn(aResponse()
-                                                                   .withStatus(200)
-                                                                   .withHeader("Content-Encoding", "gzip")
-                                                                   .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
-                                                                   .withBodyFile(JSON_BODY_GZIP)));
-        AmazonProtocolRestJson client = new AmazonProtocolRestJsonCrc32TestClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                                  new LegacyClientConfiguration().withGzip(true));
-        client.setEndpoint("http://localhost:" + mockServer.port());
-        client.allTypes(new AllTypesRequest());
+                .withStatus(200)
+                .withHeader("Content-Encoding", "gzip")
+                .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
+                .withBodyFile(JSON_BODY_GZIP)));
+        ProtocolRestJsonCustomizedClient client = ProtocolRestJsonCustomizedClient.builder()
+                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .build();
+
+        client.simple(new SimpleRequest());
     }
 
     @Test
     public void clientCalculatesCrc32FromDecompressedData_WhenCrc32IsValid() {
         stubFor(post(urlEqualTo(RESOURCE_PATH)).willReturn(aResponse()
-                                                                   .withStatus(200)
-                                                                   .withHeader("Content-Encoding", "gzip")
-                                                                   .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
-                                                                   .withBodyFile(JSON_BODY_GZIP)));
-        AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new LegacyClientConfiguration().withGzip(true));
-        client.setEndpoint("http://localhost:" + mockServer.port());
+                .withStatus(200)
+                .withHeader("Content-Encoding", "gzip")
+                .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
+                .withBodyFile(JSON_BODY_GZIP)));
+        ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
+                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .build();
+
         AllTypesResult result =
                 client.allTypes(new AllTypesRequest());
         Assert.assertEquals("foo", result.getStringMember());
@@ -103,25 +116,31 @@ public class RestJsonCrc32ChecksumTests {
     @Test(expected = AmazonClientException.class)
     public void clientCalculatesCrc32FromDecompressedData_WhenCrc32IsInvalid_ThrowsException() {
         stubFor(post(urlEqualTo(RESOURCE_PATH)).willReturn(aResponse()
-                                                                   .withStatus(200)
-                                                                   .withHeader("Content-Encoding", "gzip")
-                                                                   .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
-                                                                   .withBodyFile(JSON_BODY_GZIP)));
-        AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new LegacyClientConfiguration().withGzip(true));
-        client.setEndpoint("http://localhost:" + mockServer.port());
+                .withStatus(200)
+                .withHeader("Content-Encoding", "gzip")
+                .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
+                .withBodyFile(JSON_BODY_GZIP)));
+        ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
+                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .build();
+
         client.allTypes(new AllTypesRequest());
     }
 
     @Test
     public void useGzipFalse_WhenCrc32IsValid() {
         stubFor(post(urlEqualTo(RESOURCE_PATH)).willReturn(aResponse()
-                                                                   .withStatus(200)
-                                                                   .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
-                                                                   .withBody(JSON_BODY)));
-        AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new LegacyClientConfiguration().withGzip(false));
-        client.setEndpoint("http://localhost:" + mockServer.port());
+                .withStatus(200)
+                .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
+                .withBody(JSON_BODY)));
+        ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
+                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .build();
+
         AllTypesResult result =
                 client.allTypes(new AllTypesRequest());
         Assert.assertEquals("foo", result.getStringMember());
@@ -130,25 +149,16 @@ public class RestJsonCrc32ChecksumTests {
     @Test(expected = AmazonClientException.class)
     public void useGzipFalse_WhenCrc32IsInvalid_ThrowException() {
         stubFor(post(urlEqualTo(RESOURCE_PATH)).willReturn(aResponse()
-                                                                   .withStatus(200)
-                                                                   .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
-                                                                   .withBody(JSON_BODY)));
-        AmazonProtocolRestJson client = new AmazonProtocolRestJsonClient(FAKE_CREDENTIALS_PROVIDER,
-                                                                         new LegacyClientConfiguration().withGzip(false));
-        client.setEndpoint("http://localhost:" + mockServer.port());
+                .withStatus(200)
+                .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
+                .withBody(JSON_BODY)));
+
+        ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
+                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
+                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
+                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .build();
+
         client.allTypes(new AllTypesRequest());
     }
-
-    private static class AmazonProtocolRestJsonCrc32TestClient extends AmazonProtocolRestJsonClient {
-
-        public AmazonProtocolRestJsonCrc32TestClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration config) {
-            super(credentialsProvider, config);
-        }
-
-        @Override
-        public final boolean calculateCrc32FromCompressedData() {
-            return true;
-        }
-    }
-
 }

@@ -18,18 +18,21 @@ package software.amazon.awssdk.services.directconnect;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.test.AwsTestBase;
 
 public class IntegrationTestBase extends AwsTestBase {
 
-    protected static AmazonDirectConnect dc;
+    protected static DirectConnectClient dc;
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        dc = new AmazonDirectConnectClient(credentials);
-        dc.setRegion(Region.getRegion(Regions.US_WEST_1));
+        dc = DirectConnectClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .withRegion(Regions.US_WEST_1)
+                .build();
     }
 }

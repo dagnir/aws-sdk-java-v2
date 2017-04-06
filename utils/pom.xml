@@ -11,6 +11,7 @@
 
     <artifactId>utils</artifactId>
 
+    <name>AWS Java SDK :: Utilities</name>
 
     <dependencies>
         <dependency>
@@ -26,6 +27,11 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sdk-annotations</artifactId>
+            <version>${awsjavasdk.version}</version>
         </dependency>
     </dependencies>
 </project>

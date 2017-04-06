@@ -65,4 +65,5 @@ public final class AmazonS3ClientBuilder extends AmazonS3Builder<AmazonS3ClientB
     protected AmazonS3 build(AwsSyncClientParams clientParams) {
         return clientFactory.apply(new AmazonS3ClientParamsWrapper(clientParams, resolveS3ClientOptions()));
     }
+
 }

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.auth;
 
-import static software.amazon.awssdk.utils.ValidationUtils.assertNotNull;
+import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
 
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 

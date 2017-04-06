@@ -18,15 +18,18 @@ package software.amazon.awssdk.auth.policy;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.After;
 import org.junit.Test;
 import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SQSActions;
 import software.amazon.awssdk.auth.policy.conditions.DateCondition;
 import software.amazon.awssdk.auth.policy.conditions.DateCondition.DateComparisonType;
-import software.amazon.awssdk.services.sqs.AmazonSQSAsync;
 import software.amazon.awssdk.services.sqs.IntegrationTestBase;
-import software.amazon.awssdk.services.sqs.auth.policy.resources.SQSQueueResource;
+import software.amazon.awssdk.services.sqs.SQSAsyncClient;
+import software.amazon.awssdk.services.sqs.auth.policy.resources.SqsQueueResource;
+import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 
 /**
@@ -38,7 +41,6 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
      * Doesn't have to be a valid account id, just has to have a value
      **/
     private static final String ACCOUNT_ID = "123456789";
-    private final AmazonSQSAsync sqsClient = getSharedSqsAsyncClient();
     private String queueUrl;
 
     /**
@@ -46,7 +48,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
      */
     @After
     public void tearDown() throws Exception {
-        sqsClient.deleteQueue(queueUrl);
+        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
     }
 
     /**
@@ -55,13 +57,13 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
     @Test
     public void testPolicies() throws Exception {
         String queueName = getUniqueQueueName();
-        queueUrl = sqsClient.createQueue(queueName).getQueueUrl();
+        queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
 
         Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withPrincipals(Principal.ALL_USERS)
-                                                                               .withActions(SQSActions.SendMessage, SQSActions.ReceiveMessage)
-                                                                               .withResources(new SQSQueueResource(ACCOUNT_ID, queueName))
-                                                                               .withConditions(new DateCondition(DateComparisonType.DateLessThan,
-                                                                                                                 new Date())));
+                .withActions(SQSActions.SendMessage, SQSActions.ReceiveMessage)
+                .withResources(new SqsQueueResource(ACCOUNT_ID, queueName))
+                .withConditions(new DateCondition(DateComparisonType.DateLessThan,
+                        new Date())));
         setQueuePolicy(policy);
     }
 
@@ -69,6 +71,6 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
         Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("Policy", policy.toJson());
 
-        sqsClient.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
+        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
     }
 }

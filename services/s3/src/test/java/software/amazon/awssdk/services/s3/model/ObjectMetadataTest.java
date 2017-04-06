@@ -47,9 +47,9 @@ public class ObjectMetadataTest {
             assertNull(from.getOngoingRestore());
             assertTrue(from.getRawMetadata().size() == 0);
             assertNull(from.getRestoreExpirationTime());
-            assertNull(from.getSSEAlgorithm());
-            assertNull(from.getSSECustomerAlgorithm());
-            assertNull(from.getSSECustomerKeyMd5());
+            assertNull(from.getSseAlgorithm());
+            assertNull(from.getSseCustomerAlgorithm());
+            assertNull(from.getSseCustomerKeyMd5());
             assertTrue(0 == from.getUserMetadata().size());
             assertNull(from.getVersionId());
             // Clone an empty instance
@@ -83,9 +83,9 @@ public class ObjectMetadataTest {
         from.setLastModified(lastModified);
         from.setOngoingRestore(true);
         from.setRestoreExpirationTime(restoreExpirationTime);
-        from.setSSEAlgorithm("ssealgo");
-        from.setSSECustomerKeyMd5("sseCustKeyMd5");
-        from.setSSECustomerAlgorithm("SSECustomerAlgorithm");
+        from.setSseAlgorithm("ssealgo");
+        from.setSseCustomerKeyMd5("sseCustKeyMd5");
+        from.setSseCustomerAlgorithm("SSECustomerAlgorithm");
         from.setUserMetadata(userMetadata);
         from.setHeader(Headers.CONTENT_RANGE, "/9999");
         from.setHeader(Headers.S3_VERSION_ID, "versionid");
@@ -115,9 +115,9 @@ public class ObjectMetadataTest {
         assertTrue(from.getOngoingRestore());
         assertTrue(from.getRawMetadata().size() > 0);
         assertEquals(restoreExpirationTime, from.getRestoreExpirationTime());
-        assertEquals("ssealgo", from.getSSEAlgorithm());
-        assertEquals("SSECustomerAlgorithm", from.getSSECustomerAlgorithm());
-        assertEquals("sseCustKeyMd5", from.getSSECustomerKeyMd5());
+        assertEquals("ssealgo", from.getSseAlgorithm());
+        assertEquals("SSECustomerAlgorithm", from.getSseCustomerAlgorithm());
+        assertEquals("sseCustKeyMd5", from.getSseCustomerKeyMd5());
         assertTrue(2 == from.getUserMetadata().size());
         assertEquals("versionid", from.getVersionId());
 
@@ -141,9 +141,9 @@ public class ObjectMetadataTest {
         assertNotSame(from.getRawMetadata(), to.getRawMetadata());
 
         assertEquals(restoreExpirationTime, to.getRestoreExpirationTime());
-        assertEquals("ssealgo", to.getSSEAlgorithm());
-        assertEquals("SSECustomerAlgorithm", to.getSSECustomerAlgorithm());
-        assertEquals("sseCustKeyMd5", to.getSSECustomerKeyMd5());
+        assertEquals("ssealgo", to.getSseAlgorithm());
+        assertEquals("SSECustomerAlgorithm", to.getSseCustomerAlgorithm());
+        assertEquals("sseCustKeyMd5", to.getSseCustomerKeyMd5());
 
         assertEquals(from.getUserMetadata(), to.getUserMetadata());
         assertNotSame(from.getUserMetadata(), to.getUserMetadata());

@@ -16,32 +16,32 @@
 package software.amazon.awssdk.services.iam;
 
 import java.util.UUID;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagement;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
-import software.amazon.awssdk.services.identitymanagement.model.AccessKeyMetadata;
-import software.amazon.awssdk.services.identitymanagement.model.CreateUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteAccessKeyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteLoginProfileRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteSigningCertificateRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteUserPolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetGroupResult;
-import software.amazon.awssdk.services.identitymanagement.model.Group;
-import software.amazon.awssdk.services.identitymanagement.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListAccessKeysResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListGroupsRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListGroupsResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListSigningCertificatesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListSigningCertificatesResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListUserPoliciesResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListUsersRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListUsersResult;
-import software.amazon.awssdk.services.identitymanagement.model.RemoveUserFromGroupRequest;
-import software.amazon.awssdk.services.identitymanagement.model.SigningCertificate;
-import software.amazon.awssdk.services.identitymanagement.model.User;
+
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
+import software.amazon.awssdk.services.iam.model.CreateUserRequest;
+import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
+import software.amazon.awssdk.services.iam.model.DeleteLoginProfileRequest;
+import software.amazon.awssdk.services.iam.model.DeleteSigningCertificateRequest;
+import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
+import software.amazon.awssdk.services.iam.model.GetGroupRequest;
+import software.amazon.awssdk.services.iam.model.GetGroupResult;
+import software.amazon.awssdk.services.iam.model.Group;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
+import software.amazon.awssdk.services.iam.model.ListGroupsResult;
+import software.amazon.awssdk.services.iam.model.ListSigningCertificatesRequest;
+import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListUsersRequest;
+import software.amazon.awssdk.services.iam.model.ListUsersResult;
+import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
+import software.amazon.awssdk.services.iam.model.SigningCertificate;
+import software.amazon.awssdk.services.iam.model.User;
 
 
 /**
@@ -50,13 +50,15 @@ import software.amazon.awssdk.services.identitymanagement.model.User;
  * https://brazil-subversion.amazon.com/brazil/src/appgroup/awsdr/sdk/AWSCSharpSDKFactory/mainline/Beta.NET.SDK/AWSSDKTests/IntegrationTests/IAM/Util.cs
  */
 public class IAMUtil {
-    private static final AmazonIdentityManagement client;
+    private static final IAMClient client;
     public static String TEST_PATH = "/IntegrationTests/IAM/";
 
     static {
         try {
             IntegrationTestBase.setUpCredentials();
-            client = new AmazonIdentityManagementClient(IntegrationTestBase.credentials);
+            client = IAMClientBuilder.standard()
+                    .withCredentials(new AwsStaticCredentialsProvider(IntegrationTestBase.credentials))
+                    .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

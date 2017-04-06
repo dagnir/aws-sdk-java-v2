@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterialsProvider;
 
@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.s3.model.EncryptionMaterialsProvider;
 public final class AmazonS3EncryptionClientParamsWrapper extends AmazonS3EncryptionClientParams {
     private final EncryptionMaterialsProvider encryptionMaterials;
     private final CryptoConfiguration cryptoConfiguration;
-    private final AWSKMS kms;
+    private final KMSClient kms;
     private final AwsSyncClientParams getClientParams;
     private final S3ClientOptions getS3ClientOptions;
 
@@ -35,7 +35,7 @@ public final class AmazonS3EncryptionClientParamsWrapper extends AmazonS3Encrypt
                                           S3ClientOptions getS3ClientOptions,
                                           EncryptionMaterialsProvider encryptionMaterials,
                                           CryptoConfiguration cryptoConfiguration,
-                                          AWSKMS kms) {
+                                          KMSClient kms) {
         this.encryptionMaterials = encryptionMaterials;
         this.cryptoConfiguration = cryptoConfiguration;
         this.kms = kms;
@@ -54,7 +54,7 @@ public final class AmazonS3EncryptionClientParamsWrapper extends AmazonS3Encrypt
     }
 
     @Override
-    AWSKMS getKmsClient() {
+    KMSClient getKmsClient() {
         return kms;
     }
 

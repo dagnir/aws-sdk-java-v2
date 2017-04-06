@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.internal.http.timers.client;
 
-import static software.amazon.awssdk.utils.ValidationUtils.assertNotNull;
+import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;

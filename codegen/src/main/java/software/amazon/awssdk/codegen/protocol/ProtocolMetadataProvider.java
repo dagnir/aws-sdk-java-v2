@@ -53,12 +53,6 @@ public interface ProtocolMetadataProvider {
     String getUnmarshallerContextClassName();
 
     /**
-     * @return The suffix for generated unmarshaller classes. I.e. FooStaxUnmarshaller or
-     *     FooJsonUnmarshaller.
-     */
-    String getUnmarshallerClassSuffix();
-
-    /**
      * @return The default implementation of exception unmarshallers to use or derive from.
      *     Currently only used by XML protocols.
      */

@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.support;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
@@ -23,11 +22,11 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 public class IntegrationTestBase extends AwsIntegrationTestBase {
 
     /** The shared DP client for all tests to use. */
-    protected static AWSSupportClient support;
+    protected static SupportClient support;
 
     @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
-        support = new AWSSupportClient(getCredentials());
+    public static void setUp() throws IOException {
+        support = SupportClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }
 

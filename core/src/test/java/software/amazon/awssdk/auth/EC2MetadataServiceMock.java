@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.auth;
 
-import static software.amazon.awssdk.SDKGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY;
+import static software.amazon.awssdk.SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY;
 
 import java.io.BufferedReader;
 import java.io.IOException;

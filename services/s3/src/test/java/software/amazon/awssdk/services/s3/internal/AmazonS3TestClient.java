@@ -21,7 +21,7 @@ import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.services.kms.AWSKMSClient;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
@@ -42,7 +42,7 @@ public class AmazonS3TestClient extends AmazonS3Client {
         super(awsCredentials);
     }
 
-    public AmazonS3TestClient(AWSKMSClient kms, AwsCredentials awsCredentials) {
+    public AmazonS3TestClient(KMSClient kms, AwsCredentials awsCredentials) {
         super(awsCredentials);
     }
 

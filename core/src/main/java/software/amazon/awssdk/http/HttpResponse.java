@@ -38,8 +38,7 @@ public class HttpResponse {
     /**
      * Constructs a new HttpResponse associated with the specified request.
      *
-     * @param request
-     *            The associated request that generated this response.
+     * @param request The associated request that generated this response.
      */
     public HttpResponse(Request<?> request) {
         this.request = request;
@@ -81,10 +80,8 @@ public class HttpResponse {
     /**
      * Adds an HTTP header to the set associated with this response.
      *
-     * @param name
-     *            The name of the HTTP header.
-     * @param value
-     *            The value of the HTTP header.
+     * @param name  The name of the HTTP header.
+     * @param value The value of the HTTP header.
      */
     public void addHeader(String name, String value) {
         headers.put(name, value);
@@ -102,8 +99,7 @@ public class HttpResponse {
     /**
      * Sets the input stream containing the response content.
      *
-     * @param content
-     *            The input stream containing the response content.
+     * @param content The input stream containing the response content.
      */
     public void setContent(InputStream content) {
         this.content = content;
@@ -121,9 +117,8 @@ public class HttpResponse {
     /**
      * Sets the HTTP status text returned with this response.
      *
-     * @param statusText
-     *            The HTTP status text (ex: "Not found") returned with this
-     *            response.
+     * @param statusText The HTTP status text (ex: "Not found") returned with this
+     *                   response.
      */
     public void setStatusText(String statusText) {
         this.statusText = statusText;
@@ -142,9 +137,8 @@ public class HttpResponse {
     /**
      * Sets the HTTP status code that was returned with this response.
      *
-     * @param statusCode
-     *            The HTTP status code (ex: 200, 404, etc) associated with this
-     *            response.
+     * @param statusCode The HTTP status code (ex: 200, 404, etc) associated with this
+     *                   response.
      */
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;

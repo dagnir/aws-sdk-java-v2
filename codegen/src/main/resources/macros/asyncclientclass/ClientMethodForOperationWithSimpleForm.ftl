@@ -1,7 +1,5 @@
 <#macro content operation>
 <#if operation.simpleMethodForms??>
-  <#list operation.simpleMethodForms as form>
-
     /**
      * Simplified method form for invoking the ${operation.operationName}
      * operation.
@@ -12,29 +10,8 @@
     <#if operation.deprecated>
       @Deprecated
     </#if>
-    public ${operation.asyncFutureType} ${operation.methodName}Async(
-            ${form.argumentsDeclaration}) {
-
-        return ${operation.methodName}Async(new ${operation.input.variableType}()
-                ${form.withMethodCalls});
+    public ${operation.asyncFutureType} ${operation.methodName}() {
+        return ${operation.methodName}(new ${operation.input.variableType}());
     }
-
-    /**
-     * Simplified method form for invoking the ${operation.operationName}
-     * operation with an AsyncHandler.
-     *
-     * @see #${operation.methodName}Async(${operation.input.variableType}, software.amazon.awssdk.handlers.AsyncHandler)
-     */
-    public ${operation.asyncFutureType} ${operation.methodName}Async(
-            <#if form.arguments?has_content>
-              ${form.argumentsDeclaration},
-            </#if>
-            ${operation.asyncHandlerType} asyncHandler) {
-
-        return ${operation.methodName}Async(new ${operation.input.variableType}()
-                ${form.withMethodCalls},
-                asyncHandler);
-    }
-  </#list>
 </#if>
 </#macro>

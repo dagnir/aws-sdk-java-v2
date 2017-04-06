@@ -17,158 +17,96 @@ package software.amazon.awssdk.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
-import java.nio.ByteBuffer;
-import java.util.Random;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
- * Unit tests for the StringUtils class.
+ * Unit tests for methods of {@link StringUtils}.
+ *
+ * Adapted from https://github.com/apache/commons-lang.
  */
 public class StringUtilsTest {
+    private static final String FOO_UNCAP = "foo";
+    private static final String FOO_CAP = "Foo";
 
-    /**
-     * Tests that {@link StringUtils#fromByteBuffer(ByteBuffer)} correctly
-     * base64 encodes the contents in a ByteBuffer and returns the correct
-     * result.
-     */
+    private static final String SENTENCE_UNCAP = "foo bar baz";
+    private static final String SENTENCE_CAP = "Foo Bar Baz";
+
     @Test
-    public void testFromByteBuffer() {
-        String expectedData = "hello world";
-        String expectedEncodedData = "aGVsbG8gd29ybGQ=";
-
-        ByteBuffer byteBuffer = ByteBuffer.wrap(expectedData.getBytes());
-        String encodedData = StringUtils.fromByteBuffer(byteBuffer);
-
-        assertEquals(expectedEncodedData, encodedData);
-    }
-
-    /**
-     * Tests that we can correctly convert Bytes to strings.
-     */
-    @Test
-    public void testFromByte() {
-        assertEquals("123", StringUtils.fromByte(new Byte("123")));
-        assertEquals("-99", StringUtils.fromByte(new Byte("-99")));
+    public void testUpperCase() {
+        assertNull(StringUtils.upperCase(null));
+        assertEquals("upperCase(String) failed",
+                "FOO TEST THING", StringUtils.upperCase("fOo test THING"));
+        assertEquals("upperCase(empty-string) failed",
+                "", StringUtils.upperCase(""));
     }
 
     @Test
-    public void testUTF8Charset() {
-        assertEquals(StringUtils.UTF8.displayName(), "UTF-8");
-    }
-
-    /**
-     * @see https://github.com/aws/aws-sdk-java/pull/517
-     */
-    @Test(timeout = 10 * 1000)
-    public void replace_ReplacementStringContainsMatchString_DoesNotCauseInfiniteLoop() {
-        assertEquals("aabc", StringUtils.replace("abc", "a", "aa"));
-    }
-
-    @Test
-    public void replace_EmptyReplacementString_RemovesAllOccurencesOfMatchString() {
-        assertEquals("bbb", StringUtils.replace("ababab", "a", ""));
-    }
-
-    @Test
-    public void replace_MatchNotFound_ReturnsOriginalString() {
-        assertEquals("abc", StringUtils.replace("abc", "d", "e"));
-    }
-
-    @Test
-    public void lowerCase_NonEmptyString() {
-        String input = "x-amz-InvocAtion-typE";
-        String expected = "x-amz-invocation-type";
-        assertEquals(expected, StringUtils.lowerCase(input));
-    }
-
-    @Test
-    public void lowerCase_NullString() {
+    public void testLowerCase() {
         assertNull(StringUtils.lowerCase(null));
+        assertEquals("lowerCase(String) failed",
+                "foo test thing", StringUtils.lowerCase("fOo test THING"));
+        assertEquals("lowerCase(empty-string) failed",
+                "", StringUtils.lowerCase(""));
     }
 
     @Test
-    public void lowerCase_EmptyString() {
-        Assert.assertThat(StringUtils.lowerCase(""), Matchers.isEmptyString());
+    public void testCapitalize() {
+        assertNull(StringUtils.capitalize(null));
+
+        assertEquals("capitalize(empty-string) failed",
+                "", StringUtils.capitalize(""));
+        assertEquals("capitalize(single-char-string) failed",
+                "X", StringUtils.capitalize("x"));
+        assertEquals("capitalize(String) failed",
+                FOO_CAP, StringUtils.capitalize(FOO_CAP));
+        assertEquals("capitalize(string) failed",
+                FOO_CAP, StringUtils.capitalize(FOO_UNCAP));
+
+        assertEquals("capitalize(String) is not using TitleCase",
+                "\u01C8", StringUtils.capitalize("\u01C9"));
+
+        // Javadoc examples
+        assertNull(StringUtils.capitalize(null));
+        assertEquals("", StringUtils.capitalize(""));
+        assertEquals("Cat", StringUtils.capitalize("cat"));
+        assertEquals("CAt", StringUtils.capitalize("cAt"));
+        assertEquals("'cat'", StringUtils.capitalize("'cat'"));
     }
 
     @Test
-    public void upperCase_NonEmptyString() {
-        String input = "dHkdjj139_)(e";
-        String expected = "DHKDJJ139_)(E";
-        assertEquals(expected, StringUtils.upperCase(input));
+    public void testUnCapitalize() {
+        assertNull(StringUtils.uncapitalize(null));
+
+        assertEquals("uncapitalize(String) failed",
+                FOO_UNCAP, StringUtils.uncapitalize(FOO_CAP));
+        assertEquals("uncapitalize(string) failed",
+                FOO_UNCAP, StringUtils.uncapitalize(FOO_UNCAP));
+        assertEquals("uncapitalize(empty-string) failed",
+                "", StringUtils.uncapitalize(""));
+        assertEquals("uncapitalize(single-char-string) failed",
+                "x", StringUtils.uncapitalize("X"));
+
+        // Examples from uncapitalize Javadoc
+        assertEquals("cat", StringUtils.uncapitalize("cat"));
+        assertEquals("cat", StringUtils.uncapitalize("Cat"));
+        assertEquals("cAT", StringUtils.uncapitalize("CAT"));
     }
 
     @Test
-    public void upperCase_NullString() {
-        assertNull(StringUtils.upperCase((null)));
-    }
+    public void testReCapitalize() {
+        // reflection type of tests: Sentences.
+        assertEquals("uncapitalize(capitalize(String)) failed",
+                SENTENCE_UNCAP, StringUtils.uncapitalize(StringUtils.capitalize(SENTENCE_UNCAP)));
+        assertEquals("capitalize(uncapitalize(String)) failed",
+                SENTENCE_CAP, StringUtils.capitalize(StringUtils.uncapitalize(SENTENCE_CAP)));
 
-    @Test
-    public void upperCase_EmptyString() {
-        Assert.assertThat(StringUtils.upperCase(""), Matchers.isEmptyString());
-    }
-
-    @Test
-    public void testCompare() {
-        assertTrue(StringUtils.compare("truck", "Car") > 0);
-        assertTrue(StringUtils.compare("", "dd") < 0);
-        assertTrue(StringUtils.compare("dd", "") > 0);
-        assertEquals(0, StringUtils.compare("", ""));
-        assertTrue(StringUtils.compare(" ", "") > 0);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCompare_String1Null() {
-        String str1 = null;
-        String str2 = "test";
-        int result = StringUtils.compare(str1, str2);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCompare_String2Null() {
-        String str1 = "test";
-        String str2 = null;
-        int result = StringUtils.compare(str1, str2);
-    }
-
-    @Test
-    public void testAppendAndCompact() {
-        String[] pieces = {" ", "\t", "\n", "\u000b", "\r", "\f", "word", "foo", "bar", "baq"};
-        int ITERATIONS = 10000;
-        Random rng = new Random();
-
-        for (int i = 0; i < ITERATIONS; i++) {
-            int parts = rng.nextInt(10);
-            String s = "";
-            for (int j = 0; j < parts; j++) {
-                s = s + pieces[rng.nextInt(pieces.length)];
-            }
-
-            StringBuilder sb = new StringBuilder();
-            StringUtils.appendCompactedString(sb, s);
-            String compacted = s.replaceAll("\\s+", " ");
-            assertEquals('[' + compacted + ']', sb.toString(), compacted);
-        }
-    }
-
-    @Test
-    public void begins_with_ignore_case() {
-        Assert.assertTrue(StringUtils.beginsWithIgnoreCase("foobar", "FoO"));
-    }
-
-    @Test
-    public void begins_with_ignore_case_returns_false_when_seq_doesnot_match() {
-        Assert.assertFalse(StringUtils.beginsWithIgnoreCase("foobar", "baz"));
-    }
-
-    @Test
-    public void hasValue() {
-        Assert.assertTrue(StringUtils.hasValue("something"));
-        Assert.assertFalse(StringUtils.hasValue(null));
-        Assert.assertFalse(StringUtils.hasValue(""));
+        // reflection type of tests: One word.
+        assertEquals("uncapitalize(capitalize(String)) failed",
+                FOO_UNCAP, StringUtils.uncapitalize(StringUtils.capitalize(FOO_UNCAP)));
+        assertEquals("capitalize(uncapitalize(String)) failed",
+                FOO_CAP, StringUtils.capitalize(StringUtils.uncapitalize(FOO_CAP)));
     }
 }

@@ -15,12 +15,17 @@
 
 package software.amazon.awssdk.codegen.internal;
 
+import static java.util.stream.Collectors.joining;
 import static software.amazon.awssdk.codegen.internal.Constants.LOGGER;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeMarshaller;
@@ -60,12 +65,47 @@ public class Utils {
         return shape.isException() || shape.isFault();
     }
 
-    public static String getAsyncInterfaceName(String interfaceNamePrefix) {
-        return interfaceNamePrefix + Constants.ASYNC_SUFFIX;
+    public static String getServiceName(ServiceMetadata metadata) {
+        String baseName = metadata.getServiceAbbreviation() == null ?
+                metadata.getServiceFullName() :
+                metadata.getServiceAbbreviation();
+
+        baseName = baseName.replace("Amazon", "");
+        baseName = baseName.replace("AWS", "");
+        baseName = baseName.trim();
+        baseName = baseName.replaceAll("[^A-Za-z0-9]", "");
+
+        if (baseName.endsWith("Service")) {
+            baseName = baseName.replace("Service", "");
+        }
+
+        return baseName;
     }
 
-    public static String getClientName(String clientNamePrefix) {
-        return clientNamePrefix + Constants.CLIENT_NAME_SUFFIX;
+    public static String getAsyncInterfaceName(String serviceName) {
+        return serviceName + Constants.ASYNC_SUFFIX;
+    }
+
+    public static String getInterfaceName(String serviceName) {
+        return serviceName + Constants.INTERFACE_NAME_SUFFIX;
+    }
+
+    public static String pascalCase(String baseName) {
+        return Stream.of(baseName.split("\\s+")).map(StringUtils::lowerCase).map(Utils::capitialize).collect(joining());
+    }
+
+    public static String getClientName(String interfaceName) {
+        return Constants.CLIENT_NAME_PREFIX + interfaceName;
+    }
+
+    public static String getPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        String lowerCased = StringUtils.lowerCase(serviceName);
+
+        if (customizationConfig.getPackageNameOverride() != null) {
+            return StringUtils.lowerCase(customizationConfig.getPackageNameOverride());
+        }
+
+        return lowerCased;
     }
 
     public static String unCapitialize(String name) {
@@ -74,7 +114,7 @@ public class Utils {
         }
 
         return name.length() < 2 ? StringUtils.lowerCase(name) : StringUtils.lowerCase(name.substring(0, 1))
-                                                                 + name.substring(1);
+                + name.substring(1);
 
     }
 
@@ -84,7 +124,7 @@ public class Utils {
         }
 
         return name.length() < 2 ? StringUtils.upperCase(name) : StringUtils.upperCase(name.substring(0, 1))
-                                                                 + name.substring(1);
+                + name.substring(1);
     }
 
     /**
@@ -134,7 +174,7 @@ public class Utils {
         if (!(dir.exists())) {
             if (!dir.mkdirs()) {
                 throw new RuntimeException("Not able to create directory. "
-                                           + dir.getAbsolutePath());
+                        + dir.getAbsolutePath());
             }
         }
     }
@@ -153,7 +193,7 @@ public class Utils {
         if (!(file.exists())) {
             if (!(file.createNewFile())) {
                 throw new RuntimeException("Not able to create file . "
-                                           + file.getAbsolutePath());
+                        + file.getAbsolutePath());
             }
         }
 
@@ -179,8 +219,7 @@ public class Utils {
     /**
      * Return an InputStream of the specified resource, failing if it can't be found.
      *
-     * @param location
-     *            Location of resource
+     * @param location Location of resource
      */
     public static InputStream getRequiredResourceAsStream(Class<?> clzz, String location) {
         InputStream resourceStream = clzz.getResourceAsStream(location);
@@ -235,8 +274,7 @@ public class Utils {
      * Search for intermediate shape model by its c2j name.
      *
      * @return ShapeModel
-     * @throws IllegalArgumentException
-     *         if the specified c2j name is not found in the intermediate model.
+     * @throws IllegalArgumentException if the specified c2j name is not found in the intermediate model.
      */
     public static ShapeModel findShapeModelByC2jName(IntermediateModel intermediateModel, String shapeC2jName)
             throws IllegalArgumentException {

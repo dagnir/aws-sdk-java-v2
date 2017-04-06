@@ -26,6 +26,7 @@ import org.junit.Test;
 import software.amazon.awssdk.services.rds.model.CreateOptionGroupRequest;
 import software.amazon.awssdk.services.rds.model.DBSecurityGroup;
 import software.amazon.awssdk.services.rds.model.DeleteOptionGroupRequest;
+import software.amazon.awssdk.services.rds.model.DescribeDBSecurityGroupsRequest;
 import software.amazon.awssdk.services.rds.model.DescribeOptionGroupOptionsRequest;
 import software.amazon.awssdk.services.rds.model.DescribeOptionGroupsRequest;
 import software.amazon.awssdk.services.rds.model.ModifyOptionGroupRequest;
@@ -50,7 +51,7 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDownOptionsTest() throws Exception {
 
-        List<OptionGroup> groups = rds.describeOptionGroups().getOptionGroupsList();
+        List<OptionGroup> groups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
 
         for (OptionGroup optionGroup : groups) {
             if (optionGroup.getOptionGroupName().contains("TestOptionGroupName")) {
@@ -69,7 +70,7 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
     @Test
     public void optionsTest() {
 
-        List<OptionGroup> optionGroups = rds.describeOptionGroups().getOptionGroupsList();
+        List<OptionGroup> optionGroups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
         for (OptionGroup optionGroup : optionGroups) {
             log(optionGroup);
         }
@@ -96,7 +97,7 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
         assertEquals(0, optionGroup.getOptions().size());
 
         // verify there's a new group
-        optionGroups = rds.describeOptionGroups().getOptionGroupsList();
+        optionGroups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
         assertEquals(optionGroupsCount + 1, optionGroups.size());
 
         // modify group by adding options
@@ -106,7 +107,7 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
                         .withMajorEngineVersion(MAJOR_ENGINE_VERSION)).getOptionGroupOptions();
 
         List<String> securityGroupName = new ArrayList<String>();
-        for (DBSecurityGroup securityGroup : rds.describeDBSecurityGroups().getDBSecurityGroups()) {
+        for (DBSecurityGroup securityGroup : rds.describeDBSecurityGroups(new DescribeDBSecurityGroupsRequest()).getDBSecurityGroups()) {
             securityGroupName.add(securityGroup.getDBSecurityGroupName());
         }
 
@@ -178,7 +179,7 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
                         .withOptionGroupName(optionGroupName));
 
         // verify delete
-        optionGroups = rds.describeOptionGroups().getOptionGroupsList();
+        optionGroups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
 
         assertEquals(optionGroupsCount, optionGroups.size());
 

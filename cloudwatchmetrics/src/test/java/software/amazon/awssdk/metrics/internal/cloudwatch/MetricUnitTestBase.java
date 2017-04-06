@@ -33,7 +33,7 @@ public class MetricUnitTestBase {
     protected static final int QUEUE_TIMEOUT_MILLI = 2000;
 
     /** Client Object Reference for Amazon CloudWatch. */
-    protected static AmazonCloudWatchTestClient cloudWatchClient;
+    protected static CloudWatchTestClient cloudWatchClient;
 
     /** Object Reference for Metrics configuration used in testing. */
     protected static CloudWatchMetricConfig config;
@@ -84,7 +84,7 @@ public class MetricUnitTestBase {
      */
     @BeforeClass
     public static void setUp() throws Exception {
-        cloudWatchClient = new AmazonCloudWatchTestClient();
+        cloudWatchClient = new CloudWatchTestClient();
         queue = new LinkedBlockingQueue<>(CloudWatchMetricConfig.DEFAULT_METRICS_QSIZE);
         config = new CloudWatchMetricConfig().withQueuePollTimeoutMilli(QUEUE_TIMEOUT_MILLI);
         formQueueWithMetricData();

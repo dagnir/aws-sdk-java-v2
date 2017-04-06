@@ -50,7 +50,7 @@ public class Encrypt20Test {
         System.err.println("ct_ctr_str : " + ct_ctr_str);
         assertEquals(expectedCipherText, ct_ctr_str);
         {
-            GCMCipherLite gcm2 = (GCMCipherLite) CryptoTestUtils.createTestCipher(AES_GCM,
+            GcmCipherLite gcm2 = (GcmCipherLite) CryptoTestUtils.createTestCipher(AES_GCM,
                                                                                   AES_GCM.getIvLengthInBytes(), Cipher.ENCRYPT_MODE);
             // ff95730978565c563e7ef4e189c7a82e
             long marked = gcm2.mark();

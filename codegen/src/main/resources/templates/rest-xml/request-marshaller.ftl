@@ -20,7 +20,7 @@ import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.StringInputStream;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.IdempotentUtils;
-import software.amazon.awssdk.util.XMLWriter;
+import software.amazon.awssdk.util.XmlWriter;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
 /**
@@ -66,7 +66,7 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
                 try {
                     StringWriter stringWriter = new StringWriter();
                     <#-- xmlNameSpaceUri comes from the payload member reference -->
-                    XMLWriter xmlWriter = new XMLWriter(stringWriter, "${member.xmlNameSpaceUri}");
+                    XmlWriter xmlWriter = new XmlWriter(stringWriter, "${member.xmlNameSpaceUri}");
 
                     ${member.variable.variableType} ${member.variable.variableName} = ${shape.variable.variableName}.${member.getterMethodName}();
                     if (${member.variable.variableName} != null) {
@@ -90,7 +90,7 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
         try {
             StringWriter stringWriter = new StringWriter();
             <#-- xmlNameSpaceUri comes from the operation input reference -->
-            XMLWriter xmlWriter = new XMLWriter(stringWriter, "${shape.marshaller.xmlNameSpaceUri}");
+            XmlWriter xmlWriter = new XmlWriter(stringWriter, "${shape.marshaller.xmlNameSpaceUri}");
 
             xmlWriter.startElement("${shape.marshaller.locationName}");
             if (${shape.variable.variableName} != null) {

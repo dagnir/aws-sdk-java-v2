@@ -15,11 +15,14 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * Common base class for Base 32 like codec implementation.
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 abstract class AbstractBase32Codec implements Codec {
     private static final int MASK_2BITS = (1 << 2) - 1;
     private static final int MASK_3BITS = (1 << 3) - 1;

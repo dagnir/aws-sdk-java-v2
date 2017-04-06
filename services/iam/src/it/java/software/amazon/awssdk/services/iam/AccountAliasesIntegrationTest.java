@@ -21,8 +21,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.CreateAccountAliasRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteAccountAliasRequest;
+import software.amazon.awssdk.services.iam.model.CreateAccountAliasRequest;
+import software.amazon.awssdk.services.iam.model.DeleteAccountAliasRequest;
+import software.amazon.awssdk.services.iam.model.ListAccountAliasesRequest;
 
 public class AccountAliasesIntegrationTest extends IntegrationTestBase {
 
@@ -34,12 +35,12 @@ public class AccountAliasesIntegrationTest extends IntegrationTestBase {
     public void testAccountAliases() throws Exception {
         iam.createAccountAlias(new CreateAccountAliasRequest(ACCOUNT_ALIAS));
 
-        List<String> accountAliases = iam.listAccountAliases().getAccountAliases();
+        List<String> accountAliases = iam.listAccountAliases(new ListAccountAliasesRequest()).getAccountAliases();
         assertNotNull(accountAliases);
         assertEquals(1, accountAliases.size());
         assertEquals(ACCOUNT_ALIAS, accountAliases.get(0));
 
         iam.deleteAccountAlias(new DeleteAccountAliasRequest(ACCOUNT_ALIAS));
-        assertTrue(iam.listAccountAliases().getAccountAliases().isEmpty());
+        assertTrue(iam.listAccountAliases(new ListAccountAliasesRequest()).getAccountAliases().isEmpty());
     }
 }

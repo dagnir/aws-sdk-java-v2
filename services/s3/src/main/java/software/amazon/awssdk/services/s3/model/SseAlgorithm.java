@@ -1,0 +1,65 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.awssdk.services.s3.model;
+
+/**
+ * Server-side Encryption Algorithm.
+ */
+public enum SseAlgorithm {
+    AES256("AES256"),
+    KMS("aws:kms"),;
+
+    private final String algorithm;
+
+    private SseAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    /**
+     * Returns the SSEAlgorithm enum corresponding to the given string;
+     * or null if and only if the given algorithm is null.
+     *
+     * @throws IllegalArgumentException if the specified algorithm is not
+     *     supported.
+     */
+    public static SseAlgorithm fromString(String algorithm) {
+        if (algorithm == null) {
+            return null;
+        }
+        for (SseAlgorithm e : values()) {
+            if (e.getAlgorithm().equals(algorithm)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Unsupported algorithm " + algorithm);
+    }
+
+    /**
+     * Returns the default server side encryption algorithm, which is AES256.
+     */
+    public static SseAlgorithm getDefault() {
+        return AES256;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    @Override
+    public String toString() {
+        return algorithm;
+    }
+}

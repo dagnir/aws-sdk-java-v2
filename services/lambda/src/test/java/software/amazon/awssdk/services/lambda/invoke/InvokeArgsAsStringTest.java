@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.services.lambda.model.InvokeAsyncRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringUtils;
 
 public class InvokeArgsAsStringTest {
@@ -36,7 +36,7 @@ public class InvokeArgsAsStringTest {
 
         InputStream stream = request.getInvokeArgs();
 
-        String decoded = new String(IOUtils.toByteArray(stream), StringUtils.UTF8);
+        String decoded = new String(IoUtils.toByteArray(stream), StringUtils.UTF8);
 
         Assert.assertEquals(ARGS, decoded);
     }

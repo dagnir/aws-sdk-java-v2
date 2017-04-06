@@ -26,7 +26,7 @@ import software.amazon.awssdk.util.json.Jackson;
 public class BucketReplicationConfiguration implements Serializable {
 
     /** The ARN of the IAM role that Amazon S3 assumes while replication. */
-    private String roleARN;
+    private String roleArn;
 
     /** Collection of replication rules associated with the Amazon S3 bucket. */
     private Map<String, ReplicationRule> rules = new HashMap<String, ReplicationRule>();
@@ -35,7 +35,7 @@ public class BucketReplicationConfiguration implements Serializable {
      * Returns the IAM role associated with this replication configuration.
      */
     public String getRoleArn() {
-        return roleARN;
+        return roleArn;
     }
 
     /**
@@ -44,20 +44,20 @@ public class BucketReplicationConfiguration implements Serializable {
      * @param role
      *            The IAM role for this configuration.
      */
-    public void setRoleArn(String roleARN) {
-        this.roleARN = roleARN;
+    public void setRoleArn(String roleArn) {
+        this.roleArn = roleArn;
     }
 
     /**
      * Sets the IAM role that will be used by Amazon S3 while replication.
      * Returns the updated object.
      *
-     * @param roleARN
+     * @param roleArn
      *            The IAM role for this configuration.
      * @return The updated {@link BucketReplicationConfiguration} object.
      */
-    public BucketReplicationConfiguration withRoleArn(String roleARN) {
-        setRoleArn(roleARN);
+    public BucketReplicationConfiguration withRoleArn(String roleArn) {
+        setRoleArn(roleArn);
         return this;
     }
 

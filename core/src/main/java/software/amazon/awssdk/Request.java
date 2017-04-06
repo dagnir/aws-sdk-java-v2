@@ -139,7 +139,7 @@ public interface Request<T> extends SignableRequest<T> {
     /**
      * Returns the request metrics.
      */
-    AwsRequestMetrics getAWSRequestMetrics();
+    AwsRequestMetrics getAwsRequestMetrics();
 
     /**
      * Bind the request metrics to the request. Note metrics can be captured

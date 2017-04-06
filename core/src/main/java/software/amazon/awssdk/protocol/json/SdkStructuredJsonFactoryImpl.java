@@ -16,8 +16,12 @@
 package software.amazon.awssdk.protocol.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
+
 import java.util.List;
 import java.util.Map;
+
+import software.amazon.awssdk.AmazonWebServiceResponse;
+import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.http.ErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorCodeParser;
 import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;
@@ -52,8 +56,9 @@ public abstract class SdkStructuredJsonFactoryImpl implements SdkStructuredJsonF
                                                             String contentType);
 
     @Override
-    public <T> JsonResponseHandler<T> createResponseHandler(JsonOperationMetadata operationMetadata,
-                                                            Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller) {
+    public <T> JsonResponseHandler<T> createResponseHandler(
+            JsonOperationMetadata operationMetadata,
+            Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller) {
         return new JsonResponseHandler(responseUnmarshaller, unmarshallers, jsonFactory,
                                        operationMetadata.isHasStreamingSuccessResponse(),
                                        operationMetadata.isPayloadJson());

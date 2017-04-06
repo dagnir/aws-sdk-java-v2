@@ -36,16 +36,16 @@ import software.amazon.awssdk.services.codepipeline.model.ListPipelinesRequest;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
- * Smoke tests for the {@link AWSCodePipelineClient}.
+ * Smoke tests for the {@link CodePipelineClient}.
  */
 public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
 
-    private static AWSCodePipelineClient client;
+    private static CodePipelineClient client;
 
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = new AWSCodePipelineClient(credentials);
+        client = CodePipelineClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /**

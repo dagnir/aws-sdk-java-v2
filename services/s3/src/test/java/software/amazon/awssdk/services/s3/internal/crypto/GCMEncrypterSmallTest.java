@@ -48,8 +48,8 @@ public class GCMEncrypterSmallTest {
         CipherLite w2 = ContentCryptoScheme.AES_GCM.createCipherLite(
                 CryptoTestUtils.getTestSecretKey(), new byte[12],
                 Cipher.ENCRYPT_MODE);
-        GCMCipherLite e1 = (GCMCipherLite) w1;
-        GCMCipherLite e2 = (GCMCipherLite) w2;
+        GcmCipherLite e1 = (GcmCipherLite) w1;
+        GcmCipherLite e2 = (GcmCipherLite) w2;
         File file = CryptoTestUtils.generateRandomAsciiFile(100);
         byte[] input = IOUtils.toByteArray(new FileInputStream(file));
         //        byte[] input = "1234567890123456ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".getBytes(UTF8);

@@ -63,7 +63,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         deleteBucketAndAllContents(s3, BUCKET_NAME);
 
         try {
-            for (Trail trail : cloudTrail.describeTrails().getTrailList()) {
+            for (Trail trail : cloudTrail.describeTrails(new DescribeTrailsRequest()).getTrailList()) {
                 cloudTrail.deleteTrail(new DeleteTrailRequest().withName(trail.getName()));
             }
         } catch (Exception e) {
@@ -120,7 +120,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         assertTrue(createTrailResult.getIncludeGlobalServiceEvents());
 
         // describe trail
-        DescribeTrailsResult describeTrails = cloudTrail.describeTrails();
+        DescribeTrailsResult describeTrails = cloudTrail.describeTrails(new DescribeTrailsRequest());
         assertTrue(describeTrails.getTrailList().size() > 0);
 
         describeTrails = cloudTrail

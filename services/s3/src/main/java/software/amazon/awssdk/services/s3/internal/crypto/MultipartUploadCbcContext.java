@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.s3.internal.crypto;
 
 final class MultipartUploadCbcContext extends MultipartUploadCryptoContext {
-    private byte[] nextIV;
+    private byte[] nextIv;
 
     MultipartUploadCbcContext(String bucketName, String key,
                               ContentCryptoMaterial cekMaterial) {
@@ -24,10 +24,10 @@ final class MultipartUploadCbcContext extends MultipartUploadCryptoContext {
     }
 
     public byte[] getNextInitializationVector() {
-        return nextIV;
+        return nextIv;
     }
 
-    public void setNextInitializationVector(byte[] nextIV) {
-        this.nextIV = nextIV;
+    public void setNextInitializationVector(byte[] nextIv) {
+        this.nextIv = nextIv;
     }
 }

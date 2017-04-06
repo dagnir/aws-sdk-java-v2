@@ -3,7 +3,7 @@ package software.amazon.awssdk.metrics.internal.cloudwatch;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.services.dynamodbv2.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 
 /**

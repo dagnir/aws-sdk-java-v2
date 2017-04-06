@@ -18,15 +18,16 @@ package software.amazon.awssdk.services.logs;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.services.logs.model.DescribeLogGroupsRequest;
-import software.amazon.awssdk.services.logs.model.DescribeLogGroupsResult;
-import software.amazon.awssdk.services.logs.model.DescribeLogStreamsRequest;
-import software.amazon.awssdk.services.logs.model.DescribeLogStreamsResult;
-import software.amazon.awssdk.services.logs.model.DescribeMetricFiltersRequest;
-import software.amazon.awssdk.services.logs.model.DescribeMetricFiltersResult;
-import software.amazon.awssdk.services.logs.model.LogGroup;
-import software.amazon.awssdk.services.logs.model.LogStream;
-import software.amazon.awssdk.services.logs.model.MetricFilter;
+import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersRequest;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
+import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
+import software.amazon.awssdk.services.cloudwatchlogs.model.MetricFilter;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
@@ -35,7 +36,7 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
     /** Shared CloudWatch Logs client for all tests to use. */
-    protected static AWSLogsClient awsLogs;
+    protected static CloudWatchLogsClient awsLogs;
 
     /**
      * Loads the AWS account info for the integration tests and creates an CloudWatch Logs client
@@ -43,7 +44,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setupFixture() throws FileNotFoundException, IOException {
-        awsLogs = new AWSLogsClient(getCredentials());
+        awsLogs = CloudWatchLogsClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /*
@@ -54,7 +55,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      * @return The LogGroup object included in the DescribeLogGroups response, or null if such group
      *         is not found.
      */
-    protected static LogGroup findLogGroupByName(final AWSLogs awsLogs, final String groupName) {
+    protected static LogGroup findLogGroupByName(final CloudWatchLogsClient awsLogs, final String groupName) {
         String nextToken = null;
 
         do {
@@ -76,7 +77,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      * @return The LogStream object included in the DescribeLogStreams response, or null if such
      *         stream is not found in the specified group.
      */
-    protected static LogStream findLogStreamByName(final AWSLogs awsLogs,
+    protected static LogStream findLogStreamByName(final CloudWatchLogsClient awsLogs,
                                                    final String logGroupName,
                                                    final String logStreamName) {
         String nextToken = null;
@@ -100,7 +101,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      * @return The MetricFilter object included in the DescribeMetricFilters response, or null if
      *         such filter is not found in the specified group.
      */
-    protected static MetricFilter findMetricFilterByName(final AWSLogs awsLogs,
+    protected static MetricFilter findMetricFilterByName(final CloudWatchLogsClient awsLogs,
                                                          final String logGroupName,
                                                          final String filterName) {
         String nextToken = null;

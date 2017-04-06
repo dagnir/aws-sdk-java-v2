@@ -22,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.codecommit.model.CreateRepositoryRequest;
 import software.amazon.awssdk.services.codecommit.model.DeleteRepositoryRequest;
 import software.amazon.awssdk.services.codecommit.model.GetRepositoryRequest;
@@ -30,17 +31,17 @@ import software.amazon.awssdk.services.codecommit.model.RepositoryMetadata;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
- * Smoke test for {@link AWSCodeCommitClient}.
+ * Smoke test for {@link CodeCommitClient}.
  */
 public class AwsCodeCommitServiceIntegrationTest extends AwsTestBase {
 
     private static final String REPO_NAME = "java-sdk-test-repo-" + System.currentTimeMillis();
-    private static AWSCodeCommit client;
+    private static CodeCommitClient client;
 
     @BeforeClass
     public static void setup() throws FileNotFoundException, IOException {
         setUpCredentials();
-        client = new AWSCodeCommitClient(credentials);
+        client = CodeCommitClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
     @AfterClass

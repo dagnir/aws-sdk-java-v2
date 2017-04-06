@@ -23,16 +23,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.services.kinesisfirehose.model.BufferingHints;
-import software.amazon.awssdk.services.kinesisfirehose.model.CompressionFormat;
-import software.amazon.awssdk.services.kinesisfirehose.model.CreateDeliveryStreamRequest;
-import software.amazon.awssdk.services.kinesisfirehose.model.DeliveryStreamDescription;
-import software.amazon.awssdk.services.kinesisfirehose.model.EncryptionConfiguration;
-import software.amazon.awssdk.services.kinesisfirehose.model.KMSEncryptionConfig;
-import software.amazon.awssdk.services.kinesisfirehose.model.NoEncryptionConfig;
-import software.amazon.awssdk.services.kinesisfirehose.model.S3DestinationConfiguration;
-import software.amazon.awssdk.services.kinesisfirehose.model.S3DestinationUpdate;
-import software.amazon.awssdk.services.kinesisfirehose.model.UpdateDestinationRequest;
+import software.amazon.awssdk.services.firehose.model.BufferingHints;
+import software.amazon.awssdk.services.firehose.model.CompressionFormat;
+import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest;
+import software.amazon.awssdk.services.firehose.model.DeliveryStreamDescription;
+import software.amazon.awssdk.services.firehose.model.EncryptionConfiguration;
+import software.amazon.awssdk.services.firehose.model.KMSEncryptionConfig;
+import software.amazon.awssdk.services.firehose.model.NoEncryptionConfig;
+import software.amazon.awssdk.services.firehose.model.S3DestinationConfiguration;
+import software.amazon.awssdk.services.firehose.model.S3DestinationUpdate;
+import software.amazon.awssdk.services.firehose.model.UpdateDestinationRequest;
 import software.amazon.awssdk.util.StringUtils;
 
 /**

@@ -18,7 +18,8 @@ package software.amazon.awssdk.metrics.internal.cloudwatch;
 import java.util.concurrent.BlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.services.cloudwatch.AmazonCloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.util.VersionInfoUtils;
@@ -29,7 +30,7 @@ import software.amazon.awssdk.util.VersionInfoUtils;
 class MetricUploaderThread extends Thread {
     private static final String USER_AGENT = MetricUploaderThread.class.getName() + "/" + VersionInfoUtils.getVersion();
     private static final String THREAD_NAME = "java-sdk-metric-uploader";
-    private final AmazonCloudWatchClient cloudwatchClient;
+    private final CloudWatchClient cloudwatchClient;
     private final Log log = LogFactory.getLog(getClass());
     private final BlockingRequestBuilder qIterator;
     private volatile boolean cancelled;
@@ -43,35 +44,30 @@ class MetricUploaderThread extends Thread {
 
     MetricUploaderThread(CloudWatchMetricConfig config,
                          BlockingQueue<MetricDatum> queue,
-                         AmazonCloudWatchClient client) {
+                         CloudWatchClient client) {
         super(THREAD_NAME);
         if (config == null || queue == null) {
             throw new IllegalArgumentException();
         }
         this.cloudwatchClient = client;
         this.qIterator = new BlockingRequestBuilder(config, queue);
-        String endpoint = config.getCloudWatchEndPoint();
-        if (endpoint != null) {
-            cloudwatchClient.setEndpoint(endpoint);
-        }
         this.setPriority(MIN_PRIORITY);
         setDaemon(true);
     }
 
-    private static AmazonCloudWatchClient createCloudWatchClient(
+    private static CloudWatchClient createCloudWatchClient(
             CloudWatchMetricConfig config) {
-        AmazonCloudWatchClient amazonCloudWatchClient = null;
-        if (config.getCredentialsProvider() == null && config.getClientConfiguration() == null) {
-            amazonCloudWatchClient = new AmazonCloudWatchClient();
-        } else if (config.getCredentialsProvider() != null && config.getClientConfiguration() == null) {
-            amazonCloudWatchClient = new AmazonCloudWatchClient(config.getCredentialsProvider());
+        CloudWatchClientBuilder clientBuilder = CloudWatchClient.builder();
+
+        if (config.getCredentialsProvider() != null && config.getClientConfiguration() == null) {
+            clientBuilder.withCredentials(config.getCredentialsProvider());
         } else if (config.getClientConfiguration() != null && config.getCredentialsProvider() == null) {
-            amazonCloudWatchClient = new AmazonCloudWatchClient(config.getClientConfiguration());
+            clientBuilder.withClientConfiguration(config.getClientConfiguration());
         } else if (config.getClientConfiguration() != null && config.getCredentialsProvider() != null) {
-            amazonCloudWatchClient = new AmazonCloudWatchClient(config.getCredentialsProvider(),
-                                                                config.getClientConfiguration());
+            clientBuilder.withCredentials(config.getCredentialsProvider())
+                    .withClientConfiguration(config.getClientConfiguration());
         }
-        return amazonCloudWatchClient;
+        return clientBuilder.build();
     }
 
     @Override
@@ -100,7 +96,7 @@ class MetricUploaderThread extends Thread {
         cancelled = true;
     }
 
-    public AmazonCloudWatchClient getCloudwatchClient() {
+    public CloudWatchClient getCloudwatchClient() {
         return cloudwatchClient;
     }
 

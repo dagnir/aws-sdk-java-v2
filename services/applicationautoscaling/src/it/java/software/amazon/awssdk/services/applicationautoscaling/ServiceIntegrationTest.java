@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.applicationautoscaling;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.applicationautoscaling.model.DescribeScalingPoliciesRequest;
 import software.amazon.awssdk.services.applicationautoscaling.model.DescribeScalingPoliciesResult;
 import software.amazon.awssdk.services.applicationautoscaling.model.ServiceNamespace;
@@ -25,17 +26,19 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
-    private static AWSApplicationAutoScaling autoscaling;
+    private static ApplicationAutoScalingClient autoscaling;
 
     @BeforeClass
     public static void setUp() {
-        autoscaling = new AWSApplicationAutoScalingClient(getCredentials());
+        autoscaling = ApplicationAutoScalingClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .build();
     }
 
     @Test
     public void testScalingPolicy() {
         DescribeScalingPoliciesResult res = autoscaling.describeScalingPolicies(new DescribeScalingPoliciesRequest()
-                                                                                        .withServiceNamespace(ServiceNamespace.Ecs));
+                .withServiceNamespace(ServiceNamespace.Ecs));
         Assert.assertNotNull(res);
         Assert.assertNotNull(res.getScalingPolicies());
     }

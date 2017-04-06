@@ -35,13 +35,12 @@ import software.amazon.awssdk.test.AwsTestBase;
  */
 public class ServiceIntegrationTest extends AwsTestBase {
 
-    private static AWSStorageGatewayClient sg;
+    private static StorageGatewayClient sg;
 
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        sg = new AWSStorageGatewayClient(credentials);
-        sg.configureRegion(Regions.US_EAST_1);
+        sg = StorageGatewayClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
     }
 
     @Test
@@ -53,8 +52,7 @@ public class ServiceIntegrationTest extends AwsTestBase {
 
     @Test(expected = InvalidGatewayRequestException.class)
     public void deleteGateway_InvalidArn_ThrowsException() {
-        sg.deleteGateway(new DeleteGatewayRequest()
-                                 .withGatewayARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+        sg.deleteGateway(new DeleteGatewayRequest().withGatewayARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
     }
 
     @Test(expected = AmazonServiceException.class)

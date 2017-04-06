@@ -49,7 +49,7 @@ import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.GeneratePresignedUrlRequest;
 import software.amazon.awssdk.services.s3.model.ResponseHeaderOverrides;
 import software.amazon.awssdk.services.s3.util.SpecialObjectKeyNameGenerator;
-import software.amazon.awssdk.services.securitytoken.auth.STSSessionCredentialsProvider;
+import software.amazon.awssdk.services.sts.auth.STSSessionCredentialsProvider;
 import software.amazon.awssdk.util.BinaryUtils;
 
 /**

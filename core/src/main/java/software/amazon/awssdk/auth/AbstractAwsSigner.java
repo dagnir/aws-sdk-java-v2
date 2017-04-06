@@ -31,10 +31,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ReadLimitInfo;
-import software.amazon.awssdk.SDKGlobalTime;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.runtime.io.SdkDigestInputStream;
 import software.amazon.awssdk.util.BinaryUtils;
@@ -478,7 +479,7 @@ public abstract class AbstractAwsSigner implements Signer {
      */
     @Deprecated
     protected int getTimeOffset(SignableRequest<?> request) {
-        final int globleOffset = SDKGlobalTime.getGlobalTimeOffset();
+        final int globleOffset = SdkGlobalTime.getGlobalTimeOffset();
         return globleOffset == 0 ? request.getTimeOffset() : globleOffset;
     }
 

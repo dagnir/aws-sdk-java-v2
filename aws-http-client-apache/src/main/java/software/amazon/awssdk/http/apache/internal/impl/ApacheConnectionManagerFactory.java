@@ -33,7 +33,7 @@ import org.apache.http.conn.ssl.SSLInitializationException;
 import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import software.amazon.awssdk.http.SdkHttpClientSettings;
-import software.amazon.awssdk.http.apache.internal.conn.SdkTLSSocketFactory;
+import software.amazon.awssdk.http.apache.internal.conn.SdkTlsSocketFactory;
 
 /**
  * Factory class to create connection manager used by the apache client.
@@ -49,7 +49,7 @@ public class ApacheConnectionManagerFactory {
                 null,
                 DefaultSchemePortResolver.INSTANCE,
                 null,
-                settings.getConnectionPoolTTL(),
+                settings.getConnectionPoolTtl(),
                 TimeUnit.MILLISECONDS);
 
         cm.setDefaultMaxPerRoute(settings.getMaxConnections());
@@ -62,11 +62,11 @@ public class ApacheConnectionManagerFactory {
 
     private ConnectionSocketFactory getPreferredSocketFactory(SdkHttpClientSettings settings) {
         // TODO v2 custom socket factory
-        return new SdkTLSSocketFactory(getPreferredSSLContext(settings.getSecureRandom()),
+        return new SdkTlsSocketFactory(getPreferredSslContext(settings.getSecureRandom()),
                                        getHostNameVerifier(settings));
     }
 
-    private static SSLContext getPreferredSSLContext(final SecureRandom secureRandom) {
+    private static SSLContext getPreferredSslContext(final SecureRandom secureRandom) {
         try {
             final SSLContext sslcontext = SSLContext.getInstance("TLS");
             // http://download.java.net/jdk9/docs/technotes/guides/security/jsse/JSSERefGuide.html

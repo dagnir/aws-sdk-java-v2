@@ -60,7 +60,7 @@ public class UploadPartRequestFactory {
         this.key = origReq.getKey();
         this.file = TransferManagerUtils.getRequestFile(origReq);
         this.remainingBytes = TransferManagerUtils.getContentLength(origReq);
-        this.sseCustomerKey = origReq.getSSECustomerKey();
+        this.sseCustomerKey = origReq.getSseCustomerKey();
         this.totalNumberOfParts = (int) Math.ceil((double) this.remainingBytes
                                                   / this.optimalPartSize);
         if (origReq.getInputStream() != null) {
@@ -98,7 +98,7 @@ public class UploadPartRequestFactory {
         TransferManager.appendMultipartUserAgent(request);
 
         if (sseCustomerKey != null) {
-            request.setSSECustomerKey(sseCustomerKey);
+            request.setSseCustomerKey(sseCustomerKey);
         }
 
         offset += partSize;

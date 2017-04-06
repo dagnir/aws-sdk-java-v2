@@ -18,6 +18,7 @@ package software.amazon.awssdk.protocol.tests.exception;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -25,36 +26,42 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.protocol.query.AmazonProtocolQueryClient;
-import software.amazon.awssdk.services.protocol.query.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocol.query.model.AmazonProtocolQueryException;
-import software.amazon.awssdk.services.protocol.query.model.EmptyModeledException;
+import software.amazon.awssdk.services.protocolquery.ProtocolQueryClient;
+import software.amazon.awssdk.services.protocolquery.model.AllTypesRequest;
+import software.amazon.awssdk.services.protocolquery.model.EmptyModeledException;
+import software.amazon.awssdk.services.protocolquery.model.ProtocolQueryClientException;
 
 public class QueryExceptionTests {
 
     private static final String PATH = "/";
-    private final AmazonProtocolQueryClient client = new AmazonProtocolQueryClient(
-            new BasicAwsCredentials("akid", "skid"));
+
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
+    private ProtocolQueryClient client;
+
     @Before
-    public void setup() {
-        client.setEndpoint("http://localhost:" + wireMock.port());
+    public void setupClient() {
+        client = ProtocolQueryClient.builder()
+                                    .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                    .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                         "us-east-1"))
+                                    .build();
     }
 
     @Test
     public void unmodeledException_UnmarshalledIntoBaseServiceException() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
         assertThrowsServiceBaseException(this::callAllTypes);
     }
 
     @Test
     public void unmodeledException_ErrorCodeSetOnAse() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
         final AmazonServiceException ase = captureAse(this::callAllTypes);
         assertEquals("UnmodeledException", ase.getErrorCode());
     }
@@ -62,7 +69,7 @@ public class QueryExceptionTests {
     @Test
     public void unmodeledExceptionWithMessage_MessageSetOnAse() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>UnmodeledException</Code><Message>Something happened</Message></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>UnmodeledException</Code><Message>Something happened</Message></Error></ErrorResponse>");
         final AmazonServiceException ase = captureAse(this::callAllTypes);
         assertEquals("Something happened", ase.getErrorMessage());
     }
@@ -70,7 +77,7 @@ public class QueryExceptionTests {
     @Test
     public void unmodeledException_StatusCodeSetOnAse() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
         final AmazonServiceException ase = captureAse(this::callAllTypes);
         assertEquals(404, ase.getStatusCode());
     }
@@ -78,11 +85,11 @@ public class QueryExceptionTests {
     @Test
     public void modeledException_UnmarshalledIntoModeledException() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>EmptyModeledException</Code></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>EmptyModeledException</Code></Error></ErrorResponse>");
         try {
             callAllTypes();
         } catch (EmptyModeledException e) {
-            assertThat(e, instanceOf(AmazonProtocolQueryException.class));
+            assertThat(e, instanceOf(ProtocolQueryClientException.class));
             assertEquals("EmptyModeledException", e.getErrorCode());
         }
     }
@@ -90,7 +97,7 @@ public class QueryExceptionTests {
     @Test
     public void modeledExceptionWithMessage_MessageSetOnAse() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>EmptyModeledException</Code><Message>Something happened</Message></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>EmptyModeledException</Code><Message>Something happened</Message></Error></ErrorResponse>");
         final EmptyModeledException ase = captureModeledException(this::callAllTypes);
         assertEquals("Something happened", ase.getErrorMessage());
     }
@@ -98,7 +105,7 @@ public class QueryExceptionTests {
     @Test
     public void modeledException_ErrorCodeSetOnAse() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>EmptyModeledException</Code></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>EmptyModeledException</Code></Error></ErrorResponse>");
         final EmptyModeledException ase = captureModeledException(this::callAllTypes);
         assertEquals("EmptyModeledException", ase.getErrorCode());
     }
@@ -106,7 +113,7 @@ public class QueryExceptionTests {
     @Test
     public void modeledException_StatusCodeSetOnAse() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>EmptyModeledException</Code></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>EmptyModeledException</Code></Error></ErrorResponse>");
         final EmptyModeledException ase = captureModeledException(this::callAllTypes);
         assertEquals(404, ase.getStatusCode());
     }
@@ -126,7 +133,7 @@ public class QueryExceptionTests {
     @Test
     public void errorTypeSender_UnmarshallsIntoClientErrorType() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>UnmodeledException</Code><Type>Sender</Type></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>UnmodeledException</Code><Type>Sender</Type></Error></ErrorResponse>");
         final AmazonServiceException ase = captureAse(this::callAllTypes);
         assertEquals(AmazonServiceException.ErrorType.Client, ase.getErrorType());
     }
@@ -134,7 +141,7 @@ public class QueryExceptionTests {
     @Test
     public void errorTypeReceiver_UnmarshallsIntoServiceErrorType() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>UnmodeledException</Code><Type>Receiver</Type></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>UnmodeledException</Code><Type>Receiver</Type></Error></ErrorResponse>");
         final AmazonServiceException ase = captureAse(this::callAllTypes);
         assertEquals(AmazonServiceException.ErrorType.Service, ase.getErrorType());
     }
@@ -142,7 +149,7 @@ public class QueryExceptionTests {
     @Test
     public void noErrorTypeInXml_UnmarshallsIntoUnknownErrorType() {
         stub404Response(PATH,
-                        "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
+                "<ErrorResponse><Error><Code>UnmodeledException</Code></Error></ErrorResponse>");
         final AmazonServiceException ase = captureAse(this::callAllTypes);
         assertEquals(AmazonServiceException.ErrorType.Unknown, ase.getErrorType());
     }
@@ -172,8 +179,8 @@ public class QueryExceptionTests {
     private void assertThrowsServiceBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (AmazonProtocolQueryException e) {
-            assertEquals(AmazonProtocolQueryException.class, e.getClass());
+        } catch (ProtocolQueryClientException e) {
+            assertEquals(ProtocolQueryClientException.class, e.getClass());
         }
     }
 

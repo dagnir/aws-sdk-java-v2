@@ -169,7 +169,7 @@ public abstract class AmazonWebServiceClient {
 
     /* Check the profiling system property and return true if set. */
     protected static boolean isProfilingEnabled() {
-        return System.getProperty(SDKGlobalConfiguration.PROFILING_SYSTEM_PROPERTY) != null;
+        return System.getProperty(SdkGlobalConfiguration.PROFILING_SYSTEM_PROPERTY) != null;
     }
 
     /**
@@ -481,7 +481,7 @@ public abstract class AmazonWebServiceClient {
     }
 
     protected SignerProvider createSignerProvider(Signer signer) {
-        return new DefaultSignerProvider(this, signer);
+        return new DefaultSignerProvider(signer);
     }
 
     /**

@@ -23,7 +23,7 @@ import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.PropertiesFileCredentialsProvider;
 import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 public abstract class AwsIntegrationTestBase {
 
@@ -31,7 +31,7 @@ public abstract class AwsIntegrationTestBase {
     private static final String PROPERTIES_FILE_PATH = System.getProperty("user.home")
                                                        + "/.aws/awsTestAccount.properties";
     private static final String TEST_CREDENTIALS_PROFILE_NAME = "aws-java-sdk-test";
-    private static final AwsCredentialsProviderChain CREDENTIALS_PROVIDER_CHAIN = new AwsCredentialsProviderChain(
+    public static final AwsCredentialsProviderChain CREDENTIALS_PROVIDER_CHAIN = new AwsCredentialsProviderChain(
             new PropertiesFileCredentialsProvider(PROPERTIES_FILE_PATH),
             new ProfileCredentialsProvider(TEST_CREDENTIALS_PROFILE_NAME), new EnvironmentVariableCredentialsProvider(),
             new SystemPropertiesCredentialsProvider());
@@ -74,7 +74,7 @@ public abstract class AwsIntegrationTestBase {
     protected String getResourceAsString(String location) {
         try {
             InputStream resourceStream = getClass().getResourceAsStream(location);
-            String resourceAsString = IOUtils.toString(resourceStream);
+            String resourceAsString = IoUtils.toString(resourceStream);
             resourceStream.close();
             return resourceAsString;
         } catch (Exception e) {

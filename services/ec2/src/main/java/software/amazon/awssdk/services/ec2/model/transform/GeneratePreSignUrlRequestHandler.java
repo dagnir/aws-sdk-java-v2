@@ -139,11 +139,11 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
                                             + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
-        return toURI(region.getServiceEndpoint(serviceName));
+        return toUri(region.getServiceEndpoint(serviceName));
     }
 
     /** Returns the endpoint as a URI. */
-    private URI toURI(String endpoint) throws IllegalArgumentException {
+    private URI toUri(String endpoint) throws IllegalArgumentException {
 
         if (endpoint.contains("://") == false) {
             endpoint = Protocol.HTTPS + "://" + endpoint;

@@ -16,15 +16,16 @@
 package software.amazon.awssdk.services.cloudhsm;
 
 import org.junit.BeforeClass;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.test.AwsTestBase;
 
 public class IntegrationTestBase extends AwsTestBase {
 
-    protected static AWSCloudHSMClient client;
+    protected static CloudHSMClient client;
 
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = new AWSCloudHSMClient(credentials);
+        client = CloudHSMClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
     }
 }

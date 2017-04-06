@@ -15,11 +15,14 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * A Base 16 codec implementation.
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 class Base16Codec implements Codec {
     private static final int OFFSET_OF_LITTLE_A = 'a' - 10;
     private static final int OFFSET_OF_A = 'A' - 10;

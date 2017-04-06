@@ -135,7 +135,7 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
                     + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
-        return toURI(region.getServiceEndpoint(serviceName));
+        return toUri(region.getServiceEndpoint(serviceName));
     }
 
     private String generateUrl(Request<?> request) {
@@ -153,7 +153,7 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
     }
 
     /** Returns the endpoint as a URI. */
-    private static URI toURI(String endpoint) throws IllegalArgumentException {
+    private static URI toUri(String endpoint) throws IllegalArgumentException {
         if (!endpoint.contains("://")) {
             endpoint = Protocol.HTTPS + "://" + endpoint;
         }

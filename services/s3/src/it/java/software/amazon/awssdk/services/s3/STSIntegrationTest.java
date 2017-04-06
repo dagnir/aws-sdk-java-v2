@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.s3.model.GeneratePresignedUrlRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.securitytoken.auth.STSSessionCredentialsProvider;
+import software.amazon.awssdk.services.sts.auth.STSSessionCredentialsProvider;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
 /**

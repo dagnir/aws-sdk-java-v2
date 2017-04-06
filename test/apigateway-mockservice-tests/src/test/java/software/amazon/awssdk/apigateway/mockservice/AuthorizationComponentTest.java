@@ -31,15 +31,13 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.apigateway.mockservice.model.PutCustomauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutIamauthScalarsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.opensdk.protect.auth.RequestSignerNotFoundException;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutCustomauthScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutIamauthScalarsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.PutNoauthScalarsRequest;
 
 public class AuthorizationComponentTest {
 
@@ -56,7 +54,7 @@ public class AuthorizationComponentTest {
     @Test
     public void canProviderCustomTokenGeneratorToSignRequests() {
         String authToken = randomAlphanumeric(20);
-        MyService service = createServiceBuilder()
+        MyServiceClient service = createServiceBuilder()
                 .signer(r -> authToken)
                 .build();
 
@@ -71,7 +69,7 @@ public class AuthorizationComponentTest {
         String wrongToken = "mutated";
         MyServiceClientBuilder builder = createServiceBuilder()
                 .signer(r -> correctToken);
-        MyService service = builder.build();
+        MyServiceClient service = builder.build();
         builder.signer(r -> wrongToken);
 
         service.putCustomauthScalars(new PutCustomauthScalarsRequest());
@@ -81,7 +79,7 @@ public class AuthorizationComponentTest {
 
     @Test
     public void noAuthorizerRequiredForNonAuthorizedRequests() {
-        MyService service = createServiceBuilder().build();
+        MyServiceClient service = createServiceBuilder().build();
 
         service.putNoauthScalars(new PutNoauthScalarsRequest());
 
@@ -94,7 +92,7 @@ public class AuthorizationComponentTest {
         String secret = randomAlphanumeric(10);
         AwsCredentialsProvider provider = new AwsStaticCredentialsProvider(
                 new BasicAwsCredentials(key, secret));
-        MyService service = createServiceBuilder().iamCredentials(provider).build();
+        MyServiceClient service = createServiceBuilder().iamCredentials(provider).build();
 
         service.putIamauthScalars(new PutIamauthScalarsRequest());
 
@@ -103,17 +101,17 @@ public class AuthorizationComponentTest {
 
     @Test(expected = RequestSignerNotFoundException.class)
     public void exceptionIsRaisedIfSignerNotSuppliedForCustomauthorizedRequest() {
-        MyService service = createServiceBuilder().build();
+        MyServiceClient service = createServiceBuilder().build();
         service.putCustomauthScalars(new PutCustomauthScalarsRequest());
     }
 
     @Test(expected = RequestSignerNotFoundException.class)
     public void exceptionIsRaisedIfCredentialsNotSuppliedToIamSignedRequest() {
-        MyService service = createServiceBuilder().build();
+        MyServiceClient service = createServiceBuilder().build();
         service.putIamauthScalars(new PutIamauthScalarsRequest());
     }
 
     private MyServiceClientBuilder createServiceBuilder() {
-        return MyService.builder().endpoint("http://localhost:" + mockServer.port());
+        return MyServiceClient.builder().endpoint("http://localhost:" + mockServer.port());
     }
 }

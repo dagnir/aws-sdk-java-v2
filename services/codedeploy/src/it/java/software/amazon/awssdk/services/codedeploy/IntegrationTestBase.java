@@ -26,7 +26,7 @@ public class IntegrationTestBase extends AwsTestBase {
     /**
      * The code deploy client reference used for testing.
      */
-    protected static AmazonCodeDeployClient codeDeploy;
+    protected static CodeDeployClient codeDeploy;
 
     /**
      * Reads the credentials and sets up the code deploy the client.
@@ -34,16 +34,6 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        codeDeploy = new AmazonCodeDeployClient(credentials);
-    }
-
-    /**
-     * Performs the client shutdown.
-     */
-    @AfterClass
-    public static void tearDown() {
-        if (codeDeploy != null) {
-            codeDeploy.shutdown();
-        }
+        codeDeploy = CodeDeployClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

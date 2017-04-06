@@ -67,7 +67,7 @@ public class ${className} implements Marshaller<Request<${shapeName}>, ${shapeNa
             protocolFactory.createProtocolMarshaller(SDK_OPERATION_BINDING, ${shape.variable.variableName});
 
             protocolMarshaller.startMarshalling();
-            ${shapeName}Marshaller.getInstance().marshall(${shape.variable.variableName}, protocolMarshaller);
+            ${shapeName}ModelMarshaller.getInstance().marshall(${shape.variable.variableName}, protocolMarshaller);
             return protocolMarshaller.finishMarshalling();
         } catch(Exception e) {
             throw new SdkClientException("Unable to marshall request to JSON: " + e.getMessage(), e);

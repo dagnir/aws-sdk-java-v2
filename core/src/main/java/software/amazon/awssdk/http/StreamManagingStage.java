@@ -15,9 +15,9 @@
 
 package software.amazon.awssdk.http;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishProgress;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 import static software.amazon.awssdk.http.AmazonHttpClient.unreliableTestConfig;
-import static software.amazon.awssdk.util.IOUtils.closeQuietly;
+import static software.amazon.awssdk.util.IoUtils.closeQuietly;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -147,7 +147,7 @@ public class StreamManagingStage<OutputT> implements RequestPipeline<Request<?>,
      * @return UnreliableFilterInputStream
      */
     private InputStream wrapWithUnreliableStream(InputStream content) {
-        return new UnreliableFilterInputStream(content, unreliableTestConfig.isFakeIOException())
+        return new UnreliableFilterInputStream(content, unreliableTestConfig.isFakeIoException())
                 .withBytesReadBeforeException(unreliableTestConfig.getBytesReadBeforeException())
                 .withMaxNumErrors(unreliableTestConfig.getMaxNumErrors())
                 .withResetIntervalBeforeException(unreliableTestConfig.getResetIntervalBeforeException());

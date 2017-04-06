@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.event;
 
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishRequestBytesTransferred;
-import static software.amazon.awssdk.event.SDKProgressPublisher.publishRequestReset;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishRequestBytesTransferred;
+import static software.amazon.awssdk.event.SdkProgressPublisher.publishRequestReset;
 
 import java.io.InputStream;
 
@@ -35,7 +35,7 @@ class RequestProgressInputStream extends ProgressInputStream {
     }
 
     @Override
-    protected void onEOF() {
+    protected void onEof() {
         onNotifyBytesRead();
     }
 

@@ -20,11 +20,11 @@ import software.amazon.awssdk.test.AwsTestBase;
 
 public class IntegrationTestBase extends AwsTestBase {
 
-    protected static AWSKMS kms;
+    protected static KMSClient kms;
 
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        kms = new AWSKMSClient(credentials);
+        kms = KMSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

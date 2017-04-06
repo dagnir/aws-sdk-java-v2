@@ -86,7 +86,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
                                               + "}";
 
     private static AmazonS3Client s3;
-    private static AmazonMachineLearningClient client;
+    private static MachineLearningClient client;
 
     private static String dataSourceId;
     private static String mlModelId;
@@ -98,8 +98,10 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
 
-        client = new AmazonMachineLearningClient(credentials);
-        client.configureRegion(Regions.US_EAST_1);
+        client = MachineLearningClient.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .withRegion(Regions.US_EAST_1)
+                .build();
     }
 
     private static void setUpS3() {
@@ -143,8 +145,6 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
                     e.printStackTrace();
                 }
             }
-
-            client.shutdown();
         }
 
         if (s3 != null) {

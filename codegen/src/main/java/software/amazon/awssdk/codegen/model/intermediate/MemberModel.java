@@ -22,7 +22,7 @@ import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_SETTER;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_SETTER_PARAM;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.LIST_VARARG_ADDITIONAL_DOC;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHTMLTags;
+import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHtmlTags;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
@@ -330,7 +330,7 @@ public class MemberModel extends DocumentationModel {
 
         String variableDesc = documentation != null ? documentation : DEFAULT_GETTER_PARAM.replace("%s", name);
 
-        docBuilder.append("@return " + stripHTMLTags(variableDesc))
+        docBuilder.append("@return " + stripHtmlTags(variableDesc))
                 .append(getEnumDoc())
                 .append("*/");
 
@@ -343,7 +343,7 @@ public class MemberModel extends DocumentationModel {
         docBuilder.append(getSetterDoc())
                 .append(getParamDoc())
                 .append(LINE_SEPARATOR)
-                .append("@return " + stripHTMLTags(DEFAULT_FLUENT_RETURN))
+                .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
                 .append(getEnumDoc())
                 .append("*/");
 
@@ -362,7 +362,7 @@ public class MemberModel extends DocumentationModel {
 
         docBuilder.append(getParamDoc())
                 .append(LINE_SEPARATOR)
-                .append("@return " + stripHTMLTags(DEFAULT_FLUENT_RETURN))
+                .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
                 .append(getEnumDoc());
 
         docBuilder.append("*/");
@@ -385,7 +385,7 @@ public class MemberModel extends DocumentationModel {
 
         docBuilder.append(LINE_SEPARATOR)
                 .append("@param " + variable.getVariableName() + " "
-                        + stripHTMLTags(variableDesc));
+                        + stripHtmlTags(variableDesc));
         return docBuilder.toString();
     }
 

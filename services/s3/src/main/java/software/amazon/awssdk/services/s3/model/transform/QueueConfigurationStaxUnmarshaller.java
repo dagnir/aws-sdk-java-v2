@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.model.transform;
 
-import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringUnmarshaller;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.services.s3.model.QueueConfiguration;
 
@@ -33,7 +33,7 @@ class QueueConfigurationStaxUnmarshaller extends NotificationConfigurationStaxUn
     protected boolean handleXmlEvent(QueueConfiguration queueConfig, StaxUnmarshallerContext context, int targetDepth)
             throws Exception {
         if (context.testExpression("Queue", targetDepth)) {
-            queueConfig.setQueueARN(StringStaxUnmarshaller.getInstance().unmarshall(context));
+            queueConfig.setQueueArn(StringUnmarshaller.getInstance().unmarshall(context));
             return true;
         }
         return false;

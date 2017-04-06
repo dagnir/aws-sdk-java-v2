@@ -20,29 +20,28 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SecurityTokenServiceActions;
-import software.amazon.awssdk.services.identitymanagement.model.AccessKeyMetadata;
-import software.amazon.awssdk.services.identitymanagement.model.CreateAccessKeyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateAccessKeyResult;
-import software.amazon.awssdk.services.identitymanagement.model.CreateUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteAccessKeyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteLoginProfileRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteUserPolicyRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListAccessKeysResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListUserPoliciesResult;
-import software.amazon.awssdk.services.identitymanagement.model.PutUserPolicyRequest;
-import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenService;
-import software.amazon.awssdk.services.securitytoken.AWSSecurityTokenServiceClient;
-import software.amazon.awssdk.services.securitytoken.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.securitytoken.model.AssumeRoleResult;
+import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyRequest;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyResult;
+import software.amazon.awssdk.services.iam.model.CreateUserRequest;
+import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteLoginProfileRequest;
+import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.PutUserPolicyRequest;
+import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
+import software.amazon.awssdk.services.sts.model.AssumeRoleResult;
 
 public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
 
@@ -106,7 +105,7 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
                 .withPolicy(new Policy().withStatements(statement)
                                         .toJson());
 
-        AWSSecurityTokenService sts = getIamClient();
+        STSClient sts = getStsClient();
         Thread.sleep(1000 * 60);
         AssumeRoleResult assumeRoleResult = sts.assumeRole(assumeRoleRequest);
         assertNotNull(assumeRoleResult.getAssumedRoleUser());
@@ -116,7 +115,7 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
         assertNotNull(assumeRoleResult.getPackedPolicySize());
     }
 
-    private AWSSecurityTokenService getIamClient() {
+    private STSClient getStsClient() {
         iam.createUser(new CreateUserRequest().withUserName(USER_NAME));
 
         String policyDoc = new Policy()
@@ -130,6 +129,6 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
         CreateAccessKeyResult createAccessKeyResult = iam.createAccessKey(new CreateAccessKeyRequest().withUserName(USER_NAME));
         AwsCredentials credentials = new BasicAwsCredentials(createAccessKeyResult.getAccessKey().getAccessKeyId(),
                                                              createAccessKeyResult.getAccessKey().getSecretAccessKey());
-        return new AWSSecurityTokenServiceClient(credentials);
+        return STSClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
     }
 }

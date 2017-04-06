@@ -33,8 +33,8 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.kms.AWSKMS;
-import software.amazon.awssdk.services.kms.AWSKMSClient;
+import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.internal.MultiFileOutputStream;
 import software.amazon.awssdk.services.s3.internal.PartCreationEvent;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
@@ -83,14 +83,14 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     public static final String USER_AGENT = AmazonS3EncryptionClient.class.getName()
                                             + "/" + VersionInfoUtils.getVersion();
     private final S3CryptoModule<?> crypto;
-    private final AWSKMS kms;
+    private final KMSClient kms;
     /**
      * True if the a default KMS client is constructed, which will be shut down
      * when this instance of S3 encryption client is shutdown.  False otherwise,
      * which means the users who provided the KMS client would be responsible
      * to shut down the KMS client. 
      */
-    private final boolean isKMSClientInternal;
+    private final boolean isKmsClientInternal;
 
     // ///////////////////// Constructors ////////////////
 
@@ -491,10 +491,10 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)} and
      *                 {@link AmazonS3EncryptionClientBuilder#withClientConfiguration(LegacyClientConfiguration)} and
      *                 {@link AmazonS3EncryptionClientBuilder#withMetricsCollector(RequestMetricCollector)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withKmsClient(AWSKMS)}
+     *                 {@link AmazonS3EncryptionClientBuilder#withKmsClient(KMSClient)}
      */
     @Deprecated
-    public AmazonS3EncryptionClient(AWSKMSClient kms,
+    public AmazonS3EncryptionClient(KMSClient kms,
                                     AwsCredentialsProvider credentialsProvider,
                                     EncryptionMaterialsProvider kekMaterialsProvider,
                                     LegacyClientConfiguration clientConfig,
@@ -505,8 +505,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
                                "EncryptionMaterialsProvider parameter must not be null.");
         assertParameterNotNull(cryptoConfig,
                                "CryptoConfiguration parameter must not be null.");
-        this.isKMSClientInternal = kms == null;
-        this.kms = isKMSClientInternal
+        this.isKmsClientInternal = kms == null;
+        this.kms = isKmsClientInternal
                    ? newAwsKmsClient(credentialsProvider, clientConfig, cryptoConfig,
                                      requestMetricCollector)
                    : kms;
@@ -519,8 +519,8 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
         super(params);
         assertParameterNotNull(params.getEncryptionMaterials(), "EncryptionMaterialsProvider parameter must not be null.");
         assertParameterNotNull(params.getCryptoConfiguration(), "CryptoConfiguration parameter must not be null.");
-        this.isKMSClientInternal = params.getKmsClient() == null;
-        this.kms = isKMSClientInternal ?
+        this.isKmsClientInternal = params.getKmsClient() == null;
+        this.kms = isKmsClientInternal ?
                    newAwsKmsClient(params.getClientParams().getCredentialsProvider(),
                                    params.getClientParams().getClientConfiguration(),
                                    params.getCryptoConfiguration(),
@@ -538,15 +538,21 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      * Creates and returns a new instance of AWS KMS client in the case when
      * an explicit AWS KMS client is not specified.
      */
-    private AWSKMSClient newAwsKmsClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfig,
+    private KMSClient newAwsKmsClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfig,
                                          CryptoConfiguration cryptoConfig, RequestMetricCollector requestMetricCollector) {
-        final AWSKMSClient kmsClient = new AWSKMSClient(
-                credentialsProvider, clientConfig, requestMetricCollector);
-        final Region kmsRegion = cryptoConfig.getAwsKmsRegion();
-        if (kmsRegion != null) {
-            kmsClient.setRegion(kmsRegion);
+        Region kmsRegion = cryptoConfig.getAwsKmsRegion();
+        if (kmsRegion == null) {
+            // This is weird: we should probably be matching the S3 client's region, but this has always been the default behavior
+            // and there's no reason to change it now when we're going to rewrite the entire S3 client anyway in 2.0.
+            kmsRegion = RegionUtils.getRegion("us-east-1");
         }
-        return kmsClient;
+
+        return KMSClient.builder()
+                        .withCredentials(credentialsProvider)
+                        .withClientConfiguration(clientConfig)
+                        .withMetricsCollector(requestMetricCollector)
+                        .withRegion(kmsRegion.getName())
+                        .build();
     }
 
     private void assertParameterNotNull(Object parameterValue,
@@ -675,8 +681,12 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
     @Override
     public void shutdown() {
         super.shutdown();
-        if (isKMSClientInternal) {
-            kms.shutdown();
+        if (isKmsClientInternal) {
+            try {
+                kms.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

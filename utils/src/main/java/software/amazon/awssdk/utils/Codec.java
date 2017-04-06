@@ -15,11 +15,14 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+
 /**
  * Codec SPI
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 interface Codec {
     public byte[] encode(byte[] src);
 

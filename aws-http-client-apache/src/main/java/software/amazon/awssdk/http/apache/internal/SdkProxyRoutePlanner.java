@@ -39,7 +39,7 @@ public class SdkProxyRoutePlanner extends DefaultRoutePlanner {
     }
 
     private void parseNonProxyHosts(String nonProxyHosts) {
-        if (!StringUtils.isNullOrEmpty(nonProxyHosts)) {
+        if (!StringUtils.isEmpty(nonProxyHosts)) {
             String[] hosts = nonProxyHosts.split("\\|");
             hostPatterns = new String[hosts.length];
             for (int i = 0; i < hosts.length; ++i) {

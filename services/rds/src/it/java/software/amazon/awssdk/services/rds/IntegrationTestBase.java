@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.rds.model.DescribeDBInstancesRequest;
 import software.amazon.awssdk.services.rds.model.DescribeDBSecurityGroupsRequest;
 import software.amazon.awssdk.services.rds.model.DescribeDBSnapshotsRequest;
 import software.amazon.awssdk.services.rds.model.IPRange;
-import software.amazon.awssdk.services.sns.AmazonSNSClient;
+import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 /**
@@ -48,10 +48,10 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
     protected static final String ENGINE = "mysql5.1";
 
     /** The shared RDS client for all tests to use. */
-    protected static AmazonRDSClient rds;
+    protected static RDSClient rds;
 
     /** The shared SNS client for all tests to use. */
-    protected static AmazonSNSClient sns;
+    protected static SNSClient sns;
 
     /**
      * The name of a parameter group used by these tests which will be
@@ -91,7 +91,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
-        rds = new AmazonRDSClient(getCredentials());
+        rds = RDSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /** Releases all resources allocated by these tests. */

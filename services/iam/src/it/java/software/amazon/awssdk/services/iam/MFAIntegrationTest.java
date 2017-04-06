@@ -21,11 +21,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import org.junit.After;
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.CreateVirtualMFADeviceRequest;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteVirtualMFADeviceRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListMFADevicesRequest;
-import software.amazon.awssdk.services.identitymanagement.model.MFADevice;
-import software.amazon.awssdk.services.identitymanagement.model.VirtualMFADevice;
+import software.amazon.awssdk.services.iam.model.CreateVirtualMFADeviceRequest;
+import software.amazon.awssdk.services.iam.model.DeleteVirtualMFADeviceRequest;
+import software.amazon.awssdk.services.iam.model.ListMFADevicesRequest;
+import software.amazon.awssdk.services.iam.model.MFADevice;
+import software.amazon.awssdk.services.iam.model.VirtualMFADevice;
 
 /** Integration tests for the MFA device related APIs in IAM. */
 public class MFAIntegrationTest extends IntegrationTestBase {

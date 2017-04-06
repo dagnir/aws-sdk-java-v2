@@ -34,7 +34,7 @@ import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.auth.internal.Aws4SignerUtils;
 import software.amazon.awssdk.auth.internal.SignerConstants;
 import software.amazon.awssdk.auth.internal.SignerKey;
-import software.amazon.awssdk.internal.collections.FIFOCache;
+import software.amazon.awssdk.internal.collections.FifoCache;
 import software.amazon.awssdk.log.InternalLogApi;
 import software.amazon.awssdk.log.InternalLogFactory;
 import software.amazon.awssdk.util.BinaryUtils;
@@ -51,7 +51,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
     protected static final InternalLogApi LOG = InternalLogFactory.getLog(Aws4Signer.class);
 
     private static final int SIGNER_CACHE_MAX_SIZE = 300;
-    private static final FIFOCache<SignerKey> SIGNER_CACHE = new FIFOCache<SignerKey>(SIGNER_CACHE_MAX_SIZE);
+    private static final FifoCache<SignerKey> SIGNER_CACHE = new FifoCache<SignerKey>(SIGNER_CACHE_MAX_SIZE);
     private static final List<String> LIST_OF_HEADERS_TO_IGNORE_IN_LOWER_CASE = Arrays.asList("connection", "x-amzn-trace-id");
 
     /**

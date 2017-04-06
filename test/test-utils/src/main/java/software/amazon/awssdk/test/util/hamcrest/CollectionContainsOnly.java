@@ -23,22 +23,22 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 public class CollectionContainsOnly<T> extends TypeSafeMatcher<Collection<T>> {
-    private final List<Matcher<? super T>> matchers;
+    private final List<Matcher<? extends T>> matchers;
 
-    private CollectionContainsOnly(List<Matcher<? super T>> matchers) {
+    private CollectionContainsOnly(List<Matcher<? extends T>> matchers) {
         this.matchers = matchers;
     }
 
-    static <T> TypeSafeMatcher<Collection<T>> containsOnly(List<Matcher<? super T>> matchers) {
+    static <T> TypeSafeMatcher<Collection<T>> containsOnly(List<Matcher<? extends T>> matchers) {
         return new CollectionContainsOnly<T>(matchers);
     }
 
     @Override
     protected boolean matchesSafely(Collection<T> actualItems) {
-        final List<Matcher<? super T>> copyOfExpected = new ArrayList<>(matchers);
+        final List<Matcher<? extends T>> copyOfExpected = new ArrayList<>(matchers);
         for (T item : actualItems) {
             boolean match = false;
-            for (Matcher<? super T> m : copyOfExpected) {
+            for (Matcher<? extends T> m : copyOfExpected) {
                 if (m.matches(item)) {
                     copyOfExpected.remove(m);
                     match = true;

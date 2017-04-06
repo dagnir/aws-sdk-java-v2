@@ -240,14 +240,14 @@ public class Metadata {
      * @return The class name for the fluent sync client builder.
      */
     public String getSyncClientBuilderClassName() {
-        return syncClient + "Builder";
+        return syncInterface + "Builder";
     }
 
     /**
      * @return The class name for the fluent async client builder.
      */
     public String getAsyncClientBuilderClassName() {
-        return asyncClient + "Builder";
+        return asyncInterface + "Builder";
     }
 
     public String getPackageName() {
@@ -436,10 +436,6 @@ public class Metadata {
 
     public String getUnmarshallerContextClassName() {
         return protocolMetadataProvider.getUnmarshallerContextClassName();
-    }
-
-    public String getUnmarshallerClassSuffix() {
-        return protocolMetadataProvider.getUnmarshallerClassSuffix();
     }
 
     public String getProtocolFactory() {

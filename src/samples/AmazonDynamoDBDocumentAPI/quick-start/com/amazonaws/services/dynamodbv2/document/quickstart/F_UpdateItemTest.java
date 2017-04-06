@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package software.amazon.awssdk.services.dynamodbv2.document.quickstart;
+package software.amazon.awssdk.services.dynamodb.document.quickstart;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -28,24 +28,24 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.PropertiesCredentials;
-import software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBClient;
-import software.amazon.awssdk.services.dynamodbv2.document.AttributeUpdate;
-import software.amazon.awssdk.services.dynamodbv2.document.DynamoDB;
-import software.amazon.awssdk.services.dynamodbv2.document.Expected;
-import software.amazon.awssdk.services.dynamodbv2.document.GetItemOutcome;
-import software.amazon.awssdk.services.dynamodbv2.document.Item;
-import software.amazon.awssdk.services.dynamodbv2.document.Table;
-import software.amazon.awssdk.services.dynamodbv2.document.spec.GetItemSpec;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.FluentHashSet;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.NameMap;
-import software.amazon.awssdk.services.dynamodbv2.document.utils.ValueMap;
-import software.amazon.awssdk.services.dynamodbv2.model.AttributeDefinition;
-import software.amazon.awssdk.services.dynamodbv2.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodbv2.model.KeySchemaElement;
-import software.amazon.awssdk.services.dynamodbv2.model.KeyType;
-import software.amazon.awssdk.services.dynamodbv2.model.ProvisionedThroughput;
-import software.amazon.awssdk.services.dynamodbv2.model.ScalarAttributeType;
-import software.amazon.awssdk.services.dynamodbv2.model.TableDescription;
+import software.amazon.awssdk.services.dynamodb.AmazonDynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.document.AttributeUpdate;
+import software.amazon.awssdk.services.dynamodb.document.DynamoDB;
+import software.amazon.awssdk.services.dynamodb.document.Expected;
+import software.amazon.awssdk.services.dynamodb.document.GetItemOutcome;
+import software.amazon.awssdk.services.dynamodb.document.Item;
+import software.amazon.awssdk.services.dynamodb.document.Table;
+import software.amazon.awssdk.services.dynamodb.document.spec.GetItemSpec;
+import software.amazon.awssdk.services.dynamodb.document.utils.FluentHashSet;
+import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
+import software.amazon.awssdk.services.dynamodb.document.utils.ValueMap;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 /**
  * Sample code to update items to a dynamo table.

@@ -18,6 +18,7 @@ package software.amazon.awssdk.utils;
 import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
  * A Base 64 codec API.
@@ -26,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Hanson Char
  */
+@SdkProtectedApi
 public enum Base64 {
     ;
     private static final Log LOG = LogFactory.getLog("software.amazon.awssdk.request");

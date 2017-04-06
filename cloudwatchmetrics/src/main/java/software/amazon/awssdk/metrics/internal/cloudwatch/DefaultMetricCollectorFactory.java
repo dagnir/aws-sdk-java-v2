@@ -16,18 +16,17 @@
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.SDKGlobalConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricCollector;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.services.cloudwatch.AmazonCloudWatch;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 /**
  * The default AWS SDK metric collector factory.  This class is instantiated
  * via reflection if the default AWS SDK metrics is enabled via the
- * system property {@link SDKGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY}.
+ * system property {@link software.amazon.awssdk.SdkGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY}.
  */
 public class DefaultMetricCollectorFactory
         implements MetricCollector.Factory {
@@ -48,7 +47,7 @@ public class DefaultMetricCollectorFactory
             config.setCredentialsProvider(provider);
         }
         if (region != null) {
-            String endPoint = region.getServiceEndpoint(AmazonCloudWatch.ENDPOINT_PREFIX);
+            String endPoint = region.getServiceEndpoint(CloudWatchClient.ENDPOINT_PREFIX);
             config.setCloudWatchEndPoint(endPoint);
         }
         if (qSize != null) {

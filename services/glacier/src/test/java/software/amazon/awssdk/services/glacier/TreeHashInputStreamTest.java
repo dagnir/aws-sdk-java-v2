@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;
 import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.BinaryUtils;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.util.IoUtils;
 
 /**
  * Tests of the TreeHashInputStream class.
@@ -78,7 +78,7 @@ public class TreeHashInputStreamTest extends AwsTestBase {
         File f = new RandomTempFile("tree-hash-input-stream-test", fileLength);
         assertEquals(fileLength, (int) f.length());
 
-        byte[] fileBytes = IOUtils.toByteArray(new FileInputStream(f));
+        byte[] fileBytes = IoUtils.toByteArray(new FileInputStream(f));
         byte[] firstMeg = new byte[MB];
         System.arraycopy(fileBytes, 0, firstMeg, 0, MB);
         byte[] secondMeg = new byte[fileBytes.length - MB];
@@ -112,7 +112,7 @@ public class TreeHashInputStreamTest extends AwsTestBase {
         } catch (IOException e) {
             assertEquals("Stream closed".toLowerCase(), e.getMessage().toLowerCase());
         } finally {
-            software.amazon.awssdk.util.IOUtils.closeQuietly(fileInputStream, null);
+            IoUtils.closeQuietly(fileInputStream, null);
         }
     }
 
@@ -126,7 +126,7 @@ public class TreeHashInputStreamTest extends AwsTestBase {
             }
             return messageDigest.digest();
         } finally {
-            software.amazon.awssdk.util.IOUtils.closeQuietly(input, null);
+            IoUtils.closeQuietly(input, null);
         }
     }
 

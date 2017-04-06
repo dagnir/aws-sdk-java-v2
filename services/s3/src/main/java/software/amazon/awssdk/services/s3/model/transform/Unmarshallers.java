@@ -89,15 +89,15 @@ public class Unmarshallers {
     public static final class ListObjectsUnmarshaller
             implements Unmarshaller<ObjectListing, InputStream> {
 
-        private final boolean shouldSDKDecodeResponse;
+        private final boolean shouldSdkDecodeResponse;
 
-        public ListObjectsUnmarshaller(final boolean shouldSDKDecodeResponse) {
-            this.shouldSDKDecodeResponse = shouldSDKDecodeResponse;
+        public ListObjectsUnmarshaller(final boolean shouldSdkDecodeResponse) {
+            this.shouldSdkDecodeResponse = shouldSdkDecodeResponse;
         }
 
         public ObjectListing unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser()
-                    .parseListBucketObjectsResponse(in, shouldSDKDecodeResponse).getObjectListing();
+                    .parseListBucketObjectsResponse(in, shouldSdkDecodeResponse).getObjectListing();
         }
     }
 
@@ -107,15 +107,15 @@ public class Unmarshallers {
     public static final class ListObjectsV2Unmarshaller
             implements Unmarshaller<ListObjectsV2Result, InputStream> {
 
-        private final boolean shouldSDKDecodeResponse;
+        private final boolean shouldSdkDecodeResponse;
 
-        public ListObjectsV2Unmarshaller(final boolean shouldSDKDecodeResponse) {
-            this.shouldSDKDecodeResponse = shouldSDKDecodeResponse;
+        public ListObjectsV2Unmarshaller(final boolean shouldSdkDecodeResponse) {
+            this.shouldSdkDecodeResponse = shouldSdkDecodeResponse;
         }
 
         public ListObjectsV2Result unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser()
-                    .parseListObjectsV2Response(in, shouldSDKDecodeResponse).getResult();
+                    .parseListObjectsV2Response(in, shouldSdkDecodeResponse).getResult();
         }
     }
 
@@ -125,15 +125,15 @@ public class Unmarshallers {
     public static final class VersionListUnmarshaller
             implements Unmarshaller<VersionListing, InputStream> {
 
-        private final boolean shouldSDKDecodeResponse;
+        private final boolean shouldSdkDecodeResponse;
 
-        public VersionListUnmarshaller(final boolean shouldSDKDecodeResponse) {
-            this.shouldSDKDecodeResponse = shouldSDKDecodeResponse;
+        public VersionListUnmarshaller(final boolean shouldSdkDecodeResponse) {
+            this.shouldSdkDecodeResponse = shouldSdkDecodeResponse;
         }
 
         public VersionListing unmarshall(InputStream in) throws Exception {
             return new XmlResponsesSaxParser()
-                    .parseListVersionsResponse(in, shouldSDKDecodeResponse).getListing();
+                    .parseListVersionsResponse(in, shouldSdkDecodeResponse).getListing();
         }
     }
 

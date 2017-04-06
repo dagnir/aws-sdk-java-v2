@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.services.kms.AWSKMS;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
 import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
@@ -53,11 +53,11 @@ import software.amazon.awssdk.services.s3.model.UploadPartResult;
 public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContext> {
     private final CryptoMode defaultCryptoMode;
     /** Encryption only (EO) cryptographic module. */
-    private final S3CryptoModuleEO eo;
+    private final S3CryptoModuleEo eo;
     /** Authenticated encryption (AE) cryptographic module. */
-    private final S3CryptoModuleAE ae;
+    private final S3CryptoModuleAe ae;
 
-    public CryptoModuleDispatcher(AWSKMS kms, S3Direct s3,
+    public CryptoModuleDispatcher(KMSClient kms, S3Direct s3,
                                   AwsCredentialsProvider credentialsProvider,
                                   EncryptionMaterialsProvider encryptionMaterialsProvider,
                                   CryptoConfiguration cryptoConfig) {
@@ -71,19 +71,19 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
         this.defaultCryptoMode = cryptoConfig.getCryptoMode();
         switch (this.defaultCryptoMode) {
             case StrictAuthenticatedEncryption:
-                this.ae = new S3CryptoModuleAEStrict(kms, s3, credentialsProvider,
+                this.ae = new S3CryptoModuleAeStrict(kms, s3, credentialsProvider,
                                                      encryptionMaterialsProvider,
                                                      cryptoConfig);
                 this.eo = null;
                 break;
             case AuthenticatedEncryption:
-                this.ae = new S3CryptoModuleAE(kms, s3, credentialsProvider,
+                this.ae = new S3CryptoModuleAe(kms, s3, credentialsProvider,
                                                encryptionMaterialsProvider,
                                                cryptoConfig);
                 this.eo = null;
                 break;
             case EncryptionOnly:
-                this.eo = new S3CryptoModuleEO(kms, s3, credentialsProvider,
+                this.eo = new S3CryptoModuleEo(kms, s3, credentialsProvider,
                                                encryptionMaterialsProvider,
                                                cryptoConfig);
                 CryptoConfiguration aeConfig = cryptoConfig.clone();
@@ -93,7 +93,7 @@ public class CryptoModuleDispatcher extends S3CryptoModule<MultipartUploadContex
                     // BC not available during runtime; but EO can still work.
                     // Hence ignoring.
                 }
-                this.ae = new S3CryptoModuleAE(kms, s3, credentialsProvider,
+                this.ae = new S3CryptoModuleAe(kms, s3, credentialsProvider,
                                                encryptionMaterialsProvider,
                                                aeConfig.readOnly());
                 break;

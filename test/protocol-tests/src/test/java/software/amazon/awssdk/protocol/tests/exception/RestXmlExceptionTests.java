@@ -24,24 +24,31 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.protocol.restxml.AmazonProtocolRestXmlClient;
-import software.amazon.awssdk.services.protocol.restxml.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocol.restxml.model.AmazonProtocolRestXmlException;
-import software.amazon.awssdk.services.protocol.restxml.model.EmptyModeledException;
-import software.amazon.awssdk.services.protocol.restxml.model.MultiLocationOperationRequest;
+import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.services.protocolrestxml.ProtocolRestXmlClient;
+import software.amazon.awssdk.services.protocolrestxml.model.AllTypesRequest;
+import software.amazon.awssdk.services.protocolrestxml.model.EmptyModeledException;
+import software.amazon.awssdk.services.protocolrestxml.model.MultiLocationOperationRequest;
+import software.amazon.awssdk.services.protocolrestxml.model.ProtocolRestXmlClientException;
 
 public class RestXmlExceptionTests {
 
     private static final String ALL_TYPES_PATH = "/2016-03-11/allTypes";
-    private final AmazonProtocolRestXmlClient client = new AmazonProtocolRestXmlClient(
-            new BasicAwsCredentials("akid", "skid"));
+
     @Rule
     public WireMockRule wireMock = new WireMockRule(0);
 
+    private ProtocolRestXmlClient client;
+
     @Before
-    public void setup() {
-        client.setEndpoint("http://localhost:" + wireMock.port());
+    public void setupClient() {
+        client = ProtocolRestXmlClient.builder()
+                                      .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                      .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
+                                                                                           "us-east-1"))
+                                      .build();
     }
 
     @Test
@@ -58,7 +65,7 @@ public class RestXmlExceptionTests {
         try {
             callAllTypes();
         } catch (EmptyModeledException e) {
-            assertThat(e, instanceOf(AmazonProtocolRestXmlException.class));
+            assertThat(e, instanceOf(ProtocolRestXmlClientException.class));
         }
     }
 
@@ -90,7 +97,7 @@ public class RestXmlExceptionTests {
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {
-        assertThrowsException(runnable, AmazonProtocolRestXmlException.class);
+        assertThrowsException(runnable, ProtocolRestXmlClientException.class);
     }
 
     private void assertThrowsIllegalArgumentException(Runnable runnable) {

@@ -15,8 +15,11 @@
 
 package software.amazon.awssdk.services.route53.internal;
 
+import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.Response;
 import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.route53.model.AliasTarget;
 import software.amazon.awssdk.services.route53.model.ChangeInfo;
@@ -44,10 +47,12 @@ import software.amazon.awssdk.services.route53.model.ResourceRecordSet;
  * cannot be included, otherwise requests fail. This handler removes those
  * partial resource path elements from IDs returned by Route 53.
  */
-public class Route53IdRequestHandler extends AbstractRequestHandler {
+public class Route53IdRequestHandler extends RequestHandler2 {
+
 
     @Override
-    public void afterResponse(Request<?> request, Object obj, TimingInfo timingInfo) {
+    public void afterResponse(Request<?> request, Response<?> response) {
+        Object obj = ((AmazonWebServiceResponse) response.getAwsResponse()).getResult();
         if (obj instanceof ChangeResourceRecordSetsResult) {
             ChangeResourceRecordSetsResult result = (ChangeResourceRecordSetsResult) obj;
             removePrefix(result.getChangeInfo());

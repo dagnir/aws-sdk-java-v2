@@ -30,6 +30,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
 import software.amazon.awssdk.services.cloudwatch.model.DeleteAlarmsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmHistoryRequest;
@@ -44,6 +45,7 @@ import software.amazon.awssdk.services.cloudwatch.model.EnableAlarmActionsReques
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsResult;
 import software.amazon.awssdk.services.cloudwatch.model.HistoryItemType;
+import software.amazon.awssdk.services.cloudwatch.model.ListMetricsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.ListMetricsResult;
 import software.amazon.awssdk.services.cloudwatch.model.Metric;
 import software.amazon.awssdk.services.cloudwatch.model.MetricAlarm;
@@ -62,7 +64,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
     private static final int ONE_WEEK_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 7;
     private static final int ONE_HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
     /** The CloudWatch client for all tests to use. */
-    private static AmazonCloudWatch cloudwatch;
+    private static CloudWatchClient cloudwatch;
 
     /**
      * Loads the AWS account info for the integration tests and creates a
@@ -70,7 +72,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setUp() throws IOException {
-        cloudwatch = new AmazonCloudWatchClient(getCredentials());
+        cloudwatch = CloudWatchClient.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
     }
 
     /**
@@ -140,7 +142,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
             assertEquals(datum.getUnit(), datapoint.getUnit());
         }
 
-        ListMetricsResult listResult = cloudwatch.listMetrics();
+        ListMetricsResult listResult = cloudwatch.listMetrics(new ListMetricsRequest());
 
         boolean seenDimensions = false;
         assertTrue(listResult.getMetrics().size() > 0);
@@ -347,12 +349,14 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
     public void testClockSkew() {
         SDKGlobalConfiguration.setGlobalTimeOffset(3600);
 
-        AmazonCloudWatch cloudwatch = new AmazonCloudWatchClient(getCredentials());
-        cloudwatch.listMetrics();
+        CloudWatchClient cloudwatch = CloudWatchClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .build();
+        cloudwatch.listMetrics(new ListMetricsRequest());
         assertTrue(SDKGlobalConfiguration.getGlobalTimeOffset() < 3600);
         // subsequent changes to the global time offset won't affect existing client
         SDKGlobalConfiguration.setGlobalTimeOffset(3600);
-        cloudwatch.listMetrics();
+        cloudwatch.listMetrics(new ListMetricsRequest());
         assertTrue(SDKGlobalConfiguration.getGlobalTimeOffset() == 3600);
     }
 }

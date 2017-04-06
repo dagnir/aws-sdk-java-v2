@@ -18,37 +18,43 @@ package software.amazon.awssdk.auth.policy;
 import org.junit.After;
 import org.junit.Test;
 import software.amazon.awssdk.auth.policy.Statement.Effect;
-import software.amazon.awssdk.auth.policy.actions.SNSActions;
-import software.amazon.awssdk.auth.policy.conditions.SNSConditionFactory;
+import software.amazon.awssdk.auth.policy.actions.SnsActions;
+import software.amazon.awssdk.auth.policy.conditions.SnsConditionFactory;
 import software.amazon.awssdk.services.sns.IntegrationTestBase;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 
 /**
- * Integration tests for the service specific access control policy code provided by the SNS client.
+ * Integration tests for the service specific access control policy code provided by the Sns client.
  */
 public class SnsPolicyIntegrationTest extends IntegrationTestBase {
     private String topicArn;
 
-    /** Releases all test resources. */
+    /**
+     * Releases all test resources.
+     */
     @After
     public void tearDown() throws Exception {
         sns.deleteTopic(new DeleteTopicRequest(topicArn));
     }
 
     /**
-     * Tests that we can construct valid policies with SNS specific conditions/resources/etc.
+     * Tests that we can construct valid policies with Sns specific conditions/resources/etc.
      */
     @Test
     public void testPolicies() throws Exception {
         String topicName = "java-sns-policy-integ-test-" + System.currentTimeMillis();
         topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
 
-        Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withActions(SNSActions.Subscribe)
-                                                                               .withPrincipals(Principal.ALL).withResources(new Resource(topicArn))
-                                                                               .withConditions(SNSConditionFactory.newEndpointCondition("*@amazon.com"),
-                                                                                               SNSConditionFactory.newProtocolCondition("email")));
+        Policy policy = new Policy()
+                .withStatements(new Statement(Effect.Allow)
+                                        .withActions(SnsActions.Subscribe)
+                                        .withPrincipals(Principal.ALL_USERS)
+                                        .withResources(new Resource(topicArn))
+                                        .withConditions(
+                                                SnsConditionFactory.newEndpointCondition("*@amazon.com"),
+                                                SnsConditionFactory.newProtocolCondition("email")));
         sns.setTopicAttributes(new SetTopicAttributesRequest(topicArn, "Policy", policy.toJson()));
     }
 }

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.services.sqs.AmazonSQS;
+import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequestEntry;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
@@ -52,7 +52,7 @@ public class ReceiveQueueBuffer {
     private final QueueBufferConfig config;
     private final String qUrl;
     private final Executor executor;
-    private final AmazonSQS sqsClient;
+    private final SQSAsyncClient sqsClient;
     /**
      * synchronize on this object to create new receive batches or modify inflight message count
      */
@@ -74,10 +74,10 @@ public class ReceiveQueueBuffer {
     /** finished batches are stored in this list. */
     private LinkedList<ReceiveMessageBatchTask> finishedTasks = new LinkedList<ReceiveMessageBatchTask>();
 
-    ReceiveQueueBuffer(AmazonSQS paramSQS, Executor paramExecutor, QueueBufferConfig paramConfig, String url) {
+    ReceiveQueueBuffer(SQSAsyncClient paramSqs, Executor paramExecutor, QueueBufferConfig paramConfig, String url) {
         config = paramConfig;
         executor = paramExecutor;
-        sqsClient = paramSQS;
+        sqsClient = paramSqs;
         qUrl = url;
 
     }
@@ -284,8 +284,8 @@ public class ReceiveQueueBuffer {
             if (visibilityTimeoutNanos == -1) {
                 GetQueueAttributesRequest request = new GetQueueAttributesRequest().withQueueUrl(qUrl)
                                                                                    .withAttributeNames("VisibilityTimeout");
-                ResultConverter.appendUserAgent(request, AmazonSqsBufferedAsyncClient.USER_AGENT);
-                long visibilityTimeoutSeconds = Long.parseLong(sqsClient.getQueueAttributes(request).getAttributes()
+                ResultConverter.appendUserAgent(request, SqsBufferedAsyncClient.USER_AGENT);
+                long visibilityTimeoutSeconds = Long.parseLong(sqsClient.getQueueAttributes(request).join().getAttributes()
                                                                         .get("VisibilityTimeout"));
                 visibilityTimeoutNanos = TimeUnit.NANOSECONDS.convert(visibilityTimeoutSeconds, TimeUnit.SECONDS);
             }
@@ -388,7 +388,7 @@ public class ReceiveQueueBuffer {
         /**
          * Constructs a receive task waiting the specified time before calling SQS.
          *
-         * @param waitTimeMs
+         * @param paramParentBuffer
          *            the time to wait before calling SQS
          */
         ReceiveMessageBatchTask(ReceiveQueueBuffer paramParentBuffer) {
@@ -455,7 +455,7 @@ public class ReceiveQueueBuffer {
             if (!isExpired()) {
                 ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
                         .withQueueUrl(qUrl);
-                ResultConverter.appendUserAgent(batchRequest, AmazonSqsBufferedAsyncClient.USER_AGENT);
+                ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
                 List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                         messages.size());
@@ -489,7 +489,7 @@ public class ReceiveQueueBuffer {
             try {
                 visibilityDeadlineNano = System.nanoTime() + visibilityTimeoutNanos;
                 ReceiveMessageRequest request = new ReceiveMessageRequest(qUrl).withMaxNumberOfMessages(config.getMaxBatchSize());
-                ResultConverter.appendUserAgent(request, AmazonSqsBufferedAsyncClient.USER_AGENT);
+                ResultConverter.appendUserAgent(request, SqsBufferedAsyncClient.USER_AGENT);
 
                 if (config.getVisibilityTimeoutSeconds() > 0) {
                     request.setVisibilityTimeout(config.getVisibilityTimeoutSeconds());
@@ -501,7 +501,7 @@ public class ReceiveQueueBuffer {
                     request.withWaitTimeSeconds(config.getLongPollWaitTimeoutSeconds());
                 }
 
-                messages = sqsClient.receiveMessage(request).getMessages();
+                messages = sqsClient.receiveMessage(request).join().getMessages();
             } catch (AmazonClientException e) {
                 exception = e;
             } finally {

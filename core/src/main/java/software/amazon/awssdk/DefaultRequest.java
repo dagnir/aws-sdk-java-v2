@@ -307,7 +307,7 @@ public class DefaultRequest<T> implements Request<T> {
     }
 
     @Override
-    public AwsRequestMetrics getAWSRequestMetrics() {
+    public AwsRequestMetrics getAwsRequestMetrics() {
         return metrics;
     }
 

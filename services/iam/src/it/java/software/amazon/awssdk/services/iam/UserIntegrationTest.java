@@ -20,17 +20,17 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.CreateUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateUserResult;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.EntityAlreadyExistsException;
-import software.amazon.awssdk.services.identitymanagement.model.GetUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetUserResult;
-import software.amazon.awssdk.services.identitymanagement.model.ListUsersRequest;
-import software.amazon.awssdk.services.identitymanagement.model.ListUsersResult;
-import software.amazon.awssdk.services.identitymanagement.model.NoSuchEntityException;
-import software.amazon.awssdk.services.identitymanagement.model.UpdateUserRequest;
-import software.amazon.awssdk.services.identitymanagement.model.User;
+import software.amazon.awssdk.services.iam.model.CreateUserRequest;
+import software.amazon.awssdk.services.iam.model.CreateUserResult;
+import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
+import software.amazon.awssdk.services.iam.model.EntityAlreadyExistsException;
+import software.amazon.awssdk.services.iam.model.GetUserRequest;
+import software.amazon.awssdk.services.iam.model.GetUserResult;
+import software.amazon.awssdk.services.iam.model.ListUsersRequest;
+import software.amazon.awssdk.services.iam.model.ListUsersResult;
+import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
+import software.amazon.awssdk.services.iam.model.UpdateUserRequest;
+import software.amazon.awssdk.services.iam.model.User;
 
 /**
  * Integration tests of the user APIs of IAM.

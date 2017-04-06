@@ -37,6 +37,7 @@ import software.amazon.awssdk.services.elasticbeanstalk.model.CreateConfiguratio
 import software.amazon.awssdk.services.elasticbeanstalk.model.CreateConfigurationTemplateResult;
 import software.amazon.awssdk.services.elasticbeanstalk.model.CreateEnvironmentRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.CreateEnvironmentResult;
+import software.amazon.awssdk.services.elasticbeanstalk.model.CreateStorageLocationRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.DeleteApplicationRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.DeleteApplicationVersionRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.DeleteConfigurationTemplateRequest;
@@ -54,6 +55,7 @@ import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentInfoDes
 import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentResourceDescription;
 import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentStatus;
 import software.amazon.awssdk.services.elasticbeanstalk.model.EventDescription;
+import software.amazon.awssdk.services.elasticbeanstalk.model.ListAvailableSolutionStacksRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.RequestEnvironmentInfoRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.RetrieveEnvironmentInfoRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.S3Location;
@@ -133,7 +135,8 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     /** Tests that we can describe the available solution stacks. */
     @Test
     public void testListAvailableSolutionStacks() throws Exception {
-        List<String> solutionStacks = elasticbeanstalk.listAvailableSolutionStacks().getSolutionStacks();
+        List<String> solutionStacks = elasticbeanstalk.listAvailableSolutionStacks(new ListAvailableSolutionStacksRequest())
+                .getSolutionStacks();
         assertNotNull(solutionStacks);
         assertTrue(solutionStacks.size() > 1);
         for (String stack : solutionStacks) {
@@ -183,7 +186,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     /** Tests that we can request and retrieve logs for an environment. */
     private void testEnvironmentInfoOperations() {
         // Create a storage location
-        assertNotEmpty(elasticbeanstalk.createStorageLocation().getS3Bucket());
+        assertNotEmpty(elasticbeanstalk.createStorageLocation(new CreateStorageLocationRequest()).getS3Bucket());
 
         // Request the log tails for our environment
         elasticbeanstalk.requestEnvironmentInfo(new RequestEnvironmentInfoRequest("tail").withEnvironmentName(environmentName));

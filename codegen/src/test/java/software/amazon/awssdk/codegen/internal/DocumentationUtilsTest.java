@@ -24,24 +24,24 @@ public class DocumentationUtilsTest {
     @Test
     public void strip_html_tags_null_or_empty_input_returns_empty_string() {
 
-        Assert.assertThat(DocumentationUtils.stripHTMLTags(null), Matchers
+        Assert.assertThat(DocumentationUtils.stripHtmlTags(null), Matchers
                 .isEmptyString());
-        Assert.assertThat(DocumentationUtils.stripHTMLTags(""), Matchers
+        Assert.assertThat(DocumentationUtils.stripHtmlTags(""), Matchers
                 .isEmptyString());
 
     }
 
     @Test
     public void html_tags_at_start_of_string_are_removed() {
-        Assert.assertEquals("foo", DocumentationUtils.stripHTMLTags
+        Assert.assertEquals("foo", DocumentationUtils.stripHtmlTags
                 ("<bar>foo</bar>"));
     }
 
     @Test
     public void empty_html_tags_at_start_are_removed() {
-        Assert.assertThat(DocumentationUtils.stripHTMLTags("<p></p>"), Matchers
+        Assert.assertThat(DocumentationUtils.stripHtmlTags("<p></p>"), Matchers
                 .isEmptyString());
-        Assert.assertThat(DocumentationUtils.stripHTMLTags("<p/>"), Matchers
+        Assert.assertThat(DocumentationUtils.stripHtmlTags("<p/>"), Matchers
                 .isEmptyString());
     }
 }

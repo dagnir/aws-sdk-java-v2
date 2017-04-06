@@ -16,7 +16,9 @@
 package software.amazon.awssdk.kms.utils;
 
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.services.kms.AWSKMSClient;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.CreateAliasRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyResult;
@@ -26,12 +28,17 @@ import software.amazon.awssdk.services.kms.model.NotFoundException;
 /**
  * Useful extensions to the KMS client for S3 Integration tests
  */
-public class KmsClientTestExtensions extends AWSKMSClient {
+public class KmsClientTestExtensions {
 
     private static final String NON_DEFAULT_KEY_ALIAS = "alias/s3/integration-tests";
 
-    public KmsClientTestExtensions(AwsCredentials awsCredentials) {
-        super(awsCredentials);
+    private final KMSClient client;
+
+    public KmsClientTestExtensions(AwsCredentials awsCredentials, Regions region) {
+        this.client = KMSClient.builder()
+                .withCredentials(new AwsStaticCredentialsProvider(awsCredentials))
+                .withRegion(region)
+                .build();
     }
 
     /**
@@ -53,9 +60,9 @@ public class KmsClientTestExtensions extends AWSKMSClient {
     public String getNonDefaultKeyId() {
         String keyId = findKeyIdByAlias(NON_DEFAULT_KEY_ALIAS);
         if (keyId == null) {
-            CreateKeyResult result = createKey(new CreateKeyRequest()
+            CreateKeyResult result = client.createKey(new CreateKeyRequest()
                                                        .withDescription("KMS key used for S3 Integration tests"));
-            createAlias(new CreateAliasRequest().withTargetKeyId(result.getKeyMetadata().getKeyId()).withAliasName(
+            client.createAlias(new CreateAliasRequest().withTargetKeyId(result.getKeyMetadata().getKeyId()).withAliasName(
                     NON_DEFAULT_KEY_ALIAS));
             return result.getKeyMetadata().getKeyId();
         } else {
@@ -72,7 +79,7 @@ public class KmsClientTestExtensions extends AWSKMSClient {
      */
     public String findKeyIdByAlias(String keyAlias) {
         try {
-            return describeKey(new DescribeKeyRequest().withKeyId(keyAlias)).getKeyMetadata().getKeyId();
+            return client.describeKey(new DescribeKeyRequest().withKeyId(keyAlias)).getKeyMetadata().getKeyId();
         } catch (NotFoundException e) {
             return null;
         }

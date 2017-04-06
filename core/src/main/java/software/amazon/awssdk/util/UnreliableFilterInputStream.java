@@ -26,7 +26,7 @@ import software.amazon.awssdk.util.json.Jackson;
  */
 public class UnreliableFilterInputStream extends FilterInputStream {
     // True to throw a FakeIOException; false to throw a RuntimeException
-    private final boolean isFakeIOException;
+    private final boolean isFakeIoException;
     /**
      * Max number of errors that can be triggered.
      */
@@ -48,9 +48,9 @@ public class UnreliableFilterInputStream extends FilterInputStream {
      */
     private int resetIntervalBeforeException;
 
-    public UnreliableFilterInputStream(InputStream in, boolean isFakeIOException) {
+    public UnreliableFilterInputStream(InputStream in, boolean isFakeIoException) {
         super(in);
-        this.isFakeIOException = isFakeIOException;
+        this.isFakeIoException = isFakeIoException;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class UnreliableFilterInputStream extends FilterInputStream {
         position = marked;
     }
 
-    private void triggerError() throws FakeIOException {
+    private void triggerError() throws FakeIoException {
         if (currNumErrors >= maxNumErrors) {
             return;
         }
@@ -96,8 +96,8 @@ public class UnreliableFilterInputStream extends FilterInputStream {
                 return;
             }
             currNumErrors++;
-            if (isFakeIOException) {
-                throw new FakeIOException("Fake IO error " + currNumErrors
+            if (isFakeIoException) {
+                throw new FakeIoException("Fake IO error " + currNumErrors
                                           + " on UnreliableFileInputStream: " + this);
             } else {
                 throw new RuntimeException("Injected runtime error " + currNumErrors
@@ -156,8 +156,8 @@ public class UnreliableFilterInputStream extends FilterInputStream {
         return position;
     }
 
-    public boolean isFakeIOException() {
-        return isFakeIOException;
+    public boolean isFakeIoException() {
+        return isFakeIoException;
     }
 
     public int getResetCount() {

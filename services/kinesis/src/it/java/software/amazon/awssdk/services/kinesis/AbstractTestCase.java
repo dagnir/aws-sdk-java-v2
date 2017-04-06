@@ -21,20 +21,22 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.test.AwsTestBase;
+import software.amazon.awssdk.util.AwsHostNameUtils;
 
 public class AbstractTestCase extends AwsTestBase {
-    protected static AmazonKinesisClient client;
-    private static final String DEFAULT_ENDPOINT = "https://kinesis.us-east-1.amazonaws.com";
+    protected static KinesisClient client;
 
     @BeforeClass
     public static void init() throws FileNotFoundException, IOException {
         setUpCredentials();
-        client = new AmazonKinesisClient(credentials);
-        setEndpoint();
+        KinesisClientBuilder builder = KinesisClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN);
+        setEndpoint(builder);
+        client = builder.build();
     }
 
-    private static void setEndpoint() throws IOException {
+    private static void setEndpoint(KinesisClientBuilder builder) throws IOException {
         File endpointOverrides = new File(
                 new File(System.getProperty("user.home")),
                 ".aws/awsEndpointOverrides.properties"
@@ -47,12 +49,9 @@ public class AbstractTestCase extends AwsTestBase {
             String endpoint = properties.getProperty("kinesis.endpoint");
 
             if (endpoint != null) {
-                client.setEndpoint(endpoint);
-                return;
+                String region = AwsHostNameUtils.parseRegion(endpoint, KinesisClient.ENDPOINT_PREFIX);
+                builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region));
             }
-
         }
-
-        client.setEndpoint(DEFAULT_ENDPOINT);
     }
 }

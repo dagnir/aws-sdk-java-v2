@@ -20,13 +20,13 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.services.identitymanagement.model.CreateLoginProfileRequest;
-import software.amazon.awssdk.services.identitymanagement.model.CreateLoginProfileResult;
-import software.amazon.awssdk.services.identitymanagement.model.DeleteLoginProfileRequest;
-import software.amazon.awssdk.services.identitymanagement.model.EntityAlreadyExistsException;
-import software.amazon.awssdk.services.identitymanagement.model.GetLoginProfileRequest;
-import software.amazon.awssdk.services.identitymanagement.model.GetLoginProfileResult;
-import software.amazon.awssdk.services.identitymanagement.model.NoSuchEntityException;
+import software.amazon.awssdk.services.iam.model.CreateLoginProfileRequest;
+import software.amazon.awssdk.services.iam.model.CreateLoginProfileResult;
+import software.amazon.awssdk.services.iam.model.DeleteLoginProfileRequest;
+import software.amazon.awssdk.services.iam.model.EntityAlreadyExistsException;
+import software.amazon.awssdk.services.iam.model.GetLoginProfileRequest;
+import software.amazon.awssdk.services.iam.model.GetLoginProfileResult;
+import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 
 /**
  * Integration tests of the login profile APIs of IAM.

@@ -29,44 +29,44 @@ abstract class AbstractSseHandler extends AbstractHandler implements ServerSideE
     protected abstract ServerSideEncryptionResult sseResult();
 
     @Override
-    public final String getSSEAlgorithm() {
+    public final String getSseAlgorithm() {
         ServerSideEncryptionResult result = sseResult();
-        return result == null ? null : result.getSSEAlgorithm();
+        return result == null ? null : result.getSseAlgorithm();
     }
 
     @Override
-    public final void setSSEAlgorithm(String serverSideEncryption) {
+    public final void setSseAlgorithm(String serverSideEncryption) {
         ServerSideEncryptionResult result = sseResult();
         if (result != null) {
-            result.setSSEAlgorithm(serverSideEncryption);
+            result.setSseAlgorithm(serverSideEncryption);
         }
     }
 
     @Override
-    public final String getSSECustomerAlgorithm() {
+    public final String getSseCustomerAlgorithm() {
         ServerSideEncryptionResult result = sseResult();
-        return result == null ? null : result.getSSECustomerAlgorithm();
+        return result == null ? null : result.getSseCustomerAlgorithm();
     }
 
     @Override
-    public final void setSSECustomerAlgorithm(String algorithm) {
+    public final void setSseCustomerAlgorithm(String algorithm) {
         ServerSideEncryptionResult result = sseResult();
         if (result != null) {
-            result.setSSECustomerAlgorithm(algorithm);
+            result.setSseCustomerAlgorithm(algorithm);
         }
     }
 
     @Override
-    public final String getSSECustomerKeyMd5() {
+    public final String getSseCustomerKeyMd5() {
         ServerSideEncryptionResult result = sseResult();
-        return result == null ? null : result.getSSECustomerKeyMd5();
+        return result == null ? null : result.getSseCustomerKeyMd5();
     }
 
     @Override
-    public final void setSSECustomerKeyMd5(String md5Digest) {
+    public final void setSseCustomerKeyMd5(String md5Digest) {
         ServerSideEncryptionResult result = sseResult();
         if (result != null) {
-            result.setSSECustomerKeyMd5(md5Digest);
+            result.setSseCustomerKeyMd5(md5Digest);
         }
     }
 }

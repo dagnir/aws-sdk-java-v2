@@ -27,13 +27,13 @@ public class LegacyClientConfigurationFactory {
 
     /**
      * Builds a {@link LegacyClientConfiguration} instance with the default configuration
-     * for the current client.  If the {@link SDKGlobalConfiguration#ENABLE_IN_REGION_OPTIMIZED_MODE}
+     * for the current client.  If the {@link SdkGlobalConfiguration#ENABLE_IN_REGION_OPTIMIZED_MODE}
      * system property has been set, in-region optimized configuration will be used.
      *
      * @return constructed {@link LegacyClientConfiguration} instance
      */
     public final LegacyClientConfiguration getConfig() {
-        return SDKGlobalConfiguration.isInRegionOptimizedModeEnabled()
+        return SdkGlobalConfiguration.isInRegionOptimizedModeEnabled()
                ? getInRegionOptimizedConfig() : getDefaultConfig();
     }
 

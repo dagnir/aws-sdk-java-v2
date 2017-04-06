@@ -28,12 +28,10 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthErrorsRequest;
+import software.amazon.awssdk.apigateway.mockservice.model.InternalServerErrorException;
 import software.amazon.awssdk.opensdk.retry.RetryPolicyBuilder;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
-import software.amazon.awssdk.services.apigateway.mockservice.MyService;
-import software.amazon.awssdk.services.apigateway.mockservice.MyServiceClientBuilder;
-import software.amazon.awssdk.services.apigateway.mockservice.model.GetNoauthErrorsRequest;
-import software.amazon.awssdk.services.apigateway.mockservice.model.InternalServerErrorException;
 
 public class RetryComponentTest {
 
@@ -51,7 +49,7 @@ public class RetryComponentTest {
     @Test
     public void defaultRetryPolicyUsed_ThrottlingErrorsRetriedUpToMax() {
         stubFor(any(URI).willReturn(aResponse().withStatus(429)));
-        MyService service = createServiceBuilder().build();
+        MyServiceClient service = createServiceBuilder().build();
 
         callApi(service);
 
@@ -61,7 +59,7 @@ public class RetryComponentTest {
     @Test
     public void customRetryPolicyUsed_NonRetryableStatusCodeNotRetried() {
         stubFor(any(URI).willReturn(aResponse().withStatus(413)));
-        MyService service = createServiceBuilder()
+        MyServiceClient service = createServiceBuilder()
                 .retryPolicy(CUSTOM_RETRY_POLICY)
                 .build();
 
@@ -73,7 +71,7 @@ public class RetryComponentTest {
     @Test
     public void customRetryPolicyUsed_RetryableStatusCodeRetriedUpToMax() {
         stubFor(any(URI).willReturn(aResponse().withStatus(404)));
-        MyService service = createServiceBuilder()
+        MyServiceClient service = createServiceBuilder()
                 .retryPolicy(CUSTOM_RETRY_POLICY)
                 .build();
 
@@ -87,7 +85,7 @@ public class RetryComponentTest {
         // The 500 status code is bound to the InternalErrorException class and it's marked
         // as retryable per the custom policy
         stubFor(any(URI).willReturn(aResponse().withStatus(500)));
-        MyService service = createServiceBuilder()
+        MyServiceClient service = createServiceBuilder()
                 .retryPolicy(CUSTOM_RETRY_POLICY)
                 .build();
 
@@ -96,7 +94,7 @@ public class RetryComponentTest {
         verify(4, anyRequestedFor(URI));
     }
 
-    private void callApi(MyService service) {
+    private void callApi(MyServiceClient service) {
         try {
             service.getNoauthErrors(new GetNoauthErrorsRequest()
                                             .errorType("InternalError"));
@@ -107,7 +105,7 @@ public class RetryComponentTest {
     }
 
     private MyServiceClientBuilder createServiceBuilder() {
-        return MyService.builder().endpoint("http://localhost:" + mockServer.port());
+        return MyServiceClient.builder().endpoint("http://localhost:" + mockServer.port());
     }
 
 }

@@ -38,9 +38,11 @@ public interface IRequestHandler2 {
      * return it from this method. Otherwise your changes will leak out to the user, who might reuse
      * the request object without realizing that it was modified as part of sending it the first
      * time.
+     * <p>
+     * Super big hack: This may not be called if the request is not an AmazonWebServiceRequest.
      *
      * @param request
-     *            the request passed in by the user
+     *            the request passed in by the user.
      * @return the (possibly different) request to marshal
      */
     AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request);

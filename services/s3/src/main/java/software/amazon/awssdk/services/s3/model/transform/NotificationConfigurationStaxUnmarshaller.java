@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.s3.model.transform;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import javax.xml.stream.events.XMLEvent;
-import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringStaxUnmarshaller;
+import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.StringUnmarshaller;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.services.s3.model.BucketNotificationConfiguration;
@@ -63,9 +63,9 @@ abstract class NotificationConfigurationStaxUnmarshaller<T extends NotificationC
                 if (handleXmlEvent(topicConfig, context, targetDepth)) {
                     // Do nothing, subclass has handled it
                 } else if (context.testExpression("Id", targetDepth)) {
-                    id = StringStaxUnmarshaller.getInstance().unmarshall(context);
+                    id = StringUnmarshaller.getInstance().unmarshall(context);
                 } else if (context.testExpression("Event", targetDepth)) {
-                    topicConfig.addEvent(StringStaxUnmarshaller.getInstance().unmarshall(context));
+                    topicConfig.addEvent(StringUnmarshaller.getInstance().unmarshall(context));
                 } else if (context.testExpression("Filter", targetDepth)) {
                     topicConfig.setFilter(FilterStaxUnmarshaller.getInstance().unmarshall(context));
                 }

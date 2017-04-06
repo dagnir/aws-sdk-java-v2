@@ -50,7 +50,7 @@ public class SecretKeyRegenerationTest {
         // would only have 32% chance of hitting such edge case 
         // so that's not good enough.
         for (int i = 0; i < 1000; i++) {
-            SecretKey secretKey = new MyS3CryptoModuleBase().generateCEK(
+            SecretKey secretKey = new MyS3CryptoModuleBase().generateCek(
                     new EncryptionMaterials(CryptoTestUtils.getTestKeyPair()), p);
             Assert.assertTrue(32 == secretKey.getEncoded().length);
         }

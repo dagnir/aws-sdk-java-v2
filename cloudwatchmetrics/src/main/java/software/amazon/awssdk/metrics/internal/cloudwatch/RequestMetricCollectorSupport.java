@@ -62,7 +62,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
     }
 
     private void collectMetrics0(Request<?> request, Response<?> response) {
-        AwsRequestMetrics arm = request.getAWSRequestMetrics();
+        AwsRequestMetrics arm = request.getAwsRequestMetrics();
         if (arm == null || !arm.isEnabled()) {
             return;
         }
