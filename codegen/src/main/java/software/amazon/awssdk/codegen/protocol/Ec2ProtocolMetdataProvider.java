@@ -15,10 +15,12 @@
 
 package software.amazon.awssdk.codegen.protocol;
 
+import software.amazon.awssdk.runtime.transform.LegacyErrorUnmarshaller;
+
 public class Ec2ProtocolMetdataProvider extends BaseXmlProtocolMetadataProvider {
 
     @Override
     public String getExceptionUnmarshallerImpl() {
-        return "LegacyErrorUnmarshaller";
+        return LegacyErrorUnmarshaller.class.getName();
     }
 }

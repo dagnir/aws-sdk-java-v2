@@ -28,10 +28,12 @@ import software.amazon.awssdk.codegen.poet.client.SyncClientInterface;
 
 public class SyncClientGeneratorTasks extends BaseGeneratorTasks {
 
+    private final GeneratorTaskParams generatorTaskParams;
     private final String baseDirectory;
 
     public SyncClientGeneratorTasks(GeneratorTaskParams dependencies) {
         super(dependencies);
+        this.generatorTaskParams = dependencies;
         this.baseDirectory = dependencies.getPathProvider().getBasePackageDirectory();
     }
 
@@ -44,7 +46,7 @@ public class SyncClientGeneratorTasks extends BaseGeneratorTasks {
     }
 
     private GeneratorTask createClientClassTask() throws IOException {
-        ClassSpec syncClientClass = new SyncClientClass(model);
+        ClassSpec syncClientClass = new SyncClientClass(generatorTaskParams);
         return new PoetGeneratorTask(baseDirectory, model.getFileHeader(), syncClientClass);
     }
 

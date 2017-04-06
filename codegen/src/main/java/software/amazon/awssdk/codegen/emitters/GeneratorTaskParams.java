@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.codegen.internal.Freemarker;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 /**
  * Parameters for generator tasks.
@@ -28,6 +29,7 @@ public class GeneratorTaskParams {
     private final Freemarker freemarker;
     private final IntermediateModel model;
     private final GeneratorPathProvider pathProvider;
+    private final PoetExtensions poetExtensions;
     private final Log log = LogFactory.getLog(GeneratorTaskParams.class);
 
     private GeneratorTaskParams(Freemarker freemarker,
@@ -36,6 +38,7 @@ public class GeneratorTaskParams {
         this.freemarker = freemarker;
         this.model = model;
         this.pathProvider = pathProvider;
+        this.poetExtensions = new PoetExtensions(model);
     }
 
     public static GeneratorTaskParams create(IntermediateModel model, String sourceDirectory, String testDirectory) {
@@ -62,6 +65,13 @@ public class GeneratorTaskParams {
      */
     public GeneratorPathProvider getPathProvider() {
         return pathProvider;
+    }
+
+    /**
+     * @return Extensions and convenience methods for Java Poet.
+     */
+    public PoetExtensions getPoetExtensions() {
+        return poetExtensions;
     }
 
     /**

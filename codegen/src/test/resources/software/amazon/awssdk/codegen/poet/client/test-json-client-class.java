@@ -3,6 +3,7 @@ package software.amazon.awssdk.services.acm;
 import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceResponse;
+import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.client.ClientHandler;
@@ -63,6 +64,7 @@ import software.amazon.awssdk.services.acm.model.transform.RequestCertificateReq
 import software.amazon.awssdk.services.acm.model.transform.RequestCertificateResultUnmarshaller;
 import software.amazon.awssdk.services.acm.model.transform.ResendValidationEmailRequestMarshaller;
 import software.amazon.awssdk.services.acm.model.transform.ResendValidationEmailResultUnmarshaller;
+import software.amazon.awssdk.services.acm.presign.AcmClientPresigners;
 
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
 public class DefaultACMClient implements ACMClient {
@@ -70,9 +72,12 @@ public class DefaultACMClient implements ACMClient {
 
     private final SdkJsonProtocolFactory protocolFactory;
 
+    private final AwsSyncClientParams clientParams;
+
     protected DefaultACMClient(AwsSyncClientParams clientParams) {
         this.clientHandler = new SdkClientHandler(new ClientHandlerParams().withClientParams(clientParams)
                 .withCalculateCrc32FromCompressedDataEnabled(false));
+        this.clientParams = clientParams;
         this.protocolFactory = init();
     }
 
@@ -276,6 +281,12 @@ public class DefaultACMClient implements ACMClient {
                 .addErrorMetadata(
                         new JsonErrorShapeMetadata().withErrorCode("LimitExceededException").withModeledClass(
                                 LimitExceededException.class)));
+    }
+
+    public AcmClientPresigners presigners() {
+        return new AcmClientPresigners(PresignerParams.builder().endpoint(clientParams.getEndpoint())
+                                               .credentialsProvider(clientParams.getCredentialsProvider()).signerProvider(clientParams.getSignerProvider())
+                                               .build());
     }
 
     @Override

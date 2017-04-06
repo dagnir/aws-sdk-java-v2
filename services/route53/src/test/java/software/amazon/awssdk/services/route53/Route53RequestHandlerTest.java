@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.route53;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.services.route53.internal.Route53IdRequestHandler;
@@ -30,7 +31,6 @@ import software.amazon.awssdk.services.route53.model.ListReusableDelegationSetsR
 
 /**
  * Unit test for request handler customization of delegation set id's
- *
  */
 public class Route53RequestHandlerTest {
 
@@ -98,7 +98,9 @@ public class Route53RequestHandlerTest {
         assertEquals(createResult.getDelegationSet().getId(), id);
     }
 
-    private void afterResponse(RequestHandler2 requestHandler2,Object responseObject) {
-        requestHandler2.afterResponse(null, new Response(responseObject, null));
+    private void afterResponse(RequestHandler2 requestHandler2, Object responseObject) {
+        AmazonWebServiceResponse<Object> resp = new AmazonWebServiceResponse<>();
+        resp.setResult(responseObject);
+        requestHandler2.afterResponse(null, new Response<>(resp, null));
     }
 }

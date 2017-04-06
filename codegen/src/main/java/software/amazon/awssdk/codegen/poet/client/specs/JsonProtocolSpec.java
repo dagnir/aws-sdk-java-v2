@@ -32,7 +32,7 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
-import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.protocol.json.JsonClientMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorResponseMetadata;
@@ -42,10 +42,10 @@ import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
 
 public class JsonProtocolSpec implements ProtocolSpec {
 
-    protected final String basePackage;
+    private final PoetExtensions poetExtensions;
 
-    public JsonProtocolSpec(String basePackage) {
-        this.basePackage = basePackage;
+    public JsonProtocolSpec(PoetExtensions poetExtensions) {
+        this.poetExtensions = poetExtensions;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
 
         ClassName baseException = ClassName.get(exceptionPath, model.getSdkModeledExceptionBaseClassName());
 
-        ClassName protocolFactory = ClassName.get(basePackage, model.getMetadata().getProtocolFactory());
+        ClassName protocolFactory = poetExtensions.getTopLevelClass(model.getMetadata().getProtocolFactory());
 
         MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("init")
                 .returns(protocolFactory)
@@ -88,9 +88,8 @@ public class JsonProtocolSpec implements ProtocolSpec {
     @Override
     public CodeBlock responseHandler(OperationModel opModel) {
         boolean isStreamingBody = opModel.getOutputShape() != null && opModel.getOutputShape().isHasStreamingMember();
-        ClassName unmarshaller = PoetUtils.getTransformClass(
-                basePackage, opModel.getReturnType().getReturnType() + "Unmarshaller");
-        ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
+        ClassName unmarshaller = poetExtensions.getTransformClass(opModel.getReturnType().getReturnType() + "Unmarshaller");
+        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
 
         return CodeBlock
                 .builder()
@@ -118,10 +117,9 @@ public class JsonProtocolSpec implements ProtocolSpec {
 
     @Override
     public CodeBlock executionHandler(OperationModel opModel) {
-        ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
-        ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
-        ClassName marshaller = PoetUtils.getTransformClass(
-                basePackage, opModel.getInputShape().getShapeName() + "Marshaller");
+        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
+        ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
+        ClassName marshaller = poetExtensions.getTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
 
         return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>().withMarshaller(new $T($N))" +
                 ".withResponseHandler($N).withErrorResponseHandler($N).withInput($L)).getResult();",
@@ -157,7 +155,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
                 .collect(Collectors.toList());
 
         return exceptions.stream().map(s -> {
-            ClassName exceptionClass = PoetUtils.getModelClass(basePackage, s.getShapeName());
+            ClassName exceptionClass = poetExtensions.getModelClass(s.getShapeName());
             return CodeBlock.builder().add(".addErrorMetadata(new $T().withErrorCode($S).withModeledClass($T.class))",
                     JsonErrorShapeMetadata.class,
                     s.getErrorCode(),
