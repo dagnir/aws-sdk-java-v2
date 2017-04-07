@@ -33,7 +33,7 @@ import software.amazon.awssdk.codegen.model.service.Acceptor;
 import software.amazon.awssdk.codegen.model.service.WaiterDefinition;
 import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 class AddWaiters {
 

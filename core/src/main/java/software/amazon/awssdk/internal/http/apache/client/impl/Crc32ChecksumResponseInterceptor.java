@@ -27,7 +27,7 @@ import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.Crc32ChecksumCalculatingInputStream;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 @SdkInternalApi
 public class Crc32ChecksumResponseInterceptor implements HttpResponseInterceptor {

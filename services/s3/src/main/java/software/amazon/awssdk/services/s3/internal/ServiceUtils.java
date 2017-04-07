@@ -16,8 +16,8 @@
 package software.amazon.awssdk.services.s3.internal;
 
 import static software.amazon.awssdk.services.s3.internal.Constants.MB;
-import static software.amazon.awssdk.util.IoUtils.closeQuietly;
 import static software.amazon.awssdk.util.StringUtils.UTF8;
+import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

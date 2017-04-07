@@ -30,7 +30,7 @@ import java.util.Arrays;
 import org.junit.Assert;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class SdkAsserts {
 

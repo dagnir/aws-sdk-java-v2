@@ -45,7 +45,7 @@ import software.amazon.awssdk.services.s3.model.StorageClass;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResult;
 import software.amazon.awssdk.test.util.RandomInputStream;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.awssdk.util.StringInputStream;
 
 /**

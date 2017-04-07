@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.internal.config.InternalConfig;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Utility class for accessing AWS SDK versioning information.

@@ -19,7 +19,7 @@ import static software.amazon.awssdk.SdkGlobalConfiguration.PROFILING_SYSTEM_PRO
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishRequestContentLength;
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishResponseContentLength;
-import static software.amazon.awssdk.util.IoUtils.closeQuietly;
+import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

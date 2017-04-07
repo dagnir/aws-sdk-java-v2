@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.ssm.model.GetDocumentRequest;
 import software.amazon.awssdk.services.ssm.model.GetDocumentResult;
 import software.amazon.awssdk.services.ssm.model.ListDocumentsRequest;
 import software.amazon.awssdk.services.ssm.model.ListDocumentsResult;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class SSMServiceIntegrationTest extends IntegrationTestBase {
 

@@ -28,9 +28,9 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.XpathUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Implementation of HttpResponseHandler that handles only error responses from Amazon Web Services.

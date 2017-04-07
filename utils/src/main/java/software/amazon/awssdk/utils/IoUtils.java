@@ -13,17 +13,16 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.util;
+package software.amazon.awssdk.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.internal.io.Releasable;
-
 
 /**
  * Utilities for IO operations.
@@ -56,7 +55,7 @@ public enum IoUtils {
      * Caller is responsible for closing the given input stream.
      */
     public static String toString(InputStream is) throws IOException {
-        return new String(toByteArray(is), StringUtils.UTF8);
+        return new String(toByteArray(is), StandardCharsets.UTF_8);
     }
 
     /**
@@ -74,30 +73,6 @@ public enum IoUtils {
                     logger.debug("Ignore failure in closing the Closeable", ex);
                 }
             }
-        }
-    }
-
-    /**
-     * Releases the given {@link Closeable} especially if it was an instance of
-     * {@link Releasable}.
-     * <p>
-     * For example, the creation of a <code>ResettableInputStream</code> would entail
-     * physically opening a file. If the opened file is meant to be closed only
-     * (in a finally block) by the very same code block that created it, then it
-     * is necessary that the release method must not be called while the
-     * execution is made in other stack frames.
-     *
-     * In such case, as other stack frames may inadvertently or indirectly call
-     * the close method of the stream, the creator of the stream would need to
-     * explicitly disable the accidental closing via
-     * <code>ResettableInputStream#disableClose()</code>, so that the release method
-     * becomes the only way to truly close the opened file.
-     */
-    public static void release(Closeable is, Log log) {
-        closeQuietly(is, log);
-        if (is instanceof Releasable) {
-            Releasable r = (Releasable) is;
-            r.release();
         }
     }
 

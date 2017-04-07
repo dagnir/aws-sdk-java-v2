@@ -19,7 +19,7 @@ import static software.amazon.awssdk.services.s3.AmazonS3EncryptionClient.USER_A
 import static software.amazon.awssdk.services.s3.model.CryptoMode.AuthenticatedEncryption;
 import static software.amazon.awssdk.services.s3.model.CryptoMode.StrictAuthenticatedEncryption;
 import static software.amazon.awssdk.services.s3.model.ExtraMaterialsDescription.NONE;
-import static software.amazon.awssdk.util.IoUtils.closeQuietly;
+import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;

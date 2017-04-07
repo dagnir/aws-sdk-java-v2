@@ -41,7 +41,7 @@ import software.amazon.awssdk.services.s3.transfer.TransferManagerConfiguration;
 import software.amazon.awssdk.services.s3.transfer.Upload;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.test.util.SdkAsserts;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class ServiceUtilsIntegrationTest extends S3IntegrationTestBase {
 

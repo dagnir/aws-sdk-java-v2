@@ -15,7 +15,10 @@
 
 package software.amazon.awssdk.internal.io;
 
+import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
+
 import java.io.Closeable;
+import org.apache.commons.logging.Log;
 
 /**
  * Used for releasing a resource.
@@ -53,5 +56,29 @@ public interface Releasable {
      * <code>ResettableInputStream#disableClose()</code>, so that the release method
      * becomes the only way to truly close the opened file.
      */
-    public void release();
+    void release();
+
+    /**
+     * Releases the given {@link Closeable} especially if it was an instance of
+     * {@link Releasable}.
+     * <p>
+     * For example, the creation of a <code>ResettableInputStream</code> would entail
+     * physically opening a file. If the opened file is meant to be closed only
+     * (in a finally block) by the very same code block that created it, then it
+     * is necessary that the release method must not be called while the
+     * execution is made in other stack frames.
+     *
+     * In such case, as other stack frames may inadvertently or indirectly call
+     * the close method of the stream, the creator of the stream would need to
+     * explicitly disable the accidental closing via
+     * <code>ResettableInputStream#disableClose()</code>, so that the release method
+     * becomes the only way to truly close the opened file.
+     */
+    static void release(Closeable is, Log log) {
+        closeQuietly(is, log);
+        if (is instanceof Releasable) {
+            Releasable r = (Releasable) is;
+            r.release();
+        }
+    }
 }

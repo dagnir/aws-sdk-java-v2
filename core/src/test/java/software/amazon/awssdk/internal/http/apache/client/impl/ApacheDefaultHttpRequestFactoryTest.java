@@ -33,15 +33,15 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.internal.http.apache.request.impl.ApacheHttpRequestFactory;
 import software.amazon.awssdk.internal.http.request.HttpRequestFactory;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringInputStream;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class ApacheDefaultHttpRequestFactoryTest {
 

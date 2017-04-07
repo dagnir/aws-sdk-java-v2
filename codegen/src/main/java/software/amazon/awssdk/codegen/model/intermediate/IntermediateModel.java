@@ -25,8 +25,8 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.ValidationUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class IntermediateModel {
 
