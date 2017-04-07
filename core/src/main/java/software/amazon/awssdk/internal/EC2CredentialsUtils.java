@@ -28,8 +28,8 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.net.ConnectionUtils;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryParameters;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.json.Jackson;
+import software.amazon.awssdk.utils.IoUtils;
 
 @SdkInternalApi
 public final class EC2CredentialsUtils {

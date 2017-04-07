@@ -25,7 +25,7 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.partitions.model.Partitions;
 import software.amazon.awssdk.regions.RegionMetadata;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Loads all the partition files into memory.

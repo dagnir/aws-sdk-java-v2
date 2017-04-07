@@ -27,7 +27,7 @@ import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
 import software.amazon.awssdk.test.util.InputStreamUtils;
 import software.amazon.awssdk.test.util.SdkAsserts;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public abstract class AwsTestBase {
     /**

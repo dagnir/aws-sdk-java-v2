@@ -21,7 +21,7 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.protocol.json.JsonContent;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.ion.IonReader;
 import software.amazon.ion.IonSystem;
 import software.amazon.ion.IonType;

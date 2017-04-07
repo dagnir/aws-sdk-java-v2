@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static software.amazon.awssdk.util.IoUtils.release;
+import static software.amazon.awssdk.internal.io.Releasable.release;
 
 import java.io.File;
 import java.io.InputStream;

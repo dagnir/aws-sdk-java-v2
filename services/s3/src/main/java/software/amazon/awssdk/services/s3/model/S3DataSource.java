@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.model;
 
-import static software.amazon.awssdk.util.IoUtils.release;
+import static software.amazon.awssdk.internal.io.Releasable.release;
 
 import java.io.File;
 import java.io.InputStream;

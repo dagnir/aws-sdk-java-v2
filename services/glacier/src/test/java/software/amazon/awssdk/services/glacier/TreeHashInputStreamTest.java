@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;
 import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.BinaryUtils;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Tests of the TreeHashInputStream class.

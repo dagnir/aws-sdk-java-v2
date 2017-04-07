@@ -18,15 +18,13 @@ package software.amazon.awssdk.regions;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.internal.config.Builder;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 
 /**

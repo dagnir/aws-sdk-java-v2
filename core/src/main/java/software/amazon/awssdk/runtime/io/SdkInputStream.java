@@ -21,8 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.internal.io.Releasable;
 import software.amazon.awssdk.runtime.MetricAware;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.SdkRuntime;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Base class for AWS Java SDK specific {@link InputStream}.

@@ -20,16 +20,14 @@ import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static software.amazon.awssdk.codegen.poet.PoetUtils.buildJavaFile;
 
 import java.io.IOException;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.ComparisonFailure;
-
 import software.amazon.awssdk.codegen.emitters.ContentProcessor;
 import software.amazon.awssdk.codegen.emitters.JavaCodeFormatter;
 import software.amazon.awssdk.codegen.emitters.UnusedImportRemover;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public final class PoetMatchers {
 

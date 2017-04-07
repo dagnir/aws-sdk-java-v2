@@ -33,7 +33,7 @@ import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Response handler for S3 error responses. S3 error responses are different

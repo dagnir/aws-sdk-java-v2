@@ -17,8 +17,6 @@ package software.amazon.awssdk.util;
 
 import static software.amazon.awssdk.util.BinaryUtils.copyBytesFrom;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.Collator;
@@ -32,7 +30,6 @@ import java.util.Locale;
 @Deprecated
 public class StringUtils {
 
-    public static final String COMMA_SEPARATOR = ",";
     private static final String DEFAULT_ENCODING = "UTF-8";
     public static final Charset UTF8 = Charset.forName(DEFAULT_ENCODING);
 
@@ -46,16 +43,8 @@ public class StringUtils {
     private static final char CHAR_CARRIAGE_RETURN = '\r';
     private static final char CHAR_FORM_FEED = '\f';
 
-    public static Integer toInteger(StringBuilder value) {
-        return Integer.parseInt(value.toString());
-    }
-
     public static String toString(StringBuilder value) {
         return value.toString();
-    }
-
-    public static Boolean toBoolean(StringBuilder value) {
-        return Boolean.getBoolean(value.toString());
     }
 
     public static String fromInteger(Integer value) {
@@ -72,23 +61,6 @@ public class StringUtils {
 
     public static String fromBoolean(Boolean value) {
         return Boolean.toString(value);
-    }
-
-    public static String fromBigInteger(BigInteger value) {
-        return value.toString();
-    }
-
-    public static String fromBigDecimal(BigDecimal value) {
-        return value.toString();
-    }
-
-
-    public static BigInteger toBigInteger(String s) {
-        return new BigInteger(s);
-    }
-
-    public static BigDecimal toBigDecimal(String s) {
-        return new BigDecimal(s);
     }
 
     public static String fromFloat(Float value) {

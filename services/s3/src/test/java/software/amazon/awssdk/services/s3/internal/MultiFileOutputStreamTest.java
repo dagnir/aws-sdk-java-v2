@@ -27,7 +27,7 @@ import java.util.Random;
 import org.junit.Test;
 import software.amazon.awssdk.services.s3.UploadObjectObserver;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class MultiFileOutputStreamTest {
 

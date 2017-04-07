@@ -46,7 +46,7 @@ import software.amazon.awssdk.services.s3.transfer.internal.CompleteMultipartDow
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadImpl;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadMonitor;
 import software.amazon.awssdk.services.s3.transfer.internal.DownloadPartCallable;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 @SdkInternalApi
 final class DownloadCallable implements Callable<File> {
@@ -90,7 +90,7 @@ final class DownloadCallable implements Callable<File> {
         this.timeout = timeout;
         this.timedExecutor = timedExecutor;
         this.executor = executor;
-        this.futureFiles = new ArrayList<Future<File>>();
+        this.futureFiles = new ArrayList<>();
         this.lastFullyMergedPartNumber = lastFullyDownloadedPartNumber;
         this.isDownloadParallel = isDownloadParallel;
         this.resumeOnRetry = resumeOnRetry;
@@ -116,16 +116,14 @@ final class DownloadCallable implements Callable<File> {
             latch.await();
 
             if (isTimeoutEnabled()) {
-                timedExecutor.schedule(new Runnable() {
-                    public void run() {
-                        try {
-                            if (download.getState() != TransferState.Completed) {
-                                download.abort();
-                            }
-                        } catch (Exception e) {
-                            throw new SdkClientException(
-                                    "Unable to abort download after timeout", e);
+                timedExecutor.schedule(() -> {
+                    try {
+                        if (download.getState() != TransferState.Completed) {
+                            download.abort();
                         }
+                    } catch (Exception e) {
+                        throw new SdkClientException(
+                                "Unable to abort download after timeout", e);
                     }
                 }, timeout, TimeUnit.MILLISECONDS);
             }

@@ -34,8 +34,8 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.cloudfront.auth.Pem;
 import software.amazon.awssdk.services.cloudfront.auth.Rsa;
 import software.amazon.awssdk.util.Base64;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class SignerUtils {
 

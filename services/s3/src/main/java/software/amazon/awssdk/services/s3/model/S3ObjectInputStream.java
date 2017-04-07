@@ -25,7 +25,7 @@ import software.amazon.awssdk.metrics.MetricFilterInputStream;
 import software.amazon.awssdk.runtime.MetricAware;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.s3.metrics.S3ServiceMetric;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Input stream representing the content of an {@link S3Object}. In addition to
