@@ -13,13 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.util;
+package software.amazon.awssdk.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static software.amazon.awssdk.util.FunctionalUtils.invokeSafely;
-import static software.amazon.awssdk.util.FunctionalUtils.safeConsumer;
-import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
+import static software.amazon.awssdk.utils.FunctionalUtils.safeConsumer;
+import static software.amazon.awssdk.utils.FunctionalUtils.safeFunction;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -73,6 +73,7 @@ public class FunctionalUtilsTest {
     }
 
     @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void exceptionsForFunctionsAreConverted() {
         assertThatExceptionOfType(RuntimeException.class)
             .isThrownBy(() -> Stream.of(THROW_EXCEPTION).map(safeFunction(this::functionMethodWithChecked)).findFirst())

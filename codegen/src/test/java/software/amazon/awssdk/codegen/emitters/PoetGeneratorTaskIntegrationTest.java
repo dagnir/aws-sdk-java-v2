@@ -20,7 +20,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.CombinableMatcher.both;
-import static software.amazon.awssdk.util.FunctionalUtils.safeConsumer;
+import static software.amazon.awssdk.utils.FunctionalUtils.safeConsumer;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
