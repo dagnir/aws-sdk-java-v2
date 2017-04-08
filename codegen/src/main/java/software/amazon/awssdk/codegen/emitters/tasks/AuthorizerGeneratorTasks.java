@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.codegen.emitters.tasks;
 
-import static software.amazon.awssdk.util.FunctionalUtils.safeFunction;
+import static software.amazon.awssdk.utils.FunctionalUtils.safeFunction;
 
 import java.util.List;
 import java.util.Map;
