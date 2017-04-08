@@ -39,7 +39,9 @@ import utils.http.WireMockTestBase;
 public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase {
 
     private static final String RESOURCE = "/some-path";
-    private final AmazonHttpClient client = new AmazonHttpClient(new LegacyClientConfiguration());
+    private final AmazonHttpClient client = AmazonHttpClient.builder()
+            .clientConfiguration(new LegacyClientConfiguration())
+            .build();
     private final DefaultErrorResponseHandler sut = new DefaultErrorResponseHandler(new ArrayList<>());
     private LogCaptor logCaptor = new LogCaptor.DefaultLogCaptor(Level.INFO);
 
@@ -72,7 +74,7 @@ public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase
         String requestId = RandomStringUtils.randomAlphanumeric(10);
 
         stubFor(get(urlPathEqualTo(RESOURCE)).willReturn(aResponse().withStatus(418)
-                                                                    .withHeader(X_AMZN_REQUEST_ID_HEADER, requestId)));
+                                                                 .withHeader(X_AMZN_REQUEST_ID_HEADER, requestId)));
 
         executeRequest();
 

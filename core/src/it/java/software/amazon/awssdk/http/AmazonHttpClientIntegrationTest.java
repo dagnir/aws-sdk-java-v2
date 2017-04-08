@@ -68,7 +68,9 @@ public class AmazonHttpClientIntegrationTest extends WireMockTestBase {
         Request<?> request = newRequest(OPERATION);
         request.setHttpMethod(HttpMethodName.OPTIONS);
 
-        AmazonHttpClient sut = new AmazonHttpClient(new LegacyClientConfiguration());
+        AmazonHttpClient sut = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration())
+                .build();
         sut.requestExecutionBuilder().request(request).execute();
 
         verify(optionsRequestedFor(urlPathEqualTo(OPERATION)));
@@ -76,6 +78,8 @@ public class AmazonHttpClientIntegrationTest extends WireMockTestBase {
 
     private AmazonHttpClient createClient(String headerName, String headerValue) {
         LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration().withHeader(headerName, headerValue);
-        return new AmazonHttpClient(clientConfiguration);
+        return AmazonHttpClient.builder()
+                .clientConfiguration(clientConfiguration)
+                .build();
     }
 }

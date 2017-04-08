@@ -153,18 +153,24 @@ public abstract class AmazonWebServiceClient {
                                      RequestMetricCollector requestMetricCollector,
                                      boolean disableStrictHostNameVerification) {
         this.clientConfiguration = clientConfiguration;
-        requestHandler2s = new CopyOnWriteArrayList<RequestHandler2>();
-        client = new AmazonHttpClient(clientConfiguration,
-                                      requestMetricCollector, disableStrictHostNameVerification,
-                                      calculateCrc32FromCompressedData());
+        requestHandler2s = new CopyOnWriteArrayList<>();
+        client = AmazonHttpClient.builder()
+                .clientConfiguration(clientConfiguration)
+                .requestMetricCollector(requestMetricCollector)
+                .useBrowserCompatibleHostNameVerifier(disableStrictHostNameVerification)
+                .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
+                .build();
     }
 
     protected AmazonWebServiceClient(AwsSyncClientParams clientParams) {
         this.clientConfiguration = clientParams.getClientConfiguration();
         requestHandler2s = clientParams.getRequestHandlers();
-        client = new AmazonHttpClient(clientConfiguration, clientParams.getRequestMetricCollector(),
-                                      !useStrictHostNameVerification(),
-                                      calculateCrc32FromCompressedData());
+        client = AmazonHttpClient.builder()
+                .clientConfiguration(clientConfiguration)
+                .requestMetricCollector(clientParams.getRequestMetricCollector())
+                .useBrowserCompatibleHostNameVerifier(!useStrictHostNameVerification())
+                .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
+                .build();
     }
 
     /* Check the profiling system property and return true if set. */

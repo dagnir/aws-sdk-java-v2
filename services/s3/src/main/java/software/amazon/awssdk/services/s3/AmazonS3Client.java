@@ -3563,11 +3563,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
     }
 
     @Override
-    public S3ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
-        return (S3ResponseMetadata) client.getResponseMetadataForRequest(request);
-    }
-
-    @Override
     public void restoreObject(RestoreObjectRequest restoreObjectRequest)
             throws AmazonServiceException {
         String bucketName = restoreObjectRequest.getBucketName();

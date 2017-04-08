@@ -18,14 +18,12 @@ package software.amazon.awssdk.http;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -63,15 +61,15 @@ import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicyAdapter;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.util.CapacityManager;
-import software.amazon.awssdk.util.MetadataCache;
-import software.amazon.awssdk.util.NullResponseMetadataCache;
-import software.amazon.awssdk.util.ResponseMetadataCache;
 
 @ThreadSafe
 @SdkProtectedApi
 public class AmazonHttpClient implements AutoCloseable {
+
     public static final String HEADER_USER_AGENT = "User-Agent";
+
     public static final String HEADER_SDK_TRANSACTION_ID = "amz-sdk-invocation-id";
+
     /**
      * Logger providing detailed information on requests/responses. Users can enable this logger to
      * get access to AWS request IDs for responses, individual requests and parameters sent to AWS,
@@ -100,27 +98,11 @@ public class AmazonHttpClient implements AutoCloseable {
     private static final int THROTTLED_RETRIES = 100;
 
     /**
-     * Client configuration options, such as proxy httpClientSettings, max retries, etc.
-     */
-    private final LegacyClientConfiguration config;
-    private final RetryPolicy retryPolicy;
-    /**
-     * Client configuration options, such as proxy httpClientSettings, max retries, etc.
-     */
-    private final HttpClientSettings httpClientSettings;
-    /**
-     * Cache of metadata for recently executed requests for diagnostic purposes.
-     */
-    private final MetadataCache responseMetadataCache;
-    /**
-     * Retry capacity manager, used to manage throttled retry resource.
-     */
-    private final CapacityManager retryCapacity;
-    /**
      * Timer to enforce timeouts on the whole execution of the request (request handlers, retries,
      * backoff strategy, unmarshalling, etc).
      */
     private final ClientExecutionTimer clientExecutionTimer;
+
     /**
      * A request metric collector used specifically for this httpClientSettings client; or null if
      * there is none. This collector, if specified, always takes precedence over the one specified
@@ -129,147 +111,19 @@ public class AmazonHttpClient implements AutoCloseable {
      * @see AwsSdkMetrics
      */
     private final RequestMetricCollector requestMetricCollector;
+
     /**
      * Internal client for sending HTTP requests.
      */
-    private SdkHttpClient sdkHttpClient;
+    private final SdkHttpClient sdkHttpClient;
 
-    // TODO make final, constructors are confusing
-    private HttpClientDependencies httpClientDependencies;
+    private final HttpClientDependencies httpClientDependencies;
 
-    /**
-     * Constructs a new AWS client using the specified client configuration options (ex: max retry
-     * attempts, proxy httpClientSettings, etc).
-     *
-     * @param config Configuration options specifying how this client will communicate with AWS (ex:
-     *               proxy httpClientSettings, retry count, etc.).
-     */
-    public AmazonHttpClient(LegacyClientConfiguration config) {
-        this(config, null);
-    }
-
-    /**
-     * Constructs a new AWS client using the specified client configuration options (ex: max retry
-     * attempts, proxy httpClientSettings, etc), and request metric collector.
-     *
-     * @param config                 Configuration options specifying how this client will
-     *                               communicate with AWS (ex: proxy httpClientSettings, retry
-     *                               count, etc.).
-     * @param requestMetricCollector client specific request metric collector, which takes
-     *                               precedence over the one at the AWS SDK level; or null if there
-     *                               is none.
-     */
-    public AmazonHttpClient(LegacyClientConfiguration config,
-                            RequestMetricCollector requestMetricCollector) {
-        this(config, requestMetricCollector, false);
-    }
-
-    /**
-     * Constructs a new AWS client using the specified client configuration options (ex: max retry
-     * attempts, proxy httpClientSettings, etc), and request metric collector.
-     *
-     * @param config                 Configuration options specifying how this client will
-     *                               communicate with AWS (ex: proxy httpClientSettings, retry
-     *                               count, etc.).
-     * @param requestMetricCollector client specific request metric collector, which takes
-     *                               precedence over the one at the AWS SDK level; or null if there
-     *                               is none.
-     */
-    public AmazonHttpClient(LegacyClientConfiguration config,
-                            RequestMetricCollector requestMetricCollector,
-                            boolean useBrowserCompatibleHostNameVerifier) {
-        this(config, requestMetricCollector, useBrowserCompatibleHostNameVerifier, false);
-    }
-
-    /**
-     * Constructs a new AWS client using the specified client configuration options (ex: max retry
-     * attempts, proxy httpClientSettings, etc), and request metric collector.
-     *
-     * @param config                           Configuration options specifying how this client will
-     *                                         communicate with AWS (ex: proxy httpClientSettings,
-     *                                         retry count, etc.).
-     * @param requestMetricCollector           client specific request metric collector, which takes
-     *                                         precedence over the one at the AWS SDK level; or null
-     *                                         if there is none.
-     * @param calculateCrc32FromCompressedData The flag indicating whether the CRC32 checksum is
-     *                                         calculated from compressed data or not. It is only
-     *                                         applicable when the header "x-amz-crc32" is set in
-     *                                         the response.
-     */
-    public AmazonHttpClient(LegacyClientConfiguration config,
-                            RequestMetricCollector requestMetricCollector,
-                            boolean useBrowserCompatibleHostNameVerifier,
-                            boolean calculateCrc32FromCompressedData) {
-        this(config,
-             null,
-             requestMetricCollector,
-             useBrowserCompatibleHostNameVerifier,
-             calculateCrc32FromCompressedData);
-    }
-
-    private AmazonHttpClient(LegacyClientConfiguration config,
-                             RetryPolicy retryPolicy,
-                             RequestMetricCollector requestMetricCollector,
-                             boolean useBrowserCompatibleHostNameVerifier,
-                             boolean calculateCrc32FromCompressedData) {
-        this(config,
-             retryPolicy,
-             requestMetricCollector,
-             HttpClientSettings.adapt(config, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData));
-        this.sdkHttpClient = new ApacheHttpClientFactory().create(httpClientSettings);
-
-        this.httpClientDependencies = HttpClientDependencies.builder()
-                .clientExecutionTimer(clientExecutionTimer)
-                .config(this.config)
-                .retryCapacity(retryCapacity)
-                .httpClientSettings(httpClientSettings)
-                .retryPolicy(this.retryPolicy)
-                .sdkHttpClient(sdkHttpClient)
-                .build();
-    }
-
-    private AmazonHttpClient(LegacyClientConfiguration config,
-                             RetryPolicy retryPolicy,
-                             RequestMetricCollector requestMetricCollector,
-                             boolean useBrowserCompatibleHostNameVerifier,
-                             boolean calculateCrc32FromCompressedData,
-                             SdkHttpClient sdkHttpClient) {
-        this(config,
-             retryPolicy,
-             requestMetricCollector,
-             HttpClientSettings.adapt(config, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData));
-        this.sdkHttpClient = sdkHttpClient;
-
-        this.httpClientDependencies = HttpClientDependencies.builder()
-                .clientExecutionTimer(clientExecutionTimer)
-                .config(this.config)
-                .retryCapacity(retryCapacity)
-                .httpClientSettings(httpClientSettings)
-                .retryPolicy(this.retryPolicy)
-                .sdkHttpClient(sdkHttpClient)
-                .build();
-    }
-
-    private AmazonHttpClient(LegacyClientConfiguration clientConfig,
-                             RetryPolicy retryPolicy,
-                             RequestMetricCollector requestMetricCollector,
-                             HttpClientSettings httpClientSettings) {
-        this.config = clientConfig;
-        this.retryPolicy =
-                retryPolicy == null ? new RetryPolicyAdapter(clientConfig.getRetryPolicy(), clientConfig) : retryPolicy;
-        this.httpClientSettings = httpClientSettings;
+    private AmazonHttpClient(HttpClientDependencies httpClientDependencies, RequestMetricCollector requestMetricCollector) {
+        this.httpClientDependencies = httpClientDependencies;
+        this.clientExecutionTimer = httpClientDependencies.clientExecutionTimer();
+        this.sdkHttpClient = httpClientDependencies.sdkHttpClient();
         this.requestMetricCollector = requestMetricCollector;
-        this.responseMetadataCache =
-                clientConfig.getCacheResponseMetadata() ?
-                        new ResponseMetadataCache(clientConfig.getResponseMetadataCacheSize()) :
-                        new NullResponseMetadataCache();
-        this.clientExecutionTimer = new ClientExecutionTimer();
-
-        // When enabled, total retry capacity is computed based on retry cost
-        // and desired number of retries.
-        int throttledRetryMaxCapacity = clientConfig.useThrottledRetries()
-                ? THROTTLED_RETRY_COST * THROTTLED_RETRIES : -1;
-        this.retryCapacity = new CapacityManager(throttledRetryMaxCapacity);
     }
 
     public static Builder builder() {
@@ -305,21 +159,6 @@ public class AmazonHttpClient implements AutoCloseable {
     @SdkTestInternalApi
     public ClientExecutionTimer getClientExecutionTimer() {
         return this.clientExecutionTimer;
-    }
-
-    /**
-     * Returns additional response metadata for an executed request. Response metadata isn't
-     * considered part of the standard results returned by an operation, so it's accessed instead
-     * through this diagnostic interface. Response metadata is typically used for troubleshooting
-     * issues with AWS support staff when services aren't acting as expected.
-     *
-     * @param request A previously executed AmazonWebServiceRequest object, whose response metadata
-     *                is desired.
-     * @return The response metadata for the specified request, otherwise null if there is no
-     * response metadata available for the request
-     */
-    public ResponseMetadata getResponseMetadataForRequest(AmazonWebServiceRequest request) {
-        return responseMetadataCache.get(request);
     }
 
     /**
@@ -375,11 +214,9 @@ public class AmazonHttpClient implements AutoCloseable {
                                    HttpResponseHandler<AmazonWebServiceResponse<T>> responseHandler,
                                    HttpResponseHandler<AmazonServiceException> errorResponseHandler,
                                    ExecutionContext executionContext) {
-        HttpResponseHandler<T> adaptedRespHandler = new AwsResponseHandlerAdapter<T>(
+        HttpResponseHandler<T> adaptedRespHandler = new AwsResponseHandlerAdapter<>(
                 getNonNullResponseHandler(responseHandler),
-                request,
-                executionContext.getAwsRequestMetrics(),
-                responseMetadataCache);
+                executionContext.getAwsRequestMetrics());
         return requestExecutionBuilder()
                 .request(request)
                 .requestConfig(new AmazonWebServiceRequestAdapter(request.getOriginalRequest()))
@@ -522,19 +359,33 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         public AmazonHttpClient build() {
-            return new AmazonHttpClient(clientConfig,
-                                        retryPolicy,
-                                        requestMetricCollector,
-                                        useBrowserCompatibleHostNameVerifier,
-                                        calculateCrc32FromCompressedData,
-                                        resolveSdkHttpClient());
+            HttpClientSettings httpClientSettings = HttpClientSettings
+                    .adapt(clientConfig, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData);
+            return new AmazonHttpClient(HttpClientDependencies.builder()
+                                                .clientExecutionTimer(new ClientExecutionTimer())
+                                                .config(clientConfig)
+                                                .retryCapacity(createCapacityManager())
+                                                .httpClientSettings(httpClientSettings)
+                                                .retryPolicy(resolveRetryPolicy())
+                                                .sdkHttpClient(resolveSdkHttpClient(httpClientSettings))
+                                                .build(),
+                                        requestMetricCollector);
         }
 
-        private SdkHttpClient resolveSdkHttpClient() {
-            return sdkHttpClient != null ? sdkHttpClient :
-                    new ApacheHttpClientFactory().create(HttpClientSettings.adapt(clientConfig,
-                                                                                  useBrowserCompatibleHostNameVerifier,
-                                                                                  calculateCrc32FromCompressedData));
+        private CapacityManager createCapacityManager() {
+            // When enabled, total retry capacity is computed based on retry cost
+            // and desired number of retries.
+            int throttledRetryMaxCapacity = clientConfig.useThrottledRetries()
+                    ? THROTTLED_RETRY_COST * THROTTLED_RETRIES : -1;
+            return new CapacityManager(throttledRetryMaxCapacity);
+        }
+
+        private RetryPolicy resolveRetryPolicy() {
+            return retryPolicy == null ? new RetryPolicyAdapter(clientConfig.getRetryPolicy(), clientConfig) : retryPolicy;
+        }
+
+        private SdkHttpClient resolveSdkHttpClient(HttpClientSettings httpClientSettings) {
+            return sdkHttpClient != null ? sdkHttpClient : new ApacheHttpClientFactory().create(httpClientSettings);
         }
     }
 

@@ -4461,25 +4461,6 @@ public interface AmazonS3 extends S3DirectSpi {
             throws SdkClientException, AmazonServiceException;
 
     /**
-     * Gets additional metadata for a previously executed successful request.
-     * The returned metadata is typically used for debugging issues when a
-     * service isn't acting as expected. This data isn't considered part of the
-     * result data returned by an operation; as so, it's available through this
-     * separate diagnostic interface.
-     * <p>
-     * Response metadata is only cached for a limited period of time. Use this
-     * method to retrieve the response metadata as soon as possible after
-     * executing a request.
-     *
-     * @param request
-     *            The originally executed request.
-     *
-     * @return The response metadata for the specified request, or
-     *         <code>null</code> if none is available.
-     */
-    public S3ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request);
-
-    /**
      * Restore an object, which was transitioned to Amazon Glacier from Amazon
      * S3 when it was expired, into Amazon S3 again. This copy is by nature temporary
      * and is always stored as RRS in Amazon S3. The customer will be able to set /

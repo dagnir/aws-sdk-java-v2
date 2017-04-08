@@ -58,7 +58,9 @@ public class SdkTransactionIdInHeaderTest extends WireMockTestBase {
     }
 
     private void executeRequest() throws Exception {
-        AmazonHttpClient httpClient = new AmazonHttpClient(new LegacyClientConfiguration());
+        AmazonHttpClient httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration())
+                .build();
         try {
             httpClient.requestExecutionBuilder()
                     .request(newGetRequest(RESOURCE_PATH))

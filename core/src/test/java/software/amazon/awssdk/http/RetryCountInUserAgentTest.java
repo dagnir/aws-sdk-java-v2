@@ -36,7 +36,7 @@ import utils.retry.SimpleArrayBackoffStrategy;
 
 public class RetryCountInUserAgentTest extends WireMockTestBase {
 
-    private static final int[] BACKOFF_VALUES = new int[] {0, 10, 20};
+    private static final int[] BACKOFF_VALUES = new int[]{0, 10, 20};
 
     private static final String RESOURCE_PATH = "/user-agent/";
 
@@ -67,12 +67,13 @@ public class RetryCountInUserAgentTest extends WireMockTestBase {
     }
 
     private void executeRequest() throws Exception {
-        AmazonHttpClient httpClient = new AmazonHttpClient(
-                new LegacyClientConfiguration().withRetryPolicy(buildRetryPolicy())
-                                               .withThrottledRetries(true));
+        AmazonHttpClient httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration().withRetryPolicy(buildRetryPolicy())
+                                             .withThrottledRetries(true))
+                .build();
         try {
             httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler())
-                      .execute();
+                    .execute();
             fail("Expected exception");
         } catch (AmazonServiceException expected) {
             // Ignored or expected.

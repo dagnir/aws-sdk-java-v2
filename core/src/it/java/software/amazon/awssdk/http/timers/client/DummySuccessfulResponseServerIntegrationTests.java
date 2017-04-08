@@ -15,30 +15,20 @@
 
 package software.amazon.awssdk.http.timers.client;
 
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils.buildRequestHandlerList;
-import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.interruptCurrentThreadAfterDelay;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
 
-import java.io.IOException;
 import java.util.List;
-import org.apache.http.pool.ConnPoolControl;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
-import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils;
 import software.amazon.awssdk.internal.http.request.SlowRequestHandler;
 import software.amazon.awssdk.internal.http.response.DummyResponseHandler;
 import software.amazon.awssdk.internal.http.response.UnresponsiveResponseHandler;
@@ -57,17 +47,18 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowResponseHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = new AmazonHttpClient(
-                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
-
+        httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
+                .build();
         requestBuilder().execute(new UnresponsiveResponseHandler());
     }
 
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowAfterResponseRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = new AmazonHttpClient(
-                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
+        httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
+                .build();
 
         List<RequestHandler2> requestHandlers = buildRequestHandlerList(
                 new SlowRequestHandler().withAfterResponseWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
@@ -78,8 +69,9 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowBeforeRequestRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = new AmazonHttpClient(
-                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
+        httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
+                .build();
 
         List<RequestHandler2> requestHandlers = buildRequestHandlerList(
                 new SlowRequestHandler().withBeforeRequestWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
