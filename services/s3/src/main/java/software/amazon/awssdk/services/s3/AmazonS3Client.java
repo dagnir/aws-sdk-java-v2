@@ -299,13 +299,13 @@ import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.CredentialUtils;
 import software.amazon.awssdk.util.DateUtils;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.LengthCheckInputStream;
 import software.amazon.awssdk.util.Md5Utils;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.ServiceClientHolderInputStream;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * <p>

@@ -22,10 +22,10 @@ import static software.amazon.awssdk.services.s3.model.InstructionFileId.DEFAULT
 import static software.amazon.awssdk.services.s3.model.InstructionFileId.DOT;
 import static software.amazon.awssdk.services.s3.model.S3DataSource.Utils.cleanupDataSource;
 import static software.amazon.awssdk.util.BinaryUtils.copyAllBytesFrom;
-import static software.amazon.awssdk.util.IoUtils.closeQuietly;
 import static software.amazon.awssdk.util.LengthCheckInputStream.EXCLUDE_SKIPPED_BYTES;
 import static software.amazon.awssdk.util.StringUtils.UTF8;
 import static software.amazon.awssdk.util.Throwables.failure;
+import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -50,7 +50,6 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.runtime.io.ReleasableInputStream;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
-import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyRequest;
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyResult;
@@ -83,9 +82,9 @@ import software.amazon.awssdk.services.s3.model.S3ObjectId;
 import software.amazon.awssdk.services.s3.model.UploadObjectRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResult;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.LengthCheckInputStream;
 import software.amazon.awssdk.util.json.Jackson;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Common implementation for different S3 cryptographic modules.

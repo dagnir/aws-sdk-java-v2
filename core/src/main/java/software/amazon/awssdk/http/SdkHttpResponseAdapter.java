@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.http;
 
-import static software.amazon.awssdk.util.FunctionalUtils.invokeSafely;
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.io.InputStream;
 import java.util.Optional;

@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * An internal utility used to provide both inter and intra JVM file locking.

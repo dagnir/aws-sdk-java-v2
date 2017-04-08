@@ -58,7 +58,7 @@ import software.amazon.awssdk.services.s3.model.NotificationConfiguration;
 import software.amazon.awssdk.services.s3.model.S3Event;
 import software.amazon.awssdk.test.retry.RetryableAction;
 import software.amazon.awssdk.test.retry.RetryableParams;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.awssdk.util.StringUtils;
 
 /**

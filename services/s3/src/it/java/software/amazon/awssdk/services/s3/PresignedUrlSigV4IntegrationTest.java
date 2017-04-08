@@ -50,7 +50,7 @@ import software.amazon.awssdk.services.s3.model.SseAwsKeyManagementParams;
 import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.model.StorageClass;
 import software.amazon.awssdk.util.Base64;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.awssdk.util.Md5Utils;
 
 /**

@@ -60,7 +60,7 @@ import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.services.s3.util.UnreliableRepeatableFileInputStream;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.BinaryUtils;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.awssdk.util.Md5Utils;
 
 /**

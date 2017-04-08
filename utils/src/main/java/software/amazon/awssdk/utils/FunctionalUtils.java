@@ -13,10 +13,9 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.util;
+package software.amazon.awssdk.utils;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.io.UncheckedIOException;
 import java.util.function.Consumer;
 import java.util.function.Function;

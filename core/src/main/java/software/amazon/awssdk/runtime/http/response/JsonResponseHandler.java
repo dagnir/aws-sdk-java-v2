@@ -31,8 +31,8 @@ import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContextImpl;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.runtime.transform.VoidJsonUnmarshaller;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.ValidationUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Default implementation of HttpResponseHandler that handles a successful response from an AWS

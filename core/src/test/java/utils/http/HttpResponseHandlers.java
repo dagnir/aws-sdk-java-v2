@@ -18,7 +18,7 @@ package utils.http;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.util.IoUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class HttpResponseHandlers {
 

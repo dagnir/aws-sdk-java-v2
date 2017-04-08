@@ -13,13 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.util;
+package software.amazon.awssdk.utils;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class IoUtilsTest {
 
     @Test
     public void test() throws Exception {
-        String s = IoUtils.toString(new ByteArrayInputStream("Testing".getBytes(StringUtils.UTF8)));
+        String s = IoUtils.toString(new ByteArrayInputStream("Testing".getBytes(StandardCharsets.UTF_8)));
         assertEquals("Testing", s);
     }
 

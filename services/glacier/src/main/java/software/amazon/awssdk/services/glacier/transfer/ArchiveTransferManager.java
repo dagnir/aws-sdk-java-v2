@@ -17,10 +17,10 @@ package software.amazon.awssdk.services.glacier.transfer;
 
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishResponseBytesDiscarded;
+import static software.amazon.awssdk.internal.io.Releasable.release;
 import static software.amazon.awssdk.runtime.io.ResettableInputStream.newResettableInputStream;
-import static software.amazon.awssdk.util.IoUtils.closeQuietly;
-import static software.amazon.awssdk.util.IoUtils.release;
 import static software.amazon.awssdk.util.Throwables.failure;
+import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -31,7 +31,6 @@ import java.io.RandomAccessFile;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;

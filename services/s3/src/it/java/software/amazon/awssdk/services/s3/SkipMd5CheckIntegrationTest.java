@@ -47,7 +47,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
-import software.amazon.awssdk.util.IOUtils;
+import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.awssdk.util.StringInputStream;
 
 public class SkipMd5CheckIntegrationTest extends AwsIntegrationTestBase {

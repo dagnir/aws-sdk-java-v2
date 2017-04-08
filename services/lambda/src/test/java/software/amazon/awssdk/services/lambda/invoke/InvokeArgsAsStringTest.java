@@ -22,8 +22,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.services.lambda.model.InvokeAsyncRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class InvokeArgsAsStringTest {
 
