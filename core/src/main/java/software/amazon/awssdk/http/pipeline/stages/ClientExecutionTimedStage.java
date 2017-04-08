@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
-import static software.amazon.awssdk.util.FunctionalUtils.invokeSafely;
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.util.Optional;
 import software.amazon.awssdk.AbortedException;

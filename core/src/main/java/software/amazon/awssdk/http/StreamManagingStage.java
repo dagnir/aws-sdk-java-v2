@@ -17,7 +17,7 @@ package software.amazon.awssdk.http;
 
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 import static software.amazon.awssdk.http.AmazonHttpClient.unreliableTestConfig;
-import static software.amazon.awssdk.util.IoUtils.closeQuietly;
+import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 
 import java.io.FileInputStream;
 import java.io.IOException;

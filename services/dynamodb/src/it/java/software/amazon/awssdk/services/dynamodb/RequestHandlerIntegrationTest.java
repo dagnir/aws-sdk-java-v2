@@ -39,8 +39,8 @@ import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
-import software.amazon.awssdk.util.IoUtils;
 import software.amazon.awssdk.util.StringInputStream;
+import software.amazon.awssdk.utils.IoUtils;
 
 public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
