@@ -57,27 +57,29 @@ public class DummyErrorResponseServerIntegrationTests extends MockServerTestBase
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowErrorResponseHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = new AmazonHttpClient(
-                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
+        httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
+                .build();
 
         httpClient.requestExecutionBuilder().request(newGetRequest()).errorResponseHandler(new UnresponsiveErrorResponseHandler())
-                  .execute();
+                .execute();
     }
 
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowAfterErrorRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = new AmazonHttpClient(
-                new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT));
+        httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
+                .build();
 
         List<RequestHandler2> requestHandlers = RequestHandlerTestUtils.buildRequestHandlerList(
                 new SlowRequestHandler().withAfterErrorWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
 
         httpClient.requestExecutionBuilder()
-                  .request(newGetRequest())
-                  .errorResponseHandler(new NullErrorResponseHandler())
-                  .executionContext(ExecutionContext.builder().withRequestHandler2s(requestHandlers).build())
-                  .execute();
+                .request(newGetRequest())
+                .errorResponseHandler(new NullErrorResponseHandler())
+                .executionContext(ExecutionContext.builder().withRequestHandler2s(requestHandlers).build())
+                .execute();
     }
 
 }

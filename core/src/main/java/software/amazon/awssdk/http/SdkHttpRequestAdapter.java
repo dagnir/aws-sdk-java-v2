@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.awssdk.Request;
 
 /**
@@ -43,6 +44,13 @@ public class SdkHttpRequestAdapter implements SdkHttpRequest {
     @Override
     public Map<String, List<String>> getHeaders() {
         return this.headers;
+    }
+
+    @Override
+    public Optional<String> getFirstHeader(String headerName) {
+        return Optional.ofNullable(headers.get(headerName))
+                .filter(h -> h.size() > 0)
+                .map(h -> h.get(0));
     }
 
     @Override

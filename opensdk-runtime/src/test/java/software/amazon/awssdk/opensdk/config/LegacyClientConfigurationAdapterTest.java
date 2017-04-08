@@ -55,7 +55,6 @@ public class LegacyClientConfigurationAdapterTest {
         assertEquals(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS, config.getMaxConnections());
         assertEquals(LegacyClientConfiguration.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
-        assertEquals(LegacyClientConfiguration.DEFAULT_REQUEST_TIMEOUT, config.getRequestTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
         assertEquals(LegacyClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
@@ -81,9 +80,7 @@ public class LegacyClientConfigurationAdapterTest {
         assertNull(config.getSignerOverride());
 
         assertNotNull(config.getRetryPolicy());
-        assertNotNull(config.getDnsResolver());
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
         assertFalse(config.isPreemptiveBasicProxyAuth());
     }
 
@@ -104,7 +101,7 @@ public class LegacyClientConfigurationAdapterTest {
         long ttl = 3000, maxIdle = 10000;
         boolean useReaper = true;
 
-        int socketTimeout = 1000, connectionTimeout = 2000, requestTimeout = 3000, clientExecutionTimeout = 4000;
+        int socketTimeout = 1000, connectionTimeout = 2000, clientExecutionTimeout = 4000;
 
         ApiGatewayClientConfiguration apigConfig = new ApiGatewayClientConfiguration()
                 .proxyConfiguration(new ProxyConfiguration()
@@ -127,7 +124,6 @@ public class LegacyClientConfigurationAdapterTest {
                 .timeoutConfiguration(new TimeoutConfiguration()
                         .socketTimeout(socketTimeout)
                         .connectionTimeout(connectionTimeout)
-                        .httpRequestTimeout(requestTimeout)
                         .totalExecutionTimeout(clientExecutionTimeout)
                 );
 
@@ -151,7 +147,6 @@ public class LegacyClientConfigurationAdapterTest {
 
         assertEquals(socketTimeout, config.getSocketTimeout());
         assertEquals(connectionTimeout, config.getConnectionTimeout());
-        assertEquals(requestTimeout, config.getRequestTimeout());
         assertEquals(clientExecutionTimeout, config.getClientExecutionTimeout());
 
         assertEquals(LegacyClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
@@ -169,9 +164,7 @@ public class LegacyClientConfigurationAdapterTest {
         assertNull(config.getSignerOverride());
 
         assertNotNull(config.getRetryPolicy());
-        assertNotNull(config.getDnsResolver());
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
     }
 
     /**
@@ -182,17 +175,16 @@ public class LegacyClientConfigurationAdapterTest {
     @Test
     public void testCustomConfigHasPrecedenceOverServiceDefaultConfig() {
 
-        int serviceDefaultMaxConnections = 500, requestTimeout = 50000, proxyPort = 1234;
+        int serviceDefaultMaxConnections = 500, executionTimeout = 50000, proxyPort = 1234;
         String proxyHost = "host";
 
         ApiGatewayClientConfiguration apigConfig = new ApiGatewayClientConfiguration()
                                                                            .proxyConfiguration(new ProxyConfiguration().proxyHost(proxyHost).proxyPort(proxyPort))
-                                                                           .timeoutConfiguration(new TimeoutConfiguration().httpRequestTimeout(requestTimeout));
+                                                                           .timeoutConfiguration(new TimeoutConfiguration().totalExecutionTimeout(executionTimeout));
 
         LegacyClientConfiguration serviceDefaultConfig = new LegacyClientConfiguration()
                 .withRetryPolicy(PredefinedRetryPolicies.NO_RETRY_POLICY)
                 .withMaxConnections(serviceDefaultMaxConnections)
-                .withRequestTimeout(3000)
                 .withTcpKeepAlive(true);
 
         LegacyClientConfiguration config = ClientConfigurationAdapter.adapt(apigConfig, serviceDefaultConfig);
@@ -201,14 +193,13 @@ public class LegacyClientConfigurationAdapterTest {
         assertEquals(proxyHost, config.getProxyHost());
         assertEquals(proxyPort, config.getProxyPort());
         assertEquals(serviceDefaultMaxConnections, config.getMaxConnections());
-        assertEquals(requestTimeout, config.getRequestTimeout());
+        assertEquals(executionTimeout, config.getClientExecutionTimeout());
 
         assertEquals(PredefinedRetryPolicies.NO_RETRY_POLICY, config.getRetryPolicy());
         assertEquals(LegacyClientConfiguration.DEFAULT_USER_AGENT, config.getUserAgentPrefix());
         assertEquals(Protocol.HTTPS, config.getProtocol());
         assertEquals(LegacyClientConfiguration.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
-        assertEquals(LegacyClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
         assertEquals(LegacyClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
         assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TTL, config.getConnectionTtl());
@@ -230,9 +221,7 @@ public class LegacyClientConfigurationAdapterTest {
 
 
         assertNotNull(config.getRetryPolicy());
-        assertNotNull(config.getDnsResolver());
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
         assertFalse(config.isPreemptiveBasicProxyAuth());
         assertFalse(config.useGzip());
     }
@@ -251,7 +240,6 @@ public class LegacyClientConfigurationAdapterTest {
         assertEquals(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS, config.getMaxConnections());
         assertEquals(ApiGatewayLegacyClientConfigurationFactory.DEFAULT_SOCKET_TIMEOUT, config.getSocketTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT, config.getConnectionTimeout());
-        assertEquals(LegacyClientConfiguration.DEFAULT_REQUEST_TIMEOUT, config.getRequestTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_CLIENT_EXECUTION_TIMEOUT, config.getClientExecutionTimeout());
         assertEquals(LegacyClientConfiguration.DEFAULT_THROTTLE_RETRIES, config.useThrottledRetries());
         assertEquals(LegacyClientConfiguration.DEFAULT_USE_REAPER, config.useReaper());
@@ -276,9 +264,7 @@ public class LegacyClientConfigurationAdapterTest {
         assertNull(config.getUserAgentSuffix());
         assertNull(config.getSignerOverride());
 
-        assertNotNull(config.getDnsResolver());
         assertNotNull(config.getSecureRandom());
-        assertNotNull(config.getApacheHttpClientConfig());
         assertFalse(config.isPreemptiveBasicProxyAuth());
     }
 

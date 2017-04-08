@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk;
 
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
+
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -80,7 +82,9 @@ public abstract class AmazonWebServiceClient {
         }
     }
 
-    /** Optional request handlers for additional request processing. */
+    /**
+     * Optional request handlers for additional request processing.
+     */
     protected final List<RequestHandler2> requestHandler2s;
     /**
      * The service endpoint to which this client will send requests.
@@ -90,11 +94,17 @@ public abstract class AmazonWebServiceClient {
      * reason.
      */
     protected volatile URI endpoint;
-    /** The client configuration. */
+    /**
+     * The client configuration.
+     */
     protected LegacyClientConfiguration clientConfiguration;
-    /** Low level client for sending requests to AWS services. */
+    /**
+     * Low level client for sending requests to AWS services.
+     */
     protected AmazonHttpClient client;
-    /** Optional offset (in seconds) to use when signing requests. */
+    /**
+     * Optional offset (in seconds) to use when signing requests.
+     */
     protected int timeOffset;
     /**
      * Flag indicating whether a client is mutable or not. Legacy clients built via the constructors
@@ -124,8 +134,7 @@ public abstract class AmazonWebServiceClient {
      * Constructs a new AmazonWebServiceClient object using the specified
      * configuration.
      *
-     * @param clientConfiguration
-     *            The client configuration for this client.
+     * @param clientConfiguration The client configuration for this client.
      */
     public AmazonWebServiceClient(LegacyClientConfiguration clientConfiguration) {
         this(clientConfiguration, null);
@@ -135,11 +144,9 @@ public abstract class AmazonWebServiceClient {
      * Constructs a new AmazonWebServiceClient object using the specified
      * configuration and request metric collector.
      *
-     * @param clientConfiguration
-     *            The client configuration for this client.
-     * @param requestMetricCollector
-     *            optional request metric collector to be used at the http
-     *            client level; can be null.
+     * @param clientConfiguration    The client configuration for this client.
+     * @param requestMetricCollector optional request metric collector to be used at the http
+     *                               client level; can be null.
      */
     public AmazonWebServiceClient(LegacyClientConfiguration clientConfiguration,
                                   RequestMetricCollector requestMetricCollector) {
@@ -151,18 +158,24 @@ public abstract class AmazonWebServiceClient {
                                      RequestMetricCollector requestMetricCollector,
                                      boolean disableStrictHostNameVerification) {
         this.clientConfiguration = clientConfiguration;
-        requestHandler2s = new CopyOnWriteArrayList<RequestHandler2>();
-        client = new AmazonHttpClient(clientConfiguration,
-                                      requestMetricCollector, disableStrictHostNameVerification,
-                                      calculateCrc32FromCompressedData());
+        requestHandler2s = new CopyOnWriteArrayList<>();
+        client = AmazonHttpClient.builder()
+                .clientConfiguration(clientConfiguration)
+                .requestMetricCollector(requestMetricCollector)
+                .useBrowserCompatibleHostNameVerifier(disableStrictHostNameVerification)
+                .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
+                .build();
     }
 
     protected AmazonWebServiceClient(AwsSyncClientParams clientParams) {
         this.clientConfiguration = clientParams.getClientConfiguration();
         requestHandler2s = clientParams.getRequestHandlers();
-        client = new AmazonHttpClient(clientConfiguration, clientParams.getRequestMetricCollector(),
-                                      !useStrictHostNameVerification(),
-                                      calculateCrc32FromCompressedData());
+        client = AmazonHttpClient.builder()
+                .clientConfiguration(clientConfiguration)
+                .requestMetricCollector(clientParams.getRequestMetricCollector())
+                .useBrowserCompatibleHostNameVerifier(!useStrictHostNameVerification())
+                .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
+                .build();
     }
 
     /* Check the profiling system property and return true if set. */
@@ -208,14 +221,11 @@ public abstract class AmazonWebServiceClient {
      * <a href="http://developer.amazonwebservices.com/connect/entry.jspa?externalID=3912">
      * http://developer.amazonwebservices.com/connect/entry.jspa?externalID=3912</a>
      *
-     * @param endpoint
-     *            The endpoint (ex: "ec2.amazonaws.com") or a full URL,
-     *            including the protocol (ex: "https://ec2.amazonaws.com") of
-     *            the region specific AWS endpoint this client will communicate
-     *            with.
-     * @throws IllegalArgumentException
-     *             If any problems are detected with the specified endpoint.
-     *
+     * @param endpoint The endpoint (ex: "ec2.amazonaws.com") or a full URL,
+     *                 including the protocol (ex: "https://ec2.amazonaws.com") of
+     *                 the region specific AWS endpoint this client will communicate
+     *                 with.
+     * @throws IllegalArgumentException If any problems are detected with the specified endpoint.
      * @deprecated use {@link AwsClientBuilder#setEndpointConfiguration(AwsClientBuilder.EndpointConfiguration)} for example:
      * {@code builder.setEndpointConfiguration(new EndpointConfiguration(endpoint, signingRegion));}
      */
@@ -230,7 +240,9 @@ public abstract class AmazonWebServiceClient {
         }
     }
 
-    /** Returns the endpoint as a URI. */
+    /**
+     * Returns the endpoint as a URI.
+     */
     private URI toUri(String endpoint) throws IllegalArgumentException {
         return RuntimeHttpUtils.toUri(endpoint, clientConfiguration);
     }
@@ -255,14 +267,12 @@ public abstract class AmazonWebServiceClient {
      * Note, however, the signer returned for S3 is incomplete at this stage as
      * the information on the S3 bucket and key is not yet known.
      *
-     * @param signerRegionOverride
-     *            the overriding signer region; or null if there is none.
-     * @param isRegionIdAsSignerParam
-     *            true if the "regionId" is used to configure the signer if
-     *            applicable; false if this method is called for the purpose of
-     *            purely setting the communication end point of this AWS client,
-     *            and therefore the "regionId" parameter will not be used
-     *            directly for configuring the signer.
+     * @param signerRegionOverride    the overriding signer region; or null if there is none.
+     * @param isRegionIdAsSignerParam true if the "regionId" is used to configure the signer if
+     *                                applicable; false if this method is called for the purpose of
+     *                                purely setting the communication end point of this AWS client,
+     *                                and therefore the "regionId" parameter will not be used
+     *                                directly for configuring the signer.
      */
     private Signer computeSignerByUri(URI uri, String signerRegionOverride,
                                       boolean isRegionIdAsSignerParam) {
@@ -283,16 +293,13 @@ public abstract class AmazonWebServiceClient {
      * Note, however, the signer returned for S3 is incomplete at this stage as
      * the information on the S3 bucket and key is not yet known.
      *
-     * @param regionId
-     *            the region for sending AWS requests
-     * @param signerRegionOverride
-     *            the overriding signer region; or null if there is none.
-     * @param isRegionIdAsSignerParam
-     *            true if the "regionId" is used to configure the signer if
-     *            applicable; false if this method is called for the purpose of
-     *            purely setting the communication end point of this AWS client,
-     *            and therefore the "regionId" parameter will not be used
-     *            directly for configuring the signer.
+     * @param regionId                the region for sending AWS requests
+     * @param signerRegionOverride    the overriding signer region; or null if there is none.
+     * @param isRegionIdAsSignerParam true if the "regionId" is used to configure the signer if
+     *                                applicable; false if this method is called for the purpose of
+     *                                purely setting the communication end point of this AWS client,
+     *                                and therefore the "regionId" parameter will not be used
+     *                                directly for configuring the signer.
      */
     private Signer computeSignerByServiceRegion(
             String serviceName, String regionId,
@@ -300,8 +307,8 @@ public abstract class AmazonWebServiceClient {
             boolean isRegionIdAsSignerParam) {
         String signerType = clientConfiguration.getSignerOverride();
         Signer signer = signerType == null
-                        ? SignerFactory.getSigner(serviceName, regionId)
-                        : SignerFactory.getSignerByTypeAndService(signerType, serviceName);
+                ? SignerFactory.getSigner(serviceName, regionId)
+                : SignerFactory.getSignerByTypeAndService(signerType, serviceName);
         if (signer instanceof RegionAwareSigner) {
             // Overrides the default region computed
             RegionAwareSigner regionAwareSigner = (RegionAwareSigner) signer;
@@ -329,16 +336,14 @@ public abstract class AmazonWebServiceClient {
      * By default, all service endpoints in all regions use the https protocol. To use http instead,
      * specify it in the {@link LegacyClientConfiguration} supplied at construction.
      *
-     * @param region
-     *            The region this client will communicate with. See
-     *            {@link Region#getRegion(Regions)} for accessing a given
-     *            region.
-     * @throws java.lang.IllegalArgumentException
-     *             If the given region is null, or if this service isn't available in the given
-     *             region. See {@link Region#isServiceSupported(String)}
+     * @param region The region this client will communicate with. See
+     *               {@link Region#getRegion(Regions)} for accessing a given
+     *               region.
+     * @throws java.lang.IllegalArgumentException If the given region is null, or if this service isn't available in the given
+     *                                            region. See {@link Region#isServiceSupported(String)}
      * @see Region#getRegion(Regions)
      * @see Region#createClient(Class, AwsCredentialsProvider,
-     *      LegacyClientConfiguration)
+     * LegacyClientConfiguration)
      * @deprecated use {@link AwsClientBuilder#setRegion(String)}
      */
     @Deprecated
@@ -364,7 +369,6 @@ public abstract class AmazonWebServiceClient {
      * Convenient method for setting region.
      *
      * @param region region to set to; must not be null.
-     *
      * @see #setRegion(Region)
      * @deprecated use {@link AwsClientBuilder#setRegion(String)}
      */
@@ -385,16 +389,15 @@ public abstract class AmazonWebServiceClient {
      * requests.
      */
     public void shutdown() {
-        client.shutdown();
+        invokeSafely(client::close);
     }
 
     /**
      * Appends a request handler to the list of registered handlers that are run
      * as part of a request's lifecycle.
      *
-     * @param requestHandler
-     *            The new handler to add to the current list of request
-     *            handlers.
+     * @param requestHandler The new handler to add to the current list of request
+     *                       handlers.
      * @deprecated by {@link #addRequestHandler(RequestHandler2)}.
      */
     @Deprecated
@@ -407,9 +410,8 @@ public abstract class AmazonWebServiceClient {
      * Appends a request handler to the list of registered handlers that are run
      * as part of a request's lifecycle.
      *
-     * @param requestHandler2
-     *            The new handler to add to the current list of request
-     *            handlers.
+     * @param requestHandler2 The new handler to add to the current list of request
+     *                        handlers.
      * @deprecated use {@link AwsClientBuilder#withRequestHandlers(RequestHandler2...)}
      */
     @Deprecated
@@ -422,9 +424,8 @@ public abstract class AmazonWebServiceClient {
      * Removes a request handler from the list of registered handlers that are run
      * as part of a request's lifecycle.
      *
-     * @param requestHandler
-     *            The handler to remove from the current list of request
-     *            handlers.
+     * @param requestHandler The handler to remove from the current list of request
+     *                       handlers.
      * @deprecated use {@link AwsClientBuilder#withRequestHandlers(RequestHandler2...)}
      */
     @Deprecated
@@ -468,10 +469,10 @@ public abstract class AmazonWebServiceClient {
                                                       SignerProvider signerProvider) {
         boolean isMetricsEnabled = isRequestMetricsEnabled(req) || isProfilingEnabled();
         return ExecutionContext.builder()
-                               .withRequestHandler2s(requestHandler2s)
-                               .withUseRequestMetrics(isMetricsEnabled)
-                               .withAwsClient(this)
-                               .withSignerProvider(signerProvider).build();
+                .withRequestHandler2s(requestHandler2s)
+                .withUseRequestMetrics(isMetricsEnabled)
+                .withAwsClient(this)
+                .withSignerProvider(signerProvider).build();
     }
 
     protected final ExecutionContext createExecutionContext(Request<?> req) {
@@ -509,9 +510,7 @@ public abstract class AmazonWebServiceClient {
      * Value is in seconds, positive values imply the current clock is "fast",
      * negative values imply clock is slow.
      *
-     * @param timeOffset
-     *            The optional value for time offset (in seconds) for this client.
-     *
+     * @param timeOffset The optional value for time offset (in seconds) for this client.
      * @return the updated web service client
      */
     public AmazonWebServiceClient withTimeOffset(int timeOffset) {
@@ -538,8 +537,7 @@ public abstract class AmazonWebServiceClient {
      * Value is in seconds, positive values imply the current clock is "fast",
      * negative values imply clock is slow.
      *
-     * @param timeOffset
-     *            The optional value for time offset (in seconds) for this client.
+     * @param timeOffset The optional value for time offset (in seconds) for this client.
      */
     public void setTimeOffset(int timeOffset) {
         checkMutability();
@@ -629,11 +627,11 @@ public abstract class AmazonWebServiceClient {
 
     /**
      * @return the service name that should be used when computing the region
-     *         endpoints. This method returns the value of the
-     *         regionMetadataServiceName configuration in the internal config
-     *         file if such configuration is specified for the current client,
-     *         otherwise it returns the same service name that is used for
-     *         request signing.
+     * endpoints. This method returns the value of the
+     * regionMetadataServiceName configuration in the internal config
+     * file if such configuration is specified for the current client,
+     * otherwise it returns the same service name that is used for
+     * request signing.
      */
     public String getEndpointPrefix() {
         if (endpointPrefix != null) {
@@ -772,12 +770,13 @@ public abstract class AmazonWebServiceClient {
      *
      * @see #setRegion(Region)
      * @deprecated use {@link AwsClientBuilder#withRegion(Region)} for example:
-     *     {@code AmazonSNSClientBuilder.standard().withRegion(region).build();}
+     * {@code AmazonSNSClientBuilder.standard().withRegion(region).build();}
      */
     @Deprecated
     public <T extends AmazonWebServiceClient> T withRegion(Region region) {
         setRegion(region);
-        @SuppressWarnings("unchecked") T t = (T) this;
+        @SuppressWarnings("unchecked")
+        T t = (T) this;
         return t;
     }
 
@@ -785,7 +784,6 @@ public abstract class AmazonWebServiceClient {
      * Convenient fluent method for setting region.
      *
      * @param region region to set to; must not be null.
-     *
      * @see #withRegion(Region)
      * @deprecated use {@link AwsClientBuilder#withRegion(Regions)} for example:
      * {@code AmazonSNSClientBuilder.standard().withRegion(region).build();}
@@ -793,7 +791,8 @@ public abstract class AmazonWebServiceClient {
     @Deprecated
     public <T extends AmazonWebServiceClient> T withRegion(Regions region) {
         configureRegion(region);
-        @SuppressWarnings("unchecked") T t = (T) this;
+        @SuppressWarnings("unchecked")
+        T t = (T) this;
         return t;
     }
 
@@ -804,13 +803,14 @@ public abstract class AmazonWebServiceClient {
      *
      * @see #setEndpoint(String)
      * @deprecated use {@link AwsClientBuilder#withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration)} for example:
-     *     {@code AmazonSNSClientBuilder.standard()
-     *                                  .withEndpointConfiguration(new EndpointConfiguration(endpoint, signingRegion)).build();}
+     * {@code AmazonSNSClientBuilder.standard()
+     * .withEndpointConfiguration(new EndpointConfiguration(endpoint, signingRegion)).build();}
      */
     @Deprecated
     public <T extends AmazonWebServiceClient> T withEndpoint(String endpoint) {
         setEndpoint(endpoint);
-        @SuppressWarnings("unchecked") T t = (T) this;
+        @SuppressWarnings("unchecked")
+        T t = (T) this;
         return t;
     }
 

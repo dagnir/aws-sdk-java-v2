@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.internal.http.timers.client;
 
-import org.apache.http.client.methods.HttpRequestBase;
+import software.amazon.awssdk.http.AbortableCallable;
 
 /**
  * Dummy implementation of {@link ClientExecutionAbortTrackerTask} used when the timer is disabled
@@ -30,7 +30,7 @@ public class NoOpClientExecutionAbortTrackerTask implements ClientExecutionAbort
     }
 
     @Override
-    public void setCurrentHttpRequest(HttpRequestBase newRequest) {
+    public void setCurrentHttpRequest(AbortableCallable<?> newRequest) {
     }
 
     @Override

@@ -127,7 +127,6 @@ import software.amazon.awssdk.services.s3.internal.S3RequestEndpointResolver;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedHeaderHandler;
 import software.amazon.awssdk.services.s3.internal.S3Signer;
 import software.amazon.awssdk.services.s3.internal.S3StringResponseHandler;
-import software.amazon.awssdk.services.s3.internal.S3V4AuthErrorRetryStrategy;
 import software.amazon.awssdk.services.s3.internal.S3VersionHeaderHandler;
 import software.amazon.awssdk.services.s3.internal.S3XmlResponseHandler;
 import software.amazon.awssdk.services.s3.internal.ServerSideEncryptionHeaderHandler;
@@ -1703,7 +1702,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             s3Object.setBucketName(getObjectRequest.getBucketName());
             s3Object.setKey(getObjectRequest.getKey());
             InputStream is = s3Object.getObjectContent();
-            HttpRequestBase httpRequest = s3Object.getObjectContent().getHttpRequest();
             // Hold a reference to this client while the InputStream is still
             // around - otherwise a finalizer in the HttpClient may reset the
             // underlying TCP connection out from under us.
@@ -1743,7 +1741,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             // Re-wrap within an S3ObjectInputStream. Explicitly do not collect
             // metrics here because we know we're ultimately wrapping another
             // S3ObjectInputStream which will take care of that.
-            s3Object.setObjectContent(new S3ObjectInputStream(is, httpRequest, false));
+            s3Object.setObjectContent(new S3ObjectInputStream(is, false));
 
             return s3Object;
         } catch (AmazonS3Exception ase) {
@@ -3565,11 +3563,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
     }
 
     @Override
-    public S3ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
-        return (S3ResponseMetadata) client.getResponseMetadataForRequest(request);
-    }
-
-    @Override
     public void restoreObject(RestoreObjectRequest restoreObjectRequest)
             throws AmazonServiceException {
         String bucketName = restoreObjectRequest.getBucketName();
@@ -4265,13 +4258,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
             Signer signer = createSigner(request, bucket, key, isAdditionalHeadRequestToFindRegion);
             signerProvider.setSigner(signer);
-
-            // Retry V4 auth errors if signer is explicitly overridden and
-            // signer is not a SigV4 signer.
-            if (isSignerOverridden() && !(signer instanceof AwsS3V4Signer)) {
-                executionContext.setAuthErrorRetryStrategy(
-                        new S3V4AuthErrorRetryStrategy(buildDefaultEndpointResolver(getProtocol(request), bucket, key)));
-            }
 
             executionContext.setCredentialsProvider(CredentialUtils.getCredentialsProvider(request.getOriginalRequest(),
                                                                                            awsCredentialsProvider));

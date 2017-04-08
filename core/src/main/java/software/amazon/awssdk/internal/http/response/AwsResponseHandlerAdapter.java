@@ -17,17 +17,14 @@ package software.amazon.awssdk.internal.http.response;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.AmazonWebServiceResult;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.SdkHttpMetadata;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
-import software.amazon.awssdk.util.MetadataCache;
 
 /**
  * Adapts an {@code HttpResponseHandler<AmazonWebServiceResponse<T>>} to an {@code HttpResponseHandler<T>} (unwrapped result)
@@ -47,23 +44,16 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
     private static final Log REQUEST_LOG = AmazonHttpClient.REQUEST_LOG;
 
     private final HttpResponseHandler<AmazonWebServiceResponse<T>> delegate;
-    private final Request<?> request;
     private final AwsRequestMetrics awsRequestMetrics;
-    private final MetadataCache responseMetadataCache;
 
     /**
      * @param delegate          Response handler to delegate to and unwrap
-     * @param request           Marshalled request
      * @param awsRequestMetrics Request metrics
      */
     public AwsResponseHandlerAdapter(HttpResponseHandler<AmazonWebServiceResponse<T>> delegate,
-                                     Request<?> request,
-                                     AwsRequestMetrics awsRequestMetrics,
-                                     MetadataCache responseMetadataCache) {
+                                     AwsRequestMetrics awsRequestMetrics) {
         this.delegate = delegate;
-        this.request = request;
         this.awsRequestMetrics = awsRequestMetrics;
-        this.responseMetadataCache = responseMetadataCache;
     }
 
     @Override
@@ -76,11 +66,6 @@ public class AwsResponseHandlerAdapter<T> implements HttpResponseHandler<T> {
                                        response.getStatusText());
         }
 
-        AmazonWebServiceRequest userRequest = request.getOriginalRequest();
-        if (userRequest.getCloneRoot() != null) {
-            userRequest = userRequest.getCloneRoot();
-        }
-        responseMetadataCache.add(userRequest, awsResponse.getResponseMetadata());
         final String awsRequestId = awsResponse.getRequestId();
 
         if (REQUEST_LOG.isDebugEnabled()) {

@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
@@ -44,7 +43,6 @@ public class SdkStructuredIonFactoryTest {
     private static final String ERROR_MESSAGE = "foo";
 
     private static final String NO_SERVICE_NAME = null;
-    private static final HttpRequestBase NO_HTTP_REQUEST = null;
     private static final String NO_CUSTOM_ERROR_CODE_FIELD_NAME = null;
 
     private static IonSystem system;
@@ -67,7 +65,7 @@ public class SdkStructuredIonFactoryTest {
         payload.writeTo(writer);
         writer.close();
 
-        HttpResponse error = new HttpResponse(new DefaultRequest(NO_SERVICE_NAME), NO_HTTP_REQUEST);
+        HttpResponse error = new HttpResponse(new DefaultRequest(NO_SERVICE_NAME));
         error.setContent(new ByteArrayInputStream(bytes.toByteArray()));
         return error;
     }
@@ -134,10 +132,11 @@ public class SdkStructuredIonFactoryTest {
     }
 
     private AmazonServiceException handleError(HttpResponse error) throws Exception {
-        List<JsonErrorUnmarshaller> unmarshallers = new LinkedList<JsonErrorUnmarshaller>();
+        List<JsonErrorUnmarshaller> unmarshallers = new LinkedList<>();
         unmarshallers.add(new JsonErrorUnmarshaller(InvalidParameterException.class, ERROR_TYPE));
 
-        JsonErrorResponseHandler handler = SdkStructuredIonFactory.SDK_ION_BINARY_FACTORY.createErrorResponseHandler(unmarshallers, NO_CUSTOM_ERROR_CODE_FIELD_NAME);
+        JsonErrorResponseHandler handler = SdkStructuredIonFactory.SDK_ION_BINARY_FACTORY
+                .createErrorResponseHandler(unmarshallers, NO_CUSTOM_ERROR_CODE_FIELD_NAME);
         return handler.handle(error);
     }
 

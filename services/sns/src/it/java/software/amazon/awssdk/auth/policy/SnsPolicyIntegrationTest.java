@@ -31,7 +31,9 @@ import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 public class SnsPolicyIntegrationTest extends IntegrationTestBase {
     private String topicArn;
 
-    /** Releases all test resources. */
+    /**
+     * Releases all test resources.
+     */
     @After
     public void tearDown() throws Exception {
         sns.deleteTopic(new DeleteTopicRequest(topicArn));
@@ -45,10 +47,14 @@ public class SnsPolicyIntegrationTest extends IntegrationTestBase {
         String topicName = "java-sns-policy-integ-test-" + System.currentTimeMillis();
         topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
 
-        Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withActions(SnsActions.Subscribe)
-                                                                               .withPrincipals(Principal.ALL_USERS).withResources(new Resource(topicArn))
-                                                                               .withConditions(SnsConditionFactory.newEndpointCondition("*@amazon.com"),
-                                                                                               SnsConditionFactory.newProtocolCondition("email")));
+        Policy policy = new Policy()
+                .withStatements(new Statement(Effect.Allow)
+                                        .withActions(SnsActions.Subscribe)
+                                        .withPrincipals(Principal.ALL_USERS)
+                                        .withResources(new Resource(topicArn))
+                                        .withConditions(
+                                                SnsConditionFactory.newEndpointCondition("*@amazon.com"),
+                                                SnsConditionFactory.newProtocolCondition("email")));
         sns.setTopicAttributes(new SetTopicAttributesRequest(topicArn, "Policy", policy.toJson()));
     }
 }

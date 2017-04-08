@@ -50,11 +50,12 @@ public class ConnectionPoolMaxConnectionsIntegrationTest {
 
         String localhostEndpoint = "http://localhost:" + server.getPort();
 
-        AmazonHttpClient httpClient = new AmazonHttpClient(
-                new LegacyClientConfiguration()
-                        .withMaxConnections(1)
-                        .withConnectionTimeout(100)
-                        .withMaxErrorRetry(0));
+        AmazonHttpClient httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration()
+                                             .withMaxConnections(1)
+                                             .withConnectionTimeout(100)
+                                             .withMaxErrorRetry(0))
+                .build();
 
         Request<?> request = new EmptyHttpRequest(localhostEndpoint, HttpMethodName.GET);
 

@@ -26,14 +26,6 @@ public class RegionMetadataFactory {
     }
 
     public static RegionMetadata create() {
-        RegionMetadata metadata = createLegacyXmlRegionMetadata();
-        if (metadata == null) {
-            metadata = new RegionMetadata(new PartitionsLoader().build());
-        }
-        return metadata;
-    }
-
-    private static RegionMetadata createLegacyXmlRegionMetadata() {
-        return new LegacyRegionXmlMetadataBuilder().build();
+        return new RegionMetadata(new PartitionsLoader().build());
     }
 }

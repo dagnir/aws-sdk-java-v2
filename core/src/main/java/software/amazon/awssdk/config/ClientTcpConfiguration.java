@@ -18,7 +18,6 @@ package software.amazon.awssdk.config;
 import java.time.Duration;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 
 /**
  * Configures the TCP connection behavior of the AWS SDK client.
@@ -34,7 +33,6 @@ public final class ClientTcpConfiguration {
     private final Duration connectionTimeToLive;
     private final Duration connectionMaxIdleTime;
     private final Duration connectionValidationFrequency;
-    private final Boolean connectionReaperEnabled;
     private final Integer socketReceiveBufferSizeHint;
     private final Integer socketSendBufferSizeHint;
 
@@ -47,7 +45,6 @@ public final class ClientTcpConfiguration {
         this.connectionTimeToLive = builder.connectionTimeToLive;
         this.connectionMaxIdleTime = builder.connectionMaxIdleTime;
         this.connectionValidationFrequency = builder.connectionValidationFrequency;
-        this.connectionReaperEnabled = builder.connectionReaperEnabled;
         this.socketReceiveBufferSizeHint = builder.socketReceiveBufferSizeHint;
         this.socketSendBufferSizeHint = builder.socketSendBufferSizeHint;
     }
@@ -103,15 +100,6 @@ public final class ClientTcpConfiguration {
      */
     public Optional<Duration> connectionValidationFrequency() {
         return Optional.ofNullable(connectionValidationFrequency);
-    }
-
-    /**
-     * Whether an {@link IdleConnectionReaper} should be used to clean up idle connections.
-     *
-     * @see Builder#connectionReaperEnabled(Boolean)
-     */
-    public Optional<Boolean> connectionReaperEnabled() {
-        return Optional.ofNullable(connectionReaperEnabled);
     }
 
     /**
@@ -199,17 +187,6 @@ public final class ClientTcpConfiguration {
          */
         Builder connectionValidationFrequency(Duration connectionValidationFrequency);
 
-        /**
-         * @see ClientTcpConfiguration#connectionReaperEnabled().
-         */
-        Optional<Boolean> connectionReaperEnabled();
-
-        /**
-         * Configure whether an {@link IdleConnectionReaper} should be used to clean up idle connections.
-         *
-         * @see ClientTcpConfiguration#connectionReaperEnabled()
-         */
-        Builder connectionReaperEnabled(Boolean connectionReaperEnabled);
 
         /**
          * @see ClientTcpConfiguration#socketReceiveBufferSizeHint().
@@ -250,7 +227,6 @@ public final class ClientTcpConfiguration {
         private Duration connectionTimeToLive;
         private Duration connectionMaxIdleTime;
         private Duration connectionValidationFrequency;
-        private Boolean connectionReaperEnabled;
         private Integer socketReceiveBufferSizeHint;
         private Integer socketSendBufferSizeHint;
 
@@ -347,25 +323,6 @@ public final class ClientTcpConfiguration {
 
         public void setConnectionValidationFrequency(Duration connectionValidationFrequency) {
             connectionValidationFrequency(connectionValidationFrequency);
-        }
-
-        @Override
-        public Optional<Boolean> connectionReaperEnabled() {
-            return Optional.ofNullable(connectionReaperEnabled);
-        }
-
-        @Override
-        public Builder connectionReaperEnabled(Boolean connectionReaperEnabled) {
-            this.connectionReaperEnabled = connectionReaperEnabled;
-            return this;
-        }
-
-        public Boolean getConnectionReaperEnabled() {
-            return connectionReaperEnabled;
-        }
-
-        public void setConnectionReaperEnabled(Boolean connectionReaperEnabled) {
-            connectionReaperEnabled(connectionReaperEnabled);
         }
 
         @Override

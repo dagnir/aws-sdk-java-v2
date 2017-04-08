@@ -25,7 +25,8 @@ import java.util.concurrent.Callable;
 public interface AbortableCallable<T> extends Callable<T> {
 
     /**
-     * Aborts the execution of the task.
+     * Aborts the execution of the task. Multiple calls to abort or calling abort an already aborted callable
+     * should return without error.
      */
     void abort();
 }

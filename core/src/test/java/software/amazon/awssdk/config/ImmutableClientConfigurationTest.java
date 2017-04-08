@@ -27,10 +27,8 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.junit.Test;
-import software.amazon.awssdk.DnsResolver;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
-import software.amazon.awssdk.SystemDefaultDnsResolver;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
@@ -45,7 +43,6 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
  * Validate the functionality of {@link ImmutableClientConfiguration}.
  */
 public class ImmutableClientConfigurationTest {
-    private static final DnsResolver DNS_RESOLVER = new SystemDefaultDnsResolver();
     private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final RequestHandler2 REQUEST_HANDLER = new RequestHandler2() {};
@@ -72,10 +69,8 @@ public class ImmutableClientConfigurationTest {
                                            .withTcpKeepAlive(true)
                                            .withMaxConnections(1)
                                            .withSocketBufferSizeHints(2, 3)
-                                           .withDnsResolver(DNS_RESOLVER)
                                            .withLocalAddress(InetAddress.getLoopbackAddress())
                                            .withConnectionTimeout(1_000)
-                                           .withRequestTimeout(2_000)
                                            .withSocketTimeout(3_000)
                                            .withClientExecutionTimeout(4_000)
                                            .withGzip(true)
@@ -192,7 +187,6 @@ public class ImmutableClientConfigurationTest {
     private void assertLegacyConfigurationMatches(LegacyClientConfiguration expected,
                                                   LegacyClientConfiguration given) {
         assertThat(given).isEqualToIgnoringGivenFields(expected, "apacheHttpClientConfig");
-        assertThat(given.getApacheHttpClientConfig()).isEqualToComparingFieldByField(expected.getApacheHttpClientConfig());
     }
 
     private static class InitializedSyncConfiguration extends InitializedConfiguration implements SyncClientConfiguration {
@@ -235,7 +229,6 @@ public class ImmutableClientConfigurationTest {
                                          .connectionMaxIdleTime(Duration.ofSeconds(10))
                                          .connectionTimeToLive(Duration.ofSeconds(11))
                                          .connectionValidationFrequency(Duration.ofSeconds(12))
-                                         .connectionReaperEnabled(true)
                                          .tcpKeepaliveEnabled(true)
                                          .maxConnections(1)
                                          .socketSendBufferSizeHint(2)
@@ -246,7 +239,6 @@ public class ImmutableClientConfigurationTest {
         @Override
         public ClientIpConfiguration ipConfiguration() {
             return ClientIpConfiguration.builder()
-                                        .dnsResolver(DNS_RESOLVER)
                                         .localAddress(InetAddress.getLoopbackAddress())
                                         .build();
         }

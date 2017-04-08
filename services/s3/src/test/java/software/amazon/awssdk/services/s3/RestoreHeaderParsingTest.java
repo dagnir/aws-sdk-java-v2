@@ -29,9 +29,9 @@ public class RestoreHeaderParsingTest {
         MockObjectRestoreResult result = new MockObjectRestoreResult();
 
         ObjectRestoreHeaderHandler<MockObjectRestoreResult> handler =
-                new ObjectRestoreHeaderHandler<MockObjectRestoreResult>();
+                new ObjectRestoreHeaderHandler<>();
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
 
         handler.handle(result, response);
 
@@ -44,9 +44,9 @@ public class RestoreHeaderParsingTest {
         MockObjectRestoreResult result = new MockObjectRestoreResult();
 
         ObjectRestoreHeaderHandler<MockObjectRestoreResult> handler =
-                new ObjectRestoreHeaderHandler<MockObjectRestoreResult>();
+                new ObjectRestoreHeaderHandler<>();
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
         response.addHeader(
                 "x-amz-restore", "ongoing-request=\"true\""
                           );
@@ -61,9 +61,9 @@ public class RestoreHeaderParsingTest {
         MockObjectRestoreResult result = new MockObjectRestoreResult();
 
         ObjectRestoreHeaderHandler<MockObjectRestoreResult> handler =
-                new ObjectRestoreHeaderHandler<MockObjectRestoreResult>();
+                new ObjectRestoreHeaderHandler<>();
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
         response.addHeader(
                 "x-amz-restore",
                 "ongoing-request=\"false\", "
@@ -82,9 +82,9 @@ public class RestoreHeaderParsingTest {
         MockObjectRestoreResult result = new MockObjectRestoreResult();
 
         ObjectRestoreHeaderHandler<MockObjectRestoreResult> handler =
-                new ObjectRestoreHeaderHandler<MockObjectRestoreResult>();
+                new ObjectRestoreHeaderHandler<>();
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
         response.addHeader(
                 "x-amz-restore",
                 "expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\", "

@@ -109,8 +109,8 @@ public class ClientHandlerImpl extends ClientHandler {
     }
 
     @Override
-    public void close() {
-        client.shutdown();
+    public void close() throws Exception {
+        client.close();
     }
 
     private ExecutionContext createExecutionContext(RequestConfig requestConfig) {

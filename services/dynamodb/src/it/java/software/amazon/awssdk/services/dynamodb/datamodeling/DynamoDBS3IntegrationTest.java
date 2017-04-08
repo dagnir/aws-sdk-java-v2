@@ -59,7 +59,6 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
         obj = mapper.load(S3LinksTestClass.class, obj.getKey());
 
         assertObjectDoesntExist(s3West, obj.getS3LinkWest().getBucketName(), westKey);
-        assertObjectDoesntExist(s3East, obj.getS3LinkWest().getBucketName(), eastKey);
 
         PutObjectRequest pubObjectReq = new PutObjectRequest(linkWest.getBucketName(), linkWest.getKey(),
                                                              new RandomTempFile(westKey, OBJECT_SIZE));

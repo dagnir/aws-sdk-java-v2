@@ -13,11 +13,9 @@
  * permissions and limitations under the License.
  */
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.*;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.auth.AWSCredentials;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;

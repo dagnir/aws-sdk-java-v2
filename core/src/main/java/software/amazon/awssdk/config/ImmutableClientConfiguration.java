@@ -179,7 +179,6 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         configuration.setValidateAfterInactivityMillis(
                 Math.toIntExact(toRequiredMillis(tcpConfiguration.connectionValidationFrequency())));
 
-        configuration.setUseReaper(require(tcpConfiguration.connectionReaperEnabled()));
         configuration.setUseTcpKeepAlive(require(tcpConfiguration.tcpKeepaliveEnabled()));
         configuration.setMaxConnections(require(tcpConfiguration.maxConnections()));
         configuration.setSocketBufferSizeHints(require(tcpConfiguration.socketSendBufferSizeHint()),
@@ -187,14 +186,12 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
     }
 
     private void copyIpConfiguration(LegacyClientConfiguration configuration, ClientIpConfiguration ipConfiguration) {
-        configuration.setDnsResolver(require(ipConfiguration.dnsResolver()));
         configuration.setLocalAddress(require(ipConfiguration.localAddress()));
     }
 
     private void copyTimeoutConfiguration(LegacyClientConfiguration configuration,
                                           ClientTimeoutConfiguration timeoutConfiguration) {
         configuration.setConnectionTimeout(Math.toIntExact(toRequiredMillis(timeoutConfiguration.connectionTimeout())));
-        configuration.setRequestTimeout(Math.toIntExact(toRequiredMillis(timeoutConfiguration.httpRequestTimeout())));
         configuration.setSocketTimeout(Math.toIntExact(toRequiredMillis(timeoutConfiguration.socketTimeout())));
         configuration.setClientExecutionTimeout(Math.toIntExact(toRequiredMillis(timeoutConfiguration.totalExecutionTimeout())));
     }

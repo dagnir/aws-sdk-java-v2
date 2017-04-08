@@ -26,7 +26,6 @@ public class TimeoutConfiguration {
 
     private Integer socketTimeout;
     private Integer connectionTimeout;
-    private Integer httpRequestTimeout;
     private Integer totalExecutionTimeout;
 
     /**
@@ -115,87 +114,6 @@ public class TimeoutConfiguration {
      */
     public TimeoutConfiguration connectionTimeout(Integer connectionTimeout) {
         setConnectionTimeout(connectionTimeout);
-        return this;
-    }
-
-    /**
-     * Returns the amount of time to wait (in milliseconds) for a HTTP request to complete before
-     * giving up and timing out.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * </p>
-     * <p>
-     * The http request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this, this feature
-     * should not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * Default value is {@value LegacyClientConfiguration#DEFAULT_REQUEST_TIMEOUT},
-     * which indicates the feature is disabled.
-     * </p>
-     *
-     * @return The amount of time to wait (in milliseconds) for the request to complete before
-     *         giving up and timing out.
-     */
-    public Optional<Integer> getHttpRequestTimeout() {
-        return Optional.ofNullable(httpRequestTimeout);
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for a single HTTP request to complete before giving
-     * up and timing out.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * </p>
-     * <p>
-     * The http request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this, this feature
-     * should not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * This timeout is disabled by default.
-     * </p>
-     *
-     * @param httpRequestTimeout The amount of time to wait (in milliseconds) for the request to complete before
-     *                       giving up and timing out.
-     */
-    public void setHttpRequestTimeout(Integer httpRequestTimeout) {
-        this.httpRequestTimeout = httpRequestTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for a single HTTP request to complete before giving
-     * up and timing out.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * </p>
-     * <p>
-     * The http request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this, this feature
-     * should not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * This timeout is disabled by default.
-     * </p>
-     *
-     * @param httpRequestTimeout The amount of time to wait (in milliseconds) for the request to complete before
-     *                       giving up and timing out.
-     * @return This object for method chaining.
-     */
-    public TimeoutConfiguration httpRequestTimeout(Integer httpRequestTimeout) {
-        setHttpRequestTimeout(httpRequestTimeout);
         return this;
     }
 

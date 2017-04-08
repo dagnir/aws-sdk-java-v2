@@ -29,9 +29,9 @@ public class ExpirationHeaderParsingTest {
         MockObjectExpirationResult result = new MockObjectExpirationResult();
 
         ObjectExpirationHeaderHandler<MockObjectExpirationResult> handler =
-                new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
+                new ObjectExpirationHeaderHandler<>();
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
 
         handler.handle(result, response);
 
@@ -44,9 +44,9 @@ public class ExpirationHeaderParsingTest {
         MockObjectExpirationResult result = new MockObjectExpirationResult();
 
         ObjectExpirationHeaderHandler<MockObjectExpirationResult> handler =
-                new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
+                new ObjectExpirationHeaderHandler<>();
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
         response.addHeader(
                 "x-amz-expiration",
                 "expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\", rule-id=\"Test\"");
@@ -63,9 +63,9 @@ public class ExpirationHeaderParsingTest {
         MockObjectExpirationResult result = new MockObjectExpirationResult();
 
         ObjectExpirationHeaderHandler<MockObjectExpirationResult> handler =
-                new ObjectExpirationHeaderHandler<MockObjectExpirationResult>();
+                new ObjectExpirationHeaderHandler<>();
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
         response.addHeader(
                 "x-amz-expiration",
                 "rule-id=\"Test\", expiry-date=\"Tue, 01 Jan 2013 00:00:00 GMT\"");

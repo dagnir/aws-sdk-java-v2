@@ -32,7 +32,7 @@ import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 public class SdkHttpResponseAdapter {
 
     public static HttpResponse adapt(HttpClientSettings httpSettings, Request<?> request, SdkHttpResponse awsHttpResponse) {
-        final HttpResponse httpResponse = new HttpResponse(request, null);
+        final HttpResponse httpResponse = new HttpResponse(request);
         httpResponse.setStatusCode(awsHttpResponse.getStatusCode());
         httpResponse.setStatusText(awsHttpResponse.getStatusText());
 

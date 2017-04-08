@@ -69,7 +69,7 @@ public class ErrorResponseParseTest {
         final String requestId = "requestId";
         final String extendedRequestId = "extendedRequestId";
 
-        HttpResponse response = new HttpResponse(null, null);
+        HttpResponse response = new HttpResponse(null);
         response.addHeader("Code", code);
         response.addHeader(Headers.REQUEST_ID, requestId);
         response.addHeader(Headers.EXTENDED_REQUEST_ID, extendedRequestId);
@@ -104,7 +104,7 @@ public class ErrorResponseParseTest {
 
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.HEAD);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.addHeader("Code", code);
         response.addHeader(Headers.REQUEST_ID, requestId);
         response.addHeader(Headers.EXTENDED_REQUEST_ID, extendedRequestId);
@@ -134,7 +134,7 @@ public class ErrorResponseParseTest {
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.POST);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 
@@ -163,7 +163,7 @@ public class ErrorResponseParseTest {
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.POST);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 
@@ -202,7 +202,7 @@ public class ErrorResponseParseTest {
         final String fileName = "ErrorResponseXMLNotProperFormat.xml";
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 
@@ -228,7 +228,7 @@ public class ErrorResponseParseTest {
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.POST);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 
@@ -254,7 +254,7 @@ public class ErrorResponseParseTest {
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.POST);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 
@@ -280,7 +280,7 @@ public class ErrorResponseParseTest {
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.POST);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 
@@ -306,7 +306,7 @@ public class ErrorResponseParseTest {
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.POST);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 
@@ -332,7 +332,7 @@ public class ErrorResponseParseTest {
         final int statusCode = 501;
         Request request = new DefaultRequest("testService");
         request.setHttpMethod(HttpMethodName.POST);
-        HttpResponse response = new HttpResponse(request, null);
+        HttpResponse response = new HttpResponse(request);
         response.setContent(loadFileAsStream(fileName));
         response.setStatusCode(statusCode);
 

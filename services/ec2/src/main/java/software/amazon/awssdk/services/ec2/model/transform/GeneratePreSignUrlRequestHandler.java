@@ -23,7 +23,8 @@ import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.auth.Aws4Signer;
-import software.amazon.awssdk.handlers.CredentialsRequestHandler;
+import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
@@ -36,7 +37,7 @@ import software.amazon.awssdk.util.StringUtils;
  * RequestHandler that generates a pre-signed URL for copying encrypted
  * snapshots
  */
-public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler {
+public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
 
     @Override
     public void beforeRequest(Request<?> request) {
@@ -83,7 +84,7 @@ public class GeneratePreSignUrlRequestHandler extends CredentialsRequestHandler 
             Aws4Signer signer = new Aws4Signer();
             signer.setServiceName(serviceName);
 
-            signer.presignRequest(requestForPresigning, awsCredentials, null);
+            signer.presignRequest(requestForPresigning, request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS), null);
 
             originalCopySnapshotRequest
                     .setPresignedUrl(generateUrl(requestForPresigning));

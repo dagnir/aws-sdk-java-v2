@@ -326,7 +326,7 @@ class S3CryptoModuleAe extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
         try {
             S3ObjectInputStream objectContent = s3object.getObjectContent();
             InputStream adjustedRangeContents = new AdjustedRangeInputStream(objectContent, range[0], range[1]);
-            s3object.setObjectContent(new S3ObjectInputStream(adjustedRangeContents, objectContent.getHttpRequest()));
+            s3object.setObjectContent(new S3ObjectInputStream(adjustedRangeContents));
             return s3object;
         } catch (IOException e) {
             throw new SdkClientException("Error adjusting output to desired byte range: " + e.getMessage());
@@ -421,8 +421,7 @@ class S3CryptoModuleAe extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
         wrapper.setObjectContent(new S3ObjectInputStream(
                 new CipherLiteInputStream(objectContent,
                                           cekMaterial.getCipherLite(),
-                                          DEFAULT_BUFFER_SIZE),
-                objectContent.getHttpRequest()));
+                                          DEFAULT_BUFFER_SIZE)));
         return wrapper;
     }
 

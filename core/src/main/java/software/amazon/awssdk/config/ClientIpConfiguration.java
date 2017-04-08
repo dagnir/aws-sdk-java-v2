@@ -17,7 +17,6 @@ package software.amazon.awssdk.config;
 
 import java.net.InetAddress;
 import java.util.Optional;
-import software.amazon.awssdk.DnsResolver;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 /**
@@ -30,14 +29,12 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
                      + "should be enhanced.")
 public final class ClientIpConfiguration {
     private final InetAddress localAddress;
-    private final DnsResolver dnsResolver;
 
     /**
      * Initialize this configuration. Private to require use of {@link #builder()}.
      */
     private ClientIpConfiguration(DefaultClientIpConfigurationBuilder builder) {
         this.localAddress = builder.localAddress;
-        this.dnsResolver = builder.dnsResolver;
     }
 
     /**
@@ -54,15 +51,6 @@ public final class ClientIpConfiguration {
      */
     public Optional<InetAddress> localAddress() {
         return Optional.ofNullable(localAddress);
-    }
-
-    /**
-     * Special logic to be used when resolving DNS entries.
-     *
-     * @see Builder#dnsResolver(DnsResolver)
-     */
-    public Optional<DnsResolver> dnsResolver() {
-        return Optional.ofNullable(dnsResolver);
     }
 
     /**
@@ -84,18 +72,6 @@ public final class ClientIpConfiguration {
         Builder localAddress(InetAddress localAddress);
 
         /**
-         * @see ClientIpConfiguration#dnsResolver().
-         */
-        Optional<DnsResolver> dnsResolver();
-
-        /**
-         * Configure special logic to be used when resolving DNS entries.
-         *
-         * @see ClientIpConfiguration#dnsResolver()
-         */
-        Builder dnsResolver(DnsResolver dnsResolver);
-
-        /**
          * Build a {@link ClientIpConfiguration} from the values currently configured in this builder.
          */
         ClientIpConfiguration build();
@@ -106,7 +82,6 @@ public final class ClientIpConfiguration {
      */
     private static final class DefaultClientIpConfigurationBuilder implements Builder {
         private InetAddress localAddress;
-        private DnsResolver dnsResolver;
 
         @Override
         public Optional<InetAddress> localAddress() {
@@ -125,25 +100,6 @@ public final class ClientIpConfiguration {
 
         public void setLocalAddress(InetAddress localAddress) {
             localAddress(localAddress);
-        }
-
-        @Override
-        public Optional<DnsResolver> dnsResolver() {
-            return Optional.ofNullable(dnsResolver);
-        }
-
-        @Override
-        public Builder dnsResolver(DnsResolver dnsResolver) {
-            this.dnsResolver = dnsResolver;
-            return this;
-        }
-
-        public DnsResolver getDnsResolver() {
-            return dnsResolver;
-        }
-
-        public void setDnsResolver(DnsResolver dnsResolver) {
-            dnsResolver(dnsResolver);
         }
 
         @Override

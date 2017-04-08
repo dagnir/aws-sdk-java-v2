@@ -31,7 +31,7 @@ public class EmptyHttpRequest implements Request<Object> {
 
     private final URI endpoint;
     private final HttpMethodName httpMethod;
-    private final InputStream content;
+    private InputStream content;
     private AmazonWebServiceRequest originalRequest = new AmazonWebServiceRequest() {
     };
 
@@ -117,6 +117,7 @@ public class EmptyHttpRequest implements Request<Object> {
 
     @Override
     public void setContent(InputStream content) {
+        this.content = content;
     }
 
     @Override

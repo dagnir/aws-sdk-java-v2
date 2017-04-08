@@ -108,6 +108,11 @@
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
+            <artifactId>aws-http-client-apache</artifactId>
+            <version>${awsjavasdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
             <artifactId>utils</artifactId>
             <version>${awsjavasdk.version}</version>
         </dependency>

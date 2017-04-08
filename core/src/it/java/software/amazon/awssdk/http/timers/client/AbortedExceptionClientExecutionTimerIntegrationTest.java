@@ -15,84 +15,124 @@
 
 package software.amazon.awssdk.http.timers.client;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.createMockGetRequest;
-import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.createRawHttpClientSpy;
 import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.execute;
+import static software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils.interruptCurrentThreadAfterDelay;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
 
-import java.io.IOException;
 import java.io.InputStream;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.protocol.HttpContext;
-import org.junit.BeforeClass;
+import java.util.List;
+import org.apache.http.pool.ConnPoolControl;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AbortedException;
+import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.TestPreConditions;
+import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
-import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
-import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
+import software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils;
+import software.amazon.awssdk.internal.http.request.SlowRequestHandler;
+import software.amazon.awssdk.internal.http.response.DummyResponseHandler;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockServerTestBase {
 
     private AmazonHttpClient httpClient;
 
-    @BeforeClass
-    public static void preConditions() {
-        TestPreConditions.assumeNotJava6();
+    @Mock
+    private SdkHttpClient sdkHttpClient;
+
+    @Mock
+    private AbortableCallable<SdkHttpResponse> abortableCallable;
+
+    @Before
+    public void setup() throws Exception {
+        when(sdkHttpClient.prepareRequest(any(), any())).thenReturn(abortableCallable);
+        httpClient = AmazonHttpClient.builder()
+                .clientConfiguration(new LegacyClientConfiguration()
+                                             .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
+                                             .withMaxErrorRetry(0))
+                .sdkHttpClient(sdkHttpClient)
+                .build();
+        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
+                                                          .statusCode(200)
+                                                          .build());
     }
 
     @Override
     protected MockServer buildMockServer() {
-        return new MockServer(
-                MockServer.DummyResponseServerBehavior.build(200, "Hi",
-                                                             "Dummy response"));
+        return new MockServer(MockServer.DummyResponseServerBehavior.build(200, "Hi", "Dummy response"));
     }
 
     @Test(expected = AbortedException.class)
     public void clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_not_expired() throws Exception {
-        LegacyClientConfiguration config = new LegacyClientConfiguration()
-                .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
-                .withMaxErrorRetry(0);
-        ConnectionManagerAwareHttpClient rawHttpClient = createRawHttpClientSpy(config);
-
-        doThrow(new AbortedException()).when(rawHttpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-        httpClient = new AmazonHttpClient(config, rawHttpClient, null);
+        when(abortableCallable.call()).thenThrow(new AbortedException());
 
         execute(httpClient, createMockGetRequest());
     }
 
     @Test(expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_aborted_exception_occurs_timeout_expired() throws Exception {
-        LegacyClientConfiguration config = new LegacyClientConfiguration()
-                .withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT)
-                .withMaxErrorRetry(0);
-        ConnectionManagerAwareHttpClient rawHttpClient =
-                createRawHttpClientSpy(config);
-
-        httpClient = new AmazonHttpClient(config, rawHttpClient, null);
-
-        SdkBufferedInputStream payload = new SdkBufferedInputStream(new InputStream() {
-            @Override
-            public int read() throws IOException {
-                // Sleeping here to avoid OOM issues from a limitless InputStream
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                return 1;
-            }
+        // Simulate a slow HTTP request
+        when(abortableCallable.call()).thenAnswer(i -> {
+            Thread.sleep(10_000);
+            return null;
         });
-        
-        execute(httpClient, new EmptyHttpRequest(server.getEndpoint(), HttpMethodName.PUT, payload));
+
+        execute(httpClient, createMockGetRequest());
+    }
+
+    /**
+     * Tests that a streaming operation has it's request properly cleaned up if the client is interrupted after the
+     * response is received.
+     *
+     * @see TT0070103230
+     */
+    @Test
+    public void clientInterruptedDuringResponseHandlers_DoesNotLeakConnection() throws Exception {
+        InputStream mockContent = mock(InputStream.class);
+        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
+                                                          .statusCode(200)
+                                                          .content(mockContent)
+                                                          .build());
+        interruptCurrentThreadAfterDelay(1000);
+        List<RequestHandler2> requestHandlers = RequestHandlerTestUtils
+                .buildRequestHandlerList(new SlowRequestHandler().withAfterResponseWaitInSeconds(10));
+        try {
+            requestBuilder()
+                    .executionContext(withHandlers(requestHandlers))
+                    .execute(new DummyResponseHandler().leaveConnectionOpen());
+            fail("Expected exception");
+        } catch (AmazonClientException e) {
+            assertThat(e.getCause(), instanceOf(InterruptedException.class));
+        }
+
+        verify(mockContent).close();
+    }
+
+    private AmazonHttpClient.RequestExecutionBuilder requestBuilder() {
+        return httpClient.requestExecutionBuilder().request(newGetRequest());
+    }
+
+    private ExecutionContext withHandlers(List<RequestHandler2> requestHandlers) {
+        return ExecutionContext.builder().withRequestHandler2s(requestHandlers).build();
     }
 }

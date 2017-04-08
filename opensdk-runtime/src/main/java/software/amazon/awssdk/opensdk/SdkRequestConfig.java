@@ -28,16 +28,13 @@ import software.amazon.awssdk.annotation.Immutable;
 @Immutable
 public class SdkRequestConfig {
 
-    private final Integer httpRequestTimeout;
     private final Integer totalExecutionTimeout;
     private final Map<String, String> customHeaders;
     private final Map<String, List<String>> customQueryParams;
 
-    private SdkRequestConfig(Integer httpRequestTimeout,
-                             Integer totalExecutionTimeout,
+    private SdkRequestConfig(Integer totalExecutionTimeout,
                              Map<String, String> customHeaders,
                              Map<String, List<String>> customQueryParams) {
-        this.httpRequestTimeout = httpRequestTimeout;
         this.totalExecutionTimeout = totalExecutionTimeout;
         this.customHeaders = Collections.unmodifiableMap(customHeaders);
         this.customQueryParams = Collections.unmodifiableMap(customQueryParams);
@@ -48,15 +45,6 @@ public class SdkRequestConfig {
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * See {@link Builder#httpRequestTimeout}.
-     *
-     * @return Current request timeout value.
-     */
-    public Integer getHttpRequestTimeout() {
-        return httpRequestTimeout;
     }
 
     /**
@@ -91,7 +79,6 @@ public class SdkRequestConfig {
      */
     public Builder copyBuilder() {
         Builder b = new Builder();
-        b.httpRequestTimeout = httpRequestTimeout;
         b.totalExecutionTimeout = totalExecutionTimeout;
         b.customHeaders = new HashMap<>(customHeaders);
         b.customQueryParams = new HashMap<>(customQueryParams);
@@ -103,40 +90,9 @@ public class SdkRequestConfig {
      */
     public static class Builder {
 
-        private Integer httpRequestTimeout;
         private Integer totalExecutionTimeout;
         private Map<String, String> customHeaders = new HashMap<>();
         private Map<String, List<String>> customQueryParams = new HashMap<>();
-
-        /**
-         * Sets the amount of time to wait (in milliseconds) for a single HTTP request to complete before giving
-         * up and timing out.
-         * <p>
-         * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-         * enforce a hard timeout when reading the response. For APIs that return large responses this
-         * could be expensive.
-         * </p>
-         * <p>
-         * The http request timeout feature doesn't have strict guarantees on how quickly a request is
-         * aborted when the timeout is breached. The typical case aborts the request within a few
-         * milliseconds but there may occasionally be requests that don't get aborted until several
-         * seconds after the timer has been breached. Because of this, this feature
-         * should not be used when absolute precision is needed.
-         * </p>
-         * <p>
-         * This timeout is disabled by default.
-         * </p>
-         *
-         * @param httpRequestTimeout The amount of time to wait (in milliseconds) for the request to
-         *                       complete before giving up and timing out. A non-positive value
-         *                       disables the timeout for this request.
-         * @return This object for method chaining.
-         * @see {@link #totalExecutionTimeout(int)} to enforce a timeout across all retries
-         */
-        public Builder httpRequestTimeout(int httpRequestTimeout) {
-            this.httpRequestTimeout = httpRequestTimeout;
-            return this;
-        }
 
         /**
          * Sets the amount of time (in milliseconds) to allow the client to complete the execution of
@@ -159,10 +115,9 @@ public class SdkRequestConfig {
          * </p>
          *
          * @param totalExecutionTimeout The amount of time (in milliseconds) to allow the client to
-         *                               complete the execution of an API call. A non-positive value
-         *                               disables the timeout for this request.
+         *                              complete the execution of an API call. A non-positive value
+         *                              disables the timeout for this request.
          * @return This object for method chaining.
-         * @see {@link #httpRequestTimeout(int)} to enforce a timeout per HTTP request
          */
         public Builder totalExecutionTimeout(int totalExecutionTimeout) {
             this.totalExecutionTimeout = totalExecutionTimeout;
@@ -207,8 +162,7 @@ public class SdkRequestConfig {
          * @return Immutable {@link SdkRequestConfig} object. See {@link BaseRequest#sdkRequestConfig(SdkRequestConfig)}.
          */
         public SdkRequestConfig build() {
-            return new SdkRequestConfig(httpRequestTimeout,
-                                        totalExecutionTimeout,
+            return new SdkRequestConfig(totalExecutionTimeout,
                                         customHeaders,
                                         customQueryParams);
         }

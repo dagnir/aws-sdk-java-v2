@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.internal.http.timers.client;
 
-import org.apache.http.client.methods.HttpRequestBase;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.AbortableCallable;
 
 /**
  * Implementation of {@link ClientExecutionAbortTask} that interrupts the caller thread and aborts
@@ -27,7 +27,7 @@ public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
 
     private final Thread thread;
     private boolean hasTaskExecuted;
-    private HttpRequestBase currentHttpRequest;
+    private volatile AbortableCallable<?> currentRequest;
 
     public ClientExecutionAbortTaskImpl(Thread thread) {
         this.thread = thread;
@@ -39,13 +39,12 @@ public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
         if (!thread.isInterrupted()) {
             thread.interrupt();
         }
-        if (!currentHttpRequest.isAborted()) {
-            currentHttpRequest.abort();
-        }
+        currentRequest.abort();
     }
 
-    public void setCurrentHttpRequest(HttpRequestBase newRequest) {
-        this.currentHttpRequest = newRequest;
+    @Override
+    public void setCurrentHttpRequest(AbortableCallable<?> newRequest) {
+        this.currentRequest = newRequest;
     }
 
     public boolean hasClientExecutionAborted() {

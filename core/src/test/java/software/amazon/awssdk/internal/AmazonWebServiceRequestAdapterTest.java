@@ -41,18 +41,15 @@ public class AmazonWebServiceRequestAdapterTest {
     @Test
     public void timeoutsSetInBaseRequest_AreAdaptedToNonNullIntegers() {
         AmazonWebServiceRequest request = new EmptyAmazonWebServiceRequest();
-        request.setSdkRequestTimeout(1000);
         request.setSdkClientExecutionTimeout(4000);
         AmazonWebServiceRequestAdapter adapter = new AmazonWebServiceRequestAdapter(request);
 
-        assertEquals(Integer.valueOf(1000), adapter.getRequestTimeout());
         assertEquals(Integer.valueOf(4000), adapter.getClientExecutionTimeout());
     }
 
     @Test
     public void timeoutsNotSetInBaseRequest_AreNullWhenAdapted() {
         AmazonWebServiceRequestAdapter adapter = adaptEmpty();
-        assertNull(adapter.getRequestTimeout());
         assertNull(adapter.getClientExecutionTimeout());
     }
 

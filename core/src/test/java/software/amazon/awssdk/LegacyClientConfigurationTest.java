@@ -17,24 +17,16 @@ package software.amazon.awssdk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.Random;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.junit.Test;
-import org.mockito.Mockito;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.util.ImmutableMapParameter;
@@ -48,65 +40,6 @@ public class LegacyClientConfigurationTest {
     private static final RetryPolicy CUSTOM_RETRY_POLICY = new RetryPolicy(
             PredefinedRetryPolicies.SdkDefaultRetryCondition.NO_RETRY_CONDITION,
             RetryPolicy.BackoffStrategy.NO_DELAY, 1000, false);
-
-    @Test
-    public void httpClientConfiguration() throws Exception {
-        LegacyClientConfiguration config = new LegacyClientConfiguration();
-        ApacheHttpClientConfig httpclientConfig = config.getApacheHttpClientConfig();
-        assertNotNull("httpclient config must never be null", httpclientConfig);
-
-        assertNull("default ssl socket factory is null",
-                   httpclientConfig.getSslSocketFactory());
-
-        SSLSocketFactory customFactory = new SSLSocketFactory((KeyStore) null);
-        config.getApacheHttpClientConfig().setSslSocketFactory(customFactory);
-        assertSame("custom ssl socket factory configured", customFactory,
-                   config.getApacheHttpClientConfig().getSslSocketFactory());
-
-        config.getApacheHttpClientConfig().setSslSocketFactory(null);
-        assertNull("no more custom ssl socket factory configured", config
-                .getApacheHttpClientConfig().getSslSocketFactory());
-
-        config.getApacheHttpClientConfig().withSslSocketFactory(customFactory);
-        assertSame("custom ssl socket factory configured via fluent API",
-                   customFactory,
-                   config.getApacheHttpClientConfig().getSslSocketFactory());
-
-        LegacyClientConfiguration config2 = new LegacyClientConfiguration(config);
-        assertSame("custom ssl socket factory copied via ctor",
-                   customFactory,
-                   config2.getApacheHttpClientConfig().getSslSocketFactory());
-
-        config.getApacheHttpClientConfig().setSslSocketFactory(null);
-        assertNull(
-                "ssl socket factory set to null for the original httpclient config",
-                config.getApacheHttpClientConfig().getSslSocketFactory());
-        assertNotNull(
-                "ssl soscket of the new httpclient config should not be affected",
-                config2.getApacheHttpClientConfig().getSslSocketFactory());
-
-        assertNotNull("Client Configuration must have a default DnsResolver",
-                      config.getDnsResolver());
-
-        try {
-            config.setDnsResolver(null);
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException expected) {
-            // Expected.
-        }
-
-        DnsResolver resolver = new DnsResolver() {
-            @Override
-            public InetAddress[] resolve(String s) throws UnknownHostException {
-                return new InetAddress[0];
-            }
-        };
-
-        config.setDnsResolver(resolver);
-        assertSame("custom dns resolver set via fluent API",
-                   resolver,
-                   config.getDnsResolver());
-    }
 
     private void clearProxyProperties() {
         System.clearProperty("http.proxyHost");
@@ -260,7 +193,7 @@ public class LegacyClientConfigurationTest {
             final Class<?> clzz = field.getType();
 
             if (clzz.isAssignableFrom(int.class) || clzz.isAssignableFrom(long.class)) {
-                field.set(customConfig, Math.abs(RANDOM.nextInt()));
+                field.set(customConfig, RANDOM.nextInt(Integer.MAX_VALUE));
             } else if (clzz.isAssignableFrom(boolean.class)) {
                 // Invert the default value to ensure it's different
                 field.set(customConfig, !(Boolean) field.get(customConfig));
@@ -273,15 +206,10 @@ public class LegacyClientConfigurationTest {
             } else if (clzz.isAssignableFrom(Protocol.class)) {
                 // Default is HTTPS so switch to HTTP
                 field.set(customConfig, Protocol.HTTP);
-            } else if (clzz.isAssignableFrom(DnsResolver.class)) {
-                field.set(customConfig, new MyCustomDnsResolver());
             } else if (clzz.isAssignableFrom(SecureRandom.class)) {
                 field.set(customConfig, new SecureRandom());
             } else if (field.getName().equals("headers")) {
                 field.set(customConfig, ImmutableMapParameter.of("foo", "bar"));
-            } else if (clzz.isAssignableFrom(ApacheHttpClientConfig.class)) {
-                customConfig.getApacheHttpClientConfig()
-                            .setSslSocketFactory(Mockito.mock(ConnectionSocketFactory.class));
             } else {
                 throw new RuntimeException(
                         String.format("Field %s of type %s is not supported",
@@ -302,12 +230,5 @@ public class LegacyClientConfigurationTest {
         return (field.getModifiers() & Modifier.STATIC) == Modifier.STATIC;
     }
 
-    public static class MyCustomDnsResolver implements DnsResolver {
-
-        @Override
-        public InetAddress[] resolve(String host) throws UnknownHostException {
-            return new InetAddress[0];
-        }
-    }
 
 }

@@ -936,12 +936,6 @@ public abstract class AbstractAmazonS3 implements AmazonS3 {
     }
 
     @Override
-    public S3ResponseMetadata getCachedResponseMetadata(
-            AmazonWebServiceRequest request) {
-        throw new UnsupportedOperationException("Extend AbstractAmazonS3 to provide an implementation");
-    }
-
-    @Override
     public void restoreObject(String bucketName, String key,
                               int expirationInDays) throws AmazonServiceException {
         restoreObject(new RestoreObjectRequest(bucketName, key, expirationInDays));

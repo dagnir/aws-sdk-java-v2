@@ -33,7 +33,7 @@ public class S3ErrorResponseHandlerTest {
 
     @Before
     public void setup() {
-        httpResponse = new HttpResponse(new DefaultRequest<String>("s3"), null);
+        httpResponse = new HttpResponse(new DefaultRequest<>("s3"));
         errorResponseHandler = new S3ErrorResponseHandler();
     }
 

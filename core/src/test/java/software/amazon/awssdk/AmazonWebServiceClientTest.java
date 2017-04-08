@@ -22,7 +22,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.QueryStringSigner;
-import software.amazon.awssdk.internal.http.conn.IdleConnectionReaper;
 
 public class AmazonWebServiceClientTest {
 
@@ -74,24 +73,6 @@ public class AmazonWebServiceClientTest {
         client.setEndpointPrefix(endpointPrefixOverride);
         Assert.assertEquals(endpointPrefixOverride, client.getEndpointPrefix());
         Assert.assertNotEquals(client.getEndpointPrefix(), client.getServiceName());
-    }
-
-    /**
-     * A memory leak was introduced in 1.11 that prevented connection managers from being
-     * deregistered with the IdleConnectionReaper. This test asserts that any clients registered
-     * with the reaper are also deregistered on shutdown of the client.
-     *
-     * @see <a href="https://github.com/aws/aws-sdk-java/issues/722">Issue #722</a>
-     */
-    @Test
-    public void connectionManagersAreUnregisteredFromIdleConnectionReaper() {
-        // Clears out the IdleConnectionReaper. This is helpful when there are open registered connections from previous tests.
-        IdleConnectionReaper.shutdown();
-        for (int count = 0; count < 100; count++) {
-            new AmazonWebServiceClient(new LegacyClientConfiguration()) {
-            }.shutdown();
-        }
-        assertEquals(0, IdleConnectionReaper.getRegisteredConnectionManagers().size());
     }
 
     private static class AmazonTestClient extends AmazonWebServiceClient {

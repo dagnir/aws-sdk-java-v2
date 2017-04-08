@@ -15,38 +15,23 @@
 
 package software.amazon.awssdk.retry;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
 import org.junit.Assert;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.DefaultRequest;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.internal.http.apache.client.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.util.StringInputStream;
 
-/** Some utility class and method for testing RetryCondition. */
+/**
+ * Some utility class and method for testing RetryCondition.
+ */
 public class RetryPolicyTestBase {
 
     protected static final AmazonWebServiceRequest originalRequest = new TestAmazonWebServiceRequest();
@@ -58,16 +43,6 @@ public class RetryPolicyTestBase {
      */
     protected static ContextDataCollectionRetryCondition retryCondition;
     protected static ContextDataCollectionBackoffStrategy backoffStrategy;
-
-    public static void injectMockHttpClient(AmazonHttpClient amazonHttpClient, ConnectionManagerAwareHttpClient mockHttpClient) {
-        try {
-            Field f = AmazonHttpClient.class.getDeclaredField("httpClient");
-            f.setAccessible(true);
-            f.set(amazonHttpClient, mockHttpClient);
-        } catch (Exception e) {
-            Assert.fail("Cannot inject the mock HttpClient object. " + e.getMessage());
-        }
-    }
 
     @SuppressWarnings("rawtypes")
     public static Request<?> getSampleRequestWithRepeatableContent(AmazonWebServiceRequest amazonWebServiceRequest) {
@@ -93,7 +68,9 @@ public class RetryPolicyTestBase {
         return request;
     }
 
-    /** Verifies the RetryCondition has collected the expected context information. */
+    /**
+     * Verifies the RetryCondition has collected the expected context information.
+     */
     public static void verifyExpectedContextData(ContextDataCollection contextDataCollection,
                                                  AmazonWebServiceRequest failedRequest,
                                                  AmazonClientException expectedException,
@@ -183,8 +160,8 @@ public class RetryPolicyTestBase {
 
     /**
      * An error response handler implementation that simply
-     *   - keeps the status code
-     *   - sets the error code by the status text (which comes from the reason phrase in the low-level response)
+     * - keeps the status code
+     * - sets the error code by the status text (which comes from the reason phrase in the low-level response)
      */
     public static class TestHttpResponseHandler implements HttpResponseHandler<AmazonServiceException> {
 
@@ -200,143 +177,6 @@ public class RetryPolicyTestBase {
         @Override
         public boolean needsConnectionLeftOpen() {
             return false;
-        }
-    }
-
-    /**
-     * A mock HttpClient implementation that does nothing but throws the
-     * specified IOException or RuntimeException upon any call on execute(...)
-     * method.
-     */
-    public static class ThrowingExceptionHttpClient extends MockHttpClient {
-
-        private final Throwable t;
-
-        /**
-         * @param t An IOException or RuntimeException object.
-         */
-        public ThrowingExceptionHttpClient(Throwable t) {
-            this.t = t;
-        }
-
-        @Override
-        public HttpResponse execute(HttpUriRequest request) throws IOException,
-                                                                   ClientProtocolException {
-            if (t instanceof IOException) {
-                throw (IOException) t;
-            } else if (t instanceof RuntimeException) {
-                throw (RuntimeException) t;
-            } else {
-                Assert.fail("The expected throwable should be either an IOException or RuntimeException.");
-                return null;
-            }
-        }
-
-    }
-
-    /**
-     * A mock HttpClient implementation that does nothing but directly returns a
-     * BasicHttpResponse object with the specified status code upon any call on
-     * execute(...) method.
-     */
-    public static class ReturnServiceErrorHttpClient extends MockHttpClient {
-
-        private final int statusCode;
-        private final String reasonPhrase;
-
-        /**
-         * @param statusCode The status code to be included in the error response.
-         */
-        public ReturnServiceErrorHttpClient(int statusCode, String reasonPhrase) {
-            this.statusCode = statusCode;
-            this.reasonPhrase = reasonPhrase;
-        }
-
-        @Override
-        public HttpResponse execute(HttpUriRequest request) throws IOException,
-                                                                   ClientProtocolException {
-            return new BasicHttpResponse(new BasicStatusLine(
-                    HttpVersion.HTTP_1_1,
-                    statusCode,
-                    reasonPhrase));
-        }
-
-    }
-
-    /** A base abstract class for fake HttpClient implementations. */
-    public abstract static class MockHttpClient implements ConnectionManagerAwareHttpClient {
-
-        @Override
-        public abstract HttpResponse execute(HttpUriRequest request) throws IOException,
-                                                                            ClientProtocolException;
-
-        @Override
-        public HttpResponse execute(HttpUriRequest request, HttpContext context)
-                throws IOException, ClientProtocolException {
-            return execute(request);
-        }
-        
-        /*
-         * Unsupported operations.
-         * These operations are not used by AmazonHttpClient
-         */
-
-        @Override
-        public HttpParams getParams() {
-            return null;
-        }
-
-        @Override
-        public ClientConnectionManager getConnectionManager() {
-            return null;
-        }
-
-        @Override
-        public HttpResponse execute(HttpHost target, HttpRequest request)
-                throws IOException, ClientProtocolException {
-            return null;
-        }
-
-        @Override
-        public HttpResponse execute(HttpHost target, HttpRequest request,
-                                    HttpContext context) throws IOException,
-                                                                ClientProtocolException {
-            return null;
-        }
-
-        @Override
-        public <T> T execute(HttpUriRequest request,
-                             ResponseHandler<? extends T> responseHandler)
-                throws IOException, ClientProtocolException {
-            return null;
-        }
-
-        @Override
-        public <T> T execute(HttpUriRequest request,
-                             ResponseHandler<? extends T> responseHandler,
-                             HttpContext context) throws IOException,
-                                                         ClientProtocolException {
-            return null;
-        }
-
-        @Override
-        public <T> T execute(HttpHost target, HttpRequest request,
-                             ResponseHandler<? extends T> responseHandler)
-                throws IOException, ClientProtocolException {
-            return null;
-        }
-
-        @Override
-        public <T> T execute(HttpHost target, HttpRequest request,
-                             ResponseHandler<? extends T> responseHandler,
-                             HttpContext context) throws IOException,
-                                                         ClientProtocolException {
-            return null;
-        }
-
-        @Override
-        public HttpClientConnectionManager getHttpClientConnectionManager() {
-            return null;
         }
     }
 

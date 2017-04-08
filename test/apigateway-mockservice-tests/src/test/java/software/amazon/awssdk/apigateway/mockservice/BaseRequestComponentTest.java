@@ -40,7 +40,6 @@ import org.junit.Test;
 import software.amazon.awssdk.apigateway.mockservice.model.GetNoauthScalarsRequest;
 import software.amazon.awssdk.apigateway.mockservice.model.PutNoauthScalarsRequest;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
-import software.amazon.awssdk.http.exception.HttpRequestTimeoutException;
 import software.amazon.awssdk.opensdk.SdkRequestConfig;
 
 /**
@@ -69,10 +68,10 @@ public class BaseRequestComponentTest {
     public void customHeadersSetInBaseRequest_AreSentInActualRequest() {
         client.getNoauthScalars(new GetNoauthScalarsRequest().sdkRequestConfig(
                 SdkRequestConfig.builder()
-                                .customHeader("FooHeader", "FooValue")
-                                .customHeader("BarHeader", "BarValue")
-                                .build()
-                                                                              ));
+                        .customHeader("FooHeader", "FooValue")
+                        .customHeader("BarHeader", "BarValue")
+                        .build()
+        ));
         verify(anyRequestedFor(URI).withHeader("FooHeader", equalTo("FooValue")));
         verify(anyRequestedFor(URI).withHeader("BarHeader", equalTo("BarValue")));
     }
@@ -81,28 +80,14 @@ public class BaseRequestComponentTest {
     public void customQueryParamsSetInBaseRequest_AreSentInActualRequest() {
         client.getNoauthScalars(new GetNoauthScalarsRequest().sdkRequestConfig(
                 SdkRequestConfig.builder()
-                                .customQueryParam("FooParam", "valOne")
-                                .customQueryParam("FooParam", "valTwo")
-                                .customQueryParam("BarParam", "BarValue")
-                                .build()
-                                                                              ));
+                        .customQueryParam("FooParam", "valOne")
+                        .customQueryParam("FooParam", "valTwo")
+                        .customQueryParam("BarParam", "BarValue")
+                        .build()
+        ));
         verify(anyRequestedFor(URI).withQueryParam("FooParam", equalTo("valOne")));
         verify(anyRequestedFor(URI).withQueryParam("FooParam", equalTo("valTwo")));
         verify(anyRequestedFor(URI).withQueryParam("BarParam", equalTo("BarValue")));
-    }
-
-    /**
-     * Note that this is a time based test and may be subject to occasional flakiness. The only way
-     * to observe that request timeout is honored is to trigger the timeout.
-     */
-    @Test
-    public void customRequestTimeoutSetInBaseRequest_IsHonoredByRuntime() {
-        final int expectedTimeout = 100;
-        Runnable runnable = () -> {
-            SdkRequestConfig requestConfig = SdkRequestConfig.builder().httpRequestTimeout(expectedTimeout).build();
-            client.putNoauthScalars(new PutNoauthScalarsRequest().sdkRequestConfig(requestConfig));
-        };
-        assertRequestTimeoutTriggered(expectedTimeout, runnable);
     }
 
     /**
@@ -125,17 +110,10 @@ public class BaseRequestComponentTest {
         verify(anyRequestedFor(URI).withHeader("User-Agent", containing("apig-java")));
     }
 
-    private void assertRequestTimeoutTriggered(int expectedTimeout, Runnable runnable) {
-        assertTimeoutExceptionTriggered(
-            expectedTimeout, runnable,
-            e -> assertThat(e.getCause(), instanceOf(HttpRequestTimeoutException.class))
-        );
-    }
-
     private void assertClientExecutionTimeoutTriggered(int expectedTimeout, Runnable runnable) {
         assertTimeoutExceptionTriggered(
-            expectedTimeout, runnable,
-            e -> assertThat(e, instanceOf(ClientExecutionTimeoutException.class))
+                expectedTimeout, runnable,
+                e -> assertThat(e, instanceOf(ClientExecutionTimeoutException.class))
         );
     }
 

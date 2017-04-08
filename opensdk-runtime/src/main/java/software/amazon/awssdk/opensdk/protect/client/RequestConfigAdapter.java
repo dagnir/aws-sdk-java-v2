@@ -76,11 +76,6 @@ class RequestConfigAdapter extends RequestConfig {
     }
 
     @Override
-    public Integer getRequestTimeout() {
-        return sdkRequestConfig.getHttpRequestTimeout();
-    }
-
-    @Override
     public Integer getClientExecutionTimeout() {
         return sdkRequestConfig.getTotalExecutionTimeout();
     }

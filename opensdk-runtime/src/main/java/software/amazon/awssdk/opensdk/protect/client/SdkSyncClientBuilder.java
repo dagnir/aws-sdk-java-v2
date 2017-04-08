@@ -23,9 +23,9 @@ import java.util.List;
 import org.apache.http.conn.ConnectTimeoutException;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.LegacyClientConfigurationFactory;
-import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.NoOpSigner;
+import software.amazon.awssdk.auth.NullCredentialsProvider;
 import software.amazon.awssdk.auth.RequestSigner;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerAsRequestSigner;
@@ -217,22 +217,10 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
                                  .build();
     }
 
-    private static class AnonymousCredentialsProvider implements AwsCredentialsProvider {
-
-        @Override
-        public AwsCredentials getCredentials() {
-            return null;
-        }
-
-        @Override
-        public void refresh() {
-        }
-    }
-
     private class BuilderParams extends AwsSyncClientParams {
 
         private AwsCredentialsProvider resolveCredentials() {
-            return iamCredentials == null ? new AnonymousCredentialsProvider() : iamCredentials;
+            return iamCredentials == null ? new NullCredentialsProvider() : iamCredentials;
         }
 
         @Override

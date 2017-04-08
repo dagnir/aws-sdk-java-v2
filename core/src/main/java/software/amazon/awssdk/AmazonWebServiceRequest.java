@@ -73,8 +73,6 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      */
     private AmazonWebServiceRequest cloneSource;
 
-    private Integer sdkRequestTimeout = null;
-
     private Integer sdkClientExecutionTimeout = null;
 
     /**
@@ -329,99 +327,6 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
     }
 
     /**
-     * Returns the amount of time to wait (in milliseconds) for the request to complete before
-     * giving up and timing out. A non-positive value disables this feature.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * <p>
-     * <p>
-     * The request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this the request timeout feature should
-     * not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
-     *
-     * @return The amount of time to wait (in milliseconds) for the request to complete before
-     *         giving up and timing out. A non-positive value disables the timeout for this request.
-     * @see {@link AmazonWebServiceRequest#setSdkClientExecutionTimeout(int)} to enforce a timeout
-     *      across all retries
-     */
-    public Integer getSdkRequestTimeout() {
-        return sdkRequestTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for the request to complete before giving
-     * up and timing out. A non-positive value disables this feature.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * <p>
-     * <p>
-     * The request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this the request timeout feature should
-     * not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
-     *
-     * @param sdkRequestTimeout
-     *            The amount of time to wait (in milliseconds) for the request to complete before
-     *            giving up and timing out. A non-positive value disables the timeout for this
-     *            request.
-     * @see {@link AmazonWebServiceRequest#setSdkClientExecutionTimeout(int)} to enforce a timeout
-     *      across all retries
-     */
-    public void setSdkRequestTimeout(int sdkRequestTimeout) {
-        this.sdkRequestTimeout = sdkRequestTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for the request to complete before giving
-     * up and timing out. A non-positive value disables this feature. Returns the updated
-     * AmazonWebServiceRequest object so that additional method calls may be chained together.
-     * <p>
-     * This feature requires buffering the entire response (for non-streaming APIs) into memory to
-     * enforce a hard timeout when reading the response. For APIs that return large responses this
-     * could be expensive.
-     * <p>
-     * <p>
-     * The request timeout feature doesn't have strict guarantees on how quickly a request is
-     * aborted when the timeout is breached. The typical case aborts the request within a few
-     * milliseconds but there may occasionally be requests that don't get aborted until several
-     * seconds after the timer has been breached. Because of this the request timeout feature should
-     * not be used when absolute precision is needed.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
-     *
-     * @param sdkRequestTimeout
-     *            The amount of time to wait (in milliseconds) for the request to complete before
-     *            giving up and timing out. A non-positive value disables the timeout for this
-     *            request.
-     * @return The updated {@link AmazonWebServiceRequest} object.
-     * @see {@link AmazonWebServiceRequest#setSdkClientExecutionTimeout(int)} to enforce a timeout
-     *      across all retries
-     */
-    public <T extends AmazonWebServiceRequest> T withSdkRequestTimeout(int sdkRequestTimeout) {
-        setSdkRequestTimeout(sdkRequestTimeout);
-        @SuppressWarnings("unchecked")
-        T t = (T) this;
-        return t;
-    }
-
-    /**
      * Returns the amount of time (in milliseconds) to allow the client to complete the execution of
      * an API call. This timeout covers the entire client execution except for marshalling. This
      * includes request handler execution, all HTTP request including retries, unmarshalling, etc.
@@ -437,20 +342,9 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      * seconds after the timer has been breached. Because of this the client execution timeout
      * feature should not be used when absolute precision is needed.
      * </p>
-     * <p>
-     * This may be used together with {@link AmazonWebServiceRequest#setSdkRequestTimeout(int)} to
-     * enforce both a timeout on each individual HTTP request (i.e. each retry) and the total time
-     * spent on all requests across retries (i.e. the 'client execution' time). A non-positive value
-     * disables this feature.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
      *
      * @return The amount of time (in milliseconds) to allow the client to complete the execution of
      *         an API call. A non-positive value disables the timeout for this request.
-     * @see {@link AmazonWebServiceRequest#setSdkRequestTimeout(int)} to enforce a timeout per HTTP
-     *      request
      */
     public Integer getSdkClientExecutionTimeout() {
         return this.sdkClientExecutionTimeout;
@@ -472,21 +366,10 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      * seconds after the timer has been breached. Because of this the client execution timeout
      * feature should not be used when absolute precision is needed.
      * </p>
-     * <p>
-     * This may be used together with {@link AmazonWebServiceRequest#setSdkRequestTimeout(int)} to
-     * enforce both a timeout on each individual HTTP request (i.e. each retry) and the total time
-     * spent on all requests across retries (i.e. the 'client execution' time). A non-positive value
-     * disables this feature.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
      *
      * @param sdkClientExecutionTimeout
      *            The amount of time (in milliseconds) to allow the client to complete the execution
      *            of an API call. A non-positive value disables the timeout for this request.
-     * @see {@link AmazonWebServiceRequest#setSdkRequestTimeout(int)} to enforce a timeout per HTTP
-     *      request
      */
     public void setSdkClientExecutionTimeout(int sdkClientExecutionTimeout) {
         this.sdkClientExecutionTimeout = sdkClientExecutionTimeout;
@@ -508,22 +391,11 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
      * seconds after the timer has been breached. Because of this the client execution timeout
      * feature should not be used when absolute precision is needed.
      * </p>
-     * <p>
-     * This may be used together with {@link AmazonWebServiceRequest#setSdkRequestTimeout(int)} to
-     * enforce both a timeout on each individual HTTP request (i.e. each retry) and the total time
-     * spent on all requests across retries (i.e. the 'client execution' time). A non-positive value
-     * disables this feature.
-     * </p>
-     * <p>
-     * <b>Note:</b> This feature is not compatible with Java 1.6.
-     * </p>
      *
      * @param sdkClientExecutionTimeout
      *            The amount of time (in milliseconds) to allow the client to complete the execution
      *            of an API call. A non-positive value disables the timeout for this request.
      * @return The updated AmazonWebServiceRequest object for method chaining
-     * @see {@link AmazonWebServiceRequest#setSdkRequestTimeout(int)} to enforce a timeout per HTTP
-     *      request
      */
     public <T extends AmazonWebServiceRequest> T withSdkClientExecutionTimeout(int sdkClientExecutionTimeout) {
         setSdkClientExecutionTimeout(sdkClientExecutionTimeout);

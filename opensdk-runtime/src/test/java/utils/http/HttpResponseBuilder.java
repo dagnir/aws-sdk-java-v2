@@ -35,7 +35,7 @@ public class HttpResponseBuilder {
     }
 
     public HttpResponse build() {
-        HttpResponse httpResponse = new HttpResponse(null, null);
+        HttpResponse httpResponse = new HttpResponse(null);
         headers.entrySet()
                 .stream()
                 .forEach(e -> httpResponse.addHeader(e.getKey(), e.getValue()));

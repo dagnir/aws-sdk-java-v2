@@ -18,11 +18,8 @@ package software.amazon.awssdk.http;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.protocol.HttpContext;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkPublicApi;
-import software.amazon.awssdk.util.Crc32ChecksumCalculatingInputStream;
 
 /**
  * Represents an HTTP response returned by an AWS service in response to a
@@ -32,30 +29,19 @@ import software.amazon.awssdk.util.Crc32ChecksumCalculatingInputStream;
 public class HttpResponse {
 
     private final Request<?> request;
-    private final HttpRequestBase httpRequest;
 
     private String statusText;
     private int statusCode;
     private InputStream content;
-    private Map<String, String> headers = new HashMap<String, String>();
-    private HttpContext context;
+    private Map<String, String> headers = new HashMap<>();
 
     /**
      * Constructs a new HttpResponse associated with the specified request.
      *
-     * @param request
-     *            The associated request that generated this response.
-     * @param httpRequest
-     *            The underlying http request that generated this response.
+     * @param request The associated request that generated this response.
      */
-    public HttpResponse(Request<?> request, HttpRequestBase httpRequest) {
-        this(request, httpRequest, null);
-    }
-
-    public HttpResponse(Request<?> request, HttpRequestBase httpRequest, HttpContext context) {
+    public HttpResponse(Request<?> request) {
         this.request = request;
-        this.httpRequest = httpRequest;
-        this.context = context;
     }
 
     /**
@@ -65,15 +51,6 @@ public class HttpResponse {
      */
     public Request<?> getRequest() {
         return request;
-    }
-
-    /**
-     * Returns the original http request associated with this response.
-     *
-     * @return The original http request associated with this response.
-     */
-    public HttpRequestBase getHttpRequest() {
-        return httpRequest;
     }
 
     /**
@@ -103,10 +80,8 @@ public class HttpResponse {
     /**
      * Adds an HTTP header to the set associated with this response.
      *
-     * @param name
-     *            The name of the HTTP header.
-     * @param value
-     *            The value of the HTTP header.
+     * @param name  The name of the HTTP header.
+     * @param value The value of the HTTP header.
      */
     public void addHeader(String name, String value) {
         headers.put(name, value);
@@ -124,8 +99,7 @@ public class HttpResponse {
     /**
      * Sets the input stream containing the response content.
      *
-     * @param content
-     *            The input stream containing the response content.
+     * @param content The input stream containing the response content.
      */
     public void setContent(InputStream content) {
         this.content = content;
@@ -143,9 +117,8 @@ public class HttpResponse {
     /**
      * Sets the HTTP status text returned with this response.
      *
-     * @param statusText
-     *            The HTTP status text (ex: "Not found") returned with this
-     *            response.
+     * @param statusText The HTTP status text (ex: "Not found") returned with this
+     *                   response.
      */
     public void setStatusText(String statusText) {
         this.statusText = statusText;
@@ -164,26 +137,18 @@ public class HttpResponse {
     /**
      * Sets the HTTP status code that was returned with this response.
      *
-     * @param statusCode
-     *            The HTTP status code (ex: 200, 404, etc) associated with this
-     *            response.
+     * @param statusCode The HTTP status code (ex: 200, 404, etc) associated with this
+     *                   response.
      */
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 
     /**
-     * Returns the CRC32 checksum calculated by the underlying CRC32ChecksumCalculatingInputStream.
-     *
-     * @return The CRC32 checksum.
+     * If we get back any 2xx status code, then we know we should treat the service call as successful.
      */
-    public long getCrc32Checksum() {
-        if (context == null) {
-            return 0L;
-        }
-        Crc32ChecksumCalculatingInputStream crc32ChecksumInputStream =
-                (Crc32ChecksumCalculatingInputStream) context.getAttribute(Crc32ChecksumCalculatingInputStream.class.getName());
-        return crc32ChecksumInputStream == null ? 0L : crc32ChecksumInputStream.getCrc32Checksum();
+    public boolean isSuccessful() {
+        return statusCode / 100 == HttpStatusCodes.OK / 100;
     }
 
 }
