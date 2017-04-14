@@ -58,6 +58,7 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return adapt(config, false);
     }
 
+    @Override
     public boolean useBrowserCompatibleHostNameVerifier() {
         return useBrowserCompatibleHostNameVerifier;
     }
@@ -67,62 +68,77 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return calculateCrc32FromCompressedData;
     }
 
+    @Override
     public int getMaxConnections() {
         return config.getMaxConnections();
     }
 
+    @Override
     public InetAddress getLocalAddress() {
         return config.getLocalAddress();
     }
 
+    @Override
     public String getProxyHost() {
         return config.getProxyHost();
     }
 
+    @Override
     public int getProxyPort() {
         return config.getProxyPort();
     }
 
+    @Override
     public String getProxyUsername() {
         return config.getProxyUsername();
     }
 
+    @Override
     public String getProxyPassword() {
         return config.getProxyPassword();
     }
 
+    @Override
     public String getNonProxyHosts() {
         return config.getNonProxyHosts();
     }
 
+    @Override
     public boolean useReaper() {
         return config.useReaper();
     }
 
+    @Override
     public boolean useGzip() {
         return config.useGzip();
     }
 
+    @Override
     public int getSocketTimeout() {
         return config.getSocketTimeout();
     }
 
+    @Override
     public int[] getSocketBufferSize() {
         return config.getSocketBufferSizeHints();
     }
 
+    @Override
     public boolean useTcpKeepAlive() {
         return config.useTcpKeepAlive();
     }
 
+    @Override
     public SecureRandom getSecureRandom() {
         return config.getSecureRandom();
     }
 
+    @Override
     public int getConnectionTimeout() {
         return config.getConnectionTimeout();
     }
 
+    @Override
     public int getConnectionPoolRequestTimeout() {
         return config.getConnectionTimeout();
     }
@@ -132,6 +148,7 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return config.getConnectionTtl();
     }
 
+    @Override
     public long getMaxIdleConnectionTime() {
         return config.getConnectionMaxIdleMillis();
     }
@@ -140,18 +157,22 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return config.getValidateAfterInactivityMillis();
     }
 
+    @Override
     public String getProxyWorkstation() {
         return config.getProxyWorkstation();
     }
 
+    @Override
     public String getProxyDomain() {
         return config.getProxyDomain();
     }
 
+    @Override
     public boolean isPreemptiveBasicProxyAuth() {
         return config.isPreemptiveBasicProxyAuth();
     }
 
+    @Override
     public boolean isUseExpectContinue() {
         return config.isUseExpectContinue();
     }

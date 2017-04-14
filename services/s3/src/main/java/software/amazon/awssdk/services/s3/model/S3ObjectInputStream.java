@@ -120,14 +120,6 @@ public class S3ObjectInputStream extends SdkFilterInputStream {
 
     /**
      * {@inheritDoc}
-     */
-    @Override
-    public void reset() throws IOException {
-        super.reset();
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * Delegates to {@link S3ObjectInputStream#abort()} if there is any data
      * remaining in the stream. Otherwise, it safely closes the stream.

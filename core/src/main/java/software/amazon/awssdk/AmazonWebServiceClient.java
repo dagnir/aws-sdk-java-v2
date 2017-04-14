@@ -20,6 +20,7 @@ import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -78,7 +79,7 @@ public abstract class AmazonWebServiceClient {
                 new CommonsLogFactory());
         if (LOG.isDebugEnabled()) {
             LOG.debug("Internal logging successfully configured to commons logger: "
-                      + success);
+                    + success);
         }
     }
 
@@ -584,7 +585,7 @@ public abstract class AmazonWebServiceClient {
             AwsRequestMetrics awsRequestMetrics, Request<?> request,
             Response<?> response) {
         this.endClientExecution(awsRequestMetrics, request, response,
-                                !LOGGING_AWS_REQUEST_METRIC);
+                !LOGGING_AWS_REQUEST_METRIC);
     }
 
     /**
@@ -626,12 +627,13 @@ public abstract class AmazonWebServiceClient {
     }
 
     /**
-     * @return the service name that should be used when computing the region
-     * endpoints. This method returns the value of the
-     * regionMetadataServiceName configuration in the internal config
-     * file if such configuration is specified for the current client,
-     * otherwise it returns the same service name that is used for
-     * request signing.
+     * Returns the service name that should be used when computing the region
+     * endpoints. This is the values of the regionMetadataServiceName
+     * configuration in the internal config file if such configuration is
+     * specified for the current client, otherwise it returns the same
+     * service name that is used for request signing.
+     *
+     * @return the service name
      */
     public String getEndpointPrefix() {
         if (endpointPrefix != null) {
@@ -765,7 +767,7 @@ public abstract class AmazonWebServiceClient {
 
     /**
      * Fluent method for {@link #setRegion(Region)}.
-     *
+     * <p>
      * Example: {@code AmazonDynamoDBClient client = new AmazonDynamoDBClient(...).<AmazonDynamoDBClient>withRegion(...);}
      *
      * @see #setRegion(Region)
@@ -798,7 +800,7 @@ public abstract class AmazonWebServiceClient {
 
     /**
      * Fluent method for {@link #setEndpoint(String)}.
-     *
+     * <p>
      * Example: {@code AmazonDynamoDBClient client = new AmazonDynamoDBClient(...).<AmazonDynamoDBClient>withEndPoint(...);}
      *
      * @see #setEndpoint(String)

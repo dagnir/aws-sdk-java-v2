@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.regions.Region;

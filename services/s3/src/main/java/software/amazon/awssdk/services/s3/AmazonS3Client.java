@@ -4178,11 +4178,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         buildEndpointResolver(builder, bucketName, key).resolveRequestEndpoint(request);
     }
 
-    private S3RequestEndpointResolver buildDefaultEndpointResolver(String protocol, String bucketName, String key) {
-        ServiceEndpointBuilder builder = getBuilder(endpoint, protocol, true);
-        return new S3RequestEndpointResolver(builder, clientOptions.isPathStyleAccess(), bucketName, key);
-    }
-
     private ServiceEndpointBuilder getBuilder(URI endpoint, String protocol, boolean useDefaultBuilder) {
         if (clientOptions.isDualstackEnabled() && !clientOptions.isAccelerateModeEnabled()) {
             return new DualstackEndpointBuilder(getServiceNameIntern(), protocol, getRegion().toAwsRegion());

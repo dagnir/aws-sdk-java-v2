@@ -51,11 +51,13 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
     }
 
     /**
+     * Returns a new input stream decorated with progress reporting functionality
+     * if the the progress listener is not null, otherwise it returns the same
+     * inputstream as passed in.
+     *
      * @param is               the request content input stream
      * @param progressListener Optional progress listener
-     * @return If the progress listener is non null returns a new input stream decorated with
-     * progress reporting functionality. If progress listener is null it returns the same input
-     * stream.
+     * @return an input stream with request content
      */
     @SdkInternalApi
     public static InputStream inputStreamForRequest(InputStream is, ProgressListener progressListener) {

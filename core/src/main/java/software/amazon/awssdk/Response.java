@@ -29,6 +29,9 @@ public final class Response<T> {
     private final SdkBaseException exception;
     private final HttpResponse httpResponse;
 
+    /**
+     * @deprecated Use {@link #Response(boolean, Object, SdkBaseException, HttpResponse)}
+     */
     @Deprecated
     public Response(T response, HttpResponse httpResponse) {
         this(true, response, null, httpResponse);

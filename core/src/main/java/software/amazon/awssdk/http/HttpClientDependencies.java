@@ -81,8 +81,10 @@ public class HttpClientDependencies {
     }
 
     /**
-     * @return Adapted {@link HttpClientSettings} containing HTTP specific settings from {@link LegacyClientConfiguration} and
-     * static settings about a particular service (CRC32 behavior, strict hostname verification, etc).
+     * Returns adapted {@link HttpClientSettings} from {@link LegacyClientConfiguration} and
+     * static settings from specific services.
+     *
+     * @return {@link HttpClientSettings}
      */
     public HttpClientSettings httpClientSettings() {
         return httpClientSettings;

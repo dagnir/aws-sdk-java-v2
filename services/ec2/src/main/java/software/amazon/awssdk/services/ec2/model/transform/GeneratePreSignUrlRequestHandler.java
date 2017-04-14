@@ -155,12 +155,4 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
             throw new IllegalArgumentException(e);
         }
     }
-
-    @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
-    }
-
-    @Override
-    public void afterError(Request<?> request, Response<?> response, Exception e) {
-    }
 }
