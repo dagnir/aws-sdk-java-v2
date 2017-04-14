@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk;
 
+import static software.amazon.awssdk.utils.Validate.notNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,12 +29,13 @@ import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.utils.Validate;
 
 /**
  * Request scoped dependencies and context for an execution of a request by {@link AmazonHttpClient}. Provided to the
  * {@link software.amazon.awssdk.http.pipeline.RequestPipeline#execute(Object, RequestExecutionContext)} method.
  */
-public class RequestExecutionContext {
+public final class RequestExecutionContext {
 
     private final Request<?> request;
     private final RequestConfig requestConfig;
@@ -44,8 +47,8 @@ public class RequestExecutionContext {
     private ClientExecutionAbortTrackerTask clientExecutionTrackerTask;
 
     private RequestExecutionContext(Builder builder) {
-        this.request = builder.request;
-        this.requestConfig = builder.requestConfig;
+        this.request = notNull(builder.request, "Request must not be null");
+        this.requestConfig = notNull(builder.requestConfig, "RequestConfig must not be null");
         this.requestHandler2s = builder.resolveRequestHandlers();
         this.awsRequestMetrics = builder.executionContext.getAwsRequestMetrics();
         this.signerProvider = builder.executionContext.getSignerProvider();
@@ -79,7 +82,7 @@ public class RequestExecutionContext {
      * @return Request handlers to hook into request lifecycle.
      */
     public List<RequestHandler2> requestHandler2s() {
-        return requestHandler2s;
+        return Collections.unmodifiableList(requestHandler2s);
     }
 
     /**
@@ -151,6 +154,7 @@ public class RequestExecutionContext {
         }
 
         public RequestExecutionContext build() {
+            notNull(executionContext, "executionContext must not be null");
             return new RequestExecutionContext(this);
         }
 
