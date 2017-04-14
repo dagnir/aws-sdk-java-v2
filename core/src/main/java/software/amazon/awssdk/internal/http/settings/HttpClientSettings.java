@@ -62,6 +62,7 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return useBrowserCompatibleHostNameVerifier;
     }
 
+    @Override
     public boolean calculateCrc32FromCompressedData() {
         return calculateCrc32FromCompressedData;
     }
@@ -126,6 +127,7 @@ public class HttpClientSettings implements SdkHttpClientSettings {
         return config.getConnectionTimeout();
     }
 
+    @Override
     public long getConnectionPoolTtl() {
         return config.getConnectionTtl();
     }
