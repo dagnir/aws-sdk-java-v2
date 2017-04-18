@@ -60,7 +60,7 @@ public class AccountIdDefaultValueTest {
                         .willReturn(aResponse()
                                             .withStatus(200)
                                             .withBody("{}")));
-        glacier.listVaults(new ListVaultsRequest());
+        glacier.listVaults(ListVaultsRequest.builder_().build_());
         verify(getRequestedFor(urlEqualTo("/-/vaults")));
     }
 
@@ -70,7 +70,7 @@ public class AccountIdDefaultValueTest {
                         .willReturn(aResponse()
                                             .withStatus(200)
                                             .withBody("{}")));
-        glacier.listVaults(new ListVaultsRequest("1234"));
+        glacier.listVaults(ListVaultsRequest.builder_().accountId("1234").build_());
         verify(getRequestedFor(urlEqualTo("/1234/vaults")));
     }
 }

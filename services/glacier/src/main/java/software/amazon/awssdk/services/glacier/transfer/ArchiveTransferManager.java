@@ -401,16 +401,16 @@ public class ArchiveTransferManager {
                 jobStatusMonitor = new JobStatusMonitor(sqs, sns);
             }
 
-            JobParameters jobParameters = new JobParameters()
-                    .withArchiveId(archiveId)
-                    .withType("archive-retrieval")
-                    .withSNSTopic(jobStatusMonitor.getTopicArn());
+            JobParameters jobParameters = JobParameters.builder_()
+                    .archiveId(archiveId)
+                    .type("archive-retrieval")
+                    .sNSTopic(jobStatusMonitor.getTopicArn()).build_();
             InitiateJobResult archiveRetrievalResult =
-                    glacier.initiateJob(new InitiateJobRequest()
-                            .withAccountId(accountId)
-                            .withVaultName(vaultName)
-                            .withJobParameters(jobParameters));
-            jobId = archiveRetrievalResult.getJobId();
+                    glacier.initiateJob(InitiateJobRequest.builder_()
+                            .accountId(accountId)
+                            .vaultName(vaultName)
+                            .jobParameters(jobParameters).build_());
+            jobId = archiveRetrievalResult.jobId();
 
             jobStatusMonitor.waitForJobToComplete(jobId);
 
@@ -472,8 +472,9 @@ public class ArchiveTransferManager {
         String customizedChunkSize = null;
         customizedChunkSize = System.getProperty("software.amazon.awssdk.services.glacier.transfer.downloadChunkSizeInMB");
 
-        DescribeJobResult describeJobResult = glacier.describeJob(new DescribeJobRequest(accountId, vaultName, jobId));
-        archiveSize = describeJobResult.getArchiveSizeInBytes();
+        DescribeJobResult describeJobResult = glacier.describeJob(DescribeJobRequest.builder_().accountId(accountId)
+                .vaultName(vaultName).jobId(jobId).build_());
+        archiveSize = describeJobResult.archiveSizeInBytes();
 
         if (customizedChunkSize != null) {
             try {
@@ -540,15 +541,15 @@ public class ArchiveTransferManager {
         int retries = 0;
         while (true) {
             try {
-                GetJobOutputRequest req = new GetJobOutputRequest()
-                        .withAccountId(accountId)
-                        .withVaultName(vaultName)
-                        .withRange("bytes=" + currentPosition + "-" + endPosition)
-                        .withJobId(jobId)
+                GetJobOutputRequest req = GetJobOutputRequest.builder_()
+                        .accountId(accountId)
+                        .vaultName(vaultName)
+                        .range("bytes=" + currentPosition + "-" + endPosition)
+                        .jobId(jobId).build_()
                         .withGeneralProgressListener(progressListener);
                 GetJobOutputResult jobOutputResult = glacier.getJobOutput(req);
                 try {
-                    input = new TreeHashInputStream(new BufferedInputStream(jobOutputResult.getBody()));
+                    input = new TreeHashInputStream(new BufferedInputStream(jobOutputResult.body()));
                     appendToFile(output, input);
                 } catch (NoSuchAlgorithmException e) {
                     throw failure(e, "Unable to compute hash for data integrity");
@@ -557,9 +558,9 @@ public class ArchiveTransferManager {
                 }
 
                 // Only do tree-hash check when the output checksum is returned from Glacier
-                if (null != jobOutputResult.getChecksum()) {
+                if (null != jobOutputResult.checksum()) {
                     // Checksum does not match
-                    if (!input.getTreeHash().equalsIgnoreCase(jobOutputResult.getChecksum())) {
+                    if (!input.getTreeHash().equalsIgnoreCase(jobOutputResult.checksum())) {
                         // Discard the chunk of bytes received 
                         publishResponseBytesDiscarded(progressListener, chunkSize);
                         if (log.isDebugEnabled()) {
@@ -644,13 +645,14 @@ public class ArchiveTransferManager {
         publishProgress(progressListener, ProgressEventType.TRANSFER_PREPARING_EVENT);
         String uploadId = null;
         try {
-            InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest()
-                    .withAccountId(accountId)
-                    .withArchiveDescription(archiveDescription)
-                    .withVaultName(vaultName)
-                    .withPartSize(partSizeString);
+            InitiateMultipartUploadRequest request = InitiateMultipartUploadRequest.builder_()
+                    .accountId(accountId)
+                    .archiveDescription(archiveDescription)
+                    .vaultName(vaultName)
+                    .partSize(partSizeString)
+                    .build_();
             InitiateMultipartUploadResult initiateResult = glacier.initiateMultipartUpload(request);
-            uploadId = initiateResult.getUploadId();
+            uploadId = initiateResult.uploadId();
         } catch (Throwable t) {
             publishProgress(progressListener, ProgressEventType.TRANSFER_FAILED_EVENT);
             throw failure(t);
@@ -682,13 +684,13 @@ public class ArchiveTransferManager {
                         String checksum = TreeHashGenerator.calculateTreeHash(inputSubStream);
                         byte[] binaryChecksum = BinaryUtils.fromHex(checksum);
                         inputSubStream.reset();
-                        UploadMultipartPartRequest req = new UploadMultipartPartRequest()
-                                .withAccountId(accountId)
-                                .withChecksum(checksum)
-                                .withBody(inputSubStream)
-                                .withRange("bytes " + currentPosition + "-" + (currentPosition + length - 1) + "/*")
-                                .withUploadId(uploadId)
-                                .withVaultName(vaultName)
+                        UploadMultipartPartRequest req = UploadMultipartPartRequest.builder_()
+                                .accountId(accountId)
+                                .checksum(checksum)
+                                .body(inputSubStream)
+                                .range("bytes " + currentPosition + "-" + (currentPosition + length - 1) + "/*")
+                                .uploadId(uploadId)
+                                .vaultName(vaultName).build_()
                                 .withGeneralProgressListener(progressListener);
 
                         glacier.uploadMultipartPart(req);
@@ -711,19 +713,19 @@ public class ArchiveTransferManager {
 
             String archiveSize = Long.toString(file.length());
             CompleteMultipartUploadResult completeMultipartUploadResult =
-                    glacier.completeMultipartUpload(new CompleteMultipartUploadRequest()
-                            .withAccountId(accountId)
-                            .withArchiveSize(archiveSize)
-                            .withVaultName(vaultName)
-                            .withChecksum(checksum)
-                            .withUploadId(uploadId));
+                    glacier.completeMultipartUpload(CompleteMultipartUploadRequest.builder_()
+                            .accountId(accountId)
+                            .archiveSize(archiveSize)
+                            .vaultName(vaultName)
+                            .checksum(checksum)
+                            .uploadId(uploadId).build_());
 
-            String artifactId = completeMultipartUploadResult.getArchiveId();
+            String artifactId = completeMultipartUploadResult.archiveId();
             publishProgress(progressListener, ProgressEventType.TRANSFER_COMPLETED_EVENT);
             return new UploadResult(artifactId);
         } catch (Throwable t) {
             publishProgress(progressListener, ProgressEventType.TRANSFER_FAILED_EVENT);
-            glacier.abortMultipartUpload(new AbortMultipartUploadRequest(accountId, vaultName, uploadId));
+            glacier.abortMultipartUpload(AbortMultipartUploadRequest.builder_().accountId(accountId).vaultName(vaultName).uploadId(uploadId).build_());
             throw failure(t, "Unable to finish the upload");
         }
     }
@@ -735,17 +737,17 @@ public class ArchiveTransferManager {
         ResettableInputStream is = newResettableInputStream(file);
         try {
             publishProgress(progressListener, ProgressEventType.TRANSFER_STARTED_EVENT);
-            final UploadArchiveRequest req = new UploadArchiveRequest()
-                    .withAccountId(accountId)
-                    .withArchiveDescription(archiveDescription)
-                    .withVaultName(vaultName)
-                    .withChecksum(checksum)
-                    .withBody(is)
-                    .withContentLength(file.length())
+            final UploadArchiveRequest req = UploadArchiveRequest.builder_()
+                    .accountId(accountId)
+                    .archiveDescription(archiveDescription)
+                    .vaultName(vaultName)
+                    .checksum(checksum)
+                    .body(is)
+                    .contentLength(file.length()).build_()
                     // capture the bytes transferred
                     .withGeneralProgressListener(progressListener);
             UploadArchiveResult uploadArchiveResult = glacier.uploadArchive(req);
-            String artifactId = uploadArchiveResult.getArchiveId();
+            String artifactId = uploadArchiveResult.archiveId();
             publishProgress(progressListener, ProgressEventType.TRANSFER_COMPLETED_EVENT);
             return new UploadResult(artifactId);
         } catch (Throwable t) {

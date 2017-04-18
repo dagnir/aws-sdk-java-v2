@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
+
 import org.joda.time.DateTime;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
@@ -191,6 +192,7 @@ public final class IntermediateModel {
                "software.amazon.awssdk.ResponseMetadata" :
                customizationConfig.getCustomResponseMetadataClassName();
     }
+
 
     public Map<String, AuthorizerModel> getCustomAuthorizers() {
         return customAuthorizers;

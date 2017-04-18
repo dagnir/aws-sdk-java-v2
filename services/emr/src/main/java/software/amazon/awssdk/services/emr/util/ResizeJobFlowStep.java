@@ -171,9 +171,10 @@ public class ResizeJobFlowStep {
             args.add(onFailure.toString());
         }
 
-        return new HadoopJarStepConfig()
-                .withJar("s3://" + bucket + "/libs/resize-job-flow/0.1/resize-job-flow.jar")
-                .withArgs(args);
+        return HadoopJarStepConfig.builder_()
+                .jar("s3://" + bucket + "/libs/resize-job-flow/0.1/resize-job-flow.jar")
+                .args(args)
+                .build_();
     }
 
     /**

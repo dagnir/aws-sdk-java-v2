@@ -71,42 +71,42 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getCodeSize());
-        Assert.assertNotNull(result.getDescription());
-        Assert.assertNotNull(result.getFunctionArn());
-        Assert.assertNotNull(result.getFunctionName());
-        Assert.assertNotNull(result.getHandler());
-        Assert.assertNotNull(result.getLastModified());
-        Assert.assertNotNull(result.getMemorySize());
-        Assert.assertNotNull(result.getRole());
-        Assert.assertNotNull(result.getRuntime());
-        Assert.assertNotNull(result.getTimeout());
+        Assert.assertNotNull(result.codeSize());
+        Assert.assertNotNull(result.description());
+        Assert.assertNotNull(result.functionArn());
+        Assert.assertNotNull(result.functionName());
+        Assert.assertNotNull(result.handler());
+        Assert.assertNotNull(result.lastModified());
+        Assert.assertNotNull(result.memorySize());
+        Assert.assertNotNull(result.role());
+        Assert.assertNotNull(result.runtime());
+        Assert.assertNotNull(result.timeout());
     }
 
     private static void checkValid_GetFunctionConfigurationResult(GetFunctionConfigurationResult result) {
 
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getCodeSize());
-        Assert.assertNotNull(result.getDescription());
-        Assert.assertNotNull(result.getFunctionArn());
-        Assert.assertNotNull(result.getFunctionName());
-        Assert.assertNotNull(result.getHandler());
-        Assert.assertNotNull(result.getLastModified());
-        Assert.assertNotNull(result.getMemorySize());
-        Assert.assertNotNull(result.getRole());
-        Assert.assertNotNull(result.getRuntime());
-        Assert.assertNotNull(result.getTimeout());
+        Assert.assertNotNull(result.codeSize());
+        Assert.assertNotNull(result.description());
+        Assert.assertNotNull(result.functionArn());
+        Assert.assertNotNull(result.functionName());
+        Assert.assertNotNull(result.handler());
+        Assert.assertNotNull(result.lastModified());
+        Assert.assertNotNull(result.memorySize());
+        Assert.assertNotNull(result.role());
+        Assert.assertNotNull(result.runtime());
+        Assert.assertNotNull(result.timeout());
     }
 
     private static void checkValid_GetFunctionResult(GetFunctionResult result) {
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getCode());
-        Assert.assertNotNull(result.getCode().getLocation());
-        Assert.assertNotNull(result.getCode().getRepositoryType());
+        Assert.assertNotNull(result.code());
+        Assert.assertNotNull(result.code().location());
+        Assert.assertNotNull(result.code().repositoryType());
 
-        FunctionConfiguration config = result.getConfiguration();
+        FunctionConfiguration config = result.configuration();
         checkValid_FunctionConfiguration(config);
     }
 
@@ -114,30 +114,30 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         Assert.assertNotNull(config);
 
-        Assert.assertNotNull(config.getCodeSize());
-        Assert.assertNotNull(config.getDescription());
-        Assert.assertNotNull(config.getFunctionArn());
-        Assert.assertNotNull(config.getFunctionName());
-        Assert.assertNotNull(config.getHandler());
-        Assert.assertNotNull(config.getLastModified());
-        Assert.assertNotNull(config.getMemorySize());
-        Assert.assertNotNull(config.getRole());
-        Assert.assertNotNull(config.getRuntime());
-        Assert.assertNotNull(config.getTimeout());
+        Assert.assertNotNull(config.codeSize());
+        Assert.assertNotNull(config.description());
+        Assert.assertNotNull(config.functionArn());
+        Assert.assertNotNull(config.functionName());
+        Assert.assertNotNull(config.handler());
+        Assert.assertNotNull(config.lastModified());
+        Assert.assertNotNull(config.memorySize());
+        Assert.assertNotNull(config.role());
+        Assert.assertNotNull(config.runtime());
+        Assert.assertNotNull(config.timeout());
     }
 
     private static void checkValid_CreateEventSourceMappingResult(CreateEventSourceMappingResult result) {
 
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getBatchSize());
-        Assert.assertNotNull(result.getEventSourceArn());
-        Assert.assertNotNull(result.getFunctionArn());
-        Assert.assertNotNull(result.getLastModified());
-        Assert.assertNotNull(result.getLastProcessingResult());
-        Assert.assertNotNull(result.getState());
-        Assert.assertNotNull(result.getStateTransitionReason());
-        Assert.assertNotNull(result.getUUID());
+        Assert.assertNotNull(result.batchSize());
+        Assert.assertNotNull(result.eventSourceArn());
+        Assert.assertNotNull(result.functionArn());
+        Assert.assertNotNull(result.lastModified());
+        Assert.assertNotNull(result.lastProcessingResult());
+        Assert.assertNotNull(result.state());
+        Assert.assertNotNull(result.stateTransitionReason());
+        Assert.assertNotNull(result.uUID());
     }
 
     @Before
@@ -151,61 +151,70 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
             functionZip.close();
         }
 
-        CreateFunctionResult result = lambda.createFunction(new CreateFunctionRequest()
-                .withDescription("My cloud function").withFunctionName(FUNCTION_NAME)
-                .withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(functionBits)))
-                .withHandler("helloworld.handler").withMemorySize(128).withRuntime(Runtime.Nodejs43).withTimeout(10)
-                .withRole(lambdaServiceRoleArn)).join();
+        CreateFunctionResult result = lambda.createFunction(CreateFunctionRequest.builder_()
+                .description("My cloud function")
+                .functionName(FUNCTION_NAME)
+                .code(FunctionCode.builder_().zipFile(ByteBuffer.wrap(functionBits)).build_())
+                .handler("helloworld.handler")
+                .memorySize(128)
+                .runtime(Runtime.Nodejs43)
+                .timeout(10)
+                .role(lambdaServiceRoleArn).build_()).join();
 
         checkValid_CreateFunctionResult(result);
     }
 
     @After
     public void deleteFunction() {
-        lambda.deleteFunction(new DeleteFunctionRequest().withFunctionName(FUNCTION_NAME));
+        lambda.deleteFunction(DeleteFunctionRequest.builder_().functionName(FUNCTION_NAME).build_());
     }
 
     @Test
     public void testFunctionOperations() throws IOException {
 
         // Get function
-        GetFunctionResult getFunc = lambda.getFunction(new GetFunctionRequest().withFunctionName(FUNCTION_NAME)).join();
+        GetFunctionResult getFunc = lambda.getFunction(GetFunctionRequest.builder_().functionName(FUNCTION_NAME).build_()).join();
         checkValid_GetFunctionResult(getFunc);
 
         // Get function configuration
         GetFunctionConfigurationResult getConfig = lambda
-                .getFunctionConfiguration(new GetFunctionConfigurationRequest().withFunctionName(FUNCTION_NAME)).join();
+                .getFunctionConfiguration(GetFunctionConfigurationRequest.builder_().functionName(FUNCTION_NAME).build_()).join();
         checkValid_GetFunctionConfigurationResult(getConfig);
 
         // List functions
-        ListFunctionsResult listFunc = lambda.listFunctions(new ListFunctionsRequest()).join();
-        Assert.assertFalse(listFunc.getFunctions().isEmpty());
-        for (FunctionConfiguration funcConfig : listFunc.getFunctions()) {
+        ListFunctionsResult listFunc = lambda.listFunctions(ListFunctionsRequest.builder_().build_()).join();
+        Assert.assertFalse(listFunc.functions().isEmpty());
+        for (FunctionConfiguration funcConfig : listFunc.functions()) {
             checkValid_FunctionConfiguration(funcConfig);
         }
 
         // Invoke the function
-        InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(new InvokeAsyncRequest().withFunctionName(
-                FUNCTION_NAME).withInvokeArgs(new ByteArrayInputStream("{}".getBytes()))).join();
+        InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(InvokeAsyncRequest.builder_()
+                .functionName(FUNCTION_NAME)
+                .invokeArgs(new ByteArrayInputStream("{}".getBytes())).build_()).join();
 
-        Assert.assertEquals(202, invokeAsyncResult.getStatus().intValue());
+        Assert.assertEquals(202, invokeAsyncResult.status().intValue());
 
-        InvokeResult invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
-                .withInvocationType(InvocationType.Event).withPayload(ByteBuffer.wrap("{}".getBytes()))).join();
+        InvokeResult invokeResult = lambda.invoke(InvokeRequest.builder_()
+                .functionName(FUNCTION_NAME)
+                .invocationType(InvocationType.Event)
+                .payload(ByteBuffer.wrap("{}".getBytes())).build_()).join();
 
-        Assert.assertEquals(202, invokeResult.getStatusCode().intValue());
-        Assert.assertNull(invokeResult.getLogResult());
-        Assert.assertEquals(0, invokeResult.getPayload().remaining());
+        Assert.assertEquals(202, invokeResult.statusCode().intValue());
+        Assert.assertNull(invokeResult.logResult());
+        Assert.assertEquals(0, invokeResult.payload().remaining());
 
-        invokeResult = lambda.invoke(new InvokeRequest().withFunctionName(FUNCTION_NAME)
-                .withInvocationType(InvocationType.RequestResponse).withLogType(LogType.Tail)
-                .withPayload(ByteBuffer.wrap("{}".getBytes()))).join();
+        invokeResult = lambda.invoke(InvokeRequest.builder_()
+                .functionName(FUNCTION_NAME)
+                .invocationType(InvocationType.RequestResponse)
+                .logType(LogType.Tail)
+                .payload(ByteBuffer.wrap("{}".getBytes())).build_()).join();
 
-        Assert.assertEquals(200, invokeResult.getStatusCode().intValue());
+        Assert.assertEquals(200, invokeResult.statusCode().intValue());
 
-        System.out.println(new String(Base64.decode(invokeResult.getLogResult()), StringUtils.UTF8));
+        System.out.println(new String(Base64.decode(invokeResult.logResult()), StringUtils.UTF8));
 
-        Assert.assertEquals("\"Hello World\"", StringUtils.UTF8.decode(invokeResult.getPayload()).toString());
+        Assert.assertEquals("\"Hello World\"", StringUtils.UTF8.decode(invokeResult.payload()).toString());
     }
 
     @Test
@@ -213,18 +222,19 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         // AddEventSourceResult
         CreateEventSourceMappingResult addResult = lambda
-                .createEventSourceMapping(new CreateEventSourceMappingRequest().withFunctionName(FUNCTION_NAME)
-                        .withEventSourceArn(streamArn).withStartingPosition("TRIM_HORIZON").withBatchSize(100)).join();
+                .createEventSourceMapping(CreateEventSourceMappingRequest.builder_().functionName(FUNCTION_NAME)
+                        .eventSourceArn(streamArn).startingPosition("TRIM_HORIZON").batchSize(100).build_()).join();
         checkValid_CreateEventSourceMappingResult(addResult);
 
-        String eventSourceUUID = addResult.getUUID();
+        String eventSourceUUID = addResult.uUID();
 
         // GetEventSource
-        GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(new GetEventSourceMappingRequest()
-                .withUUID(eventSourceUUID)).join();
+        GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(GetEventSourceMappingRequest
+                .builder_()
+                .uUID(eventSourceUUID).build_()).join();
 
         // RemoveEventSource
-        lambda.deleteEventSourceMapping(new DeleteEventSourceMappingRequest().withUUID(eventSourceUUID));
+        lambda.deleteEventSourceMapping(DeleteEventSourceMappingRequest.builder_().uUID(eventSourceUUID).build_());
     }
 
 }

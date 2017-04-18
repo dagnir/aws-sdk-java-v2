@@ -101,9 +101,10 @@ public class StepFactory {
         for (String arg : args) {
             argsList.add(arg);
         }
-        return new HadoopJarStepConfig()
-                .withJar("s3://" + bucket + "/libs/script-runner/script-runner.jar")
-                .withArgs(argsList);
+        return HadoopJarStepConfig.builder_()
+                .jar("s3://" + bucket + "/libs/script-runner/script-runner.jar")
+                .args(argsList)
+                .build_();
     }
 
     /**

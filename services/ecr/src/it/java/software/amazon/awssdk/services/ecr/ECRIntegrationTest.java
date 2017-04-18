@@ -40,30 +40,30 @@ public class ECRIntegrationTest extends AwsIntegrationTestBase {
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         if (ecr != null) {
-            ecr.deleteRepository(new DeleteRepositoryRequest()
-                                         .withRepositoryName(REPO_NAME));
+            ecr.deleteRepository(DeleteRepositoryRequest.builder_()
+                                         .repositoryName(REPO_NAME).build_());
         }
     }
 
     @Test
     public void basicTest() {
         CreateRepositoryResult result = ecr.createRepository(
-                new CreateRepositoryRequest().withRepositoryName(REPO_NAME));
+                CreateRepositoryRequest.builder_().repositoryName(REPO_NAME).build_());
 
-        Assert.assertNotNull(result.getRepository());
-        Assert.assertEquals(result.getRepository().getRepositoryName(), REPO_NAME);
-        Assert.assertNotNull(result.getRepository().getRepositoryArn());
-        Assert.assertNotNull(result.getRepository().getRegistryId());
+        Assert.assertNotNull(result.repository());
+        Assert.assertEquals(result.repository().repositoryName(), REPO_NAME);
+        Assert.assertNotNull(result.repository().repositoryArn());
+        Assert.assertNotNull(result.repository().registryId());
 
-        String repoArn = result.getRepository().getRepositoryArn();
-        String registryId = result.getRepository().getRegistryId();
+        String repoArn = result.repository().repositoryArn();
+        String registryId = result.repository().registryId();
 
-        Repository repo = ecr.describeRepositories(new DescribeRepositoriesRequest()
-                                                           .withRepositoryNames(REPO_NAME)).getRepositories().get(0);
+        Repository repo = ecr.describeRepositories(DescribeRepositoriesRequest.builder_()
+                                                           .repositoryNames(REPO_NAME).build_()).repositories().get(0);
 
-        Assert.assertEquals(repo.getRegistryId(), registryId);
-        Assert.assertEquals(repo.getRepositoryName(), REPO_NAME);
-        Assert.assertEquals(repo.getRepositoryArn(), repoArn);
+        Assert.assertEquals(repo.registryId(), registryId);
+        Assert.assertEquals(repo.repositoryName(), REPO_NAME);
+        Assert.assertEquals(repo.repositoryArn(), repoArn);
     }
 
 }

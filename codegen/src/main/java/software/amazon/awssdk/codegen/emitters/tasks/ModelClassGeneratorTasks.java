@@ -31,6 +31,7 @@ import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
+import software.amazon.awssdk.codegen.poet.common.AwsServiceModel;
 import software.amazon.awssdk.codegen.poet.common.EnumClass;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
@@ -64,6 +65,11 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
         Metadata metadata = model.getMetadata();
 
         if (shapeModel.getShapeType() != ShapeType.Enum) {
+            if (metadata.isJsonProtocol()) {
+                ClassSpec modelSpec = new AwsServiceModel(model, shapeModel);
+                return new PoetGeneratorTask(modelClassDir, model.getFileHeader(), modelSpec);
+            }
+
             Map<String, Object> dataModel = ImmutableMapParameter.<String, Object>builder()
                 .put("fileHeader", model.getFileHeader())
                 .put("shape", shapeModel)
