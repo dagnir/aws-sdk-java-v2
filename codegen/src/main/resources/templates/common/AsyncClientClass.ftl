@@ -3,6 +3,7 @@ package ${metadata.packageName};
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
+import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 
 import ${metadata.packageName}.model.*;
