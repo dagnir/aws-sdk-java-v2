@@ -31,6 +31,7 @@ import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 public class ${metadata.asyncClient} implements ${metadata.asyncInterface} {
 
     private final ${metadata.syncInterface} syncClient;
+    private final ExecutorService executor;
 
     /**
      * Constructs a new asynchronous client to invoke service methods on
@@ -40,6 +41,7 @@ public class ${metadata.asyncClient} implements ${metadata.asyncInterface} {
      */
     ${metadata.asyncClient}(AwsAsyncClientParams asyncClientParams) {
         this.syncClient = ${metadata.syncInterface}Builder.standard().build((AwsSyncClientParams)asyncClientParams);
+        this.executor = asyncClientParams.getExecutor();
     }
 
   <#list operations?values as operationModel>
