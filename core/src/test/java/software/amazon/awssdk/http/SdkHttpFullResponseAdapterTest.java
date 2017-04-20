@@ -39,7 +39,7 @@ import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 import software.amazon.awssdk.util.StringInputStream;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SdkHttpResponseAdapterTest {
+public class SdkHttpFullResponseAdapterTest {
 
     private final Request<Void> request = new DefaultRequest<>("foo");
 
@@ -48,9 +48,9 @@ public class SdkHttpResponseAdapterTest {
 
     @Test
     public void adapt_SingleHeaderValue_AdaptedCorrectly() throws Exception {
-        SimpleSdkHttpResponse httpResponse = SimpleSdkHttpResponse.builder()
-                .header("FooHeader", "headerValue")
-                .build();
+        SimpleSdkHttpFullResponse httpResponse = SimpleSdkHttpFullResponse.builder()
+                                                                          .header("FooHeader", "headerValue")
+                                                                          .build();
 
         HttpResponse adapted = adapt(httpResponse);
 
@@ -59,10 +59,10 @@ public class SdkHttpResponseAdapterTest {
 
     @Test
     public void adapt_StatusTextAndStatusCode_AdaptedCorrectly() throws Exception {
-        SimpleSdkHttpResponse httpResponse = SimpleSdkHttpResponse.builder()
-                .statusText("OK")
-                .statusCode(200)
-                .build();
+        SimpleSdkHttpFullResponse httpResponse = SimpleSdkHttpFullResponse.builder()
+                                                                          .statusText("OK")
+                                                                          .statusCode(200)
+                                                                          .build();
 
         HttpResponse adapted = adapt(httpResponse);
 
@@ -73,9 +73,9 @@ public class SdkHttpResponseAdapterTest {
     @Test
     public void adapt_InputStreamWithNoGzipOrCrc32_NotWrappedWhenAdapted() throws UnsupportedEncodingException {
         InputStream content = new StringInputStream("content");
-        SimpleSdkHttpResponse httpResponse = SimpleSdkHttpResponse.builder()
-                .content(content)
-                .build();
+        SimpleSdkHttpFullResponse httpResponse = SimpleSdkHttpFullResponse.builder()
+                                                                          .content(content)
+                                                                          .build();
 
         HttpResponse adapted = adapt(httpResponse);
 
@@ -85,10 +85,10 @@ public class SdkHttpResponseAdapterTest {
     @Test
     public void adapt_InputStreamWithCrc32Header_WrappedWithValidatingStream() throws UnsupportedEncodingException {
         InputStream content = new StringInputStream("content");
-        SimpleSdkHttpResponse httpResponse = SimpleSdkHttpResponse.builder()
-                .header("x-amz-crc32", "1234")
-                .content(content)
-                .build();
+        SimpleSdkHttpFullResponse httpResponse = SimpleSdkHttpFullResponse.builder()
+                                                                          .header("x-amz-crc32", "1234")
+                                                                          .content(content)
+                                                                          .build();
 
         HttpResponse adapted = adapt(httpResponse);
 
@@ -98,10 +98,10 @@ public class SdkHttpResponseAdapterTest {
     @Test
     public void adapt_InputStreamWithGzipEncoding_WrappedWithDecompressingStream() throws UnsupportedEncodingException {
         InputStream content = getClass().getResourceAsStream("/resources/compressed_json_body.gz");
-        SimpleSdkHttpResponse httpResponse = SimpleSdkHttpResponse.builder()
-                .header("Content-Encoding", "gzip")
-                .content(content)
-                .build();
+        SimpleSdkHttpFullResponse httpResponse = SimpleSdkHttpFullResponse.builder()
+                                                                          .header("Content-Encoding", "gzip")
+                                                                          .content(content)
+                                                                          .build();
 
         HttpResponse adapted = adapt(httpResponse);
 
@@ -111,11 +111,11 @@ public class SdkHttpResponseAdapterTest {
     @Test
     public void adapt_CalculateCrcFromCompressed_WrapsWithCrc32ThenGzip() throws UnsupportedEncodingException {
         InputStream content = getClass().getResourceAsStream("/resources/compressed_json_body.gz");
-        SimpleSdkHttpResponse httpResponse = SimpleSdkHttpResponse.builder()
-                .header("Content-Encoding", "gzip")
-                .header("x-amz-crc32", "1234")
-                .content(content)
-                .build();
+        SimpleSdkHttpFullResponse httpResponse = SimpleSdkHttpFullResponse.builder()
+                                                                          .header("Content-Encoding", "gzip")
+                                                                          .header("x-amz-crc32", "1234")
+                                                                          .content(content)
+                                                                          .build();
 
         when(httpSettings.calculateCrc32FromCompressedData()).thenReturn(true);
         HttpResponse adapted = adapt(httpResponse);
@@ -126,28 +126,28 @@ public class SdkHttpResponseAdapterTest {
     @Test(expected = UncheckedIOException.class)
     public void adapt_InvalidGzipContent_ThrowsException() throws UnsupportedEncodingException {
         InputStream content = new StringInputStream("this isn't GZIP");
-        SimpleSdkHttpResponse httpResponse = SimpleSdkHttpResponse.builder()
-                .header("Content-Encoding", "gzip")
-                .content(content)
-                .build();
+        SimpleSdkHttpFullResponse httpResponse = SimpleSdkHttpFullResponse.builder()
+                                                                          .header("Content-Encoding", "gzip")
+                                                                          .content(content)
+                                                                          .build();
 
         HttpResponse adapted = adapt(httpResponse);
 
         assertThat(adapted.getContent(), instanceOf(GZIPInputStream.class));
     }
 
-    private HttpResponse adapt(SimpleSdkHttpResponse httpResponse) {
+    private HttpResponse adapt(SimpleSdkHttpFullResponse httpResponse) {
         return SdkHttpResponseAdapter.adapt(httpSettings, request, httpResponse);
     }
 
-    public static class SimpleSdkHttpResponse implements SdkHttpResponse {
+    public static class SimpleSdkHttpFullResponse implements SdkHttpFullResponse {
 
         private final Map<String, List<String>> headers;
         private final InputStream content;
         private final String statusText;
         private final int statusCode;
 
-        private SimpleSdkHttpResponse(Builder builder) {
+        private SimpleSdkHttpFullResponse(Builder builder) {
             this.headers = builder.headers;
             this.content = builder.content;
             this.statusText = builder.statusText;
@@ -157,11 +157,6 @@ public class SdkHttpResponseAdapterTest {
         @Override
         public Map<String, List<String>> getHeaders() {
             return headers;
-        }
-
-        @Override
-        public List<String> getHeaderValues(String headerName) {
-            return headers.get(headerName);
         }
 
         @Override
@@ -181,14 +176,14 @@ public class SdkHttpResponseAdapterTest {
 
 
         /**
-         * @return Builder instance to construct a {@link SimpleSdkHttpResponse}.
+         * @return Builder instance to construct a {@link SimpleSdkHttpFullResponse}.
          */
         public static Builder builder() {
             return new Builder();
         }
 
         /**
-         * Builder for a {@link SimpleSdkHttpResponse}.
+         * Builder for a {@link SimpleSdkHttpFullResponse}.
          */
         public static final class Builder {
 
@@ -221,10 +216,10 @@ public class SdkHttpResponseAdapterTest {
             }
 
             /**
-             * @return An immutable {@link SimpleSdkHttpResponse} object.
+             * @return An immutable {@link SimpleSdkHttpFullResponse} object.
              */
-            public SimpleSdkHttpResponse build() {
-                return new SimpleSdkHttpResponse(this);
+            public SimpleSdkHttpFullResponse build() {
+                return new SimpleSdkHttpFullResponse(this);
             }
         }
     }

@@ -32,8 +32,8 @@ import org.apache.http.pool.ConnPoolControl;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientSettings;
-import software.amazon.awssdk.http.SdkHttpRequest;
-import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.apache.internal.impl.ApacheHttpRequestFactory;
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
@@ -53,11 +53,11 @@ public class ApacheHttpClient implements SdkHttpClient {
     }
 
     @Override
-    public AbortableCallable<SdkHttpResponse> prepareRequest(SdkHttpRequest request, SdkRequestContext context) {
+    public AbortableCallable<SdkHttpFullResponse> prepareRequest(SdkHttpFullRequest request, SdkRequestContext context) {
         final HttpRequestBase apacheRequest = toApacheRequest(request, httpClientSettings);
-        return new AbortableCallable<SdkHttpResponse>() {
+        return new AbortableCallable<SdkHttpFullResponse>() {
             @Override
-            public SdkHttpResponse call() throws Exception {
+            public SdkHttpFullResponse call() throws Exception {
                 return execute(context, apacheRequest);
             }
 
@@ -68,7 +68,7 @@ public class ApacheHttpClient implements SdkHttpClient {
         };
     }
 
-    private SdkHttpResponse execute(SdkRequestContext context, HttpRequestBase apacheRequest) throws IOException {
+    private SdkHttpFullResponse execute(SdkRequestContext context, HttpRequestBase apacheRequest) throws IOException {
         final AwsRequestMetrics awsRequestMetrics = context.metrics();
         captureConnectionPoolMetrics(awsRequestMetrics);
 
@@ -98,7 +98,7 @@ public class ApacheHttpClient implements SdkHttpClient {
 
     }
 
-    private HttpRequestBase toApacheRequest(SdkHttpRequest request, SdkHttpClientSettings options) {
+    private HttpRequestBase toApacheRequest(SdkHttpFullRequest request, SdkHttpClientSettings options) {
         return apacheHttpRequestFactory.create(request, options);
     }
 
@@ -115,13 +115,15 @@ public class ApacheHttpClient implements SdkHttpClient {
      * @throws IOException If there were any problems getting any response information from the
      *                     HttpClient method object.
      */
-    private SdkHttpResponse createResponse(org.apache.http.HttpResponse apacheHttpResponse) throws IOException {
-        return SdkHttpResponse.builder()
-                .statusCode(apacheHttpResponse.getStatusLine().getStatusCode())
-                .statusText(apacheHttpResponse.getStatusLine().getReasonPhrase())
-                .content(apacheHttpResponse.getEntity() != null ? apacheHttpResponse.getEntity().getContent() : null)
-                .headers(transformHeaders(apacheHttpResponse))
-                .build();
+    private SdkHttpFullResponse createResponse(org.apache.http.HttpResponse apacheHttpResponse) throws IOException {
+        return SdkHttpFullResponse.builder()
+                                  .statusCode(apacheHttpResponse.getStatusLine().getStatusCode())
+                                  .statusText(apacheHttpResponse.getStatusLine().getReasonPhrase())
+                                  .content(apacheHttpResponse.getEntity() != null
+                                           ? apacheHttpResponse.getEntity().getContent()
+                                           : null)
+                                  .headers(transformHeaders(apacheHttpResponse))
+                                  .build();
 
     }
 

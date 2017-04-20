@@ -13,22 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http;
+package software.amazon.awssdk.http.async;
 
-public interface SdkHttpResponse extends SdkHttpHeaders {
-
-    /**
-     * Returns the HTTP status text associated with this response.
-     *
-     * @return The HTTP status text associated with this response.
-     */
-    String getStatusText();
+public interface AbortableRunnable extends Runnable {
 
     /**
-     * Returns the HTTP status code (ex: 200, 404, etc) associated with this
-     * response.
-     *
-     * @return The HTTP status code associated with this response.
+     * Aborts the execution of the task. Multiple calls to abort or calling abort an already aborted runnable
+     * should return without error.
      */
-    int getStatusCode();
+    void abort();
 }

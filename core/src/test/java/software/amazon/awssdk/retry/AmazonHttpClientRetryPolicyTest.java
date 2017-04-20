@@ -33,7 +33,7 @@ import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
 /**
@@ -49,7 +49,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
     private SdkHttpClient sdkHttpClient;
 
     @Mock
-    private AbortableCallable<SdkHttpResponse> abortableCallable;
+    private AbortableCallable<SdkHttpFullResponse> abortableCallable;
 
     /**
      * Reset the RetryPolicy and restart collecting context data.
@@ -81,10 +81,10 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         int statusCode = 500;
         String statusText = "InternalServerError";
         // A mock HttpClient that always returns the specified status and error code.
-        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
-                                                          .statusCode(statusCode)
-                                                          .statusText(statusText)
-                                                          .build());
+        when(abortableCallable.call()).thenReturn(SdkHttpFullResponse.builder()
+                                                                     .statusCode(statusCode)
+                                                                     .statusText(statusText)
+                                                                     .build());
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);
@@ -176,10 +176,10 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         int statusCode = 513;
         String statusText = "SomeError";
 
-        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
-                                                          .statusCode(statusCode)
-                                                          .statusText(statusText)
-                                                          .build());
+        when(abortableCallable.call()).thenReturn(SdkHttpFullResponse.builder()
+                                                                     .statusCode(statusCode)
+                                                                     .statusText(statusText)
+                                                                     .build());
 
         // The ExecutionContext should collect the expected RequestCount
         ExecutionContext context = new ExecutionContext(true);

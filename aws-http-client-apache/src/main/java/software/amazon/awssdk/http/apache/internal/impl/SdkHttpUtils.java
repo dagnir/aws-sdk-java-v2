@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
-import software.amazon.awssdk.http.SdkHttpRequest;
 
 public class SdkHttpUtils {
 
@@ -147,7 +147,7 @@ public class SdkHttpUtils {
         return true;
     }
 
-    public static boolean usePayloadForQueryParameters(SdkHttpRequest request) {
+    public static boolean usePayloadForQueryParameters(SdkHttpFullRequest request) {
         boolean requestIsPost = SdkHttpMethod.POST.equals(request.getHttpMethod());
         boolean requestHasNoPayload = (request.getContent() == null);
 
@@ -162,7 +162,7 @@ public class SdkHttpUtils {
      * @return Null if no parameters were present, otherwise the encoded query string for the parameters present in the specified
      *         request.
      */
-    public static String encodeParameters(SdkHttpRequest request) {
+    public static String encodeParameters(SdkHttpFullRequest request) {
 
         final Map<String, List<String>> requestParams = request.getParameters();
 
