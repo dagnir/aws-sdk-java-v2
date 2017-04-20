@@ -63,8 +63,8 @@ public class S3ServiceMetricTest {
                         }
 
                         @Override
-                        public boolean stop() {
-                            return false;
+                        public void stop() {
+
                         }
 
                         @Override

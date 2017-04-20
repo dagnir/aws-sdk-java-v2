@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.utils.IoUtils;
@@ -29,6 +30,7 @@ import software.amazon.awssdk.utils.IoUtils;
  * Simple struct like class to hold both the raw json string content and it's parsed JsonNode
  */
 @SdkInternalApi
+@ReviewBeforeRelease("Do we need this? It isn't well encapsulated because of storing non-copied arrays.")
 public class JsonContent {
 
     private static final Log LOG = LogFactory.getLog(JsonContent.class);

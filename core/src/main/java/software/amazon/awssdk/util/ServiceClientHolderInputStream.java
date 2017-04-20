@@ -17,6 +17,7 @@ package software.amazon.awssdk.util;
 
 import java.io.InputStream;
 import software.amazon.awssdk.AmazonWebServiceClient;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 
 /**
@@ -25,15 +26,16 @@ import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
  * collected when the client reads data from the input stream.
  *
  */
+@ReviewBeforeRelease("What? Ew. Why do we need to hold something somewhere arbitrarily to avoid GC?")
 public class ServiceClientHolderInputStream extends SdkFilterInputStream {
-
-
-    @SuppressWarnings("unused")
     private AmazonWebServiceClient client;
 
-    public ServiceClientHolderInputStream(InputStream in,
-                                          AmazonWebServiceClient client) {
+    public ServiceClientHolderInputStream(InputStream in, AmazonWebServiceClient client) {
         super(in);
         this.client = client;
+    }
+
+    AmazonWebServiceClient getClient() {
+        return client;
     }
 }

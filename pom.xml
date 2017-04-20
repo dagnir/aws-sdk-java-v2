@@ -342,6 +342,31 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.4</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>software.amazon.awssdk</groupId>
+                            <artifactId>build-tools</artifactId>
+                            <version>0.1-SNAPSHOT</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>findbugs</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <failOnError>true</failOnError>
+                        <includeFilterFile>findbugs-suppressions.xml</includeFilterFile>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -491,19 +516,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>3.0.4</version>
-                        <executions>
-                            <execution>
-                                <id>findbugs</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <failOnError>false</failOnError>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

@@ -114,7 +114,7 @@ public class MetricCollectorSupport extends MetricCollector {
      * Stops this collector immediately, dropping all pending metrics in memory.
      */
     @Override
-    public boolean stop() {
+    public void stop() {
         synchronized (MetricCollectorSupport.class) {
             if (uploaderThread != null) {
                 uploaderThread.cancel();
@@ -123,10 +123,8 @@ public class MetricCollectorSupport extends MetricCollector {
                 if (singleton == this) { // defensive check
                     singleton = null;
                 }
-                return true;
             }
         }
-        return false;
     }
 
     /** Returns the configuration. */

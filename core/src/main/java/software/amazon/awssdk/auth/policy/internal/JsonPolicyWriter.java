@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.auth.policy.Condition;
 import software.amazon.awssdk.auth.policy.Policy;
@@ -35,11 +36,13 @@ import software.amazon.awssdk.auth.policy.Principal;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.util.json.Jackson;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Serializes an AWS policy object to a JSON string, suitable for sending to an
  * AWS service.
  */
+@ReviewBeforeRelease("Do we need this? It isn't well encapsulated because of storing non-copied arrays.")
 public class JsonPolicyWriter {
 
     /** Logger used to log exceptions that occurs while writing the Json policy.*/
@@ -89,11 +92,7 @@ public class JsonPolicyWriter {
                              + e.getMessage();
             throw new IllegalArgumentException(message, e);
         } finally {
-            try {
-                writer.close();
-            } catch (Exception e) {
-                // Ignored or expected.
-            }
+            IoUtils.closeQuietly(writer, log);
         }
     }
 

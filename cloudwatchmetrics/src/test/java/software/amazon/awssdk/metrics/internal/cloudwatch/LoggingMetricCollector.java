@@ -14,8 +14,8 @@ public class LoggingMetricCollector extends MetricCollector {
     }
 
     @Override
-    public boolean stop() {
-        return true;
+    public void stop() {
+
     }
 
     @Override

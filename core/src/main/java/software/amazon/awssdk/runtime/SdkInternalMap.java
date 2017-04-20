@@ -139,6 +139,6 @@ public class SdkInternalMap<K, V> implements Map<K, V>, Serializable {
 
     @Override
     public String toString() {
-        return map == null ? null : map.toString();
+        return map == null ? "null" : map.toString();
     }
 }

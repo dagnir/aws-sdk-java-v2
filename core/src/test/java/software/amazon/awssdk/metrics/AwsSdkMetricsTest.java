@@ -175,8 +175,8 @@ public class AwsSdkMetricsTest {
             }
 
             @Override
-            public boolean stop() {
-                return false;
+            public void stop() {
+
             }
 
             @Override

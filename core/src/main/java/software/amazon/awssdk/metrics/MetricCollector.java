@@ -30,8 +30,8 @@ public abstract class MetricCollector {
         }
 
         @Override
-        public boolean stop() {
-            return true;
+        public void stop() {
+
         }
 
         /** Always returns false. */
@@ -60,11 +60,8 @@ public abstract class MetricCollector {
 
     /**
      * Stops the request metric collector.
-     *
-     * @return true if the collector is successfully stopped; false if the
-     *         collector is not running and therefore the call has no effect.
      */
-    public abstract boolean stop();
+    public abstract void stop();
 
     /** Returns true if this collector is enabled; false otherwise. */
     public abstract boolean isEnabled();
