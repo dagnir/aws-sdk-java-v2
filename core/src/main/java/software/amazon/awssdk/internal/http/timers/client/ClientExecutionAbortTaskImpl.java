@@ -17,6 +17,7 @@ package software.amazon.awssdk.internal.http.timers.client;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AbortableCallable;
+import software.amazon.awssdk.utils.Validate;
 
 /**
  * Implementation of {@link ClientExecutionAbortTask} that interrupts the caller thread and aborts
@@ -35,6 +36,8 @@ public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
 
     @Override
     public void run() {
+        Validate.notNull(currentRequest, "Current request must not be null.");
+
         hasTaskExecuted = true;
         if (!thread.isInterrupted()) {
             thread.interrupt();

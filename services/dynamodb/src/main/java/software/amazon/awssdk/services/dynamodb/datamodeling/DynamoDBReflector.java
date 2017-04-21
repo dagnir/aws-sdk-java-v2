@@ -329,11 +329,7 @@ class DynamoDBReflector {
      * one.
      */
     String getPrimaryRangeKeyName(Class<?> clazz) {
-        Method primaryRangeKeyGetter = getPrimaryHashKeyGetter(clazz);
-        return primaryRangeKeyGetter == null ?
-               null
-                                             :
-               getAttributeName(getPrimaryRangeKeyGetter(clazz));
+        return getAttributeName(getPrimaryRangeKeyGetter(clazz));
     }
 
     /**

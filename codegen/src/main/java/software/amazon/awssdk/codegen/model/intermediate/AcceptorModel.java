@@ -15,12 +15,15 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
+import static software.amazon.awssdk.utils.StringUtils.upperCase;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import java.math.BigDecimal;
 import org.apache.commons.lang3.StringEscapeUtils;
 import software.amazon.awssdk.codegen.JmesPathCodeGenVisitor;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class AcceptorModel {
 
@@ -100,7 +103,7 @@ public class AcceptorModel {
     }
 
     public String getEnumState() {
-        return "WaiterState." + this.state.toUpperCase();
+        return "WaiterState." + upperCase(this.state);
     }
 
     public boolean getIsStatusMatcher() {

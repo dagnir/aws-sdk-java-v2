@@ -52,7 +52,7 @@ public class MapUnmarshaller<K, V> implements Unmarshaller<Map<K, V>, JsonUnmars
 
             if (token == FIELD_NAME) {
                 K k = keyUnmarshaller.unmarshall(context);
-                token = context.nextToken();
+                context.nextToken();
                 V v = valueUnmarshaller.unmarshall(context);
                 map.put(k, v);
             } else if (token == END_ARRAY || token == END_OBJECT) {

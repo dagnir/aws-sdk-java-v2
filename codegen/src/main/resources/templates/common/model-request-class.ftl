@@ -1,7 +1,6 @@
 ${fileHeader}
 package ${metadata.packageName}.model;
 
-import java.io.Serializable;
 import javax.annotation.Generated;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
@@ -17,7 +16,7 @@ import software.amazon.awssdk.opensdk.protect.auth.RequestSignerAware;
  */
 </#if>
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
-public class ${shape.shapeName} extends ${baseClassFqcn} implements Serializable, Cloneable
+public class ${shape.shapeName} extends ${baseClassFqcn} implements Cloneable
         <#if shape.requestSignerAware>, RequestSignerAware</#if> {
 
     <@VariableDeclarationMacro.content shape/>

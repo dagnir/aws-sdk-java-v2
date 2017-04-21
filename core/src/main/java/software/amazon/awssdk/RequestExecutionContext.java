@@ -27,6 +27,7 @@ import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.utils.Validate;
 
 /**
  * Request scoped dependencies and context for an execution of a request by {@link AmazonHttpClient}. Provided to the
@@ -143,6 +144,8 @@ public class RequestExecutionContext {
         }
 
         private List<RequestHandler2> resolveRequestHandlers() {
+            Validate.notNull(executionContext, "Execution context must be initialized before resolving request handlers.");
+
             List<RequestHandler2> requestHandler2s = executionContext.getRequestHandler2s();
             if (requestHandler2s == null) {
                 return Collections.emptyList();

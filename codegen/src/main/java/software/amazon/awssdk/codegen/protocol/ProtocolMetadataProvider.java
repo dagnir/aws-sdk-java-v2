@@ -15,10 +15,12 @@
 
 package software.amazon.awssdk.codegen.protocol;
 
+import java.io.Serializable;
+
 /**
  * Provides various pieces of information that are specific to certain protocols.
  */
-public interface ProtocolMetadataProvider {
+public interface ProtocolMetadataProvider extends Serializable {
 
     /**
      * @return True if protocol uses some form of JSON wire format. False otherwise.

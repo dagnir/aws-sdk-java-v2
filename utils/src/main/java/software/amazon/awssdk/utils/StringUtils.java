@@ -354,9 +354,6 @@ public class StringUtils {
      * @return {@code true} if the Strings are equal (case-sensitive), or both {@code null}
      */
     public static boolean equals(final String cs1, final String cs2) {
-        if (cs1 == cs2) {
-            return true;
-        }
         if (cs1 == null || cs2 == null) {
             return false;
         }
@@ -493,10 +490,7 @@ public class StringUtils {
      * StringUtils.upperCase("aBc") = "ABC"
      * </pre>
      *
-     * <p><strong>Note:</strong> As described in the documentation for {@link String#toUpperCase()},
-     * the result of this method is affected by the current locale.
-     * For platform-independent case transformations, the method {@link #lowerCase(String, Locale)}
-     * should be used with a specific locale (e.g. {@link Locale#ENGLISH}).</p>
+     * <p>This uses "ENGLISH" as the locale.
      *
      * @param str  the String to upper case, may be null
      * @return the upper cased String, {@code null} if null String input
@@ -505,7 +499,7 @@ public class StringUtils {
         if (str == null) {
             return null;
         }
-        return str.toUpperCase();
+        return str.toUpperCase(Locale.ENGLISH);
     }
 
     /**
@@ -519,10 +513,7 @@ public class StringUtils {
      * StringUtils.lowerCase("aBc") = "abc"
      * </pre>
      *
-     * <p><strong>Note:</strong> As described in the documentation for {@link String#toLowerCase()},
-     * the result of this method is affected by the current locale.
-     * For platform-independent case transformations, the method {@link #lowerCase(String, Locale)}
-     * should be used with a specific locale (e.g. {@link Locale#ENGLISH}).</p>
+     * <p>This uses "ENGLISH" as the locale.
      *
      * @param str  the String to lower case, may be null
      * @return the lower cased String, {@code null} if null String input
@@ -531,7 +522,7 @@ public class StringUtils {
         if (str == null) {
             return null;
         }
-        return str.toLowerCase();
+        return str.toLowerCase(Locale.ENGLISH);
     }
 
     /**

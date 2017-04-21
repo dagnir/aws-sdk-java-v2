@@ -16,6 +16,7 @@
 package software.amazon.awssdk.auth.profile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -214,7 +215,7 @@ public class ProfilesConfigFileWriter {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             // Restore the stashed file
             if (inPlaceModify) {
                 boolean restored = false;

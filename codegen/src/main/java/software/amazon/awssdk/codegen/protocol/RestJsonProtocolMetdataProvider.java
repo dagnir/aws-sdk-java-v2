@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.protocol;
 
 public class RestJsonProtocolMetdataProvider extends BaseJsonProtocolMetadataProvider {
+    public static final long serialVersionUID = 1L;
 
     /**
      * For Rest-JSON, sending an empty content type is our best option. See TT0059807265.

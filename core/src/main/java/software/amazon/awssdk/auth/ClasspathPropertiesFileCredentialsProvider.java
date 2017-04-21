@@ -31,7 +31,7 @@ import software.amazon.awssdk.SdkClientException;
  * property and the AWS secret key is expected to be in the
  * <code>secretKey</code> property.
  */
-public class ClasspathPropertiesFileCredentialsProvider implements AwsCredentialsProvider {
+public final class ClasspathPropertiesFileCredentialsProvider implements AwsCredentialsProvider {
 
     /** The name of the properties file to check for credentials. */
     private static String DEFAULT_PROPERTIES_FILE = "AwsCredentials.properties";

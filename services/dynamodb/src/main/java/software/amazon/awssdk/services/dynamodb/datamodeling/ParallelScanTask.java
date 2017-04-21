@@ -190,8 +190,9 @@ public class ParallelScanTask {
                     segmentScanFutureTasks.get(segment).get();
                     throw new SdkClientException("No Exception found in the failed scan task.");
                 } catch (ExecutionException ee) {
-                    if (ee.getCause() instanceof AmazonClientException) {
-                        throw (SdkClientException) (ee.getCause());
+                    Throwable cause = ee.getCause();
+                    if (cause instanceof SdkClientException) {
+                        throw (SdkClientException) cause;
                     } else {
                         throw new SdkClientException("Internal error during the scan on segment #" + segment + ".",
                                                      ee.getCause());

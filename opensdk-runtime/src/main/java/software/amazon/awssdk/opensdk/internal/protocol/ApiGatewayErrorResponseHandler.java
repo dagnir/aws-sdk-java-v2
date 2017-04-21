@@ -65,7 +65,20 @@ public class ApiGatewayErrorResponseHandler implements HttpResponseHandler<SdkBa
         exception.setMessage(messageParser.parseErrorMessage(jsonContent.getJsonNode()));
 
         // Wrap in ASE, will be unwrapped when caught in the service client.
-        return (SdkBaseException) exception;
+        return tryConvertException(exception);
+    }
+
+    public SdkBaseException tryConvertException(BaseException exception) {
+        if (exception instanceof SdkBaseException) {
+            return (SdkBaseException) exception;
+        }
+
+        if (exception instanceof Throwable) {
+            throw new IllegalArgumentException("Attempted but failed to convert exception to SdkBaseException.",
+                                               (Throwable) exception);
+        } else {
+            throw new IllegalArgumentException("Attempted but failed to convert type to throwable: " + exception.getClass());
+        }
     }
 
     /**

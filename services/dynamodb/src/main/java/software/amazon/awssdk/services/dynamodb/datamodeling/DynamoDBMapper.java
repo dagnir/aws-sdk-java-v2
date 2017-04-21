@@ -212,6 +212,7 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
     private final DynamoDBMapperModelFactory models;
     private final S3Link.Factory s3Links;
     private final AttributeTransformer transformer;
+    private Map<String, Set<String>> annotatedGsisOnHashKeys;
 
     /**
      * Constructs a new mapper with the service object given, using the default
@@ -625,7 +626,10 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
                 } else {
                     // Intersect the set of all the indexes applicable to the range key
                     // with the set of indexes applicable to each hash key condition.
-                    for (String hashKeyName : annotatedGsisOnHashKeys.keySet()) {
+                    for (Map.Entry<String, Set<String>> indexedHashKeys : annotatedGsisOnHashKeys.entrySet()) {
+                        String hashKeyName = indexedHashKeys.getKey();
+                        Set<String> annotatedGsisOnHashKey = indexedHashKeys.getValue();
+
                         boolean foundValidQueryExpressionWithInferredIndex = false;
                         String indexNameInferredByThisHashKey = null;
                         if (hashKeyName.equals(primaryHashKeyName)) {
@@ -636,7 +640,6 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
                             }
                         }
 
-                        Set<String> annotatedGsisOnHashKey = annotatedGsisOnHashKeys.get(hashKeyName);
                         // We don't need the data in annotatedGSIsOnHashKeys afterwards,
                         // so it's safe to do the intersection in-place.
                         annotatedGsisOnHashKey.retainAll(annotatedGsisOnRangeKey);
@@ -690,15 +693,17 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
 
                 } else {
                     // Only one hash key condition
-                    String hashKeyName = annotatedGsisOnHashKeys.keySet().iterator().next();
+                    Entry<String, Set<String>> entry = annotatedGsisOnHashKeys.entrySet().iterator().next();
+                    String hashKeyName = entry.getKey();
+                    Set<String> annotatedGsisOnHashkey = entry.getValue();
                     if (!hasPrimaryHashKeyCondition) {
-                        if (annotatedGsisOnHashKeys.get(hashKeyName).size() == 1) {
+                        if (annotatedGsisOnHashkey.size() == 1) {
                             // Set the index if the index hash key is only annotated with one GSI.
-                            queryRequest.setIndexName(annotatedGsisOnHashKeys.get(hashKeyName).iterator().next());
-                        } else if (annotatedGsisOnHashKeys.get(hashKeyName).size() > 1) {
+                            queryRequest.setIndexName(annotatedGsisOnHashkey.iterator().next());
+                        } else if (annotatedGsisOnHashkey.size() > 1) {
                             throw new IllegalArgumentException(
                                     "Ambiguous query expression: More than one GSIs (" +
-                                    annotatedGsisOnHashKeys.get(hashKeyName) +
+                                    annotatedGsisOnHashkey +
                                     ") are applicable to the query. " +
                                     "Please specify one of them in your query expression.");
                         } else {
@@ -861,7 +866,8 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
     @Override
     public <T> List<T> marshallIntoObjects(Class<T> clazz, List<Map<String, AttributeValue>> itemAttributes,
                                            DynamoDBMapperConfig config) {
-        config = mergeConfig(config);
+        // If config is used in the future, be sure to mergeConfig.
+        // config = mergeConfig(config);
 
         List<T> result = new ArrayList<T>(itemAttributes.size());
         for (Map<String, AttributeValue> item : itemAttributes) {
@@ -1061,7 +1067,7 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
             String conditionalExpression = deleteExpression.getConditionExpression();
 
             if (conditionalExpression != null) {
-                if (internalAssertions != null && !internalAssertions.isEmpty()) {
+                if (!internalAssertions.isEmpty()) {
                     throw new SdkClientException(
                             "Condition Expressions cannot be used if a versioned attribute is present");
                 }
@@ -1141,14 +1147,12 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
         // Break into chunks of 25 items and make service requests to DynamoDB
         for (final StringListMap<WriteRequest> batch : requestItems.subMaps(MAX_ITEMS_PER_BATCH, true)) {
             List<FailedBatch> failedBatches = writeOneBatch(batch, config.getBatchWriteRetryStrategy());
-            if (failedBatches != null) {
-                totalFailedBatches.addAll(failedBatches);
+            totalFailedBatches.addAll(failedBatches);
 
-                // If contains throttling exception, we do a backoff
-                if (containsThrottlingException(failedBatches)) {
-                    pause(config.getBatchWriteRetryStrategy().getDelayBeforeRetryUnprocessedItems(
-                            Collections.unmodifiableMap(batch), 0));
-                }
+            // If contains throttling exception, we do a backoff
+            if (containsThrottlingException(failedBatches)) {
+                pause(config.getBatchWriteRetryStrategy().getDelayBeforeRetryUnprocessedItems(
+                        Collections.unmodifiableMap(batch), 0));
             }
         }
 
@@ -1263,7 +1267,7 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
         boolean consistentReads = (config.getConsistentReads() == ConsistentReads.CONSISTENT);
 
         if (itemsToGet == null) {
-            return new HashMap<String, List<Object>>();
+            return new HashMap<>();
         }
 
         Map<String, KeysAndAttributes> requestItems = new HashMap<String, KeysAndAttributes>();
@@ -1307,10 +1311,12 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
         config = mergeConfig(config);
         List<Object> keys = new ArrayList<Object>();
         if (itemsToGet != null) {
-            for (Class<?> clazz : itemsToGet.keySet()) {
-                if (itemsToGet.get(clazz) != null) {
+            for (Map.Entry<Class<?>, List<KeyPair>> item : itemsToGet.entrySet()) {
+                Class<?> clazz = item.getKey();
+                List<KeyPair> value = item.getValue();
+                if (value != null) {
                     final DynamoDBMapperTableModel model = getTableModel(clazz, config);
-                    for (KeyPair keyPair : itemsToGet.get(clazz)) {
+                    for (KeyPair keyPair : value) {
                         keys.add(model.createKey(keyPair.getHashKey(), keyPair.getRangeKey()));
                     }
                 }
@@ -1354,19 +1360,15 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
                     applyBatchOperationUserAgent(batchGetItemRequest));
 
             Map<String, List<Map<String, AttributeValue>>> responses = batchGetItemResult.getResponses();
-            for (String tableName : responses.keySet()) {
-                List<Object> objects = null;
-                if (resultSet.get(tableName) != null) {
-                    objects = resultSet.get(tableName);
-                } else {
-                    objects = new LinkedList<Object>();
-                }
+            for (Map.Entry<String, List<Map<String, AttributeValue>>> entries : responses.entrySet()) {
+                String tableName = entries.getKey();
+                List<Map<String, AttributeValue>> items = entries.getValue();
 
+                List<Object> objects = resultSet.getOrDefault(tableName, new LinkedList<>());
                 Class<?> clazz = classesByTableName.get(tableName);
 
-                for (Map<String, AttributeValue> item : responses.get(tableName)) {
-                    AttributeTransformer.Parameters<?> parameters =
-                            toParameters(item, clazz, tableName, config);
+                for (Map<String, AttributeValue> item : items) {
+                    AttributeTransformer.Parameters<?> parameters = toParameters(item, clazz, tableName, config);
                     objects.add(privateMarshallIntoObject(parameters));
                 }
 
@@ -1858,8 +1860,8 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
     }
 
     public static final class BatchGetItemException extends SdkClientException {
-        private final Map<String, KeysAndAttributes> unprocessedKeys;
-        private final Map<String, List<Object>> responses;
+        private final transient Map<String, KeysAndAttributes> unprocessedKeys;
+        private final transient Map<String, List<Object>> responses;
 
         public BatchGetItemException(String message, Map<String, KeysAndAttributes> unprocessedKeys,
                                      Map<String, List<Object>> responses) {
@@ -2275,7 +2277,7 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
         }
     }
 
-    private final class ValueUpdate {
+    private static final class ValueUpdate {
         private final DynamoDBMapperFieldModel<Object, Object> field;
         private final AttributeValue newValue;
         private final Object target;

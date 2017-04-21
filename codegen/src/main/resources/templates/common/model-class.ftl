@@ -1,7 +1,6 @@
 ${fileHeader}
 package ${metadata.packageName}.model;
 
-import java.io.Serializable;
 import javax.annotation.Generated;
 <#if shouldEmitStructuredPojoInterface>
 import software.amazon.awssdk.protocol.StructuredPojo;
@@ -19,7 +18,7 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 </#if>
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
 public class ${shape.shapeName} <#if baseClassFqcn??>extends ${baseClassFqcn}</#if>
-    implements Serializable, Cloneable<#if shouldEmitStructuredPojoInterface>, StructuredPojo</#if> {
+    implements Cloneable<#if shouldEmitStructuredPojoInterface>, StructuredPojo</#if> {
 
     <@VariableDeclarationMacro.content shape/>
 

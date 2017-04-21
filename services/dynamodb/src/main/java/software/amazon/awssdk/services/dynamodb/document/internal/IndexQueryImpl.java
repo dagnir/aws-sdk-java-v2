@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
 /**
  * The implementation for <code>QueryApi</code> for an index.
  */
-public class IndexQueryImpl extends QueryImpl implements QueryApi {
+public class IndexQueryImpl extends QueryImpl {
     private final Index index;
 
     public IndexQueryImpl(DynamoDBClient client, Index index) {

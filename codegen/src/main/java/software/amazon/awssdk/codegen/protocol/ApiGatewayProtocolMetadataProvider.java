@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.protocol;
 
 public class ApiGatewayProtocolMetadataProvider extends BaseJsonProtocolMetadataProvider {
+    public static final long serialVersionUID = 1L;
 
     @Override
     public String getContentType() {

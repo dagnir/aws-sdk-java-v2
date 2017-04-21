@@ -23,11 +23,13 @@ import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_SETTER_PARAM;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.LIST_VARARG_ADDITIONAL_DOC;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHtmlTags;
+import static software.amazon.awssdk.utils.StringUtils.upperCase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.protocol.MarshallingInfo;
 import software.amazon.awssdk.runtime.transform.PathMarshallers;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class MemberModel extends DocumentationModel {
 
@@ -439,7 +441,7 @@ public class MemberModel extends DocumentationModel {
      */
     @JsonIgnore
     public String getMarshallerBindingFieldName() {
-        return this.name.toUpperCase() + "_BINDING";
+        return upperCase(this.name) + "_BINDING";
     }
 
     /**

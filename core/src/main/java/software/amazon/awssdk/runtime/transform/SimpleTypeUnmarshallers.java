@@ -31,11 +31,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for String values.
      */
     public static class StringUnmarshaller implements Unmarshaller<String, Node> {
-        private static StringUnmarshaller instance;
+        private static volatile StringUnmarshaller instance;
 
         public static StringUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new StringUnmarshaller();
+                synchronized (StringUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new StringUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -49,11 +53,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for Double values.
      */
     public static class DoubleUnmarshaller implements Unmarshaller<Double, Node> {
-        private static DoubleUnmarshaller instance;
+        private static volatile DoubleUnmarshaller instance;
 
         public static DoubleUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new DoubleUnmarshaller();
+                synchronized (DoubleUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new DoubleUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -67,11 +75,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for Integer values.
      */
     public static class IntegerUnmarshaller implements Unmarshaller<Integer, Node> {
-        private static IntegerUnmarshaller instance;
+        private static volatile IntegerUnmarshaller instance;
 
         public static IntegerUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new IntegerUnmarshaller();
+                synchronized (IntegerUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new IntegerUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -85,11 +97,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for Boolean values.
      */
     public static class BooleanUnmarshaller implements Unmarshaller<Boolean, Node> {
-        private static BooleanUnmarshaller instance;
+        private static volatile BooleanUnmarshaller instance;
 
         public static BooleanUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new BooleanUnmarshaller();
+                synchronized (BooleanUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new BooleanUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -103,11 +119,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for Float values.
      */
     public static class FloatUnmarshaller implements Unmarshaller<Float, Node> {
-        private static FloatUnmarshaller instance;
+        private static volatile FloatUnmarshaller instance;
 
         public static FloatUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new FloatUnmarshaller();
+                synchronized (FloatUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new FloatUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -121,11 +141,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for Long values.
      */
     public static class LongUnmarshaller implements Unmarshaller<Long, Node> {
-        private static LongUnmarshaller instance;
+        private static volatile LongUnmarshaller instance;
 
         public static LongUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new LongUnmarshaller();
+                synchronized (LongUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new LongUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -139,11 +163,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for Byte values.
      */
     public static class ByteUnmarshaller implements Unmarshaller<Byte, Node> {
-        private static ByteUnmarshaller instance;
+        private static volatile ByteUnmarshaller instance;
 
         public static ByteUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new ByteUnmarshaller();
+                synchronized (ByteUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new ByteUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -157,11 +185,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for Date values.
      */
     public static class DateUnmarshaller implements Unmarshaller<Date, Node> {
-        private static DateUnmarshaller instance;
+        private static volatile DateUnmarshaller instance;
 
         public static DateUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new DateUnmarshaller();
+                synchronized (DateUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new DateUnmarshaller();
+                    }
+                }
             }
             return instance;
         }
@@ -175,11 +207,15 @@ public class SimpleTypeUnmarshallers {
      * Unmarshaller for ByteBuffer values.
      */
     public static class ByteBufferUnmarshaller implements Unmarshaller<ByteBuffer, Node> {
-        private static ByteBufferUnmarshaller instance;
+        private static volatile ByteBufferUnmarshaller instance;
 
         public static ByteBufferUnmarshaller getInstance() {
             if (instance == null) {
-                instance = new ByteBufferUnmarshaller();
+                synchronized (ByteBufferUnmarshaller.class) {
+                    if (instance == null) {
+                        instance = new ByteBufferUnmarshaller();
+                    }
+                }
             }
             return instance;
         }

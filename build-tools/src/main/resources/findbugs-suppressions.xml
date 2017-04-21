@@ -16,26 +16,45 @@
 
 <FindBugsFilter>
 
-    <!-- Container classes do not copy arrays for performance reasons at this time. -->
     <Match>
-        <Or>
-            <Class name="software.amazon.awssdk.auth.policy.internal.JsonPolicyWriter" />
-            <Class name="software.amazon.awssdk.auth.policy.internal.JsonContent" />
-        </Or>
-        <Bug pattern="EI_EXPOSE_REP" />
+        <!-- PZLA_PREFER_ZERO_LENGTH_ARRAYS: This rule causes many false positives, because sometimes we want to return
+             null for arrays. -->
+        <!-- UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR: This rule causes many false positives, because we may be null
+             checking using a library function, like Validate.notNull. -->
+        <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS,UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
     </Match>
+
     <Match>
         <Or>
+            <!-- Container classes do not copy arrays for performance reasons at this time. -->
             <Class name="software.amazon.awssdk.auth.policy.internal.JsonPolicyWriter" />
-            <Class name="software.amazon.awssdk.auth.policy.internal.JsonContent" />
+            <Class name="software.amazon.awssdk.protocol.json.JsonContent" />
+            <Class name="software.amazon.awssdk.internal.config.InternalConfigJsonHelper" />
+
+            <!-- Date types will be switched out for java-8 or joda-style dates in the future,
+                 so ignore these errors for now. -->
+            <Class name="software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription"/>
+            <Class name="software.amazon.awssdk.services.dynamodb.model.StreamDescription"/>
+            <Class name="software.amazon.awssdk.services.dynamodb.model.StreamRecord"/>
+            <Class name="software.amazon.awssdk.services.dynamodb.model.TableDescription"/>
         </Or>
-        <Bug pattern="EI_EXPOSE_REP2" />
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2" />
     </Match>
 
     <!-- Delegate closes input stream. -->
     <Match>
-        <Class name="software.amazon.awssdk.auth.policy.internal.JsonPolicyWriter" />
+        <Class name="software.amazon.awssdk.protocol.json.IonFactory" />
         <Method name="createParser" />
         <Bug pattern="OBL_UNSATISFIED_OBLIGATION" />
+    </Match>
+
+    <!-- We do not have control over these objects being serializable, but we do not intend for them to fully function
+         after serialization. -->
+    <Match>
+        <Or>
+            <Class name="software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper$BatchGetItemException"/>
+            <Class name="software.amazon.awssdk.protocol.json.IonFactory"/>
+        </Or>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED" />
     </Match>
 </FindBugsFilter>

@@ -39,7 +39,7 @@ import software.amazon.awssdk.internal.io.Releasable;
  */
 @NotThreadSafe
 @SdkProtectedApi
-public class ReleasableInputStream extends SdkFilterInputStream implements Releasable {
+public class ReleasableInputStream extends SdkFilterInputStream {
     private static final Log log = LogFactory
             .getLog(ReleasableInputStream.class);
     /**

@@ -92,7 +92,7 @@ class Base16Codec implements Codec {
                     dest[i] = (byte) (i - '0');
                 } else if (i >= 'A' && i <= 'F') {
                     dest[i] = (byte) (i - OFFSET_OF_A);
-                } else if (i >= 'a' && i <= 'f') {
+                } else if (i >= 'a') {
                     dest[i] = (byte) (i - OFFSET_OF_LITTLE_A);
                 } else {
                     dest[i] = -1;

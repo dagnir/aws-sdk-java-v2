@@ -74,7 +74,7 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
     }
 
     @Override
-    protected boolean atEndOfResults() {
+    protected synchronized boolean atEndOfResults() {
         return scanResult.getLastEvaluatedKey() == null;
     }
 

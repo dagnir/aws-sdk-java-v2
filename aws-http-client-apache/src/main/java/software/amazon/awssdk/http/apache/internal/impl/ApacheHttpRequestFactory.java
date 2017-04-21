@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http.apache.internal.impl;
 
+import static software.amazon.awssdk.utils.StringUtils.lowerCase;
+
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +37,7 @@ import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.apache.internal.RepeatableInputStreamRequestEntity;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 /**
  * Responsible for creating Apache HttpClient 4 request objects.
@@ -188,7 +191,7 @@ public class ApacheHttpRequestFactory {
             httpRequest.getHeaders(HttpHeaders.CONTENT_TYPE).length == 0) {
             httpRequest.addHeader(HttpHeaders.CONTENT_TYPE,
                                   "application/x-www-form-urlencoded; " +
-                                  "charset=" + DEFAULT_ENCODING.toLowerCase());
+                                  "charset=" + lowerCase(DEFAULT_ENCODING));
         }
     }
 

@@ -44,7 +44,6 @@ public final class DynamoDBMapperTableModel<T> implements DynamoDBTypeConverter<
     private final Map<String, DynamoDBMapperFieldModel<T, Object>> versions;
     private final Map<String, DynamoDBMapperFieldModel<T, Object>> fields;
     private final Map<KeyType, DynamoDBMapperFieldModel<T, Object>> keys;
-    private final DynamoDBMapperTableModel.Properties<T> properties;
     private final Class<T> targetType;
 
     /**
@@ -57,7 +56,6 @@ public final class DynamoDBMapperTableModel<T> implements DynamoDBTypeConverter<
         this.versions = builder.versions();
         this.fields = builder.fields();
         this.keys = builder.keys();
-        this.properties = builder.properties;
         this.targetType = builder.targetType;
     }
 

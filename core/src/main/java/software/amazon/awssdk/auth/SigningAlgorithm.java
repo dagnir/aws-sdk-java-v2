@@ -28,18 +28,7 @@ public enum SigningAlgorithm {
 
     private SigningAlgorithm() {
         final String algorithmName = this.toString();
-        macReference = new ThreadLocal<Mac>() {
-            @Override
-            protected Mac initialValue() {
-                try {
-                    return Mac.getInstance(algorithmName);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new SdkClientException("Unable to fetch Mac instance for Algorithm "
-                                                 + algorithmName + e.getMessage(), e);
-
-                }
-            }
-        };
+        macReference = new MacThreadLocal(algorithmName);
     }
 
     /**
@@ -47,5 +36,24 @@ public enum SigningAlgorithm {
      */
     public Mac getMac() {
         return macReference.get();
+    }
+
+    private static class MacThreadLocal extends ThreadLocal<Mac> {
+        private final String algorithmName;
+
+        public MacThreadLocal(String algorithmName) {
+            this.algorithmName = algorithmName;
+        }
+
+        @Override
+        protected Mac initialValue() {
+            try {
+                return Mac.getInstance(algorithmName);
+            } catch (NoSuchAlgorithmException e) {
+                throw new SdkClientException("Unable to fetch Mac instance for Algorithm "
+                                             + algorithmName + e.getMessage(), e);
+
+            }
+        }
     }
 }

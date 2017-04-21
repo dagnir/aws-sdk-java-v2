@@ -38,14 +38,14 @@ public class RawRequest extends BaseRequest {
 
     private HttpMethodName httpMethod = HttpMethodName.GET;
 
-    private transient InputStream payload;
+    private InputStream payload;
 
     private Map<String, String> headers = new HashMap<>();
     private Map<String, List<String>> queryParameters = new HashMap<>();
     // This is kept separate from the BaseRequest's, which allows us to later
     // override/merge in headers and query parameters set at the RawRequest
     // level.
-    private transient SdkRequestConfig requestConfig = SdkRequestConfig.builder().build();
+    private SdkRequestConfig requestConfig = SdkRequestConfig.builder().build();
     private boolean requestConfigDirty = true;
 
     /**

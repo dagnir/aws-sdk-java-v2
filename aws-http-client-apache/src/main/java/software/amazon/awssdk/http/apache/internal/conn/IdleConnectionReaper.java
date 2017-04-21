@@ -102,8 +102,9 @@ public final class IdleConnectionReaper extends Thread {
         if (instance == null) {
             synchronized (IdleConnectionReaper.class) {
                 if (instance == null) {
-                    instance = new IdleConnectionReaper();
-                    instance.start();
+                    IdleConnectionReaper newInstance = new IdleConnectionReaper();
+                    newInstance.start();
+                    instance = newInstance;
                 }
             }
         }

@@ -27,8 +27,8 @@
         if (obj == null) return false;
 
         if (obj instanceof ${shape.shapeName} == false) return false;
-        ${shape.shapeName} other = (${shape.shapeName})obj;
         <#if shape.members?has_content>
+        ${shape.shapeName} other = (${shape.shapeName})obj;
         <#list  shape.members as member>
         <#local memberName = member.name>
         if (other.${member.getterMethodName}() == null ^ this.${member.getterMethodName}() == null) return false;

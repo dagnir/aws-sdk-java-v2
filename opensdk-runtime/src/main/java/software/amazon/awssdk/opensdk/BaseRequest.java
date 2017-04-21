@@ -15,12 +15,10 @@
 
 package software.amazon.awssdk.opensdk;
 
-import java.io.Serializable;
-
 /**
  * Base class for all request objects.
  */
-public abstract class BaseRequest implements Serializable, Cloneable {
+public abstract class BaseRequest implements Cloneable {
 
     private SdkRequestConfig sdkRequestConfig = SdkRequestConfig.builder().build();
 

@@ -308,7 +308,7 @@ public enum AwsSdkMetrics {
                             } else {
                                 LogFactory.getLog(AwsSdkMetrics.class).debug("Ignoring unrecognized parameter: " + part);
                             }
-                        } catch (Exception e) {
+                        } catch (IOException | RuntimeException e) {
                             LogFactory.getLog(AwsSdkMetrics.class).debug("Ignoring failure", e);
                         }
                     }
@@ -601,7 +601,7 @@ public enum AwsSdkMetrics {
                     setMetricCollector(instance);
                     return true;
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InstantiationException | ClassNotFoundException | RuntimeException e) {
                 LogFactory.getLog(AwsSdkMetrics.class)
                           .warn("Failed to enable the default metrics", e);
             } finally {

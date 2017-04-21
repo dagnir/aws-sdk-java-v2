@@ -236,19 +236,7 @@ public class AmazonHttpClient implements AutoCloseable {
         if (responseHandler != null) {
             return responseHandler;
         } else {
-            // Return a Dummy, No-Op handler
-            return new HttpResponseHandler<T>() {
-
-                @Override
-                public T handle(HttpResponse response) throws Exception {
-                    return null;
-                }
-
-                @Override
-                public boolean needsConnectionLeftOpen() {
-                    return false;
-                }
-            };
+            return new NoOpResponseHandler<>();
         }
     }
 
@@ -386,6 +374,18 @@ public class AmazonHttpClient implements AutoCloseable {
 
         private SdkHttpClient resolveSdkHttpClient(HttpClientSettings httpClientSettings) {
             return sdkHttpClient != null ? sdkHttpClient : new ApacheHttpClientFactory().create(httpClientSettings);
+        }
+    }
+
+    private static class NoOpResponseHandler<T> implements HttpResponseHandler<T> {
+        @Override
+        public T handle(HttpResponse response) throws Exception {
+            return null;
+        }
+
+        @Override
+        public boolean needsConnectionLeftOpen() {
+            return false;
         }
     }
 

@@ -42,7 +42,7 @@ public class RetryPolicyAdapter implements software.amazon.awssdk.retry.v2.Retry
     public long computeDelayBeforeNextRetry(RetryPolicyContext context) {
         return legacyRetryPolicy.getBackoffStrategy().delayBeforeNextRetry(
                 (AmazonWebServiceRequest) context.originalRequest(),
-                (AmazonClientException) context.exception(),
+                tryConvertException(context.exception()),
                 context.retriesAttempted());
     }
 
@@ -53,9 +53,17 @@ public class RetryPolicyAdapter implements software.amazon.awssdk.retry.v2.Retry
         }
         return legacyRetryPolicy.getRetryCondition().shouldRetry(
                 (AmazonWebServiceRequest) context.originalRequest(),
-                (AmazonClientException) context.exception(),
+                tryConvertException(context.exception()),
                 context.retriesAttempted());
     }
+
+    private AmazonClientException tryConvertException(Exception e) {
+        if (e instanceof AmazonClientException) {
+            return (AmazonClientException) e;
+        }
+        return null;
+    }
+
 
     public RetryPolicy getLegacyRetryPolicy() {
         return this.legacyRetryPolicy;

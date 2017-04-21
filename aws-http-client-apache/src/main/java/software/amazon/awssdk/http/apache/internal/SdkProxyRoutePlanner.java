@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http.apache.internal;
 
+import static software.amazon.awssdk.utils.StringUtils.lowerCase;
+
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -43,7 +45,7 @@ public class SdkProxyRoutePlanner extends DefaultRoutePlanner {
             String[] hosts = nonProxyHosts.split("\\|");
             hostPatterns = new String[hosts.length];
             for (int i = 0; i < hosts.length; ++i) {
-                hostPatterns[i] = hosts[i].toLowerCase().replace("*", ".*?");
+                hostPatterns[i] = lowerCase(hosts[i]).replace("*", ".*?");
             }
         }
     }
@@ -52,7 +54,7 @@ public class SdkProxyRoutePlanner extends DefaultRoutePlanner {
         if (hostPatterns == null) {
             return false;
         }
-        String targetHost = target.getHostName().toLowerCase();
+        String targetHost = lowerCase(target.getHostName());
         for (String pattern : hostPatterns) {
             if (targetHost.matches(pattern)) {
                 return true;

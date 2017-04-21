@@ -38,8 +38,6 @@ import software.amazon.awssdk.util.StringUtils;
  * Signer implementation that signs requests with the AWS3 signing protocol.
  */
 public class Aws3Signer extends AbstractAwsSigner {
-    @Deprecated
-    protected static final DateUtils DATE_UTILS = new DateUtils();
     private static final String AUTHORIZATION_HEADER = "X-Amzn-Authorization";
     private static final String NONCE_HEADER = "x-amz-nonce";
     private static final String HTTP_SCHEME = "AWS3";

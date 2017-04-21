@@ -240,7 +240,7 @@ class Base64Codec implements Codec {
                     dest[i] = (byte) (i - OFFSET_OF_PLUS);
                 } else if (i == '/') {
                     dest[i] = (byte) (i - OFFSET_OF_SLASH);
-                } else if (i >= 'a' && i <= 'z') {
+                } else if (i >= 'a') {
                     dest[i] = (byte) (i - OFFSET_OF_LITTLE_A);
                 } else {
                     dest[i] = -1;

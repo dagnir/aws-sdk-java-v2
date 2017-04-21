@@ -36,7 +36,7 @@ public final class EC2CredentialsUtils {
 
     private static final Log LOG = LogFactory.getLog(EC2CredentialsUtils.class);
 
-    private static EC2CredentialsUtils instance;
+    private static volatile EC2CredentialsUtils instance;
 
     private final ConnectionUtils connectionUtils;
 
@@ -50,7 +50,11 @@ public final class EC2CredentialsUtils {
 
     public static EC2CredentialsUtils getInstance() {
         if (instance == null) {
-            instance = new EC2CredentialsUtils();
+            synchronized (EC2CredentialsUtils.class) {
+                if (instance == null) {
+                    instance = new EC2CredentialsUtils();
+                }
+            }
         }
         return instance;
     }
@@ -150,8 +154,8 @@ public final class EC2CredentialsUtils {
                     errorCode = code.asText();
                     responseMessage = message.asText();
                 }
-            } catch (Exception exception) {
-                LOG.debug("Unable to parse error stream");
+            } catch (RuntimeException exception) {
+                LOG.debug("Unable to parse error stream", exception);
             }
         }
 

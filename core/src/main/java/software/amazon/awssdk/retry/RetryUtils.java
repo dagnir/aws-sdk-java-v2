@@ -103,6 +103,9 @@ public class RetryUtils {
     }
 
     private static AmazonServiceException toAse(SdkBaseException e) {
+        if (!(e instanceof AmazonServiceException)) {
+            throw new IllegalStateException("Received non-AmazonServiceException where one was expected.", e);
+        }
         return (AmazonServiceException) e;
     }
 

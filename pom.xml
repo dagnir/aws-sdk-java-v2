@@ -364,7 +364,11 @@
                     </executions>
                     <configuration>
                         <failOnError>true</failOnError>
-                        <includeFilterFile>findbugs-suppressions.xml</includeFilterFile>
+                        <fork>false</fork>
+                        <findbugsXmlOutput>true</findbugsXmlOutput>
+                        <excludeFilterFile>findbugs-suppressions.xml</excludeFilterFile>
+                        <threshold>Low</threshold>
+                        <effort>Max</effort>
                     </configuration>
                 </plugin>
             </plugins>

@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.document.spec.ScanSpec;
 /**
  * The implementation for <code>ScanApi</code> for an index.
  */
-public class IndexScanImpl extends ScanImpl implements ScanApi {
+public class IndexScanImpl extends ScanImpl {
     private final Index index;
 
     public IndexScanImpl(DynamoDBClient client, Index index) {

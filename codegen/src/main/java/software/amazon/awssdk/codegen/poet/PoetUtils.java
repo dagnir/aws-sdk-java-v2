@@ -29,14 +29,10 @@ import software.amazon.awssdk.codegen.model.intermediate.DocumentationModel;
 import software.amazon.awssdk.codegen.model.intermediate.HasDeprecation;
 
 public final class PoetUtils {
-
-    public static ClassName COMPLETABLE_FUTURE = ClassName.get("java.util.concurrent", "CompletableFuture");
-
-    public static AnnotationSpec GENERATED = AnnotationSpec.builder(Generated.class)
-                                                           .addMember("value",
-                                                                      "$S",
-                                                                      "software.amazon.awssdk:aws-java-sdk-code-generator")
-                                                           .build();
+    public static final AnnotationSpec GENERATED =
+            AnnotationSpec.builder(Generated.class)
+                          .addMember("value", "$S", "software.amazon.awssdk:aws-java-sdk-code-generator")
+                          .build();
 
     private PoetUtils() {
     }

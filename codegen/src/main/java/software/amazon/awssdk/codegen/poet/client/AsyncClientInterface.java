@@ -22,6 +22,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.Modifier;
@@ -66,7 +67,7 @@ public class AsyncClientInterface implements ClassSpec {
 
     private MethodSpec toMethodSpec(OperationModel opModel) {
         ClassName returnTypeClass = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
-        TypeName returnType = ParameterizedTypeName.get(PoetUtils.COMPLETABLE_FUTURE, returnTypeClass);
+        TypeName returnType = ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), returnTypeClass);
         ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
 
         return MethodSpec.methodBuilder(opModel.getMethodName())

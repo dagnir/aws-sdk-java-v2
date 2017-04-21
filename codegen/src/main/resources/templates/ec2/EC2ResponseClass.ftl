@@ -1,7 +1,6 @@
 ${fileHeader}
 package ${metadata.packageName}.model;
 
-import java.io.Serializable;
 import javax.annotation.Generated;
 
 import software.amazon.awssdk.AmazonWebServiceResult;
@@ -11,7 +10,7 @@ import software.amazon.awssdk.AmazonWebServiceResult;
  */
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
 public class ${shape.shapeName} extends ${baseClassFqcn}
-    implements Serializable, Cloneable {
+    implements Cloneable {
 
     <@VariableDeclarationMacro.content shape/>
 

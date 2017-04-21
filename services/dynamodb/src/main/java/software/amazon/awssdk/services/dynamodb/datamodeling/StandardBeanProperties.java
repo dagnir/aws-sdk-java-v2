@@ -130,7 +130,7 @@ final class StandardBeanProperties {
             try {
                 final String name = "set" + getter.getName().replaceFirst("^(get|is)", "");
                 return getter.getDeclaringClass().getMethod(name, getter.getReturnType());
-            } catch (final Exception no) {
+            } catch (NoSuchMethodException | RuntimeException no) {
                 // Ignored or expected.
             }
             return null;
@@ -202,6 +202,8 @@ final class StandardBeanProperties {
      * {@link Map} of {@link Bean}
      */
     static final class BeanMap<T, V> extends LinkedHashMap<String, Bean<T, V>> {
+        public static final long serialVersionUID = 1L;
+
         private final Class<T> clazz;
 
         BeanMap(Class<T> clazz, boolean inherited) {

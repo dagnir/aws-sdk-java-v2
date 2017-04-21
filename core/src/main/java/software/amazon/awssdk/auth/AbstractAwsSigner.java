@@ -471,7 +471,7 @@ public abstract class AbstractAwsSigner implements Signer {
      *            offset in seconds
      */
     protected Date getSignatureDate(int offsetInSeconds) {
-        return new Date(System.currentTimeMillis() - offsetInSeconds * 1000);
+        return new Date(System.currentTimeMillis() - (1000L * offsetInSeconds));
     }
 
     /**

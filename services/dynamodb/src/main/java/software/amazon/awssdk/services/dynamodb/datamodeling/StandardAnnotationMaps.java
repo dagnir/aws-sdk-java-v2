@@ -22,6 +22,7 @@ import static software.amazon.awssdk.services.dynamodb.model.KeyType.RANGE;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -97,7 +98,7 @@ final class StandardAnnotationMaps {
                 // Ignored or expected.
             }
             return clazz.newInstance();
-        } catch (final Exception e) {
+        } catch (final IllegalAccessException | InstantiationException | InvocationTargetException | RuntimeException e) {
             throw new DynamoDBMappingException("could not instantiate " + clazz, e);
         }
     }

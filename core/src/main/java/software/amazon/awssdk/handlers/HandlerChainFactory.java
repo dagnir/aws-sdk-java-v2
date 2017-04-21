@@ -30,7 +30,7 @@ import software.amazon.awssdk.util.StringUtils;
 /**
  * Factory for creating request/response handler chains.
  */
-public class HandlerChainFactory {
+public final class HandlerChainFactory {
 
     private static final String GLOBAL_HANDLER_PATH = "software/amazon/awssdk/global/handlers/request.handler2s";
 
@@ -79,7 +79,7 @@ public class HandlerChainFactory {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (IOException | IllegalAccessException | InstantiationException | ClassNotFoundException | RuntimeException e) {
             throw new AmazonClientException("Unable to instantiate request handler chain for client: "
                                             + e.getMessage(), e);
         } finally {
@@ -146,9 +146,8 @@ public class HandlerChainFactory {
                 }
                 handlers.add(requestHandler);
             }
-        } catch (Exception e) {
-            throw new AmazonClientException("Unable to instantiate request handler chain for client: "
-                                            + e.getMessage(), e);
+        } catch (IOException | IllegalAccessException | InstantiationException | ClassNotFoundException | RuntimeException e) {
+            throw new AmazonClientException("Unable to instantiate request handler chain for client: " + e.getMessage(), e);
         } finally {
             try {
                 if (reader != null) {

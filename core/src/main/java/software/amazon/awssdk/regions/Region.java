@@ -15,7 +15,9 @@
 
 package software.amazon.awssdk.regions;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.LegacyClientConfiguration;
@@ -163,7 +165,8 @@ public class Region {
 
             client.setRegion(this);
             return client;
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException |
+                 InvocationTargetException | RuntimeException e) {
             throw new RuntimeException("Couldn't instantiate instance of " + serviceClass, e);
         }
     }

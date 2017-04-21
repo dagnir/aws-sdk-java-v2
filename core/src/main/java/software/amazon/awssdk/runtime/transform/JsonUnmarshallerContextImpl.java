@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Stack;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.utils.Validate;
 
 @SdkInternalApi
 public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
@@ -120,6 +121,7 @@ public class JsonUnmarshallerContextImpl extends JsonUnmarshallerContext {
     }
 
     private String readCurrentJsonTokenValue() throws IOException {
+        Validate.notNull(currentToken, "Current token must be updated before being read.");
         switch (currentToken) {
             case VALUE_STRING:
                 String text = jsonParser.getText();

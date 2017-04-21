@@ -56,7 +56,7 @@ class Base32Codec extends AbstractBase32Codec {
                     dest[i] = (byte) (i - 'A');
                 } else if (i >= '2' && i <= '7') {
                     dest[i] = (byte) (i - OFFSET_OF_2);
-                } else if (i >= 'a' && i <= 'z') {
+                } else if (i >= 'a') {
                     dest[i] = (byte) (i - 'a');
                 } else {
                     dest[i] = -1;

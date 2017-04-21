@@ -16,5 +16,6 @@
 package software.amazon.awssdk.codegen.protocol;
 
 public class RestXmlProtocolMetadataProvider extends BaseXmlProtocolMetadataProvider {
+    public static final long serialVersionUID = 1L;
 
 }

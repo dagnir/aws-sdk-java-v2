@@ -129,7 +129,7 @@ public class PartitionRegionImpl implements RegionImpl {
 
             } else {
                 if (partition.getDefaults() != null
-                    && partition.getDefaults().getHostName() != null) {
+                    && partition.getDefaults().getHostname() != null) {
                     return partition.getDefaults();
                 }
             }
@@ -140,7 +140,7 @@ public class PartitionRegionImpl implements RegionImpl {
     private String getEndpointString(String serviceName, Endpoint endpoint) {
         return endpoint == null
                ? null
-               : endpoint.getHostName()
+               : endpoint.getHostname()
                          .replace(SERVICE, serviceName)
                          .replace(REGION, region)
                          .replace(DNS_SUFFIX, partition.getDnsSuffix());

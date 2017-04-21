@@ -554,8 +554,7 @@ public class DynamoDBScanExpression {
             this.expressionAttributeNames = new java.util.HashMap<String, String>();
         }
         if (this.expressionAttributeNames.containsKey(key)) {
-            throw new IllegalArgumentException("Duplicated keys ("
-                                               + key.toString() + ") are provided.");
+            throw new IllegalArgumentException("Duplicated keys (" + key + ") are provided.");
         }
         this.expressionAttributeNames.put(key, value);
         return this;
@@ -635,8 +634,7 @@ public class DynamoDBScanExpression {
             this.expressionAttributeValues = new java.util.HashMap<String, AttributeValue>();
         }
         if (this.expressionAttributeValues.containsKey(key)) {
-            throw new IllegalArgumentException("Duplicated keys ("
-                                               + key.toString() + ") are provided.");
+            throw new IllegalArgumentException("Duplicated keys (" + key + ") are provided.");
         }
         this.expressionAttributeValues.put(key, value);
         return this;

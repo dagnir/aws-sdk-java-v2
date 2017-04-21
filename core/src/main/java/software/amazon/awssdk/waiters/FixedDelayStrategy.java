@@ -40,6 +40,6 @@ public class FixedDelayStrategy implements PollingStrategy.DelayStrategy {
      */
     @Override
     public void delayBeforeNextRetry(PollingStrategyContext pollingStrategyContext) throws InterruptedException {
-        Thread.sleep(defaultDelayInSeconds * 1000);
+        Thread.sleep(1000L * defaultDelayInSeconds);
     }
 }

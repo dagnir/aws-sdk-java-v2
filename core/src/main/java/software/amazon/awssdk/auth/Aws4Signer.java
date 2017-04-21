@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.auth;
 
+import static software.amazon.awssdk.util.StringUtils.lowerCase;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -461,7 +463,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
             if (shouldExcludeHeaderFromSigning(header)) {
                 continue;
             }
-            String key = StringUtils.lowerCase(header);
+            String key = lowerCase(header);
             String value = requestHeaders.get(header);
 
             StringUtils.appendCompactedString(buffer, key);
@@ -489,14 +491,14 @@ public class Aws4Signer extends AbstractAwsSigner implements
             if (buffer.length() > 0) {
                 buffer.append(";");
             }
-            buffer.append(StringUtils.lowerCase(header));
+            buffer.append(lowerCase(header));
         }
 
         return buffer.toString();
     }
 
     protected boolean shouldExcludeHeaderFromSigning(String header) {
-        return LIST_OF_HEADERS_TO_IGNORE_IN_LOWER_CASE.contains(header.toLowerCase());
+        return LIST_OF_HEADERS_TO_IGNORE_IN_LOWER_CASE.contains(lowerCase(header));
     }
 
     protected void addHostHeader(SignableRequest<?> request) {

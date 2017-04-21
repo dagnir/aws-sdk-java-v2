@@ -63,7 +63,7 @@ public enum JodaTime {
                    && checkParseIso8601DateUsingAlternativeFormat()
                    && checkParseRfc822Date()
                     ;
-        } catch (Exception ignore) {
+        } catch (ParseException | RuntimeException ignore) {
             // Ignored or expected.
         }
         return false;

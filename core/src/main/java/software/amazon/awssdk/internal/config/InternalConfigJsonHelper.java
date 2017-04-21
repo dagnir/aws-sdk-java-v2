@@ -15,11 +15,14 @@
 
 package software.amazon.awssdk.internal.config;
 
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+
 /**
  * An internal class used to help build {@link InternalConfig} after this class per se has been
  * unmarshalled from JSON. This class allows us to make use of Jackson without the need to write any
  * special parser or json marshaller/unmarshaller.
  */
+@ReviewBeforeRelease("Do we need this? It isn't well encapsulated because of storing non-copied arrays.")
 public class InternalConfigJsonHelper {
 
     private SignerConfigJsonHelper defaultSigner;

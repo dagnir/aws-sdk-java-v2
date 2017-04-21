@@ -21,7 +21,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -384,7 +386,7 @@ public class EC2MetadataUtils {
         } catch (AmazonClientException ace) {
             log.warn("Unable to retrieve the requested metadata.");
             return null;
-        } catch (Exception e) {
+        } catch (IOException | URISyntaxException | RuntimeException e) {
             // Retry on any other exceptions
             int pause = (int) (Math.pow(2, DEFAULT_QUERY_RETRIES - tries) * MINIMUM_RETRY_WAIT_TIME_MILLISECONDS);
             try {
@@ -407,7 +409,7 @@ public class EC2MetadataUtils {
                 cache.put(path, getData(path));
             }
             return cache.get(path);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return null;
         }
     }

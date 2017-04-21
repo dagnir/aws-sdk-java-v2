@@ -69,20 +69,6 @@ public class RuntimeHttpUtils {
         }
     }
 
-    private static int getConnectionTimeout(final LegacyClientConfiguration config) {
-        if (config != null) {
-            return config.getConnectionTimeout();
-        }
-        return LegacyClientConfiguration.DEFAULT_CONNECTION_TIMEOUT;
-    }
-
-    private static int getSocketTimeout(final LegacyClientConfiguration config) {
-        if (config != null) {
-            return config.getSocketTimeout();
-        }
-        return LegacyClientConfiguration.DEFAULT_SOCKET_TIMEOUT;
-    }
-
     /**
      * Returns an URI for the given endpoint.
      * Prefixes the protocol if the endpoint given does not have it.

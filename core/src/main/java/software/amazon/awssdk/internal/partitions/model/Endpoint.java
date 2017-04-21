@@ -27,7 +27,7 @@ public class Endpoint {
     /**
      * endpoint string.
      */
-    private String hostName;
+    private String hostname;
 
     /**
      * credential scope for the endpoint.
@@ -68,9 +68,9 @@ public class Endpoint {
                                   ? override.getCredentialScope()
                                   : defaults.getCredentialScope());
 
-        merged.setHostName(override.getHostName() != null
-                           ? override.getHostName()
-                           : defaults.getHostName());
+        merged.setHostname(override.getHostname() != null
+                           ? override.getHostname()
+                           : defaults.getHostname());
 
         merged.setSslCommonName(override.getSslCommonName() != null
                                 ? override.getSslCommonName()
@@ -91,16 +91,16 @@ public class Endpoint {
     /**
      * returns the endpoint string.
      */
-    public String getHostName() {
-        return hostName;
+    public String getHostname() {
+        return hostname;
     }
 
     /**
      * sets the endpoint string.
      */
     @JsonProperty(value = "hostname")
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
     /**

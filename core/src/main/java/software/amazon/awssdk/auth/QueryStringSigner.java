@@ -30,7 +30,7 @@ import software.amazon.awssdk.SignableRequest;
  * Signer implementation responsible for signing an AWS query string request
  * according to the various signature versions and hashing algorithms.
  */
-public class QueryStringSigner extends AbstractAwsSigner implements Signer {
+public class QueryStringSigner extends AbstractAwsSigner {
     /** Date override for testing only. */
     private Date overriddenDate;
 

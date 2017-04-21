@@ -28,7 +28,7 @@ import software.amazon.awssdk.codegen.model.config.customization.CustomizationCo
 import software.amazon.awssdk.util.ValidationUtils;
 import software.amazon.awssdk.utils.IoUtils;
 
-public class IntermediateModel {
+public final class IntermediateModel {
 
     /**
      * This is used for all service clients unless overridden in the Customizations file.
