@@ -253,7 +253,7 @@ public class DefaultACMClient implements ACMClient {
                 .withProtocolVersion("1.1")
                 .withSupportsCbor(false)
                 .withSupportsIon(false)
-                .withBaseServiceExceptionClass(software.amazon.awssdk.services.acm.model.ACMClientException.class)
+                .withBaseServiceExceptionClass(software.amazon.awssdk.services.acm.model.ACMException.class)
                 .addErrorMetadata(
                         new JsonErrorShapeMetadata().withErrorCode("InvalidTagException").withModeledClass(
                                 InvalidTagException.class))

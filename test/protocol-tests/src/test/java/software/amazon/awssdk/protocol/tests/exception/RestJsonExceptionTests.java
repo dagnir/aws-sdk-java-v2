@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.EmptyModeledException;
 import software.amazon.awssdk.services.protocolrestjson.model.HeadOperationRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.MultiLocationOperationRequest;
-import software.amazon.awssdk.services.protocolrestjson.model.ProtocolRestJsonClientException;
+import software.amazon.awssdk.services.protocolrestjson.model.ProtocolRestJsonException;
 
 /**
  * Exception related tests for AWS REST JSON.
@@ -123,7 +123,7 @@ public class RestJsonExceptionTests {
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {
-        assertThrowsException(runnable, ProtocolRestJsonClientException.class);
+        assertThrowsException(runnable, ProtocolRestJsonException.class);
     }
 
     private void assertThrowsSdkClientException(Runnable runnable) {

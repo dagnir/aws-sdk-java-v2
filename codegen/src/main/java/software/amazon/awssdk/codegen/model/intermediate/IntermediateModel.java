@@ -147,7 +147,7 @@ public final class IntermediateModel {
         if (customizationConfig.getSdkModeledExceptionBaseClassName() != null) {
             return customizationConfig.getSdkModeledExceptionBaseClassName();
         } else {
-            return String.format("%sException", metadata.getSyncInterface());
+            return metadata.getBaseExceptionName();
         }
     }
 

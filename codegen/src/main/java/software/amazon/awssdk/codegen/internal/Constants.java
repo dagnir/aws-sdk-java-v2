@@ -30,6 +30,8 @@ public class Constants {
 
     public static final String CLIENT_NAME_PREFIX = "Default";
 
+    public static final String BASE_EXCEPTION_NAME_SUFFIX = "Exception";
+
     public static final String PROTOCOL_CONFIG_LOCATION = "/protocol-config/%s.json";
 
     @Deprecated

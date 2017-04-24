@@ -23,8 +23,6 @@ import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.ServiceMetadata;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
-import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.util.json.Jackson;
 
 /**
  * Constructs the metadata that is required for generating the java client from the service meta data.
@@ -71,6 +69,7 @@ final class AddMetadata {
                 .withServiceFullName(serviceMetadata.getServiceFullName())
                 .withSyncClient(Utils.getClientName(syncInterfaceName))
                 .withSyncInterface(syncInterfaceName)
+                .withBaseExceptionName(Utils.getBaseExceptionName(serviceName))
                 .withProtocol(Protocol.fromValue(serviceMetadata.getProtocol()))
                 .withJsonVersion(serviceMetadata.getJsonVersion())
                 .withEndpointPrefix(serviceMetadata.getEndpointPrefix())

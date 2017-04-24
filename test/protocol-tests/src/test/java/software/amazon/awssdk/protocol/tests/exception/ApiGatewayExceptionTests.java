@@ -27,14 +27,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.apigateway.protocol.ApiGatewayProtocolClient;
-import software.amazon.awssdk.apigateway.protocol.model.ApiGatewayProtocolClientException;
+import software.amazon.awssdk.apigateway.protocol.model.ApiGatewayProtocolException;
 import software.amazon.awssdk.apigateway.protocol.model.NoModeledExceptionsRequest;
 import software.amazon.awssdk.apigateway.protocol.model.SameShapeDifferentStatusCodesRequest;
 import software.amazon.awssdk.apigateway.protocol.model.SharedExceptionsAcrossOperationsWithDifferentStatusCodesRequest;
 import software.amazon.awssdk.apigateway.protocol.model.SomeModeledException;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.BasicAwsCredentials;
 
 @RunWith(Enclosed.class)
 public class ApiGatewayExceptionTests {
@@ -62,8 +62,8 @@ public class ApiGatewayExceptionTests {
     private static void assertIsBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (ApiGatewayProtocolClientException e) {
-            assertEquals(ApiGatewayProtocolClientException.class, e.getClass());
+        } catch (ApiGatewayProtocolException e) {
+            assertEquals(ApiGatewayProtocolException.class, e.getClass());
         }
     }
 

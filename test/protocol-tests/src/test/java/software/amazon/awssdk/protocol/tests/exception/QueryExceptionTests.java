@@ -31,7 +31,7 @@ import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocolquery.ProtocolQueryClient;
 import software.amazon.awssdk.services.protocolquery.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolquery.model.EmptyModeledException;
-import software.amazon.awssdk.services.protocolquery.model.ProtocolQueryClientException;
+import software.amazon.awssdk.services.protocolquery.model.ProtocolQueryException;
 
 public class QueryExceptionTests {
 
@@ -89,7 +89,7 @@ public class QueryExceptionTests {
         try {
             callAllTypes();
         } catch (EmptyModeledException e) {
-            assertThat(e, instanceOf(ProtocolQueryClientException.class));
+            assertThat(e, instanceOf(ProtocolQueryException.class));
             assertEquals("EmptyModeledException", e.getErrorCode());
         }
     }
@@ -179,8 +179,8 @@ public class QueryExceptionTests {
     private void assertThrowsServiceBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (ProtocolQueryClientException e) {
-            assertEquals(ProtocolQueryClientException.class, e.getClass());
+        } catch (ProtocolQueryException e) {
+            assertEquals(ProtocolQueryException.class, e.getClass());
         }
     }
 

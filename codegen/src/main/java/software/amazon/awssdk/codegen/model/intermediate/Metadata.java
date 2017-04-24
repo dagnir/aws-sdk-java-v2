@@ -56,6 +56,8 @@ public class Metadata {
 
     private String serviceFullName;
 
+    private String baseExceptionName;
+
     private boolean hasApiWithStreamInput;
 
     private String contentType;
@@ -248,6 +250,19 @@ public class Metadata {
      */
     public String getAsyncClientBuilderClassName() {
         return asyncInterface + "Builder";
+    }
+
+    public String getBaseExceptionName() {
+        return baseExceptionName;
+    }
+
+    public void setBaseExceptionName(String baseExceptionName) {
+        this.baseExceptionName = baseExceptionName;
+    }
+
+    public Metadata withBaseExceptionName(String baseExceptionName) {
+        setBaseExceptionName(baseExceptionName);
+        return this;
     }
 
     public String getPackageName() {

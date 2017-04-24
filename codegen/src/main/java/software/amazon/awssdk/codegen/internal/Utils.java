@@ -98,6 +98,10 @@ public class Utils {
         return Constants.CLIENT_NAME_PREFIX + interfaceName;
     }
 
+    public static String getBaseExceptionName(String serviceName) {
+        return serviceName + Constants.BASE_EXCEPTION_NAME_SUFFIX;
+    }
+
     public static String getPackageName(String serviceName, CustomizationConfig customizationConfig) {
         String lowerCased = StringUtils.lowerCase(serviceName);
 

@@ -27,7 +27,7 @@ import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.services.protocolec2.ProtocolEc2Client;
 import software.amazon.awssdk.services.protocolec2.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocolec2.model.ProtocolEc2ClientException;
+import software.amazon.awssdk.services.protocolec2.model.ProtocolEc2Exception;
 
 public class Ec2ExceptionTests {
     private static final String PATH = "/";
@@ -72,8 +72,8 @@ public class Ec2ExceptionTests {
     private void assertThrowsServiceBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (ProtocolEc2ClientException e) {
-            assertEquals(ProtocolEc2ClientException.class, e.getClass());
+        } catch (ProtocolEc2Exception e) {
+            assertEquals(ProtocolEc2Exception.class, e.getClass());
         }
     }
 }

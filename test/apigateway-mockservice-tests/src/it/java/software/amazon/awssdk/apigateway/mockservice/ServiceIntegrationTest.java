@@ -33,7 +33,7 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.apigateway.mockservice.model.MyServiceClientException;
+import software.amazon.awssdk.apigateway.mockservice.model.MyServiceException;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.apigateway.mockservice.model.AnonListsInput;
@@ -396,7 +396,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         try {
             client.getNoauthErrors(
                     new GetNoauthErrorsRequest().errorType("ResourceNotFoundException"));
-        } catch (MyServiceClientException e) {
+        } catch (MyServiceException e) {
             assertThat(e, IsInstanceOf.instanceOf(NotFoundException.class));
             assertEquals(e.sdkHttpMetadata().httpStatusCode(), 404);
             System.out.println("Class = " + e.getClass());
@@ -413,7 +413,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     private void assertForbiddenException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (MyServiceClientException expected) {
+        } catch (MyServiceException expected) {
             assertEquals(403, expected.sdkHttpMetadata().httpStatusCode());
         }
     }
