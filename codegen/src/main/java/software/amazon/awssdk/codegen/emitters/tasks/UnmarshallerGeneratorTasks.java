@@ -82,7 +82,7 @@ public class UnmarshallerGeneratorTasks extends BaseGeneratorTasks {
 
     private boolean shouldGenerate(ShapeModel shapeModel) {
         if (shapeModel.getCustomization().isSkipGeneratingUnmarshaller()) {
-            System.out.println("Skip generating unmarshaller class for " + shapeModel.getShapeName());
+            info("Skip generating unmarshaller class for " + shapeModel.getShapeName());
             return false;
         }
         return shouldGenerate(shapeModel.getShapeType());

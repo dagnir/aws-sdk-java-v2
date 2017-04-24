@@ -35,12 +35,14 @@ import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.Output;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
+import software.amazon.awssdk.utils.Logger;
 
 /**
  * Transforms the examples so that they are in line with any shape related
  * customizations for the given service.
  */
 public class ExamplesCustomizer {
+    private static final Logger log = Logger.loggerFor(ExamplesCustomizer.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final ServiceModel serviceModel;
     private final CustomizationConfig customizationConfig;
@@ -73,7 +75,7 @@ public class ExamplesCustomizer {
     }
 
     private Example applyCustomizationsToExample(Example example, Operation operation) {
-        System.out.println(String.format("Customizing operation example : %s", example.getId()));
+        log.info(() -> String.format("Customizing operation example : %s", example.getId()));
 
         Input input = operation.getInput();
         if (input != null) {
@@ -129,14 +131,16 @@ public class ExamplesCustomizer {
             if (shapeSub.getEmitFromMember() != null) {
                 substituteValue = valueNode.get(shapeSub.getEmitFromMember());
                 if (substituteValue == null) {
-                    System.err.println(String.format("Warning: Substituting shape '%s' for its"
-                                                     + " member '%s' as shape '%s' produced null value. Original"
-                                                     + " value: %s", shapeName, shapeSub.getEmitFromMember(),
-                                                     substituteShapeName, valueNode.toString()));
+                    String errMsg = String.format("Warning: Substituting shape '%s' for its"
+                                                  + " member '%s' as shape '%s' produced null value. Original"
+                                                  + " value: %s", shapeName, shapeSub.getEmitFromMember(),
+                                                  substituteShapeName, valueNode.toString());
+                    log.error(() -> errMsg);
                 }
             }
-            System.out.println(String.format("Substituting shape %s with %s. %s -> %s", shapeName,
-                                             substituteShapeName, valueNode.toString(), Objects.toString(substituteValue)));
+            String logMsg = String.format("Substituting shape %s with %s. %s -> %s", shapeName,
+                                          substituteShapeName, valueNode.toString(), Objects.toString(substituteValue));
+            log.info(() -> logMsg);
 
             return applyCustomizationsToShapeJson(substituteShapeName, substituteShape, substituteValue);
         } else {
