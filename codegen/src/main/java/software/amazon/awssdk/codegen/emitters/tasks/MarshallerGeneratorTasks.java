@@ -56,7 +56,7 @@ public class MarshallerGeneratorTasks extends BaseGeneratorTasks {
 
     private boolean shouldGenerate(ShapeModel shapeModel) {
         if (shapeModel.getCustomization().isSkipGeneratingMarshaller()) {
-            System.out.println("Skip generating marshaller class for " + shapeModel.getShapeName());
+            info("Skip generating marshaller class for " + shapeModel.getShapeName());
             return false;
         }
         return shouldGenerate(shapeModel.getShapeType());

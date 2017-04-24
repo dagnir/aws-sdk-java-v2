@@ -54,7 +54,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
 
     private boolean shouldGenerateShape(ShapeModel shapeModel) {
         if (shapeModel.getCustomization().isSkipGeneratingModelClass()) {
-            System.out.println("Skip generating class " + shapeModel.getShapeName());
+            info("Skip generating class " + shapeModel.getShapeName());
             return false;
         }
         return true;
