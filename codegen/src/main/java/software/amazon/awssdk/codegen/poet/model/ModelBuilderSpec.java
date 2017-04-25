@@ -113,7 +113,7 @@ class ModelBuilderSpec implements ClassSpec {
         if (memberModel.isList()) {
             ListModel listModel = memberModel.getListModel();
             TypeName listMemberType = typeProvider.getStorageType(listModel.getListMemberModel());
-            memberSetters.add(copySetter(field, ParameterizedTypeName.get(typeProvider.listImplClassName(), listMemberType),
+            memberSetters.add(copySetter(memberModel, ParameterizedTypeName.get(typeProvider.listImplClassName(), listMemberType),
                     javadoc));
 
             memberSetters.add(varargToListSetter(field.name, listMemberType, javadoc));
@@ -200,17 +200,18 @@ class ModelBuilderSpec implements ClassSpec {
                 .build();
     }
 
-    private MethodSpec copySetter(FieldSpec field, TypeName copyTypeImpl, String javadoc) {
-        return MethodSpec.methodBuilder(field.name)
+    private MethodSpec copySetter(MemberModel memberModel, TypeName copyTypeImpl, String javadoc) {
+        String fieldName = memberModel.getVariable().getVariableName();
+        return MethodSpec.methodBuilder(memberModel.getSetterMethodName())
                 .addModifiers(Modifier.PUBLIC)
                 .returns(className())
-                .addParameter(field.type, field.name)
+                .addParameter(typeProvider.getStorageType(memberModel), fieldName)
                 .addJavadoc(javadoc)
-                .beginControlFlow("if ($N == null)", field.name)
-                .addStatement("this.$N = null", field.name)
+                .beginControlFlow("if ($N == null)", fieldName)
+                .addStatement("this.$N = null", fieldName)
                 .endControlFlow()
                 .beginControlFlow("else")
-                .addStatement("this.$N = new $T($N)", field.name, copyTypeImpl, field.name)
+                .addStatement("this.$N = new $T($N)", fieldName, copyTypeImpl, fieldName)
                 .endControlFlow()
                 .addStatement("return this")
                 .build();
