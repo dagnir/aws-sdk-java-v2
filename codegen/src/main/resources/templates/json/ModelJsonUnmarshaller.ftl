@@ -30,9 +30,9 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
             if (context.getHeader("${memberModel.http.unmarshallLocationName}") != null) {
                 context.setCurrentHeader("${memberModel.http.unmarshallLocationName}");
                 <#if memberModel.variable.simpleType == "Date">
-                    ${shape.variable.variableName}Builder.${memberModel.variable.variableName}(software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
+                    ${shape.variable.variableName}Builder.${memberModel.setterMethodName}(software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
                 <#else>
-                    ${shape.variable.variableName}Builder.${memberModel.variable.variableName}(<@MemberUnmarshallerDeclarationMacro.content memberModel />.unmarshall(context));
+                    ${shape.variable.variableName}Builder.${memberModel.setterMethodName}(<@MemberUnmarshallerDeclarationMacro.content memberModel />.unmarshall(context));
                 </#if>
             }
         </#if>

@@ -31,8 +31,8 @@ import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
-import software.amazon.awssdk.codegen.poet.common.AwsServiceModel;
 import software.amazon.awssdk.codegen.poet.common.EnumClass;
+import software.amazon.awssdk.codegen.poet.model.AwsServiceModel;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 class ModelClassGeneratorTasks extends BaseGeneratorTasks {
