@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import software.amazon.awssdk.codegen.model.intermediate.ListModel;
 import software.amazon.awssdk.codegen.model.intermediate.MapModel;
@@ -80,37 +81,24 @@ class TypeProvider {
     }
 
     public TypeName getTypeNameForSimpleType(String simpleType) {
-        switch (simpleType) {
-            case "Object":
-                return TypeName.OBJECT;
-            case "String":
-                return ClassName.get(String.class);
-            case "Boolean":
-                return ClassName.get(Boolean.class);
-            case "Integer":
-                return ClassName.get(Integer.class);
-            case "Long":
-                return ClassName.get(Long.class);
-            case "Short":
-                return ClassName.get(Short.class);
-            case "Byte":
-                return ClassName.get(Byte.class);
-            case "BigInteger":
-                return ClassName.get(BigInteger.class);
-            case "Double":
-                return ClassName.get(Double.class);
-            case "Float":
-                return ClassName.get(Float.class);
-            case "BigDecimal":
-                return ClassName.get(BigDecimal.class);
-            case "ByteBuffer":
-                return ClassName.get(ByteBuffer.class);
-            case "InputStream":
-                return ClassName.get(InputStream.class);
-            case "Date":
-                return ClassName.get(Date.class);
-            default:
-                throw new RuntimeException("Unsupported simple type " + simpleType);
-        }
+        return Stream.of(Object.class,
+                String.class,
+                Boolean.class,
+                Integer.class,
+                Long.class,
+                Short.class,
+                Byte.class,
+                BigInteger.class,
+                Double.class,
+                Float.class,
+                BigDecimal.class,
+                ByteBuffer.class,
+                InputStream.class,
+                Date.class)
+                .filter(cls -> cls.getName().equals(simpleType) || cls.getSimpleName().equals(simpleType))
+                .map(ClassName::get)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Unsupported simple type " + simpleType));
+
     }
 }
